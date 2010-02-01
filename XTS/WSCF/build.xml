@@ -19,72 +19,97 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<project name="WSCF" default="com.arjuna.mw.wscf.war" basedir=".">
+<project name="WSCF" default="wscf.war" basedir=".">
 	<!-- Set module name -->
-	<property name="com.arjuna.mwlabs.ts.modulename" value="wscf"/>
+	<property name="modulename" value="wscf"/>
 
-	<!-- Set default properties filename -->
-	<property name="com.arjuna.mw.wscf.properties" value="wscf.properties"/>
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location="../.."/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.arjuna.mw.wscf.properties}"/>
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
-	<!-- Set hostname and port property defaults -->
-	<property environment="env"/>
-	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
-	<property name="jboss.server" value="default"/>
-	<property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-	<property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-	<property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
-	<property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
-    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+    <!-- JBossTS products are in parent install/lib  -->
+    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
+    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
 
-	<property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
+    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
 
-	<!-- Set internal property defaults -->
-	<!-- Path names -->
-    <property name="com.arjuna.mwlabs.wscf.src" value="classes"/>
-    <property name="com.arjuna.mwlabs.wscf.src10" value="classes10"/>
-    <property name="com.arjuna.mwlabs.wscf.src11" value="classes11"/>
-	<property name="com.arjuna.mwlabs.wscf.dest.root" value="build"/>
-    <property name="com.arjuna.mwlabs.wscf.dest" value="build/classes"/>
-    <property name="com.arjuna.mwlabs.wscf.dest10" value="build/classes10/classes"/>
-    <property name="com.arjuna.mwlabs.wscf.dest11" value="build/classes11/classes"/>
-	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="build/lib"/>
-	<property name="com.arjuna.mwlabs.wscf.war.dest" value="build/webapps"/>
-	<property name="com.arjuna.mwlabs.wscf.htdocs.dest" value="build/htdocs"/>
+    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
 
-	<!-- test path names -->
-	<property name="com.arjuna.mwlabs.wscf.tests.src" value="tests/classes"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.dd" value="tests/dd"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.dest.root" value="tests/build"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.dest" value="tests/build/classes"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.dd.dest" value="tests/build/dd"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.webapps.dest" value="tests/build/webapps"/>
-	<property name="com.arjuna.mwlabs.wscf.tests.jar.dest" value="tests/build/lib"/>
+    <property name="xts.ext.dir" location="../ext"/>
 
-    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
-    <property name="com.arjuna.jta.install" location="../../install"/>
+    <!-- required JBossTS product jars -->
+    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
 
-    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
-    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
-    <property name="com.arjuna.xts.ext" location="../ext"/>
+    <!-- external jars also used by JBossTS -->
+    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
 
-    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
+    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
+    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
 
-    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
-    <property name="jta.ext.jars" value="jbossts-common.jar"/>
-    <property name="jta.ext.compile.jars" value="commons-logging-1.1.jar jta-1_1-classes.zip"/>
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+    <!-- external jars used by XTS for CXF enabled builds -->
+    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
             geronimo-ws-metadata_2.0_spec.jar">
         <isset property="cxf.build"/>
     </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+
+    <!-- external jars used by XTS for all builds -->
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
-    <property name="jboss.lib.jars" value="dom4j.jar"/>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
+
+    <!-- paths internal to build -->
+
+    <path id="build.classpath">
+        <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
+    </path>
+
+    <path id="doclet.classpath">
+        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
+    </path>
+
+    <property name="build.classpath" refid="build.classpath"/>
+
+    <property name="doclet.classpath" refid="doclet.classpath"/>
+
+    <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
+    <property  environment="env"/>
+    <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
+    <property  name="jboss.server" value="default"/>
+    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+
+	<!-- internal paths and jars -->
+
+    <property name="wscf.src" value="classes"/>
+    <property name="wscf.src10" value="classes10"/>
+    <property name="wscf.src11" value="classes11"/>
+	<property name="wscf.dest.root" value="build"/>
+    <property name="wscf.dest" value="build/classes"/>
+    <property name="wscf.dest10" value="build/classes10/classes"/>
+    <property name="wscf.dest11" value="build/classes11/classes"/>
+	<property name="wscf.jar.dest" value="build/lib"/>
+	<property name="wscf.war.dest" value="build/webapps"/>
+	<property name="wscf.htdocs.dest" value="build/htdocs"/>
+
+	<!-- test path names -->
+	<property name="wscf.tests.src" value="tests/classes"/>
+	<property name="wscf.tests.dd" value="tests/dd"/>
+	<property name="wscf.tests.dest.root" value="tests/build"/>
+	<property name="wscf.tests.dest" value="tests/build/classes"/>
+	<property name="wscf.tests.dd.dest" value="tests/build/dd"/>
+	<property name="wscf.tests.webapps.dest" value="tests/build/webapps"/>
+	<property name="wscf.tests.jar.dest" value="tests/build/lib"/>
+
+    <!--sibling module directories and jars -->
+
+    <property name="wsas.jar.dest" value="../WSAS/build/lib"/>
+    <property name="wsc.jar.dest" value="../WS-C/build/dev/lib"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
@@ -93,185 +118,158 @@
     <property name="wsc10.api.libs" value="ws-c10-api.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
 
-    <property name="com.arjuna.mwlabs.wscf.resourcebundle"
+    <property name="wscf.resourcebundle"
 	      value="wscf_msg_en_US.properties"/>
 
-	<!--Set external directories -->
-
-	<property name="com.arjuna.mwlabs.wsas.jar.dest" value="../WSAS/build/lib"/>
-	<property name="com.arjuna.mwlabs.wsc.jar.dest" value="../WS-C/build/dev/lib"/>
-
-    <!-- Define classpath builder task -->
-    <path id="com.arjuna.buildsystem.classpath">
-        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
-    </path>
-    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
-	<property name="com.arjuna.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
-
-	<path id="com.arjuna.mwlabs.wscf.lib.classpath">
-        <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
-        <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
-        <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs} ${wsc.api.libs}"/>
+    <path id="wscf.lib.classpath">
+        <path refid="build.classpath"/>
+        <fileset dir="${wsas.jar.dest}" includes="${wsas.libs}"/>
+        <fileset dir="${wsc.jar.dest}" includes="${wsc.libs} ${wsc.api.libs}"/>
     </path>
 
 	<!-- tests library and path to library -->
 	<property name="tests.libs" value="junit.jar"/>
-	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
-	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
+	<property name="tests.depend.libs" value="${tests.libs} ${modulename}.jar"/>
+	<property name="tests.depend.libs" value="${tests.libs} ${modulename}.jar"/>
 
-	<path id="com.arjuna.mwlabs.wscf.tests.lib.path">
-	  <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-	  <fileset dir="${jboss.lib.dir}" includes="${jboss.lib.jars}"/>
+	<path id="wscf.tests.lib.path">
+	  <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+        <path refid="wscf.lib.classpath"/>
 	</path>
 
 	<!-- Initialisation -->
-	<target name="com.arjuna.mwlabs.wscf.init">
+	<target name="wscf.init">
 		<!-- Define default build properties -->
 		<tstamp>
-			<format property="com.arjuna.mw.wscf.date" pattern="yyyy/mm/dd hh:mm aa"/>
+			<format property="wscf.date" pattern="yyyy/mm/dd hh:mm aa"/>
 		</tstamp>
 		<!-- Make the destination directory -->
-        <mkdir dir="${com.arjuna.mwlabs.wscf.dest}"/>
-        <mkdir dir="${com.arjuna.mwlabs.wscf.dest10}"/>
-        <mkdir dir="${com.arjuna.mwlabs.wscf.dest11}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.war.dest}"/>
+        <mkdir dir="${wscf.dest}"/>
+        <mkdir dir="${wscf.dest10}"/>
+        <mkdir dir="${wscf.dest11}"/>
+		<mkdir dir="${wscf.war.dest}"/>
 	</target>
 
 	<!-- Compilation targets -->
-	<target name="com.arjuna.mw.wscf.compile"
-	depends="com.arjuna.mwlabs.wscf.compile,
-		com.arjuna.mw.wscf.htdocs, com.arjuna.mwlabs.wscf.generateresourcebundle"/>
-
-    <target name="com.arjuna.mwlabs.wscf.compile" depends="com.arjuna.mwlabs.wscf.compile10, com.arjuna.mwlabs.wscf.compile11"/>
-    <target name="com.arjuna.mwlabs.wscf.compile11" depends="com.arjuna.mwlabs.wscf.compile-generic">
+    <target name="wscf.compile" depends="wscf.compile10, wscf.compile11"/>
+    <target name="wscf.compile11" depends="wscf.compile-generic">
 		<echo message="Compiling module 1.1 code"/>
-		<javac srcdir="${com.arjuna.mwlabs.wscf.src11}"
-                       destdir="${com.arjuna.mwlabs.wscf.dest11}"
+		<javac srcdir="${wscf.src11}"
+                       destdir="${wscf.dest11}"
                        debug="on">
 			<classpath>
                 <path>
-                    <pathelement path="${com.arjuna.mwlabs.wscf.dest}"/>
-                    <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc11.libs}"/>
+                    <pathelement path="${wscf.dest}"/>
+                    <pathelement path="${wsc.jar.dest}/${wsc11.libs}"/>
                 </path>
-				<path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+				<path refid="wscf.lib.classpath"/>
 			</classpath>
 		</javac>
 	</target>
-    <target name="com.arjuna.mwlabs.wscf.compile10" depends="com.arjuna.mwlabs.wscf.compile-generic">
+    <target name="wscf.compile10" depends="wscf.compile-generic">
 		<echo message="Compiling module 1.0 code"/>
-		<javac srcdir="${com.arjuna.mwlabs.wscf.src10}"
-                       destdir="${com.arjuna.mwlabs.wscf.dest10}"
+		<javac srcdir="${wscf.src10}"
+                       destdir="${wscf.dest10}"
                        debug="on">
 			<classpath>
                 <path>
-                    <pathelement path="${com.arjuna.mwlabs.wscf.dest}"/>
-                    <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
-                    <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.api.libs}"/>
+                    <pathelement path="${wscf.dest}"/>
+                    <pathelement path="${wsc.jar.dest}/${wsc10.libs}"/>
+                    <pathelement path="${wsc.jar.dest}/${wsc10.api.libs}"/>
                 </path>
-				<path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+				<path refid="wscf.lib.classpath"/>
 			</classpath>
 		</javac>
 	</target>
-    <target name="com.arjuna.mwlabs.wscf.compile-generic" depends="com.arjuna.mwlabs.wscf.init">
+    <target name="wscf.compile-generic" depends="wscf.init">
 		<echo message="Compiling module generic code"/>
-		<javac srcdir="${com.arjuna.mwlabs.wscf.src}"
-                       destdir="${com.arjuna.mwlabs.wscf.dest}"
+		<javac srcdir="${wscf.src}"
+                       destdir="${wscf.dest}"
                        debug="on">
 			<classpath>
-				<path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+				<path refid="wscf.lib.classpath"/>
 			</classpath>
 		</javac>
 	</target>
 
 	<!-- htdocs paths -->
-	<path id="com.arjuna.mw.wscf.htdocs.path">
+	<path id="wscf.htdocs.path">
 		<pathelement path="classes"/>
 	</path>
 
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
-	<property name="com.arjuna.mwlabs.wscf.htdocs.list"
-	value="com.arjuna.mw.*"/>
+	<property name="wscf.htdocs.list"
+	value="*"/>
 
-	<target name="com.arjuna.mw.wscf.war" depends="com.arjuna.mw.wscf.jar">
-	  <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wscf_web-app.xml"/>
-        <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
+	<target name="wscf.war" depends="wscf.jar">
+	  <war warfile="${wscf.war.dest}/${modulename}10.war" webxml="xml/wscf_web-app.xml"/>
+        <war warfile="${wscf.war.dest}/${modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
 	</target>
 
 	<!-- Jar targets -->
-    <target name="com.arjuna.mw.wscf.jar" depends="com.arjuna.mw.wscf.jar11, com.arjuna.mw.wscf.jar10"/>
+    <target name="wscf.jar" depends="wscf.jar11, wscf.jar10"/>
 
-    <target name="com.arjuna.mw.wscf.jar11" depends="com.arjuna.mw.wscf.jar-generic">
+    <target name="wscf.jar11" depends="wscf.jar-generic">
         <copy file="xml/ArjunaCoreHLS.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest11}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
+        tofile="${wscf.dest11}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
         <copy file="xml/JTAHLS.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest11}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
+        tofile="${wscf.dest11}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
         <copy file="xml/TwoPhase11HLSImple.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest11}/com/arjuna/mwlabs/wscf11/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
+        tofile="${wscf.dest11}/com/arjuna/mwlabs/wscf11/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
         <copy file="xml/Sagas11HLSImple.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest11}/com/arjuna/mwlabs/wscf11/model/sagas/arjunacore/SagasHLSImple.xml"/>
+        tofile="${wscf.dest11}/com/arjuna/mwlabs/wscf11/model/sagas/arjunacore/SagasHLSImple.xml"/>
 
-        <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"
-            basedir="${com.arjuna.mwlabs.wscf.dest11}">
+        <jar jarfile="${wscf.jar.dest}/${modulename}11.jar"
+            basedir="${wscf.dest11}">
         </jar>
     </target>
 
-    <target name="com.arjuna.mw.wscf.jar10" depends="com.arjuna.mw.wscf.jar-generic">
+    <target name="wscf.jar10" depends="wscf.jar-generic">
         <copy file="xml/ArjunaCoreHLS.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest10}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
+        tofile="${wscf.dest10}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
         <copy file="xml/JTAHLS.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest10}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
+        tofile="${wscf.dest10}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
         <copy file="xml/TwoPhaseHLSImple.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest10}/com/arjuna/mwlabs/wscf/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
+        tofile="${wscf.dest10}/com/arjuna/mwlabs/wscf/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
         <copy file="xml/SagasHLSImple.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest10}/com/arjuna/mwlabs/wscf/model/sagas/arjunacore/SagasHLSImple.xml"/>
+        tofile="${wscf.dest10}/com/arjuna/mwlabs/wscf/model/sagas/arjunacore/SagasHLSImple.xml"/>
         <copy file="xml/JTAHLSImple.xml"
-        tofile="${com.arjuna.mwlabs.wscf.dest10}/com/arjuna/mwlabs/wscf/model/jta/arjunajta/JTAHLSImple.xml"/>
+        tofile="${wscf.dest10}/com/arjuna/mwlabs/wscf/model/jta/arjunajta/JTAHLSImple.xml"/>
 
-        <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"
-            basedir="${com.arjuna.mwlabs.wscf.dest10}">
+        <jar jarfile="${wscf.jar.dest}/${modulename}10.jar"
+            basedir="${wscf.dest10}">
         </jar>
     </target>
 
-    <target name="com.arjuna.mw.wscf.jar-generic" depends="com.arjuna.mw.wscf.compile">
+    <target name="wscf.jar-generic" depends="wscf.compile, wscf.htdocs, wscf.generateresourcebundle">
         <echo message="Building jar files"/>
-        <mkdir dir="${com.arjuna.mwlabs.wscf.jar.dest}"/>
-        <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"
-            basedir="${com.arjuna.mwlabs.wscf.dest}">
+        <mkdir dir="${wscf.jar.dest}"/>
+        <jar jarfile="${wscf.jar.dest}/${modulename}.jar"
+            basedir="${wscf.dest}">
         </jar>
     </target>
 
 
-	<target name="com.arjuna.mw.wscf.htdocs"
-				depends="com.arjuna.mwlabs.wscf.init">
+	<target name="wscf.htdocs"
+				depends="wscf.init">
 		<echo message="Building htdocs "/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.htdocs.dest}"/>
-		<path id="com.arjuna.mwlabs.wscf.htdocs.path">
-			<path refid="com.arjuna.mw.wscf.htdocs.path"/>
-		</path>
+		<mkdir dir="${wscf.htdocs.dest}"/>
 
 		<javadoc
-			sourcepathref="com.arjuna.mwlabs.wscf.htdocs.path"
-			destdir="${com.arjuna.mwlabs.wscf.htdocs.dest}"
-			packagenames="${com.arjuna.mwlabs.wscf.htdocs.list}"
+			sourcepathref="wscf.htdocs.path"
+			destdir="${wscf.htdocs.dest}"
+			packagenames="${wscf.htdocs.list}"
 	        >
 			<classpath>
-				<path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
-				<path path="${com.arjuna.mwlabs.wscf.src}"/>
+				<path refid="wscf.lib.classpath"/>
+				<path path="${wscf.src}"/>
 			</classpath>
 		</javadoc>
 	</target>
 
-        <target name="com.arjuna.mwlabs.wscf.generateresourcebundle">
+        <target name="wscf.generateresourcebundle">
 
             <echo message="Generating WSCF Bundle"/>
-
-            <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
             <javadoc    packagenames="com.arjuna.*"
                         failonerror="yes"
@@ -279,147 +277,144 @@
                         defaultexcludes="yes"
                         classpath="${build.classpath}">
 
-                <packageset dir="${com.arjuna.mwlabs.wscf.src}" defaultexcludes="yes">
+                <packageset dir="${wscf.src}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
-                <packageset dir="${com.arjuna.mwlabs.wscf.src10}" defaultexcludes="yes">
+                <packageset dir="${wscf.src10}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
-                <packageset dir="${com.arjuna.mwlabs.wscf.src11}" defaultexcludes="yes">
+                <packageset dir="${wscf.src11}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
                  <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                    <path>
-                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                    </path>
-                    <param name="-basedir" value="${basedir}/${com.arjuna.mwlabs.wscf.dest}"/>
-                    <param name="-resourcebundle" value="${com.arjuna.mwlabs.wscf.resourcebundle}"/>
+                    <path refid="doclet.classpath"/>
+                    <param name="-basedir" value="${basedir}/${wscf.dest}"/>
+                    <param name="-resourcebundle" value="${wscf.resourcebundle}"/>
                  </doclet>
             </javadoc>
 
         </target>
 
 	<!-- test targets -->
-	<target name="com.arjuna.mwlabs.wscf.tests.init">
+	<target name="wscf.tests.init">
         <!-- delete the test destination directories -->
-        <delete dir="${com.arjuna.mwlabs.wscf.tests.dest.root}"/>
+        <delete dir="${wscf.tests.dest.root}"/>
 		<!-- make the test destination directories -->
-		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dest.root}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dd.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.jar.dest}"/>
+		<mkdir dir="${wscf.tests.dest.root}"/>
+		<mkdir dir="${wscf.tests.dest}"/>
+		<mkdir dir="${wscf.tests.dd.dest}"/>
+		<mkdir dir="${wscf.tests.webapps.dest}"/>
+		<mkdir dir="${wscf.tests.jar.dest}"/>
 	</target>
     
     <!-- this assumes the required libs have already been built-->
-	<target name="com.arjuna.mwlabs.wscf.tests.compile" depends="com.arjuna.mwlabs.wscf.tests.init">
-	  <javac destdir="${com.arjuna.mwlabs.wscf.tests.dest}" debug="yes" optimize="no">
+	<target name="wscf.tests.compile" depends="wscf.tests.init">
+	  <javac destdir="${wscf.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
-	      <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-          <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
-          <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
-          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.api.libs}"/>
-          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc11.libs}"/>
-	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
-	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+	      <pathelement path="${wscf.jar.dest}/${modulename}.jar"/>
+          <pathelement path="${wscf.jar.dest}/${modulename}10.jar"/>
+          <pathelement path="${wscf.jar.dest}/${modulename}11.jar"/>
+          <pathelement path="${wsc.jar.dest}/${wsc10.libs}"/>
+          <pathelement path="${wsc.jar.dest}/${wsc10.api.libs}"/>
+          <pathelement path="${wsc.jar.dest}/${wsc11.libs}"/>
+	      <path refid="wscf.tests.lib.path"/>
+	      <path refid="wscf.lib.classpath"/>
 	    </classpath>
-	    <src path="${com.arjuna.mwlabs.wscf.tests.src}"/>
+	    <src path="${wscf.tests.src}"/>
 	  </javac>
 	</target>
 
     <!-- this assumes the required libs have already been built-->
-	<target name="com.arjuna.mwlabs.wscf.tests.compile11" depends="com.arjuna.mwlabs.wscf.tests.init">
-	  <javac destdir="${com.arjuna.mwlabs.wscf.tests.dest}" debug="yes" optimize="no">
+	<target name="wscf.tests.compile11" depends="wscf.tests.init">
+	  <javac destdir="${wscf.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
-	      <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-          <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc11.libs}"/>
-	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
-	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+	      <pathelement path="${wscf.jar.dest}/${modulename}.jar"/>
+          <pathelement path="${wscf.jar.dest}/${modulename}11.jar"/>
+          <pathelement path="${wsc.jar.dest}/${wsc11.libs}"/>
+	      <path refid="wscf.tests.lib.path"/>
+	      <path refid="wscf.lib.classpath"/>
 	    </classpath>
-	    <src path="${com.arjuna.mwlabs.wscf.tests.src}"/>
+	    <src path="${wscf.tests.src}"/>
         <exclude name="com/arjuna/wscf/**"/>
 	  </javac>
 	</target>
 
-    <target name="com.arjuna.mwlabs.wscf.tests.webapps" depends="com.arjuna.mwlabs.wscf.tests.compile">
-        <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
+    <target name="wscf.tests.webapps" depends="wscf.tests.compile">
+        <copy file="${wscf.tests.dd}/wscf-tests_web-app.xml" tofile="${wscf.tests.dd.dest}/web-app.xml">
         </copy>
-        <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
+        <copy file="${wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${wscf.tests.dd.dest}/web-app11.xml">
         </copy>
-        <jar jarfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.jar">
-            <fileset dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
+        <jar jarfile="${wscf.tests.webapps.dest}/wscf-tests.jar">
+            <fileset dir="${wscf.tests.dest}"/>
         </jar>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml"/>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml"/>
-        <ear earfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_application.xml">
+        <war warfile="${wscf.tests.webapps.dest}/wscf-tests.war" webxml="${wscf.tests.dd.dest}/web-app.xml"/>
+        <war warfile="${wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${wscf.tests.dd.dest}/web-app11.xml"/>
+        <ear earfile="${wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${wscf.tests.dd}/wscf-tests_application.xml">
             <!-- we only need to deploy the ext test libs (junit) and
 	         the tests war in JBoss AS 5.0. the rest of the XTS
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	         -->
-            <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-            <fileset dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
+            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${wscf.tests.webapps.dest}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
         </ear>
     </target>
 
-    <target name="com.arjuna.mwlabs.wscf.tests.webapps11" depends="com.arjuna.mwlabs.wscf.tests.compile11">
-        <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
+    <target name="wscf.tests.webapps11" depends="wscf.tests.compile11">
+        <copy file="${wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${wscf.tests.dd.dest}/web-app11.xml">
         </copy>
-        <jar jarfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.jar">
-            <fileset dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
+        <jar jarfile="${wscf.tests.webapps.dest}/wscf-tests.jar">
+            <fileset dir="${wscf.tests.dest}"/>
         </jar>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml"/>
-        <ear earfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${com.arjuna.mwlabs.wscf.tests.dd}/wscf11-tests_application.xml">
+        <war warfile="${wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${wscf.tests.dd.dest}/web-app11.xml"/>
+        <ear earfile="${wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${wscf.tests.dd}/wscf11-tests_application.xml">
             <!-- we only need to deploy the ext test libs (junit) and
 	         the tests war in JBoss AS 5.0. the rest of the XTS
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	         -->
-            <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-            <fileset dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}" includes="wscf11-tests.war wscf-tests.jar"/>
+            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${wscf.tests.webapps.dest}" includes="wscf11-tests.war wscf-tests.jar"/>
         </ear>
     </target>
 
-    <target name="com.arjuna.mwlabs.wscf.tests.deploy" depends="com.arjuna.mwlabs.wscf.tests.webapps, com.arjuna.mwlabs.wscf.tests.undeploy">
-        <copy file="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
+    <target name="wscf.tests.deploy" depends="wscf.tests.webapps, wscf.tests.undeploy">
+        <copy file="${wscf.tests.webapps.dest}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.wscf.tests.deploy11" depends="com.arjuna.mwlabs.wscf.tests.webapps11, com.arjuna.mwlabs.wscf.tests.undeploy">
-        <copy file="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
+    <target name="wscf.tests.deploy11" depends="wscf.tests.webapps11, wscf.tests.undeploy">
+        <copy file="${wscf.tests.webapps.dest}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.wscf.tests.undeploy">
+    <target name="wscf.tests.undeploy">
         <delete file="${deploy.dir}/wscf-tests.ear"/>
     </target>
 
     <!-- Clean targets -->
-    <target name="com.arjuna.mw.wscf.clean">
+    <target name="wscf.clean">
         <echo message="Cleaning module"/>
-        <delete dir="${com.arjuna.mwlabs.wscf.dest}"/>
-        <delete dir="${com.arjuna.mwlabs.wscf.dest.root}"/>
-        <delete dir="${com.arjuna.mwlabs.wscf.htdocs.dest}"/>
-        <delete file="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-        <delete file="${com.arjuna.mwlabs.wscf.info.dest}"/>
+        <delete dir="${wscf.dest}"/>
+        <delete dir="${wscf.dest.root}"/>
+        <delete dir="${wscf.htdocs.dest}"/>
+        <delete file="${wscf.jar.dest}/${modulename}.jar"/>
         <!-- delete the test destination directories -->
-        <delete dir="${com.arjuna.mwlabs.wscf.tests.dest.root}"/>
+        <delete dir="${wscf.tests.dest.root}"/>
     </target>
 
     <!-- Short target names -->
-    <target name="compile" depends="com.arjuna.mw.wscf.compile"/>
-    <target name="jar" depends="com.arjuna.mw.wscf.jar"/>
-    <target name="war" depends="com.arjuna.mw.wscf.war"/>
-    <target name="clean" depends="com.arjuna.mw.wscf.clean"/>
-    <target name="tests-webapps" depends="com.arjuna.mwlabs.wscf.tests.webapps"/>
-    <target name="tests-webapps11" depends="com.arjuna.mwlabs.wscf.tests.webapps11"/>
+    <target name="compile" depends="wscf.compile"/>
+    <target name="jar" depends="wscf.jar"/>
+    <target name="war" depends="wscf.war"/>
+    <target name="clean" depends="wscf.clean"/>
+    <target name="tests-webapps" depends="wscf.tests.webapps"/>
+    <target name="tests-webapps11" depends="wscf.tests.webapps11"/>
     <!-- production target for 1.1 tests -->
     <target name="tests-11" depends="tests-webapps11"/>
     <target name="tests-both" depends="tests-webapps"/>
-    <target name="tests-deploy" depends="com.arjuna.mwlabs.wscf.tests.deploy"/>
+    <target name="tests-deploy" depends="wscf.tests.deploy"/>
     <target name="tests-deploy11" depends="tests-webapps11"/>
-    <target name="tests-undeploy" depends="com.arjuna.mwlabs.wscf.tests.undeploy"/>
+    <target name="tests-undeploy" depends="wscf.tests.undeploy"/>
 </project>

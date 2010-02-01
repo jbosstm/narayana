@@ -32,20 +32,71 @@
 
     <!-- ================================================================== -->
 
-    <property environment="env"/>
-    <property name="jboss.home" value="${env.JBOSS_HOME}"/>
-    <property name="jboss.server" value="default"/>
-    <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-    <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-    <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
-    <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
-    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+    <!-- Set module name -->
+    <property name="modulename" value="ws-c"/>
 
-    <!-- ================================================================== -->
-    <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location="../.."/>
 
-    <!-- ================================================================== -->
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
+    <!-- JBossTS products are in parent install/lib  -->
+    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
+    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
+
+    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
+
+    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
+
+    <property name="xts.ext.dir" location="../ext"/>
+
+    <!-- required JBossTS product jars -->
+    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+
+    <!-- external jars also used by JBossTS -->
+    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+
+    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
+    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
+
+    <!-- external jars used by XTS for CXF enabled builds -->
+    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
+
+    <!-- external jars used by XTS for all builds -->
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
+
+    <!-- paths internal to build -->
+
+    <path id="build.classpath">
+        <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
+    </path>
+
+    <path id="doclet.classpath">
+        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
+    </path>
+
+    <property name="build.classpath" refid="build.classpath"/>
+
+    <property name="doclet.classpath" refid="doclet.classpath"/>
+
+    <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
+    <property  environment="env"/>
+    <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
+    <property  name="jboss.server" value="default"/>
+    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+
+    <!-- internal paths and jars -->
     <property name="build.dir"               value="build"/>
     <property name="dev.src.dir"             value="dev/src"/>
     <property name="dev.src10.dir"             value="dev/src10"/>
@@ -69,58 +120,20 @@
     <!-- we had to delete the JaxRPC handlers so we export the bist needed to allow clients to create them -->
     <property name="ws-c10.api.classes" value="com/arjuna/webservices/wscoor/CoordinationConstants.class"/>
 
-    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
-    <property name="com.arjuna.jta.install" location="../../install"/>
-
-    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
-    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
-    <property name="com.arjuna.xts.ext" location="../ext"/>
-
-    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
-
-    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
-    <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
-    <property name="xts.ext.jars" value=""/>
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
-            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
-    <property name="jboss.lib.jars" value="dom4j.jar"/>
+    <property name="xts.ext.dir" location="../ext"/>
 
     <property name="tests.libs" value="junit.jar"/>
+
+    <path id="tests.lib.path">
+        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+    </path>
 
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
 
-    <path id="lib.ext.path">
-        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
-        <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-        <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
-        <fileset dir="${jboss.lib.dir}" includes="${jboss.lib.jars}"/>
-    </path>
-
-    <path id="tests.lib.path">
-        <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-    </path>
-
 	<!-- name of the resource bundle -->
-    <property name="com.arjuna.mwlabs.wsc.resourcebundle"
+    <property name="wsc.resourcebundle"
 	      value="wsc_msg_en_US.properties"/>
-    <!-- Define classpath builder task -->
-    <path id="com.arjuna.buildsystem.classpath">
-        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
-    </path>
-    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
-	<property name="com.arjuna.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -151,7 +164,7 @@
     <target name="dev-compile-generic" depends="init">
         <javac destdir="${build.dev.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
-                <path refid="lib.ext.path"/>
+                <path refid="build.classpath"/>
             </classpath>
             <src path="${dev.src.dir}"/>
         </javac>
@@ -163,7 +176,7 @@
                 <path>
                   <pathelement path="${build.dev.classes.dir}"/>
                 </path>
-                <path refid="lib.ext.path"/>
+                <path refid="build.classpath"/>
             </classpath>
             <src path="${dev.src10.dir}"/>
         </javac>
@@ -178,7 +191,7 @@
                 <path>
                   <pathelement path="${build.dev.classes.dir}"/>
                 </path>
-                <path refid="lib.ext.path"/>
+                <path refid="build.classpath"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
         </javac>
@@ -188,8 +201,6 @@
 
     <target name="dev-resourcebundle">
         <echo message="Generating WS-C Bundle"/>
-
-        <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
         <javadoc    packagenames="com.arjuna.*"
                     failonerror="yes"
@@ -210,11 +221,9 @@
             </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path>
-                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                </path>
+                <path refid="doclet.classpath"/>
                 <param name="-basedir" value="${basedir}/${build.dev.classes.dir}"/>
-                <param name="-resourcebundle" value="${com.arjuna.mwlabs.wsc.resourcebundle}"/>
+                <param name="-resourcebundle" value="${wsc.resourcebundle}"/>
              </doclet>
         </javadoc>
     </target>
@@ -279,7 +288,7 @@
                 <pathelement path="${build.dev.lib.dir}/ws-c10-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c11.jar"/>
                 <path refid="tests.lib.path"/>
-                <path refid="lib.ext.path"/>
+                <path refid="build.classpath"/>
             </classpath>
             <src path="${tests.src.dir}"/>
         </javac>
@@ -292,7 +301,7 @@
                 <pathelement path="${build.dev.lib.dir}/ws-c-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c11.jar"/>
                 <path refid="tests.lib.path"/>
-                <path refid="lib.ext.path"/>
+                <path refid="build.classpath"/>
             </classpath>
             <src path="${tests.src.dir}"/>
 	        <include name="com/arjuna/qa/**"/>
@@ -312,14 +321,7 @@
             <classes dir="${build.tests.classes.dir}"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c-tests_application.xml">
-            <!--
-            <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
-            -->
-            <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-            <!--
-            <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-            <fileset dir="${build.dev.lib.dir}" includes="ws-c10.jar ws-c.jar"/>
-            -->
+            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c-tests.war"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c11-tests.war"/>
         </ear>
@@ -332,14 +334,7 @@
             <classes dir="${build.tests.classes.dir}"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c11-tests_application.xml">
-            <!--
-            <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
-            -->
-            <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-            <!--
-            <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-            <fileset dir="${build.dev.lib.dir}" includes="ws-c10.jar ws-c.jar"/>
-            -->
+            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c11-tests.war"/>
         </ear>
     </target>

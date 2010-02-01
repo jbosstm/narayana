@@ -20,125 +20,93 @@
   @author JBoss Inc.
 -->
 <project name="XTS" default="build" basedir=".">
-	<!-- Set default properties filename -->
-	<property name="com.arjuna.mw.xts.properties" value="xts.properties"/>
 
-        <property name="current.dir" value="${basedir}"/>
+	<!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location=".."/>
 
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.arjuna.mw.xts.properties}"/>
+    <!-- JBossTS products are in parent install/lib  -->
+    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
+    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
 
-	<!-- need to locate env var setting for JBOSS_HOME -->
-	<property environment="env"/>
+    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
 
-	<!-- Configure dependencies -->
-    <property name="com.arjuna.jta.dir" location=".."/>
-    <property name="com.arjuna.buildsystem.dir" location="${com.arjuna.jta.dir}/antbuildsystem"/>
-    <property name="com.arjuna.jta.install" location="${com.arjuna.jta.dir}/install"/>
+    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
 
-    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
-    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
-    <property name="com.arjuna.xts.ext" location="ext"/>
+    <property name="xts.ext.dir" location="ext"/>
 
-    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
-    <property name="com.arjuna.jta.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
-    <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+    <!-- required JBossTS product jars -->
+    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+
+    <!-- external jars also used by JBossTS -->
+    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+
+    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
+    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
+
+    <!-- external jars used by XTS for CXF enabled builds -->
+    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
             geronimo-ws-metadata_2.0_spec.jar">
         <isset property="cxf.build"/>
     </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+
+    <!-- external jars used by XTS for all builds -->
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-    <condition property="jboss.home" value="${env.JBOSS_HOME}">
-        <isset property="env.JBOSS_HOME"/>
-    </condition>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
 
-    <fail unless="jboss.home">
-        The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
-    </fail>
+	<!-- paths internal to build -->
 
-    <property name="jboss.server" value="default"/>
+	<property name="xts.htdocs.dest" location="htdocs"/>
 
-    <available property="jboss.server.exists" type="dir"
-	       file="${jboss.home}/server/${jboss.server}"/>
-
-    <fail unless="jboss.server.exists">
-        The JBoss server '${jboss.server}' does not appear to exist in the installation directory.  Please set jboss.server to the name of the JBoss server instance.
-    </fail>
-
-    <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-    <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-    <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
-    <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
-
-	<!-- Set internal property defaults -->
-
-	<property name="com.arjuna.mwlabs.xts.jar.dest" location="lib"/>
-	<property name="com.arjuna.mwlabs.xts.htdocs.dest" location="htdocs"/>
-
-	<property name="com.arjuna.mwlabs.coordinator.dir" location="coordinator"/>
-	<property name="com.hp.mwlabs.classpathbuilderfilename"
-		  location="buildsystem.classpath"/>
-
-    <property name="com.arjuna.xts-demo.dir" value="demo"/>
+    <property name="xts.demo.dir" value="demo"/>
 
 	<path id="build.classpath">
-		<fileset dir="${com.arjuna.jta.install.lib}" includes="${com.arjuna.jta.install.lib.jars}"/>
-		<fileset dir="${com.arjuna.jta.install.ext}" includes="${com.arjuna.jta.install.ext.jars}"/>
-		<fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
+		<fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
+		<fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
 	</path>
-	<property name="build.classpath" refid="build.classpath"/>
-
-    <path id="com.arjuna.buildsystem.classpath">
-        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
+    
+    <path id="doclet.classpath">
+        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
     </path>
-    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
 
-	<!-- Define classpath builder task and add this JAR to the classpath -->
-	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
+    <property name="build.classpath" refid="build.classpath"/>
+
+    <property name="doclet.classpath" refid="doclet.classpath"/>
 
 	<!-- Initialisation -->
-	<target name="com.arjuna.mwlabs.xts.init">
+	<target name="init">
 		<!-- Define default build properties -->
 		<tstamp>
-		<format property="com.arjuna.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+		<format property="xts.date" pattern="yyyy/MMM/dd HH:mm"/>
 	  	</tstamp>
 
-		<property name="com.arjuna.mw.installationdirectory" location="xts-install"/>
-		<property name="com.arjuna.mw.sourceid" value="unknown"/>
-		<property name="com.arjuna.mw.version" value="unknown"/>
+		<property name="xts.installationdirectory" location="xts-install"/>
+		<property name="xts.sourceid" value="unknown"/>
+		<property name="xts.version" value="unknown"/>
 
-		<property name="com.arjuna.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-		<property name="com.arjuna.mw.notes" value=""/>
+		<property name="xts.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="xts.notes" value=""/>
 
-		<echo message="Source ID = ${com.arjuna.mw.sourceid}"/>
-		<echo message="Version   = ${com.arjuna.mw.version}"/>
-		<echo message="Builder   = ${com.arjuna.mw.builder}"/>
-		<echo message="Date      = ${com.arjuna.mw.date}"/>
-		<echo message="Notes     = ${com.arjuna.mw.notes}"/>
-
-		<!-- Installation directory -->
-		<property name="com.arjuna.mwlabs.installationdirectory"
-		    location="${com.arjuna.mw.installationdirectory}"/>
+		<echo message="Source ID = ${xts.sourceid}"/>
+		<echo message="Version   = ${xts.version}"/>
+		<echo message="Builder   = ${xts.builder}"/>
+		<echo message="Date      = ${xts.date}"/>
+		<echo message="Notes     = ${xts.notes}"/>
 
 		<!-- Compile with debugging? -->
-		<condition property="com.arjuna.mwlabs.debug" value="no">
-			<equals arg1="${com.arjuna.mw.debug}" arg2="no"/>
-		</condition>
-		<property name="com.arjuna.mwlabs.debug" value="yes"/>
+		<property name="xts.debug" value="yes"/>
 
 		<!-- Compile with deprecation? -->
-		<condition property="com.arjuna.mwlabs.deprecation" value="yes">
-			<equals arg1="${com.arjuna.mw.deprecation}" arg2="yes"/>
-		</condition>
-		<property name="com.arjuna.mwlabs.deprecation" value="no"/>
+		<property name="xts.deprecation" value="no"/>
 
-		<property name="com.arjuna.mwlabs.xts.htdocs.list" value="com.arjuna.mw.wst.*, com.arjuna.wsc.*, com.arjuna.wst.*"/>
+		<property name="xts.htdocs.list" value="com.arjuna.mw.wst.*, com.arjuna.wsc.*, com.arjuna.wst.*"/>
 
 		<!-- Empty directories -->
 		<mkdir dir="WS-C/dev/lib"/>
@@ -146,39 +114,38 @@
 	</target>
 
 	<!-- Project targets - must add all module names to each target -->
-    <target name="build-projects" depends="com.arjuna.mwlabs.xts.init, com.arjuna.mwlabs.xts.wsas.build,
-                                            com.arjuna.mwlabs.xts.ws-c.build, com.arjuna.mwlabs.xts.wscf.build,
-                                            com.arjuna.mwlabs.xts.ws-t.build, com.arjuna.mwlabs.xts.wstx.build,
-                                            org.jboss.jbossts.xts.recovery.build, htdocs">
+    <target name="build-projects" depends="init, wsas.build,
+                                            ws-c.build, wscf.build,
+                                            ws-t.build, wstx.build,
+                                            recovery.build, htdocs">
 
     </target>
 
     <!-- sar build target - note, requires prior build and *install* of the projects -->
-    <target name="build-sar" depends="install-projects, com.arjuna.mwlabs.xts.sar.build">
+    <target name="build-sar" depends="install-projects, sar.build">
 
 	</target>
 
-    <target name="build-tests" depends="install-projects, com.arjuna.mwlabs.xts.tests.build">
+    <target name="build-tests" depends="install-projects, tests.build">
 
 	</target>
 
-    <target name="build-interop-tests" depends="install-projects, com.arjuna.mwlabs.xts.interop-tests.build">
+    <target name="build-interop-tests" depends="install-projects, interop-tests.build">
 
 	</target>
 
-    <target name="htdocs" depends="com.arjuna.mwlabs.xts.init">
+    <target name="htdocs" depends="init">
 		<echo message="Building htdocs "/>
-		<mkdir dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
+		<mkdir dir="${xts.htdocs.dest}"/>
 
-		<path id="com.arjuna.mwlabs.xts.htdocs.path">
+		<path id="xts.htdocs.path">
 			<pathelement path="WS-C/dev/src"/>
 			<pathelement path="WS-T/dev/src"/>
 			<pathelement path="WSTX/classes"/>
 		</path>
 
-		<path id="com.arjuna.mwlabs.xts.lib.classpath">
+		<path id="xts.lib.classpath">
 			<path refid="build.classpath"/>
-
 			<fileset dir="WS-C/build/dev/lib" includes="*.jar"/>
 			<fileset dir="WSCF/build/lib" includes="*.jar"/>
 			<fileset dir="WS-T/build/dev/lib" includes="*.jar"/>
@@ -187,22 +154,22 @@
 		</path>
 
 		<javadoc
-			sourcepathref="com.arjuna.mwlabs.xts.htdocs.path"
-			destdir="${com.arjuna.mwlabs.xts.htdocs.dest}"
-			packagenames="${com.arjuna.mwlabs.xts.htdocs.list}"
+			sourcepathref="xts.htdocs.path"
+			destdir="${xts.htdocs.dest}"
+			packagenames="${xts.htdocs.list}"
 		>
 			<classpath>
-				<path refid="com.arjuna.mwlabs.xts.lib.classpath"/>
+				<path refid="xts.lib.classpath"/>
 			</classpath>
 		</javadoc>
 	</target>
 
 	<target name="install-projects" depends="build-projects">
-		<echo message="Installation directory : ${com.arjuna.mwlabs.installationdirectory}"/>
+		<echo message="Installation directory : ${xts.installationdirectory}"/>
 
 		<echo message="Installing jar files"/>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/lib"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/lib">
+		<mkdir dir="${xts.installationdirectory}/lib"/>
+		<copy todir="${xts.installationdirectory}/lib">
 			<fileset dir="WSAS/build/lib" includes="*.jar"/>
 			<fileset dir="WS-C/build/dev/lib" includes="*.jar"/>
 			<fileset dir="WSCF/build/lib" includes="*.jar"/>
@@ -210,70 +177,59 @@
             <fileset dir="WSTX/build/lib" includes="*.jar"/>
             <fileset dir="recovery/build/lib" includes="*.jar"/>
 		</copy>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/lib/ext"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/lib/ext">
-			<fileset dir="${com.arjuna.jta.install.lib}" includes="${com.arjuna.jta.install.lib.jars}"/>
-			<fileset dir="${com.arjuna.jta.install.ext}" includes="${com.arjuna.jta.install.ext.jars}"/>
-		</copy>
 
 		<echo message="Installing webapps"/>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/webapps"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/webapps">
+		<mkdir dir="${xts.installationdirectory}/webapps"/>
+		<copy todir="${xts.installationdirectory}/webapps">
 			<fileset dir="WS-C/build/dev/webapps"/>
 			<fileset dir="WSCF/build/webapps"/>
 			<fileset dir="WS-T/build/dev/webapps"/>
 			<fileset dir="WSTX/build/webapps"/>
 		</copy>
 
-		<echo message="Installing configuration"/>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/conf"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/conf">
-			<fileset dir="WSCF/config"/>
-			<fileset dir="WSTX/config" includes="*.xml"/>
-		</copy>
+        <echo message="Installing configuration"/>
+        <mkdir dir="${xts.installationdirectory}/conf"/>
+        <copy todir="${xts.installationdirectory}/conf">
+            <fileset dir="WSCF/config"/>
+            <fileset dir="WSTX/config" includes="*.xml"/>
+        </copy>
 
 		<echo message="Installing htdocs"/>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/docs/api"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/docs/api">
-			<fileset dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
+		<mkdir dir="${xts.installationdirectory}/docs/api"/>
+		<copy todir="${xts.installationdirectory}/docs/api">
+			<fileset dir="${xts.htdocs.dest}"/>
 		</copy>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/docs">
+		<copy todir="${xts.installationdirectory}/docs">
 			<fileset dir="docs" includes="*.pdf"/>
 		</copy>
 
 		<echo message="Installing licences"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/lib/ext">
+        <mkdir dir="${xts.installationdirectory}/lib/ext"/>
+		<copy todir="${xts.installationdirectory}/lib/ext">
 			<fileset dir="${basedir}" includes="third_party_licenses.txt"/>
 		</copy>
-
-		<echo message="Installing coordinator"/>
-		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/coordinator"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/coordinator/dd">
-            <fileset dir="WS-C/dev/dd" includes="ws-c_web-app.xml ws-c11_web-app.xml"/>
-            <fileset dir="WS-T/dev/dd" includes="ws-t_web-app.xml ws-t11_web-app.xml"/>
-        </copy>
 
     </target>
 
     <target name="install-demo">
         <echo message="Installing demo"/>
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/demo"/>
+        <mkdir dir="${xts.installationdirectory}/demo"/>
         <!-- overlay the demo app onto the install -->
-        <ant dir="${com.arjuna.xts-demo.dir}" target="distribution"/>
+        <ant dir="${xts.demo.dir}" target="distribution"/>
 	</target>
 
     <target name="install-sar" depends="build-sar">
         <echo message="Installing service archive"/>
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/sar"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/sar">
+        <mkdir dir="${xts.installationdirectory}/sar"/>
+        <copy todir="${xts.installationdirectory}/sar">
             <fileset dir="sar/build" includes="jbossxts.sar"/>
         </copy>
     </target>
 
     <target name="install-tests" depends="build-tests">
         <echo message="Installing service tests"/>
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/tests"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/tests">
+        <mkdir dir="${xts.installationdirectory}/tests"/>
+        <copy todir="${xts.installationdirectory}/tests">
             <!-- ears providing test servlets -->
             <fileset dir="WSAS/tests/build/webapps" includes="wsas-tests.ear"/>
             <fileset dir="WSCF/tests/build/webapps" includes="wscf-tests.ear"/>
@@ -284,15 +240,15 @@
             <fileset dir="localjunit/build/" includes="localjunit.jar"/>
             <fileset dir="localjunit" includes="run-tests.xml"/>
         </copy>
-	<zip destfile="${com.arjuna.mwlabs.installationdirectory}/tests/jbossxts-tests.zip">
-	  <fileset dir="${com.arjuna.mwlabs.installationdirectory}/tests" includes="*.ear *.jar *.xml"/>
-	</zip>
+        <zip destfile="${xts.installationdirectory}/tests/jbossxts-tests.zip">
+          <fileset dir="${xts.installationdirectory}/tests" includes="*.ear *.jar *.xml"/>
+        </zip>
     </target>
 
     <target name="install-interop-tests" depends="build-interop-tests">
         <echo message="Installing service tests"/>
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/interop-tests"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/interop-tests">
+        <mkdir dir="${xts.installationdirectory}/interop-tests"/>
+        <copy todir="${xts.installationdirectory}/interop-tests">
             <!-- wars providing test servlets -->
             <fileset dir="interop/WSTFSC07-interop/build/lib" includes="sc007.war"/>
             <fileset dir="interop/WSTX11-interop/build/lib" includes="interop11.war"/>
@@ -300,8 +256,8 @@
             <fileset dir="localjunit/build/" includes="localjunit.jar"/>
             <fileset dir="localjunit" includes="run-interop-tests.xml"/>
         </copy>
-	<zip destfile="${com.arjuna.mwlabs.installationdirectory}/interop-tests/jbossxts-interop-tests.zip">
-	  <fileset dir="${com.arjuna.mwlabs.installationdirectory}/interop-tests" includes="*.war *.jar *.xml"/>
+	<zip destfile="${xts.installationdirectory}/interop-tests/jbossxts-interop-tests.zip">
+	  <fileset dir="${xts.installationdirectory}/interop-tests" includes="*.war *.jar *.xml"/>
 	</zip>
     </target>
 
@@ -313,61 +269,60 @@
         then builds and installs the sar then installs the demo -->
     <target name="install" depends="install-sar, install-tests, install-interop-tests, install-demo"/>
 
-    <target name="clean" depends="com.arjuna.mwlabs.xts.init,
-		com.arjuna.mwlabs.xts.wsas.clean,
-		com.arjuna.mwlabs.xts.ws-c.clean,
-		com.arjuna.mwlabs.xts.wscf.clean,
-		com.arjuna.mwlabs.xts.ws-t.clean,
-		com.arjuna.mwlabs.xts.wstx.clean,
-		com.arjuna.mwlabs.xts.wstx.clean,
-		org.jboss.jbossts.xts.recovery.clean,
-		com.arjuna.mwlabs.xts.interop-tests.clean">
+    <!-- TODO why do we need to depend on init here? -->
+    <target name="clean" depends="init,
+		wsas.clean,
+		ws-c.clean,
+		wscf.clean,
+		ws-t.clean,
+		wstx.clean,
+		wstx.clean,
+		recovery.clean,
+		sar.clean,
+		interop-tests.clean">
 
-		<delete dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
-		<delete dir="${com.arjuna.mwlabs.xts.jar.dest}"/>
-		<delete dir="${com.arjuna.mw.installationdirectory}"/>
+		<delete dir="${xts.htdocs.dest}"/>
+		<delete dir="${xts.installationdirectory}"/>
 
-        <ant dir="${com.arjuna.xts-demo.dir}" target="clean"/>
+        <ant dir="${xts.demo.dir}" target="clean"/>
 
 	</target>
 
 
 	<!-- Module targets -->
-	<target name="com.arjuna.mwlabs.xts.wsas.build">
+	<target name="wsas.build">
 		<ant dir="WSAS"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.ws-c.build">
+	<target name="ws-c.build">
 		<ant dir="WS-C"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.wscf.build">
+	<target name="wscf.build">
 		<ant dir="WSCF"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.ws-t.build">
-		<ant dir="WS-T">
-			<property name="ws-c.home" location="WS-C"/>
-		</ant>
+	<target name="ws-t.build">
+		<ant dir="WS-T"/>
 	</target>
 
-    <target name="com.arjuna.mwlabs.xts.wstx.build">
+    <target name="wstx.build">
         <ant dir="WSTX"/>
     </target>
 
-    <target name="org.jboss.jbossts.xts.recovery.build">
+    <target name="recovery.build">
         <ant dir="recovery"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.xts.sar.build">
+    <target name="sar.build">
         <!-- by default we build 1.0 and 1.1 for ease of testing,
             but release bundles should use -Dsartype=sar-11 so that
-            thay contain only the supported version. -->
+            they contain only the supported version. -->
         <property name="sartype" value="sar-both"/>
         <ant dir="sar" target="${sartype}"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.xts.tests.build">
+    <target name="tests.build">
         <!-- by default we build 1.0 and 1.1 for ease of testing,
             but release bundles should use -Dtesttype=tests-11 so that
             thay contain only the supported version. -->
@@ -380,45 +335,45 @@
         <ant dir="localjunit" target="all"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.xts.interop-tests.build">
-        <property name="xts.home" location="${com.arjuna.mw.installationdirectory}"/>
+    <target name="interop-tests.build">
+        <property name="xts.home" location="${xts.installationdirectory}"/>
         <ant dir="interop/WSTFSC07-interop" target="war"/>
         <ant dir="interop/WSTX11-interop" target="war"/>
         <ant dir="localjunit" target="all"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.xts.interop-tests.clean">
-        <property name="xts.home" location="${com.arjuna.mw.installationdirectory}"/>
-        <ant dir="interop/WSTFSC07-interop" target="clean"/>
-        <ant dir="interop/WSTX11-interop" target="clean"/>
-    </target>
-
-	<target name="com.arjuna.mwlabs.xts.wsas.clean">
+	<target name="wsas.clean">
 		<ant dir="WSAS" target="clean"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.ws-c.clean">
+	<target name="ws-c.clean">
 		<ant dir="WS-C" target="clean"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.wscf.clean">
+	<target name="wscf.clean">
 		<ant dir="WSCF" target="clean"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.ws-t.clean">
+	<target name="ws-t.clean">
 		<ant dir="WS-T" target="clean"/>
 	</target>
 
-    <target name="com.arjuna.mwlabs.xts.wstx.clean">
+    <target name="wstx.clean">
         <ant dir="WSTX" target="clean"/>
     </target>
 
-    <target name="org.jboss.jbossts.xts.recovery.clean">
+    <target name="recovery.clean">
         <ant dir="recovery" target="clean"/>
     </target>
 
-    <target name="com.arjuna.mwlabs.xts.sar.clean">
+    <target name="sar.clean">
         <ant dir="sar" target="clean"/>
+    </target>
+
+    <target name="interop-tests.clean">
+        <property name="xts.home" location="${xts.installationdirectory}"/>
+        <ant dir="interop/WSTFSC07-interop" target="clean"/>
+        <ant dir="interop/WSTX11-interop" target="clean"/>
     </target>
 
 </project>

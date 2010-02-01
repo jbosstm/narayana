@@ -28,11 +28,13 @@
     <!-- The properties to override are the following:                      -->
     <!--    coordinator.hostname (defaults to ${hostname})                  -->
     <!--    coordinator.port (defaults to ${port})                          -->
-    <!--    xts.home The installation directory for XTS                     -->
     <!--    server deployment directory (set via env var JBOSS_HOME)        -->
     <!-- ================================================================== -->
 
     <!-- devs: run 'ant jta; cd XTS; ant install' after svn checkout -->
+
+    <!-- Set module name -->
+    <property name="modulename" value="recovery"/>
 
     <!-- the directory in which XTS resides -->
     <property name="xts.home" value="../xts-install"/>
@@ -47,17 +49,68 @@
     jboss web service HTTP listener port employed when jboss is started -->
     <property name="coordinator.port" value="jboss.web.bind.port"/>
 
-    <!-- the directory in which your installed app server resides -->
-    <property environment="env"/>
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location="../.."/>
 
-    <condition property="jbossas.home" value="${env.JBOSS_HOME}">
-      <isset property="env.JBOSS_HOME"/>
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
+
+    <!-- JBossTS products are in parent install/lib  -->
+    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
+    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
+
+    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
+
+    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
+
+    <property name="xts.ext.dir" location="../ext"/>
+
+    <!-- required JBossTS product jars -->
+    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+
+    <!-- external jars also used by JBossTS -->
+    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+
+    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
+    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
+
+    <!-- external jars used by XTS for CXF enabled builds -->
+    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
     </condition>
 
-    <fail unless="jbossas.home">
-The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
-    </fail>
+    <!-- external jars used by XTS for all builds -->
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
 
+    <!-- paths internal to build -->
+
+    <path id="build.classpath">
+        <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
+    </path>
+
+    <path id="doclet.classpath">
+        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
+    </path>
+
+    <property name="build.classpath" refid="build.classpath"/>
+
+    <property name="doclet.classpath" refid="doclet.classpath"/>
+
+    <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
+    <property  environment="env"/>
+    <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
+    <property  name="jboss.server" value="default"/>
+    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+
+    <!-- we assume the core XTS modules have already been installedi.e. WSAS, WS-C, WS-T, WSCF, WSTX, recovery -->
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="webapps.dir" location="${xts.home}/webapps"/>
     <property name="conf.dir" location="${xts.home}/conf"/>
@@ -71,15 +124,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="build.metainf.dir"       value="${build.dir}/META-INF"/>
     <property name="build.conf.dir" location="${build.dir}/conf"/>
 
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
-            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-
-    <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
     <!-- enable debugging of XTS service code -->
 
     <property name="javac.debug" value="on"/>
@@ -87,16 +131,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <!-- name of the resource bundle -->
     <property name="xts.resourcebundle"
           value="xts_msg_en_US.properties"/>
-    <!-- Define buildsystem classpath -->
-    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
-
-    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
-    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-
-    <path id="com.arjuna.buildsystem.classpath">
-        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
-    </path>
-    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
 
     <property name="bridge.api.class.files" value="org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class"/>
 
@@ -115,25 +149,22 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <!-- by default build XTS service archive supporting 1.1 WS-C/T protocols -->
     <target name="sar" depends="sar-11"/>
 
+    <!-- compile the generic classes in the sar source -->
     <target name="compile" depends="init">
         <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" excludes="org/jboss/jbossts/xts/bridge/**/*" >
             <classpath>
-                <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
+                <path refid="build.classpath"/>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
     </target>
 
     <!-- compile the 1.1 specific classes in the sar source which support WS-AT 1.1. bridging -->
-    <target name="compile11" depends="compile">
+    <target name="compile.bridge" depends="compile">
         <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" includes="org/jboss/jbossts/xts/bridge/**/*" >
             <classpath>
-                <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
+                <path refid="build.classpath"/>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
     </target>
@@ -153,15 +184,14 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path>
-                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                </path>
+                <path refid="doclet.classpath"/>
                 <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
                 <param name="-resourcebundle" value="${xts.resourcebundle}"/>
              </doclet>
         </javadoc>
     </target>            
 
+    <!-- build the full api jar -->
     <target name="api-both-jar">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
@@ -181,6 +211,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <delete dir="${build.dir}/tmp/api"/>
     </target>
 
+    <!-- build the 1.1 api jar -->
     <target name="api11-jar">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
@@ -197,6 +228,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <delete dir="${build.dir}/tmp/api"/>
     </target>
     
+    <!-- build the 1.0 api jar -->
     <target name="api10-jar">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
@@ -211,7 +243,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile11, compile, dev-resourcebundle, api-both-jar">
+    <target name="sar-both" depends="init, compile.bridge, compile, dev-resourcebundle, api-both-jar">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -256,7 +288,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile11, compile, dev-resourcebundle, api11-jar">
+    <target name="sar-11" depends="init, compile.bridge, compile, dev-resourcebundle, api11-jar">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -346,15 +378,15 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 
     <!-- convenience targets to build and deploy the service archive -->
     <target name="deploy-11" depends="undeploy, sar-11">
-        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+        <copy file="${build.dir}/jbossxts.sar" todir="${jboss.home}/server/default/deploy"/>
     </target>
 
     <target name="deploy-10" depends="undeploy, sar-10">
-        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+        <copy file="${build.dir}/jbossxts.sar" todir="${jboss.home}/server/default/deploy"/>
     </target>
 
     <target name="deploy-both" depends="undeploy, sar-both">
-        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+        <copy file="${build.dir}/jbossxts.sar" todir="${deploy.dir}"/>
     </target>
 
     <!-- by default deploy sar implementing 1.1 and 1.0 WS-C/T protocols -->
@@ -362,7 +394,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <target name="undeploy">
-        <delete file="${jbossas.home}/server/default/deploy/jbossxts.sar"/>
+        <delete file="${deploy.dir}/jbossxts.sar"/>
     </target>
 
 </project>

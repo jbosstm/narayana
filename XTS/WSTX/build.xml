@@ -19,39 +19,83 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<project name="WSTX" default="com.arjuna.mw.wstx.war" basedir=".">
+<project name="WSTX" default="wstx.war" basedir=".">
 	<!-- Set module name -->
-	<property name="com.arjuna.mwlabs.ts.modulename" value="wstx"/>
+	<property name="modulename" value="wstx"/>
 
-	<!-- Set default properties filename -->
-	<property name="com.arjuna.mw.wstx.properties" value="wstx.properties"/>
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location="../.."/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.arjuna.mw.wstx.properties}"/>
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
-	<!-- Set property defaults -->
-	<property environment="env"/>
-	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
-	<property name="jboss.server" value="default"/>
-	<property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-	<property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-	<property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
-	<property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
-    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+    <!-- JBossTS products are in parent install/lib  -->
+    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
+    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
 
-	<property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
+    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
 
-	<!-- Path names -->
-    <property name="com.arjuna.mwlabs.wstx.src" value="classes"/>
-    <property name="com.arjuna.mwlabs.wstx.src10" value="classes10"/>
-    <property name="com.arjuna.mwlabs.wstx.src11" value="classes11"/>
-	<property name="com.arjuna.mwlabs.wstx.dest.root" value="build"/>
-    <property name="com.arjuna.mwlabs.wstx.dest" value="build/classes"/>
-    <property name="com.arjuna.mwlabs.wstx.dest10" value="build/classes10/classes"/>
-    <property name="com.arjuna.mwlabs.wstx.dest11" value="build/classes11/classes"/>
-	<property name="com.arjuna.mwlabs.wstx.webapps.dest" value="build/webapps"/>
-	<property name="com.arjuna.mwlabs.wstx.jar.dest" value="build/lib"/>
-	<property name="com.arjuna.mwlabs.wstx.htdocs.dest" value="build/htdocs"/>
+    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
+
+    <property name="xts.ext.dir" location="../ext"/>
+
+    <!-- required JBossTS product jars -->
+    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+
+    <!-- external jars also used by JBossTS -->
+    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+
+    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
+    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
+
+    <!-- external jars used by XTS for CXF enabled builds -->
+    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
+
+    <!-- external jars used by XTS for all builds -->
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
+
+    <!-- paths internal to build -->
+
+    <path id="build.classpath">
+        <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
+    </path>
+
+    <path id="doclet.classpath">
+        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
+    </path>
+
+    <property name="build.classpath" refid="build.classpath"/>
+
+    <property name="doclet.classpath" refid="doclet.classpath"/>
+
+    <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
+    <property  environment="env"/>
+    <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
+    <property  name="jboss.server" value="default"/>
+    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+
+    <!-- internal paths and jars -->
+
+    <property name="wstx.src" value="classes"/>
+    <property name="wstx.src10" value="classes10"/>
+    <property name="wstx.src11" value="classes11"/>
+	<property name="wstx.src11" value="build"/>
+    <property name="wstx.dest" value="build/classes"/>
+    <property name="wstx.dest10" value="build/classes10/classes"/>
+    <property name="wstx.dest11" value="build/classes11/classes"/>
+	<property name="wstx.webapps.dest" value="build/webapps"/>
+	<property name="wstx.jar.dest" value="build/lib"/>
+	<property name="wstx.htdocs.dest" value="build/htdocs"/>
 
     <!-- classes provided for clients via api jars -->
     <property name="wstx.api.classes" value="com/arjuna/mw/wst/TxContext.class"/>
@@ -79,35 +123,15 @@
             com/arjuna/mw/wst11/service/JaxBaseHeaderContextProcessor.class"/>
 
 	<property name="com.arjuna.mwlabs.wstx.tests.src" value="tests/classes"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.dd" value="tests/dd"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.dest.root" value="tests/build"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.dest" value="tests/build/classes"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.dd.dest" value="tests/build/dd"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.webapps.dest" value="tests/build/webapps"/>
-	<property name="com.arjuna.mwlabs.wstx.tests.jar.dest" value="tests/build/lib"/>
+	<property name="wstx.tests.dd" value="tests/dd"/>
+	<property name="wstx.tests.dest.root" value="tests/build"/>
+	<property name="wstx.tests.dest" value="tests/build/classes"/>
+	<property name="wstx.tests.dd.dest" value="tests/build/dd"/>
+	<property name="wstx.tests.webapps.dest" value="tests/build/webapps"/>
+	<property name="wstx.tests.jar.dest" value="tests/build/lib"/>
 
-    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
-    <property name="com.arjuna.jta.install" location="../../install"/>
 
-    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
-    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
-    <property name="com.arjuna.xts.ext" location="../ext"/>
-
-    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
-
-    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
-    <property name="jta.ext.jars" value="jbossts-common.jar"/>
-    <property name="jta.ext.compile.jars" value="commons-logging.jar"/>
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
-            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
-    <property name="jboss.lib.jars" value="dom4j.jar"/>
+    <!--sibling module directories and jars -->
 
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
@@ -127,209 +151,192 @@
     <property name="wst11.libs" value="ws-t11.jar"/>
     <property name="wst11-api.libs" value="ws-t11-api.jar"/>
     <property name="wst.all.libs" value="${wst.libs} ${wst10.libs} ${wst11.libs}"/>
-    <property name="wstx.libs" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
-    <property name="wstx10.libs" value="${com.arjuna.mwlabs.ts.modulename}10.jar"/>
-    <property name="wstx11.libs" value="${com.arjuna.mwlabs.ts.modulename}11.jar"/>
+    <property name="wstx.libs" value="${modulename}.jar"/>
+    <property name="wstx10.libs" value="${modulename}10.jar"/>
+    <property name="wstx11.libs" value="${modulename}11.jar"/>
     <property name="wstx.all.libs" value="${wstx.libs} ${wstx10.libs} ${wstx11.libs}"/>
 
-    <!--
-    <property name="tests.libs" value="junit.jar"/>
-    -->
-    <property name="tests.libs" value="junit.jar"/>
+    <property  name="tests.libs" value="junit.jar"/>
+
+    <path id="tests.lib.path">
+        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+    </path>
+
     <property name="tests.all.libs" value="${wsas.libs} ${wsc.all.libs} ${wscf.all.libs} ${wst.all.libs} ${wstx.all.libs} ${tests.libs}"/>
 
+    <property name="javac.debug"             value="on"/>
+    <property name="javac.optimize"          value="off"/>
+
     <path id="com.arjuna.mwlabs.wstx.tests.lib.path">
-        <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-	<fileset dir="${jboss.lib.dir}" includes="${jboss.lib.jars}"/>
+        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+    	<path refid="build.classpath"/>
     </path>
 
-    <!-- Define classpath builder task -->
-    <path id="com.arjuna.buildsystem.classpath">
-        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
-    </path>
-    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
-	<property name="com.arjuna.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
-
-    <property name="com.arjuna.mwlabs.wstx.resourcebundle"
+    <property name="wstx.resourcebundle"
 	      value="wstx_msg_en_US.properties"/>
 
 	<!--Set external directories -->
 
-	<property name="com.arjuna.mwlabs.wsas.jar.dest" value="../WSAS/build/lib"/>
-	<property name="com.arjuna.mwlabs.wsc.jar.dest" value="../WS-C/build/dev/lib"/>
-	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="../WSCF/build/lib"/>
-	<property name="com.arjuna.mwlabs.wst.jar.dest" value="../WS-T/build/dev/lib"/>
+	<property name="wsas.build.lib.dir" value="../WSAS/build/lib"/>
+	<property name="wsc.build.dev.lib.dir" value="../WS-C/build/dev/lib"/>
+	<property name="wscf.build.lib.dir" value="../WSCF/build/lib"/>
+	<property name="wst.build.dev.lib.dir" value="../WS-T/build/dev/lib"/>
 
-    <path id="com.arjuna.mwlabs.wstx.lib.classpath">
-        <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
-        <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
-        <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs} ${wsc-api.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs} ${wst-api.libs}"/>
+    <path id="wstx.lib.classpath">
+        <path  refid="build.classpath"/>
+        <fileset dir="${wsas.build.lib.dir}" includes="${wsas.libs}"/>
+        <fileset dir="${wsc.build.dev.lib.dir}" includes="${wsc.libs} ${wsc-api.libs}"/>
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf.libs}"/>
+        <fileset dir="${wst.build.dev.lib.dir}" includes="${wst.libs} ${wst-api.libs}"/>
     </path>
 
-    <path id="com.arjuna.mwlabs.wstx.lib.classpath10">
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc10.libs} ${wsc10-api.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf10.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst10.libs}  ${wst10-api.libs}"/>
+    <path id="wstx.lib.classpath10">
+        <fileset dir="${wsc.build.dev.lib.dir}" includes="${wsc10.libs} ${wsc10-api.libs}"/>
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf10.libs}"/>
+        <fileset dir="${wst.build.dev.lib.dir}" includes="${wst10.libs}  ${wst10-api.libs}"/>
     </path>
 
-    <path id="com.arjuna.mwlabs.wstx.lib.classpath11">
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc11.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf11.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst11.libs}  ${wst11-api.libs}"/>
+    <path id="wstx.lib.classpath11">
+        <fileset dir="${wsc.build.dev.lib.dir}" includes="${wsc11.libs}"/>
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf11.libs}"/>
+        <fileset dir="${wst.build.dev.lib.dir}" includes="${wst11.libs}  ${wst11-api.libs}"/>
     </path>
 
 	<!-- Initialisation -->
-	<target name="com.arjuna.mwlabs.wstx.init">
+	<target name="wstx.init">
 		<!-- Define default build properties -->
 		<tstamp>
 			<format property="com.arjuna.mw.wstx.date" pattern="yyyy/mm/dd hh:mm aa"/>
 		</tstamp>
 		<!-- Make the destination directory -->
-        <mkdir dir="${com.arjuna.mwlabs.wstx.dest}"/>
-        <mkdir dir="${com.arjuna.mwlabs.wstx.dest10}"/>
-        <mkdir dir="${com.arjuna.mwlabs.wstx.dest11}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.webapps.dest}"/>
+        <mkdir dir="${wstx.dest}"/>
+        <mkdir dir="${wstx.dest10}"/>
+        <mkdir dir="${wstx.dest11}"/>
+		<mkdir dir="${wstx.webapps.dest}"/>
 	</target>
 
 	<!-- Compilation targets -->
 
-	<target name="com.arjuna.mw.wstx.compile"
-	depends="com.arjuna.mwlabs.wstx.compile,
-		com.arjuna.mw.wstx.htdocs, com.arjuna.mwlabs.wstx.generateresourcebundle"/>
+    <target name="wstx.compile" depends="wstx.compile11, wstx.compile10"/>
 
-    <target name="com.arjuna.mwlabs.wstx.compile" depends="com.arjuna.mwlabs.wstx.compile11, com.arjuna.mwlabs.wstx.compile10"/>
-
-    <target name="com.arjuna.mwlabs.wstx.compile10" depends="com.arjuna.mwlabs.wstx.compile-generic">
+    <target name="wstx.compile10" depends="wstx.compile-generic">
         <echo message="Compiling module 1.0 code"/>
-        <javac srcdir="${com.arjuna.mwlabs.wstx.src10}"
-                       destdir="${com.arjuna.mwlabs.wstx.dest10}"
+        <javac srcdir="${wstx.src10}"
+                       destdir="${wstx.dest10}"
                        debug="on">
             <classpath>
                 <path>
-                    <pathelement path="${com.arjuna.mwlabs.wstx.dest}"/>
+                    <pathelement path="${wstx.dest}"/>
                 </path>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+                <path refid="wstx.lib.classpath10"/>
+                <path refid="wstx.lib.classpath"/>
             </classpath>
         </javac>
     </target>
 
-    <target name="com.arjuna.mwlabs.wstx.compile11" depends="com.arjuna.mwlabs.wstx.compile-generic">
+    <target name="wstx.compile11" depends="wstx.compile-generic">
         <echo message="Compiling module 1.1 code"/>
-        <javac srcdir="${com.arjuna.mwlabs.wstx.src11}"
-                       destdir="${com.arjuna.mwlabs.wstx.dest11}"
+        <javac srcdir="${wstx.src11}"
+                       destdir="${wstx.dest11}"
                        debug="on">
             <classpath>
                 <path>
-                    <pathelement path="${com.arjuna.mwlabs.wstx.dest}"/>
+                    <pathelement path="${wstx.dest}"/>
                 </path>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath11"/>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+                <path refid="wstx.lib.classpath11"/>
+                <path refid="wstx.lib.classpath"/>
             </classpath>
         </javac>
     </target>
 
-    <target name="com.arjuna.mwlabs.wstx.compile-generic" depends="com.arjuna.mwlabs.wstx.init">
+    <target name="wstx.compile-generic" depends="wstx.init">
         <echo message="Compiling module generic code"/>
-        <javac srcdir="${com.arjuna.mwlabs.wstx.src}"
-                       destdir="${com.arjuna.mwlabs.wstx.dest}"
+        <javac srcdir="${wstx.src}"
+                       destdir="${wstx.dest}"
                        debug="on">
             <classpath>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+                <path refid="wstx.lib.classpath"/>
             </classpath>
         </javac>
     </target>
 
 	<!-- htdocs paths -->
-	<path id="com.arjuna.mw.wstx.htdocs.path">
+	<path id="wstx.htdocs.path">
 		<pathelement path="classes"/>
 	</path>
 
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
-	<property name="com.arjuna.mwlabs.wstx.htdocs.list" value="com.arjuna.mw.*"/>
+	<property name="wstx.htdocs.list" value="com.arjuna.mw.*"/>
 
-    <target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
-        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wstx_web-app.xml"/>
-        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wstx_web-app11.xml"/>
+    <target name="wstx.war" depends="wstx.jar">
+        <war warfile="${wstx.webapps.dest}/${modulename}10.war" webxml="xml/wstx_web-app.xml"/>
+        <war warfile="${wstx.webapps.dest}/${modulename}11.war" webxml="xml/wstx_web-app11.xml"/>
     </target>
 
 	<!-- Jar targets -->
-	<target name="com.arjuna.mw.wstx.jar" depends="com.arjuna.mw.wstx.compile">
+	<target name="wstx.jar" depends="wstx.compile, wstx.htdocs, wstx.generateresourcebundle">
 		<echo message="Building jar file"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.jar.dest}"/>
+		<mkdir dir="${wstx.jar.dest}"/>
 
         <copy file="xml/UserTwoPhaseTx.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest10}/com/arjuna/mwlabs/wstx/model/as/twophase/UserTwoPhaseTx.xml"/>
+              tofile="${wstx.dest10}/com/arjuna/mwlabs/wstx/model/as/twophase/UserTwoPhaseTx.xml"/>
 
         <copy file="xml/UserTwoPhaseTx.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest11}/com/arjuna/mwlabs/wstx11/model/as/twophase/UserTwoPhaseTx.xml"/>
+              tofile="${wstx.dest11}/com/arjuna/mwlabs/wstx11/model/as/twophase/UserTwoPhaseTx.xml"/>
 
         <copy file="xml/AtomicTransaction.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest10}/com/arjuna/mwlabs/wst/at/ContextFactoryImple.xml"/>
+              tofile="${wstx.dest10}/com/arjuna/mwlabs/wst/at/ContextFactoryImple.xml"/>
         <copy file="xml/BusinessActivity.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest10}/com/arjuna/mwlabs/wst/ba/ContextFactoryImple.xml"/>
+              tofile="${wstx.dest10}/com/arjuna/mwlabs/wst/ba/ContextFactoryImple.xml"/>
 
         <copy file="xml/AtomicTransaction11.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest11}/com/arjuna/mwlabs/wst11/at/ContextFactoryImple.xml"/>
+              tofile="${wstx.dest11}/com/arjuna/mwlabs/wst11/at/ContextFactoryImple.xml"/>
         <copy file="xml/BusinessActivity11.xml"
-              tofile="${com.arjuna.mwlabs.wstx.dest11}/com/arjuna/mwlabs/wst11/ba/ContextFactoryImple.xml"/>
+              tofile="${wstx.dest11}/com/arjuna/mwlabs/wst11/ba/ContextFactoryImple.xml"/>
 
 
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar">
+        <jar jarfile="${wstx.jar.dest}/${modulename}.jar">
             <fileset dir="../WS-C/build/dev/dd/" includes="wsdl/*"/>
             <fileset dir="../WS-T/build/dev/dd/" includes="wsdl/*"/>
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest}" excludes="${wstx.api.classes}"/>
+            <fileset dir="${wstx.dest}" excludes="${wstx.api.classes}"/>
         </jar>
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}-api.jar">
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest}" includes="${wstx.api.classes}"/>
+        <jar jarfile="${wstx.jar.dest}/${modulename}-api.jar">
+            <fileset dir="${wstx.dest}" includes="${wstx.api.classes}"/>
         </jar>
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar">
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest10}" excludes="${wstx10.api.classes}"/>
+        <jar jarfile="${wstx.jar.dest}/${modulename}10.jar">
+            <fileset dir="${wstx.dest10}" excludes="${wstx10.api.classes}"/>
         </jar>
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10-api.jar">
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest10}" includes="${wstx10.api.classes}"/>
+        <jar jarfile="${wstx.jar.dest}/${modulename}10-api.jar">
+            <fileset dir="${wstx.dest10}" includes="${wstx10.api.classes}"/>
         </jar>
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar">
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest11}" excludes="${wstx11.api.classes}"/>
+        <jar jarfile="${wstx.jar.dest}/${modulename}11.jar">
+            <fileset dir="${wstx.dest11}" excludes="${wstx11.api.classes}"/>
         </jar>
-        <jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11-api.jar">
-            <fileset dir="${com.arjuna.mwlabs.wstx.dest11}" includes="${wstx11.api.classes}"/>
+        <jar jarfile="${wstx.jar.dest}/${modulename}11-api.jar">
+            <fileset dir="${wstx.dest11}" includes="${wstx11.api.classes}"/>
         </jar>
 	</target>
 
-	<target name="com.arjuna.mw.wstx.htdocs"
-				depends="com.arjuna.mwlabs.wstx.init">
+	<target name="wstx.htdocs"
+				depends="wstx.init">
 		<echo message="Building htdocs "/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.htdocs.dest}"/>
-		<path id="com.arjuna.mwlabs.wstx.htdocs.path">
-			<path refid="com.arjuna.mw.wstx.htdocs.path"/>
-		</path>
+		<mkdir dir="${wstx.htdocs.dest}"/>
 
 		<javadoc
-			sourcepathref="com.arjuna.mwlabs.wstx.htdocs.path"
-			destdir="${com.arjuna.mwlabs.wstx.htdocs.dest}"
-			packagenames="${com.arjuna.mwlabs.wstx.htdocs.list}"
+			sourcepathref="wstx.htdocs.path"
+			destdir="${wstx.htdocs.dest}"
+			packagenames="${wstx.htdocs.list}"
 	        >
 			<classpath>
-                <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
-				<path path="${com.arjuna.mwlabs.wstx.src}"/>
+                <path refid="wstx.lib.classpath"/>
+				<path path="${wstx.src}"/>
 			</classpath>
 		</javadoc>
 	</target>
 
-        <target name="com.arjuna.mwlabs.wstx.generateresourcebundle">
+        <target name="wstx.generateresourcebundle">
 
             <echo message="Generating WSTX Bundle"/>
-
-            <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
             <javadoc    packagenames="com.arjuna.*"
                         failonerror="yes"
@@ -337,71 +344,69 @@
                         defaultexcludes="yes"
                         classpath="${build.classpath}">
 
-                <packageset dir="${com.arjuna.mwlabs.wstx.src}" defaultexcludes="yes">
+                <packageset dir="${wstx.src}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
-                <packageset dir="${com.arjuna.mwlabs.wstx.src10}" defaultexcludes="yes">
+                <packageset dir="${wstx.src10}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
-                <packageset dir="${com.arjuna.mwlabs.wstx.src11}" defaultexcludes="yes">
+                <packageset dir="${wstx.src11}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>
                 </packageset>
 
                  <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                    <path>
-                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                    </path>
-                    <param name="-basedir" value="${basedir}/${com.arjuna.mwlabs.wstx.dest}"/>
-                    <param name="-resourcebundle" value="${com.arjuna.mwlabs.wstx.resourcebundle}"/>
+                    <path refid="doclet.classpath"/>
+                    <param name="-basedir" value="${basedir}/${wstx.dest}"/>
+                    <param name="-resourcebundle" value="${wstx.resourcebundle}"/>
                  </doclet>
             </javadoc>
 
         </target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.init">
+	<target name="wstx.tests.init">
         <!-- delete the test destination directories -->
-        <delete dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
+        <delete dir="${wstx.tests.dest.root}"/>
 		<!-- make the test destination directories -->
-		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dd.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.jar.dest}"/>
+		<mkdir dir="${wstx.tests.dest.root}"/>
+		<mkdir dir="${wstx.tests.dest}"/>
+		<mkdir dir="${wstx.tests.dd.dest}"/>
+		<mkdir dir="${wstx.tests.webapps.dest}"/>
+		<mkdir dir="${wstx.tests.jar.dest}"/>
 	</target>
 
     <!-- this assumes all the rwuired libs have been built -->
-	<target name="com.arjuna.mwlabs.wstx.tests.compile" depends="com.arjuna.mwlabs.wstx.tests.init">
-	  <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
+	<target name="wstx.tests.compile" depends="wstx.tests.init">
+	  <javac destdir="${wstx.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}-api.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10-api.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11-api.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}-api.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}10.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}10-api.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}11.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}11-api.jar"/>
             <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath11"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+            <path refid="wstx.lib.classpath10"/>
+            <path refid="wstx.lib.classpath11"/>
+            <path refid="wstx.lib.classpath"/>
 	    </classpath>
 	    <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
 	  </javac>
 	</target>
 
     <!-- this assumes all the rwuired libs have been built -->
-    <target name="com.arjuna.mwlabs.wstx.tests.compile11" depends="com.arjuna.mwlabs.wstx.tests.init">
-      <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
+    <target name="wstx.tests.compile11" depends="wstx.tests.init">
+      <javac destdir="${wstx.tests.dest}" debug="yes" optimize="no">
         <classpath>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}-api.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11-api.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}-api.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}11.jar"/>
+            <pathelement path="${wstx.jar.dest}/${modulename}11-api.jar"/>
             <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath11"/>
-            <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+            <path refid="wstx.lib.classpath10"/>
+            <path refid="wstx.lib.classpath11"/>
+            <path refid="wstx.lib.classpath"/>
         </classpath>
         <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
         <include  name="com/arjuna/qa/**"/>
@@ -411,89 +416,74 @@
       </javac>
     </target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.webapps" depends="com.arjuna.mwlabs.wstx.tests.compile">
-	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
+	<target name="wstx.tests.webapps" depends="wstx.tests.compile">
+	  <copy file="${wstx.tests.dd}/wstx-tests_web-app.xml" tofile="${wstx.tests.dd.dest}/web-app.xml">
 	  </copy>
-	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
+	  <copy file="${wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${wstx.tests.dd.dest}/web-app11.xml">
 	  </copy>
-	  <jar jarfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.jar">
-	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  <jar jarfile="${wstx.tests.webapps.dest}/wstx-tests.jar">
+	    <fileset dir="${wstx.tests.dest}"/>
 	  </jar>
-	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
-	    <classes dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  <war warfile="${wstx.tests.webapps.dest}/wstx-tests.war" webxml="${wstx.tests.dd.dest}/web-app.xml">
+	    <classes dir="${wstx.tests.dest}"/>
 	  </war>
-	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml"/>
-	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_application.xml">
+	  <war warfile="${wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${wstx.tests.dd.dest}/web-app11.xml"/>
+	  <ear earfile="${wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${wstx.tests.dd}/wstx-tests_application.xml">
         <!--
 	    <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
 	    -->
-	    <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-	    <!-- we don't need to include these libs if we are
-	         deploying to JBossAs. The XTS libs are already
-	         deployed as a sar and the JTA lib is in the app
-	         server lib directory
-
-
-	    <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf.libs}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wstx.jar.dest}" includes="${wstx.libs}"/>
-	    -->
-	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
+	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	    <fileset dir="${wstx.tests.webapps.dest}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
 	  </ear>
 	</target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.webapps11" depends="com.arjuna.mwlabs.wstx.tests.compile11">
-	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
+	<target name="wstx.tests.webapps11" depends="wstx.tests.compile11">
+	  <copy file="${wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${wstx.tests.dd.dest}/web-app11.xml">
 	  </copy>
-	  <jar jarfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.jar">
-	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  <jar jarfile="${wstx.tests.webapps.dest}/wstx-tests.jar">
+	    <fileset dir="${wstx.tests.dest}"/>
 	  </jar>
-	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml"/>
-	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_application.xml">
-	    <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx11-tests.war wstx-tests.jar"/>
+	  <war warfile="${wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${wstx.tests.dd.dest}/web-app11.xml"/>
+	  <ear earfile="${wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${wstx.tests.dd}/wstx11-tests_application.xml">
+	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	    <fileset dir="${wstx.tests.webapps.dest}" includes="wstx11-tests.war wstx-tests.jar"/>
 	  </ear>
 	</target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.deploy" depends="com.arjuna.mwlabs.wstx.tests.webapps, com.arjuna.mwlabs.wstx.tests.undeploy">
-	  <copy file="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
+	<target name="wstx.tests.deploy" depends="wstx.tests.webapps, wstx.tests.undeploy">
+	  <copy file="${wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
 	</target>
 
-    <target name="com.arjuna.mwlabs.wstx.tests.deploy11" depends="com.arjuna.mwlabs.wstx.tests.webapps11, com.arjuna.mwlabs.wstx.tests.undeploy">
-      <copy file="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
+    <target name="wstx.tests.deploy11" depends="wstx.tests.webapps11, wstx.tests.undeploy">
+      <copy file="${wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
     </target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.undeploy">
+	<target name="wstx.tests.undeploy">
 	  <delete file="${deploy.dir}/wstx-tests.ear"/>
 	</target>
 
 	<!-- Clean targets -->
-	<target name="com.arjuna.mw.wstx.clean">
+	<target name="wstx.clean">
 		<echo message="Cleaning module"/>
-		<delete dir="${com.arjuna.mwlabs.wstx.dest}"/>
-		<delete dir="${com.arjuna.mwlabs.wstx.dest.root}"/>
-		<delete dir="${com.arjuna.mwlabs.wstx.htdocs.dest}"/>
-        <delete file="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-		<delete file="${com.arjuna.mwlabs.wstx.info.dest}"/>
+		<delete dir="${wstx.dest}"/>
+		<delete dir="${wstx.htdocs.dest}"/>
+        <delete file="${wstx.jar.dest}/${modulename}.jar"/>
 		<!-- delete the test destination directories -->
-		<delete dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
+		<delete dir="${wstx.tests.dest.root}"/>
 	</target>
 
 	<!-- Short target names -->
-	<target name="compile" depends="com.arjuna.mw.wstx.compile"/>
-	<target name="jar" depends="com.arjuna.mw.wstx.jar"/>
-	<target name="war" depends="com.arjuna.mw.wstx.war"/>
-	<target name="clean" depends="com.arjuna.mw.wstx.clean"/>
-	<target name="tests-webapps" depends="com.arjuna.mwlabs.wstx.tests.webapps"/>
-	<target name="tests-webapps11" depends="com.arjuna.mwlabs.wstx.tests.webapps11"/>
+	<target name="compile" depends="wstx.compile"/>
+	<target name="jar" depends="wstx.jar"/>
+	<target name="war" depends="wstx.war"/>
+	<target name="clean" depends="wstx.clean"/>
+	<target name="tests-webapps" depends="wstx.tests.webapps"/>
+	<target name="tests-webapps11" depends="wstx.tests.webapps11"/>
 	<!-- production target for 1.1 tests -->
     <target name="tests-11" depends="tests-webapps11"/>
     <target name="tests-both" depends="tests-webapps"/>
 
-	<target name="tests-deploy" depends="com.arjuna.mwlabs.wstx.tests.deploy"/>
-	<target name="tests-deploy11" depends="com.arjuna.mwlabs.wstx.tests.deploy11"/>
-	<target name="tests-undeploy" depends="com.arjuna.mwlabs.wstx.tests.undeploy"/>
+	<target name="tests-deploy" depends="wstx.tests.deploy"/>
+	<target name="tests-deploy11" depends="wstx.tests.deploy11"/>
+	<target name="tests-undeploy" depends="wstx.tests.undeploy"/>
 </project>
