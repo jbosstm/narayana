@@ -95,16 +95,16 @@ public class ReaperTestCase extends ReaperTestCaseControl
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
 
-        // test reaping
-        reaper.insert(reapable, 1); // seconds
-        reaper.insert(reapable2, 2);
-
         // enable a repeatable rendezvous before checking the reapable queue
         enableRendezvous("reaper1", true);
         // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
         enableRendezvous("reaper2", true);
         // enable a repeatable rendezvous before checking the worker queue
         enableRendezvous("reaperworker1", true);
+
+        // test reaping
+        reaper.insert(reapable, 1); // seconds
+        reaper.insert(reapable2, 2);
 
         // the reaper will be latched before it processes any of the reapables
         triggerRendezvous("reaper1");
