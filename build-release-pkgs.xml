@@ -36,8 +36,9 @@
         You don't need to check out JBossTS, the script does that.
       Check out the jbossts web pages project
         source and binary bundles for download by end users get published here
-      Build or install a tagged release of JBossAS to build against. Set JBOSS_HOME.
-        Use the oldest JBossAS release the JBossTS release is intended to support.
+      Check the version of JBossAS referenced in maven/pom-template.xml is sane.
+        You MUST NOT use a snapshot release if doing a tagged build of JBossTS.
+        In general, use the oldest JBossAS release the JBossTS release is intended to support.
       Update the properties section below to suit your machine.
       Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
       ant -f build-release-pkgs.xml dist mvn-repository cms-repository
@@ -62,7 +63,7 @@
 <!--
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
-    <property name="filename" value="4.9.0.SNAPSHOT"/>
+    <property name="filename" value="4.9.0.GA"/>
     <property name="mvn.repositoryId" value="snapshots.jboss.org"/>
     <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
 -->

@@ -263,6 +263,16 @@
             <artifactId>idl</artifactId>
         </dependency>
 
+        <!-- tsmx (tooling) requires graphing support: -->
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jcommon</artifactId>
+        </dependency>
 
         <!-- atsintegration (i.e. the JBossAS glue code) requires some app server bits. -->
 
@@ -353,14 +363,6 @@
             <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
         </dependency>
-
-        <!--
-        can this one be more fine grained?
-        <dependency>
-            <groupId>org.jboss.javaee</groupId>
-            <artifactId>jboss-javaee</artifactId>
-        </dependency>
-       -->
 
     </dependencies>
 

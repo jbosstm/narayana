@@ -22,6 +22,8 @@
 
     <property name="modulename" value="tsmx"/>
 
+    <property name="global.ext.libs" value="jcommon.jar,jfreechart.jar"/>
+    
     <import file="../../sharedbuild.xml"/>
 
     <target name="init" depends="sharedbuild.init">

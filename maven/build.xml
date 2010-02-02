@@ -23,14 +23,11 @@
   in dir 'ext' to allow for offline builds and strong versioning. Building the JBossAS
   integration code required a copy of JBossAS via the JBOSS_HOME env var.
 
-  Starting with 4.10 the build can use maven for dependency management whilst still
+  Starting with 4.10 the build uses maven for dependency management whilst still
   using ant for the main build. This helps us play nice in a maven ecosystem. The top
   level build script calls one or other method in this file to install the dependencies
-  into build/extlib. In standalone mode they are copied from ext. In maven mode they are
-  pulled from the repository. In either case build scripts use the maven names without
-  versions to minimise the updating that is needed.
-
-  Caution: Deprecation. At some point the standalone method of building will go away. 
+  into build/extlib. Build scripts use the maven names without versions to minimise the
+  updating that is needed.
 -->
 <project name="JBossTS Dependency Management" default="maven" basedir=".">
     <description>
@@ -39,7 +36,6 @@
 
     <property name="ext.lib.src" value="../ext"/>
     <property name="ext.lib.dest" value="../build/extlib"/>
-    <property name="xts.ext.lib.dest" value="../XTS/build/extlib"/>
 
     <property name="groupid" value="jboss.jbossts"/>
     <property name="artifact" value="jbossts-build"/>
@@ -50,10 +46,8 @@
             the dependencies into the dir where the build looks for them -->
 
         <delete dir="${ext.lib.dest}"/>
-        <delete dir="${xts.ext.lib.dest}"/>
         <mkdir dir="${ext.lib.dest}"/>
-        <mkdir dir="${xts.ext.lib.dest}"/>
-        
+
         <copy  file="pom-template.xml"
                tofile="pom.xml"
                filtering="true"
@@ -79,72 +73,15 @@
             </fileset>
         </copy>
 
-        <!-- XTS uses its own copy for now, so it can override some deps -->
-        <copy todir="${xts.ext.lib.dest}" overwrite="true">
-            <fileset dir="${ext.lib.dest}" includes="*"/>
-        </copy>
-        <copy todir="${xts.ext.lib.dest}" overwrite="true">
-            <fileset dir="../XTS/ext">
-                <include name="junit.jar"/>
-            </fileset>
-        </copy>
-
         <!-- we use a local copy of JacORB for build/test as we need bits of it that are not in mvn.
             However, we should ensure the AS has not upgraded or we'll wind up running on an untested version: -->
-        <checksum file="${xts.ext.lib.dest}/jacorb.jar" property="as-jacorb-md5"/>
+        <checksum file="${ext.lib.dest}/jacorb.jar" property="as-jacorb-md5"/>
         <checksum file="../ArjunaJTS/jacorb/lib/jacorb.jar" property="local-jacorb-md5"/>
         <fail message="WARNING: effective JacORB version does not match JBossAS JacORB version. This is bad. I'm sulking. Edit maven/build.xml if you want to live dangerously, or go fix the problem.">
             <condition>
                 <not><equals arg1="${as-jacorb-md5}" arg2="${local-jacorb-md5}"/></not>
             </condition>
         </fail>
-        
-
-    </target>
-
-    <target name="standalone">
-
-        <delete dir="${ext.lib.dest}"/>
-        <mkdir dir="${ext.lib.dest}"/>
-
-        <!-- jars that match the maven naming pattern can be copied directly -->
-        <copy todir="${ext.lib.dest}">
-            <fileset dir="${ext.lib.src}">
-                <include name="byteman.jar"/>
-                <include name="emma.jar"/>
-                <include name="emma_ant.jar"/>
-                <include name="wrapper.jar"/>
-                <include name="third_party_licenses.txt"/>
-            </fileset>
-        </copy>
-
-        <!-- jars that don't match maven naming need to be renamed or the build scripts choke.
-            Note: this is a kludge. But you knew that already. -->
-
-        <copy file="${ext.lib.src}/jta-1_1-classes.zip" tofile="${ext.lib.dest}/jta.jar"/>
-        <copy file="${ext.lib.src}/connector-api.jar" tofile="${ext.lib.dest}/jboss-jca-api.jar"/>
-        <copy file="${ext.lib.src}/junit-4.6.jar" tofile="${ext.lib.dest}/junit.jar"/>
-        <copy file="${ext.lib.src}/log4j-1.2.14.jar" tofile="${ext.lib.dest}/log4j.jar"/>
-        <copy file="${ext.lib.src}/commons-logging-1.1.jar" tofile="${ext.lib.dest}/commons-logging.jar"/>
-
-    </target>
-
-    <target name="standalone-atsintegration">
-
-        <!-- in legacy JBOSS_HOME mode we pull the pre-reqs for atsintegration
-            from our local copy of JBossAS rather than from maven -->
-
-        <copy file="${env.JBOSS_HOME}/common/lib/jboss-integration.jar"
-              tofile="${ext.lib.dest}/jboss-transaction-spi.jar"/>
-
-        <copy todir="${ext.lib.dest}">
-            <fileset dir="${env.JBOSS_HOME}/lib">
-                <include name="jboss-logmanager.jar"/>
-            </fileset>
-            <fileset dir="${env.JBOSS_HOME}/common/lib">
-                <include name="jbosssx.jar"/>
-            </fileset>
-        </copy>
 
     </target>
 

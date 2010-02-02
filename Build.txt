@@ -44,12 +44,14 @@ ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure,
 config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
 JTA and JTA in turn a superset of Core.
 
-The build system does not currently employ a dependency management framework such as maven or ivy. Instead the
-necessary 3rd part pre-req .jars are either present in svn (ext/ and ArjunaJTS/jacorb/ for example) or pulled
-in from a JBossAS installation found at build time via the JBOSS_HOME environment variable.
+3rd party dependency management is currently done via maven. The top level build invokes the maven/build.xml which
+calls maven to resolve the dependencies and populate build/extlib which other ant build scripts then reference
+in the classpath. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
+pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the pom-template.xml
 
-The build currently requires Java 6 and ant 1.7.1.  Although it's no longer tried and tested, it may remain possible
-for a time to build on Java 5 by editing ArjunaJTA/jdbc/build.xml and changing the excluded **/*JDBC3.java pattern
+The build currently requires Java 6, ant 1.7.1 and maven 2.0.9. Later version may work.
+Although it's no longer tried and tested, it may remain possible for a time to build on Java 5 by editing
+ArjunaJTA/jdbc/build.xml and changing the excluded **/*JDBC3.java pattern
 to **/*JDBC4.java instead. This is required as the JDBC3 and 4 APIs are not compatible.
 
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration

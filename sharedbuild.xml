@@ -113,7 +113,6 @@
                deprecation="${deprecation}" excludes="@{excluded.classes}" fork="true">
             <classpath>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
-                <fileset dir="." includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <additional.classpath/>
             </classpath>
