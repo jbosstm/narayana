@@ -20,13 +20,11 @@
  */
 package org.jboss.jbosstm.tools.mbean;
 
-import org.jboss.system.ServiceMBean;
-
 /**
  * Service mbean interface for starting jbosstm tools via a service archive
  *
  */
-public interface EmbeddedToolsMBean extends ServiceMBean
+public interface EmbeddedToolsMBean
 {
     void startEmbeddedTools();
 }

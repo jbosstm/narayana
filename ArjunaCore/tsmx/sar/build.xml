@@ -23,15 +23,12 @@
 
     <!-- You should modify the next two lines -->
     <property environment="env"/>
-    <property name="jboss.as.home" value="${env.JBOSS_HOME}"/>
 
     <!-- You should not need to modify anything below this point -->
     <property name="jboss.ts" value="../../.."/>
     <property name="jboss.ts.tools" value="${jboss.ts}/install/bin"/>
     <available property="bin.present" file="${jboss.ts.tools}" type="dir"/>
 
-    <property name="jboss.as.profile" value="default"/>
-    <property name="jboss.server" value="${jboss.as.home}/server/${jboss.as.profile}"/>
     <property name="build.dir" value="build"/>
     <property name="jboss.ts.tools.install.dir" value="${build.dir}/mbean"/>
     <property name="src.dir" value="src"/>
@@ -55,8 +52,6 @@
     </target>
 
     <path id="classpath">
-        <fileset dir="${jboss.as.home}/client" includes="jboss-system-jmx-client.jar"/>
-        <fileset dir="${jboss.as.home}/lib" includes="jboss-system.jar"/>
         <fileset dir="${jboss.ts.tools}" includes="tsmx-tools.jar"/>
         <fileset dir="${jboss.ts.tools}/tools" includes="tsmx-objectstorebrowser.jar"/>
         <fileset dir="${jboss.ts.tools}/tools/plugins" includes="osbv-defaults.jar"/>
