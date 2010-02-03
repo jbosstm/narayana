@@ -192,6 +192,15 @@ corresponding to this ObjectStore will have names prefixed by this
 that causes the instrumentation to check whether any new ObjectStore
 records have been created or whether old ones have been removed.
 
+Note: if this bean does not appear in the JMX browser check that the
+been is being initialised in transaction-jboss-beans.xml:
+
+    <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean">
+       <constructor factoryClass="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean" 
+            factoryMethod="getObjectStoreBrowserBean"/>
+       <demand state="Create">ObjectStoreEnvironmentBean</demand>
+    </bean>
+
 If JBossTS is deployed in the JBoss application server then JMX
 instrumentation of the ObjectStore is enabled by default. It can be disabled 
 by setting the property jmxEnabled on the ObjectStoreEnvironmentBean in the
