@@ -26,7 +26,6 @@
 	<!-- set properties for AS testing -->
 	<property environment="env"/>
 
-    <property name="jbossall-client.location" location="${env.JBOSS_HOME}/client/jbossall-client.jar"/>
     <property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
 
 
@@ -45,7 +44,6 @@
         <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 
-		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
 	</path>
 
 	<target name="org.jboss.jbossts.qa.init">
@@ -97,7 +95,14 @@
                 <path refid="jta.classpath"/>
                 <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
                 <!-- additional dependency, which is why we don't just do this in compile task above: -->
-                <pathelement location="${jbossall-client.location}"/>
+                <!-- include classes for AS tests -->
+                <fileset dir="../../build/extlib">
+                    <include name="jta.jar"/>
+                    <include name="jboss-ejb-api.jar"/>
+                    <include name="jboss-server-manager.jar"/>
+                    <include name="jboss-transaction-spi.jar"/>
+                    <include name="jboss-remoting.jar"/>
+                </fileset>
             </classpath>
         </javac>
     </target>

@@ -106,19 +106,8 @@
 			</and>
 		</condition>
 
-        <fail unless="env.JBOSS_HOME" message="Please set the JBOSS_HOME environment variable" if="integration.build" />
-
         <available file="${driver.home}" property="have.dbdrivers" value="true"/>
     </target>
-
-	<target name="dist.as" depends="buildtype" if="dist.as">
-		<fail unless="env.JBOSS_HOME" message="Please set the JBOSS_HOME environment variable" />
-		<echo message="copying ${env.JBOSS_HOME} - this may take a while ..."/>
-		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}/as"/>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/as">
-			<fileset dir="${env.JBOSS_HOME}"/>
-		</copy>
-	</target>
 
 	<target name="clean" depends="buildtype">
 		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
@@ -128,7 +117,6 @@
 
 	<target name="init" depends="buildtype">
 		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
-		<antcall target="dist.as"/>
 	</target>
 
 	<target name="dist" depends="clean, init">
@@ -148,9 +136,6 @@
   jbossjta - build tests for the integrated jta transaction engine
   jbossjts - build tests for the integrated jts transaction engine
   dist - build tests for the last build of the transaction engine
-
-  To include a copy of the AS (pointed to by the JBOSS_HOME
-  environment variable) in the distribution please set the ant
-  property 'as' to true.</echo>
+</echo>
 	</target>
 </project>

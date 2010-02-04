@@ -364,7 +364,7 @@
                 Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
                 On the up side, you get better diagnostic messages and code management/navigation in IDEs.
                 -->
-                <pathelement location="../ext/junit-4.6.jar"/>
+                <pathelement location="../build/extlib/junit.jar"/>
 
                 <fileset dir="tests/build">
                     <include name="jbossts-*-qa.jar"/>

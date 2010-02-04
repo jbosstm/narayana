@@ -296,6 +296,21 @@
             <artifactId>jbosssx</artifactId>
         </dependency>
 
+        <!-- qa test suite - JBossAS integration code -->
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-server-manager</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.javaee</groupId>
+            <artifactId>jboss-ejb-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.remoting</groupId>
+            <artifactId>jboss-remoting</artifactId>
+        </dependency>
 
         <!-- XTS: -->
 

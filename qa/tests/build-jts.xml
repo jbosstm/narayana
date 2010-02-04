@@ -25,8 +25,6 @@
 
 	<!-- set properties for AS testing -->
 	<property environment="env"/>
-	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
-	<property name="jbossall-client.location" location="${jboss.home}/client/jbossall-client.jar"/>
 	<property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
 
     <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
@@ -54,7 +52,7 @@
 			<include name="jta.jar"/>
 		</fileset>
 		<pathelement location="../../ArjunaJTS/orbportability/config"/>
-		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
+		<!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
         <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
@@ -221,10 +219,12 @@
                         <include name="jta-1_1-classes.zip"/>
                 </fileset>
                 <!-- include classes for AS tests -->
-                <fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
-                <fileset dir="${jboss.home}/client">
-                        <include name="jbossall-client.jar"/>
-                        <include name="jboss-javaee.jar"/>
+                <fileset dir="../../build/extlib">
+                    <include name="jboss-server-manager.jar"/>
+                    <include name="jta.jar"/>
+                    <include name="jboss-ejb-api.jar"/>
+                    <include name="jboss-transaction-spi.jar"/>
+                    <include name="jboss-remoting.jar"/>
                 </fileset>
 	</path>
 
