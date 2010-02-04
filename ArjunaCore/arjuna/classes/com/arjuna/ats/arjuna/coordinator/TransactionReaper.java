@@ -72,7 +72,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * TransactionReaper::check interrupting cancel in progress for {0}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_5
  * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_5] -
- * TransactionReaper::check worker zombie count {0] exceeds specified limit
+ * TransactionReaper::check worker zombie count {0} exceeds specified limit
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_6
  * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_6] -
  * TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback
