@@ -239,7 +239,7 @@ public abstract class FileSystemStore extends ObjectStore
          * If typename starts with a '/' then skip over it.
          */
 
-        if ((tName != null) && (tName.charAt(0) == File.separatorChar))
+        if ((tName != null) && (tName.length() > 0) && (tName.charAt(0) == File.separatorChar))
         {
             String s = tName.substring(1, tName.length());
             directory = new String(fullStoreName + s);

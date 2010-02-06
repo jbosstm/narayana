@@ -157,7 +157,7 @@ public void copyFrom (OutputObjectState copyFrom)
 	bufferUid = new Uid(copyFrom.stateUid());
 	super._valid = bufferUid.valid();
 	
-	imageType = new String(copyFrom.type());
+	imageType = (copyFrom.type() == null ? null : new String(copyFrom.type()));
     }
     
 public void print (PrintWriter strm)
@@ -201,12 +201,13 @@ public synchronized void copy (InputObjectState objstate)
 	bufferUid = new Uid(objstate.bufferUid);
 	super._valid = bufferUid.valid();
 	
-	imageType = new String(objstate.imageType);
+	imageType = (objstate.imageType == null ? null : new String(objstate.imageType));
     }
 
 public synchronized void unpackFrom (InputBuffer buff) throws IOException
     {
 	imageType = buff.unpackString();
+	
 	bufferUid = UidHelper.unpackFrom(buff);
 
 	super.unpackFrom(buff);

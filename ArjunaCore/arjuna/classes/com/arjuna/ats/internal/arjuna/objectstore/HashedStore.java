@@ -107,7 +107,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
         /* Does typename start with a '/' if so skip over */
 
-        if ((tName != null) && (tName.charAt(0) == File.separatorChar))
+        if ((tName != null) && (tName.length() > 0) && (tName.charAt(0) == File.separatorChar))
             directory = directory + tName.substring(1, tName.length());
         else
             directory = directory + tName;

@@ -435,11 +435,7 @@ public class OutputBuffer
              * pack number of bytes and then pack each byte separately.
              */
 
-            byte[] b = buffer();
-            buff.packInt(b.length);
-
-            for (int i = 0; i < b.length; i++)
-                buff.packByte(b[i]);
+            buff.packBytes(buffer());
         }
     }
 

@@ -214,7 +214,7 @@ public synchronized void copy (OutputObjectState objstate)
 	bufferUid = new Uid(objstate.bufferUid);
 	super._valid = bufferUid.valid();
 	
-	imageType = new String(objstate.imageType);
+	imageType = (objstate.imageType == null ? null : new String(objstate.imageType));
     }
     
 public synchronized void packInto (OutputBuffer buff) throws IOException

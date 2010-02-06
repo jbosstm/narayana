@@ -443,12 +443,7 @@ public class InputBuffer
          * byte separately.
          */
 
-        int i = buff.unpackInt();
-
-        _byteArray = new byte[i];
-
-        for (int j = 0; j < i; j++)
-            _byteArray[j] = buff.unpackByte();
+        _byteArray = buff.unpackBytes();
 
         _valid = true;
 
