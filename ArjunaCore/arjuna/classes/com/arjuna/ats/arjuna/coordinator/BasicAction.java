@@ -73,7 +73,10 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  *          still running action id {0} invoked - Aborting
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_5
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_5] - Activate of
- *          atomic action with id {0} and type {1} unexpectedly failed
+ *          atomic action with id {0} and type {1} unexpectedly failed, could not load state.
+ * @message com.arjuna.ats.arjuna.coordinator.BasicAction_5a
+ *          [com.arjuna.ats.arjuna.coordinator.BasicAction_5a] - Deactivate of
+ *          atomic action with id {0} and type {1} unexpectedly failed, could not save state.
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_6
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_6] -
  *          BasicAction::addChildThread () action {0} adding {1}
@@ -818,7 +821,7 @@ public class BasicAction extends StateManager
 			{
 				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5", new Object[]
+					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5a", new Object[]
 					{ get_uid(), type() });
 				}
 			}
@@ -1559,7 +1562,7 @@ public class BasicAction extends StateManager
 			heuristicDecision = tempHeuristicDecision;
 			savedIntentionList = true;
 		}
-
+		
 		return res;
 	}
 
@@ -3568,11 +3571,14 @@ public class BasicAction extends StateManager
 
 			/*
 			 * If we have failures then rewrite the intentions list. Otherwise,
-			 * delete the log entry.
+			 * delete the log entry. Depending upon how we get here the intentions
+			 * list will either be in the preparedList or the failedList. Fortunately
+			 * save_state will figure out which one to use.
 			 */
 
 			if (((failedList != null) && (failedList.size() > 0))
-					|| ((heuristicList != null) && (heuristicList.size() > 0)))
+					|| ((heuristicList != null) && (heuristicList.size() > 0))
+					|| ((preparedList != null) && (preparedList.size() > 0)))
 			{
 				/*
 				 * Re-write the BasicAction record with the failed list
