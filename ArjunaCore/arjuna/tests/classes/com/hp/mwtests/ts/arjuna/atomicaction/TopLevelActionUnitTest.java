@@ -18,41 +18,36 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 1998, 1999, 2000,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: BasicTest.java 2342 2006-03-30 13:06:17Z  $
- */
-
-package com.hp.mwtests.ts.arjuna.statemanager;
+package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+import com.arjuna.ats.arjuna.TopLevelAction;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class TopLevelActionUnitTest
 {
     @Test
     public void test() throws Exception
     {
         AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
-
-        A.begin();
-
-        bo.set(2);
-
-        A.commit();
+        AtomicAction B = new AtomicAction();
+        TopLevelAction tl = new TopLevelAction();
         
-        assertTrue(bo.getStore() != null);
-        assertTrue(bo.getStoreRoot() != null);
+        A.begin();  // top level
+        B.begin();  // nested
+        
+        tl.begin(); // nested top level
+        
+        A.abort();  // not recommended in practice!
+        
+        assertEquals(A.status(), ActionStatus.ABORTED);
+        assertEquals(B.status(), ActionStatus.ABORTED);
+        
+        assertEquals(tl.status(), ActionStatus.RUNNING);
+        
+        tl.abort();
     }
 }

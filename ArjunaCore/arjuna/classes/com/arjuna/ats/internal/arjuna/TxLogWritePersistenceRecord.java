@@ -44,6 +44,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 
 /**
+ * Needs further consideration and then completion.
  */
 
 public class TxLogWritePersistenceRecord extends PersistenceRecord

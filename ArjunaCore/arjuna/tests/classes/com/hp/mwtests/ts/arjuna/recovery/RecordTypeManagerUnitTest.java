@@ -19,59 +19,54 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 1998, 1999, 2000,
+ * Copyright (C) 2004,
  *
- * Arjuna Solutions Limited,
+ * Arjuna Technologies Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
  * UK.
  *
- * $Id: DestroyTest.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: CallbackRecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.arjuna.destroy;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+package com.hp.mwtests.ts.arjuna.recovery;
 
 import org.junit.Test;
+
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
+
 import static org.junit.Assert.*;
 
-public class DestroyTest
+
+class DummyMap implements RecordTypeMap
+{
+
+    public Class<? extends AbstractRecord> getRecordClass ()
+    {
+        return PersistenceRecord.class;
+    }
+
+    public int getType ()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    
+}
+public class RecordTypeManagerUnitTest
 {
     @Test
     public void test()
     {
-        for (int i = 0; i < 100; i++) {
-            AtomicAction A = new AtomicAction();
-
-            A.begin();
-
-            BasicObject bo = new BasicObject();
-
-            bo.set(2);
-
-            A.commit();
-
-            AtomicAction B = new AtomicAction();
-            AtomicAction C = new AtomicAction();
-            
-            B.begin();
-            C.begin();
-            
-            bo.destroy();
-
-            C.commit();
-            B.abort();
-
-            C = new AtomicAction();
-
-            C.begin();
-
-            bo.destroy();
-
-            C.commit();
-        }
+        DummyMap map = new DummyMap();
+        RecordTypeManager.manager().add(map);
+        
+        assertEquals(RecordTypeManager.manager().getClass(0), PersistenceRecord.class);
+        assertEquals(RecordTypeManager.manager().getType(PersistenceRecord.class), 0);
+        
+        RecordTypeManager.manager().remove(map);
     }
 }

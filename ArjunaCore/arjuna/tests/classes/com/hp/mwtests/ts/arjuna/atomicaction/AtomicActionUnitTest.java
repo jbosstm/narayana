@@ -18,41 +18,43 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 1998, 1999, 2000,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: BasicTest.java 2342 2006-03-30 13:06:17Z  $
- */
-
-package com.hp.mwtests.ts.arjuna.statemanager;
+package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class AtomicActionUnitTest
 {
     @Test
-    public void test() throws Exception
+    public void testBasic () throws Exception
     {
         AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
-
-        A.begin();
-
-        bo.set(2);
-
-        A.commit();
         
-        assertTrue(bo.getStore() != null);
-        assertTrue(bo.getStoreRoot() != null);
+        A.begin();
+        
+        A.end(true);
+        
+        assertEquals(A.status(), ActionStatus.COMMITTED);
+        assertEquals(A.getTimeout(), AtomicAction.NO_TIMEOUT);
+        assertTrue(BasicAction.Current() != null);
+    }
+    
+    @Test
+    public void testThreading () throws Exception
+    {
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        
+        A.addThread();
+        A.addThread(new Thread());
+        A.end(true);
+        
+        assertEquals(A.status(), ActionStatus.ABORTED);
+        assertTrue(BasicAction.Current() != null);
     }
 }

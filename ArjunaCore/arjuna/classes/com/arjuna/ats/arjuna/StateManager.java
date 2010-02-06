@@ -439,7 +439,7 @@ public class StateManager
 
     public boolean deactivate ()
     {
-        return deactivate(null, true);
+        return deactivate(null);
     }
 
     /**
@@ -1112,7 +1112,7 @@ public class StateManager
 
         synchronized (usingActions)
         {
-            if (usingActions != null)
+            if (usingActions.size() > 0)
             {
                 Enumeration e = usingActions.keys();
 

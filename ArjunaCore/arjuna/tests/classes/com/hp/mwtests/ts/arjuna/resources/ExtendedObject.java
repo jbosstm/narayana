@@ -35,29 +35,37 @@ import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-public class BasicObject extends StateManager
+public class ExtendedObject extends StateManager
 {
 
-    public BasicObject()
+    public ExtendedObject()
     {
         super(ObjectType.ANDPERSISTENT);
 
         state = 0;
 
-        System.out.println("Created basic object.");
-
+        lockMutex();
+        
         activate();
         modified();
         deactivate();
+        
+        setStatus(status());
+        
+        unlockMutex();
     }
 
-    public BasicObject(Uid u)
+    public ExtendedObject(Uid u)
     {
         super(u, ObjectType.ANDPERSISTENT);
 
         state = -1;
 
+        getMutex().tryLock();
+        
         activate();
+        
+        getMutex().unlock();
     }
 
     public void incr(int value)
@@ -87,6 +95,17 @@ public class BasicObject extends StateManager
         return super.type()+"/BasicObject";
     }
 
+    public void toggle ()
+    {
+        super.disable();
+        super.persist();
+    }
+    
+    public void terminate ()
+    {
+        super.terminate();
+    }
+    
     public boolean deactivate()
     {
         return super.deactivate();

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,44 +15,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
- * @author JBoss Inc.
+ * (C) 2007,
+ * @author JBoss, a division of Red Hat.
  */
-/*
- * Copyright (C) 1998, 1999, 2000,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: BasicTest.java 2342 2006-03-30 13:06:17Z  $
- */
+package com.hp.mwtests.ts.arjuna.common;
 
-package com.hp.mwtests.ts.arjuna.statemanager;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class LoggingUnitTest
 {
     @Test
-    public void test() throws Exception
+    public void testFacilityCode()
     {
-        AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
-
-        A.begin();
-
-        bo.set(2);
-
-        A.commit();
+        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "hello world");
+        tsLogger.arjLogger.debug(DebugLevel.ALL_NON_TRIVIAL, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ABSTRACT_REC, "another test");
         
-        assertTrue(bo.getStore() != null);
-        assertTrue(bo.getStoreRoot() != null);
+        FacilityCode fc = new FacilityCode();
+        
+        assertEquals(fc.getLevel("FAC_CRASH_RECOVERY"), FacilityCode.FAC_CRASH_RECOVERY);
+        assertEquals(fc.printString(FacilityCode.FAC_JDBC), "FAC_JDBC");
     }
 }

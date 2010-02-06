@@ -81,7 +81,7 @@ import java.io.IOException;
  *          PersistenceRecord::topLevelCommit - commit_state error
  * @message com.arjuna.ats.arjuna.PersistenceRecord_7
  *          [com.arjuna.ats.arjuna.PersistenceRecord_7] PersistenceRecord
- *          deactivate error
+ *          deactivate error, object probably already deactivated!
  * @message com.arjuna.ats.arjuna.PersistenceRecord_8
  *          [com.arjuna.ats.arjuna.PersistenceRecord_8]
  *          PersistenceRecord.topLevelPrepare - setup error!

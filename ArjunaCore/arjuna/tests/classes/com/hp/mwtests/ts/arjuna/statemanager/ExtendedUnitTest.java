@@ -32,27 +32,56 @@
 package com.hp.mwtests.ts.arjuna.statemanager;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.common.Uid;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class ExtendedUnitTest
 {
     @Test
     public void test() throws Exception
     {
         AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
-
+        ExtendedObject bo = new ExtendedObject();
+        Uid u = bo.get_uid();
+        
         A.begin();
 
         bo.set(2);
-
+       
+        bo.toggle();
+        
         A.commit();
         
+        bo.terminate();
+        
+        bo = new ExtendedObject(u);
+        
+        assertEquals(bo.status(), ObjectStatus.PASSIVE);
         assertTrue(bo.getStore() != null);
         assertTrue(bo.getStoreRoot() != null);
+    }
+
+    @Test
+    public void testCadaver () throws Exception
+    {
+        AtomicAction A = new AtomicAction();
+        AtomicAction B = new AtomicAction();
+        
+        A.begin();
+        B.begin();
+        
+        ExtendedObject bo = new ExtendedObject();
+        
+        bo.set(2);
+       
+        bo.terminate();
+        
+        B.commit();
+        A.commit();
     }
 }

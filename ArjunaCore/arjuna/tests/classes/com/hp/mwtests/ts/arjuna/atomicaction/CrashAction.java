@@ -18,6 +18,8 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
+package com.hp.mwtests.ts.arjuna.atomicaction;
+
 /*
  * Copyright (C) 1998, 1999, 2000,
  *
@@ -26,33 +28,32 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: BasicTest.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: BadAction.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.arjuna.statemanager;
-
 import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+import com.arjuna.ats.arjuna.coordinator.*;
+import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
+import com.hp.mwtests.ts.arjuna.resources.CrashRecord.CrashLocation;
+import com.hp.mwtests.ts.arjuna.resources.CrashRecord.CrashType;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class CrashAction
 {
     @Test
-    public void test() throws Exception
+    public void test()
     {
         AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
-
-        A.begin();
-
-        bo.set(2);
-
-        A.commit();
         
-        assertTrue(bo.getStore() != null);
-        assertTrue(bo.getStoreRoot() != null);
+        A.begin();
+        
+        A.add(new CrashRecord(CrashLocation.NoCrash, CrashType.Normal));
+        A.add(new CrashRecord(CrashLocation.CrashInCommit, CrashType.HeuristicHazard));
+        
+        int outcome = A.commit();
+        
+        System.out.println("Transaction "+A+" committed with "+ActionStatus.stringForm(outcome));
     }
 }
