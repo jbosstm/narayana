@@ -71,7 +71,10 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	public int start (BasicAction parentAction)
 	{
 		if (parentAction != null)
+		{
+		    if (typeOfAction() == ActionType.NESTED)
 			parentAction.addChildAction(this);
+		}
 
 		return super.Begin(parentAction);
 	}
@@ -81,7 +84,9 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		int outcome;
 
 		if (parent() != null)
-			parent().removeChildAction(this);
+		{
+		    parent().removeChildAction(this);
+		}
 
         boolean canEnd = true;
         if(status() != ActionStatus.ABORT_ONLY || TxControl.isBeforeCompletionWhenRollbackOnly())
