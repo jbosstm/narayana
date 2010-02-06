@@ -247,19 +247,25 @@ public final boolean remove (AbstractRecord oldRecord)
 	{
 	    if (listHead == oldRecord)
 	    {
-		listHead = oldRecord.getNext();
+		listHead = listHead.getNext();
 
 		if (listHead != null)
 		    listHead.setPrevious(null);
+
+		oldRecord.setNext(null);
+		oldRecord.setPrevious(null);
 	    }
 	    else
 	    {
 		if (listTail == oldRecord)
 		{
-		    listTail = oldRecord.getPrevious();
+		    listTail = listTail.getPrevious();
 
 		    if (listTail != null)
 			listTail.setNext(null);
+		    
+		    oldRecord.setNext(null);
+		    oldRecord.setPrevious(null);
 		}
 		else
 		{

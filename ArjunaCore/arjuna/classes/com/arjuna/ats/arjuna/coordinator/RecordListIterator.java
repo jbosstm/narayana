@@ -44,7 +44,7 @@ public class RecordListIterator
 
     public RecordListIterator (RecordList R)
     {
-	curElem = null;
+	curElem = R.listHead;
 	curList = R;
     }
     
@@ -59,12 +59,12 @@ public class RecordListIterator
 
     public final synchronized AbstractRecord iterate ()
     {
-	if (curElem == null)
-	    curElem = curList.listHead;
-	else
+        AbstractRecord ret = curElem;
+
+	if (curElem != null)
 	    curElem = curElem.getNext();
-	
-	return curElem;
+
+	return ret;
     }
 
     private AbstractRecord curElem;
