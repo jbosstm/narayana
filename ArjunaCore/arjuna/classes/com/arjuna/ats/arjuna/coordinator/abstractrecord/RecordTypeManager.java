@@ -48,7 +48,7 @@ public class RecordTypeManager
      * be a performance problem for recovery.
      */
     
-    public synchronized Class<AbstractRecord> getClass (int type)
+    public synchronized Class<? extends AbstractRecord> getClass (int type)
     {
         /*
          * Stop at first hit.
@@ -63,7 +63,7 @@ public class RecordTypeManager
         return null;
     }
     
-    public synchronized int getType (Class<AbstractRecord> c)
+    public synchronized int getType (Class<? extends AbstractRecord> c)
     {
         for (int i = 0; i < _map.size(); i++)
         {

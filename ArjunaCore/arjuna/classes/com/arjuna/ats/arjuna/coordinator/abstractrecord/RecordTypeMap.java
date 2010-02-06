@@ -40,7 +40,7 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 
 public interface RecordTypeMap
 { 
-    public Class<AbstractRecord> getRecordClass ();
+    public Class<? extends AbstractRecord> getRecordClass ();
     
     public int getType ();
 }
