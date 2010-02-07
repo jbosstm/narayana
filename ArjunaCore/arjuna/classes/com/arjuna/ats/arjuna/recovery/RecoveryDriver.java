@@ -36,6 +36,10 @@ import java.net.*;
 
 public class RecoveryDriver
 {
+    public static final String SCAN = "SCAN";
+    public static final String ASYNC_SCAN = "ASYNC_SCAN";
+    public static final String PING = "PING";
+    public static final String PONG = "PONG";
     
     public RecoveryDriver (int port)
     {
@@ -56,12 +60,12 @@ public class RecoveryDriver
     
     public final boolean synchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
-	return scan("SCAN");
+	return scan(SCAN);
     }
     
     public final boolean asynchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
-	return scan("ASYNC_SCAN");
+	return scan(ASYNC_SCAN);
     }
 
     private final boolean scan (String scanType) throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
@@ -69,6 +73,8 @@ public class RecoveryDriver
 	if (_hostName == null)
 	    _hostName = InetAddress.getLocalHost().getHostName();
 
+	System.err.println("**binding "+_hostName+" "+_port);
+	
 	Socket connectorSocket = new Socket(_hostName, _port);
 
 	connectorSocket.setSoTimeout(_timeout);

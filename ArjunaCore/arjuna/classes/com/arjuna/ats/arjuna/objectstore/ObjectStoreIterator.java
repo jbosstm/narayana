@@ -79,6 +79,6 @@ public class ObjectStoreIterator
         return newUid;
     }
 
-    private InputObjectState uidList;
+    private InputObjectState uidList = new InputObjectState();
 
 }

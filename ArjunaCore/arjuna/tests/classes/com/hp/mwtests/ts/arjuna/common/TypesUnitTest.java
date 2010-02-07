@@ -28,8 +28,15 @@ import org.junit.Test;
 import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.ActionType;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.internal.arjuna.abstractrecords.ActivationRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 
 import static org.junit.Assert.*;
 
@@ -88,5 +95,60 @@ public class TypesUnitTest
         StateType.printStateType(pw, StateType.OS_INVISIBLE);
         
         assertEquals(StateType.stateTypeString(StateType.OS_ORIGINAL), "StateType.OS_ORIGINAL");
+    }
+    
+    @Test
+    public void testActionType ()
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        ActionType.print(pw, ActionType.NESTED);
+    }
+    
+    @Test
+    public void testAddOutcome ()
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        AddOutcome.print(pw, AddOutcome.AR_ADDED);
+        
+        assertEquals(AddOutcome.printString(AddOutcome.AR_DUPLICATE), "AddOutcome.AR_DUPLICATE");
+    }
+    
+    @Test
+    public void testTwoPhaseOutcome ()
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        TwoPhaseOutcome.print(pw, TwoPhaseOutcome.FINISH_ERROR);
+        
+        assertEquals(TwoPhaseOutcome.stringForm(TwoPhaseOutcome.FINISH_OK), "TwoPhaseOutcome.FINISH_OK");
+        
+        TwoPhaseOutcome o = new TwoPhaseOutcome(TwoPhaseOutcome.HEURISTIC_COMMIT);
+        
+        o.setOutcome(TwoPhaseOutcome.NOT_PREPARED);
+        
+        assertEquals(o.getOutcome(), TwoPhaseOutcome.NOT_PREPARED);
+    }
+    
+    @Test
+    public void testActionStatus ()
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        ActionStatus.print(pw, ActionStatus.ABORT_ONLY);
+        
+        assertEquals(ActionStatus.stringForm(ActionStatus.ABORTED), "ActionStatus.ABORTED");
+    }
+    
+    @Test
+    public void testRecordType ()
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        RecordType.print(pw, RecordType.ACTIVATION);
+        
+        assertEquals(RecordType.classToType(PersistenceRecord.class), RecordType.PERSISTENCE);
+        assertEquals(RecordType.typeToClass(RecordType.ACTIVATION), ActivationRecord.class);
     }
 }

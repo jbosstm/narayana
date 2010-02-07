@@ -1019,6 +1019,268 @@ public class BasicAction extends StateManager
 	 */
 
 	/**
+     * Redefined version of save_state and restore_state from StateManager.
+     * 
+     * Normal operation (no crashes):
+     * 
+     * BasicAction.save_state is called after a successful prepare. This causes
+     * and BasicAction object to be saved in the object store. This object
+     * contains primarily the "intentions list" of the BasicAction. After
+     * successfully completing phase 2 of the commit protocol, the BasicAction
+     * object is deleted from the store.
+     * 
+     * Failure cases:
+     * 
+     * If a server crashes after successfully preparing, then upon recovery the
+     * action must be resolved (either committed or aborted) depending upon
+     * whether the co-ordinating atomic action committed or aborted. Upon server
+     * recovery, the crash recovery mechanism detects ServerBasicAction objects
+     * in the object store and attempts to activate the BasicAction object of
+     * the co-ordinating action. If this is successful then the SAA is committed
+     * else aborted.
+     * 
+     * If, when processing phase 2 of the commit protocol, the co-ordinator
+     * experiences a failure to commit from one of the records then the
+     * BasicAction object is NOT deleted. It is rewritten when a new state which
+     * contains a list of the records that failed during phase 2 commit. This
+     * list is called the "failedList".
+     * 
+     * The crash recovery manager will detect local BasicAction objects in
+     * addition to SAA objects in the objectstore. An attempt will be made to
+     * commit these actions. If the action contained a call to a now dead
+     * server, this action can never be resolved and the AA object can never be
+     * removed. However, if the action is purely local then after the processing
+     * is complete the removed by crash recovery.
+     * 
+     * @return <code>true</code> if successful, <code>false</code>
+     *         otherwise.
+     */
+    
+    public boolean save_state (OutputObjectState os, int ot)
+    {
+    	if (tsLogger.arjLogger.isDebugEnabled())
+    	{
+    		tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::save_state ()");
+    	}
+    
+    	try
+    	{
+    		packHeader(os, new Header(get_uid(), Utility.getProcessUid()));
+    	}
+    	catch (IOException e)
+    	{
+    		return false;
+    	}
+    
+    	/*
+    	 * In a presumed abort scenario, this routine is called: a) After a
+    	 * successful prepare - to save the intentions list. b) After a failure
+    	 * during phase 2 of commit - to overwrite the intentions list by the
+    	 * failedList.
+    	 * 
+    	 * If we're using presumed nothing, then it could be called: a) Whenever
+    	 * a participant is registered.
+    	 */
+    
+    	RecordList listToSave = null;
+    	boolean res = true;
+    
+    	/*
+    	 * If we have a failedList then we are re-writing a BasicAction object
+    	 * after a failure during phase 2 commit
+    	 */
+    
+    	if ((failedList != null) && (failedList.size() > 0))
+    	{
+    		listToSave = failedList;
+    	}
+    	else
+    	{
+    		listToSave = preparedList;
+    	}
+    
+    	AbstractRecord first = ((listToSave != null) ? listToSave.getFront()
+    			: null);
+    	AbstractRecord temp = first;
+    	boolean havePacked = ((listToSave == null) ? false : true);
+    
+    	while ((res) && (temp != null))
+    	{
+    		listToSave.putRear(temp);
+    
+    		/*
+    		 * First check to see if we need to call save_state. If we do then
+    		 * we must first save the record type (and enum) and then save the
+    		 * unique identity of the record (a string). The former is needed to
+    		 * determine what type of record we are restoring, while the latter
+    		 * is required to re-create the actual record.
+    		 */
+    
+    		/*
+    		 * First check to see if we need to call save_state. If we do then
+    		 * we must first save the record type. This is used to determine
+    		 * which type of record to create when restoring.
+    		 */
+    
+    		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    		{
+    			if (temp.doSave())
+    				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
+    				{ Integer.toString(temp.typeIs()), temp.type(), "true" });
+    			else
+    				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
+    				{ Integer.toString(temp.typeIs()), temp.type(), "false" });
+    		}
+    
+    		if (temp.doSave())
+    		{
+    			res = true;
+    
+    			try
+    			{
+    				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    				{
+    					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_15", new Object[]
+    					{ Integer.toString(temp.typeIs()) });
+    				}
+    
+    				os.packInt(temp.typeIs());
+    				res = temp.save_state(os, ot);
+    			}
+    			catch (IOException e)
+    			{
+    				res = false;
+    			}
+    		}
+    
+    		temp = listToSave.getFront();
+    
+    		if (temp == first)
+    		{
+    			listToSave.putFront(temp);
+    			temp = null;
+    		}
+    	}
+    
+    	/*
+    	 * If we only ever had a heuristic list (e.g., one-phase commit) then
+    	 * pack a record delimiter.
+    	 */
+    
+    	if (res && (os.notempty() || !havePacked))
+    	{
+    		try
+    		{
+    			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    			{
+    				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_16");
+    			}
+    
+    			os.packInt(RecordType.NONE_RECORD);
+    		}
+    		catch (IOException e)
+    		{
+    			res = false;
+    		}
+    	}
+    
+    	if (res)
+    	{
+    		// Now deal with anything on the heuristic list!
+    
+    		int hSize = ((heuristicList == null) ? 0 : heuristicList.size());
+    
+    		try
+    		{
+    			os.packInt(hSize);
+    		}
+    		catch (IOException e)
+    		{
+    			res = false;
+    		}
+    
+    		if (res && (hSize > 0))
+    		{
+    			first = heuristicList.getFront();
+    			temp = first;
+    
+    			while (res && (temp != null))
+    			{
+    				heuristicList.putRear(temp);
+    
+    				if (temp.doSave())
+    				{
+    					res = true;
+    
+    					try
+    					{
+    						if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    						{
+    							tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_17", new Object[]
+    							{ Integer.toString(temp.typeIs()) });
+    						}
+    
+    						os.packInt(temp.typeIs());
+    						res = temp.save_state(os, ot);
+    					}
+    					catch (IOException e)
+    					{
+    						res = false;
+    					}
+    				}
+    
+    				temp = heuristicList.getFront();
+    
+    				if (temp == first)
+    				{
+    					heuristicList.putFront(temp);   
+    					temp = null;
+    				}
+    			}
+    
+    			if (res && os.notempty())
+    			{
+    				try
+    				{
+    					if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    					{
+    						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_18");
+    					}
+    
+    					os.packInt(RecordType.NONE_RECORD);
+    				}
+    				catch (IOException e)
+    				{
+    					res = false;
+    				}
+    			}
+    		}
+    	}
+    
+    	if (res && os.notempty())
+    	{
+    		try
+    		{
+    			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    			{
+    				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_19", new Object[]
+    				{ ActionStatus.stringForm(actionStatus) });
+    			}
+    
+    			os.packInt(actionStatus);
+    			os.packInt(actionType); // why pack since only top-level?
+    			os.packInt(heuristicDecision); // can we optimize?
+    		}
+    		catch (IOException e)
+    		{
+    			res = false;
+    		}
+    	}
+    
+    	return res;
+    }
+
+    /**
 	 * Remove a child action.
 	 * 
 	 * @return <code>true</code> if successful, <code>false</code>
@@ -1102,268 +1364,6 @@ public class BasicAction extends StateManager
 	{
 		return new String("BasicAction: " + get_uid() + " status: "
 				+ ActionStatus.stringForm(actionStatus));
-	}
-
-	/**
-	 * Redefined version of save_state and restore_state from StateManager.
-	 * 
-	 * Normal operation (no crashes):
-	 * 
-	 * BasicAction.save_state is called after a successful prepare. This causes
-	 * and BasicAction object to be saved in the object store. This object
-	 * contains primarily the "intentions list" of the BasicAction. After
-	 * successfully completing phase 2 of the commit protocol, the BasicAction
-	 * object is deleted from the store.
-	 * 
-	 * Failure cases:
-	 * 
-	 * If a server crashes after successfully preparing, then upon recovery the
-	 * action must be resolved (either committed or aborted) depending upon
-	 * whether the co-ordinating atomic action committed or aborted. Upon server
-	 * recovery, the crash recovery mechanism detects ServerBasicAction objects
-	 * in the object store and attempts to activate the BasicAction object of
-	 * the co-ordinating action. If this is successful then the SAA is committed
-	 * else aborted.
-	 * 
-	 * If, when processing phase 2 of the commit protocol, the co-ordinator
-	 * experiences a failure to commit from one of the records then the
-	 * BasicAction object is NOT deleted. It is rewritten when a new state which
-	 * contains a list of the records that failed during phase 2 commit. This
-	 * list is called the "failedList".
-	 * 
-	 * The crash recovery manager will detect local BasicAction objects in
-	 * addition to SAA objects in the objectstore. An attempt will be made to
-	 * commit these actions. If the action contained a call to a now dead
-	 * server, this action can never be resolved and the AA object can never be
-	 * removed. However, if the action is purely local then after the processing
-	 * is complete the removed by crash recovery.
-	 * 
-	 * @return <code>true</code> if successful, <code>false</code>
-	 *         otherwise.
-	 */
-
-	public boolean save_state (OutputObjectState os, int ot)
-	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::save_state ()");
-		}
-
-		try
-		{
-			packHeader(os, new Header(get_uid(), Utility.getProcessUid()));
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
-
-		/*
-		 * In a presumed abort scenario, this routine is called: a) After a
-		 * successful prepare - to save the intentions list. b) After a failure
-		 * during phase 2 of commit - to overwrite the intentions list by the
-		 * failedList.
-		 * 
-		 * If we're using presumed nothing, then it could be called: a) Whenever
-		 * a participant is registered.
-		 */
-
-		RecordList listToSave = null;
-		boolean res = true;
-
-		/*
-		 * If we have a failedList then we are re-writing a BasicAction object
-		 * after a failure during phase 2 commit
-		 */
-
-		if ((failedList != null) && (failedList.size() > 0))
-		{
-			listToSave = failedList;
-		}
-		else
-		{
-			listToSave = preparedList;
-		}
-
-		AbstractRecord first = ((listToSave != null) ? listToSave.getFront()
-				: null);
-		AbstractRecord temp = first;
-		boolean havePacked = ((listToSave == null) ? false : true);
-
-		while ((res) && (temp != null))
-		{
-			listToSave.putRear(temp);
-
-			/*
-			 * First check to see if we need to call save_state. If we do then
-			 * we must first save the record type (and enum) and then save the
-			 * unique identity of the record (a string). The former is needed to
-			 * determine what type of record we are restoring, while the latter
-			 * is required to re-create the actual record.
-			 */
-
-			/*
-			 * First check to see if we need to call save_state. If we do then
-			 * we must first save the record type. This is used to determine
-			 * which type of record to create when restoring.
-			 */
-
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
-			{
-				if (temp.doSave())
-					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
-					{ Integer.toString(temp.typeIs()), temp.type(), "true" });
-				else
-					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
-					{ Integer.toString(temp.typeIs()), temp.type(), "false" });
-			}
-
-			if (temp.doSave())
-			{
-				res = true;
-
-				try
-				{
-					if (tsLogger.arjLoggerI18N.isDebugEnabled())
-					{
-						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_15", new Object[]
-						{ Integer.toString(temp.typeIs()) });
-					}
-
-					os.packInt(temp.typeIs());
-					res = temp.save_state(os, ot);
-				}
-				catch (IOException e)
-				{
-					res = false;
-				}
-			}
-
-			temp = listToSave.getFront();
-
-			if (temp == first)
-			{
-				listToSave.putFront(temp);
-				temp = null;
-			}
-		}
-
-		/*
-		 * If we only ever had a heuristic list (e.g., one-phase commit) then
-		 * pack a record delimiter.
-		 */
-
-		if (res && (os.notempty() || !havePacked))
-		{
-			try
-			{
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
-				{
-					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_16");
-				}
-
-				os.packInt(RecordType.NONE_RECORD);
-			}
-			catch (IOException e)
-			{
-				res = false;
-			}
-		}
-
-		if (res)
-		{
-			// Now deal with anything on the heuristic list!
-
-			int hSize = ((heuristicList == null) ? 0 : heuristicList.size());
-
-			try
-			{
-				os.packInt(hSize);
-			}
-			catch (IOException e)
-			{
-				res = false;
-			}
-
-			if (res && (hSize > 0))
-			{
-				first = heuristicList.getFront();
-				temp = first;
-
-				while (res && (temp != null))
-				{
-					heuristicList.putRear(temp);
-
-					if (temp.doSave())
-					{
-						res = true;
-
-						try
-						{
-							if (tsLogger.arjLoggerI18N.isDebugEnabled())
-							{
-								tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_17", new Object[]
-								{ Integer.toString(temp.typeIs()) });
-							}
-
-							os.packInt(temp.typeIs());
-							res = temp.save_state(os, ot);
-						}
-						catch (IOException e)
-						{
-							res = false;
-						}
-					}
-
-					temp = heuristicList.getFront();
-
-					if (temp == first)
-					{
-						heuristicList.putFront(temp);   
-						temp = null;
-					}
-				}
-
-				if (res && os.notempty())
-				{
-					try
-					{
-						if (tsLogger.arjLoggerI18N.isDebugEnabled())
-						{
-							tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_18");
-						}
-
-						os.packInt(RecordType.NONE_RECORD);
-					}
-					catch (IOException e)
-					{
-						res = false;
-					}
-				}
-			}
-		}
-
-		if (res && os.notempty())
-		{
-			try
-			{
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
-				{
-					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_19", new Object[]
-					{ ActionStatus.stringForm(actionStatus) });
-				}
-
-				os.packInt(actionStatus);
-				os.packInt(actionType); // why pack since only top-level?
-				os.packInt(heuristicDecision); // can we optimize?
-			}
-			catch (IOException e)
-			{
-				res = false;
-			}
-		}
-
-		return res;
 	}
 
 	/**
@@ -1865,6 +1865,8 @@ public class BasicAction extends StateManager
 					if (!reportHeuristics && TxControl.asyncCommit
 							&& (parentAction == null))
 					{
+					    System.err.println("**here");
+					    
 						AsyncCommit.create(this, true);
 					}
 					else
@@ -1874,9 +1876,17 @@ public class BasicAction extends StateManager
 		}
 		else
 		{
-			ActionManager.manager().remove(get_uid());
-		
-			actionStatus = ActionStatus.COMMITTED;
+		    ActionManager.manager().remove(get_uid());
+
+		    actionStatus = ActionStatus.COMMITTED;
+
+		    if (TxStats.enabled())
+		    {
+		        if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_ROLLBACK)
+		        {
+		            TxStats.getInstance().incrementCommittedTransactions();
+		        }
+		    }
 		}
 
 		boolean returnCurrentStatus = false;
@@ -3469,6 +3479,11 @@ public class BasicAction extends StateManager
 
 		if (p == TwoPhaseOutcome.FINISH_OK)
 		{
+		    // only count the first heuristic.
+		    
+	                if (TxStats.enabled())
+	                        TxStats.getInstance().incrementHeuristics();
+	                
 			if (commit)
 			{
 				if (heuristicDecision == TwoPhaseOutcome.PREPARE_OK)
@@ -3538,9 +3553,6 @@ public class BasicAction extends StateManager
 			heuristicDecision = p; // anything!
 			break;
 		}
-
-		if (TxStats.enabled())
-			TxStats.getInstance().incrementHeuristics();
 	}
 
 	protected void updateState ()

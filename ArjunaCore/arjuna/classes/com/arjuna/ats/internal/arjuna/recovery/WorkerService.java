@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
 import com.arjuna.ats.arjuna.recovery.Service;
 
 import java.io.*;
@@ -64,14 +65,14 @@ public class WorkerService implements Service
             out.println("PONG");
         }
         else
-	    if (request.equals("SCAN") || (request.equals("ASYNC_SCAN")))
+	    if (request.equals(RecoveryDriver.SCAN) || (request.equals(RecoveryDriver.ASYNC_SCAN)))
 	    {
             // hmm, we need to synchronize on the periodic recovery object in order to wake it up via notify.
             // but the periodic recovery object has to synchronize on this object and then call notify
             // in order to tell it that the last requested scan has completed. i.e. we have a two way
             // wakeup here. so we have to be careful to avoid a deadlock.
 
-            if (request.equals("SCAN")) {
+            if (request.equals(RecoveryDriver.SCAN)) {
                 // do this before kicking the periodic recovery thread
                 synchronized (this) {
                     doWait = true;
@@ -82,7 +83,7 @@ public class WorkerService implements Service
 
 		tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
 
-		if (request.equals("SCAN"))
+		if (request.equals(RecoveryDriver.SCAN))
 		{
             synchronized (this) {
                 if (doWait) {

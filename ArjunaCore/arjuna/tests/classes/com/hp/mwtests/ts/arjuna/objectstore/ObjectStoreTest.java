@@ -33,8 +33,10 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
@@ -404,6 +406,25 @@ public class ObjectStoreTest
         
         assertTrue(as.lock());
         assertTrue(as.unlock());
+    }
+    
+    @Test
+    public void testIterator () throws Exception
+    {
+        Uid u1 = new Uid();
+        Uid u2 = new Uid();
+        
+        TxControl.getStore().write_committed(u1, "foo", new OutputObjectState());
+        TxControl.getStore().write_committed(u2, "foo", new OutputObjectState());
+        
+        ObjectStoreIterator iter = new ObjectStoreIterator(TxControl.getStore(), "foo");
+        Uid x = iter.iterate();
+        
+        assertTrue(x.notEquals(Uid.nullUid()));
+        assertTrue(x.equals(u1));
+        
+        assertTrue(iter.iterate().notEquals(Uid.nullUid()));
+        assertTrue(iter.iterate().equals(Uid.nullUid()));
     }
 
     private static final boolean validate(ObjectStore objStore)

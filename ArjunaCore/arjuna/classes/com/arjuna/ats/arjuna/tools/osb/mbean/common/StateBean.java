@@ -96,7 +96,7 @@ public class StateBean extends UidBean implements StateBeanMBean
 
     public String getObjectType()
     {
-        return ObjectType.toString(info.ObjectType());
+        return ObjectType.toString(info.objectType());
     }
 
     class StateManagerInfo extends StateManager

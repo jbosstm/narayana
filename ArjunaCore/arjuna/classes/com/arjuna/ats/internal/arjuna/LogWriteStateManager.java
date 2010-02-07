@@ -99,12 +99,12 @@ public class LogWriteStateManager extends StateManager
 				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());
 	}
 
-	if ((super.ObjectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
+	if ((super.objectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
 	    return super.modified();
 	
 	BasicAction action = BasicAction.Current();
 	
-	if ((super.ObjectType() == ObjectType.NEITHER) || (super.status() == ObjectStatus.DESTROYED)) /*  NEITHER => no recovery info */
+	if ((super.objectType() == ObjectType.NEITHER) || (super.status() == ObjectStatus.DESTROYED)) /*  NEITHER => no recovery info */
 	{
 	    return true;
 	}

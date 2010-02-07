@@ -324,7 +324,11 @@ public class PeriodicRecovery extends Thread
         synchronized (_socketLock)
         {
             if (_socket == null)
+            {
                 _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost());
+                
+                recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryPort(_socket.getLocalPort());
+            }
 
             return _socket;
         }

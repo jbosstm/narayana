@@ -34,6 +34,8 @@ package com.arjuna.ats.arjuna.tools;
 import java.io.*;
 import java.net.*;
 
+import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
+
 public class RecoveryMonitor
 {
     
@@ -131,9 +133,9 @@ public class RecoveryMonitor
 	    PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream()));
 
 	    if (asyncScan)
-		toServer.println("ASYNC_SCAN");
+		toServer.println(RecoveryDriver.ASYNC_SCAN);
 	    else
-		toServer.println("SCAN");
+		toServer.println(RecoveryDriver.SCAN);
 
 	    toServer.flush() ;
 		  

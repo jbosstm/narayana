@@ -67,6 +67,16 @@ public class ExtendedObject extends StateManager
         
         getMutex().unlock();
     }
+    
+    public boolean lock ()
+    {
+        return super.tryLockMutex();
+    }
+    
+    public boolean unlock ()
+    {
+        return super.unlockMutex();
+    }
 
     public void incr(int value)
     {

@@ -18,76 +18,22 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 2001,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.  
- *
- * $Id: FdCache.java 2342 2006-03-30 13:06:17Z  $
- */
+package com.hp.mwtests.ts.arjuna.recovery;
 
-package com.arjuna.ats.internal.arjuna.objectstore;
+import org.junit.Test;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import java.io.*;
+import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 
-class CacheEntry
+import static org.junit.Assert.*;
+
+public class RecoveryModuleUnitTest
 {
-    
-public void CacheEntry (File f)
+    @Test
+    public void testAA () throws Exception
     {
-	_theFile = f;
+        AtomicActionRecoveryModule aarm = new AtomicActionRecoveryModule();
+        
+        aarm.periodicWorkFirstPass();
+        aarm.periodicWorkSecondPass();
     }
-    
-public File file ()
-    {
-	return _theFile;
-    }
-    
-CacheEntry _next;
-CacheEntry _prev;
-
-private File _theFile;
-    
-}
-
-class FdCache
-{
-
-public FdCache ()
-    {
-	this(FdCache.cacheSize);
-    }
-
-public FdCache (int size)
-    {
-	_head = _tail = null;
-    }
-
-/* XXX: Not yet finished
-public synchronized File scanCache (Uid u)
-    {
-    }
-    
-public synchronized File enterIntoCache (Uid u)
-    {
-    }
-    
-public void purgeFromCache (Uid u)
-    {
-    }
-    
-private boolean compactCache ()
-    {
-    }
-*/
-    
-private CacheEntry _head;
-private CacheEntry _tail;
-    
-private static final int cacheSize = 256;
-
 }

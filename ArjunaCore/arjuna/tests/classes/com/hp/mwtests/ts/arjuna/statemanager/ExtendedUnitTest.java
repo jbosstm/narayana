@@ -31,8 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.statemanager;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
@@ -64,6 +68,12 @@ public class ExtendedUnitTest
         assertEquals(bo.status(), ObjectStatus.PASSIVE);
         assertTrue(bo.getStore() != null);
         assertTrue(bo.getStoreRoot() != null);
+        
+        assertEquals(bo.objectType(), ObjectType.ANDPERSISTENT);
+        
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        bo.print(pw);
     }
 
     @Test
@@ -83,5 +93,14 @@ public class ExtendedUnitTest
         
         B.commit();
         A.commit();
+    }
+    
+    @Test
+    public void tryLock () throws Exception
+    {
+        ExtendedObject bo = new ExtendedObject();
+        
+        assertTrue(bo.lock());
+        assertTrue(bo.unlock());
     }
 }

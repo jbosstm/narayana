@@ -549,7 +549,7 @@ public class StateManager
      * @return the type of the object (persistent, recoverable, ...)
      */
 
-    public synchronized int ObjectType ()
+    public synchronized int objectType ()
     {
         return myType;
     }
