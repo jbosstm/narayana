@@ -692,6 +692,8 @@ public class Uid implements Cloneable, Serializable
     {
         try
         {
+            hostAddr = new long[2];
+            
             hostAddr[0] = in.readLong();
             hostAddr[1] = in.readLong();
             process = in.readInt();

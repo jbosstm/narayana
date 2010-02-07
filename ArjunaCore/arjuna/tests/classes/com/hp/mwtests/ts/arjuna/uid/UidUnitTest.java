@@ -20,45 +20,47 @@
  */
 package com.hp.mwtests.ts.arjuna.uid;
 
-/*
- * Copyright (C) 1998, 1999, 2000, 2001,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: UidUniqueness.java 2342 2006-03-30 13:06:17Z  $
- */
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 
 import com.arjuna.ats.arjuna.common.*;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class UidUniqueness
+public class UidUnitTest
 {
     @Test
-    public void test()
+    public void test () throws Exception
     {
-        for (int i = 0; i < 100; i++) {
-            Uid u = new Uid();
-            System.out.println(u + " " + u.hashCode());
-        }
+        long[] dummy = {0, 0};
         
-        assertTrue(Uid.maxUid().greaterThan(Uid.minUid()));
+        Uid u = new Uid(dummy, 0, 0, 0);
         
-        try
-        {
-            Uid a = new Uid();
-            Uid b = (Uid) a.clone();
-            
-            assertTrue(a.equals(b));
-        }
-        catch (final Exception ex)
-        {
-            fail();
-        }
+        assertTrue(u.lessThan(Uid.maxUid()));
+        assertTrue(u.getHexPid() != null);
+        
+        u.print(new PrintStream("foo"));
+    }
+    
+    @Test
+    public void testSerialization () throws Exception
+    {
+        Uid u1 = new Uid();
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(bs);
+        
+        os.writeObject(u1);
+        
+        ByteArrayInputStream bis = new ByteArrayInputStream(bs.toByteArray());
+        ObjectInputStream is = new ObjectInputStream(bis);
+        
+        Uid u2 = (Uid) is.readObject();
+        
+        assertTrue(u1.equals(u2));
     }
 
 }
