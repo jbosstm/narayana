@@ -141,8 +141,10 @@ public class ObjectStoreTest
     public void test() throws IOException
     {
         String localOSRoot = "foo";
-        String objectStoreDir = "/bar";
-
+        String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
+        String oldOSRoot = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
+        String oldStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
+        
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(localOSRoot);
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(objectStoreDir);
@@ -164,13 +166,16 @@ public class ObjectStoreTest
             objStore = null;
         }
         
+        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(oldOSRoot);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(oldStoreDir);
+        
         assertTrue(validate(objStore));
     }
 
     @Test
     public void testActionStore () throws Exception
     {
-        ActionStore as = new ActionStore("", StateType.OS_SHARED);
+        ActionStore as = new ActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
@@ -209,7 +214,7 @@ public class ObjectStoreTest
     @Test
     public void testShadowNoFileLockStore () throws Exception
     {
-        ShadowNoFileLockStore as = new ShadowNoFileLockStore("", StateType.OS_SHARED);
+        ShadowNoFileLockStore as = new ShadowNoFileLockStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
@@ -248,7 +253,7 @@ public class ObjectStoreTest
     @Test
     public void testHashedActionStore () throws Exception
     {
-        HashedActionStore as = new HashedActionStore("", StateType.OS_SHARED);
+        HashedActionStore as = new HashedActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
@@ -287,7 +292,7 @@ public class ObjectStoreTest
     @Test
     public void testNullActionStore () throws Exception
     {
-        NullActionStore as = new NullActionStore("", StateType.OS_SHARED);
+        NullActionStore as = new NullActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
@@ -454,7 +459,7 @@ public class ObjectStoreTest
 
     private static String imple = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
     private static String localOSRoot = "foo";
-    private static String objectStoreDir = "/bar";
+    private static String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
     private static String shareStatus = "OS_SHARED";
 
 }
