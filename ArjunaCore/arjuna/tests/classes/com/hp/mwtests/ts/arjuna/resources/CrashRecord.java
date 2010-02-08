@@ -32,15 +32,35 @@
 package com.hp.mwtests.ts.arjuna.resources;
 
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
+class DummyMap2 implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return CrashRecord.class;
+    }
+
+    public int getType ()
+    {
+        return RecordType.USER_DEF_FIRST0;
+    }    
+}
 
 public class CrashRecord extends AbstractRecord
 {
     public enum CrashLocation { NoCrash, CrashInPrepare, CrashInCommit, CrashInAbort };
     public enum CrashType { Normal, HeuristicHazard };
 
+    public CrashRecord ()
+    {
+        _cl = CrashLocation.NoCrash;
+        _ct = CrashType.Normal;
+    }
+    
     public CrashRecord (CrashLocation cl, CrashType ct)
     {
         super(new Uid());
@@ -154,6 +174,11 @@ public class CrashRecord extends AbstractRecord
 
     public void alter(AbstractRecord a)
     {
+    }   
+
+    public String toString ()
+    {
+        return "CrashRecord. No state. "+super.toString();
     }
 
     /**

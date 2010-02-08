@@ -2873,7 +2873,16 @@ public class BasicAction extends StateManager
 	protected final synchronized int getHeuristicDecision ()
 	{
 		return heuristicDecision;
-	}
+	}	
+
+        /**
+         * WARNING: use with extreme care!
+         */
+        
+        protected final synchronized void setHeuristicDecision (int p)
+        {
+            heuristicDecision = p;
+        }
 
 	/**
 	 * Add the specified abstract record to the transaction. Does not do any of
