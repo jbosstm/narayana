@@ -392,7 +392,7 @@ class LogConsole
         System.out.println("\nls <type> - list logs for specified type. If no type specified then must be already attached.");
         System.out.println("select [<type] - browse a specific type of transaction. Automatically detaches.");
         System.out.println("attach <log> - cannot be attached to another log.");
-        System.out.println("detach <log> - must be attached to log.");
+        System.out.println("detach - must be attached to log.");
         System.out.println("forget <pid> - must be attached to log.");
         System.out.println("delete <pid> - must be attached to log.");
         System.out.println("types - lists supported transaction types.");
