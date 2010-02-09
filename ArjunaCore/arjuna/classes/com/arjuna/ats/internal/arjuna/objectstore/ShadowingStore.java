@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;

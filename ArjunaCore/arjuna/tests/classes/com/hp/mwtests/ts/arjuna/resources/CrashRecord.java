@@ -135,12 +135,12 @@ public class CrashRecord extends AbstractRecord
 
     public boolean save_state(OutputObjectState os, int ot)
     {
-        return true;
+        return super.save_state(os, ot);
     }
 
     public boolean restore_state(InputObjectState os, int ot)
     {
-        return true;
+        return super.restore_state(os, ot);
     }
 
     public String type()

@@ -114,6 +114,9 @@
                     <include name="coverage.ec"/>
                     <include name="metadata.emma"/>
                 </fileset>
+            	   <sourcepath>
+            	     <dirset dir="${src.dir}"/>
+            	   </sourcepath>
                 <txt outfile="${basedir}/${build.dir}/emma/coverage.txt" />
                 <html outfile="${basedir}/${build.dir}/emma/coverage.html" />
             </report>

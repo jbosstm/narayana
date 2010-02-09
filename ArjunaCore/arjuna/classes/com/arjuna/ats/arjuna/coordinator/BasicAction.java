@@ -1865,8 +1865,6 @@ public class BasicAction extends StateManager
 					if (!reportHeuristics && TxControl.asyncCommit
 							&& (parentAction == null))
 					{
-					    System.err.println("**here");
-					    
 						AsyncCommit.create(this, true);
 					}
 					else
@@ -2639,7 +2637,7 @@ public class BasicAction extends StateManager
 			if (state.notempty())
 			{
 				try
-				{				
+				{
 					if (!currentStore.write_committed(u, tn, state))
 					{                                               
 						if (tsLogger.arjLoggerI18N.isWarnEnabled())

@@ -47,7 +47,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
     
     public void moveHeuristicToPrepared (int index) throws IndexOutOfBoundsException
     {
-        if ((index < 0) || (super.heuristicList.size() < index))
+        if ((index < 0) || (index > super.heuristicList.size()))
             throw new IndexOutOfBoundsException();
         else
         {
@@ -101,7 +101,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
     
     public void deleteHeuristicParticipant (int index) throws IndexOutOfBoundsException
     {
-        if ((index < 0) || (super.heuristicList.size() < index))
+        if ((index < 0) || (index > super.heuristicList.size()))
             throw new IndexOutOfBoundsException();
         else
         {

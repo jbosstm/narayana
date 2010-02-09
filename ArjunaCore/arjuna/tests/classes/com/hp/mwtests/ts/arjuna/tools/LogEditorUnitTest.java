@@ -22,18 +22,44 @@
 package com.hp.mwtests.ts.arjuna.tools;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+class DummyMap2 implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return CrashRecord.class;
+    }
+
+    public int getType ()
+    {
+        return RecordType.USER_DEF_FIRST0;
+    }    
+}
+
 public class LogEditorUnitTest
 {
     @Test
     public void test () throws Exception
     {
+        String localOSRoot = "foobar";
+        String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
+
+        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(localOSRoot);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(objectStoreDir);
+        
         // dummy to set up ObjectStore
 
         AtomicAction A = new AtomicAction();
@@ -71,5 +97,35 @@ public class LogEditorUnitTest
 
         System.out.println("Transaction " + B + " committed with "
                 + ActionStatus.stringForm(outcome));
+        
+        RecordTypeManager.manager().add(new DummyMap2());
+        
+        EditableAtomicAction eaa = new EditableAtomicAction(B.get_uid());
+        
+        assertTrue(eaa.toString() != null);
+        
+        eaa.moveHeuristicToPrepared(0);
+        
+        try
+        {
+            eaa.moveHeuristicToPrepared(-1);
+            fail();
+        }
+        catch (final Exception ex)
+        {
+        }
+        
+        eaa = new EditableAtomicAction(A.get_uid());
+        
+        eaa.deleteHeuristicParticipant(0);
+        
+        try
+        {
+            eaa.deleteHeuristicParticipant(-1);
+            fail();
+        }
+        catch (final Exception ex)
+        {
+        }
     }
 }
