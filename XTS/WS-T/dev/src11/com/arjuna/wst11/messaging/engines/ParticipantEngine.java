@@ -407,11 +407,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
         synchronized(this)
         {
             current = state ;
-
-            if (current == State.STATE_PREPARING)
-            {
-                state = State.STATE_PREPARED_SUCCESS ;
-            }
         }
 
         if (current == State.STATE_PREPARING)
@@ -437,13 +432,14 @@ public class ParticipantEngine implements ParticipantInboundEvents
             synchronized (this) {
                 current = state;
 
-                if (current == State.STATE_PREPARED_SUCCESS) {
+                if (current == State.STATE_PREPARING) {
                     if (rollbackRequired) {
                         // if we change state to aborting then we are responsible for
                         // calling rollback and sending aborted but we have no log record
                         // to delete
                         state = State.STATE_ABORTING;
                     } else {
+                        state = State.STATE_PREPARED_SUCCESS;
                         // this ensures any subsequent commit or rollback deletes the log record
                         // so we still have no log record to delete here
                         persisted = true;
