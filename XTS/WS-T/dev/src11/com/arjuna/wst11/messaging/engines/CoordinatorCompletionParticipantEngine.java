@@ -433,7 +433,6 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                 (current == State.STATE_FAILING_COMPLETING) || (current == State.STATE_FAILING_COMPENSATING))
             {
                 deleteRequired = persisted;
-                ended() ;
             }
         }
         // if we just ended the participant ensure any log record gets deleted
@@ -446,6 +445,12 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                     WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.failed_1", new Object[] {id}) ;
                 }
             }
+        }
+        // now we have removed the log record we can safely get rid of the participant
+        if ((current == State.STATE_FAILING_ACTIVE) || (current == State.STATE_FAILING_CANCELING) ||
+            (current == State.STATE_FAILING_COMPLETING) || (current == State.STATE_FAILING_COMPENSATING))
+        {
+            ended();
         }
     }
 
@@ -618,16 +623,13 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      */
     public State completed()
     {
+        // TODO -- check. not sure this can or should ever be called for a coordinator completion participant
         State current ;
         boolean failRequired  = false;
         boolean deleteRequired  = false;
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_COMPLETING)
-            {
-                changeState(State.STATE_COMPLETED) ;
-            }
         }
 
         if (current == State.STATE_COMPLETING) {
@@ -650,8 +652,9 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_COMPLETED) {
+            if (current == State.STATE_COMPLETING) {
                 if (!failRequired) {
+                    changeState(State.STATE_COMPLETED);
                     // record the fact that we have persisted this object so later operations will delete
                     // the log record
                     persisted = true;
@@ -1361,11 +1364,8 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         synchronized (this)
         {
             current = state ;
-            if (current == State.STATE_COMPLETING)
-            {
-                changeState(State.STATE_COMPLETED) ;
-            }
         }
+
         if (current == State.STATE_COMPLETING)
         {
             // ok we need to write the participant details to disk because it has just completed
@@ -1388,8 +1388,9 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_COMPLETED) {
+            if (current == State.STATE_COMPLETING) {
                 if (!failRequired) {
+                    changeState(State.STATE_COMPLETED) ;
                     // record the fact that we have persisted this object so later operations will delete
                     // the log record
                     persisted = true;
@@ -1417,7 +1418,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                     WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_2", new Object[] {id}) ;
                 }
             }
-        } else if ((current == State.STATE_COMPLETING) || (current == State.STATE_COMPLETED)) {
+        } else if (current == State.STATE_COMPLETING) {
             sendCompleted() ;
         }
     }
@@ -1427,7 +1428,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      */
     private void ended()
     {
-	changeState(State.STATE_ENDED) ;
+        changeState(State.STATE_ENDED) ;
         CoordinatorCompletionParticipantProcessor.getProcessor().deactivateParticipant(this) ;
     }
     

@@ -363,7 +363,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 (current == State.STATE_FAILING_COMPENSATING))
             {
                 deleteRequired = persisted;
-                ended() ;
             }
         }
         // if we just ended the participant ensure any log record gets deleted
@@ -376,6 +375,12 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                     WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.failed_1", new Object[] {id}) ;
                 }
             } 
+        }
+        // now the log record has been deleted we can safely end this participant
+        if ((current == State.STATE_FAILING_ACTIVE) || (current == State.STATE_FAILING_CANCELING) ||
+            (current == State.STATE_FAILING_COMPENSATING))
+        {
+            ended();
         }
     }
 
@@ -550,46 +555,24 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_ACTIVE)
-            {
-                changeState(State.STATE_COMPLETED) ;
-            }
-        }
 
-        if (current == State.STATE_ACTIVE) {
-            // ok we need to write the participant details to disk because it has just completed
-            BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, true, coordinator);
+            // we have to do this synchronized so that we don't try writing the participant details twice
 
-            if (!XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
-                // hmm, could not write entry log warning
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_1", new Object[] {id}) ;
-                }
-                // we need to fail this transaction
-                failRequired = true;
-            }
-        }
-        // recheck state before we decide whether we need to fail -- we might have been sent a cancel while
-        // writing the log
+            if (current == State.STATE_ACTIVE) {
+                // ok we need to write the participant details to disk because it has just completed
+                BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, true, coordinator);
 
-        synchronized(this)
-        {
-            current = state ;
-            if (current == State.STATE_COMPLETED) {
-                if (!failRequired) {
-                    // record the fact that we have persisted this object so later operations will delete
-                    // the log record
-                    persisted = true;
+                if (XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
+                    changeState(State.STATE_COMPLETED);
                 } else {
-                    // we must force a fail but we don't have a log record to delete
-                    changeState(State.STATE_FAILING_ACTIVE);
+                    // hmm, could not write entry log warning
+                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_1", new Object[] {id}) ;
+                    }
+                    // we need to fail this transaction
+                    failRequired = true;
                 }
-            } else {
-                // we cannot force a fail now so just delete
-                failRequired = false;
-                // we need to delete the log record here as the cancel would not have known it was persisted
-                deleteRequired = true;
             }
         }
 
@@ -597,14 +580,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
 
         if (failRequired) {
             current = fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
-        } else if (deleteRequired) {
-            if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
-                // hmm, could not delete entry log warning
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_2", new Object[] {id}) ;
-                }
-            }
         } else if ((current == State.STATE_ACTIVE) || (current == State.STATE_COMPLETED)) {
             sendCompleted() ;
         }
