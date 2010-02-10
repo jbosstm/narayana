@@ -296,7 +296,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 
     protected static synchronized void removeRecoveredCoordinator(SubordinateATCoordinator coordinator)
     {
-        recoveredCoordinators.put(coordinator.get_uid().stringForm(), null);
+        recoveredCoordinators.remove(coordinator.get_uid().stringForm());
     }
 
     public static synchronized void addActiveProxy(String id)
