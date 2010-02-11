@@ -146,7 +146,7 @@ public class Mutex
 		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_2");
 		}
 		
-		return Mutex.LOCKED;
+		return Mutex.ERROR;
 	    }
 	    else
 	    {

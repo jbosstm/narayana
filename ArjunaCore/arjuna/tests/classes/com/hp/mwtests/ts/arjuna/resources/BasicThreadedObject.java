@@ -57,9 +57,10 @@ public class BasicThreadedObject extends Thread
 
             Thread.yield();
         } else {
-            System.out.println("BasicThreadedObject " + uid + " adding to action " + BasicThreadedObject.A.get_uid());
+            System.out.println("BasicThreadedObject " + uid + " adding to existing action");
 
-            BasicThreadedObject.A.addThread();
+            if (A != null)
+                BasicThreadedObject.A.addThread();
 
             Thread.yield();
         }

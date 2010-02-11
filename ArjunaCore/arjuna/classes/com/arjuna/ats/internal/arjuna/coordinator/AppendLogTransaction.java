@@ -31,12 +31,7 @@
 
 package com.arjuna.ats.internal.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.arjuna.common.util.logging.*;
+import com.arjuna.ats.arjuna.TopLevelAction;
 
 /**
  * @author Mark Little (mark@arjuna.com)
@@ -44,7 +39,13 @@ import com.arjuna.common.util.logging.*;
  * @since JTS 4.1.
  */
 
-public class AppendLogTransaction extends AtomicAction
+/**
+ * Needs further consideration and then completion.
+ */
+
+// may no longer be needed due to TxLog work.
+
+public class AppendLogTransaction extends TopLevelAction
 {
 
     public final boolean setLoggedTransaction (AppendLogTransaction previous)

@@ -148,6 +148,9 @@ public class Uid implements Cloneable, Serializable
 
     public Uid (byte[] byteForm)
     {
+        if (byteForm == null)
+            throw new IllegalArgumentException();
+        
         hostAddr = new long[2];
         _hashValue = -1;
         _stringForm = null;
@@ -195,6 +198,9 @@ public class Uid implements Cloneable, Serializable
 
     public Uid(String uidString, boolean errsOk)
     {
+        if (uidString == null)
+            throw new IllegalArgumentException();
+        
         char theBreakChar = Uid.getBreakChar(uidString);
 
         hostAddr = new long[2];
@@ -305,7 +311,14 @@ public class Uid implements Cloneable, Serializable
             {
                 try
                 {
+                    /*
+                     * We do this so the instance is printable, but
+                     * it shouldn't be usable from here on in!
+                     */
+                    
                     this.copy(Uid.nullUid());
+                    
+                    _valid = false;
                 }
                 catch (Exception e)
                 {

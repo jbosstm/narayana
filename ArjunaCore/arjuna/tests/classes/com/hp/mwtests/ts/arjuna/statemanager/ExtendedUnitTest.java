@@ -38,6 +38,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
@@ -96,11 +97,49 @@ public class ExtendedUnitTest
     }
     
     @Test
-    public void tryLock () throws Exception
+    public void testTryLock () throws Exception
     {
         ExtendedObject bo = new ExtendedObject();
         
         assertTrue(bo.lock());
         assertTrue(bo.unlock());
+    }
+    
+    @Test
+    public void testFail () throws Exception
+    {
+        ExtendedObject bo = new ExtendedObject();
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        A.commit();
+        
+        ThreadActionData.pushAction(A);  // put it back on this thread.
+        
+        bo.deactivate();
+        bo.set_status();
+        
+        assertEquals(bo.activate(), false);
+        assertEquals(bo.destroy(), false);
+    }
+ 
+    @Test
+    public void testRememberAction () throws Exception
+    {
+        ExtendedObject bo = new ExtendedObject();
+        final Uid u = bo.get_uid();
+        
+        bo.activate();
+        bo.deactivate();
+        
+        bo = new ExtendedObject(u);
+        
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        
+        assertTrue(bo.remember(A));
+        
+        A.commit();
     }
 }

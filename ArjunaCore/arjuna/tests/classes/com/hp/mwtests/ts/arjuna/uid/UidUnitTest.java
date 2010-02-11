@@ -27,6 +27,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -44,6 +46,71 @@ public class UidUnitTest
         assertTrue(u.getHexPid() != null);
         
         u.print(new PrintStream("foo"));
+    }
+    
+    @Test
+    public void testInvalid () throws Exception
+    {
+        Uid u = null;
+        
+        try
+        {
+            u = new Uid(null, 0, 0, 0);
+            
+            fail();
+        }
+        catch (final FatalError ex)
+        {
+        }   
+
+        try
+        {
+            u = new Uid("hello world", false);
+            
+            fail();
+        }
+        catch (final FatalError ex)
+        {
+        }
+
+        try
+        {
+            u = new Uid((String) null);
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
+        
+        try
+        {
+            u = new Uid((byte[]) null);
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
+        
+        byte[] b = {0, 0};
+        u = new Uid(b);
+        
+        assertEquals(u.valid(), false);
+    }
+    
+    @Test
+    public void testComparisons () throws Exception
+    {
+        Uid u = new Uid();
+
+        assertEquals(u.equals(new Object()), false);
+        assertTrue(u.notEquals(null));
+        assertEquals(u.notEquals(u), false);
+        
+        assertEquals(u.lessThan(null), false);
+        assertEquals(u.greaterThan(null), false);
+        assertEquals(u.greaterThan(u), false);
     }
     
     @Test

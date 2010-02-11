@@ -89,7 +89,7 @@ public class LogEditorUnitTest
         B.add(new CrashRecord(CrashRecord.CrashLocation.CrashInCommit,
                 CrashRecord.CrashType.HeuristicHazard));
         B.add(new CrashRecord(CrashRecord.CrashLocation.CrashInCommit,
-                CrashRecord.CrashType.HeuristicHazard));
+                CrashRecord.CrashType.Normal));
         B.add(new CrashRecord(CrashRecord.CrashLocation.CrashInCommit,
                 CrashRecord.CrashType.HeuristicHazard));
 
@@ -104,7 +104,7 @@ public class LogEditorUnitTest
         
         assertTrue(eaa.toString() != null);
         
-        eaa.moveHeuristicToPrepared(0);
+        eaa.moveHeuristicToPrepared(1);
         
         try
         {

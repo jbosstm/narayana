@@ -27,6 +27,12 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+
+/**
+ * @message com.arjuna.ats.internal.arjuna.tools.log.eaa1 [com.arjuna.ats.internal.arjuna.tools.log.eaa1] Transaction {0} and {1} not activate.
+ * @message com.arjuna.ats.internal.arjuna.tools.log.eaa2 [com.arjuna.ats.internal.arjuna.tools.log.eaa2] Error - could not get resource to forget heuristic. Left on Heuristic List.
+ */
 
 public class EditableAtomicAction extends AtomicAction implements EditableTransaction  // going to have to be one per action type because of state differences
 {
@@ -37,7 +43,13 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
         _activated = activate();
         
         if (!_activated)
-            System.err.println("Transaction "+u+" and "+type()+" not activated.");
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa1", new Object[]
+                    { u, type() });
+            }
+        }
     }
     
     /**
@@ -47,7 +59,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
     
     public void moveHeuristicToPrepared (int index) throws IndexOutOfBoundsException
     {
-        if ((index < 0) || (index > super.heuristicList.size()))
+        if ((index < 0) || (index >= super.heuristicList.size()))
             throw new IndexOutOfBoundsException();
         else
         {
@@ -56,7 +68,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
             
             RecordListIterator iter = new RecordListIterator(super.heuristicList);
             AbstractRecord rec = iter.iterate();
-            
+
             for (int i = 0; i < index; i++)
                 rec = iter.iterate();
 
@@ -91,7 +103,12 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
                 super.updateState();
             }
             else
-                System.err.println("Error - could not get resource to forget heuristic. Left on Heuristic List.");
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa2");
+                }
+            }
         }
     }
     
@@ -101,7 +118,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
     
     public void deleteHeuristicParticipant (int index) throws IndexOutOfBoundsException
     {
-        if ((index < 0) || (index > super.heuristicList.size()))
+        if ((index < 0) || (index >= super.heuristicList.size()))
             throw new IndexOutOfBoundsException();
         else
         {

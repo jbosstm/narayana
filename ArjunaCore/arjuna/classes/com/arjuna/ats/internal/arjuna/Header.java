@@ -26,7 +26,7 @@
  * Tyne and Wear,
  * UK.  	    
  *
- * $Id: LogWriteStateManager.java 2342 2006-03-30 13:06:17Z  $
+ * $Id$
  */
 
 package com.arjuna.ats.internal.arjuna;

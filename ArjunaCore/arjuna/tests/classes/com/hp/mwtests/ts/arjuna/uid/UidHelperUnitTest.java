@@ -18,48 +18,53 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 1998, 1999, 2000,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.  
- *
- * $Id$
- */
-
-package com.arjuna.ats.internal.arjuna.common;
-
-import java.io.IOException;
+package com.hp.mwtests.ts.arjuna.uid;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.InputBuffer;
-import com.arjuna.ats.arjuna.state.OutputBuffer;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
-public class UidHelper
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class UidHelperUnitTest
 {
-    public static final Uid unpackFrom (InputBuffer buff) throws IOException
+    @Test
+    public void test () throws Exception
     {
-        if (buff == null)
-            throw new IllegalArgumentException();
+        Uid u = new Uid("hello", true);  // should be invalid!
         
-        return new Uid(buff.unpackBytes());
-    }
-
-    public static final void packInto (Uid u, OutputBuffer buff)
-            throws IOException
-    {
-        if ((u == null) || (buff == null))
-            throw new IllegalArgumentException();
+        assertEquals(u.valid(), false);
         
-        if (u.valid())
-            buff.packBytes(u.getBytes());
-        else
-            throw new IllegalArgumentException();
-    }
-
-    private UidHelper()
-    {
+        try
+        {
+            u = UidHelper.unpackFrom(null);
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
+        
+        try
+        {
+            UidHelper.packInto(null, new OutputObjectState());
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
+        
+        try
+        {
+            UidHelper.packInto(u, new OutputObjectState());
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
     }
 }

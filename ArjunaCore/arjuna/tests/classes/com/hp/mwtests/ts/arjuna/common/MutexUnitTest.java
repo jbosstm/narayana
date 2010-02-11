@@ -26,6 +26,39 @@ import com.arjuna.ats.arjuna.common.Mutex;
 
 import static org.junit.Assert.*;
 
+class MutexThread extends Thread
+{
+    public MutexThread (Mutex share)
+    {
+        _mutex = share;
+    }
+    
+    public void run ()
+    {
+        if (_mutex.lock() == Mutex.LOCKED)
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                // do some work
+                
+                System.currentTimeMillis();
+            }
+            
+            _mutex.unlock();
+        }
+
+        _done = true;
+    }
+    
+    public boolean valid ()
+    {
+        return _done;
+    }
+    
+    private Mutex _mutex;
+    private boolean _done = false;
+}
+
 public class MutexUnitTest
 {
     @Test
@@ -36,6 +69,38 @@ public class MutexUnitTest
         mx.lock();
         
         mx.unlock();
+    }
+    
+    @Test
+    public void testThreaded () throws Exception
+    {
+        Mutex mx = new Mutex();
+        MutexThread mt1 = new MutexThread(mx);
+        MutexThread mt2 = new MutexThread(mx);
+        
+        mt1.run();
+        mt2.run();
+        
+        try
+        {
+            mt1.join();
+            mt2.join();
+        }
+        catch (final Throwable ex)
+        {
+            fail();
+        }
+        
+        assertTrue(mt1.valid());
+        assertTrue(mt2.valid());
+    }
+    
+    @Test
+    public void testInvalid () throws Exception
+    {
+        Mutex mx = new Mutex();
+
+        assertEquals(mx.unlock(), Mutex.ERROR);
     }
     
     @Test

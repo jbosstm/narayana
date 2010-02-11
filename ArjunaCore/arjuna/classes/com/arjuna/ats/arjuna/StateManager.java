@@ -423,7 +423,7 @@ public class StateManager
                 }
             }
         }
-
+        
         return result;
     }
 
@@ -1472,9 +1472,9 @@ public class StateManager
                         usingActions.put(action.get_uid(), action);
                 }
             }
+            
+            result = true;
         }
-
-        result = true;
 
         return result;
     }

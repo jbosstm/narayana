@@ -133,7 +133,7 @@ public OutputObjectState (Uid newUid, String tName)
 	bufferUid = new Uid(newUid);
 	super._valid = bufferUid.valid();
 	
-	imageType = new String(tName);
+	imageType = (tName == null ? null : new String(tName));
     }
 
 public OutputObjectState (Uid newUid, String tName, byte[] buffer)
@@ -150,7 +150,7 @@ public OutputObjectState (Uid newUid, String tName, byte[] buffer)
 	bufferUid = new Uid(newUid);
 	super._valid = bufferUid.valid();
 	
-	imageType = new String(tName);
+	imageType = (tName == null ? null : new String(tName));
     }
 
 public final boolean notempty ()

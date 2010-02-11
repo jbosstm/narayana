@@ -33,6 +33,8 @@ package com.hp.mwtests.ts.arjuna.resources;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.state.*;
 
 public class ExtendedObject extends StateManager
@@ -68,6 +70,11 @@ public class ExtendedObject extends StateManager
         getMutex().unlock();
     }
     
+    public void set_status ()
+    {
+        super.setStatus(ObjectStatus.PASSIVE);
+    }
+    
     public boolean lock ()
     {
         return super.tryLockMutex();
@@ -78,6 +85,11 @@ public class ExtendedObject extends StateManager
         return super.unlockMutex();
     }
 
+    public boolean remember (BasicAction act)
+    {
+        return super.rememberAction(act, RecordType.ACTIVATION);
+    }
+    
     public void incr(int value)
     {
         modified();

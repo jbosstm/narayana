@@ -63,6 +63,10 @@ public class TypesUnitTest
         ObjectStatus.print(pw, ObjectStatus.ACTIVE);
         
         assertEquals(ObjectStatus.toString(ObjectStatus.ACTIVE_NEW), "ACTIVE_NEW");
+        assertEquals(ObjectStatus.toString(ObjectStatus.PASSIVE), "PASSIVE");
+        assertEquals(ObjectStatus.toString(ObjectStatus.PASSIVE_NEW), "PASSIVE_NEW");
+        assertEquals(ObjectStatus.toString(ObjectStatus.DESTROYED), "DESTROYED");
+        assertEquals(ObjectStatus.toString(ObjectStatus.UNKNOWN_STATUS), "UNKNOWN_STATUS");
     }
     
     @Test
@@ -75,6 +79,8 @@ public class TypesUnitTest
         ObjectType.print(pw, ObjectType.ANDPERSISTENT);
         
         assertEquals(ObjectType.toString(ObjectType.NEITHER), "NEITHER");
+        assertEquals(ObjectType.toString(ObjectType.RECOVERABLE), "RECOVERABLE");
+        assertEquals(ObjectType.toString(ObjectType.UNKNOWN_TYPE), "UNKNOWN_TYPE");
     }
     
     @Test

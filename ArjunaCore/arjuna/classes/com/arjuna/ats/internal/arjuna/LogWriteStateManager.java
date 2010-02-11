@@ -51,6 +51,10 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
  * @since JTS 4.1.
  */
 
+/**
+ * Needs further consideration and then completion.
+ */
+
 public class LogWriteStateManager extends StateManager
 {
 

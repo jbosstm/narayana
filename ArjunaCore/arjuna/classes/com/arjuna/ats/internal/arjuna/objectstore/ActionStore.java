@@ -266,23 +266,8 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public ActionStore(int shareStatus)
     {
-        super(shareStatus);
-
-        try
-        {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .getLocalOSRoot());
-        }
-        catch (ObjectStoreException e)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLogger.warn(e);
-
-            super.makeInvalid();
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
-                    e);
-        }
+        this(arjPropertyManager.getObjectStoreEnvironmentBean()
+                    .getLocalOSRoot(), shareStatus);
     }
 
     protected synchronized boolean setupStore (String location)

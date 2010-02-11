@@ -32,7 +32,10 @@ package com.hp.mwtests.ts.arjuna.threadaction;
  */
 
 import com.hp.mwtests.ts.arjuna.resources.BasicThreadedObject;
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import com.arjuna.ats.internal.arjuna.thread.ThreadSetup;
 
 import java.lang.Thread;
 
@@ -40,6 +43,21 @@ import java.lang.InterruptedException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+class DummySetup implements ThreadSetup
+{
+    public void setup ()
+    {
+        _called = true;
+    }
+    
+    public boolean called ()
+    {
+        return _called;
+    }
+    
+    private boolean _called = false;
+}
 
 public class ThreadActionTest
 {
@@ -66,4 +84,31 @@ public class ThreadActionTest
         System.out.println("Main thread has action " + BasicAction.Current());
     }
 
+    @Test
+    public void testOthers ()
+    {
+        DummySetup ds = new DummySetup();
+        
+        ThreadActionData.addSetup(ds);
+
+        AtomicAction A = new AtomicAction();
+        AtomicAction B = new AtomicAction();
+        
+        A.begin();
+        B.begin();      
+        
+        assertTrue(ThreadActionData.currentAction() != null);
+        
+        ThreadActionData.restoreActions(B);
+        
+        assertEquals(ThreadActionData.popAction(), B);
+        
+        ThreadActionData.purgeActions(Thread.currentThread());
+        
+        assertTrue(ds.called());
+        
+        ThreadActionData.removeSetup(ds);
+        
+        ThreadActionData.popAction(Thread.currentThread().getName());
+    }
 }
