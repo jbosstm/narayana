@@ -35,6 +35,8 @@ public class RecoveryManagerUnitTest
     {
         RecoveryManager rm = RecoveryManager.manager();       
         
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(2);
+        
         rm.scan(null);
         
         rm.suspend(false);
