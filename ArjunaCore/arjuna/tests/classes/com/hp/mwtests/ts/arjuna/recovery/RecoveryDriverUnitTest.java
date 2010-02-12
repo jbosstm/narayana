@@ -61,6 +61,8 @@ public class RecoveryDriverUnitTest
     {
         RecoveryManager rm = RecoveryManager.manager();       
         
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
+        
         rm.scan(null);
         
         RecoveryDriver rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(), recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress(), 100000);
