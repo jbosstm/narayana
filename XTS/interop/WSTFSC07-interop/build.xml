@@ -164,9 +164,8 @@
     			<classes dir="${build.classes.dir}"/>
     			<classes dir="${src.dir}" excludes="**/*.java"/>
                 <lib dir="${lib.dir}" includes="${xts.ext.libs}"/>
-                <!--
-		    <lib dir="${xts.lib.dir}" includes="${dist.xts.libs}"/>
-		-->
+                <!-- need to stop using this at some point soon -->
+                <lib dir="${xts.ext.dir}" includes = "${xts.ext.libs}"/>
                 <webinf dir="${dd.dir}/sc007" includes="wsdl/sc007.wsdl"/>
 		<fileset dir="${web.dir}"/>
     		</war>

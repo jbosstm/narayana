@@ -175,6 +175,8 @@
     			<classes dir="${src.dir}" excludes="**/*.java"/>
                 <webinf dir="${dd.dir}/interop11" includes="wsdl/*.wsdl"/>
                 <fileset dir="${web.dir}"/>
+                <!-- need to stop using this at some point soon -->
+                <lib dir="${xts.ext.dir}" includes = "${xts.ext.libs}"/>
     		</war>
     </target>
 	
