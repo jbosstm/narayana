@@ -85,7 +85,7 @@ class FileContender extends Thread
 
 }
 
-public class FileLocking
+public class FileLockingUnitTest
 {
     @Test
     public void test() throws IOException
@@ -122,5 +122,20 @@ public class FileLocking
         }
     }
 
-
+    @Test
+    public void testMultipleLock () throws Exception
+    {
+        FileLock fl = new FileLock(System.getProperty("java.io.tmpdir")+"/barfoo");
+        
+        assertTrue(fl.lock(FileLock.F_RDLCK, true));
+        assertTrue(fl.lock(FileLock.F_RDLCK));
+        
+        assertTrue(fl.unlock());
+        assertTrue(fl.unlock());
+        
+        assertEquals(FileLock.modeString(FileLock.F_RDLCK), "FileLock.F_RDLCK");
+        assertEquals(FileLock.modeString(FileLock.F_WRLCK), "FileLock.F_WRLCK");
+        assertEquals(FileLock.modeString(-1), "Unknown");
+    }
+    
 }

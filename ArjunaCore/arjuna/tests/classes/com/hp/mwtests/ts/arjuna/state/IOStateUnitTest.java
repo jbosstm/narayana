@@ -20,6 +20,9 @@
  */
 package com.hp.mwtests.ts.arjuna.state;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -34,7 +37,30 @@ import static org.junit.Assert.*;
 public class IOStateUnitTest
 {
     @Test
-    public void test() throws Exception
+    public void testIOObjectBuffer() throws Exception
+    {
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        OutputBuffer obuff = new OutputBuffer(1024);
+        
+        obuff.print(pw);
+        
+        assertTrue(obuff.toString() != null);
+        
+        OutputBuffer tobuff = new OutputBuffer(obuff);
+        
+        assertTrue(tobuff.valid());
+        
+        InputBuffer ibuff = new InputBuffer();
+        
+        ibuff.print(pw);
+        
+        InputBuffer tibuff = new InputBuffer(ibuff);
+        
+        assertEquals(tibuff.valid(), false);
+    }
+    
+    @Test
+    public void testIOObjectState() throws Exception
     {
         OutputObjectState oos = new OutputObjectState(new Uid(), "");
         
@@ -48,12 +74,22 @@ public class IOStateUnitTest
         oos.packShort((short) 10);
         oos.packString("test");
         
+        assertTrue(oos.valid());
+        
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        
+        oos.print(pw);
+        
         assertTrue(oos.length() != 0);
         assertTrue(oos.notempty());
         assertTrue(oos.stateUid() != Uid.nullUid());
         assertTrue(oos.buffer() != null);
         assertTrue(oos.size() > 0);
         assertTrue(oos.type() != null);
+        
+        OutputObjectState temp = new OutputObjectState(oos);
+
+        assertTrue(temp.toString() != null);
         
         InputObjectState ios = new InputObjectState(oos);
 
@@ -62,6 +98,14 @@ public class IOStateUnitTest
         assertTrue(ios.notempty());
         assertTrue(ios.size() > 0);
         assertTrue(ios.stateUid() != Uid.nullUid());
+        
+        assertTrue(ios.valid());
+        
+        ios.print(pw);
+        
+        InputObjectState is = new InputObjectState(ios);
+
+        assertTrue(is.toString() != null);
         
         assertTrue(ios.unpackBoolean());
         assertEquals(ios.unpackByte(), (byte) 0);

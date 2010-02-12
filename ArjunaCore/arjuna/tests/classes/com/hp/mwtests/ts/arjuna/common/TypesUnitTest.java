@@ -156,5 +156,10 @@ public class TypesUnitTest
         
         assertEquals(RecordType.classToType(PersistenceRecord.class), RecordType.PERSISTENCE);
         assertEquals(RecordType.typeToClass(RecordType.ACTIVATION), ActivationRecord.class);
+        
+        assertEquals(RecordType.classToType(RecordType.class), RecordType.UNTYPED);
+        
+        for (int i = 0; i < 500; i++)
+            RecordType.typeToClass(i);  // will return null for some values
     }
 }
