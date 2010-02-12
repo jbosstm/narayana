@@ -332,6 +332,7 @@ public class AddressingHelper
     public static void configureRequestContext(Map<String, Object> requestContext, MAP map, String to, String action)
     {
         configureRequestContext(requestContext, map);
+        map.setAction(action);
         configureRequestContext(requestContext, to, action);
     }
 

@@ -7,6 +7,7 @@ import org.jboss.wsf.common.addressing.MAP;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Action;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
@@ -41,6 +42,7 @@ public class RegistrationPortTypeImpl implements RegistrationPortType
 
     @WebResult(targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", partName = "parameters", name = "RegisterResponse")
     @WebMethod(operationName = "RegisterOperation", action = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register")
+    @Action(input="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register", output="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/RegisterResponse")
     public org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType registerOperation(
         @WebParam(targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", partName = "parameters", name = "Register")
         org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType parameters

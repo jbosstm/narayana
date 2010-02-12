@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.Action;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ public class ActivationPortTypeImpl implements ActivationPortType
 
     @WebMethod(operationName = "CreateCoordinationContextOperation", action = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContext")
     @WebResult(name = "CreateCoordinationContextResponse", targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", partName = "parameters")
+    @Action(input="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContext", output="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContextResponse")
     public CreateCoordinationContextResponseType createCoordinationContextOperation(
         @WebParam(name = "CreateCoordinationContext", targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", partName = "parameters")
         CreateCoordinationContextType parameters)
