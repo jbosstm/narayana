@@ -73,8 +73,6 @@ public class RecoveryDriver
 	if (_hostName == null)
 	    _hostName = InetAddress.getLocalHost().getHostName();
 
-	System.err.println("**binding "+_hostName+" "+_port);
-	
 	Socket connectorSocket = new Socket(_hostName, _port);
 
 	connectorSocket.setSoTimeout(_timeout);
