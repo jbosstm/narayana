@@ -34,6 +34,8 @@ package com.arjuna.ats.arjuna.recovery;
 import java.io.*;
 import java.net.*;
 
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+
 public class RecoveryDriver
 {
     public static final String SCAN = "SCAN";
@@ -41,14 +43,19 @@ public class RecoveryDriver
     public static final String PING = "PING";
     public static final String PONG = "PONG";
     
+    public static final int DEFAULT_SYNC_TIMEOUT = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod() * 1000; // in milliseconds
+    public static final int DEFAULT_SYNC_RETRY = 5;
+    
+    public static final int DEFAULT_SO_TIMEOUT = 20000;
+    
     public RecoveryDriver (int port)
     {
-	this(port, null, 20000);
+	this(port, null, DEFAULT_SO_TIMEOUT);
     }
     
     public RecoveryDriver (int port, String hostName)
     {
-	this(port, hostName, 20000);
+	this(port, hostName, DEFAULT_SO_TIMEOUT);
     }
     
     public RecoveryDriver (int port, String hostName, int timeout)
@@ -57,43 +64,70 @@ public class RecoveryDriver
 	_hostName = hostName;
 	_timeout = timeout;
     }
-    
+
     public final boolean synchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
-	return scan(SCAN);
+	return synchronousScan(DEFAULT_SYNC_TIMEOUT, DEFAULT_SYNC_RETRY);
+    }
+    
+    public final boolean synchronousScan (int timeout, int retry) throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
+    {
+        return scan(SCAN, timeout, retry);
     }
     
     public final boolean asynchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
-	return scan(ASYNC_SCAN);
+        /*
+         * For async the timeout is the socket timeout and number of attempts on call is 1.
+         */
+        
+	return scan(ASYNC_SCAN, _timeout, 1);
     }
 
-    private final boolean scan (String scanType) throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
+    /*
+     * Ignore timeout/retry for async.
+     */
+    
+    private final boolean scan (String scanType, int timeout, int retry) throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
 	if (_hostName == null)
 	    _hostName = InetAddress.getLocalHost().getHostName();
 
-	Socket connectorSocket = new Socket(_hostName, _port);
+        boolean success = false;
+        Socket connectorSocket = null;
+        
+	for (int i = 0; i < retry; i++)
+	{
+	    connectorSocket = new Socket(_hostName, _port);
+	    
+            connectorSocket.setSoTimeout(timeout);
+            
+	    try
+	    {
+	        // streams to and from the RecoveryManager
 
-	connectorSocket.setSoTimeout(_timeout);
+	        BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream())) ;
 
-	// streams to and from the RecoveryManager
-	
-	BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream())) ;
-	
-	PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream()));
+	        PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream()));
 
-	toServer.println(scanType);
+	        toServer.println(scanType);
 
-	toServer.flush() ;
-	
-	String response = fromServer.readLine();
-	boolean success = false;
-	
-	if (response.equals("DONE"))
-	    success = true;
-                  
-	connectorSocket.close() ;
+	        toServer.flush() ;
+
+	        String response = fromServer.readLine();
+
+	        if (response.equals("DONE"))
+	            success = true;
+	    }
+	    catch (final SocketTimeoutException ex)
+	    {
+	    }
+	    finally
+	    {
+	        if (connectorSocket != null)
+	            connectorSocket.close() ;
+	    }
+	}
 
 	return success;
     }
