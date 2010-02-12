@@ -163,7 +163,6 @@
             <war destfile="${build.war.file}" webxml="${build.webxml.file}">
     			<classes dir="${build.classes.dir}"/>
     			<classes dir="${src.dir}" excludes="**/*.java"/>
-                <lib dir="${lib.dir}" includes="${xts.ext.libs}"/>
                 <!-- need to stop using this at some point soon -->
                 <lib dir="${xts.ext.dir}" includes = "${xts.ext.libs}"/>
                 <webinf dir="${dd.dir}/sc007" includes="wsdl/sc007.wsdl"/>
