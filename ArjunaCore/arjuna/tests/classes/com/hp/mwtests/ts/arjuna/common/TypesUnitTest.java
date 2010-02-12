@@ -109,6 +109,7 @@ public class TypesUnitTest
         PrintWriter pw = new PrintWriter(new StringWriter());
         
         ActionType.print(pw, ActionType.NESTED);
+        ActionType.print(pw, ActionType.TOP_LEVEL);
     }
     
     @Test
@@ -145,8 +146,11 @@ public class TypesUnitTest
         ActionStatus.print(pw, ActionStatus.ABORT_ONLY);
         
         assertEquals(ActionStatus.stringForm(ActionStatus.ABORTED), "ActionStatus.ABORTED");
+        
+        for (int i = 0; i < ActionStatus.NO_ACTION; i++)
+            assertTrue(ActionStatus.stringForm(i) != null);
     }
-    
+
     @Test
     public void testRecordType ()
     {

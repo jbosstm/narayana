@@ -48,7 +48,7 @@ public static final int TOP_LEVEL = 0;
 public static final int NESTED = 1;
 
     /**
-     * Print a human-reabable version of the type.
+     * Print a human-readable version of the type.
      */
 
 public static void print (PrintWriter strm, int res)
