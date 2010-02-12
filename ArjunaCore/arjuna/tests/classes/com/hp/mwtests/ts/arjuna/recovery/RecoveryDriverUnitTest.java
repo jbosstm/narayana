@@ -63,7 +63,7 @@ public class RecoveryDriverUnitTest
         
         rm.scan(null);
         
-        RecoveryDriver rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(), recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress());
+        RecoveryDriver rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(), recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress(), 100000);
         
         assertTrue(rd.asynchronousScan());
         assertTrue(rd.synchronousScan());
