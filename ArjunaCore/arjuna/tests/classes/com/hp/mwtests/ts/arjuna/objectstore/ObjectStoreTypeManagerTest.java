@@ -20,7 +20,6 @@
  */
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.type.ObjectStoreTypeManager;
@@ -41,11 +40,13 @@ public class ObjectStoreTypeManagerTest
 
         ObjectStoreTypeManager manager = ObjectStoreTypeManager.manager();
 
-        assertNull(manager.getObjectStoreClass(1001));
-        assertEquals(RecordType.UNTYPED, manager.getType(DummyObjectStoreImpl.class));
+        manager.add(new DummyObjectStoreTypeMap());
+        
+        assertTrue(manager.getObjectStoreClass(1001) != null);
+        assertEquals(1001, manager.getType(DummyObjectStoreImpl.class));
 
-        assertNull(ObjectStoreType.typeToClass(1001));
-        assertEquals(RecordType.UNTYPED, ObjectStoreType.classToType(DummyObjectStoreImpl.class));
+        assertEquals(ObjectStoreType.typeToClass(1001), DummyObjectStoreImpl.class);
+        assertEquals(1001, ObjectStoreType.classToType(DummyObjectStoreImpl.class));
 
         manager.add(new DummyObjectStoreTypeMap());
 

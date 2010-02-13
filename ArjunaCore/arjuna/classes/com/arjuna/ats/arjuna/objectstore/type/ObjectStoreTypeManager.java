@@ -33,7 +33,6 @@ package com.arjuna.ats.arjuna.objectstore.type;
 
 import java.util.ArrayList;
 
-import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 
 /**
@@ -66,7 +65,7 @@ public class ObjectStoreTypeManager
                 return _map.get(i).getType();
         }
         
-        return RecordType.UNTYPED;
+        return -1;
     }
     
     public synchronized void add (ObjectStoreTypeMap map)

@@ -47,8 +47,10 @@ import com.arjuna.ats.arjuna.utils.FileLock;
 import com.arjuna.ats.internal.arjuna.objectstore.ActionStore;
 import com.arjuna.ats.internal.arjuna.objectstore.FileLockingStore;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
+import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
 import com.arjuna.ats.internal.arjuna.objectstore.NullActionStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 import com.arjuna.ats.internal.arjuna.objectstore.VolatileStore;
 
 import org.junit.Test;
@@ -176,7 +178,7 @@ public class ObjectStoreTest
     @Test
     public void testActionStore () throws Exception
     {
-        ActionStore as = new ActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
+        ActionStore as = new ActionStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         
@@ -252,9 +254,87 @@ public class ObjectStoreTest
     }
     
     @Test
+    public void testHashedStore () throws Exception
+    {
+        HashedStore as = new HashedStore(System.getProperty("java.io.tmpdir"));
+        
+        assertTrue(as.typeIs() != -1);
+        
+        final OutputObjectState buff = new OutputObjectState();
+        final String tn = "/StateManager/junit";
+        
+        for (int i = 0; i < 100; i++)
+        {
+            Uid u = new Uid();
+            
+            as.write_uncommitted(u, tn, buff);
+            
+            as.commit_state(u, tn);
+            
+            assertTrue(as.currentState(u, tn) != StateStatus.OS_UNCOMMITTED);
+            
+            InputObjectState ios = new InputObjectState();
+            
+            as.allObjUids("", ios);
+            
+            assertTrue(as.read_uncommitted(u, tn) == null);
+            
+            as.write_committed(u, tn, buff);
+            as.read_committed(u, tn);
+            
+            assertTrue(!as.remove_uncommitted(u, tn));
+            
+            as.remove_committed(u, tn);
+            
+            assertTrue(!as.hide_state(u, tn));
+            
+            assertTrue(!as.reveal_state(u, tn));
+        }
+    }
+    
+    @Test
     public void testHashedActionStore () throws Exception
     {
-        HashedActionStore as = new HashedActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
+        HashedActionStore as = new HashedActionStore(System.getProperty("java.io.tmpdir"));
+        
+        assertTrue(as.typeIs() != -1);
+        
+        final OutputObjectState buff = new OutputObjectState();
+        final String tn = "/StateManager/junit";
+        
+        for (int i = 0; i < 100; i++)
+        {
+            Uid u = new Uid();
+            
+            as.write_uncommitted(u, tn, buff);
+            
+            as.commit_state(u, tn);
+            
+            assertTrue(as.currentState(u, tn) != StateStatus.OS_UNCOMMITTED);
+            
+            InputObjectState ios = new InputObjectState();
+            
+            as.allObjUids("", ios);
+            
+            assertTrue(as.read_uncommitted(u, tn) == null);
+            
+            as.write_committed(u, tn, buff);
+            as.read_committed(u, tn);
+            
+            assertTrue(!as.remove_uncommitted(u, tn));
+            
+            as.remove_committed(u, tn);
+            
+            assertTrue(!as.hide_state(u, tn));
+            
+            assertTrue(!as.reveal_state(u, tn));
+        }
+    }
+    
+    @Test
+    public void testShadowingStore () throws Exception
+    {
+        ShadowingStore as = new ShadowingStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         

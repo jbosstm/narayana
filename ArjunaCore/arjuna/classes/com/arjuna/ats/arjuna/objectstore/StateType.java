@@ -69,6 +69,10 @@ public class StateType
             return "StateType.OS_ORIGINAL";
         case StateType.OS_INVISIBLE:
             return "StateType.OS_INVISIBLE";
+        case StateType.OS_SHARED:
+            return "StateType.OS_SHARED";
+        case StateType.OS_UNSHARED:
+            return "StateType.OS_UNSHARED";
         default:
             return "Illegal";
         }

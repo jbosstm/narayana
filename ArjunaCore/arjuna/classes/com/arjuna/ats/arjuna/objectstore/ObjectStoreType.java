@@ -187,13 +187,13 @@ public class ObjectStoreType
             return CACHED;
         
         int type = ObjectStoreTypeManager.manager().getType(c);
-        
+
         if (type >= 0)
             return type;
         
         if (tsLogger.arjLoggerI18N.isWarnEnabled())
         {
-            tsLogger.arjLoggerI18N.warn("ObjectStoreType_1", new Object[]
+            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_1", new Object[]
             { c });
         }
 
