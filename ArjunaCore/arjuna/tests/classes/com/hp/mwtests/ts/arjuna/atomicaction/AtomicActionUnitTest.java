@@ -20,12 +20,18 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import java.util.Hashtable;
+
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
 
 public class AtomicActionUnitTest
 {
@@ -36,11 +42,24 @@ public class AtomicActionUnitTest
         
         A.begin();
         
+        assertEquals(A.hierarchyDepth(), 1);
+        
+        assertEquals(A.topLevelActionUid(), A.get_uid());
+        
         A.end(true);
         
         assertEquals(A.status(), ActionStatus.COMMITTED);
         assertEquals(A.getTimeout(), AtomicAction.NO_TIMEOUT);
         assertTrue(BasicAction.Current() != null);
+        
+        ThreadActionData.purgeActions();
+        
+        assertEquals(BasicAction.Current(), null);
+        
+        assertTrue(A.type() != null);
+        assertTrue(BasicAction.maintainHeuristics());
+        
+        assertTrue(A.destroy());
     }
     
     @Test
@@ -48,13 +67,70 @@ public class AtomicActionUnitTest
     {
         AtomicAction A = new AtomicAction();
         
-        A.begin();
+        A.begin();      
+        
+        assertEquals(A.status(), ActionStatus.RUNNING);
+
+        assertTrue(A.addChildThread());
         
         A.addThread();
         A.addThread(new Thread());
-        A.end(true);
+        
+        assertEquals(A.activeThreads(), 1);
+        
+        A.removeChildThread();
+        
+        assertEquals(A.activeThreads(), 0);
+        
+        A.commit(true);
+        
+        assertEquals(A.status(), ActionStatus.COMMITTED);
+        
+        ThreadActionData.purgeActions();
+    }
+    
+    @Test
+    public void testPreventCommit () throws Exception
+    {
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        
+        A.preventCommit();
+        
+        A.commit();
         
         assertEquals(A.status(), ActionStatus.ABORTED);
-        assertTrue(BasicAction.Current() != null);
+    }
+    
+    @Test
+    public void testNested () throws Exception
+    {
+        AtomicAction A = new AtomicAction();
+        AtomicAction B = new AtomicAction();
+        
+        A.begin();
+        B.begin();
+        
+        assertTrue(A.childTransactions().length == 1);
+        
+        B.commit();
+        A.abort();
+        
+        assertEquals(A.deactivate(), true);
+    }
+    
+    @Test
+    public void testActivateDeactivate () throws Exception
+    {
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        
+        assertEquals(A.activate(), false);
+        
+        A.abort();
+        
+        assertEquals(A.deactivate(), true);
     }
 }

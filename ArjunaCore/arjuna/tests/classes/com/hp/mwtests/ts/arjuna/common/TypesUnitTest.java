@@ -120,6 +120,8 @@ public class TypesUnitTest
         AddOutcome.print(pw, AddOutcome.AR_ADDED);
         
         assertEquals(AddOutcome.printString(AddOutcome.AR_DUPLICATE), "AddOutcome.AR_DUPLICATE");
+        assertEquals(AddOutcome.printString(AddOutcome.AR_ADDED), "AddOutcome.AR_ADDED");
+        assertEquals(AddOutcome.printString(AddOutcome.AR_REJECTED), "AddOutcome.AR_REJECTED");
     }
     
     @Test
@@ -130,6 +132,9 @@ public class TypesUnitTest
         TwoPhaseOutcome.print(pw, TwoPhaseOutcome.FINISH_ERROR);
         
         assertEquals(TwoPhaseOutcome.stringForm(TwoPhaseOutcome.FINISH_OK), "TwoPhaseOutcome.FINISH_OK");
+        
+        for (int i = 0; i < TwoPhaseOutcome.INVALID_TRANSACTION; i++)
+            TwoPhaseOutcome.stringForm(i);
         
         TwoPhaseOutcome o = new TwoPhaseOutcome(TwoPhaseOutcome.HEURISTIC_COMMIT);
         

@@ -20,68 +20,58 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import java.util.Hashtable;
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
-class DummyCheckedAction extends CheckedAction
-{
-    public void check (boolean isCommit, Uid actUid, Hashtable list)
-    {
-        _called = true;
-    }
-    
-    public boolean called ()
-    {
-        return _called;
-    }
-    
-    private boolean _called;
-}
-
-public class CheckedActionTest
+public class TxControlUnitTest
 {
     @Test
-    public void test()
+    public void testDisable () throws Exception
     {
-        arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactory(DummyCheckedActionFactory.class.getCanonicalName());
-
         AtomicAction A = new AtomicAction();
-
+        
+        TxControl.disable();
+        
         A.begin();
-
         A.commit();
-
-        assertTrue(success);
+        
+        assertEquals(A.status(), ActionStatus.ABORTED);
+        
+        TxControl.enable();
+        
+        A = new AtomicAction();
+        
+        A.begin();
+        A.commit();
+        
+        assertEquals(A.status(), ActionStatus.COMMITTED);
     }
     
     @Test
-    public void testCheckedAction ()
+    public void testGetSet () throws Exception
     {
-        AtomicAction A = new AtomicAction();
-        DummyCheckedAction dca = new DummyCheckedAction();
+        assertEquals(TxControl.getActionStoreType(), arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore());
         
-        A.begin();
+        assertTrue(TxControl.getRecoveryStore() != null);
         
-        /*
-         * CheckedAction only called if there are multiple
-         * threads active in the transaction. Simulate this.
-         */
+        TxControl.setDefaultTimeout(1000);
         
-        A.addChildThread(new Thread());
+        assertEquals(TxControl.getDefaultTimeout(), 1000);
         
-        A.setCheckedAction(dca);
-
-        A.commit();
-
-        assertTrue(dca.called());
+        assertEquals(TxControl.getAsyncPrepare(), arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncPrepare());
+        
+        assertEquals(TxControl.getMaintainHeuristics(), arjPropertyManager.getCoordinatorEnvironmentBean().isMaintainHeuristics());
+        
+        String nodeName = "NodeName";
+        
+        TxControl.setXANodeName(nodeName.getBytes());
+        
+        assertEquals(new String(TxControl.getXANodeName()), nodeName);
     }
-
-    public static boolean success = false;
 }

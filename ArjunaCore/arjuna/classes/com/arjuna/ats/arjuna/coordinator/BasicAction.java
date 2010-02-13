@@ -800,14 +800,7 @@ public class BasicAction extends StateManager
 
 			if (save_state(oState, ObjectType.ANDPERSISTENT))
 			{
-				if (aaStore.write_committed(getSavingUid(), type(), oState))
-				{
-					deactivated = true;
-				}
-				else
-				{
-					deactivated = false;
-				}
+				deactivated = aaStore.write_committed(getSavingUid(), type(), oState);
 
 				oState = null;
 			}
@@ -1621,7 +1614,7 @@ public class BasicAction extends StateManager
 
 	public final Object[] childTransactions ()
 	{
-		int size = _childActions.size();
+		int size = ((_childActions == null) ? 0 : _childActions.size());
 
 		if (size > 0)
 		{
