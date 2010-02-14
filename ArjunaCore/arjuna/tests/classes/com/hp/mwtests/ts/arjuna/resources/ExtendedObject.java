@@ -46,7 +46,7 @@ public class ExtendedObject extends StateManager
 
         state = 0;
 
-        lockMutex();
+        lock();
         
         activate();
         modified();
@@ -54,7 +54,7 @@ public class ExtendedObject extends StateManager
         
         setStatus(status());
         
-        unlockMutex();
+        unlock();
     }
 
     public ExtendedObject(Uid u)
@@ -62,12 +62,6 @@ public class ExtendedObject extends StateManager
         super(u, ObjectType.ANDPERSISTENT);
 
         state = -1;
-
-        getMutex().tryLock();
-        
-        activate();
-        
-        getMutex().unlock();
     }
     
     public void set_status ()

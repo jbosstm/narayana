@@ -82,7 +82,7 @@ import java.io.IOException;
  *          object-id {0}
  * @message com.arjuna.ats.arjuna.StateManager_6
  *          [com.arjuna.ats.arjuna.StateManager_6] - StateManager.destroy -
- *          failed to add abstract record.
+ *          failed to add abstract record to transaction {0}; check transaction status.
  * @message com.arjuna.ats.arjuna.StateManager_7
  *          [com.arjuna.ats.arjuna.StateManager_7] - StateManager.destroy -
  *          caught object store exception: {0}
@@ -598,7 +598,7 @@ public class StateManager
                     if (tsLogger.arjLoggerI18N.isWarnEnabled())
                     {
                         tsLogger.arjLoggerI18N
-                                .warn("com.arjuna.ats.arjuna.StateManager_6");
+                                .warn("com.arjuna.ats.arjuna.StateManager_6", new Object[] { action.get_uid() });
                     }
                 }
                 else
@@ -1193,7 +1193,15 @@ public class StateManager
                                 currentStatus = ObjectStatus.PASSIVE;
                             }
                             else
+                            {
+                                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                {
+                                    tsLogger.arjLoggerI18N
+                                            .warn("com.arjuna.ats.arjuna.StateManager_6", new Object[] { action.get_uid() });
+                                }
+                                
                                 record = null;
+                            }
                         }
                     }
                 }

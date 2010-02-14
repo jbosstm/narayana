@@ -116,6 +116,9 @@ import java.io.IOException;
  * @message com.arjuna.ats.arjuna.PersistenceRecord_18
  *          [com.arjuna.ats.arjuna.PersistenceRecord_18]
  *          PersistenceRecord::topLevelAbort() - Expecting state but found none!
+ * @message com.arjuna.ats.arjuna.PersistenceRecord_19
+ *          [com.arjuna.ats.arjuna.PersistenceRecord_19]
+ *          PersistenceRecord::topLevelAbort() - Could not remove state from object store!
  * @message com.arjuna.ats.arjuna.PersistenceRecord_20
  *          [com.arjuna.ats.arjuna.PersistenceRecord_20]
  *          PersistenceRecord::topLevelAbort() - Received ObjectStoreException

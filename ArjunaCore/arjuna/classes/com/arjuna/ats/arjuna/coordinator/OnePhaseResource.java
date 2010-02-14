@@ -31,10 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-
-import java.io.PrintWriter;
 
 import java.io.IOException;
 

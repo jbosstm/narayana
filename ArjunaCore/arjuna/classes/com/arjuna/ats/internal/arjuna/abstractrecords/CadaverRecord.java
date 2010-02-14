@@ -286,8 +286,9 @@ public class CadaverRecord extends PersistenceRecord
 			    tlpOk = TwoPhaseOutcome.PREPARE_OK;
 		    }
 		}
-		catch (ObjectStoreException e)
+		catch (final ObjectStoreException e)
 		{
+		    e.printStackTrace();
 		}
 	    }
 	    else

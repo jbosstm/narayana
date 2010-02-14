@@ -38,6 +38,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
@@ -80,13 +81,18 @@ public class ExtendedUnitTest
     @Test
     public void testCadaver () throws Exception
     {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setReadonlyOptimisation(false);
+        
         AtomicAction A = new AtomicAction();
         AtomicAction B = new AtomicAction();
         
+        ExtendedObject bo = new ExtendedObject();
+        Uid id = bo.get_uid();
+        
+        bo = new ExtendedObject(id);
+        
         A.begin();
         B.begin();
-        
-        ExtendedObject bo = new ExtendedObject();
         
         bo.set(2);
        
