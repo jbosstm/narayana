@@ -226,7 +226,7 @@ DB_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb2
 DB_IBMDB2_JNDI_DatabaseUser=jbossts0
 DB_IBMDB2_JNDI_DatabasePassword=jbossts0
 DB_IBMDB2_JNDI_DatabaseName=jbossqa
-DB_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB_IBMDB2_JNDI_Host=vmg06.mw.lab.eng.bos.redhat.com
 DB_IBMDB2_JNDI_Port=50000
 
 ######################################################################
@@ -241,7 +241,7 @@ DB1_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb21
 DB1_IBMDB2_JNDI_DatabaseUser=jbossts0
 DB1_IBMDB2_JNDI_DatabasePassword=jbossts0
 DB1_IBMDB2_JNDI_DatabaseName=jbossqa
-DB1_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB1_IBMDB2_JNDI_Host=vmg06.mw.lab.eng.bos.redhat.com
 DB1_IBMDB2_JNDI_Port=50000
 
 DB2_IBMDB2_JNDI_NumberOfDrivers=2
@@ -252,7 +252,7 @@ DB2_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb22
 DB2_IBMDB2_JNDI_DatabaseUser=jbossts1
 DB2_IBMDB2_JNDI_DatabasePassword=jbossts1
 DB2_IBMDB2_JNDI_DatabaseName=jbossqa
-DB2_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB2_IBMDB2_JNDI_Host=vmg06.mw.lab.eng.bos.redhat.com
 DB2_IBMDB2_JNDI_Port=50000
 
 
@@ -268,8 +268,8 @@ DB_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase
 DB_SYBASE_JNDI_DatabaseUser=jbossts0
 DB_SYBASE_JNDI_DatabasePassword=jbossts0
 DB_SYBASE_JNDI_DatabaseName=jbossts
-DB_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
-DB_SYBASE_JNDI_Port=4100
+DB_SYBASE_JNDI_Host=vmg07.mw.lab.eng.bos.redhat.com
+DB_SYBASE_JNDI_Port=5000
 
 ######################################################################
 # Sybase JNDI Pair
@@ -283,8 +283,8 @@ DB1_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase1
 DB1_SYBASE_JNDI_DatabaseUser=jbossts0
 DB1_SYBASE_JNDI_DatabasePassword=jbossts0
 DB1_SYBASE_JNDI_DatabaseName=jbossts
-DB1_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
-DB1_SYBASE_JNDI_Port=4100
+DB1_SYBASE_JNDI_Host=vmg07.mw.lab.eng.bos.redhat.com
+DB1_SYBASE_JNDI_Port=5000
 
 DB2_SYBASE_JNDI_NumberOfDrivers=2
 DB2_SYBASE_JNDI_Driver0=com.sybase.jdbc3.jdbc.SybDriver
@@ -294,5 +294,5 @@ DB2_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase2
 DB2_SYBASE_JNDI_DatabaseUser=jbossts1
 DB2_SYBASE_JNDI_DatabasePassword=jbossts1
 DB2_SYBASE_JNDI_DatabaseName=jbossts
-DB2_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
-DB2_SYBASE_JNDI_Port=4100
+DB2_SYBASE_JNDI_Host=vmg07.mw.lab.eng.bos.redhat.com
+DB2_SYBASE_JNDI_Port=5000

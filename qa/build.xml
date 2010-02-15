@@ -50,9 +50,8 @@
         https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
         http://www.jboss.com/products/platforms/application/supportedconfigurations/
         Files names below should be matched to those in run-tests.xml
-        https://wiki.corp.redhat.com/bin/view/JBossIT/SystemServiceQaLab#Databases
+        https://docspace.corp.redhat.com/clearspace/community/bu/middleware/jboss-qe/lab
         server connection params in config/jdbc_profiles/
-        TODO: update DB2, Sybase servers
         -->
 
         <mkdir dir="${driver.home}/oracle_10_2_0_4"/>

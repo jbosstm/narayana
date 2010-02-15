@@ -187,7 +187,7 @@ public class JNDIManager
 		}
 		catch (Exception e)
 		{
-			System.err.println(e);
+            e.printStackTrace(System.err);
 			System.out.println("Failed");
 		}
 	}
