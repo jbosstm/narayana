@@ -564,6 +564,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
 
                 if (XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
                     changeState(State.STATE_COMPLETED);
+                    persisted = true;
                 } else {
                     // hmm, could not write entry log warning
                     if (WSTLogger.arjLoggerI18N.isWarnEnabled())
