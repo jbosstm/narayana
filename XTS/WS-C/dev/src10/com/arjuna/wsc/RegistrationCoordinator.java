@@ -88,11 +88,11 @@ public class RegistrationCoordinator
         
         if (callback.hasFailed())
         {
-            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.log_mesg.getString("com.arjuna.wsc.RegistrationCoordinator_1")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.RegistrationCoordinator_1")) ;
         }
         else if (!callback.hasTriggered())
         {
-            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.log_mesg.getString("com.arjuna.wsc.RegistrationCoordinator_2")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.RegistrationCoordinator_2")) ;
         }
         
         final RegisterResponseType response = callback.getRegisterResponse() ;

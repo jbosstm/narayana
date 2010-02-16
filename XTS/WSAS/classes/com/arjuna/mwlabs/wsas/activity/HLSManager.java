@@ -93,7 +93,7 @@ public class HLSManager
                 }
             }
             if (!found) {
-                throw new InvalidHLSException(wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.HLSManager_1"));
+                throw new InvalidHLSException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.HLSManager_1"));
             } else {
                 _hls.remove(elem);
             }

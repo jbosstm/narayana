@@ -96,7 +96,7 @@ public class ArjunaContext extends AnyContentSupport
     {
        if (!isValid())
        {
-           throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wsarj.ArjunaContext_1")) ;
+           throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsarj.ArjunaContext_1")) ;
        }
        
        StreamHelper.writeElement(out, ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER_QNAME, instanceIdentifier) ;
@@ -123,14 +123,14 @@ public class ArjunaContext extends AnyContentSupport
             }
             else
             {
-                final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wsarj.ArjunaContext_2") ;
+                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsarj.ArjunaContext_2") ;
                 final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
                 throw new XMLStreamException(message) ;
             }
         }
         else
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wsarj.ArjunaContext_2") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsarj.ArjunaContext_2") ;
             final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
             throw new XMLStreamException(message) ;
         }

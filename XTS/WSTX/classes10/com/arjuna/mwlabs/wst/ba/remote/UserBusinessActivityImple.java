@@ -282,7 +282,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple_2"));
+                    wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple_2"));
             }
             return new ContextImple(coordinationContext) ;
         }
@@ -312,7 +312,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         }
         catch (final Throwable th)
         {
-            throw new SystemException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple_3"));
+            throw new SystemException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple_3"));
         }
     }
     

@@ -109,7 +109,7 @@ public class Vote extends Enumerated
         final Object vote = ENUM_MAP.get(value) ;
         if (vote == null)
         {
-            final String pattern = WSTLogger.log_mesg.getString("com.arjuna.webservices.wsat.Vote_1") ;
+            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.Vote_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {value}) ;
             throw new InvalidEnumerationException(message) ;
         }

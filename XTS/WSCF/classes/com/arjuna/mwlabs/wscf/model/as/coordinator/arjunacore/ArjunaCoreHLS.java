@@ -112,7 +112,7 @@ public class ArjunaCoreHLS implements HLS, CoordinatorManagerService,
 			if (status != ActionStatus.RUNNING)
 			{
 				throw new BegunFailedException(
-						wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ArjunaCoreHLS_1")
+						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ArjunaCoreHLS_1")
 								+ ActionStatus.stringForm(status));
 			}
 			else

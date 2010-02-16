@@ -64,7 +64,7 @@ public class Configuration
 	{
 	    throw new FileNotFoundException(fileName);
 	    
-	    //	    throw new FileNotFoundException(fileName+wsasLogger.log_mesg.getString("com.arjuna.mw.wsas.utils.Configuration_1"));
+	    //	    throw new FileNotFoundException(fileName+wsasLogger.arjLoggerI18N.getString("com.arjuna.mw.wsas.utils.Configuration_1"));
 	}
 	else
 	    initialise(url);
@@ -82,7 +82,7 @@ public class Configuration
 	    
 	if (doc == null)
 	{
-	    throw new FileNotFoundException(wsasLogger.log_mesg.getString("com.arjuna.mw.wsas.utils.Configuration_2")+" "+url);
+	    throw new FileNotFoundException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mw.wsas.utils.Configuration_2")+" "+url);
 	}
 	
 	org.w3c.dom.NodeList children = getProperties(doc.getDocumentElement());

@@ -130,14 +130,14 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_1")) ;
+                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_1")) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_2") ;
+                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_2") ;
                     final String message = MessageFormat.format(pattern, new Object[] {se}) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
@@ -166,7 +166,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_5")) ;
+                    WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_5")) ;
                 TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
@@ -201,7 +201,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_6")) ;
+                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_6")) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
@@ -209,14 +209,14 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.TRANSACTIONROLLEDBACK_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_7")) ;
+                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_7")) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_8") ;
+                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_8") ;
                     final String message = MessageFormat.format(pattern, new Object[] {se}) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
@@ -245,7 +245,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_11")) ;
+                    WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_11")) ;
                 TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
@@ -286,14 +286,14 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_12")) ;
+                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_12")) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_13") ;
+                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_13") ;
                     final String message = MessageFormat.format(pattern, new Object[] {se}) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
@@ -322,7 +322,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_16")) ;
+                    WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_16")) ;
                 TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }

@@ -101,7 +101,7 @@ public class TransactionManagerImple extends TransactionManager
 	public int replay () throws SystemException
 	{
 		throw new SystemException(
-				wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.remote.Transaction11ManagerImple_1"));
+				wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.remote.Transaction11ManagerImple_1"));
 	}
 
 	public TxContext suspend () throws SystemException

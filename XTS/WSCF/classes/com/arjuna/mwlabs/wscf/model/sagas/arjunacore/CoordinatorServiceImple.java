@@ -186,7 +186,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 		    }
 		}
 		else
-		    throw new ProtocolViolationException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
+		    throw new ProtocolViolationException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
 	    }
 	}
 	catch (NoActivityException ex)
@@ -248,7 +248,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 		    }
 		}
 		else
-		    throw new ProtocolViolationException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
+		    throw new ProtocolViolationException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
 	    }
 	}
 	catch (NoActivityException ex)

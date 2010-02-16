@@ -728,7 +728,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
                 responseContext.addRelatesTo(new RelationshipType(messageId.getValue())) ;
             }
             
-            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
+            final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
             final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(responseContext, soapFault, instanceIdentifier) ;
         }

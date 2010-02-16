@@ -156,7 +156,7 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
             SoapFaultType soapFaultType = SoapFaultType.toState(soapFaultTypeName);
             soapFault = new SoapFault11(soapFaultType, subcode, reason);
         } catch (Exception e) {
-            String message = WSTLogger.log_mesg.getString("com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl_1");
+            String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl_1");
             throw new WebServiceException(message, e);
         }
 

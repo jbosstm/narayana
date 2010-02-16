@@ -110,7 +110,7 @@ public class AttributedAnyType extends AnyAttributeSupport
     {
         if (any != null)
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.AttributedAnyType_1") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.AttributedAnyType_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
             throw new XMLStreamException(message) ;
         }

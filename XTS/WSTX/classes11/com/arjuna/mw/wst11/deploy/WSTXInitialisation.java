@@ -101,7 +101,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if (is == null)
         {
-            final String pattern = wstxLogger.log_mesg.getString("com.arjuna.mw.wst11.deploy.WSTXI_21") ;
+            final String pattern = wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_21") ;
             throw new FileNotFoundException(MessageFormat.format(pattern, new Object[] {WS_T11_CONFIG}));
         }
 
@@ -111,7 +111,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if (doc == null)
         {
-            final String pattern = wstxLogger.log_mesg.getString("com.arjuna.mw.wst11.deploy.WSTXI_22") ;
+            final String pattern = wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_22") ;
             throw new FileNotFoundException(MessageFormat.format(pattern, new Object[] {WS_T11_CONFIG}));
         }
 
@@ -123,7 +123,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
-            throw new FileNotFoundException(wstxLogger.log_mesg.getString("com.arjuna.mw.wst11.deploy.WSTXI_23"));
+            throw new FileNotFoundException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_23"));
         }
         UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
         TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;

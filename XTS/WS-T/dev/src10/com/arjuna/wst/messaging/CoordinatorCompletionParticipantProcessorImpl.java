@@ -238,7 +238,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2", new Object[] {instanceIdentifier}) ;
             }
-            sendFault(addressingContext, arjunaContext, WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3")) ;
+            sendFault(addressingContext, arjunaContext, WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3")) ;
         }
     }
     
@@ -360,7 +360,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
             try
             {
-                final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4") ;
+                final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4") ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
                 CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
             }

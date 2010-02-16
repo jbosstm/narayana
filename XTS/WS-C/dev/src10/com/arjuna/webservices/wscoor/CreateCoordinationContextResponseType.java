@@ -98,7 +98,7 @@ public class CreateCoordinationContextResponseType extends AnyContentAnyAttribut
     {
        if (!isValid())
        {
-           throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_1")) ;
+           throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_1")) ;
        }
        
        StreamHelper.writeElement(out, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT_QNAME, coordinationContext) ;
@@ -125,7 +125,7 @@ public class CreateCoordinationContextResponseType extends AnyContentAnyAttribut
             }
             else
             {
-                final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_2") ;
+                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_2") ;
                 final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
                 throw new XMLStreamException(message) ;
             }

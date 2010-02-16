@@ -70,11 +70,11 @@ public class DocComparitor
 	public boolean equals (org.w3c.dom.Document doc1, org.w3c.dom.Document doc2)
 	{
 		if (doc1 == null)
-			throw new IllegalArgumentException(wscfLogger.log_mesg
+			throw new IllegalArgumentException(wscfLogger.arjLoggerI18N
 					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_1"));
 
 		if (doc2 == null)
-			throw new IllegalArgumentException(wscfLogger.log_mesg
+			throw new IllegalArgumentException(wscfLogger.arjLoggerI18N
 					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_2"));
 
 		CoordinationXML protocol1 = new CoordinationXML(doc1);

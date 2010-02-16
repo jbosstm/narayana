@@ -105,7 +105,7 @@ public class Outcome extends Enumerated
         final Object outcome = ENUM_MAP.get(value) ;
         if (outcome == null)
         {
-            final String pattern = WSTLogger.log_mesg.getString("com.arjuna.webservices.wsat.Outcome_1") ;
+            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.Outcome_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {value}) ;
             throw new InvalidEnumerationException(message) ;
         }

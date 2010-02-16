@@ -84,28 +84,28 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME);
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME).addTextNode(WSCLogger.log_mesg.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_1"));
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_1"));
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final InvalidProtocolException invalidProtocolException)
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME);
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.log_mesg.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2"));
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2"));
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final InvalidStateException InvalidStateException)
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME);
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME).addTextNode(WSCLogger.log_mesg.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3"));
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3"));
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final NoActivityException noActivityException)
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME);
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME).addTextNode(WSCLogger.log_mesg.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4"));
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4"));
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -128,7 +128,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 }
                 SOAPFactory factory = SOAPFactory.newInstance();
                 SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME);
-                WSCLogger.log_mesg.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2") ;
+                WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2") ;
                 throw new SOAPFaultException(soapFault);
             }
         }

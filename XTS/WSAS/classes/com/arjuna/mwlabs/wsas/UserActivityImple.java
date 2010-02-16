@@ -532,7 +532,7 @@ public class UserActivityImple implements UserActivity
 		}
 	    }
 	    else
-		throw new InvalidActivityException(wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.UserActivityImple_51"));
+		throw new InvalidActivityException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.UserActivityImple_51"));
 	}
 
 	HLS[] hls = HLSManager.allHighLevelServices();

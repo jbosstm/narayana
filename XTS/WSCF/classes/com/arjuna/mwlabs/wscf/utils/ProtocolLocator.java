@@ -75,7 +75,7 @@ public class ProtocolLocator
 
 	    if (url == null)
 	    {
-		throw new FileNotFoundException(_xmlName+" "+wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_1"));
+		throw new FileNotFoundException(_xmlName+" "+wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_1"));
 	    }
 	    else
 	    {
@@ -84,7 +84,7 @@ public class ProtocolLocator
 	    
 		if (doc == null)
 		{
-		    throw new FileNotFoundException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_2")+" "+_xmlName);
+		    throw new FileNotFoundException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_2")+" "+_xmlName);
 		}
 		else
 		    return doc;

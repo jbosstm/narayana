@@ -101,7 +101,7 @@ public class CoordinatorControl
 
 			if (status != ActionStatus.RUNNING)
 				throw new BegunFailedException(
-						wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
+						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
 								+ ActionStatus.stringForm(status));
 			else
 			{
@@ -447,7 +447,7 @@ public class CoordinatorControl
 			if (status != ActionStatus.RUNNING)
 			{
 				throw new BegunFailedException(
-						wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
+						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
 								+ ActionStatus.stringForm(status));
 			}
 			else

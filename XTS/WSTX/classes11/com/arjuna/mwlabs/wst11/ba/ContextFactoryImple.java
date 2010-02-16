@@ -254,7 +254,7 @@ public class ContextFactoryImple implements ContextFactory
 	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.Context11FactoryImple_1",
 					  new Object[]{BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI});
 
-	    throw new InvalidCreateParametersException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.ba.Context11FactoryImple_3")+" < "+ BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME+", "+coordinationTypeURI+" >");
+	    throw new InvalidCreateParametersException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.ba.Context11FactoryImple_3")+" < "+ BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME+", "+coordinationTypeURI+" >");
 	}
 
 	return null;

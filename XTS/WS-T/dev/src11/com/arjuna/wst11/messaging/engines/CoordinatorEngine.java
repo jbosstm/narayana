@@ -699,7 +699,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             final MAP faultMAP = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
-            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1") ;
+            final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1") ;
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultMAP, soapFault, instanceIdentifier) ;
         }

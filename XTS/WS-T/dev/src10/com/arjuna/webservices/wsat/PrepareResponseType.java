@@ -76,7 +76,7 @@ public class PrepareResponseType extends ElementContent
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSTLogger.log_mesg.getString("com.arjuna.webservices.wsat.PrepareResponseType_1")) ;
+        throw new XMLStreamException(WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.PrepareResponseType_1")) ;
     }
     
     /**

@@ -254,7 +254,7 @@ public class SAAJXMLStreamWriter extends BaseXMLStreamWriter
     public void writeCData(final String cdata)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.SAAJXMLStreamWriter_1")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.SAAJXMLStreamWriter_1")) ;
     }
     
     /**

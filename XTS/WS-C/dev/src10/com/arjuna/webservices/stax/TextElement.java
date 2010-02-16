@@ -89,7 +89,7 @@ public class TextElement extends ElementContent
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.stax.TextElement_1")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.stax.TextElement_1")) ;
     }
     
     /**

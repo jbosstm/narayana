@@ -526,7 +526,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             try
             {
                 final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4")) ;
+                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4")) ;
                 AddressingHelper.installNoneReplyTo(faultMAP);
                 SoapFaultClient.sendSoapFault(soapFault, faultMAP, getFaultAction()) ;
             }

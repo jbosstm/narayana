@@ -83,11 +83,11 @@ public class ActivationCoordinator
         
         if (callback.hasFailed())
         {
-            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.log_mesg.getString("com.arjuna.wsc.ActivationCoordinator_1")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.ActivationCoordinator_1")) ;
         }
         else if (!callback.hasTriggered())
         {
-            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.log_mesg.getString("com.arjuna.wsc.ActivationCoordinator_2")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_RECEIVER, null, WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.ActivationCoordinator_2")) ;
         }
         
         final CreateCoordinationContextResponseType response = callback.getCreateCoordinationContextResponse() ;

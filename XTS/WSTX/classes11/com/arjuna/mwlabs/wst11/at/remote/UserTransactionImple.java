@@ -279,7 +279,7 @@ public class UserTransactionImple extends UserTransaction
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.remote.UserTransaction11Imple__2"));
+                    wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.remote.UserTransaction11Imple__2"));
             }
             return new ContextImple(coordinationContext) ;
 		}

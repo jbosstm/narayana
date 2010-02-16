@@ -77,7 +77,7 @@ public class WSAddr2005Client
         {
             if (!replyTo.isValid())
             {
-                throw new IOException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_4")) ;
+                throw new IOException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_4")) ;
             }
             final AttributedURIType address = replyTo.getAddress() ;
             if (!AddressingConstants.WSA_ADDRESS_ANONYMOUS.equals(address.getValue()))
@@ -92,7 +92,7 @@ public class WSAddr2005Client
         {
             return ((SoapBodyMessage)response).getSoapBody() ;
         }
-        throw new IOException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_5")) ;
+        throw new IOException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_5")) ;
     }
     
     /**
@@ -154,11 +154,11 @@ public class WSAddr2005Client
         final AttributedURIType to = addressingContext.getTo() ;
         if (to == null)
         {
-            throw new IOException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_1")) ;
+            throw new IOException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_1")) ;
         }
         if (!to.isValid())
         {
-            throw new IOException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_2")) ;
+            throw new IOException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_2")) ;
         }
         return to.getValue() ;
     }
@@ -190,7 +190,7 @@ public class WSAddr2005Client
         
         if (client == null)
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_3") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_3") ;
             final String message = MessageFormat.format(pattern, new Object[] {scheme}) ;
             throw new IOException(message) ;
         }

@@ -117,7 +117,7 @@ public class JTAHLS implements HLS, CoordinatorManagerService, UserCoordinatorSe
 	    int status = _theTransactionManagerImple.getStatus();
 	
 	    if (status != javax.transaction.Status.STATUS_ACTIVE)
-		throw new BegunFailedException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.jta.JTAHLS_1")+status);
+		throw new BegunFailedException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.jta.JTAHLS_1")+status);
 	    else
 	    {
 		_coordinators.put(currentActivity(), tx);

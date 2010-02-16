@@ -96,7 +96,7 @@ public class CoordinatorControl
 	    int status = coord.start(parentCoordinator());
 	
 	    if (status != ActionStatus.RUNNING)
-		throw new BegunFailedException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1")+ActionStatus.stringForm(status));
+		throw new BegunFailedException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1")+ActionStatus.stringForm(status));
 	    else
 	    {
 		_coordinators.put(currentActivity(), coord);
@@ -374,7 +374,7 @@ public class CoordinatorControl
             if (status != ActionStatus.RUNNING)
             {
                 throw new BegunFailedException(
-                        wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1")
+                        wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1")
                                 + ActionStatus.stringForm(status));
             }
             else

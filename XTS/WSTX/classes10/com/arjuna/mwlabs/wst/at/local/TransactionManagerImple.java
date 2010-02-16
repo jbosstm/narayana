@@ -112,7 +112,7 @@ public class TransactionManagerImple extends TransactionManager
 	public int replay () throws SystemException
 	{
 		throw new SystemException(
-				wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.local.TransactionManagerImple_1"));
+				wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.local.TransactionManagerImple_1"));
 	}
 
 	public void resume (TxContext tx) throws UnknownTransactionException,

@@ -197,7 +197,7 @@ public class ACCoordinator extends TwoPhaseCoordinator implements
 			throw new InvalidParticipantException();
 		else
 			throw new WrongStateException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_1"));
+					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_1"));
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class ACCoordinator extends TwoPhaseCoordinator implements
 
 		if (!participant.valid())
 			throw new InvalidParticipantException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_2")
+					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_2")
 							+ id);
 
 		synchronized (this)
@@ -282,7 +282,7 @@ public class ACCoordinator extends TwoPhaseCoordinator implements
 
 			if (!found)
 				throw new InvalidParticipantException(
-						wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_3")
+						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_3")
 								+ id);
 			else
 			{
@@ -294,7 +294,7 @@ public class ACCoordinator extends TwoPhaseCoordinator implements
 				}
 				else
 					throw new InvalidParticipantException(
-							wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_4"));
+							wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator_4"));
 			}
 		}
 	}

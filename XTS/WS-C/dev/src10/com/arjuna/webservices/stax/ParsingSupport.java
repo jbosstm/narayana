@@ -95,7 +95,7 @@ public abstract class ParsingSupport
                 case XMLStreamConstants.START_DOCUMENT:
                 case XMLStreamConstants.END_DOCUMENT:
                 case XMLStreamConstants.NAMESPACE:
-                    final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.stax.ParsingSupport_1") ;
+                    final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.stax.ParsingSupport_1") ;
                     final String message = MessageFormat.format(pattern, new Object[] {new Integer(type)}) ;
                     throw new XMLStreamException(message) ;
             }

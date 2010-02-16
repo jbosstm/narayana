@@ -184,7 +184,7 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_1")
+						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_1")
 								+ " " + this + " " + _status);
 		}
 	}
@@ -278,7 +278,7 @@ public class ActivityImple
 					 */
 
 					throw new InvalidActivityException(
-							wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_2")
+							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_2")
 									+ " " + this);
 				}
 
@@ -357,7 +357,7 @@ public class ActivityImple
 					// we can't have terminated yet!
 
 					throw new WrongStateException(
-							wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_3")
+							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_3")
 									+ " " + _status);
 				}
 			}
@@ -400,7 +400,7 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_4")
+						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_4")
 								+ " " + this + " " + _status);
 		}
 	}
@@ -570,7 +570,7 @@ public class ActivityImple
 		{
 			if (_completionStatus.equals(FailureOnly.instance()))
 				throw new WrongStateException(
-						wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_5")
+						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_5")
 								+ " " + _completionStatus + " " + cs);
 		}
 	}
@@ -607,7 +607,7 @@ public class ActivityImple
 	{
 		if (child == null)
 			throw new InvalidActivityException(
-					wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_6"));
+					wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_6"));
 
 		synchronized (this)
 		{
@@ -617,7 +617,7 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_7")
+						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_7")
 								+ " " + _status);
 		}
 	}
@@ -652,7 +652,7 @@ public class ActivityImple
 	{
 		if (child == null)
 			throw new InvalidActivityException(
-					wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_8"));
+					wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_8"));
 
 		synchronized (this)
 		{
@@ -660,12 +660,12 @@ public class ActivityImple
 			{
 				if (_children.get(child.getGlobalId()) == null)
 					throw new InvalidActivityException(
-							wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_9")
+							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_9")
 									+ child);
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_10")
+						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_10")
 								+ _status);
 		}
 	}

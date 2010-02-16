@@ -158,7 +158,7 @@ public class LocalContextFactoryImple implements ContextFactory
 			{ AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI });
 
 			throw new InvalidCreateParametersException(
-					wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11"
+					wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11"
 							+ " <"
 							+ AtomicTransactionConstants.WSAT_PROTOCOL
 							+ ", "

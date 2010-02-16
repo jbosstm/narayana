@@ -196,7 +196,7 @@ public class CoordinatorServiceImple implements UserCoordinator,
 				}
 				else
 					throw new HeuristicHazardException(
-							wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple_1"));
+							wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple_1"));
 			}
 		}
 		catch (NoActivityException ex)
@@ -271,7 +271,7 @@ public class CoordinatorServiceImple implements UserCoordinator,
 				}
 				else
 					throw new HeuristicHazardException(
-							wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple_1"));
+							wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple_1"));
 			}
 		}
 		catch (NoActivityException ex)

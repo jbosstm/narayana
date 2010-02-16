@@ -75,7 +75,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME,
-                        WSCLogger.log_mesg.getString("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1")) ;
+                        WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1")) ;
                     ActivationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
                     return ;
                 }
@@ -100,7 +100,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME,
-                    WSCLogger.log_mesg.getString("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1")) ;
+                    WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1")) ;
                 ActivationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
             }
         }

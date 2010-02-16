@@ -82,7 +82,7 @@ public class Initializer
 	    
 	    if (doc == null)
 	    {
-		throw new SystemException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.protocols.Initializer_1")+impl);
+		throw new SystemException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.protocols.Initializer_1")+impl);
 	    }
 	    else
 	    {

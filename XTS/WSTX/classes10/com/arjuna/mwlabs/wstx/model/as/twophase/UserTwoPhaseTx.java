@@ -169,7 +169,7 @@ public class UserTwoPhaseTx implements UserTransaction
 	}
 	catch (ActiveChildException ex)
 	{
-	    throw new InvalidTransactionException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_2"));
+	    throw new InvalidTransactionException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_2"));
 	}
 	catch (TransactionCommittedException ex)
 	{
@@ -226,7 +226,7 @@ public class UserTwoPhaseTx implements UserTransaction
 	}
 	catch (ActiveChildException ex)
 	{
-	    throw new InvalidTransactionException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_2"));
+	    throw new InvalidTransactionException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_2"));
 	}
 	catch (TransactionRolledBackException ex)
 	{
@@ -555,7 +555,7 @@ public class UserTwoPhaseTx implements UserTransaction
 	    }
 	}
 	else
-	    throw new HeuristicHazardException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_3"));
+	    throw new HeuristicHazardException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wstx.model.as.twophase.UserTwoPhaseTx_3"));
     }
     
     private UserCoordinator _theCoordinator;

@@ -99,7 +99,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
         // just returns start, end, characters, CData
         if ((currentNode == headerElement) && (type == END_ELEMENT))
         {
-            throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_1")) ;
+            throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_1")) ;
         }
         else if (type == START_ELEMENT)
         {
@@ -150,7 +150,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
         }
         else
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_3") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_3") ;
             final String message = MessageFormat.format(pattern, new Object[] {new Integer(type)}) ;
             throw new XMLStreamException(message) ;
         }
@@ -167,7 +167,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
         final int nextType = next() ;
         if ((nextType != START_ELEMENT) && (nextType != END_ELEMENT))
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_4") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_4") ;
             final String message = MessageFormat.format(pattern, new Object[] {new Integer(nextType)}) ;
             throw new XMLStreamException(message) ;
         }
@@ -253,7 +253,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
     {
         if ((type != this.type) || (hasName() && !(testEquals(namespaceURI, getNamespaceURI()) && testEquals(localName, getLocalName()))))
         {
-            throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_5")) ;
+            throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_5")) ;
         }
     }
 
@@ -497,7 +497,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
     public int getTextCharacters(final int sourceStart, final char[] target, final int targetStart, final int length)
             throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_6")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_6")) ;
     }
 
     /**
@@ -529,7 +529,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
     public String getElementText()
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_7")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_7")) ;
     }
 
     /**
@@ -676,7 +676,7 @@ public class SAAJXMLStreamReader implements XMLStreamReader
         }
         else
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_2") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.DOMXMLStreamReader_2") ;
             final String message = MessageFormat.format(pattern, new Object[] {child.getClass().getName()}) ;
             throw new XMLStreamException(message) ;
         }

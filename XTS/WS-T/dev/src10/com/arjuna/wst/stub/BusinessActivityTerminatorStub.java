@@ -208,7 +208,7 @@ public class BusinessActivityTerminatorStub implements com.arjuna.wst.BusinessAc
     {
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_terminationParticipant, MessageId.getMessageId()) ;
         final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
-                WSTLogger.log_mesg.getString("com.arjuna.wst.stub.BusinessActivityTerminatorStub_1")) ;
+                WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.stub.BusinessActivityTerminatorStub_1")) ;
         try
         {
             TerminationCoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier(_id)) ;

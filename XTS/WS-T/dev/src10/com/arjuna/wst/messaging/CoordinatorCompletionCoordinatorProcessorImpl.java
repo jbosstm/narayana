@@ -380,7 +380,7 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
             final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
             try
             {
-                final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_4") ;
+                final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_4") ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
                 CoordinatorCompletionParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
             }

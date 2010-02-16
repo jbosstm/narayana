@@ -109,7 +109,7 @@ public class BaseTransactionImple
 		    }
 		}
 		else
-		    throw new SystemException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.jta.arjunajta.BaseTransactionImple_1"));
+		    throw new SystemException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.jta.arjunajta.BaseTransactionImple_1"));
 	    }
 	}
 	catch (NoPermissionException ex)
@@ -159,7 +159,7 @@ public class BaseTransactionImple
 			throw new SystemException(exp.toString());
 		}
 		else
-		    throw new SystemException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.jta.arjunajta.BaseTransactionImple_1"));
+		    throw new SystemException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.jta.arjunajta.BaseTransactionImple_1"));
 	    }
 	}
 	catch (NoPermissionException ex)

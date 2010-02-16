@@ -94,7 +94,7 @@ public class SoapParser
         if (!(SoapConstants.SOAP_BODY_NAME.equals(streamReader.getLocalName()) &&
             soapDetails.getNamespaceURI().equals(streamReader.getNamespaceURI())))
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.soap.SoapParser_1") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.SoapParser_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
             throw new SoapFault10(SoapFaultType.FAULT_SENDER, message) ;
         }
@@ -107,7 +107,7 @@ public class SoapParser
         {
             if (!bodyName.equals(soapDetails.getFaultName()))
             {
-                final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.soap.SoapParser_2") ;
+                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.SoapParser_2") ;
                 final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
                 throw new SoapFault10(SoapFaultType.FAULT_SENDER, message) ;
             }
@@ -262,7 +262,7 @@ public class SoapParser
         if ((mustUnderstand != null) && ("1".equals(mustUnderstand) || "true".equalsIgnoreCase(mustUnderstand)))
         {
             final QName headerName = streamReader.getName() ;
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.soap.SoapParser_3") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.SoapParser_3") ;
             final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
             final SoapFault10 soapFault = new SoapFault10(SoapFaultType.FAULT_MUST_UNDERSTAND, message) ;
             soapFault.setHeaderElements(soapDetails.getMustUnderstandHeaders(headerName)) ;

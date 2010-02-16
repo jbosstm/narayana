@@ -155,7 +155,7 @@ public class CreateCoordinationContextType extends AnyContentAnyAttributeSupport
     {
        if (!isValid())
        {
-           throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextType_1")) ;
+           throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextType_1")) ;
        }
        
        if (expires != null)
@@ -198,7 +198,7 @@ public class CreateCoordinationContextType extends AnyContentAnyAttributeSupport
             }
             else
             {
-                final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextType_2") ;
+                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextType_2") ;
                 final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
                 throw new XMLStreamException(message) ;
             }

@@ -109,7 +109,7 @@ public class State extends Enumerated
         final Object state = ENUM_MAP.get(value) ;
         if (state == null)
         {
-            final String pattern = WSTLogger.log_mesg.getString("com.arjuna.webservices11.wsat.State_1") ;
+            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices11.wsat.State_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {value}) ;
             throw new InvalidEnumerationException(message) ;
         }

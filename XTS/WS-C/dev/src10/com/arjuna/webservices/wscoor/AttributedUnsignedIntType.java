@@ -96,7 +96,7 @@ public class AttributedUnsignedIntType extends AnyAttributeSupport
         }
         catch (final NumberFormatException nfe)
         {
-            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.wscoor.AttributedUnsignedIntType_1") ;
+            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.AttributedUnsignedIntType_1") ;
             final String message = MessageFormat.format(pattern, new Object[] {value}) ;
             throw new XMLStreamException(message) ;
         }

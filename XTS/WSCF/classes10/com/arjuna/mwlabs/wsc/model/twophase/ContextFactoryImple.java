@@ -188,7 +188,7 @@ public class ContextFactoryImple implements ContextFactory
 			{ _coordinationTypeURI, coordinationTypeURI });
 
 			throw new InvalidCreateParametersException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wsc.model.twophase.ContextFactoryImple_11")
+					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsc.model.twophase.ContextFactoryImple_11")
 							+ " < "
 							+ _coordinationTypeURI
 							+ ", "

@@ -97,7 +97,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void setNamespaceContext(final NamespaceContext namespaceContext)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_1")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_1")) ;
     }
     
     /**
@@ -123,7 +123,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeComment(final String comment)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_2")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_2")) ;
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeProcessingInstruction(final String target)
             throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_3")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_3")) ;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeProcessingInstruction(final String target, final String data)
             throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_4")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_4")) ;
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeEntityRef(final String name)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_5")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_5")) ;
     }
 
     /**
@@ -164,7 +164,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeDTD(final String dtd)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_6")) ;    }
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_6")) ;    }
 
     /**
      * Write the XML encoding.
@@ -172,7 +172,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeStartDocument()
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_7")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_7")) ;
     }
 
     /**
@@ -182,7 +182,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeStartDocument(final String version)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_8")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_8")) ;
     }
 
     /**
@@ -193,7 +193,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeStartDocument(final String encoding, final String version)
             throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_9")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_9")) ;
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void writeEndDocument()
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_10")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_10")) ;
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class BaseXMLStreamWriter implements XMLStreamWriter
     public void close()
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.log_mesg.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_11")) ;
+        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.adapters.BaseXMLStreamWriter_11")) ;
     }
 
     /**

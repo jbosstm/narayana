@@ -194,7 +194,7 @@ public class ProtocolManager
 		}
 
 		throw new ProtocolNotRegisteredException(
-				wscfLogger.log_mesg.getString("com.arjuna.mw.wscf11.protocols.ProtocolManager_1")
+				wscfLogger.arjLoggerI18N.getString("com.arjuna.mw.wscf11.protocols.ProtocolManager_1")
 						+ protocolDef.protocolType());
 	}
 
@@ -424,7 +424,7 @@ public class ProtocolManager
 						// TODO
 
 						throw new ExceptionInInitializerError(
-								wscfLogger.log_mesg.getString("com.arjuna.mw.wscf11.protocols.ProtocolManager_2")
+								wscfLogger.arjLoggerI18N.getString("com.arjuna.mw.wscf11.protocols.ProtocolManager_2")
 										+ className);
 					}
 					else

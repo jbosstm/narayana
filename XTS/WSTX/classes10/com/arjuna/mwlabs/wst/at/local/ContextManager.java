@@ -89,7 +89,7 @@ public class ContextManager
 		return null;
 	    else
 	    {
-		throw new SystemException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.local.ContextManager_1"));
+		throw new SystemException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.local.ContextManager_1"));
 	    }
 	}
     }
