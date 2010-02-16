@@ -33,36 +33,20 @@ package com.arjuna.mw.wsas.logging;
 
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.common.internal.util.logging.commonPropertyManager;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
-import java.util.*;
-
 public class wsasLogger
 {
 
     public static LogNoi18n      arjLogger;
     public static Logi18n        arjLoggerI18N;
-    public static ResourceBundle log_mesg;
 
-    private static String language;
-    private static String country;
-    private static Locale currentLocale;
-    private static String dirLocale;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        arjLogger = noi18n;
+        arjLoggerI18N = i18n;
+    }
 
     static
     {
-	arjLogger = LogFactory.getLogNoi18n("com.arjuna.mw.wsas.logging.wsasLogger");
-
-	language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-	country  = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-	currentLocale = new Locale(language,country);
-	log_mesg = ResourceBundle.getBundle("wsas_msg",currentLocale);
-	
-	arjLoggerI18N = LogFactory.getLogi18n("com.arjuna.mw.wsas.logging.wsasLoggerI18N",
-					     "wsas_msg_"+language+"_"+country);
-	
+        LogFactory.initializeModuleLogger(wsasLogger.class, "wsas_msg", "com.arjuna.mw.wsas");
     }
-
 }

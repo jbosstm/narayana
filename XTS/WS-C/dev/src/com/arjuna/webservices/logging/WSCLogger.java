@@ -31,11 +31,6 @@
 
 package com.arjuna.webservices.logging;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.common.internal.util.logging.commonPropertyManager;
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.util.logging.LogNoi18n;
 import com.arjuna.common.util.logging.Logi18n;
@@ -53,22 +48,15 @@ public class WSCLogger
      * The I18N logger.
      */
     public static Logi18n        arjLoggerI18N;
-    /**
-     * The message bundle.
-     */
-    public static ResourceBundle log_mesg;
+
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        arjLogger = noi18n;
+        arjLoggerI18N = i18n;
+    }
 
     static
     {
-    	arjLogger = LogFactory.getLogNoi18n("com.arjuna.wsc.logging.WSCLogger");
-    
-        final String language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-        final String country  = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-    
-    	final Locale currentLocale = new Locale(language, country);
-    	log_mesg = ResourceBundle.getBundle("wsc_msg",currentLocale);
-    	
-    	arjLoggerI18N = LogFactory.getLogi18n("com.arjuna.wsc.logging.WSCLoggerI18N",
-    					     "wsc_msg_"+language+"_"+country);
+        LogFactory.initializeModuleLogger(WSCLogger.class, "wsc_msg", "com.arjuna.wsc");
     }
 }
