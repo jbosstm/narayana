@@ -130,7 +130,8 @@
                         destdir="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"
                         debug="${com.hp.mwlabs.debug}"
                         bootclasspath="${com.hp.mw.orbportability.orbspecific.jacorb-bootclasspath}"
-                        deprecation="${com.hp.mwlabs.deprecation}">
+                        deprecation="${com.hp.mwlabs.deprecation}"
+                        includeantruntime="false">
                         <classpath>
                                 <pathelement path="${build.jacorb.classpath}"/>
                                 <pathelement path="${com.hp.mw.orbportability.orbspecific.jacorb-classpath}"/>
@@ -145,7 +146,8 @@
                         excludes="**/orbspecific/javaidl/**/*.java"
                         debug="${com.hp.mwlabs.debug}"
                         bootclasspath="${com.hp.mw.orbportability.orbspecific.jacorb-bootclasspath}"
-                        deprecation="${com.hp.mwlabs.deprecation}">
+                        deprecation="${com.hp.mwlabs.deprecation}"
+                        includeantruntime="false">
                         <classpath>
                                 <pathelement path="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"/>
                                 <pathelement path="${build.jacorb.classpath}"/>
@@ -254,7 +256,7 @@
                         debug="${com.hp.mwlabs.debug}"
                         bootclasspath="${com.hp.mw.orbportability.orbspecific.javaidl-bootclasspath}"
                         deprecation="${com.hp.mwlabs.deprecation}"
-                        >
+                        includeantruntime="false">
                         <classpath>
                                 <pathelement path="${com.hp.mw.orbportability.orbspecific.javaidl.classpath}"/>
                                 <pathelement path="${com.hp.mwlabs.orbportability.orbspecific.idlsrcdir}"/>
@@ -269,7 +271,8 @@
                         excludes="**/orbspecific/jacorb/**/*.java"
                         debug="${com.hp.mwlabs.debug}"
                         bootclasspath="${com.hp.mw.orbportability.orbspecific.javaidl-bootclasspath}"
-                        deprecation="${com.hp.mwlabs.deprecation}">
+                        deprecation="${com.hp.mwlabs.deprecation}"
+                        includeantruntime="false">
                         <classpath>
                                 <pathelement path="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"/>
                                 <pathelement path="${com.hp.mw.orbportability.orbspecific.javaidl.classpath}"/>

@@ -60,7 +60,7 @@
     <target name="compile" depends="init" description="compile the source" if="bin.present">
         <mkdir dir="${build.dir}"/>
         <javac destdir="${build.dir}/classes" classpathref="classpath"
-            debug="${com.arjuna.mwlabs.debug}">
+            debug="${com.arjuna.mwlabs.debug}" includeantruntime="false">
             <src path="${src.dir}"/>
         </javac>
     </target>

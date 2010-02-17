@@ -71,7 +71,7 @@
                 includes="**/*.java"
                 debug="${com.hp.mwlabs.debug}"
                 deprecation="${com.hp.mwlabs.deprecation}"
-	/>
+                includeantruntime="false"/>
 
 		<copy todir="${com.hp.mwlabs.orbportability.builddir}">
 			<fileset dir="${com.hp.mwlabs.orbportability.config}" includes="*.xml"/>

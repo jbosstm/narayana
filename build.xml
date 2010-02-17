@@ -19,7 +19,7 @@
   @author JBoss Inc.
   (C) 2009 @author Red Hat Middleware LLC.
 -->
-<project name="jbossts" default="help">
+<project name="jbossts" default="jbossall">
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
@@ -87,6 +87,11 @@
             <property name="no_jts" value="true"/>
         </ant>
         <atsinstall.macro build.type="jta"/>
+    </target>
+
+    <target  name="jbossall" depends="jbossjts">
+        <ant dir="XTS" target="clean"/>
+        <ant dir="XTS" target="install"/>
     </target>
 
     <target name="antbuildsystem" depends="clean">

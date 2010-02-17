@@ -184,7 +184,8 @@
 
 		<javac srcdir="${org.jboss.jbossts.qa.build.idl}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
-			   debug="on">
+			   debug="on"
+               includeantruntime="false">
 
 			<classpath>
 				<path refid="jts.classpath"/>
@@ -197,7 +198,8 @@
 	<target name="org.jboss.jbossts.qa.compile" depends="org.jboss.jbossts.qa.idl.compile">
 		<javac srcdir="${org.jboss.jbossts.qa.src}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
-			   debug="on" deprecation="on">
+			   debug="on" deprecation="on"
+               includeantruntime="false">
 
 			<exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
 
@@ -231,7 +233,8 @@
     <target name="as-ejbjar.compile" if="integration.build">
         <javac srcdir="${org.jboss.jbossts.qa.src}"
                destdir="${org.jboss.jbossts.qa.build.classes}"
-               debug="on" deprecation="on">
+               debug="on" deprecation="on"
+               includeantruntime="false">
             <include name="**/${astest.dir}/**/*.java" />
             <classpath>
                 <path refid="as.classpath"/>

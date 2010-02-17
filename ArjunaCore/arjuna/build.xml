@@ -119,6 +119,9 @@
             	   </sourcepath>
                 <txt outfile="${basedir}/${build.dir}/emma/coverage.txt" />
                 <html outfile="${basedir}/${build.dir}/emma/coverage.html" />
+                <sourcepath>
+                    <dirset dir="${src.dir}"/>
+                </sourcepath>
             </report>
         </emma>
         

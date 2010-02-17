@@ -71,7 +71,7 @@
                     <exclude name="**/LastOnePhaseResource.java"/>
 
 
-                    <exclude name="**/implicit**"/>
+                    <exclude name="**/implicit/**"/>
                     <exclude name="**/SimpleNestedTest.java"/>
 
                 </fileset>

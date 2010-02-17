@@ -49,7 +49,8 @@
 
 		<javac 	srcdir="${org.jboss.jbossts.qa.core.src}"
 				destdir="${org.jboss.jbossts.qa.build.classes}"
-				debug="on" deprecation="on">
+				debug="on" deprecation="on"
+                includeantruntime="false">
 
             <include name="**/org/jboss/jbossts/qa/Utils/CrashRecoveryDelays.java"/>
             <include name="**/org/jboss/jbossts/qa/Utils/*Store*.java"/>

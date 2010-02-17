@@ -60,7 +60,8 @@
         <javac srcdir="${org.jboss.jbossts.qa.src}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on"
-			   excludes="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java">
+			   excludes="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java"
+               includeantruntime="false">
 
 			<include name="**/org/jboss/jbossts/qa/Utils/*Store*.java"/>
 			<include name="**/org/jboss/jbossts/qa/Utils/BaseTestCase.java"/>
@@ -89,7 +90,8 @@
     <target name="astests-compile" depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init" if="integration.build">
         <javac srcdir="${org.jboss.jbossts.qa.src}"
                destdir="${org.jboss.jbossts.qa.build.classes}"
-               debug="on" includes="**/astests/**">
+               debug="on" includes="**/astests/**"
+               includeantruntime="false">
 
             <classpath>
                 <path refid="jta.classpath"/>

@@ -37,7 +37,7 @@
     <target name="compile" depends="sharedbuild-jts.compile">
         <!-- TODO fix me - how to chain macros? or just pass additional.src.dirs -->
         <javac srcdir="services/classes" destdir="${build.dir}/classes" debug="${debug}"
-               deprecation="${deprecation}" excludes="${excluded.classes}">
+               deprecation="${deprecation}" excludes="${excluded.classes}" includeantruntime="false">
             <classpath>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
                 <fileset dir="." includes="${lib.dir}/ext/*"/>
@@ -110,6 +110,8 @@
                     <exclude name="**/CheckedTransactions.java"/>
                     <exclude name="**/GridTest.java"/>
                     <exclude name="**/remote/**"/>
+
+                    <exclude name="**/DefaultTimeout.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
