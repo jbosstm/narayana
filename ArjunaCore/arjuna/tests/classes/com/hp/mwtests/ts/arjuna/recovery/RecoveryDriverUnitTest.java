@@ -59,9 +59,10 @@ public class RecoveryDriverUnitTest
     @Test
     public void testValid () throws Exception
     {
-        RecoveryManager rm = RecoveryManager.manager();       
-        
         recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
+
+        RecoveryManager rm = RecoveryManager.manager();       
         
         rm.scan(null);
         

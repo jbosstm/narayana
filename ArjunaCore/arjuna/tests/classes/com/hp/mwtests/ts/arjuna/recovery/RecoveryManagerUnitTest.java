@@ -33,9 +33,10 @@ public class RecoveryManagerUnitTest
     @Test
     public void testSuspendResume () throws Exception
     {
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
+
         RecoveryManager rm = RecoveryManager.manager();       
-        
-        recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(2);
         
         rm.scan(null);
         
