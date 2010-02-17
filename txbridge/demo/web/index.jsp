@@ -62,6 +62,8 @@
                 <option value="AtomicTransaction">WS-AT</option>
                 <option value="JTA">JTA (requires XTS demo services)</option>
             </select>
+            <br/>WS-AT parent to JTA subordinate is Inbound Bridging.
+            <br/>JTA parent to WS-AT subordinate is Outbound Bridging.
         </p>
 
         <p>

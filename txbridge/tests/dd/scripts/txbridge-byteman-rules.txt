@@ -1,0 +1,7 @@
+RULE testrule
+CLASS ^XTSATRecoveryManager
+METHOD writeParticipantRecoveryRecord
+AT EXIT
+IF true
+DO killJVM()
+ENDRULE

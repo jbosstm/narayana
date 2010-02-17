@@ -61,7 +61,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 
     static final long serialVersionUID = -5739871936627778072L;
 
-    // Xid not guarateed Serializable by spec, but our XidImple happens to be
+    // Xid not guaranteed Serializable by spec, but our XidImple happens to be
 	private Xid xid;
 
     // Id needed for recovery of the subordinate tx. Uids are likewise Serializable.
@@ -107,14 +107,16 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
             throw ioException;
         }
 
-        out.defaultWriteObject();
+        //out.defaultWriteObject();
+        out.writeObject(xid);
+        out.writeObject(subordinateTransactionId);
     }
 
     /**
      * Deserialization hook. Unpacks transaction recovery information and uses it to
      * recover the subordinate transaction.
      *
-     * @param in the strean from which to unpack the object state.
+     * @param in the stream from which to unpack the object state.
      * @throws IOException if deserialzation and recovery fail.
      * @throws ClassNotFoundException if deserialzation fails.
      */
@@ -122,7 +124,10 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
     {
         log.trace("readObject()");
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        xid = (Xid)in.readObject();
+        subordinateTransactionId = (Uid)in.readObject();
+
         xaTerminator = SubordinationManager.getXATerminator();
 
         try

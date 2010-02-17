@@ -23,21 +23,32 @@
  */
 package org.jboss.jbossts.txbridge;
 
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import org.apache.log4j.Logger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import com.arjuna.wst.Durable2PCParticipant;
 
+import javax.resource.spi.XATerminator;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 import java.io.ObjectInputStream;
 
 /**
- * Integrates with JBossAS 5 MC lifecycle to provide recovery services.
+ * Integrates with JBossAS MC lifecycle to provide recovery services.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
  */
-public class BridgeRecoveryManager implements XTSATRecoveryModule
+public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule
 {
     private static Logger log = Logger.getLogger(BridgeRecoveryManager.class);
+
+    private final XTSATRecoveryManager xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
+    private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
+    private final XATerminator xaTerminator = SubordinationManager.getXATerminator();
 
     /**
      * MC lifecycle callback, used to register the recovery module with the transaction manager.
@@ -46,7 +57,8 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule
     {
         log.info("BridgeRecoveryManager starting");
 
-        XTSATRecoveryManager.getRecoveryManager().registerRecoveryModule(this);
+        xtsATRecoveryManager.registerRecoveryModule(this);
+        acRecoveryManager.addModule(this);
     }
 
     /**
@@ -56,7 +68,8 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule
     {
         log.info("BridgeRecoveryManager stopping");
 
-        XTSATRecoveryManager.getRecoveryManager().unregisterRecoveryModule(this);
+        xtsATRecoveryManager.unregisterRecoveryModule(this);
+        acRecoveryManager.removeModule(this, false);
     }
 
     /**
@@ -66,11 +79,12 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule
      * participant was originally saved using serialization.
      *
      * @param id the id used when the participant was created
-     * @param objectInputStream a stream from which the application should deserialise the participant
+     * @param objectInputStream a stream from which the application should deserialize the participant
      * if it recognises that the id belongs to the module's application
      * @return the deserialized Participant object
      * @throws Exception if an error occurs deserializing the durable participant
      */
+    @Override
     public Durable2PCParticipant deserialize(String id, ObjectInputStream objectInputStream) throws Exception
     {
         log.trace("deserialize(id="+id+")");
@@ -89,8 +103,55 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule
     /**
      * Unused recovery callback. We use serialization instead, so this method will always throw an exception if called.
      */
+    @Override
     public Durable2PCParticipant recreate(String s, byte[] bytes) throws Exception
     {
         throw new Exception("recreation not supported - should use deserialization instead.");
+    }
+
+    /**
+     * Called by the RecoveryManager at start up, and then
+     * PERIODIC_RECOVERY_PERIOD seconds after the completion, for all RecoveryModules,
+     * of the second pass
+     */
+    @Override
+    public void periodicWorkFirstPass()
+    {
+        log.trace("periodicWorkFirstPass()");
+
+        if(!xtsATRecoveryManager.isParticipantRecoveryStarted()) {
+            // can't do anything until XTS Participant recovery has run.
+            return;
+        }
+
+        Xid[] xids = null;
+        try {
+            xids = xaTerminator.recover(XAResource.TMSTARTRSCAN);
+            xaTerminator.recover(XAResource.TMENDRSCAN);
+
+        } catch(XAException e) {
+            log.error("Problem whilst scanning for in-doubt subordinate transactions", e);
+        }
+
+        if(xids == null) {
+            return;
+        }
+
+        for(Xid xid : xids) {
+           log.trace("in-doubt Xid: "+xid);
+        }
+
+        // TODO: finish me
+
+    }
+
+    /**
+     * Called by the RecoveryManager RECOVERY_BACKOFF_PERIOD seconds
+     * after the completion of the first pass
+     */
+    @Override
+    public void periodicWorkSecondPass()
+    {
+        log.trace("periodicWorkSecondPass()");
     }
 }

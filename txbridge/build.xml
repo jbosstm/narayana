@@ -26,9 +26,6 @@
 		JBossTS Transaction Bridge
 	</description>
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/output/jboss-6.0.0-SNAPSHOT"/>
-    <property name="jbossas.server" value="default"/>
-
     <property name="jbossts.home" location=".."/>
 
 	<property name="src" location="src"/>
@@ -38,17 +35,16 @@
         <fileset dir="${jbossts.home}/install/lib">
             <include name="jbossjta.jar"/>
             <include name="jbossjts.jar"/>
-            <include name="ext/log4j-1.2.14.jar"/>
-            <include name="ext/jta-1_1-classes.zip"/>
-            <include name="ext/connector-api.jar"/>
         </fileset>
 
-        <fileset dir="${jbossts.home}/XTS/sar/build">
+        <fileset dir="../build/extlib">
+            <include name="log4j.jar"/>
+            <include name="jta.jar"/>
+            <include name="jboss-jca-api.jar"/>
+        </fileset>
+
+        <fileset dir="${jbossts.home}/XTS/xts-install/lib">
             <include  name="jbossxts-api.jar"/>
-        </fileset>
-
-        <fileset dir="${jbossas.home}/common/lib">
-            <include name="jbossws-native-jaxws.jar"/>
         </fileset>
 	</path>
 
@@ -64,7 +60,7 @@
 	<target name="compile" depends="init"
 			description="compile the source ">
 		<mkdir dir="${build}/classes"/>
-		<javac srcdir="${src}" destdir="${build}/classes" debug="true">
+		<javac srcdir="${src}" destdir="${build}/classes" debug="true" includeantruntime="false">
 			<classpath refid="build-prereqs"/>
 		</javac>
 	</target>
@@ -81,14 +77,17 @@
 		</jar>
 	</target>
 
-    <target name="deploy" depends="dist" description="deploy to JBossAS">
-        <copy file="${build}/txbridge.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy/"/>
-    </target>
-
     <!-- ##################################################################################### -->
 
     <!-- the following targets are utility functions for the JBossTS dev team.
             You probably don't need to worry about them. -->
+
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT"/>
+    <property name="jbossas.server" value="default"/>
+
+    <target name="deploy" depends="dist" description="deploy to JBossAS">
+        <copy file="${build}/txbridge.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy/"/>
+    </target>
 
     <target name="install-jts">
         <copy todir="${jbossas.home}/common/lib">

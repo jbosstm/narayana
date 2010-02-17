@@ -43,7 +43,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
     private static Logger log = Logger.getLogger(BridgeVolatileParticipant.class);
 
     // no standard interface for driving Synchronization phases separately
-    // in JCA, so we have to use proprietry API.
+    // in JCA, so we have to use proprietary API.
     private XATerminatorExtensions xaTerminatorExtensions;
 
     private String externalTxId;
@@ -80,7 +80,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
         // hard to invoke afterCompletion on the subordinate. So we cheat a bit by using setRollbackOnly instead.
         // A slightly more efficient but less clear impl would be to have the same object implement both the Volatile
         // and Durable Participants and keep count of the number of prepare/rollback invocations to know
-        // if being invoked as Volatile or Dirable.
+        // if being invoked as Volatile or Durable.
 
 
         // TODO InboundBridgeManager.getInboundBridge() would be better,

@@ -2,8 +2,8 @@
 
 <!--
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags.
+ * Copyright 2010, Red Hat, Inc. and/or its affiliates,
+ * and individual contributors as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
@@ -17,20 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2009
- * @author JBoss Inc.
+ * (C) 2010
+ * @author JBoss, by Red Hat.
 -->
 
-<project name="TxBridgeDemo" default="dist" basedir=".">
+<project name="TxBridgeTests" default="dist" basedir=".">
 	<description>
-		JBossTS Transaction Bridge Demo App
+		JBossTS Transaction Bridge Test Suite
 	</description>
 
     <property name="jbossts.home" location="../.."/>
 
 	<property name="src" location="src"/>
     <property name="dd" location="dd"/>
-    <property name="web" location="web"/>
 	<property name="build" location="build"/>
 
 	<path id="build-prereqs">
@@ -40,15 +39,16 @@
             <include name="jta.jar"/>
             <include name="jpa-api.jar"/>
             <include name="jboss-ejb-api.jar"/>
+            <include name="junit.jar"/>
+        </fileset>
+
+        <fileset dir="${jbossts.home}/install/lib">
+            <include name="jbossjta.jar"/>
+            <include name="jbossjts.jar"/>
         </fileset>
 
         <fileset dir="${jbossts.home}/XTS/xts-install/lib">
             <include  name="jbossxts-api.jar"/>
-        </fileset>
-
-        <!-- TODO get from deployed location instead? -->
-        <fileset dir="../build/">
-            <include name="txbridge.jar"/>
         </fileset>
 
 	</path>
@@ -70,24 +70,42 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="compile"
+    <target name="run" depends="compile">
+        <java classname="org.jboss.jbossts.txbridge.tests.Scratch" fork="true">
+            <classpath>
+                <pathelement location="${build}/classes"/>
+                <path refid="build-prereqs"/>
+            </classpath>
+
+            <jvmarg value="-Xdebug" />
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
+
+        </java>
+    </target>
+
+    <target name="dist" depends="compile"
 			description="generate the distribution">
 
-        <copy file="${dd}/jaxws-handlers-server.xml" todir="${build}/classes/org/jboss/jbossts/txbridge/demo/bistro"/>
-        <jar destfile="${build}/txbridge-demo-service.jar">
-			<metainf dir="${dd}" includes="persistence.xml"/>
+        <copy file="${dd}/jaxws-handlers-server.xml"
+              todir="${build}/classes/org/jboss/jbossts/txbridge/tests/service"/>
+
+        <jar destfile="${build}/txbridge-tests-service.jar">
 			<fileset dir="${build}/classes">
-				<include name="org/jboss/jbossts/txbridge/demo/bistro/*"/>
+				<include name="org/jboss/jbossts/txbridge/tests/service/*"/>
+                <include name="org/jboss/jbossts/txbridge/tests/utility/*"/>
 			</fileset>
+            <metainf dir="dd">
+                <include name="jboss-beans.xml"/>
+            </metainf>
 		</jar>
 
-        <copy file="${dd}/jaxws-handlers-client.xml" todir="${build}/classes/org/jboss/jbossts/txbridge/demo/client"/>
-        <war warfile="${build}/txbridge-demo-client.war" webxml="${dd}/web.xml">
+        <copy file="${dd}/jaxws-handlers-client.xml"
+              todir="${build}/classes/org/jboss/jbossts/txbridge/tests/client"/>
+
+        <war warfile="${build}/txbridge-tests-client.war" webxml="${dd}/web.xml">
 			<classes dir="${build}/classes">
-                <include name="org/jboss/jbossts/txbridge/demo/client/*"/>
+                <include name="org/jboss/jbossts/txbridge/tests/client/*"/>
 			</classes>
-            <!-- jsp files -->
-            <fileset dir="${web}" includes="*.jsp"/>
 		</war>
 
 	</target>
@@ -98,11 +116,11 @@
     <property name="jbossas.server" value="default"/>
 
     <target name="deploy-service" depends="dist" description="deploy EJB to JBossAS">
-        <copy file="${build}/txbridge-demo-service.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+        <copy file="${build}/txbridge-tests-service.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
     </target>
 
     <target name="deploy-client" depends="dist" description="deploy Servlet to JBossAS">
-        <copy file="${build}/txbridge-demo-client.war" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+        <copy file="${build}/txbridge-tests-client.war" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
     </target>
 
 </project>

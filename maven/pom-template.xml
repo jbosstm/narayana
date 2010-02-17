@@ -379,6 +379,12 @@
             <artifactId>jaxws-api</artifactId>
         </dependency>
 
+        <!-- txbridge demo -->
+        <dependency>
+            <groupId>org.hibernate.java-persistence</groupId>
+            <artifactId>jpa-api</artifactId>
+        </dependency>
+        
     </dependencies>
 
 </project>

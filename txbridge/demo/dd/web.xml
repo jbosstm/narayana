@@ -30,7 +30,6 @@
     <servlet>
         <servlet-name>Basic Client Servlet</servlet-name>
         <servlet-class>org.jboss.jbossts.txbridge.demo.client.BasicClient</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
