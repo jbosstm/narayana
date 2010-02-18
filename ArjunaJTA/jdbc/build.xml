@@ -59,6 +59,9 @@
                 </fileset>
             </tests>
         </run.tests.macro>
+
+        <emma.report.macro/>
+        
     </target>
 
 </project>
