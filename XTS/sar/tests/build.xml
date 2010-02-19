@@ -57,8 +57,8 @@
   <property name="xts.lib.jars" value="jbossxts-api.jar"/>
 
   <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
-  <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-jaxws.jar jboss-logging-spi.jar"/>
+  <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-client.jar stax-api.jar
+            jbossws-native-core.jar jbossws-common.jar jboss-jaxws.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.dir" location="${jbossas.home}/common/lib"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
 

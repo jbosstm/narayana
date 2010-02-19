@@ -38,7 +38,7 @@
             <include name="servlet-api.jar"/>
             <include name="log4j.jar"/>
             <include name="jta.jar"/>
-            <include name="jpa-api.jar"/>
+            <include name="hibernate-jpa-2.0-api.jar"/>
             <include name="jboss-ejb-api.jar"/>
         </fileset>
 

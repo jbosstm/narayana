@@ -81,9 +81,10 @@
             geronimo-ws-metadata_2.0_spec.jar">
         <isset property="cxf.build"/>
     </condition>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
-            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
+
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar
+             jbossws-client.jar stax-api.jar 
+             jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
     <property name="jboss.client.libs" value="${jboss.client.lib.jars}"/>
 
     <property name="jboss.common.libs" value="servlet-api.jar"/>

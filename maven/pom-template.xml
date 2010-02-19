@@ -165,9 +165,10 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <!-- http://repository.jboss.com/maven2/org/jboss/jbossas/jboss-as-component-matrix -->
                 <groupId>org.jboss.jbossas</groupId>
                 <artifactId>jboss-as-component-matrix</artifactId>
-                <version>6.0.0.M1</version>
+                <version>6.0.0.20100216-M2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -267,11 +268,13 @@
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
+            <version>1.0.2</version>            
         </dependency>
 
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jcommon</artifactId>
+            <version>1.0.2</version>
         </dependency>
 
         <!-- atsintegration (i.e. the JBossAS glue code) requires some app server bits. -->
@@ -341,26 +344,6 @@
 
         <dependency>
             <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-saaj</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-jaxrpc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-jaxws</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-jaxws-ext</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.ws.native</groupId>
             <artifactId>jbossws-native-core</artifactId>
         </dependency>
 
@@ -381,8 +364,11 @@
 
         <!-- txbridge demo -->
         <dependency>
-            <groupId>org.hibernate.java-persistence</groupId>
-            <artifactId>jpa-api</artifactId>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+
+            <!--<groupId>org.hibernate.java-persistence</groupId>-->
+            <!--<artifactId>jpa-api</artifactId>-->
         </dependency>
         
     </dependencies>

@@ -84,9 +84,9 @@
     </condition>
 
     <!-- external jars used by XTS for all builds -->
-    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
-            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar
+            jbossws-client.jar stax-api.jar
+            jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
             jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
 
     <!-- paths internal to build -->
