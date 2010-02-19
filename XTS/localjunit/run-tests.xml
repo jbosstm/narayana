@@ -26,17 +26,16 @@
     <property name="base.url" value="http://${server.hostname}:8080"/>
     <property name="reports.dir" value="reports"/>
     <property name="localjunit.lib.dir" value="build" />
-    <property name="apache.httpclient.lib.dir" value="ext" />
-    <property name="apache.logging.lib.dir" value="ext" />
-    <property name="apache.codec.lib.dir" value="ext" />
-    <property name="junit.lib.dir" value="../ext" />
+
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.extlib.dir" location="../../build/extlib"/>
 
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
-        <pathelement location="${apache.httpclient.lib.dir}/commons-httpclient.jar"/>
-        <pathelement location="${apache.logging.lib.dir}/commons-logging.jar"/>
-        <pathelement location="${apache.codec.lib.dir}/commons-codec.jar"/>
-        <pathelement location="${junit.lib.dir}/junit.jar"/>
+        <pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>
+		<pathelement location="${jbossts.build.extlib.dir}/commons-logging.jar"/>
+		<pathelement location="${jbossts.build.extlib.dir}/commons-codec.jar"/>
+		<pathelement location="../ext/junit.jar"/>
     </path>
 
 
