@@ -36,14 +36,19 @@ import java.lang.Exception;
 public class TestException extends Exception
 {
 
-public TestException ()
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public TestException()
     {
-	super();
+        super();
     }
 
-public TestException (String s)
+    public TestException(String s)
     {
-	super(s);
+        super(s);
     }
 
 }
