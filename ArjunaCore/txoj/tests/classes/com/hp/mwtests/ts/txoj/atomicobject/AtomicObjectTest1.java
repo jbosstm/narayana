@@ -33,6 +33,9 @@ package com.hp.mwtests.ts.txoj.atomicobject;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.internal.txoj.lockstore.BasicPersistentLockStore;
+import com.arjuna.ats.txoj.common.txojPropertyManager;
+
 import java.util.Random;
 import java.lang.Math;
 
@@ -51,10 +54,12 @@ public class AtomicObjectTest1
     @Test
     public void test() throws TestException
     {
+        txojPropertyManager.getTxojEnvironmentBean().setLockStoreType(BasicPersistentLockStore.class.getName());
+        
 	rand = new Random();
 
-	atomicObject1 = new AtomicObject();
-	atomicObject2 = new AtomicObject();
+	atomicObject1 = new AtomicObject(ObjectModel.MULTIPLE);
+	atomicObject2 = new AtomicObject(ObjectModel.MULTIPLE);
 
 	System.out.println(atomicObject1.get_uid());
 	System.out.println(atomicObject2.get_uid());

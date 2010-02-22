@@ -58,8 +58,8 @@ public class AtomicObjectTest4
     public void test () throws TestException
     {
         rand = new Random();
-        atomicObject1 = new AtomicObject();
-        atomicObject2 = new AtomicObject();
+        atomicObject1 = new AtomicObject(ObjectModel.MULTIPLE);
+        atomicObject2 = new AtomicObject(ObjectModel.MULTIPLE);
 
         System.out.println(atomicObject1.get_uid());
         System.out.println(atomicObject2.get_uid());
