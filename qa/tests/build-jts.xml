@@ -234,7 +234,7 @@
         <javac srcdir="${org.jboss.jbossts.qa.src}"
                destdir="${org.jboss.jbossts.qa.build.classes}"
                debug="on" deprecation="on"
-               includeantruntime="false">
+               includeantruntime="true">
             <include name="**/${astest.dir}/**/*.java" />
             <classpath>
                 <path refid="as.classpath"/>
