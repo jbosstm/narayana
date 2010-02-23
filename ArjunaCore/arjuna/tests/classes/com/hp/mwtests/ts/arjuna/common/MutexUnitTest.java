@@ -22,20 +22,20 @@ package com.hp.mwtests.ts.arjuna.common;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.common.Mutex;
+import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 
 import static org.junit.Assert.*;
 
 class MutexThread extends Thread
 {
-    public MutexThread (Mutex share)
+    public MutexThread (BasicMutex share)
     {
         _mutex = share;
     }
     
     public void run ()
     {
-        if (_mutex.lock() == Mutex.LOCKED)
+        if (_mutex.lock() == BasicMutex.LOCKED)
         {
             for (int i = 0; i < 1000; i++)
             {
@@ -55,7 +55,7 @@ class MutexThread extends Thread
         return _done;
     }
     
-    private Mutex _mutex;
+    private BasicMutex _mutex;
     private boolean _done = false;
 }
 
@@ -64,7 +64,7 @@ public class MutexUnitTest
     @Test
     public void testBasicMutex () throws Exception
     {
-        Mutex mx = new Mutex();
+        BasicMutex mx = new BasicMutex();
         
         mx.lock();
         
@@ -74,7 +74,7 @@ public class MutexUnitTest
     @Test
     public void testThreaded () throws Exception
     {
-        Mutex mx = new Mutex();
+        BasicMutex mx = new BasicMutex();
         MutexThread mt1 = new MutexThread(mx);
         MutexThread mt2 = new MutexThread(mx);
         
@@ -98,27 +98,27 @@ public class MutexUnitTest
     @Test
     public void testInvalid () throws Exception
     {
-        Mutex mx = new Mutex();
+        BasicMutex mx = new BasicMutex();
 
-        assertEquals(mx.unlock(), Mutex.ERROR);
+        assertEquals(mx.unlock(), BasicMutex.ERROR);
     }
     
     @Test
     public void testReentrantMutex () throws Exception
     {
-        Mutex mx = new Mutex();
+        BasicMutex mx = new BasicMutex();
         
         mx.lock();
         
-        assertEquals(mx.tryLock(), Mutex.WOULD_BLOCK);
+        assertEquals(mx.tryLock(), BasicMutex.WOULD_BLOCK);
         
         mx.unlock();
         
-        mx = new Mutex(true);
+        mx = new BasicMutex(true);
         
         mx.lock();
         
-        assertEquals(mx.tryLock(), Mutex.LOCKED);
+        assertEquals(mx.tryLock(), BasicMutex.LOCKED);
         
         mx.unlock();
         mx.unlock();

@@ -32,9 +32,9 @@
 package com.arjuna.ats.txoj;
 
 import com.arjuna.ats.txoj.lockstore.*;
-import com.arjuna.ats.txoj.semaphore.*;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.StateManager;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
@@ -51,7 +51,6 @@ import com.arjuna.ats.internal.txoj.abstractrecords.CadaverLockRecord;
 import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
 import com.arjuna.ats.internal.txoj.lockstore.BasicPersistentLockStore;
-import com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
 import java.io.PrintWriter;
 import java.util.*;
@@ -161,7 +160,7 @@ public class LockManager extends StateManager
 
         if (mutex != null)
         {
-            if (mutex.lock() == Semaphore.SM_LOCKED)
+            if (mutex.lock() == Mutex.LOCKED)
                 doSignal = true;
         }
 
@@ -1026,12 +1025,12 @@ public class LockManager extends StateManager
             {
                 // TODO add a factory if we ever have more than one implementation
                 
-                mutex = new BasicSemaphore(systemKey);
+                mutex = new com.arjuna.ats.internal.arjuna.common.BasicMutex();
             }
 
             if (mutex != null)
             {
-                if (mutex.lock() == Semaphore.SM_LOCKED)
+                if (mutex.lock() == Mutex.LOCKED)
                 {
                     /*
                      * At some point we may want to add a factory to hide this, but
@@ -1120,7 +1119,7 @@ public class LockManager extends StateManager
                 return false; /* init failed */
             }
 
-            if ((mutex == null) || (mutex.tryLock() == Semaphore.SM_WOULD_BLOCK))
+            if ((mutex == null) || (mutex.tryLock() == Mutex.WOULD_BLOCK))
             {
                 return false;
             }
@@ -1431,7 +1430,7 @@ public class LockManager extends StateManager
 
     private boolean objectLocked;/* Semaphore grabbed */
 
-    private Semaphore mutex; /* Controls access to the lock store */
+    private com.arjuna.ats.internal.arjuna.common.BasicMutex mutex; /* Controls access to the lock store */
 
     private LockConflictManager conflictManager;
 

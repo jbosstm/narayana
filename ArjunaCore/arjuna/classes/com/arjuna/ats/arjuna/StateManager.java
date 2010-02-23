@@ -54,6 +54,7 @@ import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.RecoveryRecord;
+import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.IOException;
@@ -1492,7 +1493,7 @@ public class StateManager
      * @since JTS 2.1.
      */
 
-    protected final Mutex getMutex ()
+    protected final BasicMutex getMutex ()
     {
         return mutex;
     }
@@ -1504,7 +1505,7 @@ public class StateManager
 
     protected final boolean lockMutex ()
     {
-        if (mutex.lock() == Mutex.LOCKED)
+        if (mutex.lock() == BasicMutex.LOCKED)
             return true;
         else
             return false;
@@ -1517,7 +1518,7 @@ public class StateManager
 
     protected final boolean unlockMutex ()
     {
-        if (mutex.unlock() == Mutex.UNLOCKED)
+        if (mutex.unlock() == BasicMutex.UNLOCKED)
             return true;
         else
             return false;
@@ -1531,7 +1532,7 @@ public class StateManager
 
     protected final boolean tryLockMutex ()
     {
-        if (mutex.tryLock() == Mutex.LOCKED)
+        if (mutex.tryLock() == BasicMutex.LOCKED)
             return true;
         else
             return false;
@@ -1573,7 +1574,7 @@ public class StateManager
 
     private String storeRoot;
 
-    private Mutex mutex = new Mutex();
+    private BasicMutex mutex = new BasicMutex();
 
     private static final String marker = "#ARJUNA#";
 }

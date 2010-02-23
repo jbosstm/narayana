@@ -31,11 +31,11 @@
 
 package com.arjuna.ats.internal.jts.interposition;
 
-import com.arjuna.ats.arjuna.common.Mutex;
 
 import com.arjuna.ats.jts.extensions.Arjuna;
 import com.arjuna.ats.jts.logging.*;
 
+import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 import com.arjuna.ats.internal.jts.interposition.resources.arjuna.InterpositionCreator;
 import com.arjuna.ats.internal.jts.interposition.resources.strict.StrictInterpositionCreator;
 import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterpositionCreator;
@@ -265,6 +265,6 @@ public class FactoryList
 	private static FactoryElement _list = null;
 	private static FactoryElement _default = null; // used if no formatID
 													// values match.
-	private static Mutex _lock = new Mutex();
+	private static BasicMutex _lock = new BasicMutex();
 
 }

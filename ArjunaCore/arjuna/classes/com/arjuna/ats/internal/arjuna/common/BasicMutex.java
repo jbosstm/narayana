@@ -29,10 +29,11 @@
  * $Id: Mutex.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna.common;
+package com.arjuna.ats.internal.arjuna.common;
 
 import java.lang.InterruptedException;
 
+import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
@@ -50,21 +51,15 @@ import com.arjuna.common.util.logging.*;
  * 
  */
 
-public class Mutex
+public class BasicMutex implements Mutex
 {
-
-    public static final int LOCKED = 0;
-    public static final int UNLOCKED = 1;
-    public static final int WOULD_BLOCK = 2;
-    public static final int ERROR = 3;
-
-    public Mutex ()
+    public BasicMutex ()
     {
 	//	this(true);
 	this(false);
     }
     
-    public Mutex (boolean reentrant)
+    public BasicMutex (boolean reentrant)
     {
 	_lock = new Object();
 	_users = 0;
@@ -126,7 +121,7 @@ public class Mutex
 	    }
 	}
 
-	return Mutex.LOCKED;
+	return BasicMutex.LOCKED;
     }
 	    
     public int unlock ()
@@ -146,7 +141,7 @@ public class Mutex
 		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_2");
 		}
 		
-		return Mutex.ERROR;
+		return BasicMutex.ERROR;
 	    }
 	    else
 	    {
@@ -168,7 +163,7 @@ public class Mutex
 			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_2");
 			}
 			
-			return Mutex.LOCKED;
+			return BasicMutex.LOCKED;
 		    }
 		}
 
@@ -182,7 +177,7 @@ public class Mutex
 	    }
 	}
 	
-	return Mutex.UNLOCKED;
+	return BasicMutex.UNLOCKED;
     }
     
     public int tryLock ()
@@ -206,7 +201,7 @@ public class Mutex
 			return lock();
 		}
 		
-		return Mutex.WOULD_BLOCK;
+		return BasicMutex.WOULD_BLOCK;
 	    }
 	}
     }
