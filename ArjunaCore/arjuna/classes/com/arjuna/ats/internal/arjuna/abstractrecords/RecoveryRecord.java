@@ -160,7 +160,7 @@ public class RecoveryRecord extends AbstractRecord
      * nestedCommit does nothing since the passing of the state up to the parent
      * action is handled by the record list merging system. In fact since
      * nestedPrepare returns PREPARE_READONLY this function should never
-     * actaully be called
+     * actually be called
      */
 
     public int nestedCommit ()

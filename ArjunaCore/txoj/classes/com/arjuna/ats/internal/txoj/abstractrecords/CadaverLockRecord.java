@@ -77,7 +77,7 @@ public class CadaverLockRecord extends LockRecord
 	cadaverLockStore = store;
 	objectTypeName = new String(lm.type());
 	
-	if (super.objectModel == ObjectModel.SINGLE)
+	if (lm.getObjectModel() == ObjectModel.SINGLE)
 	{
 	    doRelease = false;
 	}

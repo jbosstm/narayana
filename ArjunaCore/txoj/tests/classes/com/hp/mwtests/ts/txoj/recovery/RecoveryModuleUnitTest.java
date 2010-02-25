@@ -31,37 +31,25 @@
 
 package com.hp.mwtests.ts.txoj.recovery;
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject;
+import org.junit.Test;
 
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
-class MyRecoveredTO extends RecoveredTransactionalObject
-{
-    public MyRecoveredTO(Uid objectUid, String originalType,
-            ObjectStore objectStore)
-    {
-        super(objectUid, originalType, objectStore);
-    }
-    
-    public void replay ()
-    {
-        super.replayPhase2();
-    }
-}
 
-public class RecoveryTest
+public class RecoveryModuleUnitTest
 {
     @Test
-    public void testCommit () throws Exception
+    public void test () throws Exception
     {
+        TORecoveryModule trm = new TORecoveryModule();
         AtomicAction A = new AtomicAction();
         
         A.begin();
@@ -74,32 +62,9 @@ public class RecoveryTest
         
         assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
         
-        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), TxControl.getStore());
-        
-        rto.replay();
-        
-        A.abort();
-    }
-    
-    @Test
-    public void testAbort () throws Exception
-    {
-        AtomicAction A = new AtomicAction();
-        
-        A.begin();
-        
-        AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
-        
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
-        
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
-        
-        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), TxControl.getStore());
-        
         A.abort();
         
-        rto.replay();
+        trm.periodicWorkFirstPass();
+        trm.periodicWorkSecondPass();
     }
 }

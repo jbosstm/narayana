@@ -26,64 +26,49 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: BasicTest.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.arjuna.statemanager;
+package com.hp.mwtests.ts.txoj.basic;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectModel;
-import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.*;
+import com.arjuna.ats.arjuna.common.*;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
+import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BasicTest
+public class ReactivateUnitTest
 {
     @Test
-    public void test() throws Exception
+    public void test()
     {
-        AtomicAction A = new AtomicAction();
-        BasicObject bo = new BasicObject();
+        try {
+            AtomicObject obj = new AtomicObject();
+            Uid objRef = obj.get_uid();
 
-        A.begin();
+            AtomicAction A = new AtomicAction();
 
-        bo.set(2);
+            A.begin();
 
-        A.commit();
-        
-        assertTrue(bo.getStore() != null);
-        assertTrue(bo.getStoreRoot() != null);
-        
-        assertEquals(bo.getObjectModel(), ObjectModel.SINGLE);
-    }
+            obj.set(1234);
 
-    @Test
-    public void testNested () throws Exception
-    {
-        AtomicAction A = new AtomicAction();
-        AtomicAction B = new AtomicAction();      
-        BasicObject bo = new BasicObject();
-        Uid u = bo.get_uid();
-        
-        A.begin();
-        B.begin();
-        
-        bo.set(2);
+            A.commit();
 
-        B.commit();
-        A.commit();
+            AtomicObject recObj = new AtomicObject(objRef);
 
-        bo = new BasicObject(u);
-        
-        A = new AtomicAction();
-        
-        A.begin();
-        
-        assertEquals(bo.get(), 2);
-        
-        A.commit();
+            AtomicAction B = new AtomicAction();
+
+            B.begin();
+
+            assertEquals(1234, recObj.get());
+
+            B.abort();
+        }
+        catch (Exception ex)
+        {
+            fail(ex.toString());
+        }
     }
 }

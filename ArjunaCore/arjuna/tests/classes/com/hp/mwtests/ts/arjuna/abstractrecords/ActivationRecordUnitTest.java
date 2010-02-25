@@ -43,7 +43,13 @@ public class ActivationRecordUnitTest
     @Test
     public void test ()
     {
-        ActivationRecord cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), new AtomicAction());
+        AtomicAction A = new AtomicAction();
+        AtomicAction B = new AtomicAction();
+        
+        A.begin();
+        B.begin();
+        
+        ActivationRecord cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), B);
         
         assertFalse(cr.propagateOnAbort());
         assertTrue(cr.propagateOnCommit());
@@ -57,17 +63,19 @@ public class ActivationRecordUnitTest
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_READONLY);
         assertEquals(cr.nestedAbort(), TwoPhaseOutcome.FINISH_OK);
 
-        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), new AtomicAction());
+        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), B);
         
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_READONLY);
         assertEquals(cr.nestedCommit(), TwoPhaseOutcome.FINISH_OK);
         
-        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), new AtomicAction());
+        B.abort();
+        
+        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), A);
 
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.topLevelAbort(), TwoPhaseOutcome.FINISH_OK);
  
-        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), new AtomicAction());
+        cr = new ActivationRecord(ObjectType.ANDPERSISTENT, new ExtendedObject(), A);
         
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.topLevelCommit(), TwoPhaseOutcome.FINISH_OK);
@@ -79,5 +87,7 @@ public class ActivationRecordUnitTest
         
         assertTrue(cr.save_state(new OutputObjectState(), ObjectType.ANDPERSISTENT));
         assertFalse(cr.restore_state(new InputObjectState(), ObjectType.ANDPERSISTENT));
+        
+        A.abort();
     }
 }

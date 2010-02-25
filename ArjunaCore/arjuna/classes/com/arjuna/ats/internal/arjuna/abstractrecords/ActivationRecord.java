@@ -141,7 +141,18 @@ public class ActivationRecord extends AbstractRecord
                     "ActivationRecord::nestedPrepare() for " + order());
         }
 
-        return TwoPhaseOutcome.PREPARE_READONLY;
+        if ((objectAddr != null) && (actionHandle != null))
+        {
+            if (StateManagerFriend.forgetAction(objectAddr, actionHandle, true, RecordType.ACTIVATION))
+            {              
+                actionHandle = actionHandle.parent();
+                
+                if (StateManagerFriend.rememberAction(objectAddr, actionHandle, RecordType.ACTIVATION))
+                    return TwoPhaseOutcome.PREPARE_READONLY;
+            }
+        }
+        
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     /**
@@ -246,7 +257,7 @@ public class ActivationRecord extends AbstractRecord
 
     /*
      * should_merge and should_replace are invoked by the record list manager to
-     * determine if two records should be merged togethor or if the 'newer'
+     * determine if two records should be merged together or if the 'newer'
      * should replace the older. shouldAdd determines if the new record should
      * be added in addition to the existing record and is currently only invoked
      * if both of should_merge and should_replace return FALSE Default

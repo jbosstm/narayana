@@ -38,7 +38,7 @@ import java.io.PrintWriter;
  * trying to set a lock.
  */
 
-class ConflictType
+public class ConflictType
 {
 
     public static final int CONFLICT = 0;

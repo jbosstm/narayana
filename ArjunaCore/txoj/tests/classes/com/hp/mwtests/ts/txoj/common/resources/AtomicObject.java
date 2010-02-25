@@ -109,12 +109,11 @@ public class AtomicObject extends LockManager
             printDebug = true;
     }
 
-    public void finalize () throws Throwable
+    public void terminate ()
     {
         super.terminate();
-        super.finalize();
     }
-
+    
     public void incr (int value) throws TestException
     {
         AtomicAction A = new AtomicAction();

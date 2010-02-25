@@ -3007,7 +3007,7 @@ public class BasicAction extends StateManager
 		{
 			p = ((actionType == ActionType.TOP_LEVEL) ? record.topLevelPrepare()
 					: record.nestedPrepare());
-			
+
 			if (p == TwoPhaseOutcome.PREPARE_OK)
 			{
 				record = insertRecord(preparedList, record);

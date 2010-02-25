@@ -726,6 +726,7 @@ public class LockManager extends StateManager
         }
 
         cleanUp();
+
         super.terminate();
     }
 
@@ -754,17 +755,19 @@ public class LockManager extends StateManager
              * act accordingly.
              */
 
+            BasicAction current = BasicAction.Current();
+
             synchronized (super.usingActions)
             {
                 if (super.usingActions != null)
                 {
-                    Enumeration e = super.usingActions.keys();
+                    Enumeration e = super.usingActions.elements();
 
                     while (e.hasMoreElements())
                     {
                         BasicAction action = (BasicAction) e.nextElement();
 
-                        while (action != null)
+                        if (action != null)  // shouldn't be null!!
                         {
                             /*
                              * Pop actions off using list. Don't check if action
@@ -777,12 +780,14 @@ public class LockManager extends StateManager
                              * maintain the locks because this object is being
                              * deleted.
                              */
-
+                            
                             AbstractRecord A = new CadaverLockRecord(lockStore,
                                     this, action);
 
                             if (action.add(A) != AddOutcome.AR_ADDED)
+                            {
                                 A = null;
+                            }
                         }
                     }
                 }

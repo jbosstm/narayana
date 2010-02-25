@@ -60,13 +60,7 @@ public class LockRecord extends AbstractRecord
 
     public LockRecord (LockManager lm, BasicAction currAct)
     {
-	super(lm.get_uid(), lm.type(), ObjectType.ANDPERSISTENT);
-
-	actionHandle = currAct;
-
-	managerAddress = lm;
-	readOnly = false;
-	managerType = lm.type();
+        this(lm, false, currAct);
     }
     
     public LockRecord (LockManager lm, boolean rdOnly, BasicAction currAct)

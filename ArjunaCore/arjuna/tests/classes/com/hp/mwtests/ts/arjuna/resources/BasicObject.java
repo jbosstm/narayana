@@ -76,10 +76,19 @@ public class BasicObject extends StateManager
 
     public int get()
     {
-        if (activate())
-            return state;
-        else
-            return -1;
+        try
+        {
+            lockMutex();
+            
+            if (activate())
+                return state;
+            else
+                return -1;
+        }
+        finally
+        {
+            getMutex().unlock();
+        }
     }
 
     public String type()

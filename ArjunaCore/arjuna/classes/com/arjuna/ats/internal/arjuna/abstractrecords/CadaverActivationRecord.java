@@ -78,6 +78,8 @@ public class CadaverActivationRecord extends ActivationRecord
 				     "CadaverActivationRecord::nestedAbort() for "+get_uid());
 	}
 	
+	super.nestedAbort();
+	
 	return TwoPhaseOutcome.FINISH_OK;
     }
     
@@ -102,6 +104,8 @@ public class CadaverActivationRecord extends ActivationRecord
 				     "CadaverActivationRecord::nestedPrepare() for "+get_uid());
 	}
 	
+	super.nestedPrepare();
+	
 	return TwoPhaseOutcome.PREPARE_READONLY;
     }
     
@@ -114,6 +118,8 @@ public class CadaverActivationRecord extends ActivationRecord
 				     "CadaverActivationRecord::topLevelAbort() for "+get_uid());
 	}
 	
+	super.topLevelAbort();
+	
 	return TwoPhaseOutcome.FINISH_OK;
     }
     
@@ -124,6 +130,8 @@ public class CadaverActivationRecord extends ActivationRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
 				     "CadaverActivationRecord::topLevelCommit() for "+get_uid());
 	}
+	
+	super.topLevelCommit();
 	
 	return TwoPhaseOutcome.FINISH_OK;
     }
@@ -136,6 +144,10 @@ public class CadaverActivationRecord extends ActivationRecord
 				     "CadaverActivationRecord::topLevelPrepare() for "+get_uid());
 	}
 	
+	// make sure SM instance forgets about action
+	
+	super.topLevelCommit();
+	
 	return TwoPhaseOutcome.PREPARE_READONLY;
     }
     
@@ -146,7 +158,7 @@ public class CadaverActivationRecord extends ActivationRecord
     
     /*
      * shouldMerge and should_replace are invoked by the record list manager
-     * to determine if two records should be merged togethor or if the
+     * to determine if two records should be merged together or if the
      * 'newer' should replace the older.
      * shouldAdd determines if the new record should be added in addition
      * to the existing record and is currently only invoked if both of

@@ -37,19 +37,14 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
 
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-import java.util.*;
-import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.Header;
-
-import java.io.IOException;
 
 /**
  * TransactionalObject shell instantiated at recovery time.
@@ -121,9 +116,7 @@ import java.io.IOException;
 
 public class RecoveredTransactionalObject extends StateManager
 {
-
-    RecoveredTransactionalObject(Uid objectUid, String originalType,
-            ObjectStore objectStore)
+    protected RecoveredTransactionalObject(Uid objectUid, String originalType, ObjectStore objectStore)
     {
         _ourUid = objectUid;
         _type = originalType;
@@ -143,7 +136,7 @@ public class RecoveredTransactionalObject extends StateManager
         }
     }
 
-    final void replayPhase2 ()
+    protected final void replayPhase2 ()
     {
         if (findHoldingTransaction())
         {
@@ -221,6 +214,8 @@ public class RecoveredTransactionalObject extends StateManager
             {
                 rollback();
             }
+            else
+                commit();
         }
         else
         {

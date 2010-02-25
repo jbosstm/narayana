@@ -298,10 +298,13 @@ public class StateManager
 
             synchronized (usingActions)
             {
-                if (usingActions.get(action.topLevelAction().get_uid()) == null)
+                if (usingActions.get(action.get_uid()) == null)
                 {
-                    usingActions.put(action.topLevelAction().get_uid(), action
-                            .topLevelAction());
+                    /*
+                     * May cause us to add parent as well as child.
+                     */
+                    
+                    usingActions.put(action.get_uid(), action);
                     forceAR = true;
                 }
             }
@@ -395,7 +398,7 @@ public class StateManager
             {
                 int arStatus = AddOutcome.AR_ADDED;
                 ActivationRecord ar = new ActivationRecord(oldStatus, this,
-                        action.topLevelAction());
+                        action);
 
                 if ((arStatus = action.add(ar)) != AddOutcome.AR_ADDED)
                 {
@@ -405,8 +408,7 @@ public class StateManager
                     {
                         synchronized (usingActions)
                         {
-                            usingActions.remove(action.topLevelAction()
-                                    .get_uid());
+                            usingActions.remove(action.get_uid());
                         }
                     }
 
@@ -422,6 +424,11 @@ public class StateManager
 
                     currentlyActivated = activated = true;
                 }
+            }
+            else
+            {
+                if (currentStatus == ObjectStatus.ACTIVE_NEW)
+                    currentlyActivated = activated = true;
             }
         }
         
@@ -555,6 +562,11 @@ public class StateManager
         return myType;
     }
 
+    public int getObjectModel ()
+    {
+        return objectModel;
+    }
+    
     /**
      * @return the object's unique identifier.
      */
@@ -998,6 +1010,7 @@ public class StateManager
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
                 tsLogger.arjLoggerI18N
                         .warn("com.arjuna.ats.arjuna.StateManager_10");
+            
             activate();
         }
 
@@ -1212,7 +1225,7 @@ public class StateManager
         /*
          * Here the object must be either RECOVERABLE or PERSISTENT. Whether or
          * not an action exists we still need to reset the object status to
-         * avoid possible later confusion What it gets set to is not important
+         * avoid possible later confusion. What it gets set to is not important
          * really as long as it gets changed from ACTIVE_NEW which might cause
          * any running action to abort.
          */
@@ -1433,7 +1446,7 @@ public class StateManager
                         if (committed)
                         {
                             if ((myType == ObjectType.RECOVERABLE)
-                                    && (objectModel == ObjectModel.SINGLE))
+                                    && (objectModel == ObjectModel.SINGLE) || (action.typeOfAction() == ActionType.NESTED))
                             {
                                 initialStatus = currentStatus = ObjectStatus.ACTIVE;
                             }

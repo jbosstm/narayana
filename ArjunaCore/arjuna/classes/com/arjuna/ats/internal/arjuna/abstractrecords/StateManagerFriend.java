@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.arjuna.ats.arjuna.StateManager;
@@ -48,6 +47,8 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf1] - StateManagerFriend.forgetAction
  * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf2
  *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf2] - StateManagerFriend.destroyed
+ * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf3
+ *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf3] - StateManagerFriend.rememberAction
  */
 
 public class StateManagerFriend
@@ -70,6 +71,29 @@ public class StateManagerFriend
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
                 tsLogger.arjLoggerI18N
                 .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf1", ex);
+            
+            return false;
+        }
+    }
+    
+    public static final boolean rememberAction (StateManager inst,
+            BasicAction act, int recordType)
+    {
+        try
+        {
+            Method m = StateManager.class.getDeclaredMethod("rememberAction", BasicAction.class, int.class);
+
+            m.setAccessible(true);
+            Boolean b = (Boolean) m.invoke(inst, act, recordType);
+            m.setAccessible(false);
+
+            return b.booleanValue();
+        }
+        catch (final Throwable ex)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf3", ex);
             
             return false;
         }
