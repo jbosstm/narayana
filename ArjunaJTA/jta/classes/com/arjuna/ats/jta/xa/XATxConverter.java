@@ -33,6 +33,7 @@ package com.arjuna.ats.jta.xa;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.jta.xa.XID;
 
 import javax.transaction.xa.Xid;
 import java.io.UnsupportedEncodingException;

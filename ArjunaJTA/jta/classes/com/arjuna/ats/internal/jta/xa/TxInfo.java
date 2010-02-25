@@ -51,10 +51,7 @@ public class TxInfo
     
     public TxInfo (Xid xid)
     {
-	_xid = xid;
-	_thread = Thread.currentThread();
-
-	setState(TxInfo.ASSOCIATED);
+        this(xid, TxInfo.ASSOCIATED);
     }
 
     public TxInfo (Xid xid, int state)

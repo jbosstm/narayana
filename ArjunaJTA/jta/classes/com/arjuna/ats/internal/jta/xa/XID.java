@@ -29,9 +29,11 @@
  * $Id: XID.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.jta.xa;
+package com.arjuna.ats.internal.jta.xa;
 
 import java.io.Serializable;
+
+import com.arjuna.ats.jta.xa.XATxConverter;
 
 /**
  * An X/Open XID implementation.
@@ -40,11 +42,12 @@ import java.io.Serializable;
  * @version $Id: XID.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
  */
-// package private, arguably should be inner class of XidImple.
-class XID implements Serializable
-{
 
-	public static final int XIDDATASIZE = 128; /* size in bytes */
+public class XID implements Serializable
+{
+    private static final long serialVersionUID = 1L;
+
+    public static final int XIDDATASIZE = 128; /* size in bytes */
 
 	public static final int MAXGTRIDSIZE = 64; /*
 												 * maximum size in bytes of

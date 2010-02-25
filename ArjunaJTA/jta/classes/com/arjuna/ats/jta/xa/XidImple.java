@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jta.xa;
 
+import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import com.arjuna.ats.arjuna.common.*;

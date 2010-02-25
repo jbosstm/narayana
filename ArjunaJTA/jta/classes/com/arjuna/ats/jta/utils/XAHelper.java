@@ -104,6 +104,8 @@ public class XAHelper
 				return "XAException.XAER_OUTSIDE";
 			case XAException.XA_RETRY:
 				return "XAException.XA_RETRY";
+			case XAException.XAER_ASYNC:
+			    return "XAException.XAER_ASYNC";
 			default:
 				return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.unknownerrorcode")
 						+ e.errorCode;

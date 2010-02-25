@@ -99,25 +99,29 @@ public class SubordinateAtomicAction extends
 
 	public boolean save_state (OutputObjectState os, int t)
 	{
-		if (_theXid != null)
-		{
-			try
-			{
-				os.packBoolean(true);
-				
-				((XidImple) _theXid).packInto(os);
-			}
-			catch (IOException ex)
-			{
-				return false;
-			}
-		}
+	    try
+	    {
+	        if (_theXid != null)
+	        {
+	            os.packBoolean(true);
 
-		return super.save_state(os, t);
+	            ((XidImple) _theXid).packInto(os);
+	        }
+	        else
+	            os.packBoolean(false);
+	    }
+	    catch (IOException ex)
+	    {
+	        return false;
+	    }
+
+	    return super.save_state(os, t);
 	}
 	
 	public boolean restore_state (InputObjectState os, int t)
 	{
+	    _theXid = null;
+	    
 		try
 		{
 			boolean haveXid = os.unpackBoolean();

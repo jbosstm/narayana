@@ -47,9 +47,7 @@ public class SubordinateAtomicAction extends
 
 	public SubordinateAtomicAction ()
 	{
-		super();
-
-		start();
+		this(AtomicAction.NO_TIMEOUT);
 	}
 
 	public SubordinateAtomicAction (int timeout)
@@ -73,7 +71,7 @@ public class SubordinateAtomicAction extends
 
 	public int commit ()
 	{
-		return ActionStatus.INVALID;
+		return commit(true);
 	}
 
 	/**

@@ -21,10 +21,14 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
+import javax.transaction.xa.XAException;
+
 import org.junit.Test;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.XidImple;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +50,88 @@ public class UtilsUnitTest
     
     @Test
     public void testXAHelper () throws Exception
-    {
+    {   
         assertTrue(XAHelper.printXAErrorCode(null) != null);
+        
+        XAException ex = new XAException(XAException.XA_HEURCOM);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_HEURCOM");
+        
+        ex = new XAException(XAException.XA_HEURHAZ);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_HEURHAZ");
+        
+        ex = new XAException(XAException.XA_HEURMIX);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_HEURMIX");
+        
+        ex = new XAException(XAException.XA_HEURRB);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_HEURRB");
+        
+        ex = new XAException(XAException.XA_NOMIGRATE);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_NOMIGRATE");
+        
+        ex = new XAException(XAException.XA_RBCOMMFAIL);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBCOMMFAIL");
+        
+        ex = new XAException(XAException.XA_RBDEADLOCK);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBDEADLOCK");
+        
+        ex = new XAException(XAException.XA_RBINTEGRITY);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBINTEGRITY");
+        
+        ex = new XAException(XAException.XA_RBOTHER);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBOTHER");
+        
+        ex = new XAException(XAException.XA_RBPROTO);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBPROTO");
+        
+        ex = new XAException(XAException.XA_RBROLLBACK);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBROLLBACK");
+        
+        ex = new XAException(XAException.XA_RBTIMEOUT);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBTIMEOUT");
+        
+        ex = new XAException(XAException.XA_RBTRANSIENT);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RBTRANSIENT");
+        
+        ex = new XAException(XAException.XA_RDONLY);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RDONLY");
+        
+        ex = new XAException(XAException.XA_RETRY);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XA_RETRY");
+        
+        ex = new XAException(XAException.XAER_RMERR);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_RMERR");
+        
+        ex = new XAException(XAException.XAER_ASYNC);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_ASYNC");
+        
+        ex = new XAException(XAException.XAER_DUPID);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_DUPID");       
+        
+        ex = new XAException(XAException.XAER_INVAL);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_INVAL");
+        
+        ex = new XAException(XAException.XAER_NOTA);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_NOTA");
+        
+        ex = new XAException(XAException.XAER_OUTSIDE);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_OUTSIDE");
+        
+        ex = new XAException(XAException.XAER_PROTO);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_PROTO");
+        
+        ex = new XAException(XAException.XAER_RMFAIL);
+        assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_RMFAIL");
+        
+        XidImple xid1 = new XidImple(new Uid());
+        XidImple xid2 = new XidImple(new Uid());
+        XidImple xid3 = new XidImple(xid1);
+        
+        assertFalse(XAHelper.sameXID(xid1, xid2));
+        assertTrue(XAHelper.sameXID(xid1, xid3));
+        
+        assertTrue(XAHelper.sameTransaction(xid1, xid1));
+        assertTrue(XAHelper.sameTransaction(xid1, xid3));
+        
+        assertTrue(XAHelper.xidToString(xid1) != null);
     }
 }
