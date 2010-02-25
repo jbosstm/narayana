@@ -34,6 +34,12 @@
         Utility functions for build time 3rd party dependency processing.
     </description>
 
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="../antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
     <property name="ext.lib.src" value="../ext"/>
     <property name="ext.lib.dest" value="../build/extlib"/>
 
@@ -73,15 +79,20 @@
             </fileset>
         </copy>
 
-        <!-- we use a local copy of JacORB for build/test as we need bits of it that are not in mvn.
-            However, we should ensure the AS has not upgraded or we'll wind up running on an untested version: -->
-        <checksum file="${ext.lib.dest}/jacorb.jar" property="as-jacorb-md5"/>
-        <checksum file="../ArjunaJTS/jacorb/lib/jacorb.jar" property="local-jacorb-md5"/>
-        <fail message="WARNING: effective JacORB version does not match JBossAS JacORB version. This is bad. I'm sulking. Edit maven/build.xml if you want to live dangerously, or go fix the problem.">
-            <condition>
-                <not><equals arg1="${as-jacorb-md5}" arg2="${local-jacorb-md5}"/></not>
-            </condition>
-        </fail>
+        <if>
+            <available file="@{dir}/@{artifact}-sources.jar"/>
+            <then>
+                <!-- we use a local copy of JacORB for build/test as we need bits of it that are not in mvn.
+                However, we should ensure the AS has not upgraded or we'll wind up running on an untested version: -->
+                <checksum file="${ext.lib.dest}/jacorb.jar" property="as-jacorb-md5"/>
+                <checksum file="../ArjunaJTS/jacorb/lib/jacorb.jar" property="local-jacorb-md5"/>
+                <fail message="WARNING: effective JacORB version does not match JBossAS JacORB version. This is bad. I'm sulking. Edit maven/build.xml if you want to live dangerously, or go fix the problem.">
+                    <condition>
+                        <not><equals arg1="${as-jacorb-md5}" arg2="${local-jacorb-md5}"/></not>
+                    </condition>
+                </fail>
+            </then>
+        </if>
 
     </target>
 
