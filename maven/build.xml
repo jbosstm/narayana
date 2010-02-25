@@ -80,7 +80,7 @@
         </copy>
 
         <if>
-            <available file="@{dir}/@{artifact}-sources.jar"/>
+            <available file="../ArjunaJTS/jacorb/lib/jacorb.jar"/>
             <then>
                 <!-- we use a local copy of JacORB for build/test as we need bits of it that are not in mvn.
                 However, we should ensure the AS has not upgraded or we'll wind up running on an untested version: -->
