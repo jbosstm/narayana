@@ -52,8 +52,12 @@ public class JTAHelper
 	    return "javax.transaction.Status.STATUS_NO_TRANSACTION";
 	case javax.transaction.Status.STATUS_PREPARED:
 	    return "javax.transaction.Status.STATUS_PREPARED";
+	case javax.transaction.Status.STATUS_PREPARING:
+            return "javax.transaction.Status.STATUS_PREPARING";
 	case javax.transaction.Status.STATUS_ROLLEDBACK:
 	    return "javax.transaction.Status.STATUS_ROLLEDBACK";
+	case javax.transaction.Status.STATUS_ROLLING_BACK:
+            return "javax.transaction.Status.STATUS_ROLLING_BACK";
 	case javax.transaction.Status.STATUS_UNKNOWN:
 	default:
 	    return "javax.transaction.Status.STATUS_UNKNOWN";
