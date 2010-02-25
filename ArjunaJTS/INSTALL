@@ -1,12 +1,12 @@
 
-JBossTS 4.9.GA is designed for use standalone or with JBossAS 6 alpha/milestone releases
+JBossTS 4.10 is designed for use standalone or with JBossAS 6 alpha/milestone releases
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
 a JMX configuration style to the POJO microcontainer used by AS 6.x, packaging and config files changes.
 Upgrading users should take care to read the steps below carefully.
 
-Installing JBossTS 4.9.GA JTA into JBossAS 6 alpha
+Installing JBossTS 4.10 JTA into JBossAS 6 alpha
 ------------------------------------------------------------
 
 The application server ships with an earlier release of JBossTS JTS, configured to run in JTA local mode,
@@ -23,7 +23,7 @@ do so the steps are as follows:
 
 
 
-Installing JBossTS 4.9.GA JTS into JBossAS 6 alpha
+Installing JBossTS 4.10 JTS into JBossAS 6 alpha
 ------------------------------------------------------------
 
 The JTS binaries are now bundled with JBossAS. To change the default JTA to JTS in JBossAS,
