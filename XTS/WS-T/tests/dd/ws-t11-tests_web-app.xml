@@ -44,7 +44,7 @@
 
     <servlet>
         <servlet-name>JUnitTestsXMLServlet</servlet-name>
-        <servlet-class>com.arjuna.qa.junit.WSCTestRunnerXMLServlet</servlet-class>
+        <servlet-class>com.arjuna.qa.junit.WSTTestRunnerXMLServlet</servlet-class>
         <init-param>
             <param-name>TestSuiteClassName</param-name>
             <param-value>com.arjuna.wst11.tests.junit.TestSuite</param-value>
