@@ -44,7 +44,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TestRunnerServlet extends HttpServlet
+public class WSCTestRunnerServlet extends HttpServlet
 {
     public void init(ServletConfig config) throws ServletException
     {
@@ -53,10 +53,10 @@ public class TestRunnerServlet extends HttpServlet
         _testSuiteClassName = config.getInitParameter("TestSuiteClassName");
     }
 
-   protected String getContentType()
-   {
-       return "text/html";
-   }
+    protected String getContentType()
+    {
+        return "text/html";
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
@@ -127,8 +127,7 @@ public class TestRunnerServlet extends HttpServlet
     }
 
     public void doStatus(PrintWriter writer, HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
-    {
+            throws ServletException {
         writer.println("<HTML>");
         writer.println("<HEAD>");
         writer.println("<TITLE>Test Runner</TITLE>");
@@ -501,6 +500,11 @@ public class TestRunnerServlet extends HttpServlet
 
     protected class RunnerThread extends Thread
     {
+        RunnerThread()
+        {
+            super("JUnit Runner Thread") ;
+        }
+        
         public void run()
         {
             try
@@ -530,7 +534,7 @@ public class TestRunnerServlet extends HttpServlet
         }
     }
 
-    protected class BasicTestListener implements TestListener
+    private class BasicTestListener implements TestListener
     {
         public void startTest(Test test)
         {
@@ -592,7 +596,7 @@ public class TestRunnerServlet extends HttpServlet
         private Throwable            _throwable            = null;
     }
 
-    private static void encode(PrintWriter writer, String string)
+    protected static void encode(PrintWriter writer, String string)
     {
         if (string != null)
         {
@@ -619,6 +623,6 @@ public class TestRunnerServlet extends HttpServlet
     protected String       _testSuiteClassName = null;
     protected RunnerThread _runnerThread       = null;
     protected TestResult   _testResult         = null;
-    private TestSuite    _testSuite          = null;
+    protected TestSuite    _testSuite          = null;
 
 }

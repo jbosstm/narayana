@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author <a href="mailto:istudens@redhat.com">Ivo Studensky</a>
  * @version $Revision$
  */
-public class TestRunnerXMLServlet extends TestRunnerServlet
+public class WSTTestRunnerXMLServlet extends WSTTestRunnerServlet
 {
 
     @Override
