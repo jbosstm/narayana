@@ -33,7 +33,7 @@ import java.util.*;
 @PropertyPrefix(prefix = "com.arjuna.orbportability.")
 public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentBeanMBean
 {
-    private volatile String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
+    private volatile String initialReferencesRoot = System.getProperty("user.dir");
     private volatile String initialReferencesFile = "CosServices.cfg";
     private volatile String fileDir = null;
     private volatile String resolveService = "CONFIGURATION_FILE";
@@ -51,7 +51,7 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     /**
      * Returns the name of the directory in which the initial reference file is stored.
      *
-     * Default: "."
+     * Default: value of System.getProperty("user.dir")
      * Equivalent deprecated property: com.arjuna.orbportability.initialReferencesRoot
      *
      * @return the path to the directory in which initial references are stored.

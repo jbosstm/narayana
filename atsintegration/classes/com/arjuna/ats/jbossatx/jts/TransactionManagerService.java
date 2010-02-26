@@ -37,6 +37,7 @@ import com.arjuna.orbportability.OA;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.orbportability.Services;
 
 /**
  * JBoss Transaction Manager Service.
@@ -83,7 +84,7 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
             ORBManager.setPOA(oa);
 
             org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
-            final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
+            final int resolver = Services.getResolver();
 
             com.arjuna.ats.jts.TransactionServer.registerTransactionManager(resolver, orb, factory);
         }

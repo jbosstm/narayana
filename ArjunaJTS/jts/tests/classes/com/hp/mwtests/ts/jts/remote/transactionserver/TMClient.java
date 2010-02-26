@@ -34,10 +34,7 @@ package com.hp.mwtests.ts.jts.remote.transactionserver;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
 import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
 
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
 import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.common.opPropertyManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
@@ -79,29 +76,7 @@ public class TMClient
 
         Services serv = new Services(myORB);
 
-        int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-        String resolveService = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
-
-        if (resolveService != null)
-        {
-            if (resolveService.compareTo("NAME_SERVICE") == 0)
-                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
-            else
-            {
-                if (resolveService.compareTo("BIND_CONNECT") == 0)
-                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
-                else
-                {
-                    if (resolveService.compareTo("FILE") == 0)
-                        resolver = com.arjuna.orbportability.Services.FILE;
-                    else
-                    {
-                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
-                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
-                    }
-                }
-            }
-        }
+        int resolver = Services.getResolver();
 
         try
         {

@@ -29,13 +29,12 @@
 * $Id: FileLocator.java 2342 2006-03-30 13:06:17Z  $
 */
 
-package com.arjuna.common.util;
+package com.arjuna.common.util.propertyservice;
 
 import java.io.File;
 import java.net.URL;
 
 import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 
 /**
  * The FileLocator class provides a common method for locating files.
@@ -51,13 +50,13 @@ import java.net.MalformedURLException;
  * @since JTS 3.0.
  */
 
-public class FileLocator
+class FileLocator
 {
    /**
     * Locate the specific file.
     * Return the (URL decoded) abolute pathname to the file or null.
     */
-   public static String locateFile (String findFile) throws FileNotFoundException
+   static String locateFile (String findFile) throws FileNotFoundException
    {
       URL url;
       String fullPathName;

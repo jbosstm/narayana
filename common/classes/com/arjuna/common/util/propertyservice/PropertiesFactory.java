@@ -20,7 +20,6 @@
  */
 package com.arjuna.common.util.propertyservice;
 
-import com.arjuna.common.util.FileLocator;
 import com.arjuna.common.util.ConfigurationInfo;
 
 import java.util.Properties;
@@ -73,7 +72,7 @@ public class PropertiesFactory
         {
             // Convert the possibly relative path into a canonical path, using FileLocator.
             // This is the point where the search path is applied - user.dir (pwd), user.home, java.home, classpath
-            filepath = FileLocator.locateFile(propertyFileName);
+            filepath = com.arjuna.common.util.propertyservice.FileLocator.locateFile(propertyFileName);
             File propertyFile = new File(filepath);
             if(!propertyFile.exists() || !propertyFile.isFile()) {
                 throw new RuntimeException("invalid property file "+filepath);

@@ -101,7 +101,7 @@ public Services(ORB orb)
 public org.omg.CORBA.Object getService (String serviceName,
 					Object[] params) throws org.omg.CORBA.ORBPackage.InvalidName, IOException, SystemException
     {
-	switch (com.arjuna.orbportability.common.Configuration.bindDefault())
+	switch (bindDefault())
 	{
 	case Services.RESOLVE_INITIAL_REFERENCES:
 	    return getService(serviceName, params, RESOLVE_INITIAL_REFERENCES);
@@ -186,8 +186,6 @@ public org.omg.CORBA.Object getService (String serviceName,
 	case CONFIGURATION_FILE:
 	    {
 		String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
-		if (cosservicesRoot == null || cosservicesRoot.length() == 0)
-		     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
 		String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 		String configFile = cosservicesRoot+File.separatorChar+configLocation;
 		LineNumberReader input;
@@ -326,7 +324,7 @@ public void registerService (org.omg.CORBA.Object objRef,
 		             String serviceName,
 			     Object[] params) throws org.omg.CORBA.ORBPackage.InvalidName, IOException, SystemException
     {
-	switch (com.arjuna.orbportability.common.Configuration.bindDefault())
+	switch (bindDefault())
 	{
 	case Services.CONFIGURATION_FILE:
 	    registerService(objRef, serviceName, params, CONFIGURATION_FILE);
@@ -394,8 +392,6 @@ public void registerService (org.omg.CORBA.Object objRef,
 	case CONFIGURATION_FILE:
 	    {
 		String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
-		if (cosservicesRoot == null || cosservicesRoot.length() == 0)
-		     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
 		String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 		String configFile = cosservicesRoot+File.separatorChar+configLocation;
 		LineNumberReader input = null;
@@ -555,8 +551,6 @@ public final String[] listInitialServices () throws IOException, SystemException
 	 */
 
 	String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
-	if (cosservicesRoot == null || cosservicesRoot.length() == 0)
-	     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
 	String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 	String configFile = cosservicesRoot+File.separatorChar+configLocation;
 	LineNumberReader input = null;
@@ -671,6 +665,55 @@ public final static int bindValue(String bindString)
     	
     	return(bindValue);
     }
+
+    public static final int getResolver ()
+    {
+        int resolver = bindDefault();
+        final String resolveService = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
+
+        if (resolveService != null)
+        {
+            if (resolveService.compareTo("NAME_SERVICE") == 0)
+                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
+            else
+            {
+                if (resolveService.compareTo("BIND_CONNECT") == 0)
+                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
+                else
+                {
+                    if (resolveService.compareTo("FILE") == 0)
+                        resolver = com.arjuna.orbportability.Services.FILE;
+                    else
+                    {
+                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
+                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
+                    }
+                }
+            }
+        }
+
+        return resolver;
+    }
+
+    /**
+     * @return the default bind mechanism. TODO
+     * @message com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind {0} - invalid bind mechanism in properties file
+     */
+    private static synchronized final int bindDefault ()
+    {
+        if (_bindMethod == -1)
+        {
+            if (opLogger.loggerI18N.isWarnEnabled())
+            {
+                opLogger.loggerI18N.warn("com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind", new Object[] { "com.arjuna.orbportability.common.Configuration.bindDefault()" } );
+            }
+        }
+
+        return _bindMethod;
+    }
+
+    private static final int _bindMethod = Services.bindValue(opPropertyManager.getOrbPortabilityEnvironmentBean().getBindMechanism());
+
     	    	
 public static final String nameService = "NameService";
 public static final String transactionService = "TransactionManagerService";

@@ -34,42 +34,10 @@ package com.arjuna.ats.jts;
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.common.util.ConfigurationInfo;
 
 public class TransactionServer
 {
-    // TODO consider as a util class addition?
-    
-    public static final int getResolver ()
-    {
-        int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-        final String resolveService = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
-
-        if (resolveService != null)
-        {
-            if (resolveService.compareTo("NAME_SERVICE") == 0)
-                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
-            else
-            {
-                if (resolveService.compareTo("BIND_CONNECT") == 0)
-                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
-                else
-                {
-                    if (resolveService.compareTo("FILE") == 0)
-                        resolver = com.arjuna.orbportability.Services.FILE;
-                    else
-                    {
-                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
-                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
-                    }
-                }
-            }
-        }
-
-        return resolver;
-    }
-
     public static final void registerTransactionManager (final int resolver, ORB myORB, org.omg.CosTransactions.TransactionFactory theOTS) throws Exception
     {
         final Services myServ = new Services(myORB);
@@ -117,7 +85,7 @@ public class TransactionServer
 	}
 
 	com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple theOTS = null;
-	final int resolver = getResolver();
+	final int resolver = Services.getResolver();
 	
 	try
 	{
