@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="localjunit" default="all">
 
+    <import file="../sharedbuild.xml"/>
+
 	<property name="build.dir"               value="build"/>
 	<property name="build.dir.classes"       value="${build.dir}/classes"/>
 	<property name="src.dir"	         value="src"/>
 	<property name="reports.dir"	         value="reports"/>
 	<property name="javac.debug"             value="on"/>
 	<property name="javac.optimize"          value="off"/>
-
-    <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location="../.."/>
-
-    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
-    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
-    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
 	<path id="tests.classpath">
 		<pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>

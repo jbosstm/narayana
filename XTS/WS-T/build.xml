@@ -33,63 +33,10 @@
 
     <!-- ================================================================== -->
 
+    <import file="../sharedbuild.xml"/>
+
     <!-- Set module name -->
     <property name="modulename" value="ws-t"/>
-
-    <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location="../.."/>
-
-    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
-    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
-    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
-
-    <!-- JBossTS products are in parent install/lib  -->
-    <property name="jbossts.install.dir" location="${jbossts.dir}/install"/>
-    <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
-
-    <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
-    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
-    <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
-
-    <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
-
-    <property name="xts.ext.dir" location="../ext"/>
-
-    <!-- required JBossTS product jars -->
-    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
-
-    <!-- external jars also used by JBossTS -->
-    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
-
-    <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
-    <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
-
-    <!-- external jars used by XTS for CXF enabled builds -->
-    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-
-    <!-- external jars used by XTS for all builds -->
-    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar
-            jbossws-client.jar stax-api.jar
-            jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
-            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
-
-    <!-- paths internal to build -->
-
-    <path id="build.classpath">
-        <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
-        <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
-    </path>
-
-    <path id="doclet.classpath">
-        <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
-    </path>
-
-    <property name="build.classpath" refid="build.classpath"/>
-
-    <property name="doclet.classpath" refid="doclet.classpath"/>
 
     <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
     <property  environment="env"/>
