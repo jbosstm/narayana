@@ -65,7 +65,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 public class TxControl
 {
-    public static final int NODE_NAME_SIZE = 10;
+    public static final int NODE_NAME_SIZE = 64;
     public static final String DEFAULT_NODE_NAME = "Arjuna:";
     
     public static class Shutdown extends Thread

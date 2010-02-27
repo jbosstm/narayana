@@ -296,7 +296,6 @@ public class XARecoveryModule implements RecoveryModule
 			_recoveryManagerClass = null;
 		}
 
-
         List<String> instances = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveryInstances();
 
         for(String theClassAndParameter : instances)

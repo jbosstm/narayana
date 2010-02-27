@@ -206,7 +206,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      * each optionally including trailing configuration data.
      * The provided list will be copied, not retained.
      *
-     * @param xaResourceRecoveryInstances the XAResourceRecovery implementaion classnames and configuration.
+     * @param xaResourceRecoveryInstances the XAResourceRecovery implementation classnames and configuration.
      */
     public void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances)
     {

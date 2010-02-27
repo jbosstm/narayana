@@ -32,8 +32,6 @@
 package com.arjuna.ats.jta.recovery;
 
 import java.sql.*;
-import javax.sql.*;
-import javax.transaction.*;
 import javax.transaction.xa.*;
 
 /**
