@@ -21,11 +21,14 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
+import javax.transaction.Status;
 import javax.transaction.xa.XAException;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -46,6 +49,28 @@ public class UtilsUnitTest
         assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_ROLLEDBACK), "javax.transaction.Status.STATUS_ROLLEDBACK");
         assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_ROLLING_BACK), "javax.transaction.Status.STATUS_ROLLING_BACK");
         assertEquals(JTAHelper.stringForm(javax.transaction.Status.STATUS_UNKNOWN), "javax.transaction.Status.STATUS_UNKNOWN");
+    }
+    
+    @Test
+    public void testStatusConverter () throws Exception
+    {
+        assertEquals(StatusConverter.convert(ActionStatus.ABORT_ONLY), Status.STATUS_MARKED_ROLLBACK);
+        assertEquals(StatusConverter.convert(ActionStatus.ABORTED), Status.STATUS_ROLLEDBACK);
+        assertEquals(StatusConverter.convert(ActionStatus.ABORTING), Status.STATUS_ROLLING_BACK);
+        assertEquals(StatusConverter.convert(ActionStatus.CLEANUP), Status.STATUS_UNKNOWN);
+        assertEquals(StatusConverter.convert(ActionStatus.COMMITTED), Status.STATUS_COMMITTED);
+        assertEquals(StatusConverter.convert(ActionStatus.COMMITTING), Status.STATUS_COMMITTING);
+        assertEquals(StatusConverter.convert(ActionStatus.CREATED), Status.STATUS_UNKNOWN);
+        assertEquals(StatusConverter.convert(ActionStatus.DISABLED), Status.STATUS_UNKNOWN);
+        assertEquals(StatusConverter.convert(ActionStatus.H_COMMIT), Status.STATUS_COMMITTED);
+        assertEquals(StatusConverter.convert(ActionStatus.H_HAZARD), Status.STATUS_COMMITTED);
+        assertEquals(StatusConverter.convert(ActionStatus.H_MIXED), Status.STATUS_COMMITTED);
+        assertEquals(StatusConverter.convert(ActionStatus.H_ROLLBACK), Status.STATUS_ROLLEDBACK);
+        assertEquals(StatusConverter.convert(ActionStatus.INVALID), Status.STATUS_UNKNOWN);
+        assertEquals(StatusConverter.convert(ActionStatus.NO_ACTION), Status.STATUS_NO_TRANSACTION);
+        assertEquals(StatusConverter.convert(ActionStatus.PREPARED), Status.STATUS_PREPARED);
+        assertEquals(StatusConverter.convert(ActionStatus.PREPARING), Status.STATUS_PREPARING);
+        assertEquals(StatusConverter.convert(ActionStatus.RUNNING), Status.STATUS_ACTIVE);
     }
     
     @Test

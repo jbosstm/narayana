@@ -44,6 +44,7 @@ import java.io.*;
 
 public class DummyXA implements XAResource, Serializable
 {
+    private static final long serialVersionUID = -2285367224867593569L;
     
     public DummyXA (boolean print)
     {

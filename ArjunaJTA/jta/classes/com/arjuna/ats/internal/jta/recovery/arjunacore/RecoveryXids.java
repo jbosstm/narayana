@@ -31,13 +31,7 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.jta.recovery.*;
-
 import com.arjuna.ats.jta.utils.XAHelper;
-
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-
-import com.arjuna.ats.arjuna.common.*;
 
 import java.util.*;
 import javax.transaction.xa.*;

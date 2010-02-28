@@ -130,7 +130,7 @@ public class XAOnePhaseResource implements OnePhaseResource
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             case XAException.XA_HEURCOM:
                 doForget = true;
-                break;
+                return TwoPhaseOutcome.FINISH_OK;
             case XAException.XA_HEURRB:
                 doForget = true;
                 return TwoPhaseOutcome.ONE_PHASE_ERROR;
@@ -207,8 +207,18 @@ public class XAOnePhaseResource implements OnePhaseResource
                 jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.rollbackexception",
                         new Object[] {xid, xae.getMessage()}, xae);
             }
-            return TwoPhaseOutcome.FINISH_ERROR ;
         }
+        catch (final Throwable ex)
+        {
+            if (jtaLogger.logger.isDebugEnabled())
+            {
+                jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
+                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
+                        "XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
+            }
+        }
+        
+        return TwoPhaseOutcome.FINISH_ERROR ;
     }
 
     /**

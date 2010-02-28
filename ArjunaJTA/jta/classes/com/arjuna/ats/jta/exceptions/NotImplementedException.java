@@ -51,7 +51,7 @@ public class NotImplementedException extends Exception
      * call to {@link #initCause}.
      */
     public NotImplementedException() {
-        super();    //To change body of overridden methods use File | Settings | File Templates.
+        super();
     }
 
     /**
@@ -63,7 +63,7 @@ public class NotImplementedException extends Exception
      *                later retrieval by the {@link #getMessage()} method.
      */
     public NotImplementedException(String message) {
-        super(message);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message);
     }
 
     /**
@@ -81,7 +81,7 @@ public class NotImplementedException extends Exception
      * @since 1.4
      */
     public NotImplementedException(String message, Throwable cause) {
-        super(message, cause);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message, cause);
     }
 
     /**
@@ -99,7 +99,7 @@ public class NotImplementedException extends Exception
      * @since 1.4
      */
     public NotImplementedException(Throwable cause) {
-        super(cause);    //To change body of overridden methods use File | Settings | File Templates.
+        super(cause);
     }
 }
 

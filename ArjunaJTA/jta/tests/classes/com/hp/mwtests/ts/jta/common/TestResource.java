@@ -27,8 +27,7 @@ import javax.transaction.xa.Xid;
 
 public class TestResource implements XAResource
 {
-
-	public void commit (Xid id, boolean onePhase) throws XAException
+    public void commit (Xid id, boolean onePhase) throws XAException
 	{
 		System.out.println("XA_COMMIT[" + id + "]");
 	}

@@ -228,25 +228,18 @@ public class XAResourceRecord extends AbstractRecord
 					"XAResourceRecord.topLevelPrepare for " + _tranID);
 		}
 
-		if (!_valid || (_theXAResource == null))
+		if (!_valid || (_theXAResource == null) || (_tranID == null))
 		{
-			removeConnection();
+		    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                            jtaLogger.loggerI18N
+                                            .warn(
+                                                            "com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx",
+                                                            new Object[]
+                                                            { "XAResourceRecord.prepare" });
+                    }
 
-			return TwoPhaseOutcome.PREPARE_READONLY;
-		}
-
-		if (_tranID == null)
-		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx",
-								new Object[]
-								{ "XAResourceRecord.prepare" });
-			}
-
-			removeConnection();
+                    removeConnection();
 
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}

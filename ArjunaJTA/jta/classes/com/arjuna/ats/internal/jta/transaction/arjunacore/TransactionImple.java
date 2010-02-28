@@ -550,7 +550,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throw new RollbackException(
 					"TransactionImple.enlistResource - "
 							+ jtaLogger.loggerI18N
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
 		case javax.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:

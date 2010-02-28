@@ -72,6 +72,13 @@ public class TxWorkManager
 		{
 			workers = _transactions.get(tx);
 
+			/*
+			 * TODO
+			 * 
+			 * Is this really correct? We only get to add one unit of work per
+			 * transaction?! If so why use a stack datastructure?
+			 */
+			
 			if (workers == null)
 			{
 				workers = new Stack<Work>();
