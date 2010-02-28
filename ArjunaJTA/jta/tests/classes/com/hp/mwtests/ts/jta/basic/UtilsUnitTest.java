@@ -54,6 +54,8 @@ public class UtilsUnitTest
     @Test
     public void testStatusConverter () throws Exception
     {
+        StatusConverter sc = new StatusConverter();
+        
         assertEquals(StatusConverter.convert(ActionStatus.ABORT_ONLY), Status.STATUS_MARKED_ROLLBACK);
         assertEquals(StatusConverter.convert(ActionStatus.ABORTED), Status.STATUS_ROLLEDBACK);
         assertEquals(StatusConverter.convert(ActionStatus.ABORTING), Status.STATUS_ROLLING_BACK);

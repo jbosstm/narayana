@@ -62,6 +62,7 @@ public class RecoveryXidsUnitTest
         assertTrue(rxids.equals(dup2));
         
         rxids.nextScan(xids);
+        rxids.nextScan(xids);
         
         xids[1] = new XidImple(new Uid());
         
@@ -76,5 +77,7 @@ public class RecoveryXidsUnitTest
         
         assertFalse(rxids.updateIfEquivalentRM(new TestResource(), null));
         assertTrue(rxids.updateIfEquivalentRM(new TestResource(), xids));
+        
+        assertFalse(rxids.isSameRM(new TestResource()));
     }
 }
