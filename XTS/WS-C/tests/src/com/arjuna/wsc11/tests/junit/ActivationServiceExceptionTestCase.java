@@ -26,14 +26,17 @@
 
 package com.arjuna.wsc11.tests.junit;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.ActivationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
-import junit.framework.TestCase;
 
-public class ActivationServiceExceptionTestCase extends TestCase
+public class ActivationServiceExceptionTestCase
 {
+    @Test
     public void testInvalidCreateParametersException()
         throws Exception
     {

@@ -26,19 +26,20 @@
 
 package com.arjuna.wsc.tests.junit;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        com.arjuna.wsc.tests.junit.ActivationTestCase.class,
+        com.arjuna.wsc.tests.junit.RegistrationTestCase.class,
+        com.arjuna.wsc.tests.junit.ActivationServiceTestCase.class,
+        com.arjuna.wsc.tests.junit.ActivationServiceExceptionTestCase.class,
+        com.arjuna.wsc.tests.junit.RegistrationServiceTestCase.class,
+        com.arjuna.wsc.tests.junit.RegistrationServiceExceptionTestCase.class,
+        com.arjuna.wsc.tests.junit.EnduranceTestCase.class,
+        com.arjuna.wsc.tests.junit.ThreadedEnduranceTestCase.class
+})
 public class TestSuite extends junit.framework.TestSuite
 {
-    public TestSuite()
-    {
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.ActivationTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.RegistrationTestCase.class));
-
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.ActivationServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.ActivationServiceExceptionTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.RegistrationServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.RegistrationServiceExceptionTestCase.class));
-
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.EnduranceTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc.tests.junit.ThreadedEnduranceTestCase.class));
-    }
 }

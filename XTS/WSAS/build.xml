@@ -100,7 +100,7 @@
 	<target name="wsas.jar" depends="wsas.compile, wsas.htdocs, wsas.generateresourcebundle">
 		<echo message="Building jar file"/>
 		<mkdir dir="${wsas.jar.dest}"/>
-		<jar jarfile="${wsas.jar.dest}/${modulename}.jar" basedir="${wsas.dest}"/>
+        <jar jarfile="${wsas.jar.dest}/${modulename}.jar" basedir="${wsas.dest}" excludes="com/arjuna/qa/junit/*.class"/>
 	</target>
 
 	<target name="wsas.htdocs"
@@ -166,8 +166,9 @@
 	<target name="wsas.tests.webapps" depends="wsas.tests.compile">
 	  <copy file="${wsas.tests.dd}/wsas-tests_web-app.xml" tofile="${wsas.tests.dd.dest}/web-app.xml">
 	  </copy>
+        <jar jarfile="${wsas.tests.jar.dest}/wsas-tests.jar" basedir="${wsas.tests.dest}" excludes="com/arjuna/qa/junit/*.class"/>
+        <jar jarfile="${wsas.tests.jar.dest}/xts-test-servlet.jar" basedir="${wsas.tests.dest}" includes="com/arjuna/qa/junit/*.class"/>
 	  <war warfile="${wsas.tests.webapps.dest}/wsas-tests.war" webxml="${wsas.tests.dd.dest}/web-app.xml">
-	    <classes dir="${wsas.tests.dest}"/>
 	  </war>
 	  <ear earfile="${wsas.tests.webapps.dest}/wsas-tests.ear" appxml="${wsas.tests.dd}/wsas-tests_application.xml">
 	    <!-- we only need to deploy the ext test libs (junit) and
@@ -176,7 +177,9 @@
 	         in the server lib
 	    -->
 	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
-	    <fileset dir="${wsas.tests.webapps.dest}" includes="wsas-tests.war"/>
+          <fileset dir="${wsas.tests.webapps.dest}" includes="wsas-tests.war"/>
+          <fileset dir="${wsas.tests.jar.dest}" includes="wsas-tests.jar"/>
+          <fileset dir="${wsas.tests.jar.dest}" includes="xts-test-servlet.jar"/>
 	  </ear>
 	</target>
 

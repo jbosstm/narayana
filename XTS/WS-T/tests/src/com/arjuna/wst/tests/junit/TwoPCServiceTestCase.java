@@ -28,7 +28,10 @@
 
 package com.arjuna.wst.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -42,9 +45,10 @@ import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.stub.ParticipantStub;
 import com.arjuna.wst.tests.TestUtil;
 
-public class TwoPCServiceTestCase extends TestCase
+public class TwoPCServiceTestCase 
 {
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -80,6 +84,7 @@ public class TwoPCServiceTestCase extends TestCase
         _nonexistentStub                    = new ParticipantStub("twoPCCoordinator", false, nonexistentCoordinator);
     }
 
+    @Test
     public void testPrepareWithPreparedVote()
         throws Exception
     {
@@ -89,6 +94,7 @@ public class TwoPCServiceTestCase extends TestCase
         assertTrue("Expected vote \"Prepared\" got \"" + vote.getClass().getName() + "\"", vote instanceof com.arjuna.wst.Prepared);
     }
 
+    @Test
     public void testPrepareWithAbortedVote()
         throws Exception
     {
@@ -98,6 +104,7 @@ public class TwoPCServiceTestCase extends TestCase
         assertTrue("Expected vote \"Aborted\" got \"" + vote.getClass().getName() + "\"", vote instanceof com.arjuna.wst.Aborted);
     }
 
+    @Test
     public void testPrepareWithReadOnlyVote()
         throws Exception
     {
@@ -107,30 +114,35 @@ public class TwoPCServiceTestCase extends TestCase
         assertTrue("Expected vote \"ReadOnly\" got \"" + vote.getClass().getName() + "\"", vote instanceof com.arjuna.wst.ReadOnly);
     }
 
+    @Test
     public void testCommitWithNoException()
         throws Exception
     {
         _noExceptionStub.commit();
     }
 
+    @Test
     public void testRollbackWithNoException()
         throws Exception
     {
         _noExceptionStub.rollback();
     }
 
+    @Test
     public void testUnknownWithNoException()
         throws Exception
     {
         _noExceptionStub.unknown();
     }
 
+    @Test
     public void testErrorWithNoException()
         throws Exception
     {
         _noExceptionStub.error();
     }
 
+    @Test
     public void testPrepareWithWrongStateException()
         throws Exception
     {
@@ -144,6 +156,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithWrongStateException()
         throws Exception
     {
@@ -157,6 +170,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithWrongStateException()
         throws Exception
     {
@@ -170,6 +184,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testPrepareWithSystemException()
         throws Exception
     {
@@ -183,6 +198,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithSystemException()
         throws Exception
     {
@@ -196,6 +212,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithSystemException()
         throws Exception
     {
@@ -209,18 +226,21 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testUnknownWithSystemException()
         throws Exception
     {
         _systemExceptionStub.unknown();
     }
 
+    @Test
     public void testErrorWithSystemException()
         throws Exception
     {
         _systemExceptionStub.error();
     }
 
+    @Test
     public void testPrepareWithNonExistent()
         throws Exception
     {
@@ -234,6 +254,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithNonExistent()
         throws Exception
     {
@@ -247,6 +268,7 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithNonExistent()
         throws Exception
     {
@@ -260,19 +282,22 @@ public class TwoPCServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testUnknownWithNonExistent()
         throws Exception
     {
         _nonexistentStub.unknown();
     }
 
+    @Test
     public void testErrorWithNonExistent()
         throws Exception
     {
         _nonexistentStub.error();
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         _preparedVoteStub                   = null;

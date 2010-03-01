@@ -27,29 +27,20 @@
 package com.arjuna.wst11.tests.junit;
 
 import com.arjuna.wst11.tests.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class TestSuite extends junit.framework.TestSuite
+@RunWith(Suite.class)
+    @Suite.SuiteClasses({
+            CompletionParticipantTestCase.class,
+            CompletionCoordinatorTestCase.class,
+            TwoPCParticipantTestCase.class,
+            TwoPCCoordinatorTestCase.class,
+            BusinessAgreementWithParticipantCompletionParticipantTestCase.class,
+            BusinessAgreementWithParticipantCompletionCoordinatorTestCase.class,
+            BusinessAgreementWithCoordinatorCompletionParticipantTestCase.class,
+            BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase.class
+    })
+public class TestSuite
 {
-    public TestSuite()
-    {
-        // the service tests are no longer working
-        addTest(new junit.framework.TestSuite(CompletionParticipantTestCase.class));
-        addTest(new junit.framework.TestSuite(CompletionCoordinatorTestCase.class));
-        addTest(new junit.framework.TestSuite(TwoPCParticipantTestCase.class));
-        addTest(new junit.framework.TestSuite(TwoPCCoordinatorTestCase.class));
-        //addTest(new junit.framework.TestSuite(CompletionServiceTestCase.class));
-        //addTest(new junit.framework.TestSuite(TwoPCServiceTestCase.class));
-        //addTest(new junit.framework.TestSuite(BusinessAgreementWithParticipantCompletionServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(BusinessAgreementWithParticipantCompletionParticipantTestCase.class));
-        addTest(new junit.framework.TestSuite(BusinessAgreementWithParticipantCompletionCoordinatorTestCase.class));
-        //addTest(new junit.framework.TestSuite(BusinessAgreementWithCoordinatorCompletionServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(BusinessAgreementWithCoordinatorCompletionParticipantTestCase.class));
-        addTest(new junit.framework.TestSuite(BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase.class));
-        // these tests refer to a sercie which no longer exists
-        //addTest(new junit.framework.TestSuite(BAParticipantManagerServiceTestCase.class));
-        //addTest(new junit.framework.TestSuite(BAParticipantManagerParticipantTestCase.class));
-        //addTest(new junit.framework.TestSuite(BAParticipantManagerCoordinatorTestCase.class));
-        //addTest(new junit.framework.TestSuite(BusinessActivityTerminatorServiceTestCase.class));
-    }
-
 }

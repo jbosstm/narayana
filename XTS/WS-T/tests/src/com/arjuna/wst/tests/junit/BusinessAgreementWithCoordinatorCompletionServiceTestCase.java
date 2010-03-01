@@ -26,7 +26,10 @@
 
 package com.arjuna.wst.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -41,9 +44,10 @@ import com.arjuna.wst.messaging.engines.CoordinatorCompletionCoordinatorEngine;
 import com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub;
 import com.arjuna.wst.tests.TestUtil;
 
-public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends TestCase
+public class BusinessAgreementWithCoordinatorCompletionServiceTestCase
 {
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -82,24 +86,28 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
                 = new BusinessAgreementWithCoordinatorCompletionStub(_faultedExceptionBusinessAgreementWithCoordinatorCompletionEngine);
     }
 
+    @Test
     public void testCloseWithNoException()
         throws Exception
     {
         _noExceptionBusinessAgreementWithCoordinatorCompletionStub.close();
     }
 
+    @Test
     public void testCancelWithNoException()
         throws Exception
     {
         _noExceptionBusinessAgreementWithCoordinatorCompletionStub.cancel();
     }
 
+    @Test
     public void testCompensateWithNoException()
         throws Exception
     {
         _noExceptionBusinessAgreementWithCoordinatorCompletionStub.compensate();
     }
 
+    @Test
     public void testCloseWithWrongStateException()
         throws Exception
     {
@@ -113,6 +121,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCancelWithWrongStateException()
         throws Exception
     {
@@ -126,6 +135,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCompensateWithWrongStateException()
         throws Exception
     {
@@ -139,6 +149,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCloseWithSystemException()
         throws Exception
     {
@@ -152,6 +163,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCancelWithSystemException()
         throws Exception
     {
@@ -165,6 +177,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCompensateWithSystemException()
         throws Exception
     {
@@ -178,6 +191,7 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
+    @Test
     public void testCompensateWithFaultedException ()
         throws Exception
     {
@@ -191,7 +205,8 @@ public class BusinessAgreementWithCoordinatorCompletionServiceTestCase extends T
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         _noExceptionBusinessAgreementWithCoordinatorCompletionStub                    = null;

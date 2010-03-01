@@ -35,7 +35,10 @@ import com.arjuna.mw.wst11.BusinessActivityManager;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wst.tests.common.DemoBusinessParticipant;
 import com.arjuna.wst.tests.common.FailureBusinessParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,9 +46,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class MultiCompensate extends TestCase
+public class MultiCompensate
 {
-    public static void testMultiCompensate()
+    @Test
+    public void testMultiCompensate()
             throws Exception
     {
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();

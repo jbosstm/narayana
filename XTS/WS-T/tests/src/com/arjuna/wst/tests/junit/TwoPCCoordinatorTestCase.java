@@ -30,7 +30,10 @@ package com.arjuna.wst.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -45,7 +48,7 @@ import com.arjuna.webservices.wsat.client.ParticipantClient;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.wst.tests.junit.TestParticipantProcessor.ParticipantDetails;
 
-public class TwoPCCoordinatorTestCase extends TestCase
+public class TwoPCCoordinatorTestCase 
 {
     private ParticipantProcessor origParticipantProcessor ;
     
@@ -53,7 +56,8 @@ public class TwoPCCoordinatorTestCase extends TestCase
     private String participanURIService;
     private String coordinatorServiceURI;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origParticipantProcessor = ParticipantProcessor.setProcessor(testParticipantProcessor) ;
@@ -62,6 +66,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         coordinatorServiceURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_COORDINATOR) ;
     }
 
+    @Test
     public void testSendPrepare()
         throws Exception
     {
@@ -78,6 +83,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, messageId, null);
     }
 
+    @Test
     public void testSendCommit()
         throws Exception
     {
@@ -94,6 +100,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, messageId, null);
     }
 
+    @Test
     public void testSendRollback()
         throws Exception
     {
@@ -110,6 +117,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, messageId, null);
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -135,7 +143,8 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, false, messageId, null);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ParticipantProcessor.setProcessor(origParticipantProcessor) ;

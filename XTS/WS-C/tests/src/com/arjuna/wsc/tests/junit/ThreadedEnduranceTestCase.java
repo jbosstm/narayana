@@ -30,7 +30,10 @@ import java.util.Random;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -51,7 +54,7 @@ import com.arjuna.webservices.wscoor.processors.ActivationRequesterProcessor;
 import com.arjuna.webservices.wscoor.processors.RegistrationRequesterProcessor;
 import com.arjuna.wsc.tests.TestUtil;
 
-public class ThreadedEnduranceTestCase extends TestCase
+public class ThreadedEnduranceTestCase
 {
     private EndpointReferenceType activationCoordinatorService ;
     private EndpointReferenceType activationRequesterService ;
@@ -62,7 +65,8 @@ public class ThreadedEnduranceTestCase extends TestCase
     private static final long TEST_DURATION = 60 * 1000;
     private static final int  TEST_THREADS  = 4;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -77,24 +81,28 @@ public class ThreadedEnduranceTestCase extends TestCase
         registrationRequesterService = new EndpointReferenceType(new AttributedURIType(registrationRequesterServiceURI)) ;
     }
 
+    @Test
     public void testCreateCoordinationContextResponse()
         throws Exception
     {
         invoke(0);
     }
 
+    @Test
     public void testCreateCoordinationContextError()
         throws Exception
     {
         invoke(1);
     }
 
+    @Test
     public void testRegisterResponse()
         throws Exception
     {
         invoke(2);
     }
 
+    @Test
     public void testRegisterError()
         throws Exception
     {
@@ -357,7 +365,8 @@ public class ThreadedEnduranceTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         activationCoordinatorService = null ;

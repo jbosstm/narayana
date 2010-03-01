@@ -24,29 +24,24 @@
 
 package com.arjuna.wscf11.tests;
 
-public class WSCF11TestSuite extends junit.framework.TestSuite
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+    @Suite.SuiteClasses({
+            com.arjuna.wscf11.tests.model.twophase.StartEnd.class,
+            com.arjuna.wscf11.tests.model.twophase.BeginConfirm.class,
+            com.arjuna.wscf11.tests.model.twophase.BeginCancel.class,
+            com.arjuna.wscf11.tests.model.twophase.Suspend.class,
+            com.arjuna.wscf11.tests.model.twophase.SuspendResume.class,
+            com.arjuna.wscf11.tests.model.twophase.SuspendConfirm.class,
+            com.arjuna.wscf11.tests.model.twophase.CancelOnlyCancel.class,
+            com.arjuna.wscf11.tests.model.twophase.CancelOnlyConfirm.class,
+            com.arjuna.wscf11.tests.model.twophase.AddParticipant.class,
+            com.arjuna.wscf11.tests.model.twophase.SuspendParticipant.class,
+            com.arjuna.wscf11.tests.model.twophase.AddSynchronization.class,
+            com.arjuna.wscf11.tests.model.twophase.ParticipantSynchronization.class
+    })
+public class WSCF11TestSuite
 {
-    public WSCF11TestSuite()
-    {
-        // wscf twophase tests
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.StartEnd.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.BeginConfirm.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.BeginCancel.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.Suspend.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.SuspendResume.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.SuspendConfirm.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.CancelOnlyCancel.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.CancelOnlyConfirm.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.AddParticipant.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.SuspendParticipant.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.AddSynchronization.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.ParticipantSynchronization.class));
-        // this test relies on an invalid, out of date DOM implementation
-        //addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.ContextOutput.class));
-        // TODO -- these tests break because ArjunaContextImple.toString() is broken. fix after 4.3.0 release
-        //addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.WscContext.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.WscNestedContext.class));
-        // this test relies on an invalid, out of date DOM implementation
-        //addTest(new junit.framework.TestSuite(com.arjuna.wscf11.tests.model.twophase.WscTranslateContext.class));
-    }
 }

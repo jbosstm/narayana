@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author <a href="mailto:istudens@redhat.com">Ivo Studensky</a>
  * @version $Revision$
  */
-public class WSTTestRunnerXMLServlet extends WSTTestRunnerServlet
+public class TestRunnerXMLServlet extends TestRunnerServlet
 {
 
     @Override
@@ -94,7 +94,7 @@ public class WSTTestRunnerXMLServlet extends WSTTestRunnerServlet
                 totalDuration += passedTest.duration;
 
                 testsuite.add(newTestcase(
-                        passedTest.test.getClass().getName(), passedTest.test.toString(), passedTest.duration));
+                        passedTest.description.getClass().getName(), passedTest.description.toString(), passedTest.duration));
             }
         }
 
@@ -113,7 +113,7 @@ public class WSTTestRunnerXMLServlet extends WSTTestRunnerServlet
                 charArrayWriter.close();
 
                 testsuite.add(newFailedTestcase(
-                        failedTest.test.getClass().getName(), failedTest.test.toString(), failedTest.duration,
+                        failedTest.description.getClass().getName(), failedTest.description.toString(), failedTest.duration,
                         failedTest.assertionFailedError.getMessage(), charArrayWriter.toString()));
             }
         }
@@ -134,7 +134,7 @@ public class WSTTestRunnerXMLServlet extends WSTTestRunnerServlet
 
                 System.out.println("charArrayWriter.toString()=" + charArrayWriter.toString());
                 testsuite.add(newErrorTestcase(
-                        errorTest.test.getClass().getName(), errorTest.test.toString(), errorTest.duration,
+                        errorTest.description.getClass().getName(), errorTest.description.toString(), errorTest.duration,
                         errorTest.throwable.getMessage(), charArrayWriter.toString()));
             }
         }

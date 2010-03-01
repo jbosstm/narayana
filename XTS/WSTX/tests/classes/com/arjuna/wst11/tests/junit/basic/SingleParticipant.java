@@ -34,7 +34,10 @@ package com.arjuna.wst11.tests.junit.basic;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,10 +45,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class SingleParticipant extends TestCase
+public class SingleParticipant
 {
 
-    public static void testSingleParticipant()
+    @Test
+    public void testSingleParticipant()
             throws Exception
     {
 	    UserTransaction ut = UserTransaction.getUserTransaction();

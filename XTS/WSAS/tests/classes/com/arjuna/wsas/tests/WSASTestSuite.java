@@ -24,23 +24,24 @@
 
 package com.arjuna.wsas.tests;
 
-public class WSASTestSuite extends junit.framework.TestSuite
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+    @Suite.SuiteClasses({
+            com.arjuna.wsas.tests.junit.basic.Context.class,
+            com.arjuna.wsas.tests.junit.basic.Hierarchy.class,
+            com.arjuna.wsas.tests.junit.basic.NestedActivity.class,
+            com.arjuna.wsas.tests.junit.basic.NullEnd.class,
+            com.arjuna.wsas.tests.junit.basic.Resume.class,
+            com.arjuna.wsas.tests.junit.basic.StartEnd.class,
+            com.arjuna.wsas.tests.junit.basic.StatusCheck.class,
+            com.arjuna.wsas.tests.junit.basic.Suspend.class,
+            com.arjuna.wsas.tests.junit.basic.Timeout.class,
+            com.arjuna.wsas.tests.junit.hls.Context1.class,
+            com.arjuna.wsas.tests.junit.hls.Context2.class,
+            com.arjuna.wsas.tests.junit.hls.Service.class
+    })
+public class WSASTestSuite
 {
-    public WSASTestSuite()
-    {
-        // wsas basic tests
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Context.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Hierarchy.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.NestedActivity.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.NullEnd.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Resume.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.StartEnd.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.StatusCheck.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Suspend.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Timeout.class));
-        // wsas hls tests
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context1.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context2.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Service.class));
-    }
 }

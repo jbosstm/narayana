@@ -26,7 +26,10 @@
 
 package com.arjuna.wsc.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.stax.URI;
@@ -38,12 +41,13 @@ import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wsc.RegistrationCoordinator;
 import com.arjuna.wsc.tests.TestUtil;
 
-public class RegistrationServiceTestCase extends TestCase
+public class RegistrationServiceTestCase
 {
     private EndpointReferenceType registrationRequester ;
     private EndpointReferenceType registrationCoordinator ;
-    
-    protected void setUp()
+
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -53,6 +57,7 @@ public class RegistrationServiceTestCase extends TestCase
         registrationCoordinator = new EndpointReferenceType(new AttributedURIType(registrationCoordinatorURI)) ;
     }
 
+    @Test
     public void testKnownCoordinationType()
         throws Exception
     {
@@ -74,7 +79,8 @@ public class RegistrationServiceTestCase extends TestCase
             fail("Unexpected exception: " + th) ;
         }
     }
-    
+
+    @Test
     public void testUnknownCoordinationType()
         throws Exception
     {
@@ -95,7 +101,8 @@ public class RegistrationServiceTestCase extends TestCase
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         registrationCoordinator = null ;

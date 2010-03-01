@@ -32,7 +32,10 @@
 package com.arjuna.wst11.tests.junit.basic;
 
 import com.arjuna.mw.wst11.UserTransaction;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -40,10 +43,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class PrintTransaction extends TestCase
+public class PrintTransaction
 {
 
-    public static void testPrintTransaction()
+    @Test
+    public void testPrintTransaction()
             throws Exception
     {
 	    UserTransaction ut = UserTransaction.getUserTransaction();

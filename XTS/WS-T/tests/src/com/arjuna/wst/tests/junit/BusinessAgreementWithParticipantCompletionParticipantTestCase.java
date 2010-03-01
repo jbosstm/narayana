@@ -28,7 +28,10 @@ package com.arjuna.wst.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -48,14 +51,15 @@ import com.arjuna.webservices.wsba.client.ParticipantCompletionCoordinatorClient
 import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.wst.tests.junit.TestParticipantCompletionCoordinatorProcessor.ParticipantCompletionCoordinatorDetails;
 
-public class BusinessAgreementWithParticipantCompletionParticipantTestCase extends TestCase
+public class BusinessAgreementWithParticipantCompletionParticipantTestCase
 {
     private ParticipantCompletionCoordinatorProcessor origParticipantCompletionCoordinatorProcessor ;
     private TestParticipantCompletionCoordinatorProcessor testParticipantCompletionCoordinatorProcessor = new TestParticipantCompletionCoordinatorProcessor() ;
     private String participantCompletionCoordinatorServiceURI ;
     private String participantCompletionParticipantServiceURI ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origParticipantCompletionCoordinatorProcessor = ParticipantCompletionCoordinatorProcessor.setProcessor(testParticipantCompletionCoordinatorProcessor) ;
@@ -64,6 +68,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         participantCompletionParticipantServiceURI = soapRegistry.getServiceURI(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_PARTICIPANT) ;
     }
 
+    @Test
     public void testSendClosed()
         throws Exception
     {
@@ -83,6 +88,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCancelled()
         throws Exception
     {
@@ -102,6 +108,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompensated()
         throws Exception
     {
@@ -121,6 +128,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompleted()
         throws Exception
     {
@@ -140,6 +148,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendStatus()
         throws Exception
     {
@@ -188,7 +197,8 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
     */
-    
+
+    @Test
     public void testSendExit()
         throws Exception
     {
@@ -208,6 +218,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendFault()
         throws Exception
     {
@@ -230,6 +241,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendGetStatus()
         throws Exception
     {
@@ -249,7 +261,8 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ParticipantCompletionCoordinatorProcessor.setProcessor(origParticipantCompletionCoordinatorProcessor) ;

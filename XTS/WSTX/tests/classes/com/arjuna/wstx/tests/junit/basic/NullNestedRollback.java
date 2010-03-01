@@ -33,7 +33,9 @@ package com.arjuna.wstx.tests.junit.basic;
 
 import com.arjuna.mw.wstx.UserTransaction;
 import com.arjuna.mw.wstx.UserTransactionFactory;
-import junit.framework.TestCase;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -41,9 +43,9 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class NullNestedRollback extends TestCase
+public class NullNestedRollback
 {
-
+    @Test
     public static void testNullNestedRollback()
             throws Exception
     {

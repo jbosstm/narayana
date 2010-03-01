@@ -29,17 +29,21 @@ import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.DemoVolatileParticipant;
 import com.arjuna.wst.tests.common.FailureParticipant;
 import com.arjuna.wst.TransactionRolledBackException;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Andrew Dinn
  * @version $Id: $
  */
 
-public class SubtransactionCommitRollbackInPrepare extends TestCase
+public class SubtransactionCommitRollbackInPrepare
 {
 
-    public static void testSubTransactionCommitRollbackInPrepare()
+    @Test
+    public void testSubTransactionCommitRollbackInPrepare()
             throws Exception
     {
         final UserTransaction ut = UserTransactionFactory.userTransaction();

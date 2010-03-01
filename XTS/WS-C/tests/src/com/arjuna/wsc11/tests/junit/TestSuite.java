@@ -26,20 +26,19 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-public class TestSuite extends junit.framework.TestSuite
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        com.arjuna.wsc11.tests.junit.ActivationTestCase.class,
+        com.arjuna.wsc11.tests.junit.RegistrationTestCase.class,
+        com.arjuna.wsc11.tests.junit.ActivationServiceTestCase.class,
+        com.arjuna.wsc11.tests.junit.ActivationServiceExceptionTestCase.class,
+        com.arjuna.wsc11.tests.junit.RegistrationServiceTestCase.class,
+        com.arjuna.wsc11.tests.junit.RegistrationServiceExceptionTestCase.class,
+        com.arjuna.wsc11.tests.junit.EnduranceTestCase.class
+})
+public class TestSuite
 {
-    public TestSuite()
-    {
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ActivationTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationTestCase.class));
-
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ActivationServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ActivationServiceExceptionTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationServiceTestCase.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationServiceExceptionTestCase.class));
-
-        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.EnduranceTestCase.class));
-        // this needs redesigning because 1.1. protocols are RPC pattern
-        //addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ThreadedEnduranceTestCase.class));
-    }
 }

@@ -34,7 +34,9 @@ package com.arjuna.wstx.tests.junit.basic;
 import com.arjuna.mw.wstx.*;
 import com.arjuna.wstx.tests.DemoParticipant;
 import com.arjuna.wstx.tests.DemoSynchronization;
-import junit.framework.TestCase;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,9 +44,9 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class SynchronizationParticipant extends TestCase
+public class SynchronizationParticipant
 {
-
+    @Test
     public static void testSynchronizationParticipant()
             throws Exception
     {

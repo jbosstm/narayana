@@ -36,7 +36,10 @@ import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -44,10 +47,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class SuspendCommitTransaction extends TestCase
+public class SuspendCommitTransaction
 {
 
-    public static void testSuspendCommitTransaction()
+    @Test
+    public void testSuspendCommitTransaction()
             throws Exception
     {
         UserTransaction ut = UserTransaction.getUserTransaction();

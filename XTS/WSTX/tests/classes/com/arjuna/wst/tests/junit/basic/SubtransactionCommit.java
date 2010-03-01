@@ -28,17 +28,21 @@ import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.UserTransactionFactory;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.DemoVolatileParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Andrew Dinn
  * @version $Id:$
  */
 
-public class SubtransactionCommit extends TestCase
+public class SubtransactionCommit
 {
 
-    public static void testSubTransactionCommit()
+    @Test
+    public void testSubTransactionCommit()
             throws Exception
     {
         final UserTransaction ut = UserTransactionFactory.userTransaction();

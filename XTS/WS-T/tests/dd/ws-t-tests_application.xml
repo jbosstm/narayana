@@ -42,10 +42,14 @@
     </module>
 
     <module>
-        <java>junit.jar</java>
-    </module>
-    
-    <module>
         <java>ws-t-tests.jar</java>
+    </module>
+
+    <module>
+        <java>xts-test-servlet.jar</java>
+    </module>
+
+    <module>
+        <java>junit.jar</java>
     </module>
 </application>

@@ -26,6 +26,11 @@
 
 package com.arjuna.wsc11.tests.junit;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
@@ -34,24 +39,26 @@ import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
-import junit.framework.TestCase;
+
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class ActivationTestCase extends TestCase
+public class ActivationTestCase
 {
     private ActivationCoordinatorProcessor origActivationCoordinatorProcessor ;
 
     private TestActivationCoordinatorProcessor testActivationCoordinatorProcessor = new TestActivationCoordinatorProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origActivationCoordinatorProcessor = ActivationCoordinatorProcessor.setCoordinator(testActivationCoordinatorProcessor) ;
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithoutCurrentContext()
         throws Exception
     {
@@ -63,6 +70,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithExpiresWithoutCurrentContext()
         throws Exception
     {
@@ -74,6 +82,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithCurrentContextWithoutExpires()
         throws Exception
     {
@@ -91,6 +100,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithCurrentContextWithExpires()
         throws Exception
     {
@@ -111,6 +121,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithExpiresWithCurrentContextWithoutExpires()
         throws Exception
     {
@@ -128,6 +139,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithExpiresWithCurrentContextWithExpires()
         throws Exception
     {
@@ -234,7 +246,8 @@ public class ActivationTestCase extends TestCase
         assertNotNull(outContext.getRegistrationService());
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ActivationCoordinatorProcessor.setCoordinator(origActivationCoordinatorProcessor) ;

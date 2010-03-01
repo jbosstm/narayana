@@ -29,7 +29,10 @@ package com.arjuna.wst11.tests.junit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.SoapFault11;
@@ -45,17 +48,19 @@ import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinator
 import com.arjuna.wst11.tests.junit.TestParticipantCompletionCoordinatorProcessor.ParticipantCompletionCoordinatorDetails;
 import com.arjuna.wst11.tests.TestUtil;
 
-public class BusinessAgreementWithParticipantCompletionParticipantTestCase extends TestCase
+public class BusinessAgreementWithParticipantCompletionParticipantTestCase 
 {
     private ParticipantCompletionCoordinatorProcessor origParticipantCompletionCoordinatorProcessor ;
     private TestParticipantCompletionCoordinatorProcessor testParticipantCompletionCoordinatorProcessor = new TestParticipantCompletionCoordinatorProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origParticipantCompletionCoordinatorProcessor = ParticipantCompletionCoordinatorProcessor.setProcessor(testParticipantCompletionCoordinatorProcessor) ;
     }
 
+    @Test
     public void testSendClosed()
         throws Exception
     {
@@ -73,6 +78,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCancelled()
         throws Exception
     {
@@ -90,6 +96,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompensated()
         throws Exception
     {
@@ -107,6 +114,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompleted()
         throws Exception
     {
@@ -124,6 +132,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendStatus()
         throws Exception
     {
@@ -144,6 +153,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -168,6 +178,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, false, false, messageId, null);
     }
 
+    @Test
     public void testSendExit()
         throws Exception
     {
@@ -185,6 +196,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendFault()
         throws Exception
     {
@@ -205,6 +217,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendGetStatus()
         throws Exception
     {
@@ -222,6 +235,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCannotComplete()
         throws Exception
     {
@@ -239,7 +253,8 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ParticipantCompletionCoordinatorProcessor.setProcessor(origParticipantCompletionCoordinatorProcessor) ;

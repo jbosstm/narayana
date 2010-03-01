@@ -35,7 +35,9 @@ import com.arjuna.mw.wstx.UserTransaction;
 import com.arjuna.mw.wstx.UserTransactionFactory;
 
 import com.arjuna.mw.wstx.exceptions.TransactionRolledBackException;
-import junit.framework.TestCase;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,9 +45,9 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class NullRollbackOnly extends TestCase
+public class NullRollbackOnly
 {
-
+    @Test
     public static void testNullRollbackOnly()
             throws Exception
     {

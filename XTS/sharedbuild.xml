@@ -38,7 +38,7 @@
 
         <!-- TODO ok, I lied. stop using the old junit from our own ext lib and use the new one in the parent build/extlib -->
 
-    <property name="xts.ext.dir" location="ext"/>
+    <property name="xts.ext.dir" location="${jbossts.build.extlib.dir}"/>
 
         <!-- required JBossTS product jars -->
     <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>

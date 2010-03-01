@@ -34,7 +34,10 @@ package com.arjuna.wst.tests.junit.ba;
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.UserBusinessActivity;
 import com.arjuna.wst.tests.common.DemoBusinessParticipantWithComplete;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,10 +45,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class ConfirmWithComplete extends TestCase
+public class ConfirmWithComplete
 {
-
-    public static void testConfirmWithComplete()
+    @Test
+    public void testConfirmWithComplete()
             throws Exception
     {
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();

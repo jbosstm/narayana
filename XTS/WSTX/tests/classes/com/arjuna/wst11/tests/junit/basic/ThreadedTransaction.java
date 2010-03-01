@@ -32,7 +32,10 @@
 package com.arjuna.wst11.tests.junit.basic;
 
 import com.arjuna.mw.wst11.UserTransaction;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 class ThreadedObject extends Thread
@@ -73,10 +76,11 @@ class ThreadedObject extends Thread
 
 }
 
-public class ThreadedTransaction extends TestCase
+public class ThreadedTransaction
 {
 
-    public static void testThreadedTransaction()
+    @Test
+    public void testThreadedTransaction()
             throws Exception
     {
         boolean passed = false;

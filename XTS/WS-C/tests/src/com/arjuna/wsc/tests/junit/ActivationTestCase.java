@@ -28,7 +28,11 @@ package com.arjuna.wsc.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -51,15 +55,16 @@ import com.arjuna.webservices.wscoor.processors.ActivationRequesterProcessor;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
 
-public class ActivationTestCase extends TestCase
+public class ActivationTestCase
 {
     private ActivationCoordinatorProcessor origActivationCoordinatorProcessor ;
     
     private TestActivationCoordinatorProcessor testActivationCoordinatorProcessor = new TestActivationCoordinatorProcessor() ;
     private EndpointReferenceType activationCoordinatorService ;
     private EndpointReferenceType activationRequesterService ;
-    
-    protected void setUp()
+
+    @Before
+    public void setUp()
         throws Exception
     {
         origActivationCoordinatorProcessor = ActivationCoordinatorProcessor.setCoordinator(testActivationCoordinatorProcessor) ;
@@ -70,6 +75,7 @@ public class ActivationTestCase extends TestCase
         activationRequesterService = new EndpointReferenceType(new AttributedURIType(activationRequesterServiceURI)) ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithoutCurrentContext()
         throws Exception
     {
@@ -80,7 +86,8 @@ public class ActivationTestCase extends TestCase
         
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
-    
+
+    @Test
     public void testRequestWithExpiresWithoutCurrentContext()
         throws Exception
     {
@@ -92,6 +99,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithCurrentContextWithoutExpires()
         throws Exception
     {
@@ -106,6 +114,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithoutExpiresWithCurrentContextWithExpires()
         throws Exception
     {
@@ -121,6 +130,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithExpiresWithCurrentContextWithoutExpires()
         throws Exception
     {
@@ -135,6 +145,7 @@ public class ActivationTestCase extends TestCase
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
 
+    @Test
     public void testRequestWithExpiresWithCurrentContextWithExpires()
         throws Exception
     {
@@ -149,7 +160,7 @@ public class ActivationTestCase extends TestCase
         
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
     }
-    
+
     private void executeRequestTest(final String messageId, final String coordinationType, final Long expires, final CoordinationContextType coordinationContext)
         throws Exception
     {
@@ -198,6 +209,7 @@ public class ActivationTestCase extends TestCase
         assertEquals(requestCreateCoordinationContext.getCoordinationType().getValue(), coordinationType);
     }
 
+    @Test
     public void testResponse()
         throws Exception
     {
@@ -243,6 +255,7 @@ public class ActivationTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
+    @Test
     public void testError()
         throws Exception
     {
@@ -286,8 +299,9 @@ public class ActivationTestCase extends TestCase
         assertTrue(callback.hasTriggered()) ;
         assertFalse(callback.hasFailed()) ;
     }
-    
-    protected void tearDown()
+
+    @After
+    public void tearDown()
         throws Exception
     {
         ActivationCoordinatorProcessor.setCoordinator(origActivationCoordinatorProcessor) ;

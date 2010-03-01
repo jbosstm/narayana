@@ -28,7 +28,10 @@ package com.arjuna.wst.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -47,14 +50,15 @@ import com.arjuna.webservices.wsba.client.CoordinatorCompletionParticipantClient
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.wst.tests.junit.TestCoordinatorCompletionParticipantProcessor.CoordinatorCompletionParticipantDetails;
 
-public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase extends TestCase
+public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase
 {
     private CoordinatorCompletionParticipantProcessor origCoordinatorCompletionParticipantProcessor ;
     private TestCoordinatorCompletionParticipantProcessor testCoordinatorCompletionParticipantProcessor = new TestCoordinatorCompletionParticipantProcessor() ;
     private String coordinatorCompletionParticipantServiceURI ;
     private String coordinatorCompletionCoordinatorServiceURI ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origCoordinatorCompletionParticipantProcessor = CoordinatorCompletionParticipantProcessor.setProcessor(testCoordinatorCompletionParticipantProcessor) ;
@@ -63,6 +67,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         coordinatorCompletionCoordinatorServiceURI = soapRegistry.getServiceURI(BusinessActivityConstants.SERVICE_COORDINATOR_COMPLETION_COORDINATOR) ;
     }
 
+    @Test
     public void testSendClose()
         throws Exception
     {
@@ -82,6 +87,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCancel()
         throws Exception
     {
@@ -101,6 +107,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompensate()
         throws Exception
     {
@@ -120,6 +127,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendFaulted()
         throws Exception
     {
@@ -139,6 +147,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendExited()
         throws Exception
     {
@@ -158,6 +167,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendStatus()
         throws Exception
     {
@@ -180,6 +190,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendComplete()
         throws Exception
     {
@@ -199,6 +210,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendGetStatus()
         throws Exception
     {
@@ -221,6 +233,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
     /*
      * cannot test this any longer as client does not provide API to send soap fault
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -245,7 +258,8 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
     }
      */
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         CoordinatorCompletionParticipantProcessor.setProcessor(origCoordinatorCompletionParticipantProcessor) ;

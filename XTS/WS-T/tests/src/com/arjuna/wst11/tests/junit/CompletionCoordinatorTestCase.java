@@ -29,7 +29,10 @@ package com.arjuna.wst11.tests.junit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -44,13 +47,15 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-public class CompletionCoordinatorTestCase extends TestCase
+public class CompletionCoordinatorTestCase 
 {
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
     }
 
+    @Test
     public void testSendCommitted()
         throws Exception
     {
@@ -91,6 +96,7 @@ public class CompletionCoordinatorTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
+    @Test
     public void testSendAborted()
         throws Exception
     {
@@ -132,6 +138,7 @@ public class CompletionCoordinatorTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -182,7 +189,8 @@ public class CompletionCoordinatorTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
     }

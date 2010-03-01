@@ -47,7 +47,10 @@ import com.arjuna.mwlabs.wsas.util.XMLUtils;
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
 import com.arjuna.wsas.tests.DemoSOAPContextImple;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -55,10 +58,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Context1 extends TestCase
+public class Context1
 {
 
-    public static void testContext1()
+    @Test
+    public void testContext1()
             throws Exception
     {
         UserActivity ua = UserActivityFactory.userActivity();

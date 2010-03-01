@@ -34,7 +34,10 @@ package com.arjuna.wst.tests.junit.ba;
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.UserBusinessActivity;
 import com.arjuna.wst.tests.common.DemoBusinessParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,9 +45,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Cancel extends TestCase
+public class Cancel
 {
-    public static void testCancel()
+    @Test
+    public void testCancel()
             throws Exception
     {
         UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();

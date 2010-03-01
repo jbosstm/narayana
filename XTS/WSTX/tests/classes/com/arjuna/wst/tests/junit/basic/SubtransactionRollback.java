@@ -27,17 +27,21 @@ import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.UserTransactionFactory;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.DemoVolatileParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Andrew Dinn
  * @version $Id: $
  */
 
-public class SubtransactionRollback extends TestCase
+public class SubtransactionRollback
 {
 
-    public static void testSubTransactionRollback()
+    @Test
+    public void testSubTransactionRollback()
             throws Exception
     {
         final UserTransaction ut = UserTransactionFactory.userTransaction();

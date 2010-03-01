@@ -38,7 +38,10 @@ import com.arjuna.mw.wsas.status.*;
 
 import com.arjuna.mw.wsas.completionstatus.*;
 import com.arjuna.wsas.tests.WSASTestUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,10 +49,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Timeout extends TestCase
+public class Timeout
 {
 
-    public static void testTimeout()
+    @Test
+    public void testTimeout()
             throws Exception
     {
 	    UserActivity ua = UserActivityFactory.userActivity();

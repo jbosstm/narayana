@@ -62,6 +62,8 @@
     <property name="build.tests.dd.dir"      value="${build.dir}/tests/dd"/>
     <property name="build.tests.webapps.dir" value="${build.dir}/tests/webapps"/>
 
+    <property name="wsas.tests.build.lib.dir"  value="../WSAS/tests/build/lib"/>
+
     <!-- classes provided for clients via api jar -->
     <property name="ws-c.api.classes" value="com/arjuna/wsc/AlreadyRegisteredException.class"/>
     <!-- we had to delete the JaxRPC handlers so we export the bist needed to allow clients to create them -->
@@ -261,28 +263,38 @@
         </copy>
         <copy file="${tests.dd.dir}/ws-c11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
         </copy>
+        <jar jarfile="${build.tests.lib.dir}/xts-test-servlet.jar">
+            <fileset dir="${build.tests.classes.dir}" includes="com/arjuna/qa/junit/*.class"/>
+        </jar>
+        <jar jarfile="${build.tests.lib.dir}/ws-c-tests.jar">
+            <fileset dir="${build.tests.classes.dir}" />
+        </jar>
         <war warfile="${build.tests.webapps.dir}/ws-c-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
-            <classes dir="${build.tests.classes.dir}"/>
         </war>
         <war warfile="${build.tests.webapps.dir}/ws-c11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
-            <classes dir="${build.tests.classes.dir}"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c-tests_application.xml">
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c-tests.war"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c11-tests.war"/>
+            <fileset dir="${build.tests.lib.dir}" includes="ws-c-tests.jar"/>
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 
     <target name="tests-webapps11" depends="tests-compile11" >
         <copy file="${tests.dd.dir}/ws-c11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
         </copy>
+        <jar jarfile="${build.tests.lib.dir}/xts-test-servlet.jar">
+            <fileset dir="${build.tests.classes.dir}" includes="com/arjuna/qa/junit/*.class"/>
+        </jar>
         <war warfile="${build.tests.webapps.dir}/ws-c11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
-            <classes dir="${build.tests.classes.dir}"/>
+            <classes dir="${build.tests.classes.dir}"  excludes="com/arjuna/qa/junit/**/*.class"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c11-tests_application.xml">
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c11-tests.war"/>
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 

@@ -35,7 +35,10 @@ import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.FailureParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,9 +46,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class CommitExceptionInPrepare extends TestCase
+public class CommitExceptionInPrepare
 {
-    public static void testCommitExceptionInPrepare()
+    @Test
+    public void testCommitExceptionInPrepare()
             throws Exception
     {
         UserTransaction ut = UserTransaction.getUserTransaction();

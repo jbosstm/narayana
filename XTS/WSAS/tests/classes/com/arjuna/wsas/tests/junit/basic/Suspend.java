@@ -38,7 +38,10 @@ import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
 import com.arjuna.wsas.tests.WSASTestUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,10 +49,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Suspend extends TestCase
+public class Suspend
 {
 
-    public static void testSuspend()
+    @Test
+    public void testSuspend()
             throws Exception
     {
         UserActivity ua = UserActivityFactory.userActivity();

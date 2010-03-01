@@ -85,6 +85,7 @@
     <property name="ws-c.build.dev.lib.dir"  value="../WS-C//build/dev/lib"/>
     <property name="wscf.build.lib.dir"  value="../WSCF//build/lib"/>
     <property name="wsas.build.lib.dir"  value="../WSAS//build/lib"/>
+    <property name="wsas.tests.build.lib.dir"  value="../WSAS/tests/build/lib"/>
 
     <property name="ws-c.libs"               value="ws-c.jar"/>
     <property name="ws-c.api.libs"               value="ws-c-api.jar"/>
@@ -371,7 +372,7 @@
 
     <target name="tests-webapps" depends="tests-compile">
         <jar jarfile="${build.tests.lib.dir}/ws-t-tests.jar">
-            <fileset dir="${build.tests.classes.dir}"/>
+            <fileset dir="${build.tests.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
         </jar>
         <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app.xml">
         </copy>
@@ -382,19 +383,10 @@
         <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
-            <!--
-            <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
-            -->
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
-            <!--
-            <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-            <fileset dir="${build.dev.lib.dir}" includes="ws-t.jar ws-t10.jar"/>
-            -->
             <fileset dir="${build.tests.webapps.dir}" includes="ws-t-tests.war ws-t11-tests.war"/>
             <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
-            <!--
-            <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs} ${ws-c10.libs}"/>
-            -->
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 
@@ -410,6 +402,7 @@
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-t11-tests.war"/>
             <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 

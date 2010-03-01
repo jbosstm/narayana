@@ -29,7 +29,10 @@ package com.arjuna.wst11.tests.junit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
@@ -45,17 +48,19 @@ import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipant
 import com.arjuna.wst11.tests.junit.TestCoordinatorCompletionParticipantProcessor.CoordinatorCompletionParticipantDetails;
 import com.arjuna.wst11.tests.TestUtil;
 
-public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase extends TestCase
+public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase
 {
     private CoordinatorCompletionParticipantProcessor origCoordinatorCompletionParticipantProcessor ;
     private TestCoordinatorCompletionParticipantProcessor testCoordinatorCompletionParticipantProcessor = new TestCoordinatorCompletionParticipantProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origCoordinatorCompletionParticipantProcessor = CoordinatorCompletionParticipantProcessor.setProcessor(testCoordinatorCompletionParticipantProcessor) ;
     }
 
+    @Test
     public void testSendClose()
         throws Exception
     {
@@ -73,6 +78,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCancel()
         throws Exception
     {
@@ -90,6 +96,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCompensate()
         throws Exception
     {
@@ -107,6 +114,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendFaulted()
         throws Exception
     {
@@ -124,6 +132,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendExited()
         throws Exception
     {
@@ -141,6 +150,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendStatus()
         throws Exception
     {
@@ -161,6 +171,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendComplete()
         throws Exception
     {
@@ -178,6 +189,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendGetStatus()
         throws Exception
     {
@@ -195,6 +207,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -220,6 +233,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, false, messageId, null);
     }
 
+    @Test
     public void testSendNotCompleted()
         throws Exception
     {
@@ -237,7 +251,8 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase exten
         checkDetails(details, false, true, messageId, instanceIdentifier);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         CoordinatorCompletionParticipantProcessor.setProcessor(origCoordinatorCompletionParticipantProcessor) ;

@@ -26,8 +26,6 @@
 
 package com.arjuna.wsc.tests.junit;
 
-import junit.framework.TestCase;
-
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
@@ -35,17 +33,24 @@ import com.arjuna.wsc.ActivationCoordinator;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.tests.TestUtil;
 
-public class ActivationServiceTestCase extends TestCase
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ActivationServiceTestCase
 {
     private String activationCoordinatorURI ;
-    
-    protected void setUp()
+
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         activationCoordinatorURI = soapRegistry.getServiceURI(CoordinationConstants.SERVICE_ACTIVATION_COORDINATOR) ;
     }
 
+    @Test
     public void testKnownCoordinationType()
         throws Exception
     {
@@ -68,6 +73,7 @@ public class ActivationServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testUnknownCoordinationType()
         throws Exception
     {
@@ -85,7 +91,8 @@ public class ActivationServiceTestCase extends TestCase
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
     }

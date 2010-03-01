@@ -26,7 +26,10 @@
 
 package com.arjuna.wst.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -39,9 +42,10 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.stub.BusinessActivityTerminatorStub;
 import com.arjuna.wst.tests.TestUtil;
 
-public class BusinessActivityTerminatorServiceTestCase extends TestCase
+public class BusinessActivityTerminatorServiceTestCase
 {
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -65,24 +69,28 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         _unknownTransactionExceptionBusinessActivityTerminatorStub = new BusinessActivityTerminatorStub("businessActivityTerminatorCoordinator", unknownTransactionExceptionBusinessActivityTerminatorCoordinator);
     }
 
+    @Test
     public void testCloseWithNoException()
         throws Exception
     {
         _noExceptionBusinessActivityTerminatorStub.close();
     }
 
+    @Test
     public void testCancelWithNoException()
         throws Exception
     {
         _noExceptionBusinessActivityTerminatorStub.cancel();
     }
 
+    @Test
     public void testCompleteWithNoException()
         throws Exception
     {
         _noExceptionBusinessActivityTerminatorStub.complete();
     }
 
+    @Test
     public void testCloseWithUnknownTransactionException()
         throws Exception
     {
@@ -96,6 +104,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCancelWithUnknownTransactionException()
         throws Exception
     {
@@ -109,6 +118,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCompleteWithUnknownTransactionException()
         throws Exception
     {
@@ -122,6 +132,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCloseWithTransactionRolledBackException()
         throws Exception
     {
@@ -135,6 +146,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCloseWithSystemException()
         throws Exception
     {
@@ -148,6 +160,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCancelWithSystemException()
         throws Exception
     {
@@ -161,6 +174,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCompleteWithSystemException()
         throws Exception
     {
@@ -174,7 +188,8 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         _noExceptionBusinessActivityTerminatorStub                    = null;

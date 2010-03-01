@@ -35,7 +35,10 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.FailureParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,9 +46,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class RollbackExceptionInRollback extends TestCase
+public class RollbackExceptionInRollback
 {
-    public static void testRollbackExceptionInRollback()
+    @Test
+    public void testRollbackExceptionInRollback()
             throws Exception
     {
 	    UserTransaction ut = UserTransaction.getUserTransaction();

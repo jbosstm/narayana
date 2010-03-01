@@ -28,7 +28,10 @@ package com.arjuna.wsc.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -49,15 +52,16 @@ import com.arjuna.webservices.wscoor.processors.RegistrationCoordinatorProcessor
 import com.arjuna.webservices.wscoor.processors.RegistrationRequesterProcessor;
 import com.arjuna.wsc.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
 
-public class RegistrationTestCase extends TestCase
+public class RegistrationTestCase
 {
     private RegistrationCoordinatorProcessor origRegistrationCoordinatorProcessor ;
     
     private TestRegistrationCoordinatorProcessor testRegistrationCoordinatorProcessor = new TestRegistrationCoordinatorProcessor() ;
     private EndpointReferenceType registrationCoordinatorService ;
     private EndpointReferenceType registrationRequesterService ;
-    
-    protected void setUp()
+
+    @Before
+    public void setUp()
         throws Exception
     {
         origRegistrationCoordinatorProcessor = RegistrationCoordinatorProcessor.setCoordinator(testRegistrationCoordinatorProcessor) ;
@@ -68,12 +72,14 @@ public class RegistrationTestCase extends TestCase
         registrationRequesterService = new EndpointReferenceType(new AttributedURIType(registrationRequesterServiceURI)) ;
     }
 
+    @Test
     public void testRequestWithoutInstanceIdentifier()
         throws Exception
     {
         executeRequest("testRequestWithoutInstanceIdentifier", null) ;
     }
 
+    @Test
     public void testRequestWithInstanceIdentifier()
         throws Exception
     {
@@ -123,6 +129,7 @@ public class RegistrationTestCase extends TestCase
             requestRegister.getParticipantProtocolService().getAddress().getValue()) ;
     }
 
+    @Test
     public void testResponse()
         throws Exception
     {
@@ -162,6 +169,7 @@ public class RegistrationTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
+    @Test
     public void testError()
         throws Exception
     {
@@ -206,7 +214,8 @@ public class RegistrationTestCase extends TestCase
         assertFalse(callback.hasFailed()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         RegistrationCoordinatorProcessor.setCoordinator(origRegistrationCoordinatorProcessor) ;

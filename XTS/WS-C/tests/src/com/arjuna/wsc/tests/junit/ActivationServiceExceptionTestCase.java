@@ -26,25 +26,30 @@
 
 package com.arjuna.wsc.tests.junit;
 
-import junit.framework.TestCase;
-
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.wsc.ActivationCoordinator;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.tests.TestUtil;
 
-public class ActivationServiceExceptionTestCase extends TestCase
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ActivationServiceExceptionTestCase
 {
     private String activationCoordinatorURI ;
     
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         activationCoordinatorURI = soapRegistry.getServiceURI(CoordinationConstants.SERVICE_ACTIVATION_COORDINATOR) ;
     }
 
+    @Test
     public void testInvalidCreateParametersException()
         throws Exception
     {
@@ -62,7 +67,8 @@ public class ActivationServiceExceptionTestCase extends TestCase
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
     }

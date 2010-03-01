@@ -34,7 +34,10 @@ package com.arjuna.wsas.tests.junit.basic;
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
 import com.arjuna.wsas.tests.WSASTestUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,10 +45,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class StartEnd extends TestCase
+public class StartEnd
 {
 
-    public static void testStartEnd()
+    @Test
+    public void testStartEnd()
             throws Exception
     {
 	    UserActivity ua = UserActivityFactory.userActivity();

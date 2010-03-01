@@ -26,6 +26,9 @@
 
 package com.arjuna.wsc11.tests.junit;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.arjuna.wsc.AlreadyRegisteredException;
 import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wsc.InvalidStateException;
@@ -33,13 +36,14 @@ import com.arjuna.wsc.NoActivityException;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
-import junit.framework.TestCase;
+
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class RegistrationServiceExceptionTestCase extends TestCase
+public class RegistrationServiceExceptionTestCase
 {
+    @Test
     public void testAlreadyRegisteredProtocolIdentifierException()
         throws Exception
     {
@@ -63,6 +67,7 @@ public class RegistrationServiceExceptionTestCase extends TestCase
         }
     }
 
+    @Test
     public void testInvalidProtocolProtocolIdentifierException()
         throws Exception
     {
@@ -86,6 +91,7 @@ public class RegistrationServiceExceptionTestCase extends TestCase
         }
     }
 
+    @Test
     public void testInvalidStateProtocolIdentifierException()
         throws Exception
     {
@@ -109,6 +115,7 @@ public class RegistrationServiceExceptionTestCase extends TestCase
         }
     }
 
+    @Test
     public void testNoActivityProtocolIdentifierException()
         throws Exception
     {

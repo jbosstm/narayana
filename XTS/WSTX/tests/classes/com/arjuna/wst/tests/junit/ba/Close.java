@@ -34,7 +34,10 @@ package com.arjuna.wst.tests.junit.ba;
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.UserBusinessActivity;
 import com.arjuna.wst.tests.common.DemoBusinessParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -42,9 +45,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Close extends TestCase
+public class Close
 {
-    public static void testClose()
+    @Test
+    public void testClose()
             throws Exception
     {
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();

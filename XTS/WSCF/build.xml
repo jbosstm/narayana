@@ -57,6 +57,7 @@
     <!--sibling module directories and jars -->
 
     <property name="wsas.jar.dest" value="../WSAS/build/lib"/>
+    <property name="wsas.tests.build.lib.dir"  value="../WSAS/tests/build/lib"/>
     <property name="wsc.jar.dest" value="../WS-C/build/dev/lib"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
@@ -308,6 +309,7 @@
 	         -->
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${wscf.tests.webapps.dest}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 
@@ -326,6 +328,7 @@
 	         -->
             <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
             <fileset dir="${wscf.tests.webapps.dest}" includes="wscf11-tests.war wscf-tests.jar"/>
+            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 

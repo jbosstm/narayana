@@ -35,6 +35,10 @@
     </module>
 
     <module>
+        <java>xts-test-servlet.jar</java>
+    </module>
+
+    <module>
         <java>junit.jar</java>
     </module>
 

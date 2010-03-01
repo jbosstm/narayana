@@ -38,7 +38,9 @@ import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.wscf11.tests.TwoPhaseParticipant;
 import com.arjuna.wscf11.tests.TwoPhaseSynchronization;
 import com.arjuna.wscf11.tests.WSCF11TestUtils;
-import junit.framework.TestCase;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,9 +48,9 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class ParticipantSynchronization extends TestCase
+public class ParticipantSynchronization
 {
-
+    @Test
     public void testParticipantSynchronization()
             throws Exception
     {

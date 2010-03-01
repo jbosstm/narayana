@@ -37,7 +37,11 @@ import com.arjuna.mw.wsas.ActivityManagerFactory;
 
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
-import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -45,10 +49,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class Service extends TestCase
+public class Service
 {
 
-    public static void testService()
+    @Test
+    public void testService()
             throws Exception
     {
         UserActivity ua = UserActivityFactory.userActivity();

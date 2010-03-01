@@ -26,7 +26,10 @@
 
 package com.arjuna.wst.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AddressingContext;
@@ -36,14 +39,15 @@ import com.arjuna.webservices.wsat.client.CompletionCoordinatorClient;
 import com.arjuna.webservices.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.wst.tests.junit.TestCompletionCoordinatorProcessor.CompletionCoordinatorDetails;
 
-public class CompletionParticipantTestCase extends TestCase
+public class CompletionParticipantTestCase
 {
     private CompletionCoordinatorProcessor origCompletionCoordinatorProcessor ;
     
     private TestCompletionCoordinatorProcessor testCompletionCoordinatorProcessor = new TestCompletionCoordinatorProcessor() ;
     private String completionCoordinatorService ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origCompletionCoordinatorProcessor = CompletionCoordinatorProcessor.setProcessor(testCompletionCoordinatorProcessor) ;
@@ -51,6 +55,7 @@ public class CompletionParticipantTestCase extends TestCase
         completionCoordinatorService = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_COMPLETION_COORDINATOR) ;
     }
 
+    @Test
     public void testSendCommit()
         throws Exception
     {
@@ -64,6 +69,7 @@ public class CompletionParticipantTestCase extends TestCase
         assertTrue(details.hasCommit()) ;
     }
 
+    @Test
     public void testSendRollback()
         throws Exception
     {
@@ -77,7 +83,8 @@ public class CompletionParticipantTestCase extends TestCase
         assertTrue(details.hasRollback()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         CompletionCoordinatorProcessor.setProcessor(origCompletionCoordinatorProcessor) ;

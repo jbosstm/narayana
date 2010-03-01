@@ -26,7 +26,10 @@
 
 package com.arjuna.wst11.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
@@ -39,18 +42,20 @@ import com.arjuna.wst11.tests.TestUtil;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class CompletionParticipantTestCase extends TestCase
+public class CompletionParticipantTestCase 
 {
     private CompletionCoordinatorProcessor origCompletionCoordinatorProcessor ;
 
     private TestCompletionCoordinatorProcessor testCompletionCoordinatorProcessor = new TestCompletionCoordinatorProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origCompletionCoordinatorProcessor = CompletionCoordinatorProcessor.setProcessor(testCompletionCoordinatorProcessor) ;
     }
 
+    @Test
     public void testSendCommit()
         throws Exception
     {
@@ -68,6 +73,7 @@ public class CompletionParticipantTestCase extends TestCase
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendRollback()
         throws Exception
     {
@@ -85,7 +91,8 @@ public class CompletionParticipantTestCase extends TestCase
         checkDetails(details, true, true, messageId, instanceIdentifier);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         CompletionCoordinatorProcessor.setProcessor(origCompletionCoordinatorProcessor) ;

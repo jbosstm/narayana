@@ -36,7 +36,10 @@ import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wst.tests.common.DemoBusinessParticipant;
 import com.arjuna.wst.tests.common.FailureBusinessParticipant;
 import com.arjuna.wst.SystemException;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -44,9 +47,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class MultiCancel extends TestCase
+public class MultiCancel
 {
-    public static void testMultiCancel()
+    @Test
+    public void testMultiCancel()
             throws Exception
     {
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();

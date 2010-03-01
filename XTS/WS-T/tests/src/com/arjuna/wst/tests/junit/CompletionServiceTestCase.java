@@ -26,7 +26,10 @@
 
 package com.arjuna.wst.tests.junit;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -40,9 +43,10 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.stub.CompletionStub;
 import com.arjuna.wst.tests.TestUtil;
 
-public class CompletionServiceTestCase extends TestCase
+public class CompletionServiceTestCase
 {
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -70,18 +74,21 @@ public class CompletionServiceTestCase extends TestCase
         _nonexistentCompletionStub                    = new CompletionStub("completionParticipant", nonexistentCompletionCoordinator);
     }
 
+    @Test
     public void testCommitWithNoException()
         throws Exception
     {
         _noExceptionCompletionStub.commit();
     }
 
+    @Test
     public void testRollbackWithNoException()
         throws Exception
     {
         _noExceptionCompletionStub.rollback();
     }
 
+    @Test
     public void testCommitWithTransactionRolledBackException()
         throws Exception
     {
@@ -95,6 +102,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithUnknownTransactionException()
         throws Exception
     {
@@ -108,6 +116,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithUnknownTransactionException()
         throws Exception
     {
@@ -121,6 +130,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithSystemException()
         throws Exception
     {
@@ -134,6 +144,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithSystemException()
         throws Exception
     {
@@ -147,6 +158,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCommitWithNonExistent()
         throws Exception
     {
@@ -160,6 +172,7 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRollbackWithNonExistent()
         throws Exception
     {
@@ -173,7 +186,8 @@ public class CompletionServiceTestCase extends TestCase
         }
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         _noExceptionCompletionStub                    = null;

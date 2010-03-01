@@ -37,7 +37,10 @@ import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.wscf.tests.WSCFTestUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -45,9 +48,10 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class WscContext extends TestCase
+public class WscContext
 {
 
+    @Test
     public void testWscContext()
             throws Exception
     {

@@ -26,6 +26,11 @@
 
 package com.arjuna.wsc11.tests.junit;
 
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
@@ -35,32 +40,35 @@ import com.arjuna.webservices11.wscoor.client.WSCOORClient;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
-import junit.framework.TestCase;
+
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class RegistrationTestCase extends TestCase
+public class RegistrationTestCase
 {
     private RegistrationCoordinatorProcessor origRegistrationCoordinatorProcessor ;
 
     private TestRegistrationCoordinatorProcessor testRegistrationCoordinatorProcessor = new TestRegistrationCoordinatorProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origRegistrationCoordinatorProcessor = RegistrationCoordinatorProcessor.setCoordinator(testRegistrationCoordinatorProcessor) ;
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
     }
 
+    @Test
     public void testRequestWithoutInstanceIdentifier()
         throws Exception
     {
         executeRequest("testRequestWithoutInstanceIdentifier", null) ;
     }
 
+    @Test
     public void testRequestWithInstanceIdentifier()
         throws Exception
     {
@@ -102,7 +110,8 @@ public class RegistrationTestCase extends TestCase
         assertEquals(protocolIdentifier, requestRegister.getProtocolIdentifier()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         RegistrationCoordinatorProcessor.setCoordinator(origRegistrationCoordinatorProcessor) ;

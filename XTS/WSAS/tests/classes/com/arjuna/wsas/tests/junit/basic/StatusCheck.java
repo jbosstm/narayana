@@ -40,7 +40,10 @@ import com.arjuna.mw.wsas.status.NoActivity;
 import com.arjuna.mw.wsas.status.Active;
 
 import com.arjuna.mw.wsas.completionstatus.Failure;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -48,10 +51,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class StatusCheck extends TestCase
+public class StatusCheck
 {
 
-    public static void testStatusCheck()
+    @Test
+    public void testStatusCheck()
             throws Exception
     {
 	    UserActivity ua = UserActivityFactory.userActivity();

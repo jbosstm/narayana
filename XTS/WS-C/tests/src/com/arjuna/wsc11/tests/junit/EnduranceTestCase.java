@@ -26,6 +26,11 @@
 
 package com.arjuna.wsc11.tests.junit;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
@@ -39,12 +44,12 @@ import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
 import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
-import junit.framework.TestCase;
+
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class EnduranceTestCase extends TestCase
+public class EnduranceTestCase
 {
     private ActivationCoordinatorProcessor origActivationCoordinatorProcessor ;
     private RegistrationCoordinatorProcessor origRegistrationCoordinatorProcessor ;
@@ -55,7 +60,8 @@ public class EnduranceTestCase extends TestCase
 
     private static final long TEST_DURATION = 30 * 1000;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origActivationCoordinatorProcessor = ActivationCoordinatorProcessor.setCoordinator(testActivationCoordinatorProcessor) ;
@@ -63,6 +69,7 @@ public class EnduranceTestCase extends TestCase
         origRegistrationCoordinatorProcessor = RegistrationCoordinatorProcessor.setCoordinator(testRegistrationCoordinatorProcessor) ;
     }
 
+    @Test
     public void testCreateCoordinationContextRequest()
         throws Exception
     {
@@ -76,6 +83,7 @@ public class EnduranceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testCreateCoordinationContextError()
         throws Exception
     {
@@ -89,6 +97,7 @@ public class EnduranceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRegisterRequest()
         throws Exception
     {
@@ -102,6 +111,7 @@ public class EnduranceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testRegisterError()
         throws Exception
     {
@@ -115,6 +125,7 @@ public class EnduranceTestCase extends TestCase
         }
     }
 
+    @Test
     public void testEachInTurn()
         throws Exception
     {
@@ -288,7 +299,8 @@ public class EnduranceTestCase extends TestCase
         assertNotNull(protocolIdentifier, requestRegister.getParticipantProtocolService()) ;
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ActivationCoordinatorProcessor.setCoordinator(origActivationCoordinatorProcessor) ;

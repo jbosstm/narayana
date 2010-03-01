@@ -35,7 +35,10 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import com.arjuna.wst.tests.common.DemoVolatileParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,10 +46,11 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class SynchronizationParticipant extends TestCase
+public class SynchronizationParticipant
 {
 
-    public static void testSynchronizationParticipant()
+    @Test
+    public void testSynchronizationParticipant()
             throws Exception
     {
 	    UserTransaction ut = UserTransaction.getUserTransaction();

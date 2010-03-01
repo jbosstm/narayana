@@ -30,7 +30,10 @@ package com.arjuna.wst.tests.junit;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -48,12 +51,13 @@ import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
 import com.arjuna.wst.tests.junit.TestCoordinatorProcessor.CoordinatorDetails;
 
-public class TwoPCParticipantTestCase extends TestCase
+public class TwoPCParticipantTestCase 
 {
     private CoordinatorProcessor origCoordinatorProcessor ;
     private TestCoordinatorProcessor testCoordinatorProcessor = new TestCoordinatorProcessor();
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origCoordinatorProcessor = CoordinatorProcessor.getProcessor();
@@ -64,6 +68,7 @@ public class TwoPCParticipantTestCase extends TestCase
         participantServiceURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_PARTICIPANT) ;
     }
 
+    @Test
     public void testSendPrepared()
         throws Exception
     {
@@ -82,6 +87,7 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendAborted()
         throws Exception
     {
@@ -100,6 +106,7 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, false, messageId, instanceIdentifier);
    }
 
+    @Test
     public void testSendReadOnly()
         throws Exception
     {
@@ -118,6 +125,7 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendCommitted()
         throws Exception
     {
@@ -136,6 +144,7 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, false, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendReplay()
         throws Exception
     {
@@ -154,6 +163,7 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, true, messageId, instanceIdentifier);
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -178,7 +188,8 @@ public class TwoPCParticipantTestCase extends TestCase
         checkDetails(details, false, messageId, null);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         CoordinatorProcessor.setProcessor(origCoordinatorProcessor);

@@ -21,16 +21,18 @@
 /*
  * Copyright (c) 2002, 2003, Arjuna Technologies Limited.
  *
- * WSTXTestRunnerServlet.java
+ * TestRunnerServlet.java
  */
 
 package com.arjuna.qa.junit;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestListener;
 import junit.framework.TestResult;
-import junit.framework.TestSuite;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -44,7 +46,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WSCFTestRunnerServlet extends HttpServlet
+public class TestRunnerServlet extends HttpServlet
 {
     public void init(ServletConfig config) throws ServletException
     {
@@ -53,13 +55,13 @@ public class WSCFTestRunnerServlet extends HttpServlet
         _testSuiteClassName = config.getInitParameter("TestSuiteClassName");
     }
 
-   protected String getContentType()
-   {
-       return "text/html";
-   }
+    protected String getContentType()
+    {
+        return "text/html";
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
+            throws ServletException, IOException
     {
         try
         {
@@ -127,7 +129,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
     }
 
     public void doStatus(PrintWriter writer, HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
+            throws ServletException
     {
         writer.println("<HTML>");
         writer.println("<HEAD>");
@@ -211,7 +213,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
                 PassedTest passedTest = (PassedTest) passedTestsIterator.next();
                 writer.println("<TR>");
                 writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif\">");
-                encode(writer, passedTest.test.toString());
+                encode(writer, passedTest.description.toString());
                 writer.println("</TD>");
                 writer.print("<TD align=\"center\" style=\"font-family: Arial, Helvetica, sans-serif\">" + passedTest.duration + " ms</TD>");
                 writer.println("</TR>");
@@ -241,7 +243,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
                 writer.println("<TR>");
                 writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif\">");
                 writer.print("<A href=\"" + request.getRequestURL() + "?failednumber=" + failedNumber + "\">");
-                encode(writer, failedTest.test.toString());
+                encode(writer, failedTest.description.toString());
                 writer.print("</A>");
                 writer.println("</TD>");
                 writer.print("<TD align=\"center\" style=\"font-family: Arial, Helvetica, sans-serif\">" + failedTest.duration + " ms</TD>");
@@ -275,7 +277,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
                 writer.println("<TR>");
                 writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif\">");
                 writer.print("<A href=\"" + request.getRequestURL() + "?errornumber=" + errorNumber + "\">");
-                encode(writer, errorTest.test.toString());
+                encode(writer, errorTest.description.toString());
                 writer.print("</A>");
                 writer.println("</TD>");
                 writer.print("<TD align=\"center\" style=\"font-family: Arial, Helvetica, sans-serif\">" + errorTest.duration + " ms</TD>");
@@ -325,7 +327,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
             writer.print("<TR>");
             writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif; font-weight: bold\">Test:</TD>");
             writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif\">");
-            encode(writer, failedTest.test.toString());
+            encode(writer, failedTest.description.toString());
             writer.println("</TD>");
             writer.println("</TR>");
 
@@ -418,7 +420,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
             writer.print("<TR>");
             writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif; font-weight: bold\">Test:</TD>");
             writer.print("<TD style=\"font-family: Arial, Helvetica, sans-serif\">");
-            encode(writer, errorTest.test.toString());
+            encode(writer, errorTest.description.toString());
             writer.println("</TD>");
             writer.println("</TR>");
 
@@ -481,26 +483,31 @@ public class WSCFTestRunnerServlet extends HttpServlet
 
     protected class PassedTest
     {
-        public Test test;
+        public Description description;
         public long duration;
     }
 
     protected class FailedTest
     {
-        public Test                 test;
-        public long                 duration;
+        public Description description;
+        public long duration;
         public AssertionFailedError assertionFailedError;
     }
 
     protected class ErrorTest
     {
-        public Test      test;
-        public long      duration;
-	public Throwable throwable;
+        public Description description;
+        public long duration;
+        public Throwable throwable;
     }
 
     protected class RunnerThread extends Thread
     {
+        RunnerThread()
+        {
+            super("JUnit Runner Thread") ;
+        }
+        
         public void run()
         {
             try
@@ -509,15 +516,11 @@ public class WSCFTestRunnerServlet extends HttpServlet
                 _failedTests.clear();
                 _errorTests.clear();
 
-                Class        testSuiteClass = Class.forName(_testSuiteClassName);
-                TestListener testListener   = new BasicTestListener();
-
-                _testResult = new TestResult();
-                _testSuite  = (TestSuite) testSuiteClass.newInstance();
-
-                _testResult.addListener(testListener);
-                _testSuite.run(_testResult);
-                _testResult.removeListener(testListener);
+                Class testSuiteClass = Class.forName(_testSuiteClassName);
+                org.junit.runner.notification.RunListener testListener   = new BasicTestListener();
+                JUnitCore core = new JUnitCore();
+                core.addListener(testListener);
+                core.run(testSuiteClass);
             }
             catch (Exception exception)
             {
@@ -530,69 +533,89 @@ public class WSCFTestRunnerServlet extends HttpServlet
         }
     }
 
-    protected class BasicTestListener implements TestListener
+    private class BasicTestListener extends RunListener
     {
-        public void startTest(Test test)
-        {
+        @Override
+        public void testRunStarted(Description description) throws Exception {
+            super.testRunStarted(description);
+            _running = true;
+        }
+
+        @Override
+        public void testRunFinished(Result result) throws Exception {
+            super.testRunFinished(result);
+            _running = false;
+        }
+
+        @Override
+        public void testStarted(Description description) throws Exception {
+            super.testStarted(description);
             _startTime            = System.currentTimeMillis();
-            _failed               = false;
-            _error                = false;
-            _assertionFailedError = null;
-            _throwable            = null;
-            _currentTest          = test;
+            _currentTest          = description;
         }
 
-        public void addError(Test test, Throwable throwable)
-        {
-            _error     = true;
-            _throwable = throwable;
-            throwable.printStackTrace(System.out);
+        @Override
+        public void testFinished(Description description) throws Exception {
+            super.testFinished(description);
+            if (!_fail) {
+                PassedTest passedTest = new PassedTest();
+                passedTest.description = description;
+                passedTest.duration = System.currentTimeMillis() - _startTime;
+                _passedTests.add(passedTest);
+
+                _currentTest = null;
+            }
         }
 
-        public void addFailure(Test test, AssertionFailedError assertionFailedError)
-        {
-            _failed               = true;
-            _assertionFailedError = assertionFailedError;
-            assertionFailedError.printStackTrace(System.out);
-        }
-
-        public void endTest(Test test)
-        {
-            if (_failed)
-            {
-                FailedTest failedTest           = new FailedTest();
-                failedTest.test                 = test;
-                failedTest.duration             = System.currentTimeMillis() - _startTime;
-                failedTest.assertionFailedError = _assertionFailedError;
+        @Override
+        public void testFailure(Failure failure) throws Exception {
+            super.testFailure(failure);
+            _fail = true;
+            Throwable _throwable = failure.getException();
+            _throwable.printStackTrace(System.out);
+            if (_throwable instanceof AssertionFailedError) {
+                FailedTest failedTest = new FailedTest();
+                failedTest.description = failure.getDescription();
+                failedTest.duration = System.currentTimeMillis() - _startTime;
+                failedTest.assertionFailedError = (AssertionFailedError)_throwable;
                 _failedTests.add(failedTest);
-	    }
-	    else if (_error)
-            {
+            } else {
                 ErrorTest errorTest = new ErrorTest();
-                errorTest.test      = test;
-                errorTest.duration  = System.currentTimeMillis() - _startTime;
+                errorTest.description = failure.getDescription();
+                errorTest.duration = System.currentTimeMillis() - _startTime;
                 errorTest.throwable = _throwable;
                 _errorTests.add(errorTest);
-	    }
-	    else
-            {
-                PassedTest passedTest = new PassedTest();
-                passedTest.test       = test;
-                passedTest.duration   = System.currentTimeMillis() - _startTime;
-                _passedTests.add(passedTest);
-	    }
+            }
+            
+            _currentTest = null;
+        }
+
+        @Override
+        public void testAssumptionFailure(Failure failure) {
+            super.testAssumptionFailure(failure);
+            _fail=true;
+            Throwable _throwable = failure.getException();
+            _throwable.printStackTrace(System.out);
+            ErrorTest errorTest = new ErrorTest();
+            errorTest.description = failure.getDescription();
+            errorTest.duration = System.currentTimeMillis() - _startTime;
+            errorTest.throwable = _throwable;
+            _errorTests.add(errorTest);
 
             _currentTest = null;
         }
 
+        @Override
+        public void testIgnored(Description description) throws Exception {
+            super.testIgnored(description);
+            _currentTest = null;
+        }
+
         private long                 _startTime            = 0;
-        private boolean              _failed               = false;
-        private boolean              _error                = false;
-        private AssertionFailedError _assertionFailedError = null;
-        private Throwable            _throwable            = null;
+        private boolean              _fail                 = false;
     }
 
-    private static void encode(PrintWriter writer, String string)
+    protected static void encode(PrintWriter writer, String string)
     {
         if (string != null)
         {
@@ -615,10 +638,10 @@ public class WSCFTestRunnerServlet extends HttpServlet
     protected List         _passedTests        = new LinkedList();
     protected List         _failedTests        = new LinkedList();
     protected List         _errorTests         = new LinkedList();
-    protected Test         _currentTest        = null;
+    protected Description  _currentTest        = null;
     protected String       _testSuiteClassName = null;
     protected RunnerThread _runnerThread       = null;
     protected TestResult   _testResult         = null;
-    private TestSuite    _testSuite          = null;
+    protected boolean      _running            = false;
 
 }

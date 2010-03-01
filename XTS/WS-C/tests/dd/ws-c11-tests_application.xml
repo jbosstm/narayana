@@ -33,6 +33,15 @@
             <context-root>/ws-c11-tests</context-root>
         </web>
     </module>
+
+    <module>
+        <java>ws-c-tests.jar</java>
+    </module>
+
+    <module>
+        <java>xts-test-servlet.jar</java>
+    </module>
+    
     <module>
         <java>junit.jar</java>
     </module>

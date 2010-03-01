@@ -49,7 +49,10 @@ import com.arjuna.mw.wscf.model.as.coordinator.xa.outcomes.XAOutcome;
 import com.arjuna.mw.wscf.utils.DomUtil;
 import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
 import com.arjuna.wscf.tests.DemoXAParticipant;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -57,7 +60,7 @@ import junit.framework.TestCase;
  * @since 1.0.
  */
 
-public class TopLevel1 extends TestCase
+public class TopLevel1
 {
     private static final String PROTOCOL_IMPLEMENTATION_PROPERTY = "com.arjuna.mw.wscf.protocolImplementation";
     private static final String testProtocolClassName = "com.arjuna.mwlabs.wscf.generic.coordinator.jta.JTAHLS";

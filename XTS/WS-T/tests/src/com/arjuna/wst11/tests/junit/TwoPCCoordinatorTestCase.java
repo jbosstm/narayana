@@ -31,7 +31,10 @@ package com.arjuna.wst11.tests.junit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
@@ -46,18 +49,20 @@ import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.wst11.tests.junit.TestParticipantProcessor.ParticipantDetails;
 import com.arjuna.wst11.tests.TestUtil;
 
-public class TwoPCCoordinatorTestCase extends TestCase
+public class TwoPCCoordinatorTestCase 
 {
     private ParticipantProcessor origParticipantProcessor ;
 
     private TestParticipantProcessor testParticipantProcessor = new TestParticipantProcessor() ;
 
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         origParticipantProcessor = ParticipantProcessor.setProcessor(testParticipantProcessor) ;
     }
 
+    @Test
     public void testSendPrepare()
         throws Exception
     {
@@ -75,6 +80,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, true, messageId, null);
     }
 
+    @Test
     public void testSendCommit()
         throws Exception
     {
@@ -92,6 +98,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, true, messageId, null);
     }
 
+    @Test
     public void testSendRollback()
         throws Exception
     {
@@ -109,6 +116,7 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, true, true, messageId, null);
     }
 
+    @Test
     public void testSendError()
         throws Exception
     {
@@ -134,7 +142,8 @@ public class TwoPCCoordinatorTestCase extends TestCase
         checkDetails(details, false, false, messageId, null);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         ParticipantProcessor.setProcessor(origParticipantProcessor) ;

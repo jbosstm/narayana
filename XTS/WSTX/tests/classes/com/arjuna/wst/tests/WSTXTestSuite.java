@@ -28,57 +28,47 @@ import com.arjuna.wst.tests.junit.basic.SubtransactionCommit;
 import com.arjuna.wst.tests.junit.basic.SubtransactionCommitFailInPrepare;
 import com.arjuna.wst.tests.junit.basic.SubtransactionCommitRollbackInPrepare;
 import com.arjuna.wst.tests.junit.basic.SubtransactionRollback;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class WSTXTestSuite extends junit.framework.TestSuite
+@RunWith(Suite.class)
+    @Suite.SuiteClasses({
+            // wst basic tests
+            // this test fails because the commit is retried forever instead of an exception being generated
+            //addTest(new junit.framework.TestSuite(CommitExceptionInCommit.class));
+            com.arjuna.wst.tests.junit.basic.CommitExceptionInPrepare.class,
+            com.arjuna.wst.tests.junit.basic.CommitRollbackInPrepare.class,
+            com.arjuna.wst.tests.junit.basic.MultiParticipants.class,
+            com.arjuna.wst.tests.junit.basic.NestedTransaction.class,
+            com.arjuna.wst.tests.junit.basic.NullCommitTransaction.class,
+            com.arjuna.wst.tests.junit.basic.NullRollbackTransaction.class,
+            com.arjuna.wst.tests.junit.basic.PrintTransaction.class,
+            com.arjuna.wst.tests.junit.basic.ResumeNullTransaction.class,
+            com.arjuna.wst.tests.junit.basic.RollbackExceptionInRollback.class,
+            com.arjuna.wst.tests.junit.basic.SingleParticipant.class,
+            com.arjuna.wst.tests.junit.basic.SuspendCommitTransaction.class,
+            com.arjuna.wst.tests.junit.basic.SuspendNullTransaction.class,
+            com.arjuna.wst.tests.junit.basic.SuspendResumeCommitTransaction.class,
+            com.arjuna.wst.tests.junit.basic.SuspendResumeParticipants.class,
+            com.arjuna.wst.tests.junit.basic.SuspendResumeSingleParticipant.class,
+            com.arjuna.wst.tests.junit.basic.SuspendTransaction.class,
+            com.arjuna.wst.tests.junit.basic.ThreadedTransaction.class,
+
+            // subtransaction tests
+            SubtransactionCommit.class,
+            SubtransactionRollback.class,
+            SubtransactionCommitRollbackInPrepare.class,
+            SubtransactionCommitFailInPrepare.class,
+            // wst BA tests
+            com.arjuna.wst.tests.junit.ba.Cancel.class,
+            com.arjuna.wst.tests.junit.ba.Close.class,
+            com.arjuna.wst.tests.junit.ba.Compensate.class,
+            com.arjuna.wst.tests.junit.ba.ConfirmWithComplete.class,
+            com.arjuna.wst.tests.junit.ba.Exit.class,
+            com.arjuna.wst.tests.junit.ba.MultiCancel.class,
+            com.arjuna.wst.tests.junit.ba.MultiClose.class,
+            com.arjuna.wst.tests.junit.ba.MultiCompensate.class
+    })
+public class WSTXTestSuite
 {
-    public WSTXTestSuite()
-    {
-        // wst basic tests
-        // this test fails because the commit is retried forever instead of an exception being generated
-        //addTest(new junit.framework.TestSuite(CommitExceptionInCommit.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.CommitExceptionInPrepare.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.CommitRollbackInPrepare.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.MultiParticipants.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.NestedTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.NullCommitTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.NullRollbackTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.PrintTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.ResumeNullTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.RollbackExceptionInRollback.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SingleParticipant.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendCommitTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendNullTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendResumeCommitTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendResumeParticipants.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendResumeSingleParticipant.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendTransaction.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.ThreadedTransaction.class));
-
-        // subtransaction tests
-        addTest(new junit.framework.TestSuite(SubtransactionCommit.class));
-        addTest(new junit.framework.TestSuite(SubtransactionRollback.class));
-        addTest(new junit.framework.TestSuite(SubtransactionCommitRollbackInPrepare.class));
-        addTest(new junit.framework.TestSuite(SubtransactionCommitFailInPrepare.class));
-        // wst BA tests
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Cancel.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Close.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Compensate.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.ConfirmWithComplete.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Exit.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCancel.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiClose.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCompensate.class));
-
-        // wstx basic tests
-        // these don't run at present because the WSCF protocol manager code cannot process the xml
-        // in UserTwoPhaseTx.xml and TwoPhaseTxManager.xml and wstx.UserTransactionFactory tries to
-        // use these documents to identify the transaction protocol it is meant to support
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.NullCommitTransaction.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.NullNestedCommit.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.NullNestedRollback.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.NullRollbackOnly.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.NullRollbackTransaction.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.SingleParticipant.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wstx.tests.junit.basic.SynchronizationParticipant.class));
-    }
 }
