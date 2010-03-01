@@ -214,6 +214,14 @@ public class ObjectStoreTest
             
             assertTrue(!as.reveal_state(u, tn));
         }
+        
+        final OutputObjectState os = new OutputObjectState();
+        
+        as.packInto(os);
+        
+        final InputObjectState is = new InputObjectState(os);
+        
+        as.unpackFrom(is);
     }
     
     @Test
@@ -419,6 +427,12 @@ public class ObjectStoreTest
             
             assertTrue(!as.reveal_state(u, tn));
         }
+        
+        assertTrue(as.storeValid());
+        
+        as.makeInvalid();
+        
+        assertFalse(as.storeValid());
     }
 
     @Test
