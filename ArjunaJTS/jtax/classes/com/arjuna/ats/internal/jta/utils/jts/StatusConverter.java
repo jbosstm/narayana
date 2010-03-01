@@ -31,11 +31,6 @@
 
 package com.arjuna.ats.internal.jta.utils.jts;
 
-import org.omg.CosTransactions.*;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
 /**
  * Some useful utility routines.
  */

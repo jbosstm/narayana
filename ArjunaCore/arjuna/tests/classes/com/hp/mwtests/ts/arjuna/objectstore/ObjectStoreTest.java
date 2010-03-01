@@ -178,7 +178,9 @@ public class ObjectStoreTest
     @Test
     public void testActionStore () throws Exception
     {
-        ActionStore as = new ActionStore(System.getProperty("java.io.tmpdir"));
+        ActionStore as = new ActionStore();
+        
+        as = new ActionStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         
@@ -217,7 +219,9 @@ public class ObjectStoreTest
     @Test
     public void testShadowNoFileLockStore () throws Exception
     {
-        ShadowNoFileLockStore as = new ShadowNoFileLockStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
+        ShadowNoFileLockStore as = new ShadowNoFileLockStore();
+        
+        as = new ShadowNoFileLockStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
@@ -256,7 +260,9 @@ public class ObjectStoreTest
     @Test
     public void testHashedStore () throws Exception
     {
-        HashedStore as = new HashedStore(System.getProperty("java.io.tmpdir"));
+        HashedStore as = new HashedStore();
+        
+        as = new HashedStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         
@@ -295,7 +301,9 @@ public class ObjectStoreTest
     @Test
     public void testHashedActionStore () throws Exception
     {
-        HashedActionStore as = new HashedActionStore(System.getProperty("java.io.tmpdir"));
+        HashedActionStore as = new HashedActionStore();
+        
+        as = new HashedActionStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         
@@ -334,7 +342,9 @@ public class ObjectStoreTest
     @Test
     public void testShadowingStore () throws Exception
     {
-        ShadowingStore as = new ShadowingStore(System.getProperty("java.io.tmpdir"));
+        ShadowingStore as = new ShadowingStore();
+        
+        as = new ShadowingStore(System.getProperty("java.io.tmpdir"));
         
         assertTrue(as.typeIs() != -1);
         
@@ -373,7 +383,9 @@ public class ObjectStoreTest
     @Test
     public void testNullActionStore () throws Exception
     {
-        NullActionStore as = new NullActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
+        NullActionStore as = new NullActionStore();
+        
+        as = new NullActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
         
         assertTrue(as.typeIs() != -1);
         
