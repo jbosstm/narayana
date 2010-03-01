@@ -41,7 +41,9 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.jta.xa.XidImple;
+import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource.ErrorType;
@@ -50,6 +52,26 @@ import static org.junit.Assert.*;
 
 public class OnePhaseUnitTest
 {
+    @Test
+    public void test () throws Exception
+    {
+        DummyRecoverableXAConnection rc = new DummyRecoverableXAConnection();
+        Object[] obj = new Object[1];
+        SampleOnePhaseResource res = new SampleOnePhaseResource();
+        
+        obj[XAResourceRecord.XACONNECTION] = rc;
+        
+        XAOnePhaseResource xares = new XAOnePhaseResource(res, new XidImple(new Uid()), obj);
+        
+        OutputObjectState os = new OutputObjectState();
+        
+        xares.pack(os);
+        
+        InputObjectState is = new InputObjectState(os);
+        
+        xares.unpack(is);
+    }
+    
     @Test
     public void testInvalid ()
     {

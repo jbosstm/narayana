@@ -27,6 +27,16 @@ import javax.transaction.xa.Xid;
 
 public class TestResource implements XAResource
 {
+    public TestResource ()
+    {
+        this(false);
+    }
+    
+    public TestResource (boolean readonly)
+    {
+        _readonly = readonly;
+    }
+    
     public void commit (Xid id, boolean onePhase) throws XAException
 	{
 		System.out.println("XA_COMMIT[" + id + "]");
@@ -56,7 +66,10 @@ public class TestResource implements XAResource
 	{
 		System.out.println("XA_PREPARE[" + xid + "]");
 
-		return (XA_OK);
+		if (_readonly)
+		    return XA_RDONLY;
+		else
+		    return XA_OK;
 
 		// throw new XAException();
 	}
@@ -85,4 +98,5 @@ public class TestResource implements XAResource
 
 	protected int _timeout = 0;
 
+	private boolean _readonly = false;
 }

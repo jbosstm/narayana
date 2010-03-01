@@ -968,16 +968,6 @@ public class XAResourceRecord extends AbstractRecord
 		    return XARecoveryResource.WAITING_FOR_RECOVERY;
 	}
 
-	public static AbstractRecord create()
-	{
-		return new XAResourceRecord();
-	}
-
-	public static void remove(AbstractRecord toDelete)
-	{
-		toDelete = null;
-	}
-
 	/**
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.savestate
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.savestate]

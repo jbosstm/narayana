@@ -33,11 +33,18 @@ package com.hp.mwtests.ts.jta.twophase;
 
 import org.junit.Test;
 
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.xa.XidImple;
+import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
+import com.hp.mwtests.ts.jta.common.TestResource;
 
 import static org.junit.Assert.*;
 
@@ -52,6 +59,56 @@ public class XAResourceRecordUnitTest
         xares.setValue(obj);
         
         assertTrue(xares.value() != obj);
+        
+        DummyRecoverableXAConnection rc = new DummyRecoverableXAConnection();
+        Object[] params = new Object[1];
+        
+        params[XAResourceRecord.XACONNECTION] = rc;
+        
+        xares = new XAResourceRecord(new TransactionImple(0), new DummyXA(false), new XidImple(new Uid()), params);
+        
+        assertTrue(xares.type() != null);
+        
+        xares.merge(xares);
+        xares.replace(xares);
+        
+        assertTrue(xares.toString() != null);
+    }
+    
+    @Test
+    public void testPackUnpack () throws Exception
+    {
+        XAResourceRecord xares;      
+        DummyRecoverableXAConnection rc = new DummyRecoverableXAConnection();
+        Object[] params = new Object[1];
+        
+        params[XAResourceRecord.XACONNECTION] = rc;
+        
+        xares = new XAResourceRecord(new TransactionImple(0), new DummyXA(false), new XidImple(new Uid()), params);
+        
+        OutputObjectState os = new OutputObjectState();
+        
+        assertTrue(xares.save_state(os, ObjectType.ANDPERSISTENT));
+        
+        InputObjectState is = new InputObjectState(os);
+        
+        assertTrue(xares.restore_state(is, ObjectType.ANDPERSISTENT));
+    }
+    
+    @Test
+    public void testReadonly () throws Exception
+    {
+        XAResourceRecord xares;
+        
+        DummyRecoverableXAConnection rc = new DummyRecoverableXAConnection();
+        Object[] params = new Object[1];
+        
+        params[XAResourceRecord.XACONNECTION] = rc;
+        
+        xares = new XAResourceRecord(new TransactionImple(0), new TestResource(true), new XidImple(new Uid()), params);
+        
+        assertEquals(xares.topLevelCommit(), TwoPhaseOutcome.NOT_PREPARED);
+        assertEquals(xares.topLevelPrepare(), TwoPhaseOutcome.PREPARE_READONLY);
     }
     
     @Test

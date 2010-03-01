@@ -31,15 +31,11 @@
 
 package com.arjuna.ats.jta.xa;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import java.sql.*;
 import javax.sql.*;
-import javax.transaction.*;
 import javax.transaction.xa.*;
-
-import com.arjuna.ats.jta.exceptions.NotImplementedException;
 
 /**
  * XA connection implementations must provide an implementation

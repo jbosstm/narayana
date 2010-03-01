@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
+import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -149,6 +150,8 @@ public class UtilsUnitTest
         ex = new XAException(XAException.XAER_RMFAIL);
         assertEquals(XAHelper.printXAErrorCode(ex), "XAException.XAER_RMFAIL");
         
+        assertTrue(XAHelper.printXAErrorCode(new XAException(-1)) != null);
+        
         XidImple xid1 = new XidImple(new Uid());
         XidImple xid2 = new XidImple(new Uid());
         XidImple xid3 = new XidImple(xid1);
@@ -160,5 +163,12 @@ public class UtilsUnitTest
         assertTrue(XAHelper.sameTransaction(xid1, xid3));
         
         assertTrue(XAHelper.xidToString(xid1) != null);
+        
+        XID x = new XID();
+        x.bqual_length = 1;
+        x.gtrid_length = 1;
+        x.data = new byte[] { '1', '2' };
+        
+        assertTrue(x.toString() != null);
     }
 }

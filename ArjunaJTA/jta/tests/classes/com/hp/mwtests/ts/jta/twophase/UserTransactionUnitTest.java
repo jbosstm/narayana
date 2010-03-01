@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import javax.naming.InitialContext;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 
@@ -38,6 +39,7 @@ import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple;
+import com.arjuna.ats.jta.UserTransaction;
 
 import static org.junit.Assert.*;
 
@@ -55,6 +57,16 @@ public class UserTransactionUnitTest
         assertTrue(ut.toString() != null);
         
         assertEquals(ut.getObjectInstance(null, null, null, null), ut);
+        
+        try
+        {
+            ut = (UserTransactionImple) UserTransaction.userTransaction(new InitialContext());
+        
+            fail();
+        }
+        catch (final Throwable ex)
+        {
+        }
     }
     
     @Test

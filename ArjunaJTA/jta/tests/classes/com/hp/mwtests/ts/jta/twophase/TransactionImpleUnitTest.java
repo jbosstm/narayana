@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
@@ -41,6 +42,7 @@ import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
@@ -85,6 +87,16 @@ public class TransactionImpleUnitTest
         assertTrue(TransactionImple.getTransactions() != null);
         
         assertEquals(TransactionImple.getTransaction(tx.get_uid()), null);
+        
+        try
+        {
+            tx = (TransactionImple) TransactionManager.transactionManager(new InitialContext());
+        
+            fail();
+        }
+        catch (final Throwable ex)
+        {
+        }
     }
     
     @Test

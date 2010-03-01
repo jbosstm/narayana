@@ -34,16 +34,11 @@ package com.arjuna.ats.internal.jdbc;
 import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jdbc.logging.*;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-import com.arjuna.ats.jta.*;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.exceptions.NotImplementedException;
 
 import com.arjuna.common.util.logging.*;
 
