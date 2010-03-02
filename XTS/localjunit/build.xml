@@ -14,7 +14,7 @@
 		<pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-logging.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-codec.jar"/>
-		<pathelement location="../ext/junit.jar"/>
+		<pathelement location="${jbossts.build.extlib.dir}/junit.jar"/>
 	</path>
 
 	<target name="all" depends="init,jar">

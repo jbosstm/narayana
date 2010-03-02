@@ -21,6 +21,8 @@
 
 <project name="Local JUnit Test for basic XTS testsuite" default="interop-tests" basedir=".">
 
+    <import file="../sharedbuild.xml"/>
+
     <property environment="env"/>
     <property name="server.hostname" value="${env.MYTESTIP_1}"/>
     <property name="base.url" value="http://${server.hostname}:8080"/>
@@ -29,15 +31,12 @@
 
     <property name="testtype" value="tests-both" />
 
-    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
-    <property name="jbossts.build.extlib.dir" location="../../build/extlib"/>
-
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
         <pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-logging.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-codec.jar"/>
-		<pathelement location="../ext/junit.jar"/>
+		<pathelement location="${jbossts.build.extlib.dir}/junit.jar"/>
     </path>
 
     <target name="interop-tests" depends="wstf-interop-tests,wstx11-interop-tests"/>

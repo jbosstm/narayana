@@ -21,10 +21,10 @@
 -->
 <project name="WSCF" default="wscf.war" basedir=".">
 
-    <import file="../sharedbuild.xml"/>
-
 	<!-- Set module name -->
 	<property name="modulename" value="wscf"/>
+
+    <import file="../sharedbuild.xml"/>
 
     <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
     <property  environment="env"/>
@@ -82,7 +82,7 @@
 	<property name="tests.depend.libs" value="${tests.libs} ${modulename}.jar"/>
 
 	<path id="wscf.tests.lib.path">
-	  <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	  <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
         <path refid="wscf.lib.classpath"/>
 	</path>
 
@@ -307,7 +307,7 @@
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	         -->
-            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${wscf.tests.webapps.dest}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
@@ -326,7 +326,7 @@
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	         -->
-            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${wscf.tests.webapps.dest}" includes="wscf11-tests.war wscf-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>

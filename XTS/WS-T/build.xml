@@ -33,10 +33,10 @@
 
     <!-- ================================================================== -->
 
-    <import file="../sharedbuild.xml"/>
-
     <!-- Set module name -->
     <property name="modulename" value="ws-t"/>
+
+    <import file="../sharedbuild.xml"/>
 
     <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
     <property  environment="env"/>
@@ -124,7 +124,7 @@
     <property  name="tests.libs" value="junit.jar"/>
 
     <path id="tests.lib.path">
-        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
     </path>
 
     <property name="javac.debug"             value="on"/>
@@ -383,7 +383,7 @@
         <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
-            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-t-tests.war ws-t11-tests.war"/>
             <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
@@ -399,7 +399,7 @@
         <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t11-tests_application.xml">
-            <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-t11-tests.war"/>
             <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>

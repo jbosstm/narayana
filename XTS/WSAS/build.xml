@@ -21,10 +21,10 @@
 -->
 <project name="WSAS" default="wsas.jar" basedir=".">
 
-    <import file="../sharedbuild.xml"/>
+    <!-- Set module name -->
+    <property name="modulename" value="wsas"/>
 
-	<!-- Set module name -->
-	<property name="modulename" value="wsas"/>
+    <import file="../sharedbuild.xml"/>
 
     <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
     <property  environment="env"/>
@@ -58,7 +58,7 @@
 	<property name="tests.depend.libs" value="${tests.libs} ${modulename}.jar"/>
 
 	<path id="wsas.tests.lib.path">
-	  <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	  <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
 	</path>
 
 	<!-- Initialisation -->
@@ -176,7 +176,7 @@
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	    -->
-	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	    <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
           <fileset dir="${wsas.tests.webapps.dest}" includes="wsas-tests.war"/>
           <fileset dir="${wsas.tests.jar.dest}" includes="wsas-tests.jar"/>
           <fileset dir="${wsas.tests.jar.dest}" includes="xts-test-servlet.jar"/>

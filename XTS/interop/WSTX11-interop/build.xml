@@ -24,10 +24,10 @@
         JBoss Transactions WS-Addressing interop test
     </description>
 
-    <import file="../../sharedbuild.xml"/>
-
     <!-- Set module name -->
     <property name="modulename" value="wstx11-interop"/>
+
+    <import file="../../sharedbuild.xml"/>
 
     <!-- the directory in which XTS resides -->
     <property name="xts.home" value="../../xts-install"/>
@@ -83,7 +83,7 @@
 		<javac destdir="${build.classes.dir}" srcdir="${src.dir}" debug="${compile.debug}">
             <classpath>
                 <fileset dir="${xts.home}/lib" includes="${xts.libs}"/>
-                <fileset dir="${xts.ext.dir}" includes="${xts.ext.libs}"/>
+                <fileset dir="${jbossts.build.extlib.dir}" includes="${xts.ext.libs}"/>
                 <path refid="build.classpath"/>
             </classpath>
         </javac>
@@ -123,7 +123,7 @@
                 <webinf dir="${dd.dir}/interop11" includes="wsdl/*.wsdl"/>
                 <fileset dir="${web.dir}"/>
                 <!-- need to stop using this at some point soon -->
-                <lib dir="${xts.ext.dir}" includes = "${xts.ext.libs}"/>
+                <lib dir="${jbossts.build.extlib.dir}" includes = "${xts.ext.libs}"/>
     		</war>
     </target>
 	

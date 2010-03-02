@@ -21,10 +21,10 @@
 -->
 <project name="WSTX" default="wstx.war" basedir=".">
 
-    <import file="../sharedbuild.xml"/>
+    <!-- Set module name -->
+    <property name="modulename" value="wstx"/>
 
-	<!-- Set module name -->
-	<property name="modulename" value="wstx"/>
+    <import file="../sharedbuild.xml"/>
 
     <!-- use $JBOSS_HOME to locate directory for deploy and undeploy -->
     <property  environment="env"/>
@@ -107,7 +107,7 @@
     <property  name="tests.libs" value="junit.jar"/>
 
     <path id="tests.lib.path">
-        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
     </path>
 
     <property name="tests.all.libs" value="${wsas.libs} ${wsc.all.libs} ${wscf.all.libs} ${wst.all.libs} ${wstx.all.libs} ${tests.libs}"/>
@@ -116,7 +116,7 @@
     <property name="javac.optimize"          value="off"/>
 
     <path id="com.arjuna.mwlabs.wstx.tests.lib.path">
-        <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
     	<path refid="build.classpath"/>
     </path>
 
@@ -378,7 +378,7 @@
 	  </war>
 	  <war warfile="${wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${wstx.tests.dd.dest}/web-app11.xml"/>
 	  <ear earfile="${wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${wstx.tests.dd}/wstx-tests_application.xml">
-	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	    <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
 	    <fileset dir="${wstx.tests.webapps.dest}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
         <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
 	  </ear>
@@ -392,7 +392,7 @@
 	  </jar>
 	  <war warfile="${wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${wstx.tests.dd.dest}/web-app11.xml"/>
 	  <ear earfile="${wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${wstx.tests.dd}/wstx11-tests_application.xml">
-	    <fileset dir="${xts.ext.dir}" includes="${tests.libs}"/>
+	    <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
 	    <fileset dir="${wstx.tests.webapps.dest}" includes="wstx11-tests.war wstx-tests.jar"/>
         <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
 	  </ear>
