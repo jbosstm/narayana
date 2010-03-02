@@ -34,7 +34,7 @@ wrapper.jar		Java Service Wrapper 3.2.3
 xalan.jar
 xercesImpl.jar		Xerces 2.3.0
 xmlParserAPIs.jar	Xerces 2.3.0
-byteman.jar		1.2.1
+byteman.jar		1.2.2
 emma.jar, emma_ant.jar  emma code coverage tool 2.0.5312 license: http://www.eclipse.org/legal/cpl-v10.html
 
 n.b. emma.jar has been patched to correct its handling of local
