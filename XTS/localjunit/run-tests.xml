@@ -21,8 +21,10 @@
 
 <project name="Local JUnit Test for basic XTS testsuite" default="tests-both" basedir=".">
 
+    <!-- this should be run from the installed tree i.e. <JBossTSDir>/XTS/xts-install/tests -->
+
     <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location=".."/>
+    <property name="jbossts.dir" location="../../.."/>
     <!-- all libraries external to JBossTS should be found in parent build/extlib -->
     <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
     <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
@@ -31,7 +33,7 @@
     <property name="server.hostname" value="${env.MYTESTIP_1}"/>
     <property name="base.url" value="http://${server.hostname}:8080"/>
     <property name="reports.dir" value="reports"/>
-    <property name="localjunit.lib.dir" value="build" />
+    <property name="localjunit.lib.dir" value="." />
 
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
