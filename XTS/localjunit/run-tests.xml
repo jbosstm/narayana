@@ -21,7 +21,11 @@
 
 <project name="Local JUnit Test for basic XTS testsuite" default="tests-both" basedir=".">
 
-    <import file="../sharedbuild.xml"/>
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location=".."/>
+    <!-- all libraries external to JBossTS should be found in parent build/extlib -->
+    <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
+    <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
 
     <property environment="env"/>
     <property name="server.hostname" value="${env.MYTESTIP_1}"/>
