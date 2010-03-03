@@ -117,7 +117,7 @@
     </target>
 
     <!-- build the messages resource bundle for use by the XTS logger -->
-    <target name="dev-resourcebundle">
+    <target name="resourcebundle">
         <echo message="Generating XTS Bundle"/>
 
         <javadoc    packagenames="org.jboss.jbossts.*"
@@ -190,7 +190,7 @@
     </target>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile.bridge, compile, dev-resourcebundle, api-both-jar">
+    <target name="sar-both" depends="init, compile.bridge, compile, resourcebundle, api-both-jar">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -235,7 +235,7 @@
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile.bridge, compile, dev-resourcebundle, api11-jar">
+    <target name="sar-11" depends="init, compile.bridge, compile, resourcebundle, api11-jar">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -277,7 +277,7 @@
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init, compile, dev-resourcebundle, api10-jar">
+    <target name="sar-10" depends="init, compile, resourcebundle, api10-jar">
         <!-- create config jar containing conf files for 1.0 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>

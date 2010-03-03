@@ -21,8 +21,24 @@
 -->
 <project name="sharedbuild">
 
-        <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location=".."/>
+    <!-- location of XTS tree root and various build trees -->
+    <property name="root.dir" location="."/>
+
+    <property name="wsas.dir" location="${root.dir}/WSAS"/>
+    <property name="ws-c.dir" location="${root.dir}/WS-C"/>
+    <property name="wscf.dir" location="${root.dir}/WSCF"/>
+    <property name="ws-t.dir" location="${root.dir}/WS-T"/>
+    <property name="wstx.dir" location="${root.dir}/WSTX"/>
+    <property name="recovery.dir" location="${root.dir}/recovery"/>
+    <property name="sar.dir" location="${root.dir}/sar"/>
+    <property name="demo.dir" location="${root.dir}/demo"/>
+    <property name="localjunit.dir" location="${root.dir}/localjunit"/>
+    <property name="interop.sc007.dir" location="${root.dir}/interop/WSTFSC07-interop"/>
+    <property name="interop.wstx11.dir" location="${root.dir}/interop/WSTX11-interop"/>
+
+
+    <!-- location of JBossTS parent tree -->
+    <property name="jbossts.dir" location="${root.dir}/.."/>
 
         <!-- all libraries external to JBossTS should be found in parent build/extlib -->
     <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
@@ -59,10 +75,6 @@
 
         <!-- paths internal to build -->
 
-    <property name="xts.htdocs.dest" location="htdocs"/>
-
-    <property name="xts.demo.dir" value="demo"/>
-
     <path id="build.classpath">
         <fileset dir="${jbossts.install.lib.dir}" includes="${jbossts.install.lib.jars}"/>
         <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars} ${xts.build.extlib.jars}"/>
@@ -75,5 +87,24 @@
     <property name="build.classpath" refid="build.classpath"/>
 
     <property name="doclet.classpath" refid="doclet.classpath"/>
+
+    <!-- emma support -->
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${jbossts.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    
+    <property name="emma.enabled" value="false"/>
+    
+    <property name="emma.dir" value="${jbossts.build.extlib.dir}" />
+
+    <path id="emma.lib" >
+        <pathelement location="${emma.dir}/emma.jar" />
+        <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
+
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
 </project>

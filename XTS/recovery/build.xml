@@ -60,9 +60,9 @@
 	<!--Set external directories -->
 
 	<property name="wsas.jar.dest" value="../WSAS/build/lib"/>
-	<property name="wsc.jar.dest" value="../WS-C/build/dev/lib"/>
+	<property name="wsc.jar.dest" value="../WS-C/build/lib"/>
 	<property name="wscf.jar.dest" value="../WSCF/build/lib"/>
-    <property name="wst.jar.dest" value="../WS-T/build/dev/lib"/>
+    <property name="wst.jar.dest" value="../WS-T/build/lib"/>
     <property name="wstx.jar.dest" value="../WSTX/build/lib"/>
 
     <path id="recovery.lib.classpath">

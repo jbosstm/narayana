@@ -19,10 +19,14 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<project name="WSAS" default="wsas.jar" basedir=".">
+<project name="WSAS" default="jar" basedir=".">
 
     <!-- Set module name -->
     <property name="modulename" value="wsas"/>
+
+    <!-- set root before including shared build -->
+
+    <property name="root.dir" location = ".."/>
 
     <import file="../sharedbuild.xml"/>
 
@@ -38,34 +42,36 @@
 
 	<!-- Set internal property defaults -->
 	<!-- Path names -->
-	<property name="wsas.src" value="classes"/>
-	<property name="wsas.dest.root" value="build"/>
-	<property name="wsas.dest" value="${wsas.dest.root}/classes"/>
-	<property name="wsas.jar.dest" value="${wsas.dest.root}/lib"/>
-	<property name="wsas.htdocs.dest" value="build/htdocs"/>
+	<property name="src.dir" value="classes"/>
+
+	<property name="build.dir" value="build"/>
+	<property name="build.classes.dir" value="${build.dir}/classes"/>
+	<property name="build.lib.dir" value="${build.dir}/lib"/>
+	<property name="build.htdocs.dir" value="${build.dir}/htdocs"/>
 
 	<!-- test path names -->
-	<property name="wsas.tests.src" value="tests/classes"/>
-	<property name="wsas.tests.dd" value="tests/dd"/>
-	<property name="wsas.tests.dest.root" value="tests/build"/>
-	<property name="wsas.tests.dest" value="tests/build/classes"/>
-	<property name="wsas.tests.dd.dest" value="tests/build/dd"/>
-	<property name="wsas.tests.webapps.dest" value="tests/build/webapps"/>
-	<property name="wsas.tests.jar.dest" value="tests/build/lib"/>
+	<property name="tests.src.dir" value="tests/classes"/>
+	<property name="tests.dd.dir" value="tests/dd"/>
+
+    <property name="tests.build.dir"         value="tests/build"/>
+    <property name="tests.build.classes.dir" value="${tests.build.dir}/classes"/>
+    <property name="tests.build.lib.dir"     value="${tests.build.dir}/lib"/>
+    <property name="tests.build.dd.dir"      value="${tests.build.dir}/dd"/>
+    <property name="tests.build.webapps.dir" value="${tests.build.dir}/webapps"/>
 
 	<!-- tests library and path to library -->
 	<property name="tests.libs" value="junit.jar"/>
 	<property name="tests.depend.libs" value="${tests.libs} ${modulename}.jar"/>
 
-	<path id="wsas.tests.lib.path">
+	<path id="tests.lib.path">
 	  <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
 	</path>
 
 	<!-- Initialisation -->
-	<target name="wsas.init">
+	<target name="init">
 		<!-- Define default build properties -->
 		<tstamp>
-			<format property="wsas.date" pattern="yyyy/mm/dd hh:mm aa"/>
+			<format property="date" pattern="yyyy/mm/dd hh:mm aa"/>
 		</tstamp>
 		<!-- Compile with debugging? -->
 		<condition property="debug" value="no">
@@ -79,52 +85,52 @@
 		</condition>
 		<property name="deprecation" value="no"/>
 		<!-- Make the destination directory -->
-		<mkdir dir="${wsas.dest}"/>
+		<mkdir dir="${build.classes.dir}"/>
 	</target>
 
 	<!-- Compilation targets -->
-	<target name="wsas.compile" depends="wsas.init">
+	<target name="compile" depends="init">
 		<echo message="Compiling module"/>
-		<javac srcdir="${wsas.src}" destdir="${wsas.dest}"
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}"
                debug="${debug}" deprecation="${deprecation}"
 		       classpathref = "build.classpath"/>
 	</target>
 
 	<!-- htdocs paths -->
-	<path id="wsas.htdocs.path" path="${wsas.src}"/>
+	<path id="htdocs.path" path="${src.dir}"/>
 
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
-	<property name="wsas.htdocs.list" value="*"/>
+	<property name="htdocs.list" value="*"/>
 
 	<!-- Jar targets -->
-	<target name="wsas.jar" depends="wsas.compile, wsas.htdocs, wsas.generateresourcebundle">
+	<target name="jar" depends="compile, htdocs, generateresourcebundle">
 		<echo message="Building jar file"/>
-		<mkdir dir="${wsas.jar.dest}"/>
-        <jar jarfile="${wsas.jar.dest}/${modulename}.jar" basedir="${wsas.dest}" excludes="com/arjuna/qa/junit/*.class"/>
+		<mkdir dir="${build.lib.dir}"/>
+        <jar jarfile="${build.lib.dir}/${modulename}.jar" basedir="${build.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
 	</target>
 
-	<target name="wsas.htdocs"
-				depends="wsas.init">
+	<target name="htdocs"
+				depends="init">
 		<echo message="Building htdocs "/>
-		<mkdir dir="${wsas.htdocs.dest}"/>
+		<mkdir dir="${build.htdocs.dir}"/>
 
 		<javadoc
-			sourcepathref="wsas.htdocs.path"
-			destdir="${wsas.htdocs.dest}"
-			packagenames="${wsas.htdocs.list}"
+			sourcepathref="htdocs.path"
+			destdir="${build.htdocs.dir}"
+			packagenames="${htdocs.list}"
 	        >
 			<classpath>
 				<path refid="build.classpath"/>
-				<path path="${wsas.src}"/>
+				<path path="${src.dir}"/>
 			</classpath>
 		</javadoc>
 	</target>
 
-    <target name="wsas.generateresourcebundle">
+    <target name="generateresourcebundle">
 
         <echo message="Generating WSAS Bundle"/>
 
-        <javadoc    sourcepath="${wsas.src}"
+        <javadoc    sourcepath="${src.dir}"
                     packagenames="com.arjuna.*"
                     failonerror="yes"
                     private="yes"
@@ -132,7 +138,7 @@
                 classpath="${build.classpath}">
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
                  <path refid="doclet.classpath"/>
-                 <param name="-basedir" value="${basedir}/${wsas.dest}"/>
+                 <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
                 <param name="-resourcebundle" value="${wsas.resourcebundle}"/>
              </doclet>
         </javadoc>
@@ -140,76 +146,69 @@
     </target>
 
 	<!-- test targets -->
-	<target name="wsas.tests.init">
-        <delete dir="${wsas.tests.dest.root}"/>
+	<target name="tests.init">
+        <delete dir="${tests.build.dir}"/>
 		<!-- make the test destination directories -->
-		<mkdir dir="${wsas.tests.dest.root}"/>
-		<mkdir dir="${wsas.tests.dest}"/>
-		<mkdir dir="${wsas.tests.dd.dest}"/>
-		<mkdir dir="${wsas.tests.webapps.dest}"/>
-		<mkdir dir="${wsas.tests.jar.dest}"/>
+		<mkdir dir="${tests.build.dir}"/>
+		<mkdir dir="${tests.build.classes.dir}"/>
+		<mkdir dir="${tests.build.dd.dir}"/>
+		<mkdir dir="${tests.build.webapps.dir}"/>
+		<mkdir dir="${tests.build.lib.dir}"/>
 	</target>
 
     <!-- this assumes the required libs have already been built -->
     
-	<target name="wsas.tests.compile" depends="wsas.tests.init">
-	  <javac destdir="${wsas.tests.dest}" debug="yes" optimize="no">
+	<target name="tests.compile" depends="tests.init">
+	  <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
 	    <classpath>
-	      <pathelement path="${wsas.jar.dest}/${modulename}.jar"/>
-	      <path refid="wsas.tests.lib.path"/>
+	      <pathelement path="${build.lib.dir}/${modulename}.jar"/>
+	      <path refid="tests.lib.path"/>
 	      <path refid="build.classpath"/>
 	    </classpath>
-	    <src path="${wsas.tests.src}"/>
+	    <src path="${tests.src.dir}"/>
 	  </javac>
 	</target>
 
-	<target name="wsas.tests.webapps" depends="wsas.tests.compile">
-	  <copy file="${wsas.tests.dd}/wsas-tests_web-app.xml" tofile="${wsas.tests.dd.dest}/web-app.xml">
+	<target name="tests.webapps" depends="tests.compile">
+	  <copy file="${tests.dd.dir}/wsas-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml">
 	  </copy>
-        <jar jarfile="${wsas.tests.jar.dest}/wsas-tests.jar" basedir="${wsas.tests.dest}" excludes="com/arjuna/qa/junit/*.class"/>
-        <jar jarfile="${wsas.tests.jar.dest}/xts-test-servlet.jar" basedir="${wsas.tests.dest}" includes="com/arjuna/qa/junit/*.class"/>
-	  <war warfile="${wsas.tests.webapps.dest}/wsas-tests.war" webxml="${wsas.tests.dd.dest}/web-app.xml">
+        <jar jarfile="${tests.build.lib.dir}/wsas-tests.jar" basedir="${tests.build.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
+        <jar jarfile="${tests.build.lib.dir}/xts-test-servlet.jar" basedir="${tests.build.classes.dir}" includes="com/arjuna/qa/junit/*.class"/>
+	  <war warfile="${tests.build.webapps.dir}/wsas-tests.war" webxml="${tests.build.dd.dir}/web-app.xml">
 	  </war>
-	  <ear earfile="${wsas.tests.webapps.dest}/wsas-tests.ear" appxml="${wsas.tests.dd}/wsas-tests_application.xml">
+	  <ear earfile="${tests.build.webapps.dir}/wsas-tests.ear" appxml="${tests.dd.dir}/wsas-tests_application.xml">
 	    <!-- we only need to deploy the ext test libs (junit) and
 	         the tests war in JBoss AS 5.0. the rest of the XTS
 	         code is deployed as a sar and the TS code is deployed
 	         in the server lib
 	    -->
 	    <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-          <fileset dir="${wsas.tests.webapps.dest}" includes="wsas-tests.war"/>
-          <fileset dir="${wsas.tests.jar.dest}" includes="wsas-tests.jar"/>
-          <fileset dir="${wsas.tests.jar.dest}" includes="xts-test-servlet.jar"/>
+          <fileset dir="${tests.build.webapps.dir}" includes="wsas-tests.war"/>
+          <fileset dir="${tests.build.lib.dir}" includes="wsas-tests.jar"/>
+          <fileset dir="${tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
 	  </ear>
 	</target>
 
-	<target name="wsas.tests.deploy" depends="wsas.tests.webapps, wsas.tests.undeploy">
-	  <copy file="${wsas.tests.webapps.dest}/wsas-tests.ear" tofile="${deploy.dir}/wsas-tests.ear"/>
+	<target name="tests.deploy" depends="tests.webapps, tests.undeploy">
+	  <copy file="${tests.build.webapps.dir}/wsas-tests.ear" tofile="${deploy.dir}/wsas-tests.ear"/>
 	</target>
 
-	<target name="wsas.tests.undeploy">
+	<target name="tests.undeploy">
 	  <delete file="${deploy.dir}/wsas-tests.ear"/>
 	</target>
 
 	<!-- Clean targets -->
-	<target name="wsas.clean">
+	<target name="clean">
 		<echo message="Cleaning module"/>
-		<delete dir="${wsas.dest}"/>
-		<delete dir="${wsas.dest.root}"/>
-		<delete dir="${wsas.htdocs.dest}"/>
-		<delete file="${wsas.jar.dest}/${modulename}.jar"/>
+		<delete dir="${build.classes.dir}"/>
+		<delete dir="${build.dir}"/>
+		<delete dir="${build.htdocs.dir}"/>
+		<delete file="${build.lib.dir}/${modulename}.jar"/>
 		<!-- delete the test destination directories -->
-		<delete dir="${wsas.tests.dest.root}"/>
+		<delete dir="${tests.build.dir}"/>
 	</target>
 
-	<!-- Short target names -->
-	<target name="compile" depends="wsas.compile"/>
-	<target name="jar" depends="wsas.jar"/>
-	<target name="clean" depends="wsas.clean"/>
-	<target name="tests-webapps" depends="wsas.tests.webapps"/>
 	<!-- production target for 1.1 tests - tests are not version specific -->
-    <target name="tests-11" depends="tests-webapps"/>
-    <target name="tests-both" depends="tests-webapps"/>
-	<target name="tests-deploy" depends="wsas.tests.deploy"/>
-	<target name="tests-undeploy" depends="wsas.tests.undeploy"/>
+    <target name="tests-11" depends="tests.webapps"/>
+    <target name="tests-both" depends="tests.webapps"/>
 </project>
