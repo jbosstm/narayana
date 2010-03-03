@@ -308,6 +308,9 @@ public class ArjunaTransactionImple extends
 	 * example) then we do nothing - could throw TransactionRequired or
 	 * INVALID_TRANSACTION. However, if it was rolledback then we throw
 	 * TRANSACTION_ROLLEDBACK. Seems like an inconsistency.
+	 * 
+	 * OTS is vague as to what to do if the transaction has been terminated,
+	 * so we make a sensible choice.
 	 *
 	 * report_heuristics is ignored if we are a subtransaction.
 	 */

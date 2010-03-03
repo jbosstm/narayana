@@ -28,8 +28,6 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
-import javax.transaction.Status;
-
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CosTransactions.HeuristicHazard;

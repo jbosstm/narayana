@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
 import com.arjuna.ats.internal.jta.transaction.jts.jca.TxWorkManager;
-import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 
 import javax.transaction.Transaction;
 

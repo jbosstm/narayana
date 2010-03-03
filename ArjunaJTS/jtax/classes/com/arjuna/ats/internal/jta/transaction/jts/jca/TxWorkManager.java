@@ -40,8 +40,6 @@ import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkException;
 import javax.transaction.Transaction;
 
-import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
-
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.logging.*;
 

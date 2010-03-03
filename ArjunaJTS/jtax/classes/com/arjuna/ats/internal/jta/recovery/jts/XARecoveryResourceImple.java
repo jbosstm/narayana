@@ -42,11 +42,8 @@ import com.arjuna.common.util.logging.*;
 
 import javax.transaction.xa.*;
 
-/*
- * Default visibility.
- */
 
-class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryResource
+public class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryResource
 {
 
     public XARecoveryResourceImple (Uid u)
@@ -69,7 +66,7 @@ class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryReso
     public int recoverable ()
     {
 	/*
-	 * If we haven't got an XID then we tried to load the
+	 * If we haven't got an XID then we probably tried to load the
 	 * state of an inflight transaction and that state had
 	 * just been deleted. So, no recovery to perform.
 	 */

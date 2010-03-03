@@ -245,7 +245,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 
 		if (_theTransaction != null)
-		{
+		{   
 			/*
 			 * Call end on any suspended resources. If this fails, then the
 			 * transaction will be rolled back.
@@ -253,6 +253,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			try
 			{
+			    if ((getStatus() != Status.STATUS_ACTIVE) && (getStatus() != Status.STATUS_MARKED_ROLLBACK))
+		                        throw new NoTransaction();
+		             
 				if (!endSuspendedRMs())
 					_theTransaction.rollbackOnly();
 
@@ -334,26 +337,31 @@ public class TransactionImple implements javax.transaction.Transaction,
 			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollback");
 		}
 
+		boolean endSuspendedFailed = false;
+		
 		if (_theTransaction != null)
 		{
-			/*
-			 * Call end on any suspended resources. If this fails, then there's
-			 * not a lot else we can do because the transaction is about to roll
-			 * back anyway!
-			 */
-
-			boolean endSuspendedFailed = !endSuspendedRMs();
-
-			if (endSuspendedFailed)
-			{
-				if (jtaxLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1");
-				}
-			}
-
 			try
 			{
+		             if ((getStatus() != Status.STATUS_ACTIVE) && (getStatus() != Status.STATUS_MARKED_ROLLBACK))
+		                        throw new NoTransaction();
+		             
+		                 /*
+	                         * Call end on any suspended resources. If this fails, then there's
+	                         * not a lot else we can do because the transaction is about to roll
+	                         * back anyway!
+	                         */
+		             
+		              endSuspendedFailed = !endSuspendedRMs();
+
+	                        if (endSuspendedFailed)
+	                        {
+	                                if (jtaxLogger.loggerI18N.isWarnEnabled())
+	                                {
+	                                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1");
+	                                }
+	                        }
+	                        
 				_theTransaction.abort();
 			}
 			catch (org.omg.CosTransactions.WrongTransaction e1)

@@ -35,7 +35,6 @@ import com.arjuna.ats.jta.recovery.*;
 
 import com.arjuna.ats.arjuna.common.*;
 
-import java.util.*;
 import javax.transaction.xa.*;
 
 public class XARecoveryResourceManagerImple implements XARecoveryResourceManager

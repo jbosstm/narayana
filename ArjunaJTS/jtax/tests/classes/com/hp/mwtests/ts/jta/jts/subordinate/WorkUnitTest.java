@@ -29,13 +29,19 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jta.jca;
+package com.hp.mwtests.ts.jta.jts.subordinate;
 
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.WorkSynchronization;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.internal.jta.transaction.jts.jca.TxWorkManager;
+import com.arjuna.ats.internal.jta.transaction.jts.jca.WorkSynchronization;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.Work;
@@ -68,7 +74,7 @@ public class WorkUnitTest
     public void testWorkManager () throws Exception
     {
         DummyWork work = new DummyWork();
-        Transaction tx = new TransactionImple(0);
+        Transaction tx = new TransactionImple();
         
         TxWorkManager.addWork(work, tx);
         
@@ -94,7 +100,7 @@ public class WorkUnitTest
     @Test
     public void testWorkSynchronization () throws Exception
     {
-        Transaction tx = new TransactionImple(0);
+        Transaction tx = new TransactionImple();
         Synchronization ws = new WorkSynchronization(tx);
         DummyWork work = new DummyWork();
         
@@ -112,4 +118,27 @@ public class WorkUnitTest
         
         ws.afterCompletion(Status.STATUS_COMMITTED);
     }
+    
+    @Before
+    public void setUp () throws Exception
+    {
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
+
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
+
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+    }
+    
+    @After
+    public void tearDown () throws Exception
+    {
+        myOA.destroy();
+        myORB.shutdown();
+    }
+    
+    private ORB myORB = null;
+    private RootOA myOA = null;
 }
