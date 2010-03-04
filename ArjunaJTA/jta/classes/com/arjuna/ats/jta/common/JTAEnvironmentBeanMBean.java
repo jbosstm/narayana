@@ -52,7 +52,11 @@ public interface JTAEnvironmentBeanMBean
     List<String> getXaResourceRecoveryInstances();
 
     void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances);
-    
+
+    List<String> getXaResourceOrphanFilters();
+
+    void setXaResourceOrphanFilters(List<String> xaResourceOrphanFilters);
+
     boolean isXaRollbackOptimization();
 
     void setXaRollbackOptimization(boolean xaRollbackOptimization);

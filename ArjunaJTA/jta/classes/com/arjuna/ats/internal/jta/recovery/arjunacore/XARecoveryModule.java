@@ -40,14 +40,12 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.*;
 import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.xa.XidImple;
 
 import com.arjuna.common.util.logging.*;
 
@@ -65,13 +63,7 @@ import javax.transaction.xa.XAException;
 
 public class XARecoveryModule implements RecoveryModule
 {
-	// why not in Environment?
-
-	public static final String XARecoveryPropertyNamePrefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery";
-
-	private static final String RECOVER_ALL_NODES = "*";
-
-	public XARecoveryModule()
+    public XARecoveryModule()
 	{
 		this(
 				com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple.class
@@ -94,6 +86,21 @@ public class XARecoveryModule implements RecoveryModule
             _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
         }
     }
+
+    public void addXAResourceOrphanFilter(XAResourceOrphanFilter xaResourceOrphanFilter) {
+        synchronized (_xaResourceOrphanFilters) {
+            if(!_xaResourceOrphanFilters.contains(xaResourceOrphanFilter)) {
+                _xaResourceOrphanFilters.add(xaResourceOrphanFilter);
+            }
+        }
+    }
+    
+    public void removeXAResourceOrphanFilter(XAResourceOrphanFilter xaResourceOrphanFilter) {
+        synchronized (_xaResourceOrphanFilters) {
+            _xaResourceOrphanFilters.remove(xaResourceOrphanFilter);
+        }
+    }
+
 
 
     /**
@@ -232,8 +239,7 @@ public class XARecoveryModule implements RecoveryModule
 	}
 
 	/**
-	 * @param Xid
-	 *            xid The transaction to commit/rollback.
+	 * @param xid The transaction to commit/rollback.
 	 *
 	 * @return the XAResource than can be used to commit/rollback the specified
 	 *         transaction.
@@ -368,19 +374,26 @@ public class XARecoveryModule implements RecoveryModule
                     }
                 }
             }
+
+            for(String xaResourceOrphanFilterClassname : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters())
+            {
+                try
+                {
+                    Class c = Thread.currentThread().getContextClassLoader().loadClass(xaResourceOrphanFilterClassname);
+                    XAResourceOrphanFilter filter = (XAResourceOrphanFilter)c.newInstance();
+                    _xaResourceOrphanFilters.add(filter);
+                }
+                catch(Exception e)
+                {
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N
+                                .warn("com.arjuna.ats.internal.jta.recovery.general",
+                                        new Object[] { e, xaResourceOrphanFilterClassname }, e);
+                    }
+                }
+            }
         }
-
-        // Find the node(s) we can recover on behalf of.
-        _xaRecoveryNodes = new Vector<String>(jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes());
-
-		if ((_xaRecoveryNodes == null) || (_xaRecoveryNodes.size() == 0))
-		{
-			if (jtaLogger.loggerI18N.isInfoEnabled())
-			{
-				jtaLogger.loggerI18N
-						.info("com.arjuna.ats.internal.jta.recovery.noxanodes");
-			}
-		}
 	}
 
 	/**
@@ -395,8 +408,6 @@ public class XARecoveryModule implements RecoveryModule
 	 *          resource to table: no XID value available.
 	 * @message com.arjuna.ats.internal.jta.recovery.unexpectedrecoveryerror
 	 *          Unexpceted recovery error:
-	 * @message com.arjuna.ats.internal.jta.recovery.noxanodes No XA recovery
-	 *          nodes specified. Will only recover saved states.
 	 */ 
 
 	private final boolean transactionInitiatedRecovery()
@@ -806,7 +817,7 @@ public class XARecoveryModule implements RecoveryModule
 
 			xidsToRecover.nextScan(trans);
 
-			Object[] xids = xidsToRecover.toRecover();
+			Xid[] xids = xidsToRecover.toRecover();
 
 			if (xids != null)
 			{
@@ -834,7 +845,7 @@ public class XARecoveryModule implements RecoveryModule
 					{
 						// is the xid known to be one that couldn't be recovered
 
-						recordUid = previousFailure((Xid) xids[j]);
+						recordUid = previousFailure(xids[j]);
 
 						if ((recordUid == null) && (foundTransaction))
 							break; // end
@@ -845,214 +856,15 @@ public class XARecoveryModule implements RecoveryModule
 						// transaction
 
 						if (recordUid == null)
-						{
-							/*
-							 * It wasn't an xid that we couldn't recover, so the
-							 * RM knows about it, but we don't. Therefore it may
-							 * have to be rolled back.
-							 */
-
-							if (jtaLogger.logger.isDebugEnabled())
-							{
-								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-										VisibilityLevel.VIS_PRIVATE,
-										FacilityCode.FAC_CRASH_RECOVERY,
-										"Checking node name of "
-												+ ((Xid) xids[j]));
-							}
-
-							String nodeName = XAUtils
-									.getXANodeName((Xid) xids[j]);
-							boolean doRecovery = false;
-
-							if (jtaLogger.logger.isDebugEnabled())
-							{
-								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-										VisibilityLevel.VIS_PRIVATE,
-										FacilityCode.FAC_CRASH_RECOVERY,
-										"Node name is " + nodeName);
-							}
-
-							/*
-							 * If there is no node name but we have been told to
-							 * recover everything, then we can roll it back.
-							 */
-
-							if ((nodeName == null)
-									&& (_xaRecoveryNodes != null)
-									&& (_xaRecoveryNodes
-											.contains(RECOVER_ALL_NODES)))
-							{
-								if (jtaLogger.logger.isDebugEnabled())
-								{
-									jtaLogger.logger.debug(
-											DebugLevel.FUNCTIONS,
-											VisibilityLevel.VIS_PRIVATE,
-											FacilityCode.FAC_CRASH_RECOVERY,
-											"Ignoring node name. Will recover "+(Xid) xids[j]);
-								}
-
-								doRecovery = true;
-							}
-							else
-							{
-								if (nodeName != null)
-								{
-									/*
-									 * Check that the node name is in our
-									 * recovery set or that we have been told to
-									 * recover everything.
-									 */
-
-									if (_xaRecoveryNodes != null)
-									{
-										if (_xaRecoveryNodes
-												.contains(RECOVER_ALL_NODES)
-												|| _xaRecoveryNodes
-														.contains(nodeName))
-										{
-											if (jtaLogger.loggerI18N
-													.isDebugEnabled())
-											{
-												jtaLogger.logger
-														.debug(
-																DebugLevel.FUNCTIONS,
-																VisibilityLevel.VIS_PRIVATE,
-																FacilityCode.FAC_CRASH_RECOVERY,
-																"Node name matches. Will recover "+(Xid) xids[j]);
-											}
-
-											doRecovery = true;
-										}
-										else
-										{
-											if (jtaLogger.loggerI18N
-													.isDebugEnabled())
-											{
-												jtaLogger.logger
-														.debug(
-																DebugLevel.FUNCTIONS,
-																VisibilityLevel.VIS_PRIVATE,
-																FacilityCode.FAC_CRASH_RECOVERY,
-																"Node name does not match. Ignoring Xid.");
-											}
-										}
-									}
-									else
-									{
-										if (jtaLogger.loggerI18N
-												.isDebugEnabled())
-										{
-											jtaLogger.logger
-													.debug(
-															DebugLevel.FUNCTIONS,
-															VisibilityLevel.VIS_PRIVATE,
-															FacilityCode.FAC_CRASH_RECOVERY,
-															"Node name not set. Ignoring Xid.");
-										}
-									}
-								}
-								else
-								{
-									if (jtaLogger.logger.isDebugEnabled())
-									{
-										jtaLogger.logger
-												.debug(
-														DebugLevel.FUNCTIONS,
-														VisibilityLevel.VIS_PRIVATE,
-														FacilityCode.FAC_CRASH_RECOVERY,
-														"Will not recover this Xid");
-									}
-								}
-							}
-
-							try
-							{
-								if (doRecovery)
-								{
-									if (!transactionLog((Xid) xids[j]))
-									{
-									    if (jtaLogger.loggerI18N.isInfoEnabled())
-	                                                                        {
-	                                                                                jtaLogger.loggerI18N
-	                                                                                                .info(
-	                                                                                                                "com.arjuna.ats.internal.jta.recovery.info.rollingback",
-	                                                                                                                new Object[]
-	                                                                                                                { XAHelper
-	                                                                                                                                .xidToString((Xid) xids[j]) });
-	                                                                        }
-									    
-										xares.rollback((Xid) xids[j]);
-									}
-									else
-									{
-									    if (jtaLogger.loggerI18N.isInfoEnabled())
-	                                                                        {
-	                                                                                jtaLogger.loggerI18N
-	                                                                                                .info(
-	                                                                                                                "com.arjuna.ats.internal.jta.recovery.info.rollingbackignore",
-	                                                                                                                new Object[]
-	                                                                                                                { XAHelper
-	                                                                                                                                .xidToString((Xid) xids[j]) });
-	                                                                        }
-									    
-										/*
-										 * Ignore it as the transaction system
-										 * will recovery it eventually.
-										 */
-									}
-								}
-								else
-								{
-									if (jtaLogger.loggerI18N.isInfoEnabled())
-									{
-										jtaLogger.loggerI18N
-												.info(
-														"com.arjuna.ats.internal.jta.recovery.info.notrollback",
-														new Object[]
-														{ XAHelper
-																.xidToString((Xid) xids[j]) });
-									}
-								}
-							}
-							catch (XAException e1)
-							{
-								e1.printStackTrace();
-
-								switch (e1.errorCode)
-								{
-								case XAException.XAER_RMERR:
-									break;
-								case XAException.XA_HEURHAZ:
-								case XAException.XA_HEURCOM:
-								case XAException.XA_HEURMIX:
-								case XAException.XA_HEURRB:
-								case XAException.XA_RBROLLBACK:
-								{
-									if (!doForget) // already done?
-										doForget = true;
-								}
-									break;
-								default:
-									break;
-								}
-							}
-							catch (Exception e2)
-							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N
-											.warn(
-													"com.arjuna.ats.internal.jta.recovery.xarecovery2",
-													new Object[]
-													{
-															_logName
-																	+ ".xaRecovery ",
-															e2 });
-								}
-							}
-						}
-						else
+                        {
+                            /*
+                            * It wasn't an xid that we couldn't recover, so the
+                            * RM knows about it, but we don't. Therefore it may
+                            * have to be rolled back.
+                            */
+                            doForget = handleOrphan(xares, xids[j]);
+                        }
+                        else
 						{
 							foundTransaction = true;
 
@@ -1089,7 +901,7 @@ public class XARecoveryModule implements RecoveryModule
 						{
 							try
 							{
-								xares.forget((Xid) xids[j]);
+								xares.forget(xids[j]);
 							}
 							catch (Exception e)
 							{
@@ -1142,6 +954,84 @@ public class XARecoveryModule implements RecoveryModule
 	}
 
     /**
+     * Apply use configurable filtering to determine how to handle the in-doubt resource.
+     *
+     * @param xares
+     * @param xid
+     * @return true if forget should be called, false otherwise.
+     */
+    private boolean handleOrphan(XAResource xares, Xid xid)
+    {
+        // be default we play it safe and leave resources alone unless a filter explicitly recognizes them.
+        // getting presumed abort behaviour therefore requires appropriate filters to be registered.
+        XAResourceOrphanFilter.Vote votingOutcome = XAResourceOrphanFilter.Vote.LEAVE_ALONE;
+
+        for(XAResourceOrphanFilter filter : _xaResourceOrphanFilters) {
+            XAResourceOrphanFilter.Vote vote = filter.checkXid(xid);
+
+            if(jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
+                        FacilityCode.FAC_CRASH_RECOVERY, "XAResourceOrphanFilter "+filter.getClass().getName()+" voted "+vote);
+            }
+
+            if(vote == XAResourceOrphanFilter.Vote.LEAVE_ALONE)
+            {
+                return false;
+            }
+            else if(vote == XAResourceOrphanFilter.Vote.ROLLBACK)
+            {
+                votingOutcome = vote;
+            }
+        }
+
+        try
+        {
+            if(votingOutcome == XAResourceOrphanFilter.Vote.ROLLBACK)
+            {
+                if (jtaLogger.loggerI18N.isInfoEnabled())
+                {
+                    jtaLogger.loggerI18N
+                            .info("com.arjuna.ats.internal.jta.recovery.info.rollingback",
+                                    new Object[] { XAHelper.xidToString(xid) });
+                }
+
+                xares.rollback(xid);
+            }
+        }
+        catch (XAException e1)
+        {
+            e1.printStackTrace();
+
+            switch (e1.errorCode)
+            {
+                case XAException.XAER_RMERR:
+                    break;
+                case XAException.XA_HEURHAZ:
+                case XAException.XA_HEURCOM:
+                case XAException.XA_HEURMIX:
+                case XAException.XA_HEURRB:
+                case XAException.XA_RBROLLBACK:
+                {
+                    return true;
+                }
+                default:
+                    break;
+            }
+        }
+        catch (Exception e2)
+        {
+            if (jtaLogger.loggerI18N.isWarnEnabled())
+            {
+                jtaLogger.loggerI18N
+                        .warn(
+                                "com.arjuna.ats.internal.jta.recovery.xarecovery2",
+                                new Object[] { _logName + ".xaRecovery ", e2 });
+            }
+        }
+        return false;
+    }
+
+    /**
      * For some drivers, isSameRM is connection specific. If we have prev scan results
      * for the same RM but using a different connection, we need to be able to identify them.
      * Look at the data from previous scans, identify any for the same RM but different XAResource
@@ -1173,93 +1063,6 @@ public class XARecoveryModule implements RecoveryModule
             }
         }
     }
-
-	/**
-	 * Is there a log file for this transaction?
-	 *
-	 * @param Xid
-	 *            xid the transaction to check.
-	 *
-	 * @return <code>boolean</code>true if there is a log file,
-	 *         <code>false</code> if there isn't.
-	 *
-	 * @message com.arjuna.ats.internal.jta.recovery.notaxid {0} not an Arjuna
-	 *          XID
-	 */
-
-	private final boolean transactionLog(Xid xid)
-	{
-		if (_transactionStore == null)
-		{
-			_transactionStore = TxControl.getStore();
-		}
-		
-		XidImple theXid = new XidImple(xid);
-		Uid u = theXid.getTransactionUid();
-
-                if (jtaLogger.logger.isDebugEnabled())
-                {
-                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PRIVATE,
-                                        FacilityCode.FAC_CRASH_RECOVERY,
-                                        "Checking whether Xid "
-                                                        + theXid + " exists in ObjectStore.");
-                }
-                
-		if (!u.equals(Uid.nullUid()))
-		{
-			try
-			{
-
-		                if (jtaLogger.logger.isDebugEnabled())
-		                {
-		                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-		                                        VisibilityLevel.VIS_PRIVATE,
-		                                        FacilityCode.FAC_CRASH_RECOVERY,
-		                                        "Looking for "+u+" and "+_transactionType);
-		                }
-		                
-				if (_transactionStore.currentState(u, _transactionType) != StateStatus.OS_UNKNOWN)
-				{
-	                                if (jtaLogger.logger.isDebugEnabled())
-	                                {
-	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-	                                                        VisibilityLevel.VIS_PRIVATE,
-	                                                        FacilityCode.FAC_CRASH_RECOVERY,
-	                                                        "Found record for "+theXid);
-	                                }
-	                                
-					return true;
-				}
-				else
-				{
-	                                if (jtaLogger.logger.isDebugEnabled())
-	                                {
-	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-	                                                        VisibilityLevel.VIS_PRIVATE,
-	                                                        FacilityCode.FAC_CRASH_RECOVERY,
-	                                                        "No record found for "+theXid);
-	                                }
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		else
-		{
-			if (jtaLogger.logger.isInfoEnabled())
-			{
-				jtaLogger.loggerI18N.info(
-						"com.arjuna.ats.internal.jta.recovery.notaxid",
-						new Object[]
-						{ xid });
-			}
-		}
-
-		return false;
-	}
 
 	/**
 	 * Is the Xid is in the failure list, i.e., the list of those transactions
@@ -1369,6 +1172,8 @@ public class XARecoveryModule implements RecoveryModule
 
     private final List<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new LinkedList<XAResourceRecoveryHelper>();
 
+    private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters = new LinkedList<XAResourceOrphanFilter>();
+
     private Hashtable _failures = null;
 
 	private Vector _xaRecoveryNodes = null;
@@ -1384,8 +1189,6 @@ public class XARecoveryModule implements RecoveryModule
 
 	// Reference to the Object Store.
 	private static ObjectStore _transactionStore = null;
-
-	// milliseconds
 
 	private static final char BREAKCHARACTER = ';'; // delimiter for xaconnrecov
 	// property

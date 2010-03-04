@@ -66,7 +66,12 @@
 
 	<!-- Which Xid types to recover -->
 	<entry key="JTAEnvironmentBean.xaRecoveryNodes">1</entry>
-	
+
+    <entry key="JTAEnvironmentBean.xaResourceOrphanFilters">
+        com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter
+        com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter
+    </entry>
+
     <!--
       Base port number for determining a unique number to associate with an instance of the transaction service
       (which is needed in order to support multiple instances on the same machine).

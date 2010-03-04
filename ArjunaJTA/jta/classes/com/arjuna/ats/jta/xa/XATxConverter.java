@@ -153,10 +153,8 @@ public class XATxConverter
 
     public static String getNodeName(XID xid)
     {
-        if(xid.formatID != FORMAT_ID) {
-            return null;
-        }
-
+        // don't check the formatId - it may differ e.g. JTA vs. JTS.
+        
         // the node name follows the Uid with no separator, so the only
         // way to tell where it starts is to figure out how long the Uid is.
         Uid uid = getUid(xid);

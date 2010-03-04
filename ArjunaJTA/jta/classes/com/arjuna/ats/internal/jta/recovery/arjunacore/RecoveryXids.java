@@ -110,7 +110,7 @@ public class RecoveryXids
      * they won't appear in the next new list of inflight transactions.
      */
 
-    public final java.lang.Object[] toRecover ()
+    public final Xid[] toRecover ()
     {
         final int numScanN = (_scanN == null ? 0 : _scanN.length) ;
         final int numScanM = (_scanM == null ? 0 : _scanM.length) ;
@@ -121,7 +121,7 @@ public class RecoveryXids
             return null ;
         }
         
-        final Vector workingVector = new Vector() ;
+        final Vector<Xid> workingVector = new Vector<Xid>() ;
         
         for (int count = 0 ; count < numScan ; count++)
         {
@@ -131,7 +131,7 @@ public class RecoveryXids
             }
         }
         
-        return workingVector.toArray();
+        return workingVector.toArray(new Xid[workingVector.size()]);
     }
 
     public final boolean isSameRM (XAResource xares)

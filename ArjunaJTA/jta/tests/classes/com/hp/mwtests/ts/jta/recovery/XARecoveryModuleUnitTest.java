@@ -33,6 +33,8 @@ package com.hp.mwtests.ts.jta.recovery;
 
 import java.util.ArrayList;
 
+import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -40,6 +42,9 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
+
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import static org.junit.Assert.*;
 
@@ -74,6 +79,50 @@ public class XARecoveryModuleUnitTest
         {
             xarm.periodicWorkFirstPass();
             xarm.periodicWorkSecondPass();
+        }
+    }
+
+    @Test
+    public void testXAResourceRecoveryHelperRegistration() {
+
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        XAResourceRecoveryHelper xaResourceRecoveryHelper = new DummyXAResourceRecoveryHelper();
+
+        xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+        xaRecoveryModule.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+    }
+
+    class DummyXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
+        @Override
+        public boolean initialise(String p) throws Exception
+        {
+            return false;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public XAResource[] getXAResources() throws Exception
+        {
+            return new XAResource[0];  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void testXAResourceOrphanFilterRegistration() {
+
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        XAResourceOrphanFilter xaResourceOrphanFilter = new DummyXAResourceOrphanFilter();
+
+        xaRecoveryModule.addXAResourceOrphanFilter(xaResourceOrphanFilter);
+        xaRecoveryModule.removeXAResourceOrphanFilter(xaResourceOrphanFilter);
+
+    }
+
+    class DummyXAResourceOrphanFilter implements XAResourceOrphanFilter
+    {
+        @Override
+        public Vote checkXid(Xid xid)
+        {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }

@@ -47,6 +47,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery")
     private volatile List<String> xaResourceRecoveryInstances = new ArrayList<String>();
 
+    private volatile List<String> xaResourceOrphanFilters = new ArrayList<String>();
+
     private volatile boolean xaRollbackOptimization = false;
     private volatile boolean xaAssumeRecoveryComplete = false;
 
@@ -214,6 +216,36 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
             this.xaResourceRecoveryInstances = new ArrayList<String>();
         } else {
             this.xaResourceRecoveryInstances = new ArrayList<String>(xaResourceRecoveryInstances);
+        }
+    }
+
+    /**
+     * Returns a list of names of classes that implement XAResourceOrphanFilter.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * Default: empty list.
+     * Equivalent deprecated property prefix:
+     *
+     * @return a list of XAResourceOrphanFilter implementation class names.
+     */
+    public List<String> getXaResourceOrphanFilters()
+    {
+        return new ArrayList<String>(xaResourceOrphanFilters);
+    }
+
+    /**
+     * Sets the XAResource orphan filters.
+     * List elements should be names of classes that implement XAResourceOrphanFilter.
+     * The provided list will be copied, not retained.
+     *
+     * @param xaResourceOrphanFilters a list of XAResourceOrphanFilter implementation classes.
+     */
+    public void setXaResourceOrphanFilters(List<String> xaResourceOrphanFilters)
+    {
+        if(xaResourceOrphanFilters == null) {
+            this.xaResourceOrphanFilters = new ArrayList<String>();
+        } else {
+            this.xaResourceOrphanFilters = new ArrayList<String>(xaResourceOrphanFilters);
         }
     }
 
