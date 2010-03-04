@@ -807,9 +807,12 @@ public class PeriodicRecovery extends Thread
         }
 
         // n.b. this works on a copy of the modules list so it is not affected by
-        // dynamic updates in the middle of a scan
+        // dynamic updates in the middle of a scan, ensuring first+second pass happen
+        // for the same stable set of modules.
 
-        Enumeration modules = getModules().elements();
+        Vector copyOfModules = getModules();
+        
+        Enumeration modules = copyOfModules.elements();
 
         while (modules.hasMoreElements())
         {
@@ -866,7 +869,7 @@ public class PeriodicRecovery extends Thread
                     "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15", new Object[] {_theTimestamper.format(new Date())});
         }
 
-        modules = _recoveryModules.elements();
+        modules = copyOfModules.elements();
 
         while (modules.hasMoreElements())
         {
