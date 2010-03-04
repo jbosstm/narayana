@@ -45,8 +45,9 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         if (module == null) {
             throw new NullPointerException("XTSATRecoveryModule value must be non-null");
         }
-
-        recoveryModules.add(module);
+        synchronized (recoveryModules) {
+            recoveryModules.add(module);
+        }
     }
 
     /**
@@ -58,8 +59,11 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
      *          if the module is not currently registered
      */
     public void unregisterRecoveryModule(XTSATRecoveryModule module) throws NoSuchElementException {
-        if (!recoveryModules.remove(module)) {
-            throw new NoSuchElementException();
+
+        synchronized (recoveryModules) {
+            if (!recoveryModules.remove(module)) {
+                throw new NoSuchElementException();
+            }
         }
     }
 
@@ -396,7 +400,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     /**
      * a map from participant ids to participant recover records
      */
-    private List<XTSATRecoveryModule> recoveryModules = new ArrayList<XTSATRecoveryModule>();
+    private final List<XTSATRecoveryModule> recoveryModules = new ArrayList<XTSATRecoveryModule>();
 
     /**
      * the tx object store to be used for saving and deleting participant details
