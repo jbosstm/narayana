@@ -44,8 +44,12 @@
     </path>
 
 
+    <target name="init">
+        <mkdir dir="${reports.dir}"/>
+    </target>
+
     <!-- target for 1.1 tests -->
-    <target name="tests-11">
+    <target name="tests-11" depends="init">
         <run-localjunit-test serverUrl="${base.url}/wsas-tests/index.xml" outfile="TEST-wsas-test.xml" />
         <run-localjunit-test serverUrl="${base.url}/ws-c11-tests/index.xml" outfile="TEST-ws-c11-test.xml" />
         <run-localjunit-test serverUrl="${base.url}/ws-t11-tests/index.xml" outfile="TEST-ws-t11-test.xml" />

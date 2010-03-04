@@ -46,7 +46,11 @@
 		<pathelement location="${jbossts.build.extlib.dir}/junit.jar"/>
     </path>
 
-    <target name="interop-tests" depends="wstf-interop-tests,wstx11-interop-tests"/>
+    <target name="init">
+        <mkdir dir="${reports.dir}"/>
+    </target>
+
+    <target name="interop-tests" depends="wstf-interop-tests,wstx11-interop-tests,init"/>
 
     <target name="wstf-interop-tests">
         <run-localjunit-test serverUrl="${base.url}/sc007/test?serviceuri=${base.url}/sc007/ParticipantService&amp;testTimeout=120000&amp;test=allTests&amp;resultPage=/xmlresults" outfile="TEST-sc007-test.xml" />
