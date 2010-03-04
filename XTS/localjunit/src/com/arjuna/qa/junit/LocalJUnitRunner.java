@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.Header;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.FileWriter;
@@ -79,6 +80,9 @@ public class LocalJUnitRunner extends TestCase
         }
         catch (Exception e)
         {
+            System.err.println("======================================================");
+            System.err.println("====================  EXCEPTION  =====================");
+            System.err.println("======================================================");
             e.printStackTrace();
             result = false;
         }

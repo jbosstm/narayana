@@ -22,9 +22,10 @@
 <project name="Local JUnit Test for basic XTS testsuite" default="interop-tests" basedir=".">
 
     <!-- this should be run from the installed tree i.e. <JBossTSDir>/XTS/xts-install/interop-tests-->
-    
+    <!-- location of XTS root dir -->
+    <property name="root.dir" value="../.."/>
     <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location="../../.."/>
+    <property name="jbossts.dir" location="${root.dir}/.."/>
     <!-- all libraries external to JBossTS should be found in parent build/extlib -->
     <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
     <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
@@ -50,20 +51,20 @@
         <mkdir dir="${reports.dir}"/>
     </target>
 
-    <target name="interop-tests" depends="wstf-interop-tests,wstx11-interop-tests,init"/>
+    <target name="interop-tests" depends="init, wstf-interop-tests,wstx11-interop-tests"/>
 
     <target name="wstf-interop-tests">
-        <run-localjunit-test serverUrl="${base.url}/sc007/test?serviceuri=${base.url}/sc007/ParticipantService&amp;testTimeout=120000&amp;test=allTests&amp;resultPage=/xmlresults" outfile="TEST-sc007-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/sc007/test?serviceuri=${base.url}/sc007/ParticipantService&amp;testTimeout=120000&amp;test=allTests&amp;resultPage=/xmlresults" tag="sc007" />
     </target>
 
     <target name="wstx11-interop-tests">
-        <run-localjunit-test serverUrl="${base.url}/interop11/test?serviceuri=${base.url}/interop11/ATParticipantService&amp;testTimeout=120000&amp;test=allATTests&amp;resultPage=/xmlresults" outfile="TEST-interop11-AT-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/interop11/test?serviceuri=${base.url}/interop11/BAParticipantService&amp;testTimeout=120000&amp;test=allBATests&amp;resultPage=/xmlresults" outfile="TEST-interop11-BA-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/interop11/test?serviceuri=${base.url}/interop11/ATParticipantService&amp;testTimeout=120000&amp;test=allATTests&amp;resultPage=/xmlresults" tag="interop11-AT" />
+        <run-localjunit-test serverUrl="${base.url}/interop11/test?serviceuri=${base.url}/interop11/BAParticipantService&amp;testTimeout=120000&amp;test=allBATests&amp;resultPage=/xmlresults" tag="interop11-BA" />
     </target>
 
     <macrodef name="run-localjunit-test">
         <attribute name="serverUrl" />
-        <attribute name="outfile" />
+        <attribute name="tag" />
         <sequential>
             <junit printsummary="yes" haltonfailure="no" fork="true" dir="." maxmemory="256m" showoutput="yes">
                 <classpath>
@@ -73,9 +74,9 @@
                 <formatter type="xml"/>
 
                 <sysproperty key="serverUrl" value="@{serverUrl}" />
-                <sysproperty key="outfile" value="${reports.dir}/@{outfile}" />
+                <sysproperty key="outfile" value="${reports.dir}/Test-@{tag}-test.xml" />
 
-                <test name="com.arjuna.qa.junit.LocalJUnitInteropRunner" />
+                <test name="com.arjuna.qa.junit.LocalJUnitInteropRunner" outfile="TEST-com.arjuna.qa.junit.LocalJUnitInteropRunner-@{tag}"/>
 
                 <!--jvmarg value="-Xdebug"/>
                 <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/-->

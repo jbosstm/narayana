@@ -23,8 +23,10 @@
 
     <!-- this should be run from the installed tree i.e. <JBossTSDir>/XTS/xts-install/tests -->
 
+    <!-- location of XTS root dir -->
+    <property name="root.dir" value="../.."/>
     <!-- location of JBossTS parent tree -->
-    <property name="jbossts.dir" location="../../.."/>
+    <property name="jbossts.dir" location="${root.dir}/.."/>
     <!-- all libraries external to JBossTS should be found in parent build/extlib -->
     <property name="jbossts.build.dir" location="${jbossts.dir}/build"/>
     <property name="jbossts.build.extlib.dir" location="${jbossts.build.dir}/extlib"/>
@@ -50,24 +52,24 @@
 
     <!-- target for 1.1 tests -->
     <target name="tests-11" depends="init">
-        <run-localjunit-test serverUrl="${base.url}/wsas-tests/index.xml" outfile="TEST-wsas-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-c11-tests/index.xml" outfile="TEST-ws-c11-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-t11-tests/index.xml" outfile="TEST-ws-t11-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/wscf11-tests/index.xml" outfile="TEST-wscf11-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/wstx11-tests/index.xml" outfile="TEST-wstx11-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/wsas-tests/index.xml" tag="wsas" />
+        <run-localjunit-test serverUrl="${base.url}/ws-c11-tests/index.xml" tag="ws-c11" />
+        <run-localjunit-test serverUrl="${base.url}/ws-t11-tests/index.xml" tag="ws-t11" />
+        <run-localjunit-test serverUrl="${base.url}/wscf11-tests/index.xml" tag="wscf11" />
+        <run-localjunit-test serverUrl="${base.url}/wstx11-tests/index.xml" tag="wstx11" />
     </target>
 
     <!-- target for both 1.0 and 1.1 tests -->
     <target name="tests-both" depends="tests-11">
-        <run-localjunit-test serverUrl="${base.url}/wscf-tests/index.xml" outfile="TEST-wscf-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/wstx-tests/index.xml" outfile="TEST-wstx-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-c-tests/index.xml" outfile="TEST-ws-c-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-t-tests/index.xml" outfile="TEST-ws-t-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/wscf-tests/index.xml" tag="wscf" />
+        <run-localjunit-test serverUrl="${base.url}/wstx-tests/index.xml" tag="wstx" />
+        <run-localjunit-test serverUrl="${base.url}/ws-c-tests/index.xml" tag="ws-c" />
+        <run-localjunit-test serverUrl="${base.url}/ws-t-tests/index.xml" tag="ws-t" />
     </target>
  
     <macrodef name="run-localjunit-test">
         <attribute name="serverUrl" />
-        <attribute name="outfile" />
+        <attribute name="tag" />
         <sequential>
             <junit printsummary="yes" haltonfailure="no" fork="true" dir="." maxmemory="256m" showoutput="yes">
                 <classpath>
@@ -77,9 +79,9 @@
                 <formatter type="xml"/>
 
                 <sysproperty key="serverUrl" value="@{serverUrl}" />
-                <sysproperty key="outfile" value="${reports.dir}/@{outfile}" />
+                <sysproperty key="outfile" value="${reports.dir}/TEST-@{tag}-test.xml" />
 
-                <test name="com.arjuna.qa.junit.LocalJUnitRunner" />
+                <test name="com.arjuna.qa.junit.LocalJUnitRunner" outfile="TEST-com.arjuna.qa.junit.LocalJUnitRunner-@{tag}"/>
 
                 <!--jvmarg value="-Xdebug"/>
                 <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/-->

@@ -54,6 +54,9 @@ public class LocalJUnitInteropRunner extends TestCase
         }
         catch (Exception e)
         {
+            System.err.println("======================================================");
+            System.err.println("====================  EXCEPTION  =====================");
+            System.err.println("======================================================");
             e.printStackTrace();
             result = false;
         }
