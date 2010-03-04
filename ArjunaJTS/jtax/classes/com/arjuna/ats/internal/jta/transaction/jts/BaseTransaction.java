@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.jta.transaction.jts;
 
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.logging.*;
 
 import org.omg.CosTransactions.*;
 
@@ -46,12 +45,6 @@ import com.arjuna.common.util.logging.*;
 import javax.transaction.NotSupportedException;
 import java.lang.IllegalStateException;
 import java.lang.NullPointerException;
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NoTransaction;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.InvalidControl;
-import org.omg.CosTransactions.WrongTransaction;
 
 /**
  * Some common methods for UserTransaction and TransactionManager.

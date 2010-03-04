@@ -143,11 +143,13 @@ public class ActivationRecord extends AbstractRecord
 
         if ((objectAddr != null) && (actionHandle != null))
         {
+            int state = objectAddr.status();
+            
             if (StateManagerFriend.forgetAction(objectAddr, actionHandle, true, RecordType.ACTIVATION))
             {              
                 actionHandle = actionHandle.parent();
                 
-                if (StateManagerFriend.rememberAction(objectAddr, actionHandle, RecordType.ACTIVATION))
+                if (StateManagerFriend.rememberAction(objectAddr, actionHandle, RecordType.ACTIVATION, state))
                     return TwoPhaseOutcome.PREPARE_READONLY;
             }
         }

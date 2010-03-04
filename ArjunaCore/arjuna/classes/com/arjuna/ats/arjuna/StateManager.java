@@ -296,7 +296,7 @@ public class StateManager
              * later by the creation of a new ActivationRecord.)
              */
 
-            synchronized (usingActions)
+            synchronized (mutex)
             {
                 if (usingActions.get(action.get_uid()) == null)
                 {
@@ -406,7 +406,7 @@ public class StateManager
 
                     if (forceAR)
                     {
-                        synchronized (usingActions)
+                        synchronized (mutex)
                         {
                             usingActions.remove(action.get_uid());
                         }
@@ -1124,7 +1124,7 @@ public class StateManager
 
         BasicAction action = null;
 
-        synchronized (usingActions)
+        synchronized (mutex)
         {
             if (usingActions.size() > 0)
             {
@@ -1435,7 +1435,7 @@ public class StateManager
 
         if (recordType != RecordType.RECOVERY)
         {
-            synchronized (usingActions)
+            synchronized (mutex)
             {
                 if (usingActions != null)
                 {
@@ -1470,7 +1470,7 @@ public class StateManager
      */
 
     protected final synchronized boolean rememberAction (BasicAction action,
-            int recordType)
+            int recordType, int state)
     {
         if (tsLogger.arjLogger.isDebugEnabled())
         {
@@ -1488,12 +1488,15 @@ public class StateManager
         {
             if ((action != null) && (action.status() == ActionStatus.RUNNING))
             {
-                synchronized (usingActions)
+                synchronized (mutex)
                 {
                     if (usingActions.get(action.get_uid()) == null)
                         usingActions.put(action.get_uid(), action);
                 }
             }
+            
+            if ((currentStatus == ObjectStatus.PASSIVE) || (currentStatus == ObjectStatus.PASSIVE_NEW))
+                currentStatus = state;
             
             result = true;
         }

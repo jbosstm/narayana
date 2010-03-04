@@ -77,14 +77,14 @@ public class StateManagerFriend
     }
     
     public static final boolean rememberAction (StateManager inst,
-            BasicAction act, int recordType)
+            BasicAction act, int recordType, int state)
     {
         try
         {
-            Method m = StateManager.class.getDeclaredMethod("rememberAction", BasicAction.class, int.class);
+            Method m = StateManager.class.getDeclaredMethod("rememberAction", BasicAction.class, int.class, int.class);
 
             m.setAccessible(true);
-            Boolean b = (Boolean) m.invoke(inst, act, recordType);
+            Boolean b = (Boolean) m.invoke(inst, act, recordType, state);
             m.setAccessible(false);
 
             return b.booleanValue();

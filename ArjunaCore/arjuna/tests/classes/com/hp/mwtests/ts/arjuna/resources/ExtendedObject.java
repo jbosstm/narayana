@@ -81,7 +81,7 @@ public class ExtendedObject extends StateManager
 
     public boolean remember (BasicAction act)
     {
-        return super.rememberAction(act, RecordType.ACTIVATION);
+        return super.rememberAction(act, RecordType.ACTIVATION, ObjectStatus.ACTIVE);
     }
     
     public void incr(int value)
