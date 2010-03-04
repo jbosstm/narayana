@@ -43,12 +43,12 @@ import org.apache.log4j.Logger;
  */
 public class InboundBridge
 {
-	private static Logger log = Logger.getLogger(InboundBridge.class);
+	private static final Logger log = Logger.getLogger(InboundBridge.class);
 
     /**
      * Identifier for the subordinate transaction.
      */
-	private Xid xid;
+	private final Xid xid;
 
     /**
      * Create a new InboundBridge to manage the given subordinate JTA transaction.

@@ -38,9 +38,9 @@ import com.arjuna.ats.jta.utils.JTAHelper;
  */
 public class BridgeSynchronization implements Synchronization
 {
-    private static Logger log = Logger.getLogger(BridgeSynchronization.class);
+    private static final Logger log = Logger.getLogger(BridgeSynchronization.class);
 
-    private BridgeWrapper bridgeWrapper;
+    private final BridgeWrapper bridgeWrapper;
 
     public BridgeSynchronization(BridgeWrapper bridgeWrapper)
     {

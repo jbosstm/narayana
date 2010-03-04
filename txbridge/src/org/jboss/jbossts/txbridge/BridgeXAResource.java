@@ -43,11 +43,11 @@ public class BridgeXAResource implements XAResource
     // Design note: Given the way JBossTS is designed, we could subclass AbstractRecord rather than
     // implementing XAResource, but this design is more standards friendly and thus portable.
 
-    private static Logger log = Logger.getLogger(BridgeXAResource.class);
+    private static final Logger log = Logger.getLogger(BridgeXAResource.class);
 
-    private transient BridgeWrapper bridgeWrapper;
+    private final transient BridgeWrapper bridgeWrapper;
 
-    private transient Uid externalTxId;
+    private final transient Uid externalTxId;
 
     /**
      * Create a new XAResource which wraps the subordinate WS-AT transaction.

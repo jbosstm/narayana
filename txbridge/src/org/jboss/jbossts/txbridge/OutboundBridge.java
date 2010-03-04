@@ -38,12 +38,12 @@ import com.arjuna.wst.UnknownTransactionException;
  */
 public class OutboundBridge
 {
-    private static Logger log = Logger.getLogger(OutboundBridge.class);
+    private static final Logger log = Logger.getLogger(OutboundBridge.class);
 
     /**
      * Management object for the subordinate transaction
      */
-    private BridgeWrapper bridgeWrapper;
+    private final BridgeWrapper bridgeWrapper;
 
     /**
      * Create a new OutboundBridge to manage the given subordinate WS-AT transaction.

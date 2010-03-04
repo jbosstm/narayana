@@ -42,7 +42,7 @@ import javax.xml.ws.handler.MessageContext;
  */
 public class JaxWSTxOutboundBridgeHandler implements Handler
 {
-	private static Logger log = Logger.getLogger(JaxWSTxOutboundBridgeHandler.class);
+	private static final Logger log = Logger.getLogger(JaxWSTxOutboundBridgeHandler.class);
 
 	/**
 	 * Process a message. Determines if it is inbound or outbound and dispatches accordingly.

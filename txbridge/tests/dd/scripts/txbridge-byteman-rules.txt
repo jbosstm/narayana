@@ -1,6 +1,14 @@
+#RULE testrule
+#CLASS ^XTSATRecoveryManager
+#METHOD writeParticipantRecoveryRecord
+#AT EXIT
+#IF true
+#DO killJVM()
+#ENDRULE
+
 RULE testrule
-CLASS ^XTSATRecoveryManager
-METHOD writeParticipantRecoveryRecord
+CLASS ^TestXAResource
+METHOD prepare
 AT EXIT
 IF true
 DO killJVM()

@@ -49,10 +49,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class OutboundBridgeManager
 {
-    private static Logger log = Logger.getLogger(OutboundBridgeManager.class);
+    private static final Logger log = Logger.getLogger(OutboundBridgeManager.class);
 
     // maps JTA Tx Id to OutboundBridge instance.
-    private static ConcurrentMap<Uid, OutboundBridge> outboundBridgeMappings = new ConcurrentHashMap<Uid, OutboundBridge>();
+    private static final ConcurrentMap<Uid, OutboundBridge> outboundBridgeMappings = new ConcurrentHashMap<Uid, OutboundBridge>();
 
     /**
      * Return an OutboundBridge instance that maps the current Thread's JTA transaction context

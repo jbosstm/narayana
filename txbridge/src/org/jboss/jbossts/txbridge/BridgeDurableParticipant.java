@@ -47,25 +47,32 @@ import java.io.ObjectOutputStream;
  */
 public class BridgeDurableParticipant implements Durable2PCParticipant, Serializable
 {
-	private static Logger log = Logger.getLogger(BridgeDurableParticipant.class);
+	private static final Logger log = Logger.getLogger(BridgeDurableParticipant.class);
 
     /*
      * Uniq String used to prefix ids at participant registration,
      * so that the recovery module can identify relevant instances.
      */
-    public static String TYPE_IDENTIFIER = "BridgeDurableParticipant_";
+    public static final String TYPE_IDENTIFIER = "BridgeDurableParticipant_";
 
-	private transient XATerminator xaTerminator;
+    /*
+     * Uniq (well, hopefully) formatId so we can distinguish our own Xids.
+     */
+    public static final int XARESOURCE_FORMAT_ID = 131080;
 
-    private transient String externalTxId;
+	private transient volatile XATerminator xaTerminator;
+
+    private transient volatile String externalTxId;
+
+    private transient volatile boolean isAwaitingRecovery = false;
 
     static final long serialVersionUID = -5739871936627778072L;
 
     // Xid not guaranteed Serializable by spec, but our XidImple happens to be
-	private Xid xid;
+	private volatile Xid xid;
 
     // Id needed for recovery of the subordinate tx. Uids are likewise Serializable.
-    private Uid subordinateTransactionId;
+    private volatile Uid subordinateTransactionId;
 
     /**
      * Create a new WS-AT Durable Participant which wraps the subordinate XA tx terminator.
@@ -128,6 +135,8 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         xid = (Xid)in.readObject();
         subordinateTransactionId = (Uid)in.readObject();
 
+        isAwaitingRecovery = true;
+
         xaTerminator = SubordinationManager.getXATerminator();
 
         try
@@ -167,16 +176,16 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 			}
             else
             {
-                InboundBridgeManager.removeMapping(externalTxId);
-				log.debug("prepare on Xid="+xid+" returning ReadOnly");
+                cleanupRefs();
+                log.debug("prepare on Xid="+xid+" returning ReadOnly");
 				return new ReadOnly();
 			}
 
 		}
         catch(XAException e)
         {
-            InboundBridgeManager.removeMapping(externalTxId);
-			log.warn("prepare on Xid="+xid+" returning Aborted", e);
+            cleanupRefs();
+            log.warn("prepare on Xid="+xid+" returning Aborted", e);
 			return new Aborted();
 		}
     }
@@ -202,7 +211,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 		}
         finally
         {
-            InboundBridgeManager.removeMapping(externalTxId);
+            cleanupRefs();
         }
     }
 
@@ -228,7 +237,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 		}
         finally
         {
-            InboundBridgeManager.removeMapping(externalTxId);
+            cleanupRefs();
         }
     }
 
@@ -251,6 +260,23 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 	public void error() throws SystemException
     {
 		log.trace("error(Xid="+xid+"): NOT IMPLEMENTED");
+    }
+
+    public boolean isAwaitingRecovery() {
+        return isAwaitingRecovery;
+    }
+
+    public Xid getXid()
+    {
+        return xid;
+    }
+
+    private void cleanupRefs()
+    {
+        log.trace("cleanupRefs()");
+
+        InboundBridgeManager.removeMapping(externalTxId);
+        isAwaitingRecovery = false;
     }
 }
 

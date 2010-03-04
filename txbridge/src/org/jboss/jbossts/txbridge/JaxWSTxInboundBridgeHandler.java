@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class JaxWSTxInboundBridgeHandler implements Handler
 {
-	private static Logger log = Logger.getLogger(JaxWSTxInboundBridgeHandler.class);
+	private static final Logger log = Logger.getLogger(JaxWSTxInboundBridgeHandler.class);
 
 	/**
 	 * Process a message. Determines if it is inbound or outbound and dispatches accordingly.

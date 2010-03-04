@@ -40,15 +40,15 @@ import javax.transaction.Status;
  */
 public class BridgeVolatileParticipant implements Volatile2PCParticipant
 {
-    private static Logger log = Logger.getLogger(BridgeVolatileParticipant.class);
+    private static final Logger log = Logger.getLogger(BridgeVolatileParticipant.class);
 
     // no standard interface for driving Synchronization phases separately
     // in JCA, so we have to use proprietary API.
-    private XATerminatorExtensions xaTerminatorExtensions;
+    private final XATerminatorExtensions xaTerminatorExtensions;
 
-    private String externalTxId;
+    private final String externalTxId;
 
-    private Xid xid;
+    private final Xid xid;
 
     /**
      * Create a new WS-AT Volatile Participant which wraps the subordinate XA tx terminator.

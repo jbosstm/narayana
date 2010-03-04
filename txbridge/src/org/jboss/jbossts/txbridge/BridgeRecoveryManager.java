@@ -25,7 +25,9 @@ package org.jboss.jbossts.txbridge;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import org.apache.log4j.Logger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
@@ -36,19 +38,24 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.io.ObjectInputStream;
+import java.util.*;
 
 /**
- * Integrates with JBossAS MC lifecycle to provide recovery services.
+ * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide recovery services.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
  */
-public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule
+public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule, XAResourceOrphanFilter
 {
-    private static Logger log = Logger.getLogger(BridgeRecoveryManager.class);
+    private static final Logger log = Logger.getLogger(BridgeRecoveryManager.class);
 
     private final XTSATRecoveryManager xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
     private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
     private final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+    private final List<BridgeDurableParticipant> participantsAwaitingRecovery =
+            Collections.synchronizedList(new LinkedList<BridgeDurableParticipant>());
+    private volatile boolean orphanedXAResourcesAreIdentifiable = false;
 
     /**
      * MC lifecycle callback, used to register the recovery module with the transaction manager.
@@ -59,6 +66,25 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
 
         xtsATRecoveryManager.registerRecoveryModule(this);
         acRecoveryManager.addModule(this);
+
+        XARecoveryModule xaRecoveryModule = getXARecoveryModule();
+        xaRecoveryModule.addXAResourceOrphanFilter(this);
+    }
+
+    private XARecoveryModule getXARecoveryModule()
+    {
+        XARecoveryModule xaRecoveryModule = null;
+        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)acRecoveryManager.getModules())) {
+            if(recoveryModule instanceof XARecoveryModule) {
+                xaRecoveryModule = (XARecoveryModule)recoveryModule;
+                break;
+            }
+        }
+
+        if(xaRecoveryModule == null) {
+            throw new IllegalStateException("no XARecoveryModule found");
+        }
+        return xaRecoveryModule;
     }
 
     /**
@@ -70,6 +96,9 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
 
         xtsATRecoveryManager.unregisterRecoveryModule(this);
         acRecoveryManager.removeModule(this, false);
+        
+        XARecoveryModule xaRecoveryModule = getXARecoveryModule();
+        xaRecoveryModule.removeXAResourceOrphanFilter(this);
     }
 
     /**
@@ -92,7 +121,9 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
         if(id.startsWith(BridgeDurableParticipant.TYPE_IDENTIFIER))
         {
             Object participant = objectInputStream.readObject();
-            return (BridgeDurableParticipant)participant;
+            BridgeDurableParticipant bridgeDurableParticipant = (BridgeDurableParticipant)participant;
+            participantsAwaitingRecovery.add(bridgeDurableParticipant);
+            return bridgeDurableParticipant;
         }
         else
         {
@@ -118,31 +149,6 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
     public void periodicWorkFirstPass()
     {
         log.trace("periodicWorkFirstPass()");
-
-        if(!xtsATRecoveryManager.isParticipantRecoveryStarted()) {
-            // can't do anything until XTS Participant recovery has run.
-            return;
-        }
-
-        Xid[] xids = null;
-        try {
-            xids = xaTerminator.recover(XAResource.TMSTARTRSCAN);
-            xaTerminator.recover(XAResource.TMENDRSCAN);
-
-        } catch(XAException e) {
-            log.error("Problem whilst scanning for in-doubt subordinate transactions", e);
-        }
-
-        if(xids == null) {
-            return;
-        }
-
-        for(Xid xid : xids) {
-           log.trace("in-doubt Xid: "+xid);
-        }
-
-        // TODO: finish me
-
     }
 
     /**
@@ -153,5 +159,105 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
     public void periodicWorkSecondPass()
     {
         log.trace("periodicWorkSecondPass()");
+
+        cleanupRecoveredParticipants();
+
+        // the XTS recovery module is registered and hence run before us. Therefore by the time we get here
+        // we know deserialize has been called for any BridgeDurableParticipant for which a log exists.
+        orphanedXAResourcesAreIdentifiable = true;
+
+
+        List<Xid> indoubtSubordinates = getIndoubtSubordinates();
+        for(Xid xid : indoubtSubordinates) {
+            if(checkXid(xid) == XAResourceOrphanFilter.Vote.ROLLBACK) {
+                log.trace("rolling back orphaned subordinate tx "+xid);
+                try {
+                    xaTerminator.rollback(xid);
+                } catch(XAException e) {
+                    log.error("problem rolling back orphaned subordinate tx "+xid, e);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Run a recovery scan to identify any in-doubt JTA subordinates.
+     *
+     * @return a possibly empty but non-null list of xids corresponding to outstanding
+     * JTA subordinate transactions owned by the txbridge.
+     */
+    private List<Xid> getIndoubtSubordinates()
+    {
+        log.trace("getIndoubtSubordinates()");
+
+        Xid[] allSubordinateXids = null;
+        try {
+            allSubordinateXids = xaTerminator.recover(XAResource.TMSTARTRSCAN);
+        } catch(XAException e) {
+            log.error("Problem whilst scanning for in-doubt subordinate transactions", e);
+        } finally {
+            try {
+                xaTerminator.recover(XAResource.TMENDRSCAN);
+            } catch(XAException e) {}
+        }
+
+        LinkedList<Xid> mySubordinateXids = new LinkedList<Xid>();
+
+        if(allSubordinateXids == null) {
+            return mySubordinateXids;
+        }
+
+        for(Xid xid : allSubordinateXids) {
+            if(xid.getFormatId() == BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
+                mySubordinateXids.add(xid);
+                log.trace("in-doubt subordinate, xid: "+xid);
+            }
+        }
+
+        return mySubordinateXids;
+    }
+
+    /**
+     * Release any BridgeDurableParticipant instances that have been driven
+     * through to completion by their parent XTS transaction.
+     */
+    private void cleanupRecoveredParticipants()
+    {
+        log.trace("cleanupRecoveredParticipants()");
+
+        synchronized(participantsAwaitingRecovery) {
+            Iterator<BridgeDurableParticipant> iter = participantsAwaitingRecovery.iterator();
+            while(iter.hasNext()) {
+                BridgeDurableParticipant participant = iter.next();
+                if(!participant.isAwaitingRecovery()) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+
+    @Override
+    public Vote checkXid(Xid xid)
+    {
+        log.trace("checkXid("+xid+")");
+
+        if(xid.getFormatId() != BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
+            return Vote.ABSTAIN;
+        }
+
+        if(!orphanedXAResourcesAreIdentifiable) {
+            return Vote.LEAVE_ALONE;
+        }
+
+        synchronized(participantsAwaitingRecovery) {
+            for(BridgeDurableParticipant participant : participantsAwaitingRecovery) {
+                if(participant.getXid().equals(xid)) {
+                    return Vote.LEAVE_ALONE;
+                }
+            }
+        }
+
+        return Vote.ROLLBACK;
     }
 }

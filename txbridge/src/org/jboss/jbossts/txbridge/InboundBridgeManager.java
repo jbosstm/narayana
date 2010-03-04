@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge;
 
-import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 
@@ -45,17 +45,17 @@ import org.apache.log4j.Logger;
  * Maintains the mapping data that relates WS-AT transactions to JTA subordinate transactions and related objects.
  *
  * The mappings are scoped to the singleton instance of this class and its lifetime.
- * This poses problems where you have more than one instances (classloading, clusters)
+ * This poses problems where you have more than one instance (classloading, clusters)
  * or where you need crash recovery. It short, it's rather limited.
  *
  * @author jonathan.halliday@redhat.com, 2007-04-30
  */
 public class InboundBridgeManager
 {
-	private static Logger log = Logger.getLogger(InboundBridgeManager.class);
+	private static final Logger log = Logger.getLogger(InboundBridgeManager.class);
 
     // maps WS-AT Tx Id to InboundBridge instance.
-	private static ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, InboundBridge>();
+	private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, InboundBridge>();
 
 	/**
 	 * Return an InboundBridge instance that maps the current Thread's WS transaction context
@@ -134,7 +134,7 @@ public class InboundBridgeManager
 
         // Xid for driving the subordinate,
         // shared by the bridge (thread assoc) and Participant (termination via XATerminator)
-		Xid xid = new XidImple(new Uid());
+		Xid xid = XATxConverter.getXid(new Uid(), false, BridgeDurableParticipant.XARESOURCE_FORMAT_ID);
 
 		BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
         // construct the participantId in such as way as we can recognise it at recovery time:
