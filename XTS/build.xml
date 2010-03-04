@@ -185,6 +185,8 @@
             <fileset dir="${ws-c.dir}/tests/build/webapps" includes="ws-c-tests.ear"/>
             <fileset dir="${ws-t.dir}/tests/build/webapps" includes="ws-t-tests.ear"/>
             <fileset dir="${wstx.dir}/tests/build/webapps" includes="wstx-tests.ear"/>
+            <!-- xts test servlet jar for use by bridge code -->
+            <fileset dir="${wsas.dir}/tests/build/lib" includes="xts-test-servlet.jar"/>
             <!-- ant script and client jar used to exercise servlets-->
             <fileset dir="${localjunit.dir}/build/" includes="localjunit.jar"/>
             <fileset dir="${localjunit.dir}" includes="run-tests.xml"/>
