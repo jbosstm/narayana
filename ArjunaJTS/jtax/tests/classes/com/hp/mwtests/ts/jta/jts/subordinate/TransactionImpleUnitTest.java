@@ -38,10 +38,30 @@ import com.arjuna.ats.internal.jta.transaction.jts.subordinate.SubordinateAtomic
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.TransactionImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.interposition.ServerControlWrapper;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 
 import static org.junit.Assert.*;
+
+class DummyTransactionImple extends TransactionImple
+{
+    public DummyTransactionImple(AtomicTransaction imported)
+    {
+        super(imported);
+    }
+
+    public void commitAndDisassociate () throws javax.transaction.RollbackException, javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException, java.lang.SecurityException, javax.transaction.SystemException, java.lang.IllegalStateException
+    {
+        super.commitAndDisassociate();
+    }
+
+    public void rollbackAndDisassociate () throws java.lang.IllegalStateException, java.lang.SecurityException, javax.transaction.SystemException
+    {
+        super.rollbackAndDisassociate();
+    }
+}
+
 
 public class TransactionImpleUnitTest extends TestBase
 {   
@@ -55,6 +75,8 @@ public class TransactionImpleUnitTest extends TestBase
         assertFalse(tx.equals(null));
         assertTrue(tx.equals(tx));
         assertFalse(tx.equals(new TransactionImple(new AtomicTransaction())));
+        assertFalse(tx.equals(new Object()));
+        assertTrue(tx.toString() != null);
         
         try
         {
@@ -75,6 +97,8 @@ public class TransactionImpleUnitTest extends TestBase
         catch (final InvalidTerminationStateException ex)
         {
         }
+        
+        tx.doBeforeCompletion();
         
         tx.doPrepare();
         
@@ -108,6 +132,26 @@ public class TransactionImpleUnitTest extends TestBase
         {
         }
         
+        tx.doForget();
+        
         OTSImpleManager.current().rollback();
+        
+        DummyTransactionImple dummy = new DummyTransactionImple(new AtomicTransaction());
+        
+        try
+        {
+            dummy.commitAndDisassociate();
+        }
+        catch (final InactiveTransactionException ex)
+        {
+        }
+        
+        try
+        {
+            dummy.rollbackAndDisassociate();
+        }
+        catch (final InactiveTransactionException ex)
+        {
+        }
     }
 }

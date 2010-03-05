@@ -80,7 +80,7 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 /**
  * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction
  *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction]
- *          {0} - null transaction!
+ *          {0} - null or invalid transaction!
  * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror
  *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror] {0}
  *          caused an XA error: {1} from resource {2} in transaction {3}
@@ -217,27 +217,20 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					"XAResourceRecord.prepare for " + _tranID);
 		}
 
-		if (!_valid || (_theXAResource == null))
+		if (!_valid || (_theXAResource == null) || (_tranID == null))
 		{
-			removeConnection();
+		    if (jtaxLogger.loggerI18N.isWarnEnabled())
+		    {
+		        jtaxLogger.loggerI18N
+		        .warn(
+		                "com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+		                new Object[]
+		                           { "XAResourceRecord.prepare" });
+		    }
 
-			return Vote.VoteRollback;
-		}
+		    removeConnection();
 
-		if (_tranID == null)
-		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-								new Object[]
-								{ "XAResourceRecord.prepare" });
-			}
-
-			removeConnection();
-
-			return Vote.VoteRollback;
+		    return Vote.VoteRollback;
 		}
 
 		try
@@ -350,9 +343,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					"XAResourceRecord.rollback for " + _tranID);
 		}
 
-		if (!_valid)
-			return;
-
 		if (_theTransaction != null
 				&& _theTransaction.getXAResourceState(_theXAResource) == TxInfo.OPTIMIZED_ROLLBACK)
 		{
@@ -363,7 +353,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			return;
 		}
 
-		if (_tranID == null)
+		if (!_valid || (_tranID == null))
 		{
 			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{

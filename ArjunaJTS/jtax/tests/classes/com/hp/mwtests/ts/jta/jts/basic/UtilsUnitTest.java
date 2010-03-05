@@ -55,6 +55,18 @@ public class UtilsUnitTest
         
         assertTrue(XidUtils.getXid(tx.getControlWrapper().get_control(), false) != null);
         
+        try
+        {
+            XidUtils.getXid((Control) null, true);
+            
+            fail();
+        }
+        catch (final IllegalStateException ex)
+        {
+        }
+        
+        assertTrue(XidUtils.getXid(OTSImpleManager.current().get_control(), true) != null);
+        
         OTSImpleManager.current().commit(true);
     }
     

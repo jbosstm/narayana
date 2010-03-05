@@ -31,6 +31,9 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.junit.Test;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.UNKNOWN;
@@ -44,6 +47,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
@@ -52,6 +56,25 @@ import com.hp.mwtests.ts.jta.jts.common.DummyXA;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 
 import static org.junit.Assert.*;
+
+class DummyXAResourceRecord extends XAResourceRecord
+{
+    public DummyXAResourceRecord (TransactionImple tx, XAResource res, Xid xid, Object[] params)
+    {
+        super(tx, res, xid, params);
+    }
+    
+    public void setXAResource (XAResource res)
+    {
+        super.setXAResource(res);
+    }
+    
+    public int recover ()
+    {
+        return super.recover();
+    }
+}
+
 
 public class XAResourceRecordUnitTest extends TestBase
 {
@@ -66,9 +89,31 @@ public class XAResourceRecordUnitTest extends TestBase
         
         xares = new XAResourceRecord(new TransactionImple(), new DummyXA(false), new XidImple(new Uid()), params);
         
+        xares.merge(null);
+        xares.alter(null);
+        
         assertTrue(xares.type() != null);
         
         assertTrue(xares.toString() != null);
+        
+        assertTrue(xares.get_uid().notEquals(Uid.nullUid()));
+    }
+    
+    @Test
+    public void testRecovery () throws Exception
+    {
+        DummyRecoverableXAConnection rc = new DummyRecoverableXAConnection();
+        Object[] params = new Object[1];
+        
+        params[XAResourceRecord.XACONNECTION] = rc;
+        
+        DummyXAResourceRecord xares = new DummyXAResourceRecord(new TransactionImple(), new DummyXA(false), new XidImple(new Uid()), params);
+        
+        assertEquals(xares.getRecoveryCoordinator(), null);
+        
+        assertEquals(xares.recover(), XARecoveryResource.FAILED_TO_RECOVER);
+        
+        xares.setXAResource(null);
     }
     
     @Test
@@ -85,6 +130,8 @@ public class XAResourceRecordUnitTest extends TestBase
         OutputObjectState os = new OutputObjectState();
         
         assertTrue(xares.saveState(os));
+        
+        xares = new XAResourceRecord();
         
         InputObjectState is = new InputObjectState(os);
         
@@ -232,5 +279,8 @@ public class XAResourceRecordUnitTest extends TestBase
         catch (final UNKNOWN ex)
         {       
         }
+        
+        assertFalse(xares.propagateOnAbort());
+        assertFalse(xares.propagateOnCommit());
     }
 }

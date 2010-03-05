@@ -170,6 +170,16 @@ public class XATerminatorImpleUnitTest extends TestBase
 
         try
         {
+            xa.beforeCompletion(xid);
+            
+            fail();
+        }
+        catch (final Exception ex)
+        {
+        }
+        
+        try
+        {
             xa.prepare(xid);
             
             fail();

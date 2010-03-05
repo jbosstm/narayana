@@ -101,6 +101,10 @@ public class TransactionImporterImple implements TransactionImporter
 			throw new IllegalArgumentException();
 		
 		TransactionImple recovered = new TransactionImple(actId);
+		
+		if (recovered.baseXid() == null)
+		    throw new IllegalArgumentException();
+		
 		TransactionImple tx = (TransactionImple) _transactions.get(recovered.baseXid());
 
 		if (tx == null)

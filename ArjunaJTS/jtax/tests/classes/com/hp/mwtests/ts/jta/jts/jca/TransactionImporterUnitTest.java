@@ -32,78 +32,68 @@
 package com.hp.mwtests.ts.jta.jts.jca;
 
 import org.junit.Test;
-import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.SubordinateAtomicTransaction;
-import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
-import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.internal.jta.transaction.jts.jca.TransactionImporterImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 
 import static org.junit.Assert.*;
 
-class DummySubordinateAtomicTransaction extends SubordinateAtomicTransaction
-{
-    public DummySubordinateAtomicTransaction ()
-    {
-        super(new Uid());
-    }
-    
-    public boolean checkForCurrent ()
-    {
-        return super.checkForCurrent();
-    }
-}
-
-
-public class SubordinateTxUnitTest extends TestBase
+public class TransactionImporterUnitTest extends TestBase
 {
     @Test
-    public void testTransactionImple () throws Exception
+    public void test () throws Exception
     {
-        TransactionImple tx = new TransactionImple(new Uid());
-        TransactionImple dummy = new TransactionImple(new Uid());
-        
-        tx.recordTransaction();
-        
-        assertFalse(tx.equals(dummy));
-        
-        assertTrue(tx.toString() != null);
-        
-        tx.recover();
-    }
-    
-    @Test
-    public void testAtomicTransaction () throws Exception
-    {
-        XidImple xid = new XidImple(new Uid());
-        SubordinateAtomicTransaction saa1 = new SubordinateAtomicTransaction(new Uid());
-        SubordinateAtomicTransaction saa2 = new SubordinateAtomicTransaction(new Uid(), xid, 0);
-        
-        assertEquals(saa2.getXid(), xid);
+        TransactionImporterImple importer = new TransactionImporterImple();
         
         try
         {
-            saa2.end(true);
+            importer.importTransaction(null);
             
             fail();
         }
-        catch (final WrongTransaction ex)
+        catch (final IllegalArgumentException ex)
         {
         }
         
         try
         {
-            saa2.abort();
+            importer.recoverTransaction(null);
             
             fail();
         }
-        catch (final WrongTransaction ex)
+        catch (final IllegalArgumentException ex)
         {
         }
         
-        DummySubordinateAtomicTransaction dsat = new DummySubordinateAtomicTransaction();
+        try
+        {
+            importer.recoverTransaction(new Uid());
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
         
-        assertFalse(dsat.checkForCurrent());
+        try
+        {
+            importer.getImportedTransaction(null);
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
+        
+        try
+        {
+            importer.removeImportedTransaction(null);
+            
+            fail();
+        }
+        catch (final IllegalArgumentException ex)
+        {
+        }
     }
 }
