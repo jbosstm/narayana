@@ -221,7 +221,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		{
 			removeConnection();
 
-			return Vote.VoteReadOnly;
+			return Vote.VoteRollback;
 		}
 
 		if (_tranID == null)

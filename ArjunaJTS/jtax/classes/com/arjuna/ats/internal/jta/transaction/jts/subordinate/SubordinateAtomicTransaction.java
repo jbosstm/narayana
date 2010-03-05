@@ -238,10 +238,17 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 
 	private ServerTransaction getTransaction ()
 	{
-		ServerControlWrapper scw = (ServerControlWrapper) super._theAction;
-		ServerControl sc = (ServerControl) scw.getImple();
-		
-		return (ServerTransaction) sc.getImplHandle();
+	    ServerControlWrapper scw = (ServerControlWrapper) super._theAction;
+
+	    if (scw != null)
+	    {
+	        ServerControl sc = (ServerControl) scw.getImple();
+
+	        if (sc != null)
+	            return (ServerTransaction) sc.getImplHandle();
+	    }
+
+	    return null;
 	}
 	
 	    /*

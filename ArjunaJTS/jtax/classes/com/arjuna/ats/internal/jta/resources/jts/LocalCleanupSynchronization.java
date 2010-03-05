@@ -36,10 +36,6 @@ import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 
-import com.arjuna.ats.jta.utils.JTAHelper;
-
-import javax.transaction.xa.*;
-
 /**
  * This synchronization is responsible for removing the JTA transaction
  * from the internal table. We don't need one for the purely local JTA
@@ -63,6 +59,10 @@ public class LocalCleanupSynchronization implements com.arjuna.ats.arjuna.coordi
 	return true;
     }
 
+    /**
+     * status is ActionStatus
+     */
+    
     public boolean afterCompletion (int status)
     {
 	_tx.shutdown();

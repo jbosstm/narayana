@@ -35,7 +35,6 @@ import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 
 import javax.transaction.xa.Xid;

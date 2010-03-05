@@ -20,12 +20,10 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.arjuna.common.Uid;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
-import javax.transaction.Transaction;
 
 /**
  * A TransactionImporter is used to manager the relationship with external SubordinateTransactions.

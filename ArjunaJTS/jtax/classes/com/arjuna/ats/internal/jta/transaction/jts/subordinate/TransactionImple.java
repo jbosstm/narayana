@@ -41,7 +41,6 @@ import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
-import com.arjuna.ats.jta.logging.*;
 
 import java.lang.IllegalStateException;
 

@@ -794,7 +794,10 @@ public class AtomicTransaction
 
 	public Uid get_uid ()
 	{
+	    if (_theAction != null)
 		return _theAction.get_uid();
+	    else
+	        return Uid.nullUid();
 	}
 
 	/**

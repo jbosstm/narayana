@@ -45,6 +45,7 @@ import org.junit.After;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.orbportability.OA;
@@ -53,6 +54,7 @@ import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.jts.common.DummyXA;
+import com.hp.mwtests.ts.jta.jts.common.Synchronization;
 
 import static org.junit.Assert.*;
 
@@ -70,6 +72,9 @@ public class TransactionImpleUnitTest
         
         tx.delistResource(res, XAResource.TMSUSPEND);
         
+        assertTrue(tx.getResources() != null);      
+        assertTrue(tx.getTimeout() != -1);
+        
         tx.commit();
         
         assertTrue(TransactionImple.getTransactions() != null);
@@ -83,6 +88,28 @@ public class TransactionImpleUnitTest
             fail();
         }
         catch (final Throwable ex)
+        {
+        }
+    }
+    
+    @Test
+    public void testSynchronization () throws Exception
+    {
+        TransactionImple tx = new TransactionImple();
+
+        tx.registerSynchronization(new Synchronization());
+        
+        assertTrue(tx.getSynchronizations().size() == 1);
+        
+        tx.setRollbackOnly();
+        
+        try
+        {
+            tx.registerSynchronization(new Synchronization());
+            
+            fail();
+        }
+        catch (final RollbackException ex)
         {
         }
     }
@@ -135,6 +162,19 @@ public class TransactionImpleUnitTest
         catch (final IllegalStateException ex)
         {
         }
+        
+        OTSImpleManager.current().suspend();
+        
+        tx = new TransactionImple();
+        
+        DummyXA res = new DummyXA(false);
+        
+        tx.enlistResource(res);
+        
+        tx.delistResource(res, XAResource.TMSUSPEND);
+        tx.enlistResource(res);
+        
+        tx.commit();
     }
     
     @Test

@@ -34,9 +34,6 @@ package com.arjuna.ats.internal.jta.transaction.jts;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ats.jta.logging.*;
-
-import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ControlWrapper;

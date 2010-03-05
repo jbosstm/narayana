@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.xa.*;
-import javax.transaction.Transaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
