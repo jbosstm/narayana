@@ -21,7 +21,7 @@
  *
  * (C) 2007, 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;

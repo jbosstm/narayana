@@ -21,7 +21,7 @@
  *
  * (C) 2009 @author Red Hat Middleware LLC
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.outbound;
 
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.transaction.Transaction;
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Maintains the mapping data that relates JTA transactions to WS-AT subordinate transactions and related objects.
  *
  * The mappings are scoped to the singleton instance of this class and its lifetime.
- * This poses problems where you have more than one instances (classloading, clusters)
+ * This poses problems where you have more than one instance (classloading, clusters)
  * or where you need crash recovery. It short, it's rather limited.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
@@ -52,7 +52,7 @@ public class OutboundBridgeManager
     private static final Logger log = Logger.getLogger(OutboundBridgeManager.class);
 
     // maps JTA Tx Id to OutboundBridge instance.
-    private static final ConcurrentMap<Uid, OutboundBridge> outboundBridgeMappings = new ConcurrentHashMap<Uid, OutboundBridge>();
+    private static final ConcurrentMap<Uid, org.jboss.jbossts.txbridge.outbound.OutboundBridge> outboundBridgeMappings = new ConcurrentHashMap<Uid, org.jboss.jbossts.txbridge.outbound.OutboundBridge>();
 
     /**
      * Return an OutboundBridge instance that maps the current Thread's JTA transaction context
@@ -60,7 +60,7 @@ public class OutboundBridgeManager
      *
      * @return as OutboundBridge corresponding to the calling Thread's current JTA transaction context.
      */
-	public static OutboundBridge getOutboundBridge()
+	public static org.jboss.jbossts.txbridge.outbound.OutboundBridge getOutboundBridge()
 	{
 		log.trace("getOutboundBridge()");
 
@@ -116,9 +116,9 @@ public class OutboundBridgeManager
         // TODO: allow params to be configurable, or at least pass timeout down.
         BridgeWrapper bridgeWrapper = BridgeWrapper.create(0, false);
 
-        OutboundBridge outboundBridge = new OutboundBridge(bridgeWrapper);
-        XAResource xaResource = new BridgeXAResource(externalTxId, bridgeWrapper);
-        Synchronization synchronization = new BridgeSynchronization(bridgeWrapper);
+        org.jboss.jbossts.txbridge.outbound.OutboundBridge outboundBridge = new org.jboss.jbossts.txbridge.outbound.OutboundBridge(bridgeWrapper);
+        XAResource xaResource = new org.jboss.jbossts.txbridge.outbound.BridgeXAResource(externalTxId, bridgeWrapper);
+        Synchronization synchronization = new org.jboss.jbossts.txbridge.outbound.BridgeSynchronization(bridgeWrapper);
 
         try
         {

@@ -21,7 +21,7 @@
  *
  * (C) 2007, 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -92,7 +92,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
     /**
      * Serialization hook. Gathers and writes information needed for transaction recovery.
      *
-     * @param out the strean to which the object state is serialized.
+     * @param out the stream to which the object state is serialized.
      * @throws IOException if serialization fails.
      */
     private void writeObject(ObjectOutputStream out) throws IOException
@@ -135,6 +135,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         xid = (Xid)in.readObject();
         subordinateTransactionId = (Uid)in.readObject();
 
+        // this readObject method executes only when a log is being read at recovery time:
         isAwaitingRecovery = true;
 
         xaTerminator = SubordinationManager.getXATerminator();
@@ -275,7 +276,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
     {
         log.trace("cleanupRefs()");
 
-        InboundBridgeManager.removeMapping(externalTxId);
+        org.jboss.jbossts.txbridge.inbound.InboundBridgeManager.removeMapping(externalTxId);
         isAwaitingRecovery = false;
     }
 }

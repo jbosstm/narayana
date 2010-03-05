@@ -21,7 +21,7 @@
  *
  * (C) 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.wst.*;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
@@ -82,9 +82,6 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
         // and Durable Participants and keep count of the number of prepare/rollback invocations to know
         // if being invoked as Volatile or Durable.
 
-
-        // TODO InboundBridgeManager.getInboundBridge() would be better,
-        // but needs XTS to provide tx context on thread in (selected) Participant calls.
         InboundBridge inboundBridge = InboundBridgeManager.getInboundBridge(externalTxId);
 
         try

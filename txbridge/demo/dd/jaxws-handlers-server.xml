@@ -37,7 +37,7 @@
 
         <handler>
             <handler-name>TransactionBridgeHandler</handler-name>
-            <handler-class>org.jboss.jbossts.txbridge.JaxWSTxInboundBridgeHandler</handler-class>
+            <handler-class>org.jboss.jbossts.txbridge.inbound.JaxWSTxInboundBridgeHandler</handler-class>
         </handler>
 
 		<handler>

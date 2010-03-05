@@ -21,7 +21,7 @@
  *
  * (C) 2007, 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -55,7 +55,7 @@ public class InboundBridgeManager
 	private static final Logger log = Logger.getLogger(InboundBridgeManager.class);
 
     // maps WS-AT Tx Id to InboundBridge instance.
-	private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, InboundBridge>();
+	private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
 
 	/**
 	 * Return an InboundBridge instance that maps the current Thread's WS transaction context
@@ -138,7 +138,7 @@ public class InboundBridgeManager
 
 		BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
         // construct the participantId in such as way as we can recognise it at recovery time:
-        String participantId = BridgeDurableParticipant.TYPE_IDENTIFIER+new Uid().toString();
+        String participantId = org.jboss.jbossts.txbridge.inbound.BridgeDurableParticipant.TYPE_IDENTIFIER+new Uid().toString();
 		transactionManager.enlistForDurableTwoPhase(bridgeDurableParticipant, participantId);
 
         BridgeVolatileParticipant bridgeVolatileParticipant = new BridgeVolatileParticipant(externalTxId, xid);

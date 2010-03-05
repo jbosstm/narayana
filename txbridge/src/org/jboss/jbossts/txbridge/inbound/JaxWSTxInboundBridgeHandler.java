@@ -21,7 +21,7 @@
  *
  * (C) 2007, 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
@@ -92,7 +92,7 @@ public class JaxWSTxInboundBridgeHandler implements Handler
 
 		try
 		{
-			InboundBridge inboundBridge = InboundBridgeManager.getInboundBridge();
+			InboundBridge inboundBridge = org.jboss.jbossts.txbridge.inbound.InboundBridgeManager.getInboundBridge();
 			inboundBridge.start();
 		}
 		catch (Exception e)
@@ -128,7 +128,7 @@ public class JaxWSTxInboundBridgeHandler implements Handler
 
 		try
 		{
-			InboundBridge inboundBridge = InboundBridgeManager.getInboundBridge();
+			org.jboss.jbossts.txbridge.inbound.InboundBridge inboundBridge = InboundBridgeManager.getInboundBridge();
 			inboundBridge.stop();
 		}
 		catch (Exception e)

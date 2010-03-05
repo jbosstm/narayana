@@ -23,7 +23,17 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-    <bean name="TxBridge" class="org.jboss.jbossts.txbridge.BridgeRecoveryManager">
+    <bean name="TxBridgeInboundRecoveryManager" class="org.jboss.jbossts.txbridge.inbound.InboundBridgeRecoveryManager">
+
+        <demand state="PreInstall">jboss.xts:service=XTSService</demand>
+
+        <depends>jboss.xts:service=XTSService</depends>
+
+        <depends>jboss:service=TransactionManager</depends>
+
+    </bean>
+
+    <bean name="TxBridgeOutboundRecoveryManager" class="org.jboss.jbossts.txbridge.outbound.OutboundBridgeRecoveryManager">
 
         <demand state="PreInstall">jboss.xts:service=XTSService</demand>
 

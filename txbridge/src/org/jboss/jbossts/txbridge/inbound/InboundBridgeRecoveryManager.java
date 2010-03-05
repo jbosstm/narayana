@@ -21,7 +21,7 @@
  *
  * (C) 2009 @author Red Hat Middleware LLC
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -41,13 +41,14 @@ import java.io.ObjectInputStream;
 import java.util.*;
 
 /**
- * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide recovery services.
+ * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide
+ * recovery services for inbound bridged transactions.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
  */
-public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule, XAResourceOrphanFilter
+public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule, XAResourceOrphanFilter
 {
-    private static final Logger log = Logger.getLogger(BridgeRecoveryManager.class);
+    private static final Logger log = Logger.getLogger(InboundBridgeRecoveryManager.class);
 
     private final XTSATRecoveryManager xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
     private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
@@ -58,11 +59,11 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
     private volatile boolean orphanedXAResourcesAreIdentifiable = false;
 
     /**
-     * MC lifecycle callback, used to register the recovery module with the transaction manager.
+     * MC lifecycle callback, used to register components with the recovery manager.
      */
     public void start()
     {
-        log.info("BridgeRecoveryManager starting");
+        log.info("InboundBridgeRecoveryManager starting");
 
         xtsATRecoveryManager.registerRecoveryModule(this);
         acRecoveryManager.addModule(this);
@@ -71,8 +72,30 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
         xaRecoveryModule.addXAResourceOrphanFilter(this);
     }
 
+    /**
+     * MC lifecycle callback, used to unregister components from the recovery manager.
+     */
+    public void stop()
+    {
+        log.info("InboundBridgeRecoveryManager stopping");
+
+        xtsATRecoveryManager.unregisterRecoveryModule(this);
+        acRecoveryManager.removeModule(this, false);
+        
+        XARecoveryModule xaRecoveryModule = getXARecoveryModule();
+        xaRecoveryModule.removeXAResourceOrphanFilter(this);
+    }
+
+    /**
+     * Lookup the XARecoveryModule, required for (de-)registration of XAResourceOrphanFilter.
+     * @return the RecoveryManager's XARecoveryModule instance.
+     */
     private XARecoveryModule getXARecoveryModule()
     {
+        // at some stage we should probably consider extending atsintegration's
+        // RecoveryManagerService (and maybe the app server's tm integration spi) to
+        // expose orphan filters directly, as with e.g. [add|remove]XAResourceRecovery.
+
         XARecoveryModule xaRecoveryModule = null;
         for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)acRecoveryManager.getModules())) {
             if(recoveryModule instanceof XARecoveryModule) {
@@ -85,20 +108,6 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
             throw new IllegalStateException("no XARecoveryModule found");
         }
         return xaRecoveryModule;
-    }
-
-    /**
-     * MC lifecycle callback, used to unregister the recovery module from the transaction manager.
-     */
-    public void stop()
-    {
-        log.info("BridgeRecoveryManager stopping");
-
-        xtsATRecoveryManager.unregisterRecoveryModule(this);
-        acRecoveryManager.removeModule(this, false);
-        
-        XARecoveryModule xaRecoveryModule = getXARecoveryModule();
-        xaRecoveryModule.removeXAResourceOrphanFilter(this);
     }
 
     /**
@@ -118,6 +127,10 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
     {
         log.trace("deserialize(id="+id+")");
 
+        // Inbound bridge transactions don't have an independent log - their state is inlined into the
+        // XTS Participant log and this callback is used to recover that state.
+        // We keep a handle on it for later use, as we have no other means of determining which Xids
+        // represent uncompleted transactions.
         if(id.startsWith(BridgeDurableParticipant.TYPE_IDENTIFIER))
         {
             Object participant = objectInputStream.readObject();
@@ -127,7 +140,7 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
         }
         else
         {
-            return null;
+            return null; // it belongs to some other XTS app, ignore it.
         }
     }
 
@@ -164,9 +177,11 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
 
         // the XTS recovery module is registered and hence run before us. Therefore by the time we get here
         // we know deserialize has been called for any BridgeDurableParticipant for which a log exists.
+        // thus if it's not in our participantsAwaitingRecovery list by now, it's presumed rollback.
         orphanedXAResourcesAreIdentifiable = true;
 
-
+        // Inbound tx may have a JCA tx log but no corresponding XTS Participant (i.e. BridgeDurableParticipant) log.
+        // these can now be identified and rolled back.
         List<Xid> indoubtSubordinates = getIndoubtSubordinates();
         for(Xid xid : indoubtSubordinates) {
             if(checkXid(xid) == XAResourceOrphanFilter.Vote.ROLLBACK) {
@@ -227,7 +242,7 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
         log.trace("cleanupRecoveredParticipants()");
 
         synchronized(participantsAwaitingRecovery) {
-            Iterator<BridgeDurableParticipant> iter = participantsAwaitingRecovery.iterator();
+            Iterator<org.jboss.jbossts.txbridge.inbound.BridgeDurableParticipant> iter = participantsAwaitingRecovery.iterator();
             while(iter.hasNext()) {
                 BridgeDurableParticipant participant = iter.next();
                 if(!participant.isAwaitingRecovery()) {
@@ -237,19 +252,29 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
         }
     }
 
+    /**
+     * Used to identify inbound bridged Xids in either the RM log (when called by XARecoveryModule) or
+     * the JCA subordinate tx log (when called internally from this class) which have or have not got a
+     * remaining transaction that may still drive them to completion.
+     * 
+     * @param xid The in-doubt xid.
+     * @return a Vote on the handling of the xid (to roll it back or not).
+     */
     @Override
     public Vote checkXid(Xid xid)
     {
         log.trace("checkXid("+xid+")");
 
         if(xid.getFormatId() != BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
-            return Vote.ABSTAIN;
+            return Vote.ABSTAIN; // it's not one of ours, ignore it.
         }
 
         if(!orphanedXAResourcesAreIdentifiable) {
+            // recovery system not in stable state yet - we don't yet know if it's orphaned or not.
             return Vote.LEAVE_ALONE;
         }
 
+        // check if it's owned by a recovered tx that may still commit.
         synchronized(participantsAwaitingRecovery) {
             for(BridgeDurableParticipant participant : participantsAwaitingRecovery) {
                 if(participant.getXid().equals(xid)) {
@@ -258,6 +283,7 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModul
             }
         }
 
+        // presumed abort:
         return Vote.ROLLBACK;
     }
 }

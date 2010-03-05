@@ -21,7 +21,7 @@
  *
  * (C) 2009 @author JBoss Inc
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.outbound;
 
 import org.apache.log4j.Logger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;

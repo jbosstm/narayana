@@ -21,8 +21,9 @@
  *
  * (C) 2009 @author Red Hat Middleware LLC
  */
-package org.jboss.jbossts.txbridge;
+package org.jboss.jbossts.txbridge.outbound;
 
+import com.arjuna.wst.UnknownTransactionException;
 import org.apache.log4j.Logger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
@@ -33,21 +34,28 @@ import javax.transaction.xa.XAException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 /**
  * Provides method call mapping between JTA parent coordinator and WS-AT subordinate transaction.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
  */
-public class BridgeXAResource implements XAResource
+public class BridgeXAResource implements XAResource, Serializable
 {
     // Design note: Given the way JBossTS is designed, we could subclass AbstractRecord rather than
     // implementing XAResource, but this design is more standards friendly and thus portable.
 
     private static final Logger log = Logger.getLogger(BridgeXAResource.class);
 
-    private final transient BridgeWrapper bridgeWrapper;
+    private transient volatile BridgeWrapper bridgeWrapper;
 
-    private final transient Uid externalTxId;
+    private volatile Uid externalTxId; // JTA i.e. parent id
+
+    private volatile String bridgeWrapperId; // XTS i.e. subordinate.
 
     /**
      * Create a new XAResource which wraps the subordinate WS-AT transaction.
@@ -61,6 +69,52 @@ public class BridgeXAResource implements XAResource
 
         this.externalTxId = externalTxId;
         this.bridgeWrapper = bridgeWrapper;
+        bridgeWrapperId = bridgeWrapper.getIdentifier();
+    }
+
+    /**
+     * Serialization hook. Gathers and writes information needed for transaction recovery.
+     *
+     * @param out the stream to which the object state is serialized.
+     * @throws java.io.IOException if serialization fails.
+     */
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        log.trace("writeObject() for tx id="+externalTxId);
+
+        //out.defaultWriteObject();
+        out.writeObject(externalTxId);
+        out.writeObject(bridgeWrapperId);
+    }
+
+    /**
+     * Deserialization hook. Unpacks transaction recovery information and uses it to
+     * recover the subordinate transaction.
+     *
+     * @param in the stream from which to unpack the object state.
+     * @throws IOException if deserialzation and recovery fail.
+     * @throws ClassNotFoundException if deserialzation fails.
+     */
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        log.trace("readObject()");
+
+        //in.defaultReadObject();
+        externalTxId = (Uid)in.readObject();
+        bridgeWrapperId = (String)in.readObject();
+
+        try
+        {
+            bridgeWrapper = BridgeWrapper.recover(bridgeWrapperId);
+            // TODO: check for null!
+        }
+        catch(UnknownTransactionException unknownTransactionException)
+        {
+            log.error("Unable to recover subordinate transaction id="+bridgeWrapperId, unknownTransactionException);
+            IOException ioException = new IOException("unable to deserialize");
+            ioException.initCause(unknownTransactionException);
+            throw ioException;
+        }
     }
 
     /**
