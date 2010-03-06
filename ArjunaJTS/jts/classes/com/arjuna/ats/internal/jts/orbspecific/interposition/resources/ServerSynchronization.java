@@ -37,12 +37,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.orbportability.OA;
-
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 

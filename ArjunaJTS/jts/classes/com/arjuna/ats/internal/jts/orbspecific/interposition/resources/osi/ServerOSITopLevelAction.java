@@ -31,12 +31,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.*;
 import com.arjuna.ats.internal.jts.interposition.resources.osi.*;
@@ -44,10 +40,8 @@ import com.arjuna.ats.internal.jts.interposition.resources.osi.*;
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
 
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
 
 public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 {
