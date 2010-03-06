@@ -29,44 +29,40 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jts.orbspecific.interposition;
+package com.hp.mwtests.ts.jts.interposition;
 
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.PropagationContext;
 
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterposition;
+import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterpositionCreator;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi.ServerOSINestedAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 import static org.junit.Assert.*;
 
-public class ServerNestedOSIActionUnitTest extends TestBase
+public class RestrictedInterpositionUnitTest extends TestBase
 {
     @Test
-    public void testCommit () throws Exception
+    public void test () throws Exception
     {
-        ControlImple cont = new ControlImple(null, null);
-        Control theControl = cont.getControl();
-        ArjunaTransactionImple tx = cont.getImplHandle();
-        ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
+        RestrictedInterposition inter = new RestrictedInterposition();
         
-        assertFalse(act.interposeResource());
+        OTSImpleManager.current().begin();
+        OTSImpleManager.current().begin();
         
-        act.commit_subtransaction(null);
-    }
-    
-    @Test
-    public void testRollback () throws Exception
-    {
-        ControlImple cont = new ControlImple(null, null);
-        Control theControl = cont.getControl();
-        ArjunaTransactionImple tx = cont.getImplHandle();
-        ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
+        PropagationContext ctx = OTSImpleManager.current().get_control().get_coordinator().get_txcontext();
         
-        act.rollback_subtransaction();
+        ControlImple cont = inter.setupHierarchy(ctx);
+        
+        RestrictedInterpositionCreator creator = new RestrictedInterpositionCreator();
+        
+        assertTrue(creator.recreateLocal(ctx) != null);       
+        assertTrue(creator.recreate(ctx) != null);
+        
+        OTSImpleManager.current().rollback();
+        OTSImpleManager.current().rollback();
     }
 }

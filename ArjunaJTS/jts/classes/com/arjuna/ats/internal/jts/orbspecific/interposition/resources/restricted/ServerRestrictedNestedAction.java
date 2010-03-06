@@ -31,24 +31,12 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.ats.internal.jts.interposition.*;
-import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 import com.arjuna.common.util.logging.*;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
 
 import java.util.List;
 
@@ -81,8 +69,8 @@ public final synchronized ServerControl deepestControl ()
     }
 
     /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_1 {0} - found concurrent transactions!
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_1 {0} Concurrent children found for restricted interposition!
+     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_1 {0} - found concurrent ({1}) transactions!
+     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_1 Concurrent children found for restricted interposition!
      */
 
     public final synchronized ServerRestrictedNestedAction child ()
@@ -91,19 +79,20 @@ public final synchronized ServerControl deepestControl ()
         List<ServerNestedAction> children = getChildren();
 
         // There should be only one child!
-        if (children.size() != 1)
+        if (children.size() > 1)
         {
             if (jtsLogger.loggerI18N.isWarnEnabled())
             {
                 jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_1",
-                        new Object[] {"ServerRestrictedNestedAction.child"});
+                        new Object[] {"ServerRestrictedNestedAction.child", children.size()});
             }
 
-            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_2"));
+            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_1"));
         }
         else
         {
-            toReturn = (ServerRestrictedNestedAction) children.remove(0);
+            if (children.size() == 1)
+                toReturn = (ServerRestrictedNestedAction) children.remove(0);
         }
 
         return toReturn;

@@ -41,9 +41,4 @@ public class RecoveryEnvironment
     public static final String OTS_ISSUE_RECOVERY_ROLLBACK  = "com.arjuna.ats.jts.recovery.issueRecoveryRollback" ;
     public static final String COMMITTED_TRANSACTION_RETRY_LIMIT = "com.arjuna.ats.jts.recovery.commitTransactionRetryLimit";
     public static final String ASSUMED_OBJECT_NOT_EXIST = "com.arjuna.ats.jts.recovery.assumedObjectNotExist" ;
-
-   /** Not used */
-   private RecoveryEnvironment()
-   {
-   }
 }

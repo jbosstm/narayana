@@ -693,7 +693,7 @@ public class AtomicTransaction
 
 		synchronized (_theStatus)
 		{
-			if (_theAction != null)
+			if (_theAction == null)
 				throw new NoTransaction();
 		}
 

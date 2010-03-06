@@ -43,14 +43,15 @@ import org.omg.CORBA.SystemException;
 public class StrictInterpositionCreator implements FactoryCreator
 {
 
-public ControlImple recreateLocal (PropagationContext ctx) throws SystemException
+    public ControlImple recreateLocal (PropagationContext ctx)
+            throws SystemException
     {
-	return StrictInterposition.create(ctx);
+        return StrictInterposition.create(ctx);
     }
 
-public Control recreate (PropagationContext ctx) throws SystemException
+    public Control recreate (PropagationContext ctx) throws SystemException
     {
-	return recreateLocal(ctx).getControl();
+        return recreateLocal(ctx).getControl();
     }
 
 };

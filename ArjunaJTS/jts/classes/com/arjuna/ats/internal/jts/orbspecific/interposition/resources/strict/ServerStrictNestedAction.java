@@ -31,142 +31,139 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict;
 
-import com.arjuna.orbportability.OA;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.interposition.*;
-import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
 
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
 
 public class ServerStrictNestedAction extends ServerNestedAction
 {
 
     /*
-     * Create local transactions with same ids as remote.
-     * The base class is responsible for registering us with the
-     * parent transaction.
+     * Create local transactions with same ids as remote. The base class is
+     * responsible for registering us with the parent transaction.
      */
 
-public ServerStrictNestedAction (ServerControl control, boolean doRegister)
+    public ServerStrictNestedAction(ServerControl control, boolean doRegister)
     {
-	super(control);
+        super(control);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerStrictNestedAction::ServerStrictNestedAction ( "+_theUid+" )");
-	}
+        if (jtsLogger.logger.isDebugEnabled())
+        {
+            jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
+                    "ServerStrictNestedAction::ServerStrictNestedAction ( "
+                            + _theUid + " )");
+        }
 
-	_registered = false;
-	_theResource = null;
+        _registered = false;
+        _theResource = null;
 
-	if (_theControl != null)
-	{
-	    _theResource = new org.omg.CosTransactions.SubtransactionAwareResourcePOATie(this);
+        if (_theControl != null)
+        {
+            _theResource = new org.omg.CosTransactions.SubtransactionAwareResourcePOATie(
+                    this);
 
-	    ORBManager.getPOA().objectIsReady(_theResource);
-	    
-	    /*
-	     * Would like to be able to attach a thread filter
-	     * to this object if process-filters aren't supported.
-	     * However, currently this won't work as we can't have
-	     * two different filter types working at the same
-	     * time.
-	     *
-	     *		ATTACH_THREAD_FILTER_(_theResource);
-	     */
-	    
-	    if (doRegister)
-		interposeResource();
-	}
+            ORBManager.getPOA().objectIsReady(_theResource);
+
+            /*
+             * Would like to be able to attach a thread filter to this object if
+             * process-filters aren't supported. However, currently this won't
+             * work as we can't have two different filter types working at the
+             * same time. ATTACH_THREAD_FILTER_(_theResource);
+             */
+
+            if (doRegister)
+                interposeResource();
+        }
     }
 
     /**
      * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ipfailed {0} - could not register interposed hierarchy!
      */
 
-public boolean interposeResource ()
+    public boolean interposeResource ()
     {
-	if (!_registered)
-	{
-	    _registered = true;
+        if (!_registered)
+        {
+            _registered = true;
 
-	    if ((_theResource != null) && (_theControl != null))
-	    {
-		Coordinator realCoordinator = _theControl.originalCoordinator();
+            if ((_theResource != null) && (_theControl != null))
+            {
+                Coordinator realCoordinator = _theControl.originalCoordinator();
 
-		if (!(_valid = registerSubTran(realCoordinator)))
-		{
-		    if (jtsLogger.loggerI18N.isWarnEnabled())
-		    {
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ipfailed",
-						  new Object[] {"ServerStrictNestedAction"});
-		    }
-		    
-		    /*
-		     * Failed to register. Valid is set, and the interposition
-		     * controller will now deal with this.
-		     */
-		}
+                if (!(_valid = registerSubTran(realCoordinator)))
+                {
+                    if (jtsLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtsLogger.loggerI18N
+                                .warn(
+                                        "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ipfailed",
+                                        new Object[]
+                                        { "ServerStrictNestedAction" });
+                    }
 
-		realCoordinator = null;
-	    }
-	    else
-		_valid = false;
-	}
+                    /*
+                     * Failed to register. Valid is set, and the interposition
+                     * controller will now deal with this.
+                     */
+                }
 
-	return _valid;
+                realCoordinator = null;
+            }
+            else
+                _valid = false;
+        }
+
+        return _valid;
     }
 
     /*
-     * Since we may be called multiple times if we are nested and are
-     * propagated to our parents, we remember the initial response and return
-     * it subsequently.
+     * Since we may be called multiple times if we are nested and are propagated
+     * to our parents, we remember the initial response and return it
+     * subsequently.
      */
 
-public void commit_subtransaction (Coordinator parent) throws SystemException
+    public void commit_subtransaction (Coordinator parent)
+            throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerStrictNestedAction::commit_subtransaction : "+_theUid);
-	}
+        if (jtsLogger.logger.isDebugEnabled())
+        {
+            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
+                    "ServerStrictNestedAction::commit_subtransaction : "
+                            + _theUid);
+        }
 
-	try
-	{
-	    super.commit_subtransaction(parent);
+        try
+        {
+            super.commit_subtransaction(parent);
 
-	    /*
-	     * Now register a resource with our parent if required.
-	     */
+            /*
+             * Now register a resource with our parent if required.
+             */
 
-	    if (super._parent != null)
-		super._parent.interposeResource();
-	}
-	catch (SystemException e)
-	{
-	    if (super._parent != null)
-		super._parent.interposeResource();
+            if (super._parent != null)
+                super._parent.interposeResource();
+        }
+        catch (SystemException e)
+        {
+            if (super._parent != null)
+                super._parent.interposeResource();
 
-	    throw e;
-	}
+            throw e;
+        }
     }
 
-private boolean _registered;
- 
+    private boolean _registered;
+
 }

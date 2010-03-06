@@ -93,7 +93,7 @@ public final synchronized ServerControl deepestControl ()
     }
 
     /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3 {0} - found concurrent transactions!
+     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3 {0} - found concurrent ({1}) transactions!
      * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4 {0} Concurrent children found for restricted interposition!
      */
     public final synchronized ServerRestrictedNestedAction child ()
@@ -102,19 +102,20 @@ public final synchronized ServerControl deepestControl ()
         List<ServerNestedAction> children = getChildren();
 
         // There should be only one child!
-        if (children.size() != 1)
+        if (children.size() > 1)
         {
             if (jtsLogger.loggerI18N.isWarnEnabled())
             {
                 jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3",
-                        new Object[] {"ServerRestrictedTopLevelAction.child"});
+                        new Object[] {"ServerRestrictedTopLevelAction.child", children.size()});
             }
 
             throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4"));
         }
         else
         {
-            toReturn = (ServerRestrictedNestedAction) children.remove(0);
+            if (children.size() == 1)
+                toReturn = (ServerRestrictedNestedAction) children.remove(0);
         }
 
         return toReturn;

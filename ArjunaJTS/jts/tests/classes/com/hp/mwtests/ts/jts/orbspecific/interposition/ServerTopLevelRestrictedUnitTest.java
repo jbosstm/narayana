@@ -32,17 +32,19 @@
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
 import org.junit.Test;
+import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Vote;
 
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi.ServerOSINestedAction;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.ServerRestrictedTopLevelAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 import static org.junit.Assert.*;
 
-public class ServerNestedOSIActionUnitTest extends TestBase
+public class ServerTopLevelRestrictedUnitTest extends TestBase
 {
     @Test
     public void testCommit () throws Exception
@@ -51,22 +53,10 @@ public class ServerNestedOSIActionUnitTest extends TestBase
         Control theControl = cont.getControl();
         ArjunaTransactionImple tx = cont.getImplHandle();
         ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
+        ServerRestrictedTopLevelAction act = new ServerRestrictedTopLevelAction(sc);
         
-        assertFalse(act.interposeResource());
-        
-        act.commit_subtransaction(null);
-    }
-    
-    @Test
-    public void testRollback () throws Exception
-    {
-        ControlImple cont = new ControlImple(null, null);
-        Control theControl = cont.getControl();
-        ArjunaTransactionImple tx = cont.getImplHandle();
-        ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
-        
-        act.rollback_subtransaction();
+        assertTrue(act.type() != null);
+        assertTrue(act.child() == null);
+        assertTrue(act.deepestControl() != null);
     }
 }

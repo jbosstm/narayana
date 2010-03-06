@@ -37,12 +37,12 @@ import org.omg.CosTransactions.Control;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi.ServerOSINestedAction;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ServerStrictNestedAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 import static org.junit.Assert.*;
 
-public class ServerNestedOSIActionUnitTest extends TestBase
+public class ServerNestedStrictUnitTest extends TestBase
 {
     @Test
     public void testCommit () throws Exception
@@ -51,7 +51,7 @@ public class ServerNestedOSIActionUnitTest extends TestBase
         Control theControl = cont.getControl();
         ArjunaTransactionImple tx = cont.getImplHandle();
         ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
+        ServerStrictNestedAction act = new ServerStrictNestedAction(sc, true);
         
         assertFalse(act.interposeResource());
         
@@ -65,7 +65,7 @@ public class ServerNestedOSIActionUnitTest extends TestBase
         Control theControl = cont.getControl();
         ArjunaTransactionImple tx = cont.getImplHandle();
         ServerControl sc = new ServerControl(tx.get_uid(), theControl, tx, theControl.get_coordinator(), theControl.get_terminator()); 
-        ServerOSINestedAction act = new ServerOSINestedAction(sc, true);
+        ServerStrictNestedAction act = new ServerStrictNestedAction(sc, true);
         
         act.rollback_subtransaction();
     }
