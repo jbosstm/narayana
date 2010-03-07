@@ -43,8 +43,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ArjunaOTS.*;
-
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.UNKNOWN;

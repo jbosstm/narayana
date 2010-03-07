@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jts.recovery.contact;
 
-import org.omg.CosTransactions.*;
-
 import java.util.*;
 import java.text.*;
 
@@ -43,7 +41,6 @@ import com.arjuna.ats.arjuna.recovery.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;

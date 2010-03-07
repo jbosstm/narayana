@@ -48,20 +48,20 @@ module ArjunaOTS
 
     struct GlobalTransactionInfo
     {
-	long  totalNumberOfTransactions;
-	long  numberOfCommittedTransactions;
-	long  numberOfAbortedTransactions;
-	float averageLifetime;
-	long  numberOfHeuristics;
-	long  reaperTimeout;
-	long  defaultTimeout;
+		long  totalNumberOfTransactions;
+		long  numberOfCommittedTransactions;
+		long  numberOfAbortedTransactions;
+		float averageLifetime;
+		long  numberOfHeuristics;
+		long  reaperTimeout;
+		long  defaultTimeout;
     };
 
     struct TransactionInfo
     {
-	long currentDepth;
-	long timeout;
-	long numberOfThreads;
+		long currentDepth;
+		long timeout;
+		long numberOfThreads;
     };
 
     typedef sequence<CosTransactions::otid_t> txIds;
@@ -78,8 +78,8 @@ module ArjunaOTS
 
     interface UidCoordinator : CosTransactions::Coordinator
     {
-	readonly attribute string uid;
-	readonly attribute string topLevelUid;
+		readonly attribute string uid;
+		readonly attribute string topLevelUid;
     };
 
     interface ActionControl : CosTransactions::Control
@@ -91,7 +91,7 @@ module ArjunaOTS
 
     interface ArjunaSubtranAwareResource : CosTransactions::SubtransactionAwareResource
     {
-	CosTransactions::Vote prepare_subtransaction ();
+		CosTransactions::Vote prepare_subtransaction ();
     };
 
     /*
@@ -102,17 +102,17 @@ module ArjunaOTS
 
     interface ArjunaFactory : CosTransactions::TransactionFactory
     {
-	txIds numberOfTransactions (in ArjunaOTS::TransactionType t) raises(CosTransactions::Inactive, CosTransactions::NoTransaction);
-
-	txIds getChildTransactions (in CosTransactions::otid_t parent) raises(CosTransactions::Inactive, CosTransactions::NoTransaction);
-
-	CosTransactions::Status getCurrentStatus (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
-	CosTransactions::Status getStatus (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
-
-	GlobalTransactionInfo getGlobalInfo ();
-	TransactionInfo getTransactionInfo (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
-
-	CosTransactions::Control getTransaction (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
+		txIds numberOfTransactions (in ArjunaOTS::TransactionType t) raises(CosTransactions::Inactive, CosTransactions::NoTransaction);
+	
+		txIds getChildTransactions (in CosTransactions::otid_t parent) raises(CosTransactions::Inactive, CosTransactions::NoTransaction);
+	
+		CosTransactions::Status getCurrentStatus (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
+		CosTransactions::Status getStatus (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
+	
+		GlobalTransactionInfo getGlobalInfo ();
+		TransactionInfo getTransactionInfo (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
+	
+		CosTransactions::Control getTransaction (in CosTransactions::otid_t uid) raises(CosTransactions::NoTransaction);
     };
 
     interface ArjunaTransaction : UidCoordinator, CosTransactions::Terminator
@@ -121,26 +121,26 @@ module ArjunaOTS
 
     interface Current : CosTransactions::Current
     {
-	long get_timeout ();
+		long get_timeout ();
     };
 
     interface OTSAbstractRecord : ArjunaSubtranAwareResource
     {
-	readonly attribute long type_id;
-	readonly attribute string uid;
-
-	boolean propagateOnAbort ();
-	boolean propagateOnCommit ();
-
-	boolean saveRecord ();
-
-	void merge (in OTSAbstractRecord record);
-	void alter (in OTSAbstractRecord record);
-
-	boolean shouldAdd (in OTSAbstractRecord record);
-	boolean shouldAlter (in OTSAbstractRecord record);
-	boolean shouldMerge (in OTSAbstractRecord record);
-	boolean shouldReplace (in OTSAbstractRecord record);
+		readonly attribute long type_id;
+		readonly attribute string uid;
+	
+		boolean propagateOnAbort ();
+		boolean propagateOnCommit ();
+	
+		boolean saveRecord ();
+	
+		void merge (in OTSAbstractRecord record);
+		void alter (in OTSAbstractRecord record);
+	
+		boolean shouldAdd (in OTSAbstractRecord record);
+		boolean shouldAlter (in OTSAbstractRecord record);
+		boolean shouldMerge (in OTSAbstractRecord record);
+		boolean shouldReplace (in OTSAbstractRecord record);
     };
 
     // for JTA 1.1 TransactionSynchronizationRegistry support, a marker interface
@@ -152,8 +152,8 @@ module ArjunaOTS
     // for managing synchronisations via the admin tools
     interface ManagedSynchronization : CosTransactions::Synchronization
     {
-	readonly attribute string implementationType;
-	readonly attribute string instanceName;
+		readonly attribute string implementationType;
+		readonly attribute string instanceName;
     };
 };
 

@@ -33,7 +33,6 @@
 package com.arjuna.ats.internal.jts.recovery.contact;
 
 import com.arjuna.ats.jts.logging.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ArjunaOTS.*;
 
@@ -58,68 +57,65 @@ import com.arjuna.orbportability.event.*;
 
 public class RecoveryContactWriter implements com.arjuna.orbportability.event.EventHandler
 {
+    private boolean _noted;
 
-private boolean _noted;
-
-public RecoveryContactWriter()
-{
-    if (jtsLogger.loggerI18N.isDebugEnabled())
+    public RecoveryContactWriter()
     {
-	jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
-				   "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+        if (jtsLogger.loggerI18N.isDebugEnabled())
+        {
+            jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
+                    FacilityCode.FAC_CRASH_RECOVERY, 
+            "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+        }
+
+        _noted = false;
     }
 
-    _noted = false;
-}
+    public void connected (org.omg.CORBA.Object obj)
+    {    
+        if (jtsLogger.loggerI18N.isDebugEnabled())
+        {
+            jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
+                    FacilityCode.FAC_CRASH_RECOVERY, 
+                    "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2", new Object[] {obj});
+        }
 
-public void connected (org.omg.CORBA.Object obj)
-{    
-    if (jtsLogger.loggerI18N.isDebugEnabled())
+        // only do this once - but shouldn't need this, since de-register on writing
+
+        if (_noted) {
+            return;
+        }
+        try {
+            ArjunaFactory theFactory = ArjunaFactoryHelper.narrow(obj);
+
+            if (theFactory != null) {
+                // if that didn't blow, we have a hit
+                if (jtsLogger.loggerI18N.isDebugEnabled())
+                {
+                    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
+                            FacilityCode.FAC_CRASH_RECOVERY, 
+                    "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+                }
+
+                FactoryContactItem.createAndSave(theFactory);
+                // we've done our work, so set the flag and try to remove ourselves
+                _noted = true;
+                EventManager.getManager().removeHandler(this);
+            }
+        } catch ( Exception ex) {
+            // oh well - it probably wasn't ours
+        }
+    }
+
+    public void disconnected (org.omg.CORBA.Object obj)
     {
-	jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
-				   "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2", new Object[] {obj});
+        // nothing to be done
     }
 
-    // only do this once - but shouldn't need this, since de-register on writing
-
-    if (_noted) {
-	return;
+    public String name ()
+    {
+        return "RecoveryContactEventHandler";
     }
-    try {
-	ArjunaFactory theFactory = ArjunaFactoryHelper.narrow(obj);
-	
-	if (theFactory != null) {
-	    // if that didn't blow, we have a hit
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
-	    }
-	    
-	    FactoryContactItem.createAndSave(theFactory);
-	    // we've done our work, so set the flag and try to remove ourselves
-	    _noted = true;
-	    EventManager.getManager().removeHandler(this);
-	}
-    } catch ( Exception ex) {
-	// oh well - it probably wasn't ours
-    }
-}
-
-public void disconnected (org.omg.CORBA.Object obj)
-{
-    // nothing to be done
-}
-
-public String name ()
-{
-    return "RecoveryContactEventHandler";
-}
-
-
 }
 
 
