@@ -32,14 +32,8 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
-import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -47,7 +41,6 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CORBA.SystemException;
 import java.util.Date;
 
 /**
@@ -81,83 +74,83 @@ public class AssumedCompleteTransaction extends RecoveredTransaction
 	    }
     }
 
-/**
- *  the original process must be deceased if we are assumed complete
- */
-public Status getOriginalStatus()
-{
-    return Status.StatusNoTransaction;
-}
-
-
-public String type ()
+    /**
+     *  the original process must be deceased if we are assumed complete
+     */
+    public Status getOriginalStatus()
     {
-	return AssumedCompleteTransaction.typeName();
+        return Status.StatusNoTransaction;
     }
-  /**
-   * typeName differs from original to force the ActionStore to 
-   * keep AssumedCompleteTransactions separate
-   */
 
-public static String typeName ()
+
+    public String type ()
     {
-	return ourTypeName;
+        return AssumedCompleteTransaction.typeName();
     }
+    /**
+     * typeName differs from original to force the ActionStore to 
+     * keep AssumedCompleteTransactions separate
+     */
 
-public String toString ()
+    public static String typeName ()
     {
-	return "AssumedCompleteTransaction < "+get_uid()+" >";
+        return ourTypeName;
     }
 
-/**
- * This T is already assumed complete, so return false
- */
-public boolean assumeComplete()
+    public String toString ()
     {
-	return false;
+        return "AssumedCompleteTransaction < "+get_uid()+" >";
     }
 
-public Date getLastActiveTime()
-{
-    return _lastActiveTime;
-}
-
-public boolean restore_state (InputObjectState objectState, int ot)
-{
-    // do the other stuff
-    boolean result = super.restore_state(objectState,ot);
-    
-    if (result) {
-	try {
-	    long oldtime = objectState.unpackLong();
-	    _lastActiveTime = new Date(oldtime);
-	} catch (java.io.IOException ex) {
-	    // can assume the assumptionTime is missing - make it now
-	    _lastActiveTime = new Date();
-	}
+    /**
+     * This T is already assumed complete, so return false
+     */
+    public boolean assumeComplete()
+    {
+        return false;
     }
-    return result;
-}
 
-public boolean save_state (OutputObjectState os, int ot)
-{
-    // do the other stuff
-    boolean result = super.save_state(os,ot);
-    
-    if (result ) {
-	// a re-write means we have just been active
-	_lastActiveTime = new Date();
-	try {
-	    os.packLong(_lastActiveTime.getTime());
-	} catch (java.io.IOException ex) {
-	}
+    public Date getLastActiveTime()
+    {
+        return _lastActiveTime;
     }
-    return result;
 
-}
+    public boolean restore_state (InputObjectState objectState, int ot)
+    {
+        // do the other stuff
+        boolean result = super.restore_state(objectState,ot);
 
-private Date _lastActiveTime;
+        if (result) {
+            try {
+                long oldtime = objectState.unpackLong();
+                _lastActiveTime = new Date(oldtime);
+            } catch (java.io.IOException ex) {
+                // can assume the assumptionTime is missing - make it now
+                _lastActiveTime = new Date();
+            }
+        }
+        return result;
+    }
 
-private static String ourTypeName = "/StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteTransaction";
-	
+    public boolean save_state (OutputObjectState os, int ot)
+    {
+        // do the other stuff
+        boolean result = super.save_state(os,ot);
+
+        if (result ) {
+            // a re-write means we have just been active
+            _lastActiveTime = new Date();
+            try {
+                os.packLong(_lastActiveTime.getTime());
+            } catch (java.io.IOException ex) {
+            }
+        }
+        return result;
+
+    }
+
+    private Date _lastActiveTime;
+
+    private static String ourTypeName = "/StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteTransaction";
+
 }

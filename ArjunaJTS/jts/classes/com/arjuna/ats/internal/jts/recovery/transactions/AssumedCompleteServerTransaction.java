@@ -32,10 +32,7 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import org.omg.CosTransactions.*;
@@ -44,8 +41,6 @@ import java.util.Date;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
-
-import org.omg.CORBA.SystemException;
 
 /**
  * Transaction relic of a committed transaction that did not get committed responses from
@@ -63,6 +58,7 @@ import org.omg.CORBA.SystemException;
  *
  * @message com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction_1] - AssumedCompleteServerTransaction {0} created
  */
+
 public class AssumedCompleteServerTransaction extends RecoveredServerTransaction
 {
     public AssumedCompleteServerTransaction ( Uid actionUid )
@@ -77,82 +73,82 @@ public class AssumedCompleteServerTransaction extends RecoveredServerTransaction
     }
 
     
-/**
- *  the original process must be deceased if we are assumed complete
- */
-public Status getOriginalStatus()
-{
-    return Status.StatusNoTransaction;
-}
-
-public String type ()
+    /**
+     *  the original process must be deceased if we are assumed complete
+     */
+    public Status getOriginalStatus()
     {
-	return AssumedCompleteServerTransaction.typeName();
+        return Status.StatusNoTransaction;
     }
 
-  /**
-   * typeName differs from original to force the ActionStore to 
-   * keep AssumedCompleteServerTransactions separate
-   */
-public static String typeName ()
+    public String type ()
     {
-	return ourTypeName;
+        return AssumedCompleteServerTransaction.typeName();
     }
 
-public String toString ()
+    /**
+     * typeName differs from original to force the ActionStore to 
+     * keep AssumedCompleteServerTransactions separate
+     */
+    public static String typeName ()
     {
-	return "AssumedCompleteServerTransaction < "+get_uid()+" >";
+        return ourTypeName;
     }
 
-/**
- * This T is already assumed complete, so return false
- */
-public boolean assumeComplete()
+    public String toString ()
     {
-	return false;
+        return "AssumedCompleteServerTransaction < "+get_uid()+" >";
     }
 
-public Date getLastActiveTime()
-{
-    return _lastActiveTime;
-}
-
-public boolean restore_state (InputObjectState objectState, int ot)
-{
-    // do the other stuff
-    boolean result = super.restore_state(objectState,ot);
-    
-    if (result) {
-	try {
-	    long oldtime = objectState.unpackLong();
-	    _lastActiveTime = new Date(oldtime);
-	} catch (java.io.IOException ex) {
-	    // can assume the assumptionTime is missing - make it now
-	    _lastActiveTime = new Date();
-	}
+    /**
+     * This T is already assumed complete, so return false
+     */
+    public boolean assumeComplete()
+    {
+        return false;
     }
-    return result;
-}
 
-public boolean save_state (OutputObjectState objectState, int ot)
-{
-    // do the other stuff
-    boolean result = super.save_state(objectState,ot);
-    
-    if (result ) {
-	// a re-write means we have just been active
-	_lastActiveTime = new Date();
-	try {
-	    objectState.packLong(_lastActiveTime.getTime());
-	} catch (java.io.IOException ex) {
-	}
+    public Date getLastActiveTime()
+    {
+        return _lastActiveTime;
     }
-    return result;
 
-}
+    public boolean restore_state (InputObjectState objectState, int ot)
+    {
+        // do the other stuff
+        boolean result = super.restore_state(objectState,ot);
 
-private Date _lastActiveTime;
+        if (result) {
+            try {
+                long oldtime = objectState.unpackLong();
+                _lastActiveTime = new Date(oldtime);
+            } catch (java.io.IOException ex) {
+                // can assume the assumptionTime is missing - make it now
+                _lastActiveTime = new Date();
+            }
+        }
+        return result;
+    }
 
-private static String ourTypeName = "/StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteServerTransaction";
-    
+    public boolean save_state (OutputObjectState objectState, int ot)
+    {
+        // do the other stuff
+        boolean result = super.save_state(objectState,ot);
+
+        if (result ) {
+            // a re-write means we have just been active
+            _lastActiveTime = new Date();
+            try {
+                objectState.packLong(_lastActiveTime.getTime());
+            } catch (java.io.IOException ex) {
+            }
+        }
+        return result;
+
+    }
+
+    private Date _lastActiveTime;
+
+    private static String ourTypeName = "/StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteServerTransaction";
+
 }
