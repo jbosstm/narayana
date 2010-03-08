@@ -142,7 +142,7 @@
                     failonerror="yes"
                     private="yes"
                     defaultexcludes="yes"
-                    classpath="${build.classpath}">
+                    classpathref="build.classpath">
 
             <packageset dir="${recovery.src}" defaultexcludes="yes">
               <include name="org/jboss/jbossts/**"/>

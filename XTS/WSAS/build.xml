@@ -135,7 +135,7 @@
                     failonerror="yes"
                     private="yes"
                     defaultexcludes="yes"
-                classpath="${build.classpath}">
+                classpathref="build.classpath">
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
                  <path refid="doclet.classpath"/>
                  <param name="-basedir" value="${basedir}/${build.classes.dir}"/>

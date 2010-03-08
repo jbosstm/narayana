@@ -36,6 +36,7 @@
     <property name="interop.sc007.dir" location="${root.dir}/interop/WSTFSC07-interop"/>
     <property name="interop.wstx11.dir" location="${root.dir}/interop/WSTX11-interop"/>
 
+    <property name="xts.install.dir" location="${root.dir}/xts-install"/>
 
     <!-- location of JBossTS parent tree -->
     <property name="jbossts.dir" location="${root.dir}/.."/>
@@ -84,27 +85,11 @@
         <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
     </path>
 
-    <property name="build.classpath" refid="build.classpath"/>
+    <!-- macros and associate defs -->
 
-    <property name="doclet.classpath" refid="doclet.classpath"/>
-
-    <!-- emma support -->
+    <!-- compilation -->
     
-    <taskdef resource="net/sf/antcontrib/antlib.xml">
-        <classpath>
-            <pathelement location="${jbossts.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
-        </classpath>
-    </taskdef>
-    
-    <property name="emma.enabled" value="false"/>
-    
-    <property name="emma.dir" value="${jbossts.build.extlib.dir}" />
-
-    <path id="emma.lib" >
-        <pathelement location="${emma.dir}/emma.jar" />
-        <pathelement location="${emma.dir}/emma_ant.jar" />
-    </path>
-
-    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+    <property name="debug" value="true"/>
+    <property name="deprecation" value="true"/>
 
 </project>

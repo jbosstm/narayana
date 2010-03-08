@@ -226,7 +226,7 @@
                         failonerror="yes"
                         private="yes"
                         defaultexcludes="yes"
-                        classpath="${build.classpath}">
+                        classpathref="build.classpath">
 
                 <packageset dir="${src.dir}" defaultexcludes="yes">
                   <include name="com/arjuna/**"/>

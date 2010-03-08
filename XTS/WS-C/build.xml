@@ -83,9 +83,6 @@
         <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
     </path>
 
-    <property name="javac.debug"             value="on"/>
-    <property name="javac.optimize"          value="off"/>
-
 	<!-- name of the resource bundle -->
     <property name="wsc.resourcebundle"
 	      value="wsc_msg_en_US.properties"/>
@@ -124,7 +121,7 @@
     </target>
 
     <target name="compile-generic" depends="init">
-        <javac destdir="${build.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+        <javac destdir="${build.classes.dir}" debug="${debug}" deprecation="${deprecation}">
             <classpath>
                 <path refid="build.classpath"/>
             </classpath>
@@ -133,7 +130,7 @@
     </target>
 
     <target name="compile10" depends="compile-generic">
-        <javac destdir="${build.classes10.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+        <javac destdir="${build.classes10.dir}" debug="${debug}" deprecation="${deprecation}">
             <classpath>
                 <path>
                   <pathelement path="${build.classes.dir}"/>
@@ -148,7 +145,7 @@
     </target>
 
     <target name="compile11" depends="compile-generic">
-        <javac destdir="${build.classes11.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+        <javac destdir="${build.classes11.dir}" debug="${debug}" deprecation="${deprecation}">
             <classpath>
                 <path>
                   <pathelement path="${build.classes.dir}"/>
@@ -168,7 +165,7 @@
                     failonerror="yes"
                     private="yes"
                     defaultexcludes="yes"
-                    classpath="${build.classpath}">
+                    classpathref="build.classpath">
 
             <packageset dir="${src.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
@@ -242,7 +239,7 @@
 
     <!-- this assumes the required libs have already been built -->
     <target name="tests-compile">
-        <javac destdir="${tests.build.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+        <javac destdir="${tests.build.classes.dir}" debug="${debug}" deprecation="${deprecation}">
             <classpath>
                 <pathelement path="${build.lib.dir}/ws-c.jar"/>
                 <pathelement path="${build.lib.dir}/ws-c-api.jar"/>
@@ -257,7 +254,7 @@
     </target>
     <!-- this assumes the required libs have already been built -->
     <target name="tests-compile11">
-        <javac destdir="${tests.build.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+        <javac destdir="${tests.build.classes.dir}" debug="${debug}" deprecation="${deprecation}">
             <classpath>
                 <pathelement path="${build.lib.dir}/ws-c.jar"/>
                 <pathelement path="${build.lib.dir}/ws-c-api.jar"/>
