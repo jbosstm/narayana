@@ -421,6 +421,7 @@
 	<!-- Clean targets -->
 	<target name="clean">
 		<echo message="Cleaning module"/>
+        <delete dir="${build.dir}"/>
 		<delete dir="${build.classes.dir}"/>
 		<delete dir="${build.htdocs.dir}"/>
         <delete file="${build.lib.dir}/${modulename}.jar"/>

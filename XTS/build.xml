@@ -230,6 +230,7 @@
 		wstx.clean,
 		recovery.clean,
 		sar.clean,
+		localjunit.clean,
 		interop-tests.clean">
 
 		<delete dir="${xts.htdocs.dest}"/>
@@ -318,6 +319,10 @@
 
     <target name="sar.clean">
         <ant dir="${sar.dir}" target="clean"/>
+    </target>
+
+    <target name="localjunit.clean">
+        <ant dir="${localjunit.dir}" target="clean"/>
     </target>
 
     <target name="interop-tests.clean">

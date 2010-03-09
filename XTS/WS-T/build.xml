@@ -145,6 +145,7 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete dir="${tests.build.dir}"/>
         <delete>
             <fileset dir="." includes="**/*.bak" defaultexcludes="no"/>
             <fileset dir="." includes="**/*~"    defaultexcludes="no"/>

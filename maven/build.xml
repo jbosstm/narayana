@@ -47,6 +47,10 @@
     <property name="artifact" value="jbossts-build"/>
     <property name="version" value="unknown"/>
 
+    <target name="clean">
+        <delete file="pom.xml"/>
+    </target>
+
     <target name="maven">
         <!-- munge the pom template into an actual pom, then use it to install
             the dependencies into the dir where the build looks for them -->

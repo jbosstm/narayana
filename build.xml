@@ -99,10 +99,19 @@
     </target>
 
     <target name="clean">
+        <ant dir="maven" target="clean"/>
         <ant dir="antbuildsystem" target="clean"/>
         <ant dir="common" target="clean"/>
         <ant dir="ArjunaCore" target="clean"/>
         <ant dir="ArjunaJTA" target="clean"/>
+        <ant dir="qa" target="clean"/>
+
+        <if>
+            <available file="XTS"/>
+            <then>
+                <ant dir="XTS" target="clean"/>
+            </then>
+        </if>
 
         <if>
             <available file="ArjunaJTS"/>
@@ -114,6 +123,9 @@
         <ant dir="atsintegration" target="clean"/>
 
         <delete dir="build"/>
+        <delete dir="install"/>
+        <delete file="idl-compiler.out"/>
+        <delete file="idl-compiler.err"/>
     </target>
 
     <target name="init_dependencies">
