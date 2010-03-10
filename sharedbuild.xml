@@ -105,6 +105,9 @@
         <attribute name="excluded.classes" default="${excluded.classes}"/>
         <attribute name="includeant" default="false"/>
         <attribute name="includeemma" default="${emma.enabled}"/>
+        <!-- default coverage filter == empty string == include everything, see
+            http://emma.sourceforge.net/reference_single/reference.html#filtersyntax.ANT -->
+        <attribute name="emmafilter" default=""/>
 
         <element name="additional.classpath" optional="true"/>
         <element name="additional.src.dirs" optional="true"/>
@@ -124,7 +127,8 @@
         <emma enabled="@{includeemma}">
             <instr mode="overwrite"
                    metadatafile="${build.dir}/metadata.emma"
-                   merge="true">
+                   merge="true"
+                   filter="@{emmafilter}">
                 <instrpath>
                     <pathelement location="${build.dir}/classes"/>
                 </instrpath>

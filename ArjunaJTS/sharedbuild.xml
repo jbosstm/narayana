@@ -37,7 +37,10 @@
     </target>
 
     <target name="compile" depends="init, compile-idl">
-        <compile.macro>
+        <!-- additional elements to compile the .java files which are generated from idl,
+            but exclude those classes from the emma code coverage: -->
+        <compile.macro
+                emmafilter="-org.omg.*, -com.arjuna.ArjunaOTS.*">
             <additional.classpath>
                 <path refid="jacorb.classpath"/>
             </additional.classpath>
