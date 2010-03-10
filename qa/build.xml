@@ -111,7 +111,9 @@
 	<target name="clean" depends="buildtype">
 		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
 
-        <ant dir="tests" antfile="build-${buildtype}.xml" target="clean"/>
+        <!-- always use jts regardless of build type, as we may not be able to
+            determine the build type at clean time and jts should have the superset -->
+        <ant dir="tests" antfile="build-jts.xml" target="clean"/>
 	</target>
 
 	<target name="init" depends="buildtype">
