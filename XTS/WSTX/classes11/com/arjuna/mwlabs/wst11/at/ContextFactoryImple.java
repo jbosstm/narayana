@@ -58,6 +58,7 @@ import com.arjuna.wst.Durable2PCParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.wst11.stub.SubordinateVolatile2PCStub;
 import com.arjuna.wst11.stub.SubordinateDurable2PCStub;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
@@ -282,18 +283,24 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
      * create a bridged to subordinate WS-AT 1.1 transaction, associate it with the registrar and create and return
      * a coordination context for it. n.b. this is a private, behind-the-scenes method for use by the JTA-AT
      * transaction bridge code.
+     * @param subordinateType a unique string which groups subordinates for the benefit of their parent tx/app and
+     * allows them to be identified and retrieved as a group during recovery
      * @param expires the timeout for the bridged to AT transaction
      * @param isSecure true if the registration cooridnator URL should use a secure address, otherwise false.
      * @return a coordination context for the bridged to transaction
      */
-    public BridgeTxData createBridgedTransaction (final Long expires, final boolean isSecure)
+    public BridgeTxData createBridgedTransaction (String subordinateType, final Long expires, final boolean isSecure)
     {
+        // we must have a type and it must not be the AT-AT subordinate type
+        if (subordinateType == null || SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT.equals(subordinateType)) {
+            return null;
+        }
         // we need to create a subordinate transaction and register it as both a durable and volatile
         // participant with the registration service defined in the current context
 
         SubordinateATCoordinator subTx = null;
         try {
-            subTx = (SubordinateATCoordinator) createSubordinate();
+            subTx = (SubordinateATCoordinator) createSubordinate(subordinateType);
         } catch (NoActivityException e) {
             // will not happen
             return null;
@@ -387,13 +394,18 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		// we don't use this as one implementation is registered per type
 	}
 
-	public final Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException
+    public final Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException
+    {
+        return createSubordinate(SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT);
+    }
+    
+	public final Object createSubordinate (String subordinateType) throws NoActivityException, InvalidProtocolException, SystemException
 	{
 		try
 		{
 			CoordinatorServiceImple coordManager = (CoordinatorServiceImple) _coordManager;
 			CoordinatorControl theControl = coordManager.coordinatorControl();
-			ATCoordinator subordinateTransaction = theControl.createSubordinate();
+			ATCoordinator subordinateTransaction = theControl.createSubordinate(subordinateType);
 
 			/*
 			 * Now add the registrar for this specific coordinator to the

@@ -437,11 +437,11 @@ public class CoordinatorControl
 	 * @throws SystemException throw if any error occurs.
 	 */
 	
-	public final ATCoordinator createSubordinate () throws SystemException
+	public final ATCoordinator createSubordinate (String subordinateType) throws SystemException
 	{	
 		try
 		{
-			SubordinateATCoordinator coord = new SubordinateATCoordinator();
+			SubordinateATCoordinator coord = new SubordinateATCoordinator(subordinateType);
 			int status = coord.start(null);
 
 			if (status != ActionStatus.RUNNING)

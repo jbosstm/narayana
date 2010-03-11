@@ -279,7 +279,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
 
         SubordinateATCoordinator[] coordinators = SubordinateATCoordinator.listRecoveredCoordinators();
         for (SubordinateATCoordinator coordinator : coordinators) {
-            if (coordinator.isOrphaned()) {
+            if (coordinator.getSubordinateType() == SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT && coordinator.isOrphaned()) {
                 if (XTSLogger.arjLoggerI18N.isWarnEnabled())
                 {
                     XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_5",

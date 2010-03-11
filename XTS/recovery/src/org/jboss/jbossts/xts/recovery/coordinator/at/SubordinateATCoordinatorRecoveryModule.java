@@ -332,7 +332,7 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
     }
 
     // 'type' within the Object Store for ACCoordinator.
-    private String _transactionType = new SubordinateATCoordinator().type() ;
+    private String _transactionType = SubordinateATCoordinator.TRANSACTION_TYPE ;
 
     // Array of transactions found in the object store of the
     // ACCoordinator type.

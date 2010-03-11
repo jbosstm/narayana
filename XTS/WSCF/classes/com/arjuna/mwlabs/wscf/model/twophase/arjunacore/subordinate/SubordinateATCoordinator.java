@@ -34,6 +34,8 @@ package com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.*;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wsas.activity.Outcome;
 
 import com.arjuna.mw.wsas.completionstatus.CompletionStatus;
@@ -44,6 +46,7 @@ import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Collection;
 
@@ -61,7 +64,6 @@ import java.util.Collection;
 
 public class SubordinateATCoordinator extends ATCoordinator
 {
-
     /**
      * normal constructor
      */
@@ -72,6 +74,16 @@ public class SubordinateATCoordinator extends ATCoordinator
 	}
 
     /**
+     * bridge wrapper constructor
+     */
+	public SubordinateATCoordinator(String subordinateType)
+	{
+		super();
+        activated = true;
+        this.subordinateType = subordinateType;
+	}
+
+    /**
      * constructor for recovered coordinator
      * @param recovery
      */
@@ -79,6 +91,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	{
 		super(recovery);
         activated = false;
+        subordinateType = null;
 	}
 
     /**
@@ -262,9 +275,14 @@ public class SubordinateATCoordinator extends ATCoordinator
     {
     }
 
+    /**
+     * type string used to locate TX log records in the tx object store hierarchy
+     */
+    public final static String TRANSACTION_TYPE = "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/SubordinateATCoordinator";
+
     public String type ()
     {
-        return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/SubordinateATCoordinator";
+        return TRANSACTION_TYPE;
     }
 
     /**
@@ -360,6 +378,44 @@ public class SubordinateATCoordinator extends ATCoordinator
     }
 
     /**
+     * standard AT subordinate tx type for an AT subordinate created below another AT transaction
+     */
+    public static final String SUBORDINATE_TX_TYPE_AT_AT = "org.jboss.jbossts.xts.at.at.subordinate";
+
+    public String getSubordinateType()
+    {
+        return subordinateType;
+    }
+    
+    @Override
+    public boolean save_state(OutputObjectState os, int ot) {
+        // also need to save the subordinate type
+        if (super.save_state(os, ot)) {
+            try {
+                os.packString(subordinateType);
+                return true;
+            } catch (IOException ioe) {
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean restore_state(InputObjectState os, int ot) {
+        // also need to restore the subordinate type
+        if (super.restore_state(os, ot)) {
+            try {
+                subordinateType = os.unpackString();
+                return true;
+            } catch (IOException ioe) {
+            }
+        }
+        
+        return false;
+    }
+
+    /**
      * this saves the status after the subtransaction commit or rollback so it can be referred to during
      * afterCompletion processing.
      */
@@ -370,6 +426,16 @@ public class SubordinateATCoordinator extends ATCoordinator
      * for recovered transactions until they are activated
      */
     private boolean activated;
+
+    /**
+     * string identifying which type of subordinate transaction this is. the standard subordinate type is
+     * XTSATRecoveryManager.SUBORDINATE_TX_TYPE_AT_AT which identifies a subordinate of another AT transaction.
+     * Alternative types can occur as a result of transaction bridging e.g. the AT transaction may be a
+     * subordinate of an XA transaction. different types of subordinate can be scanned and rolled back
+     * independently from other subordinate types.
+     */
+
+    private String subordinateType;
 
     private static final HashMap<String, SubordinateATCoordinator> recoveredCoordinators = new HashMap<String, SubordinateATCoordinator>();
 

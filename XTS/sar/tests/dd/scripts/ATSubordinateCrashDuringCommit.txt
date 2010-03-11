@@ -527,11 +527,11 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when a subordinate coordinator
-# (SubordinateCoordinator) is requested to perform a commit. It
+# (SubordinateATCoordinator) is requested to perform a commit. It
 # traces the call.
 
 RULE trace subordinate coordinator commit
-CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator
+CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator
 METHOD commit
 AT ENTRY
 BIND NOTHING
@@ -542,11 +542,11 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when a subordinate coordinator
-# (SubordinateCoordinator) is requested to perform a commit. It
+# (SubordinateATCoordinator) is requested to perform a commit. It
 # traces the call.
 
 RULE trace subordinate coordinator commit 2
-CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator
+CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator
 METHOD commit
 AT EXIT
 BIND NOTHING
@@ -563,7 +563,7 @@ ENDRULE
 # both transactions
 
 RULE trace prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,
@@ -584,7 +584,7 @@ ENDRULE
 # progressed as expected
 
 RULE trace subordinate prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverySubordinateATCoordinator
 METHOD replayPhase2
 AT INVOKE removeRecoveredCoordinator
 BIND coordinator = $0,
@@ -614,6 +614,7 @@ DO traceln("log", "removed committed transaction " + uid),
 ENDRULE
 
 #######################################################################
+# This rule is triggered when the recovery system deletes the COMMITTED
 # activity from the log for the second time. It ensures that the JVM
 # exits. n.b. it waits for the second delete because both the subordinate
 # tx and the parent tx need to be deleted.

@@ -20,9 +20,9 @@
   @author JBoss Inc.
 -->
 
-<project name="XTSTestService" default="jar" basedir=".">
+<project name="XTSTestService" default="war" basedir=".">
     <!-- build a JBoss service which runs a specific test of the XTS service according to an environment setting -->
-    <!-- the tests will normally be run in a  JVM employing a TOAST agent and suitable configured TOAST rule set -->
+    <!-- the tests will normally be run in a  JVM employing a BYTEMAN agent and suitable configured BYTEMAN rule set -->
 
   <property environment="env"/>
   <!-- we need JBOSS_HOME for deployment -->

@@ -50,13 +50,18 @@ public interface LocalFactory
 {
 
 	/**
-	 * Create a new subordinate coordinator instance.
+	 * Create a new subordinate coordinator instance with the default subordinate type.
 	 * 
 	 * @return a new coordinator instance.
 	 */
-	
 	public Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException;
-    
+    /**
+     * Create a new subordinate coordinator instance with the supplied subordinate type.
+     *
+     * @return a new coordinator instance.
+     */
+    public Object createSubordinate (String subordinateType) throws NoActivityException, InvalidProtocolException, SystemException;
+
 }
 
 

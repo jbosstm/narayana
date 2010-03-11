@@ -63,6 +63,7 @@ import com.arjuna.wst.Durable2PCParticipant;
 import com.arjuna.wst.stub.SubordinateVolatile2PCStub;
 import com.arjuna.wst.stub.SubordinateDurable2PCStub;
 import com.arjuna.wst.messaging.engines.ParticipantEngine;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 public class ContextFactoryImple implements ContextFactory, LocalFactory
 {
@@ -277,13 +278,18 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		// we don't use this as one implementation is registered per type
 	}
 
-	public final Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException
-	{
+    public final Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException
+    {
+        return createSubordinate(SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT);
+    }
+    
+    public final Object createSubordinate (String subordinateType) throws NoActivityException, InvalidProtocolException, SystemException
+    {
 		try
 		{
 			CoordinatorServiceImple coordManager = (CoordinatorServiceImple) _coordManager;
 			CoordinatorControl theControl = coordManager.coordinatorControl();
-			ATCoordinator subordinateTransaction = theControl.createSubordinate();
+			ATCoordinator subordinateTransaction = theControl.createSubordinate(subordinateType);
 			
 			/*
 			 * Now add the registrar for this specific coordinator to the

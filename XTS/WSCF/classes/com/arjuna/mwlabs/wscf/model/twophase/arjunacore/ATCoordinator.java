@@ -288,7 +288,8 @@ public class ATCoordinator extends TwoPhaseCoordinator
 					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3"));
 	}
 
-	public String type ()
+    @Override
+    public String type ()
 	{
 		return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/ATCoordinator";
 	}
