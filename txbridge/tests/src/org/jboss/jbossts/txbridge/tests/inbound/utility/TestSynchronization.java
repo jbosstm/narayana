@@ -18,7 +18,7 @@
  * (C) 2008,
  * @author JBoss Inc.
  */
-package org.jboss.jbossts.txbridge.tests.utility;
+package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
 import org.apache.log4j.Logger;
 

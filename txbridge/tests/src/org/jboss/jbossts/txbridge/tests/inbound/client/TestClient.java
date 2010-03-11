@@ -18,7 +18,7 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.client;
+package org.jboss.jbossts.txbridge.tests.inbound.client;
 
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;

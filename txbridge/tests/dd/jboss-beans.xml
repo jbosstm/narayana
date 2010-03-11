@@ -23,9 +23,9 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-    <bean name="TxBridgeTests" class="org.jboss.jbossts.txbridge.tests.utility.TestXAResourceRecoveryHelper">
+    <bean name="TxBridgeTests" class="org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResourceRecoveryHelper">
 
-        <constructor factoryClass="org.jboss.jbossts.txbridge.tests.utility.TestXAResourceRecoveryHelper" factoryMethod="getInstance"/>
+        <constructor factoryClass="org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResourceRecoveryHelper" factoryMethod="getInstance"/>
 
         <depends>jboss.xts:service=XTSService</depends>
 

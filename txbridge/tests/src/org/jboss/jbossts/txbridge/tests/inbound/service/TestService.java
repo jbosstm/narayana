@@ -18,7 +18,7 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.service;
+package org.jboss.jbossts.txbridge.tests.inbound.service;
 
 /**
  * Interface for a web service used by txbridge test cases. Service side version.

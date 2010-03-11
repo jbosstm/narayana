@@ -18,7 +18,7 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.utility;
+package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;

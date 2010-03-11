@@ -18,19 +18,44 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.client;
+package org.jboss.jbossts.txbridge.tests.inbound.service;
 
+import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
+
+import javax.jws.HandlerChain;
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.transaction.TransactionManager;
 
 /**
- * Interface for a web service used by txbridge test cases. Client side version.
+ * Implementation of a web service used by txbridge test cases.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
  */
-@WebService
+@Stateless
+@Remote(TestService.class)
+@WebService()
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-public interface TestService
+@HandlerChain(file = "jaxws-handlers-server.xml") // relative path from the class file
+@TransactionAttribute(TransactionAttributeType.MANDATORY) // default is REQUIRED
+public class TestServiceImpl implements TestService
 {
-    public void doStuff();
+    private static Logger log = Logger.getLogger(TestServiceImpl.class);
+
+    @Override
+    @WebMethod
+    public void doStuff()
+    {
+        log.trace("doStuff()");
+
+        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        try {
+            tm.getTransaction().enlistResource(new TestXAResource());
+        } catch(Exception e) {
+            log.error("could not enlist resource", e);
+        }
+    }
 }

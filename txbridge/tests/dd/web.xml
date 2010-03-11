@@ -28,7 +28,7 @@
 
     <servlet>
         <servlet-name>Test Client Servlet</servlet-name>
-        <servlet-class>org.jboss.jbossts.txbridge.tests.client.TestClient</servlet-class>
+        <servlet-class>org.jboss.jbossts.txbridge.tests.inbound.client.TestClient</servlet-class>
     </servlet>
 
     <servlet-mapping>
