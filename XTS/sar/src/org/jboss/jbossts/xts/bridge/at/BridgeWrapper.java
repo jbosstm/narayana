@@ -111,7 +111,7 @@ public class BridgeWrapper
      * @return a possibly zero-length array of bridge wrappers for all recovered subordinate AT transactions
      * with the given subordinate type or null if a subordinate coordinator recovery scan has not yet occurred
      */
-    public BridgeWrapper[] scan(String subordinateType)
+    public static BridgeWrapper[] scan(String subordinateType)
     {
         // return null if not yet ready
 
@@ -143,10 +143,11 @@ public class BridgeWrapper
         count = 0;
 
         for (int i = 0; i < coordinators.length; i++) {
-            if (coordinators[i].getSubordinateType().equals(subordinateType)) {
+            SubordinateATCoordinator coordinator = coordinators[i];
+            if (coordinator.getSubordinateType().equals(subordinateType)) {
                 BridgeWrapper bridgeWrapper = new BridgeWrapper();
                 bridgeWrapper.context = null;
-                bridgeWrapper.coordinator =coordinator;
+                bridgeWrapper.coordinator = coordinator;
                 bridgeWrapper.id = coordinator.get_uid().stringForm();
                 bridgeWrapper.subordinateType = coordinator.getSubordinateType();
                 result[count++] = bridgeWrapper;
