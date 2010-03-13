@@ -36,7 +36,6 @@ import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.utils.*;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.jts.utils.*;
@@ -60,7 +59,6 @@ import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 

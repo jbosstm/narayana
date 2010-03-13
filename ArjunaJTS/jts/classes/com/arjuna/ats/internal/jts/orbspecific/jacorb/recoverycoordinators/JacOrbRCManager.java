@@ -43,7 +43,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -79,9 +78,9 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
  *  Unlike some other RcvCoManager's, this does not create any real
  *  RecoveryCoordinator objects.
  */
-public JacOrbRCManager ()
+    public JacOrbRCManager()
     {
-	//	_ourPOA = JacOrbRCServiceInit.getRCPOA("transaction");
+        // _ourPOA = JacOrbRCServiceInit.getRCPOA("transaction");
     }
 
     /**
@@ -144,14 +143,14 @@ public JacOrbRCManager ()
 	return rc;
     }
 
-public void destroy (RecoveryCoordinator rc) throws SystemException
+    public void destroy (RecoveryCoordinator rc) throws SystemException
     {
-	// does nothing for JacORB
+        // does nothing for JacORB
     }
 
-public void destroyAll (java.lang.Object[] params) throws SystemException
+    public void destroyAll (java.lang.Object[] params) throws SystemException
     {
-	// does nothing for JacORB
+        // does nothing for JacORB
     }
 
     private final synchronized void initialise ()

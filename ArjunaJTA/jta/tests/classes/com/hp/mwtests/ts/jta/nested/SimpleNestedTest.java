@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.jta.nested;
 import com.hp.mwtests.ts.jta.common.TestResource;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
+import javax.transaction.NotSupportedException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
@@ -43,7 +44,7 @@ import static org.junit.Assert.*;
 public class SimpleNestedTest
 {
     @Test
-    public void test() throws Exception
+    public void testEnabled () throws Exception
     {
         jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(true);
 
@@ -64,7 +65,27 @@ public class SimpleNestedTest
         transactionManager.commit();
 
         transactionManager.commit();
+    }
+    
+    @Test
+    public void testDisabled () throws Exception
+    {
+        jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(false);
 
-        System.err.println("Passed.");
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        transactionManager.begin();
+
+        try
+        {
+            transactionManager.begin();
+            
+            fail();
+        }
+        catch (final NotSupportedException ex)
+        {
+        }
+
+        transactionManager.commit();
     }
 }

@@ -82,7 +82,7 @@ public class BaseTransaction
 		 * programmer use them. Strict conformance will always say no.
 		 */
 
-		if (!BaseTransaction._supportSubtransactions)
+		if (!jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions())
 		{
 			try
 			{
@@ -289,7 +289,7 @@ public class BaseTransaction
 				if (coord != null)
 				{
 					if ((coord.get_status() == org.omg.CosTransactions.Status.StatusActive)
-							&& (!_supportSubtransactions))
+							&& (!jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions()))
 					{
 						throw new IllegalStateException(
 								"BaseTransaction.checkTransactionState - "

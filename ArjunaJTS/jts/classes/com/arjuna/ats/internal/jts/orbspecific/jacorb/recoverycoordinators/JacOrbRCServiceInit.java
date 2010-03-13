@@ -247,6 +247,9 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     {
         POA ourPOA = getRCPOA("recovery_coordinator");
 
+        if (ourPOA == null)  // shortcut
+            return false;
+        
         Implementations.initialise();
         
         try

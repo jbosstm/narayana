@@ -66,24 +66,26 @@ public class BaseTransaction
 		 * programmer use them. Strict conformance will always say no.
 		 */
 
-		if (!BaseTransaction._supportSubtransactions)
+		if (!jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions())
 		{
-			try
-			{
-				checkTransactionState();
-			}
-			catch (IllegalStateException e1)
-			{
-                NotSupportedException notSupportedException = new NotSupportedException(e1.getMessage());
-                notSupportedException.initCause(e1);
-                throw notSupportedException;
-			}
-			catch (Exception e2)
-			{
-                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
-                systemException.initCause(e2);
-                throw systemException;
-			}
+		    try
+		    {
+		        checkTransactionState();
+		    }
+		    catch (IllegalStateException e1)
+		    {
+		        NotSupportedException notSupportedException = new NotSupportedException(
+		                e1.getMessage());
+		        notSupportedException.initCause(e1);
+		        throw notSupportedException;
+		    }
+		    catch (Exception e2)
+		    {
+		        javax.transaction.SystemException systemException = new javax.transaction.SystemException(
+		                e2.toString());
+		        systemException.initCause(e2);
+		        throw systemException;
+		    }
 		}
 
 		Integer value = _timeouts.get();
@@ -310,7 +312,7 @@ public class BaseTransaction
 		else
 		{
 			if ((theTransaction.getStatus() != javax.transaction.Status.STATUS_NO_TRANSACTION)
-					&& !_supportSubtransactions)
+					&& !jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions())
 			{
 				throw new IllegalStateException(
 						"BaseTransaction.checkTransactionState - "
@@ -325,7 +327,7 @@ public class BaseTransaction
 
 	static
 	{
-        _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
+            _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
 	}
 
 }

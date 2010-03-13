@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jts.orbspecific;
 
-import com.arjuna.orbportability.*;
-
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;
@@ -49,18 +47,11 @@ import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
 import com.arjuna.common.util.logging.*;
 
-import java.io.PrintStream;
-import java.util.*;
-import java.lang.Object;
 import org.omg.CORBA.*;
 
 import org.omg.CosTransactions.SubtransactionsUnavailable;
@@ -77,7 +68,6 @@ import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import java.lang.OutOfMemoryError;
-import java.util.EmptyStackException;
 
 /**
  * The implementation of CosTransactions::Current.

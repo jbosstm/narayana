@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
@@ -42,7 +43,7 @@ import com.arjuna.ArjunaOTS.*;
 import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 
-public class DemoArjunaResource extends com.arjuna.ArjunaOTS.ArjunaSubtranAwareResourcePOA
+public class DemoArjunaResource extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 {
 
     public DemoArjunaResource ()
@@ -115,7 +116,61 @@ public class DemoArjunaResource extends com.arjuna.ArjunaOTS.ArjunaSubtranAwareR
 	System.out.println("DEMOARJUNARESOURCE : COMMIT_ONE_PHASE");
     }
 
-    private ArjunaSubtranAwareResource ref;
+    public void alter (OTSAbstractRecord arg0)
+    {
+    }
+
+    public void merge (OTSAbstractRecord arg0)
+    {
+    }
+
+    public boolean propagateOnAbort ()
+    {
+        return false;
+    }
+
+    public boolean propagateOnCommit ()
+    {
+        return false;
+    }
+
+    public boolean saveRecord ()
+    {
+        return false;
+    }
+
+    public boolean shouldAdd (OTSAbstractRecord arg0)
+    {
+        return false;
+    }
+
+    public boolean shouldAlter (OTSAbstractRecord arg0)
+    {
+        return false;
+    }
+
+    public boolean shouldMerge (OTSAbstractRecord arg0)
+    {
+        return false;
+    }
+
+    public boolean shouldReplace (OTSAbstractRecord arg0)
+    {
+        return false;
+    }
+
+    public int type_id ()
+    {
+        return 101;
+    }
+
+    public String uid ()
+    {
+        return uid.stringForm();
+    }
  
+
+    private ArjunaSubtranAwareResource ref;
+    private Uid uid = new Uid();
 }
 

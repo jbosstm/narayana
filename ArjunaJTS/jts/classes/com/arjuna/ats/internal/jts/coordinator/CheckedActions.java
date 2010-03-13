@@ -59,11 +59,11 @@ public class CheckedActions
     public static final synchronized void set (CheckedAction ca) throws SystemException
     {
     	if (otsCheckedAction == null)
-    	    otsCheckedAction = new Hashtable();
+    	    otsCheckedAction = new Hashtable<String, CheckedAction>();
     
     	otsCheckedAction.put(ThreadUtil.getThreadId(), ca);
     }
 
-    private static Hashtable otsCheckedAction = null;
+    private static Hashtable<String, CheckedAction> otsCheckedAction = null;
 
 }

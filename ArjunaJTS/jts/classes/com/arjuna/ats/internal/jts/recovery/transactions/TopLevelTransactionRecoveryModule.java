@@ -31,27 +31,13 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import org.omg.CosTransactions.*;
-
-import java.util.*;
-
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.*;
-import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
-
-import java.io.IOException;
 
 
 // todo - make add a protected getTransactionType() method

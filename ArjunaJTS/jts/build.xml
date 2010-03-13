@@ -103,11 +103,8 @@
                     <exclude name="**/utils/ResourceTrace.java"/>
                     <exclude name="**/utils/Util.java"/>
 
-
-                    <exclude name="**/HeuristicTest.java"/>
-                    <exclude name="**/TransactionTest1.java"/>
                     <exclude name="**/TransactionTest2.java"/>
-                    <exclude name="**/CheckedTransactions.java"/>
+                	<exclude name="**/CheckedTransactions.java"/>
                     <exclude name="**/GridTest.java"/>
                     <exclude name="**/remote/**"/>
 

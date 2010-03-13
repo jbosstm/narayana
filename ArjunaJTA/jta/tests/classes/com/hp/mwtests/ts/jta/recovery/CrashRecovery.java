@@ -47,7 +47,7 @@ public class CrashRecovery
     {
         // this test is supposed to leave a record around in the log store during a commit long enough
         // that the periodic recovery thread runs and detects it. rather than rely on delays to make
-        // this happen (placing us at the mercy of the schduler) we use a byteman script to enforce
+        // this happen (placing us at the mercy of the scheduler) we use a byteman script to enforce
         // the thread sequence we need
 
         // set the smallest possible backoff period so we don't have to wait too long for the test to run

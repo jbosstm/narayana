@@ -132,9 +132,7 @@ public class HeuristicTest
 
         System.out.println("Trying to determing final transaction outcome.");
 
-
         org.omg.CosTransactions.Status status = Status.StatusUnknown;
-
 
         try
         {

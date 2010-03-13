@@ -31,23 +31,11 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.orbportability.orb.Attribute;
-import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-
-import org.omg.CORBA.*;
-import org.omg.PortableServer.*;
-import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.*;
 import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import org.omg.PortableInterceptor.*;
-import org.omg.CosNaming.*;
-import org.omg.CORBA.Any;
 
 /**
  * Initialises JacORB RecoveryCoordinator IOR creation mechanism

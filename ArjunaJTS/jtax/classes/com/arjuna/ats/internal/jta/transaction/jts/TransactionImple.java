@@ -45,7 +45,6 @@ import com.arjuna.ats.jta.utils.XAHelper;
 
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
@@ -1248,42 +1247,42 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (otx != null)
 		{
-            synchronized (TransactionImple._transactions)
-            {
-				try
-				{
-					tx = (TransactionImple) TransactionImple._transactions.get(otx.get_uid());
+		    synchronized (TransactionImple._transactions)
+		    {
+		        try
+		        {
+		            tx = (TransactionImple) TransactionImple._transactions.get(otx.get_uid());
 
-					if (tx == null)
-					{
-						/*
-						 * If it isn't active then don't add it to the
-						 * hashtable.
-						 */
+		            if (tx == null)
+		            {
+		                /*
+		                 * If it isn't active then don't add it to the
+		                 * hashtable.
+		                 */
 
-						tx = new TransactionImple(new AtomicTransaction(otx));
+		                tx = new TransactionImple(new AtomicTransaction(otx));
 
-						try
-						{
-							if (tx.getStatus() == javax.transaction.Status.STATUS_ACTIVE)
-							{
-								putTransaction(tx);
-							}
-						}
-						catch (Exception ex)
-						{
-							// shouldn't happen!
-						}
-					}
-				}
-				catch (ClassCastException ex)
-				{
-					if (jtaxLogger.loggerI18N.isWarnEnabled())
-					{
-						jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.nottximple");
-					}
-				}
-			}
+		                try
+		                {
+		                    if (tx.getStatus() == javax.transaction.Status.STATUS_ACTIVE)
+		                    {
+		                        putTransaction(tx);
+		                    }
+		                }
+		                catch (Exception ex)
+		                {
+		                    // shouldn't happen!
+		                }
+		            }
+		        }
+		        catch (ClassCastException ex)
+		        {
+		            if (jtaxLogger.loggerI18N.isWarnEnabled())
+		            {
+		                jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.nottximple");
+		            }
+		        }
+		    }
 		}
 
 		return tx;
@@ -1424,6 +1423,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
+			    e4.printStackTrace();
+			    
 				RollbackException rollbackException = new RollbackException(e4.toString());
                 if(_rollbackOnlyCallerStacktrace != null) {
                     // we rolled back beacuse the user explicitly told us not to commit. Attach the trace of who did that for debug:
@@ -1444,6 +1445,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				//throw new IllegalStateException(
 				//		jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+			    
+			    throw new IllegalStateException();
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{

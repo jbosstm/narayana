@@ -86,8 +86,8 @@ import java.io.IOException;
  * @version $Id: ExtendedResourceRecord.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
  * 
- * @message com.arjuna.ats.internal.jts.resources.errgenerr {0} caught
- *          exception: {1}
+ * @message com.arjuna.ats.internal.jts.resources.errgenerr {0} caught exception: {1}
+ * @message com.arjuna.ats.internal.jts.resources.noparent {0} has no parent transaction!
  */
 
 public class ExtendedResourceRecord extends
@@ -349,6 +349,12 @@ public class ExtendedResourceRecord extends
 		}
 		catch (SystemException ex)
 		{
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.nestedAbort", ex });
+	                        }
+	                  
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
 
@@ -391,7 +397,7 @@ public class ExtendedResourceRecord extends
 
 				_currentTransaction = (ArjunaTransactionImple) _currentTransaction.parent();
 
-				ControlImple control = _currentTransaction.getControlHandle();
+				ControlImple control = ((_currentTransaction == null) ? null : _currentTransaction.getControlHandle());
 
 				if (control != null)
 				{
@@ -413,10 +419,26 @@ public class ExtendedResourceRecord extends
 				}
 			}
 			else
+			{
+			    if (jtsLogger.loggerI18N.isWarnEnabled())
+                            {
+                                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.noparent", new Object[]
+                                    { get_uid() });
+                            }
+			    
 				o = TwoPhaseOutcome.FINISH_ERROR;
+			}
 		}
 		catch (Exception e)
 		{
+		    e.printStackTrace();
+		    
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.nestedCommit", e });
+	                        }
+		    
 			o = TwoPhaseOutcome.FINISH_ERROR;
 		}
 
@@ -456,6 +478,12 @@ public class ExtendedResourceRecord extends
 		}
 		catch (Exception e)
 		{
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.nestedPrepare", e });
+	                        }
+	                  
 			o = TwoPhaseOutcome.PREPARE_NOTOK;
 		}
 
@@ -558,6 +586,12 @@ public class ExtendedResourceRecord extends
 		}
 		catch (SystemException e5)
 		{
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.topLevelCommit", e5 });
+	                        }
+	                  
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
 
@@ -601,6 +635,12 @@ public class ExtendedResourceRecord extends
 		}
 		catch (Exception e)
 		{
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.topLevelPrepare", e });
+	                        }
+	                  
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
 
@@ -654,6 +694,12 @@ public class ExtendedResourceRecord extends
 		}
 		catch (Exception e5)
 		{
+	                  if (jtsLogger.loggerI18N.isWarnEnabled())
+	                        {
+	                                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.errgenerr", new Object[]
+	                                { "ExtendedResourceRecord.topLevelOnePhaseCommit", e5 });
+	                        }
+	                  
 			e5.printStackTrace();
 			
 			/*
@@ -700,7 +746,7 @@ public class ExtendedResourceRecord extends
 
 		return false;
 	}
-
+/*
 	public static AbstractRecord create ()
 	{
 		return new ExtendedResourceRecord();
@@ -710,7 +756,7 @@ public class ExtendedResourceRecord extends
 	{
 		toDelete = null;
 	}
-
+*/
 	public void print (PrintWriter strm)
 	{
 		super.print(strm);
@@ -1259,12 +1305,13 @@ public class ExtendedResourceRecord extends
 	{
 		try
 		{
-			OTSAbstractRecord otsARHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.narrow(_resourceHandle);
+		    if (_otsARHandle == null)
+		        _otsARHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.narrow(_resourceHandle);
 
-			if (otsARHandle == null)
-				throw new BAD_PARAM();
-			else
-				return otsARHandle;
+		    if (_otsARHandle == null)
+		        throw new BAD_PARAM();
+		    else
+		        return _otsARHandle;
 		}
 		catch (Exception e)
 		{
@@ -1280,6 +1327,7 @@ public class ExtendedResourceRecord extends
 	private Uid _recCoordUid;
 	private ArjunaTransactionImple _currentTransaction;
 	private boolean _propagateRecord;
+	private OTSAbstractRecord _otsARHandle;
 
 	// cached variables
 

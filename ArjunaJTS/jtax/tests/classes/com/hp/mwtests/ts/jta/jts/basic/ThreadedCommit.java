@@ -71,8 +71,6 @@ class TWorker extends Thread
                 {
                 }
             }
-
-            tm.commit();
         }
         catch (final Exception ex)
         {

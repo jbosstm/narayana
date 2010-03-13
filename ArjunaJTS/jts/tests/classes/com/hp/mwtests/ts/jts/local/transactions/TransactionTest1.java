@@ -96,6 +96,8 @@ public class TransactionTest1
             try
             {
                 terminator.commit(true);
+                
+                fail();
             }
             catch (TRANSACTION_ROLLEDBACK  e)
             {
@@ -112,6 +114,8 @@ public class TransactionTest1
             try
             {
                 current.commit(true);
+                
+                fail();
             }
             catch (INVALID_TRANSACTION  e1)
             {
@@ -125,6 +129,8 @@ public class TransactionTest1
             try
             {
                 current.commit(true);
+                
+                fail();
             }
             catch (TRANSACTION_ROLLEDBACK  e1)
             {
@@ -155,6 +161,8 @@ public class TransactionTest1
             try
             {
                 terminator.commit(true);
+                
+                fail();
             }
             catch (TRANSACTION_ROLLEDBACK  e1)
             {
@@ -172,6 +180,8 @@ public class TransactionTest1
             try
             {
                 terminator.commit(true);
+                
+                fail();
             }
             catch (TRANSACTION_ROLLEDBACK  e1)
             {
