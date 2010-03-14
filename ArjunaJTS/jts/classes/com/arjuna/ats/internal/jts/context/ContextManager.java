@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jts.context;
 
-import com.arjuna.orbportability.*;
-
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;
@@ -44,19 +42,13 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 
-import com.arjuna.ats.jts.extensions.*;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
-
 import com.arjuna.common.util.logging.*;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.lang.Object;
 import org.omg.CORBA.*;
@@ -66,17 +58,10 @@ import org.omg.PortableInterceptor.*;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NoTransaction;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.InvalidControl;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.BAD_OPERATION;
-import java.lang.OutOfMemoryError;
 import java.util.EmptyStackException;
 import org.omg.CORBA.ORBPackage.InvalidName;
 
