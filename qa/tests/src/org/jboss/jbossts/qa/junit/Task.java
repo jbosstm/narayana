@@ -30,13 +30,13 @@ public interface Task
     public enum TaskType { EXPECT_PASS_FAIL, EXPECT_READY }
 
     /**
-     * execute a type READY task in a subprocess passing no arguments to the Main method of the
+     * execute a type PASS_FAIL task in a subprocess passing no arguments to the Main method of the
      * implementing class then wait for the subprocess to exit.
      */
     public void perform();
 
     /**
-     * execute a type READY task in a subprocess passing the supplied arguments to the Main method
+     * execute a type PASS_FAIL task in a subprocess passing the supplied arguments to the Main method
      * of the implementing class then wait for the subprocess to exit.
      * @param params arguments to supply to the main method of the implementing class
      */
