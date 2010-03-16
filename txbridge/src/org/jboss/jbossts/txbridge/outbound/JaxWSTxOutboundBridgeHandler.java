@@ -42,101 +42,101 @@ import javax.xml.ws.handler.MessageContext;
  */
 public class JaxWSTxOutboundBridgeHandler implements Handler
 {
-	private static final Logger log = Logger.getLogger(JaxWSTxOutboundBridgeHandler.class);
+    private static final Logger log = Logger.getLogger(JaxWSTxOutboundBridgeHandler.class);
 
-	/**
-	 * Process a message. Determines if it is inbound or outbound and dispatches accordingly.
-	 *
-	 * @param msgContext the context to process
-	 * @return true on success, false on error
-	 */
-	public boolean handleMessage(MessageContext msgContext)
-	{
-		log.trace("handleMessage()");
+    /**
+     * Process a message. Determines if it is inbound or outbound and dispatches accordingly.
+     *
+     * @param msgContext the context to process
+     * @return true on success, false on error
+     */
+    public boolean handleMessage(MessageContext msgContext)
+    {
+        log.trace("handleMessage()");
 
-		Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-		if (outbound == null)
-		   throw new IllegalStateException("Cannot obtain required property: " + MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        if (outbound == null)
+            throw new IllegalStateException("Cannot obtain required property: " + MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
-		return outbound ? handleOutbound(msgContext) : handleInbound(msgContext);
-	}
+        return outbound ? handleOutbound(msgContext) : handleInbound(msgContext);
+    }
 
-	/**
-	 * Tidy up the Transaction/Thread association before faults are thrown back to the client.
-	 *
-	 * @param messageContext unused
-	 * @return true on success, false on error
-	 */
-	public boolean handleFault(MessageContext messageContext)
-	{
-		log.trace("handleFault()");
+    /**
+     * Tidy up the Transaction/Thread association before faults are thrown back to the client.
+     *
+     * @param messageContext unused
+     * @return true on success, false on error
+     */
+    public boolean handleFault(MessageContext messageContext)
+    {
+        log.trace("handleFault()");
 
-		return suspendTransaction();
-	}
+        return suspendTransaction();
+    }
 
-	public void close(MessageContext messageContext)
-	{
-		log.trace("close()");
-	}
+    public void close(MessageContext messageContext)
+    {
+        log.trace("close()");
+    }
 
-	/**
+    /**
      * Tidy up the Transaction/Thread association before returning a message to the client.
-	 *
-	 * @param msgContext unused
-	 * @return true on success, false on error
-	 */
-	protected boolean handleInbound(MessageContext msgContext)
-	{
-		log.trace("handleInbound()");
+     *
+     * @param msgContext unused
+     * @return true on success, false on error
+     */
+    protected boolean handleInbound(MessageContext msgContext)
+    {
+        log.trace("handleInbound()");
 
-		return suspendTransaction();
-	}
+        return suspendTransaction();
+    }
 
-	/**
+    /**
      * Process outbound messages by mapping the JTA transaction context
      * to a WS-AT one and associating the latter to the current Thread.
-	 *
-	 * @param msgContext unused
-	 * @return true on success, false on error
-	 */
-	protected boolean handleOutbound(MessageContext msgContext)
-    {
-		log.trace("handleOutbound()");
-
-		try
-		{
-			OutboundBridge outboundBridge = OutboundBridgeManager.getOutboundBridge();
-			outboundBridge.start();
-		}
-		catch (Exception e)
-		{
-			log.error(e);
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Break the association between the WS-AT transaction context and the calling Thread.
      *
+     * @param msgContext unused
      * @return true on success, false on error
-	 */
-	private boolean suspendTransaction()
+     */
+    protected boolean handleOutbound(MessageContext msgContext)
     {
-		log.trace("suspendTransaction()");
+        log.trace("handleOutbound()");
 
-		try
-		{
-			OutboundBridge outboundBridge = OutboundBridgeManager.getOutboundBridge();
-			outboundBridge.stop();
-		}
-		catch (Exception e)
-		{
-			log.error(e);
+        try
+        {
+            OutboundBridge outboundBridge = OutboundBridgeManager.getOutboundBridge();
+            outboundBridge.start();
+        }
+        catch (Exception e)
+        {
+            log.error(e);
             return false;
-		}
+        }
 
         return true;
-	}
+    }
+
+    /**
+     * Break the association between the WS-AT transaction context and the calling Thread.
+     *
+     * @return true on success, false on error
+     */
+    private boolean suspendTransaction()
+    {
+        log.trace("suspendTransaction()");
+
+        try
+        {
+            OutboundBridge outboundBridge = OutboundBridgeManager.getOutboundBridge();
+            outboundBridge.stop();
+        }
+        catch (Exception e)
+        {
+            log.error(e);
+            return false;
+        }
+
+        return true;
+    }
 }

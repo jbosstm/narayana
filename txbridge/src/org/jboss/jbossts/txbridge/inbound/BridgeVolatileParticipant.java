@@ -58,7 +58,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     BridgeVolatileParticipant(String externalTxId, Xid xid)
     {
-		log.trace("BridgeVolatileParticipant(TxId="+externalTxId+", Xid="+xid+")");
+        log.trace("BridgeVolatileParticipant(TxId="+externalTxId+", Xid="+xid+")");
 
         this.xid = xid;
         this.externalTxId = externalTxId;
@@ -92,7 +92,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
 
             if(!xaTerminatorExtensions.beforeCompletion(xid))
             {
-				log.warn("prepare on Xid="+xid+" failed, setting RollbackOnly");
+                log.warn("prepare on Xid="+xid+" failed, setting RollbackOnly");
                 inboundBridge.setRollbackOnly();
             }
 

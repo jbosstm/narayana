@@ -43,12 +43,12 @@ import org.apache.log4j.Logger;
  */
 public class InboundBridge
 {
-	private static final Logger log = Logger.getLogger(InboundBridge.class);
+    private static final Logger log = Logger.getLogger(InboundBridge.class);
 
     /**
      * Identifier for the subordinate transaction.
      */
-	private final Xid xid;
+    private final Xid xid;
 
     /**
      * Create a new InboundBridge to manage the given subordinate JTA transaction.
@@ -57,46 +57,46 @@ public class InboundBridge
      * @throws XAException
      * @throws SystemException
      */
-	InboundBridge(Xid xid) throws XAException, SystemException
+    InboundBridge(Xid xid) throws XAException, SystemException
     {
-		log.trace("InboundBridge(Xid="+xid+")");
+        log.trace("InboundBridge(Xid="+xid+")");
 
-		this.xid = xid;
+        this.xid = xid;
 
-		getTransaction(); // ensures transaction is initialized
-	}
+        getTransaction(); // ensures transaction is initialized
+    }
 
-	/**
-	 * Associate the JTA transaction to the current Thread.
-	 * Typically used by a server side inbound handler.
-	 *
-	 * @throws XAException
-	 * @throws SystemException
-	 * @throws InvalidTransactionException
-	 */
-	public void start() throws XAException, SystemException, InvalidTransactionException
+    /**
+     * Associate the JTA transaction to the current Thread.
+     * Typically used by a server side inbound handler.
+     *
+     * @throws XAException
+     * @throws SystemException
+     * @throws InvalidTransactionException
+     */
+    public void start() throws XAException, SystemException, InvalidTransactionException
     {
-		log.trace("start(Xid="+xid+")");
+        log.trace("start(Xid="+xid+")");
 
-		Transaction tx = getTransaction();
+        Transaction tx = getTransaction();
 
-		TransactionManager.transactionManager().resume(tx);
-	}
+        TransactionManager.transactionManager().resume(tx);
+    }
 
-	/**
-	 * Disassociate the JTA transaction from the current Thread.
-	 * Typically used by a server side outbound handler.
-	 *
-	 * @throws XAException
-	 * @throws SystemException
-	 * @throws InvalidTransactionException
-	 */
-	public void stop() throws XAException, SystemException, InvalidTransactionException
+    /**
+     * Disassociate the JTA transaction from the current Thread.
+     * Typically used by a server side outbound handler.
+     *
+     * @throws XAException
+     * @throws SystemException
+     * @throws InvalidTransactionException
+     */
+    public void stop() throws XAException, SystemException, InvalidTransactionException
     {
-		log.trace("stop("+xid+")");
+        log.trace("stop("+xid+")");
 
-		TransactionManager.transactionManager().suspend();
-	}
+        TransactionManager.transactionManager().suspend();
+    }
 
     public void setRollbackOnly() throws XAException, SystemException
     {
@@ -105,28 +105,28 @@ public class InboundBridge
         getTransaction().setRollbackOnly();
     }
 
-	/**
-	 * Get the JTA Transaction which corresponds to the Xid of the instance.
-	 *
-	 * @return
-	 * @throws XAException
-	 * @throws SystemException
-	 */
-	private Transaction getTransaction()
-			throws XAException, SystemException
-	{
-		Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
+    /**
+     * Get the JTA Transaction which corresponds to the Xid of the instance.
+     *
+     * @return
+     * @throws XAException
+     * @throws SystemException
+     */
+    private Transaction getTransaction()
+            throws XAException, SystemException
+    {
+        Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
-		switch (tx.getStatus())
-		{
+        switch (tx.getStatus())
+        {
             // TODO: other cases?
 
-			case Status.STATUS_ACTIVE:
+            case Status.STATUS_ACTIVE:
             case Status.STATUS_MARKED_ROLLBACK:
-				break;
-			default:
-				throw new IllegalStateException("Transaction not in state ACTIVE");
-		}
-		return tx;
-	}
+                break;
+            default:
+                throw new IllegalStateException("Transaction not in state ACTIVE");
+        }
+        return tx;
+    }
 }

@@ -62,9 +62,9 @@ public class OutboundBridgeManager
      *
      * @return as OutboundBridge corresponding to the calling Thread's current JTA transaction context.
      */
-	public static org.jboss.jbossts.txbridge.outbound.OutboundBridge getOutboundBridge()
-	{
-		log.trace("getOutboundBridge()");
+    public static org.jboss.jbossts.txbridge.outbound.OutboundBridge getOutboundBridge()
+    {
+        log.trace("getOutboundBridge()");
 
         try
         {
@@ -85,7 +85,7 @@ public class OutboundBridgeManager
         }
 
         return null;
-	}
+    }
 
     /**
      * Remove the mapping for the given externalTxId. This should be called for gc when the tx is finished.

@@ -79,6 +79,6 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
 
         BridgeWrapper[] bridgeWrappers = BridgeWrapper.scan(OutboundBridgeManager.BRIDGEWRAPPER_PREFIX);
         // TODO: do something useful with the results.
-        
+
     }
 }

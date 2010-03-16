@@ -47,7 +47,7 @@ import java.io.ObjectOutputStream;
  */
 public class BridgeDurableParticipant implements Durable2PCParticipant, Serializable
 {
-	private static final Logger log = Logger.getLogger(BridgeDurableParticipant.class);
+    private static final Logger log = Logger.getLogger(BridgeDurableParticipant.class);
 
     /*
      * Uniq String used to prefix ids at participant registration,
@@ -60,7 +60,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public static final int XARESOURCE_FORMAT_ID = 131080;
 
-	private transient volatile XATerminator xaTerminator;
+    private transient volatile XATerminator xaTerminator;
 
     private transient volatile String externalTxId;
 
@@ -69,7 +69,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
     static final long serialVersionUID = -5739871936627778072L;
 
     // Xid not guaranteed Serializable by spec, but our XidImple happens to be
-	private volatile Xid xid;
+    private volatile Xid xid;
 
     // Id needed for recovery of the subordinate tx. Uids are likewise Serializable.
     private volatile Uid subordinateTransactionId;
@@ -80,14 +80,14 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      * @param externalTxId the WS-AT Tx identifier
      * @param xid the Xid to use when driving the subordinate XA transaction.
      */
-	BridgeDurableParticipant(String externalTxId, Xid xid)
+    BridgeDurableParticipant(String externalTxId, Xid xid)
     {
-		log.trace("BridgeDurableParticipant(TxId="+externalTxId+", Xid="+xid+")");
+        log.trace("BridgeDurableParticipant(TxId="+externalTxId+", Xid="+xid+")");
 
         this.xid = xid;
         this.externalTxId = externalTxId;
-		xaTerminator = SubordinationManager.getXATerminator();
-	}
+        xaTerminator = SubordinationManager.getXATerminator();
+    }
 
     /**
      * Serialization hook. Gathers and writes information needed for transaction recovery.
@@ -162,54 +162,57 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      * @return an indication of whether it can prepare or not.
      * @see com.arjuna.wst.Vote
      */
-	public Vote prepare() throws WrongStateException, SystemException
-	{
-		log.trace("prepare(Xid="+xid+")");
+    public Vote prepare() throws WrongStateException, SystemException
+    {
+        log.trace("prepare(Xid="+xid+")");
 
-		try
+        try
         {
-			// XAResource.XA_OK, XAResource.XA_RDONLY or exception.  if RDONLY, don't call commit
-			int result = xaTerminator.prepare(xid);
-			if(result == XAResource.XA_OK)
+            // XAResource.XA_OK, XAResource.XA_RDONLY or exception.  if RDONLY, don't call commit
+            int result = xaTerminator.prepare(xid);
+            if(result == XAResource.XA_OK)
             {
-				log.debug("prepare on Xid="+xid+" returning Prepared");
-				return new Prepared();
-			}
+                log.debug("prepare on Xid="+xid+" returning Prepared");
+                return new Prepared();
+            }
             else
             {
                 cleanupRefs();
                 log.debug("prepare on Xid="+xid+" returning ReadOnly");
-				return new ReadOnly();
-			}
+                return new ReadOnly();
+            }
 
-		}
+        }
         catch(XAException e)
         {
+            // TODO: this is not necessarily an error. If the subordinate tx is setRollbackOnly
+            // e.g. due to failure of VolatileParticipant.prepare, then it's expected the prepare will fail.
+            // we really need to use XATerminatorExtensions to expose a isSetRollbackOnly...
             cleanupRefs();
             log.warn("prepare on Xid="+xid+" returning Aborted", e);
-			return new Aborted();
-		}
+            return new Aborted();
+        }
     }
 
     /**
      * The participant should make permanent the work that it controls.
-	 *
+     *
      * @throws WrongStateException
      * @throws SystemException
      */
     public void commit() throws WrongStateException, SystemException
     {
-		log.trace("commit(Xid="+xid+")");
+        log.trace("commit(Xid="+xid+")");
 
-		try
-		{
-			xaTerminator.commit(xid, false);
-			log.debug("commit on Xid="+xid+" OK");
-		}
-		catch (XAException e)
-		{
-			log.error("commit on Xid="+xid+" failed", e);
-		}
+        try
+        {
+            xaTerminator.commit(xid, false);
+            log.debug("commit on Xid="+xid+" OK");
+        }
+        catch (XAException e)
+        {
+            log.error("commit on Xid="+xid+" failed", e);
+        }
         finally
         {
             cleanupRefs();
@@ -225,17 +228,17 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public void rollback() throws WrongStateException, SystemException
     {
-		log.trace("rollback(Xid="+xid+")");
+        log.trace("rollback(Xid="+xid+")");
 
-		try
-		{
-			xaTerminator.rollback(xid);
-			log.debug("rollback on Xid="+xid+" OK");
-		}
-		catch (XAException e)
-		{
-			log.error("rollback on Xid="+xid+" failed", e);
-		}
+        try
+        {
+            xaTerminator.rollback(xid);
+            log.debug("rollback on Xid="+xid+" OK");
+        }
+        catch (XAException e)
+        {
+            log.error("rollback on Xid="+xid+" failed", e);
+        }
         finally
         {
             cleanupRefs();
@@ -248,9 +251,9 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      * available (has rolled back) then this operation will be invoked by the
      * coordination service.
      */
-	public void unknown() throws SystemException
+    public void unknown() throws SystemException
     {
-		log.trace("unknown(Xid="+xid+"): NOT IMPLEMENTED");
+        log.trace("unknown(Xid="+xid+"): NOT IMPLEMENTED");
     }
 
     /**
@@ -258,9 +261,9 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      * transaction it was registered with. If an error occurs (e.g., the
      * transaction service is unavailable) then this operation will be invoked.
      */
-	public void error() throws SystemException
+    public void error() throws SystemException
     {
-		log.trace("error(Xid="+xid+"): NOT IMPLEMENTED");
+        log.trace("error(Xid="+xid+"): NOT IMPLEMENTED");
     }
 
     public boolean isAwaitingRecovery() {

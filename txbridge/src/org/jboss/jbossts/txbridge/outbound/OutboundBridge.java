@@ -66,12 +66,12 @@ public class OutboundBridge
      */
     public void start() throws UnknownTransactionException, SystemException
     {
-		log.trace("start(BridgeWrapper="+bridgeWrapper+")");
+        log.trace("start(BridgeWrapper="+bridgeWrapper+")");
 
         TxContext txContext = bridgeWrapper.getContext();
 
         TransactionManagerFactory.transactionManager().resume(txContext);
-	}
+    }
 
     /**
      * Disassociate the WS-AT transaction from the current Thread.

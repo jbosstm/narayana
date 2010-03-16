@@ -52,35 +52,35 @@ import org.apache.log4j.Logger;
  */
 public class InboundBridgeManager
 {
-	private static final Logger log = Logger.getLogger(InboundBridgeManager.class);
+    private static final Logger log = Logger.getLogger(InboundBridgeManager.class);
 
     // maps WS-AT Tx Id to InboundBridge instance.
-	private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
+    private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
 
-	/**
-	 * Return an InboundBridge instance that maps the current Thread's WS transaction context
-	 * to a JTA context. Control of the latter is provided by the returned instance.
-	 *
-	 * @return an InboundBridge corresponding to the calling Thread's current WS-AT transaction context.
-	 * @throws WrongStateException
-	 * @throws UnknownTransactionException
-	 * @throws com.arjuna.wst.SystemException
-	 * @throws AlreadyRegisteredException
-	 */
-	public static InboundBridge getInboundBridge()
-		throws XAException, WrongStateException, UnknownTransactionException,
-			com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
-	{
-		log.trace("getInboundBridge()");
+    /**
+     * Return an InboundBridge instance that maps the current Thread's WS transaction context
+     * to a JTA context. Control of the latter is provided by the returned instance.
+     *
+     * @return an InboundBridge corresponding to the calling Thread's current WS-AT transaction context.
+     * @throws WrongStateException
+     * @throws UnknownTransactionException
+     * @throws com.arjuna.wst.SystemException
+     * @throws AlreadyRegisteredException
+     */
+    public static InboundBridge getInboundBridge()
+            throws XAException, WrongStateException, UnknownTransactionException,
+            com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
+    {
+        log.trace("getInboundBridge()");
 
-		String externalTxId = UserTransactionFactory.userTransaction().toString();
+        String externalTxId = UserTransactionFactory.userTransaction().toString();
 
         if(!inboundBridgeMappings.containsKey(externalTxId)) {
             createMapping(externalTxId);
         }
 
-		return inboundBridgeMappings.get(externalTxId);
-	}
+        return inboundBridgeMappings.get(externalTxId);
+    }
 
     /**
      * Return an InboundBridge instance for the specified WS-AT transaction context.
@@ -111,39 +111,39 @@ public class InboundBridgeManager
         }
     }
 
-	/**
-	 * Create the JTA transaction mapping and support objects for a given WS transaction context.
-	 *
-	 * @param externalTxId The WS-AT tx identifier.
-	 * @throws WrongStateException
-	 * @throws UnknownTransactionException
-	 * @throws com.arjuna.wst.SystemException
-	 * @throws AlreadyRegisteredException
-	 */
-	private static synchronized void createMapping(String externalTxId)
-			throws XAException, WrongStateException, UnknownTransactionException,
-			com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
+    /**
+     * Create the JTA transaction mapping and support objects for a given WS transaction context.
+     *
+     * @param externalTxId The WS-AT tx identifier.
+     * @throws WrongStateException
+     * @throws UnknownTransactionException
+     * @throws com.arjuna.wst.SystemException
+     * @throws AlreadyRegisteredException
+     */
+    private static synchronized void createMapping(String externalTxId)
+            throws XAException, WrongStateException, UnknownTransactionException,
+            com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
     {
-		log.trace("createMapping(externalTxId="+externalTxId+")");
+        log.trace("createMapping(externalTxId="+externalTxId+")");
 
-		if(inboundBridgeMappings.containsKey(externalTxId)) {
-			return;
-		}
+        if(inboundBridgeMappings.containsKey(externalTxId)) {
+            return;
+        }
 
         TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
 
         // Xid for driving the subordinate,
         // shared by the bridge (thread assoc) and Participant (termination via XATerminator)
-		Xid xid = XATxConverter.getXid(new Uid(), false, BridgeDurableParticipant.XARESOURCE_FORMAT_ID);
+        Xid xid = XATxConverter.getXid(new Uid(), false, BridgeDurableParticipant.XARESOURCE_FORMAT_ID);
 
-		BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
+        BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
         // construct the participantId in such as way as we can recognise it at recovery time:
         String participantId = org.jboss.jbossts.txbridge.inbound.BridgeDurableParticipant.TYPE_IDENTIFIER+new Uid().toString();
-		transactionManager.enlistForDurableTwoPhase(bridgeDurableParticipant, participantId);
+        transactionManager.enlistForDurableTwoPhase(bridgeDurableParticipant, participantId);
 
         BridgeVolatileParticipant bridgeVolatileParticipant = new BridgeVolatileParticipant(externalTxId, xid);
         transactionManager.enlistForVolatileTwoPhase(bridgeVolatileParticipant, new Uid().toString());
 
         inboundBridgeMappings.put(externalTxId, new InboundBridge(xid));
-	}
+    }
 }

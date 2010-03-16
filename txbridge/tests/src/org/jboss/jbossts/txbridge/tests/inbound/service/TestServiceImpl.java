@@ -33,6 +33,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
 
 
 /**
@@ -50,19 +51,54 @@ public class TestServiceImpl implements TestService
 {
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
 
+    private boolean arrangeBeforeCompletionFailure = false;
+    private int xaErrorCode = 0;
+
     @Override
     @WebMethod
-    public void doStuff()
+    public void doTestResourceEnlistment()
     {
-        log.trace("doStuff()");
+        log.trace("doTestResourceEnlistment()");
 
         TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-        try {
-            tm.getTransaction().registerSynchronization(new TestSynchronization());
-            tm.getTransaction().enlistResource(new TestXAResource());
+        try
+        {
+            TestSynchronization testSynchronization = new TestSynchronization();
+            if(arrangeBeforeCompletionFailure) {
+                testSynchronization.setFailInBeforeCompletion(true);
+            }
+            tm.getTransaction().registerSynchronization(testSynchronization);
+
+            TestXAResource testXAResource = new TestXAResource();
+            if(xaErrorCode != 0) {
+                testXAResource.setPrepareException(new XAException(xaErrorCode));
+            }
+            tm.getTransaction().enlistResource(testXAResource);
+
         } catch(Exception e) {
-            log.error("could not enlist resource", e);
+            log.error("could not enlist", e);
         }
     }
+
+    @Override
+    @WebMethod
+    public void doNothing() {
+        log.trace("doNothing()");
+    }
+
+    @Override
+    @WebMethod
+    public void arrangeBeforeCompletionFailure() {
+        log.trace("arrangeBeforeCompletionFailure()");
+        arrangeBeforeCompletionFailure = true;
+    }
+
+    @Override
+    @WebMethod
+    public void arrangeXAResourcePrepareXAException(int xaErrorCode) {
+        log.trace("arrangeXAResourcePrepareXAException("+xaErrorCode+")");
+        this.xaErrorCode = xaErrorCode;
+    }
+
 }

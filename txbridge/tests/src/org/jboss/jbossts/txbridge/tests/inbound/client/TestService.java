@@ -32,5 +32,11 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface TestService
 {
-    public void doStuff();
+    public void doTestResourceEnlistment();
+
+    public void doNothing();
+
+    public void arrangeBeforeCompletionFailure();
+
+    public void arrangeXAResourcePrepareXAException(int xaErrorCode);
 }

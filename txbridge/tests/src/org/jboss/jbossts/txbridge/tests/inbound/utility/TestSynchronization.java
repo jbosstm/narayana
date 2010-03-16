@@ -36,6 +36,8 @@ public class TestSynchronization implements Synchronization
     private boolean beforeCompletionDone = false;
     private boolean afterCompletionDone = false;
 
+    private boolean failInBeforeCompletion = false;
+
     public boolean isBeforeCompletionDone()
     {
         return beforeCompletionDone;
@@ -46,6 +48,16 @@ public class TestSynchronization implements Synchronization
         return afterCompletionDone;
     }
 
+    public boolean isFailInBeforeCompletion()
+    {
+        return failInBeforeCompletion;
+    }
+
+    public void setFailInBeforeCompletion(boolean failInBeforeCompletion)
+    {
+        this.failInBeforeCompletion = failInBeforeCompletion;
+    }
+
     public void beforeCompletion() {
         if(beforeCompletionDone) {
             log.trace("beforeCompletion called more than once");
@@ -54,6 +66,11 @@ public class TestSynchronization implements Synchronization
 
         beforeCompletionDone = true;
         log.trace("TestSynchronization.beforeCompletion()");
+
+        if(failInBeforeCompletion) {
+            log.trace("failing in beforeCompletion");
+            throw new RuntimeException("failed in beforeCompletion");
+        }
     }
 
     public void afterCompletion(int i) {

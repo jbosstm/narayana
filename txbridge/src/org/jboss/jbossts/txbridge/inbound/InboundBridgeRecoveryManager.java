@@ -81,7 +81,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
 
         xtsATRecoveryManager.unregisterRecoveryModule(this);
         acRecoveryManager.removeModule(this, false);
-        
+
         XARecoveryModule xaRecoveryModule = getXARecoveryModule();
         xaRecoveryModule.removeXAResourceOrphanFilter(this);
     }
@@ -256,7 +256,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
      * Used to identify inbound bridged Xids in either the RM log (when called by XARecoveryModule) or
      * the JCA subordinate tx log (when called internally from this class) which have or have not got a
      * remaining transaction that may still drive them to completion.
-     * 
+     *
      * @param xid The in-doubt xid.
      * @return a Vote on the handling of the xid (to roll it back or not).
      */

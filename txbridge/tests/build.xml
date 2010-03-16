@@ -153,6 +153,7 @@
               overwrite="true"/>
     </target>
 
+    <!-- http://localhost:8080/txbridge-outbound-tests-client/testclient -->
     <target name="deploy-outbound-client" depends="dist" description="deploy Servlet to JBossAS">
         <copy file="${build}/txbridge-outbound-tests-client.war"
               todir="${jbossas.home}/server/${jbossas.server}/deploy"

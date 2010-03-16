@@ -84,9 +84,10 @@ public class TestClient extends HttpServlet
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String param = request.getParameter("param");
-
-        log.info("param: "+param);
+        String outcome = request.getParameter("outcome");
+        String failInBeforeCompletion = request.getParameter("failInBeforeCompletion");
+        String prepareXAErrorCode = request.getParameter("prepareXAErrorCode");
+        
 
         try
         {
@@ -102,13 +103,26 @@ public class TestClient extends HttpServlet
 
             //////////////////////
 
-            testService.doStuff();
+            if("true".equals(failInBeforeCompletion)) {
+                testService.arrangeBeforeCompletionFailure();
+            }
+
+            if(prepareXAErrorCode != null) {
+                testService.arrangeXAResourcePrepareXAException(Integer.parseInt(prepareXAErrorCode));
+            }
+
+            testService.doTestResourceEnlistment();
+            testService.doNothing();            
 
             //////////////////////
 
-            log.info("calling commit on the transaction...");
+            log.info("calling "+outcome+" on the transaction...");
 
-            ut.commit();
+            if("commit".equals(outcome)) {
+                ut.commit();
+            } else {
+                ut.rollback();
+            }
         }
         catch (final TransactionRolledBackException tre)
         {

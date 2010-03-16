@@ -130,7 +130,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper
             if(preparedXids.remove(xid)) {
                 writeToDisk();
             } else {
-                throw new XAException(XAException.XAER_NOTA);
+                log.trace("no log present for "+xid);
             }
         }
     }

@@ -40,6 +40,7 @@ public class TestXAResource implements XAResource
     private Xid currentXid;
 
     private int prepareReturnValue = XAResource.XA_OK;
+    private XAException prepareException = null;
     private XAException commitException = null;
 
     public int getPrepareReturnValue()
@@ -50,6 +51,16 @@ public class TestXAResource implements XAResource
     public void setPrepareReturnValue(int prepareReturnValue)
     {
         this.prepareReturnValue = prepareReturnValue;
+    }
+
+    public XAException getPrepareException()
+    {
+        return prepareException;
+    }
+
+    public void setPrepareException(XAException prepareException)
+    {
+        this.prepareException = prepareException;
     }
 
     public XAException getCommitException()
@@ -101,6 +112,12 @@ public class TestXAResource implements XAResource
 
     public int prepare(Xid xid) throws XAException {
         log.trace("TestXAResource.prepare(Xid="+xid+") returning "+prepareReturnValue);
+
+        if(prepareException != null) {
+            log.trace("prepare throwing XAException "+prepareException.errorCode);
+            throw prepareException;
+        }
+
         if(prepareReturnValue == XA_OK) {
             TestXAResourceRecoveryHelper.getInstance().logPrepared(xid);
         }
