@@ -51,6 +51,8 @@ public class OutboundBridgeManager
 {
     private static final Logger log = Logger.getLogger(OutboundBridgeManager.class);
 
+    public static String BRIDGEWRAPPER_PREFIX = "txbridge_";
+
     // maps JTA Tx Id to OutboundBridge instance.
     private static final ConcurrentMap<Uid, org.jboss.jbossts.txbridge.outbound.OutboundBridge> outboundBridgeMappings = new ConcurrentHashMap<Uid, org.jboss.jbossts.txbridge.outbound.OutboundBridge>();
 
@@ -114,7 +116,7 @@ public class OutboundBridgeManager
         }
 
         // TODO: allow params to be configurable, or at least pass timeout down.
-        BridgeWrapper bridgeWrapper = BridgeWrapper.create(0, false);
+        BridgeWrapper bridgeWrapper = BridgeWrapper.create(BRIDGEWRAPPER_PREFIX, 0, false);
 
         org.jboss.jbossts.txbridge.outbound.OutboundBridge outboundBridge = new org.jboss.jbossts.txbridge.outbound.OutboundBridge(bridgeWrapper);
         XAResource xaResource = new org.jboss.jbossts.txbridge.outbound.BridgeXAResource(externalTxId, bridgeWrapper);

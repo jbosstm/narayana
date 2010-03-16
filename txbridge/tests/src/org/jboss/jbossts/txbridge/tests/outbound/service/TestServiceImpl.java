@@ -18,51 +18,56 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.inbound.service;
+package org.jboss.jbossts.txbridge.tests.outbound.service;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.mw.wst11.TransactionManager;
+import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.UserTransactionFactory;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.Volatile2PCParticipant;
 
 import org.apache.log4j.Logger;
-import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
-import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import org.jboss.jbossts.txbridge.tests.outbound.utility.TestDurableParticipant;
+import org.jboss.jbossts.txbridge.tests.outbound.utility.TestVolatileParticipant;
+
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.transaction.TransactionManager;
-
 
 /**
  * Implementation of a web service used by txbridge test cases.
  *
- * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
+ * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-@Stateless
-@Remote(TestService.class)
-@WebService()
+@WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @HandlerChain(file = "jaxws-handlers-server.xml") // relative path from the class file
-@TransactionAttribute(TransactionAttributeType.MANDATORY) // default is REQUIRED
-public class TestServiceImpl implements TestService
+public class TestServiceImpl
 {
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
 
-    @Override
     @WebMethod
     public void doStuff()
     {
         log.trace("doStuff()");
 
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        String transactionId = UserTransactionFactory.userTransaction().toString();
 
         try {
-            tm.getTransaction().registerSynchronization(new TestSynchronization());
-            tm.getTransaction().enlistResource(new TestXAResource());
+            TransactionManager tm = TransactionManagerFactory.transactionManager();
+
+            Volatile2PCParticipant volatileParticipant = new TestVolatileParticipant();
+            tm.enlistForVolatileTwoPhase(volatileParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Volatile:" + new Uid().toString());
+
+            Durable2PCParticipant durableParticipant = new TestDurableParticipant();
+            tm.enlistForDurableTwoPhase(durableParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Durable:" + new Uid().toString());
+
         } catch(Exception e) {
-            log.error("could not enlist resource", e);
+            log.error("could not enlist participant", e);
         }
+
     }
 }

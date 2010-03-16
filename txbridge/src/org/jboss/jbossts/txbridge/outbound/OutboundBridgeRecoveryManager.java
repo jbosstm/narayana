@@ -23,6 +23,7 @@ package org.jboss.jbossts.txbridge.outbound;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import org.apache.log4j.Logger;
+import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
 /**
  * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide
@@ -76,6 +77,8 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     {
         log.trace("periodicWorkSecondPass()");
 
-        // TODO BridgeWrapper recovery scan for orphans - pending JBTM-725 work.
+        BridgeWrapper[] bridgeWrappers = BridgeWrapper.scan(OutboundBridgeManager.BRIDGEWRAPPER_PREFIX);
+        // TODO: do something useful with the results.
+        
     }
 }

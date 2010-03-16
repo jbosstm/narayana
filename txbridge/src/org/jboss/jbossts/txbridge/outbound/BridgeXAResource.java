@@ -106,7 +106,7 @@ public class BridgeXAResource implements XAResource, Serializable
         try
         {
             bridgeWrapper = BridgeWrapper.recover(bridgeWrapperId);
-            // TODO: check for null!
+            // rollback and commit will deal with bridgeWrapper == null cases via ensureRecoveryIsDoneIfNeeded
         }
         catch(UnknownTransactionException unknownTransactionException)
         {
@@ -116,6 +116,36 @@ public class BridgeXAResource implements XAResource, Serializable
             throw ioException;
         }
     }
+
+    /**
+     * Attempts to reconnect the BridgeWrapper if it's not already connected.
+     * If XTS is not ready yet, throws the specified Exception.
+     *
+     * @param exceptionCode a XAException status code.
+     * @throws XAException if XTS recovery is not complete.
+     */
+    private void ensureRecoveryIsDoneIfNeeded(int exceptionCode) throws XAException
+    {
+        if(bridgeWrapper == null) {
+            // XTS recovery was not ready when deserialization ran. maybe it's ready now, so try again...
+            try
+            {
+                bridgeWrapper = BridgeWrapper.recover(bridgeWrapperId);
+                if(bridgeWrapper == null) {
+                    // nope, still not ready...
+                    throw new XAException(exceptionCode);
+                }
+            }
+            catch(UnknownTransactionException unknownTransactionException)
+            {
+                log.error("Unable to recover subordinate transaction id="+bridgeWrapperId, unknownTransactionException);
+                XAException xaException = new XAException(XAException.XAER_NOTA);
+                xaException.initCause(unknownTransactionException);
+                throw xaException;
+            }
+        }
+    }
+
 
     /**
      * Ask the resource manager to prepare for a transaction commit of the transaction specified in xid.
@@ -162,6 +192,10 @@ public class BridgeXAResource implements XAResource, Serializable
     {
         log.trace("rollback(Xid="+xid+")");
 
+        // if XTS has not finished recovery yet we can't throw XA_RETRY here.
+        // We'll settle for RMFAIL which has transient semantics.
+        ensureRecoveryIsDoneIfNeeded(XAException.XAER_RMFAIL);
+
         try
         {
             bridgeWrapper.rollback();
@@ -182,6 +216,9 @@ public class BridgeXAResource implements XAResource, Serializable
     public void commit(Xid xid, boolean onePhase) throws XAException
     {
         log.trace("commit(Xid="+xid+", onePhase="+onePhase+")");
+
+        // if XTS has not finished recovery yet we wont be able to complete until it does.
+        ensureRecoveryIsDoneIfNeeded(XAException.XA_RETRY);
 
         try
         {

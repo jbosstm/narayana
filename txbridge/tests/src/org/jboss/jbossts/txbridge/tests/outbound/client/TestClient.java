@@ -18,28 +18,25 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.txbridge.tests.inbound.client;
+package org.jboss.jbossts.txbridge.tests.outbound.client;
 
-import com.arjuna.mw.wst11.UserTransactionFactory;
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import com.arjuna.wst.TransactionRolledBackException;
+import com.arjuna.ats.jta.exceptions.RollbackException;
 import org.apache.log4j.Logger;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Servlet which includes test methods for exercising the txbridge.
@@ -50,6 +47,7 @@ public class TestClient extends HttpServlet
 {
     private static Logger log = Logger.getLogger(TestClient.class);
 
+    private UserTransaction userTransaction;
     private ServletContext context;
     private TestService testService;
 
@@ -62,17 +60,14 @@ public class TestClient extends HttpServlet
     {
         try
         {
-            URL wsdlLocation = new URL("http://localhost:8080/txbridge-inbound-tests-service/TestServiceImpl?wsdl");
-            QName serviceName = new QName("http://service.inbound.tests.txbridge.jbossts.jboss.org/", "TestServiceImplService");
+            Context ic = new InitialContext();
+            userTransaction = (UserTransaction) ic.lookup("java:comp/UserTransaction");
+
+            URL wsdlLocation = new URL("http://localhost:8080/txbridge-outbound-tests-service/TestServiceImpl?wsdl");
+            QName serviceName = new QName("http://service.outbound.tests.txbridge.jbossts.jboss.org/", "TestServiceImplService");
 
             Service service = Service.create(wsdlLocation, serviceName);
             testService = service.getPort(TestService.class);
-
-            // we could have used @HandlerChain but it's nice to show a bit of variety...
-            BindingProvider bindingProvider = (BindingProvider)testService;
-            List<Handler> handlers = new ArrayList<Handler>(1);
-            handlers.add(new JaxWSHeaderContextProcessor());
-            bindingProvider.getBinding().setHandlerChain(handlers);
 
             context = config.getServletContext();
         }
@@ -90,13 +85,11 @@ public class TestClient extends HttpServlet
 
         try
         {
-            com.arjuna.mw.wst11.UserTransaction ut = UserTransactionFactory.userTransaction();
-
             log.info("starting the transaction...");
 
-            ut.begin();
+            userTransaction.begin();
 
-            log.info("transaction ID= " + ut.toString());
+            log.info("transaction ID= " + userTransaction.toString());
 
             log.info("calling business Web Services...");
 
@@ -108,9 +101,9 @@ public class TestClient extends HttpServlet
 
             log.info("calling commit on the transaction...");
 
-            ut.commit();
+            userTransaction.commit();
         }
-        catch (final TransactionRolledBackException tre)
+        catch (final RollbackException re)
         {
             log.info("Transaction rolled back") ;
         }

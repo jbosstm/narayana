@@ -22,17 +22,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
-    <display-name>XML Transaction Bridge Test Client</display-name>
+    <display-name>XML Transaction Bridge Outbound Test Client</display-name>
 
-    <description>XML Transaction Bridge Test Client</description>
+    <description>XML Transaction Bridge Outbound Test Client</description>
 
     <servlet>
-        <servlet-name>Test Client Servlet</servlet-name>
-        <servlet-class>org.jboss.jbossts.txbridge.tests.inbound.client.TestClient</servlet-class>
+        <servlet-name>Outbound Test Client Servlet</servlet-name>
+        <servlet-class>org.jboss.jbossts.txbridge.tests.outbound.client.TestClient</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Test Client Servlet</servlet-name>
+        <servlet-name>Outbound Test Client Servlet</servlet-name>
         <url-pattern>/testclient</url-pattern>
     </servlet-mapping>
 </web-app>
