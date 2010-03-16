@@ -20,10 +20,14 @@
  */
 package com.arjuna.common.tests.simple;
 
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import org.junit.Test;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -47,5 +51,113 @@ public class EnvironmentBeanTest
         Set<Object> expectedKeys = testBean.getProperties().keySet();
 
         assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
+    }
+
+    ///////////////////////////////////////////////
+
+    public static void testBeanByReflection(Object environmentBean) throws Exception {
+
+        for(Field field : environmentBean.getClass().getDeclaredFields()) {
+            Class type = field.getType();
+
+            String setterMethodName = "set"+capitalizeFirstLetter(field.getName());
+            Method setter;
+            try {
+                setter = environmentBean.getClass().getMethod(setterMethodName, new Class[] {field.getType()});
+            } catch(NoSuchMethodException e) {
+                continue; // emma code coverage tool adds fields to instrumented classes - ignore them.
+            }
+
+            String getterMethodName;
+            Method getter = null;
+            if(field.getType().equals(Boolean.TYPE)) {
+                getterMethodName = "is"+capitalizeFirstLetter(field.getName());
+                try {
+                    getter = environmentBean.getClass().getMethod(getterMethodName, new Class[] {});
+                } catch (NoSuchMethodException e) {}
+            }
+
+            if(getter == null) {
+                getterMethodName = "get"+capitalizeFirstLetter(field.getName());
+                getter = environmentBean.getClass().getMethod(getterMethodName, new Class[] {});
+            }
+
+            if(field.getType().getName().startsWith("java.util")) {
+                handleGroupProperty(environmentBean, field, setter, getter);
+            } else {
+                handleSimpleProperty(environmentBean, field, setter, getter);
+            }
+        }
+
+    }
+
+    private static void handleGroupProperty(Object bean, Field field, Method setter, Method getter)
+        throws Exception
+    {
+        Object inputValue = null;
+
+        if(java.util.Map.class.isAssignableFrom(field.getType())) {
+
+            inputValue = new HashMap<String,String>();
+            ((Map)inputValue).put("testKey", "testValue");
+
+        } else {
+
+            inputValue = new ArrayList<String>();
+            ((List)inputValue).add("testValue");
+            
+        }
+
+        setter.invoke(bean, new Object[] {inputValue});
+
+        Object outputValue = getter.invoke(bean, new Object[] {});
+
+        assertEquals(inputValue, outputValue);
+        assertNotSame(inputValue, outputValue);
+
+        setter.invoke(bean, new Object[] {null});
+        outputValue = getter.invoke(bean, new Object[] {});
+        assertNotNull(outputValue);
+        assertTrue(((Collection)outputValue).isEmpty());
+
+    }
+
+    private static void handleSimpleProperty(Object bean, Field field, Method setter, Method getter)
+            throws Exception
+    {
+        Object inputValue = null;
+
+        if(field.getType().equals(Boolean.TYPE)) {
+
+            inputValue = Boolean.TRUE;
+            setter.invoke(bean, new Object[]{ inputValue });
+
+        } else if(field.getType().equals(String.class)) {
+
+            inputValue = "inputValue";
+            setter.invoke(bean, new Object[] {inputValue});
+
+        } else if(field.getType().equals(Long.TYPE)) {
+
+            inputValue = new Long(1001);
+            setter.invoke(bean, new Object[] {inputValue});
+
+        } else if(field.getType().equals(Integer.TYPE)) {
+
+            inputValue = new Integer(1001);
+            setter.invoke(bean, new Object[] {inputValue});
+
+        } else {
+
+            throw new Exception("unknown field type "+field.getType());
+        }
+
+        Object outputValue = getter.invoke(bean, new Object[] {});
+
+        assertEquals(inputValue, outputValue);
+    }
+
+    private static String capitalizeFirstLetter(String string) {
+        return (string.length()>0) ? (Character.toUpperCase(string.charAt(0))+string.substring(1)) : string;
     }
 }

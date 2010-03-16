@@ -21,7 +21,9 @@
 package com.arjuna.common.tests.logging;
 
 import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
+import com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean;
 import com.arjuna.common.internal.util.logging.commonPropertyManager;
+import com.arjuna.common.tests.simple.EnvironmentBeanTest;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 import com.arjuna.common.util.logging.*;
 
@@ -101,4 +103,15 @@ public class LogConfig
         }
 
     }
+
+    @Test
+    public void testLoggingEnvironmentBean() throws Exception {
+        EnvironmentBeanTest.testBeanByReflection(new LoggingEnvironmentBean());
+    }
+
+    @Test
+    public void testBasicLogEnvironmentBean() throws Exception {
+        EnvironmentBeanTest.testBeanByReflection(new BasicLogEnvironmentBean());
+    }
+
 }
