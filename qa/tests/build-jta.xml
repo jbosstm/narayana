@@ -39,7 +39,7 @@
 			<include name="jbossjta.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jta.jar"/>
+			<include name="jboss-transaction-api_1.1_spec.jar"/>
 		</fileset>
         <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
@@ -99,7 +99,7 @@
                 <!-- additional dependency, which is why we don't just do this in compile task above: -->
                 <!-- include classes for AS tests -->
                 <fileset dir="../../build/extlib">
-                    <include name="jta.jar"/>
+                    <include name="jboss-transaction-api_1.1_spec.jar"/>
                     <include name="jboss-ejb-api.jar"/>
                     <include name="jboss-server-manager.jar"/>
                     <include name="jboss-transaction-spi.jar"/>

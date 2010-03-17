@@ -22,7 +22,7 @@
 
     <property name="modulename" value="jtax"/>
 
-    <property name="global.ext.libs" value="jta.jar,jboss-jca-api.jar"/>
+    <property name="global.ext.libs" value="jboss-transaction-api_1.1_spec.jar,jboss-connector-api_1.5_spec.jar"/>
 
     <import file="../sharedbuild.xml"/>
 

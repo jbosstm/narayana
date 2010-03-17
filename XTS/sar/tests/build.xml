@@ -60,7 +60,7 @@
   <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-client.jar stax-api.jar
             jbossws-native-core.jar jbossws-common.jar jboss-jaxws.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.dir" location="${jbossas.home}/common/lib"/>
-    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
+    <property name="jboss.common.lib.jars" value="jboss-servlet-api_3.0_spec.jar"/>
 
   <target name="init">
     <delete dir="${build.dir}"/>

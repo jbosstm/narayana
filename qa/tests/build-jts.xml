@@ -49,7 +49,7 @@
 			<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jta.jar"/>
+			<include name="jboss-transaction-api_1.1_spec.jar"/>
 		</fileset>
 		<pathelement location="../../ArjunaJTS/orbportability/config"/>
 		<!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
@@ -223,8 +223,8 @@
                 <!-- include classes for AS tests -->
                 <fileset dir="../../build/extlib">
                     <include name="jboss-server-manager.jar"/>
-                    <include name="jta.jar"/>
-                    <include name="jboss-ejb-api.jar"/>
+                    <include name="jboss-transaction-api_1.1_spec.jar"/>
+                    <include name="jboss-ejb-api_3.1_spec.jar"/>
                     <include name="jboss-transaction-spi.jar"/>
                     <include name="jboss-remoting.jar"/>
                 </fileset>

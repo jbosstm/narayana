@@ -39,8 +39,8 @@
 
         <fileset dir="../build/extlib">
             <include name="log4j.jar"/>
-            <include name="jta.jar"/>
-            <include name="jboss-jca-api.jar"/>
+            <include name="jboss-transaction-api_1.1_spec.jar"/>
+            <include name="jboss-connector-api_1.5_spec.jar"/>
         </fileset>
 
         <fileset dir="${jbossts.home}/XTS/xts-install/lib">

@@ -72,7 +72,7 @@
     <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar
             jbossws-client.jar stax-api.jar
             jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
-            jta.jar servlet-api.jar dom4j.jar ${cxf.build.extlib.jars}"/>
+            jboss-transaction-api_1.1_spec.jar jboss-servlet-api_3.0_spec.jar dom4j.jar ${cxf.build.extlib.jars}"/>
 
         <!-- paths internal to build -->
 
