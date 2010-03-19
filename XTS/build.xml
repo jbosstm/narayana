@@ -274,7 +274,12 @@
         <ant dir="${sar.dir}" target="${sartype}"/>
     </target>
 
-    <target name="tests.build">
+    <target name="test.settype">
+        <condition property="testtype" value="tests-11">
+            <equals arg1="${sartype}" arg2="sar-11"/>
+        </condition>
+    </target>
+    <target name="tests.build" depends="test.settype">
         <!-- by default we build 1.0 and 1.1 for ease of testing,
             but release bundles should use -Dtesttype=tests-11 so that
             thay contain only the supported version. -->

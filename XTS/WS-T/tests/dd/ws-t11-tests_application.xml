@@ -35,7 +35,7 @@
     </module>
 
     <module>
-        <java>ws-t-tests.jar</java>
+        <java>ws-t11-tests.jar</java>
     </module>
 
     <module>

@@ -298,12 +298,16 @@
         <jar jarfile="${tests.build.lib.dir}/xts-test-servlet.jar">
             <fileset dir="${tests.build.classes.dir}" includes="com/arjuna/qa/junit/*.class"/>
         </jar>
+        <jar jarfile="${tests.build.lib.dir}/ws-c11-tests.jar">
+            <fileset dir="${tests.build.classes.dir}" />
+        </jar>
         <war warfile="${tests.build.webapps.dir}/ws-c11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml">
             <classes dir="${tests.build.classes.dir}"  excludes="com/arjuna/qa/junit/**/*.class"/>
         </war>
         <ear earfile="${tests.build.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c11-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="ws-c11-tests.war"/>
+            <fileset dir="${tests.build.lib.dir}" includes="ws-c11-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>

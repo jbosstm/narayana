@@ -402,7 +402,7 @@
     </target>
 
     <target name="tests-webapps11" depends="tests-compile11">
-        <jar jarfile="${tests.build.lib.dir}/ws-t-tests.jar">
+        <jar jarfile="${tests.build.lib.dir}/ws-t11-tests.jar">
             <fileset dir="${tests.build.classes.dir}"/>
         </jar>
         <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml">
@@ -412,7 +412,7 @@
         <ear earfile="${tests.build.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t11-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="ws-t11-tests.war"/>
-            <fileset dir="${tests.build.lib.dir}" includes="ws-t-tests.jar"/>
+            <fileset dir="${tests.build.lib.dir}" includes="ws-t11-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
