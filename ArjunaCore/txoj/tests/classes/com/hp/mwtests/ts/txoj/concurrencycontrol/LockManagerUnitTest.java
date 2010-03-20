@@ -29,52 +29,47 @@
  * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.recovery;
+package com.hp.mwtests.ts.txoj.concurrencycontrol;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
+import com.arjuna.ats.txoj.LockManager;
+import com.arjuna.ats.txoj.LockResult;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 import static org.junit.Assert.*;
 
-
-class DummyTOModule extends TORecoveryModule
+class DummyLockManager extends LockManager
 {
-    public void intialise ()
+    public DummyLockManager ()
     {
-        super.initialise();
+        super(new Uid(), ObjectType.ANDPERSISTENT);
     }
 }
 
-public class RecoveryModuleUnitTest
+
+public class LockManagerUnitTest
 {
     @Test
-    public void test () throws Exception
+    public void test () throws Throwable
     {
-        DummyTOModule trm = new DummyTOModule();
-        AtomicAction A = new AtomicAction();
-        
-        trm.intialise();
-        
-        A.begin();
-        
         AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
         
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
+        obj.finalize();
         
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
+        obj = new AtomicObject();
         
-        A.abort();
+        assertTrue(obj.releaselock(new Uid()));
+        assertEquals(obj.setlock(null), LockResult.REFUSED);
         
-        trm.periodicWorkFirstPass();
-        trm.periodicWorkSecondPass();
+        obj.print(new PrintWriter(new ByteArrayOutputStream()));
+        obj.printState(new PrintWriter(new ByteArrayOutputStream()));
+        
+        assertEquals(new DummyLockManager().type(), "StateManager/LockManager");
     }
 }

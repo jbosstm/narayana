@@ -29,52 +29,36 @@
  * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.recovery;
+package com.hp.mwtests.ts.txoj.concurrencycontrol;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import com.hp.mwtests.ts.txoj.common.resources.HammerThreadedObject;
 
 import static org.junit.Assert.*;
 
-
-class DummyTOModule extends TORecoveryModule
-{
-    public void intialise ()
-    {
-        super.initialise();
-    }
-}
-
-public class RecoveryModuleUnitTest
+public class LockConflictUnitTest
 {
     @Test
-    public void test () throws Exception
+    public void testAtomicObject () throws Exception
     {
-        DummyTOModule trm = new DummyTOModule();
-        AtomicAction A = new AtomicAction();
+        HammerThreadedObject.object = new AtomicObject();
+        HammerThreadedObject object1 = new HammerThreadedObject(2);
+        HammerThreadedObject object2 = new HammerThreadedObject(-2);
+
+        HammerThreadedObject.object.setRetry(2);
         
-        trm.intialise();
-        
-        A.begin();
-        
-        AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
-        
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
-        
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
-        
-        A.abort();
-        
-        trm.periodicWorkFirstPass();
-        trm.periodicWorkSecondPass();
+        object1.start();
+        object2.start();
+
+        try
+        {
+            object1.join();
+            object2.join();
+        }
+        catch (InterruptedException e)
+        {
+        }
     }
 }

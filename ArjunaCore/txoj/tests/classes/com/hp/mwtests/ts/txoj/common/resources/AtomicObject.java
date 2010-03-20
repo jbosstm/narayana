@@ -109,6 +109,16 @@ public class AtomicObject extends LockManager
             printDebug = true;
     }
 
+    public int getRetry ()
+    {
+        return retry;
+    }
+    
+    public void setRetry (int t)
+    {
+        retry = t;
+    }
+    
     public void terminate ()
     {
         super.terminate();
@@ -120,7 +130,7 @@ public class AtomicObject extends LockManager
 
         A.begin();
 
-        if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+        if (setlock(new Lock(LockMode.WRITE), retry) == LockResult.GRANTED)
         {
             state += value;
 
@@ -146,7 +156,7 @@ public class AtomicObject extends LockManager
 
         A.begin();
 
-        if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+        if (setlock(new Lock(LockMode.WRITE), retry) == LockResult.GRANTED)
         {
             state = value;
 
@@ -173,7 +183,7 @@ public class AtomicObject extends LockManager
 
         A.begin();
 
-        if (setlock(new Lock(LockMode.READ), 0) == LockResult.GRANTED)
+        if (setlock(new Lock(LockMode.READ), retry) == LockResult.GRANTED)
         {
             value = state;
 
@@ -239,5 +249,5 @@ public class AtomicObject extends LockManager
     private int state;
 
     private boolean printDebug;
-
+    private int retry = 0;
 };

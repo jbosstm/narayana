@@ -413,7 +413,7 @@ public class LockManager extends StateManager
             super.setupStore();
 
         while ((conflict == ConflictType.CONFLICT)
-                && ((retry >= 0) || (retry == LockManager.waitTotalTimeout)))
+                && ((retry >= 0) || ((retry == LockManager.waitTotalTimeout) && (sleepTime > 0))))
         {
             Object syncObject = ((currAct == null) ? getMutex() : currAct);
             
@@ -549,22 +549,22 @@ public class LockManager extends StateManager
                     if (conflict == ConflictType.CONFLICT)
                         freeState();
                 }
-    
-                if (conflict == ConflictType.CONFLICT)
+            }
+            
+            if (conflict == ConflictType.CONFLICT)
+            {
+                if (retry != 0)
                 {
-                    if (retry != 0)
+                    if (sleepTime > 0)
                     {
-                        if (sleepTime > 0)
-                        {
-                            sleepTime -= conflictManager.wait(retry, sleepTime);
-                        }
-                        else
-                            retry = 0;
+                        sleepTime -= conflictManager.wait(retry, sleepTime);
                     }
-    
-                    if (retry != LockManager.waitTotalTimeout)
-                        retry--;
+                    else
+                        retry = 0;
                 }
+
+                if (retry != LockManager.waitTotalTimeout)
+                    retry--;
             }
         }
 

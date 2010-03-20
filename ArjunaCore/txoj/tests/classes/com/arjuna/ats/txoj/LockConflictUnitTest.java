@@ -29,52 +29,24 @@
  * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.recovery;
+package com.arjuna.ats.txoj;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import com.arjuna.ats.txoj.LockConflictManager;
 
 import static org.junit.Assert.*;
 
-
-class DummyTOModule extends TORecoveryModule
-{
-    public void intialise ()
-    {
-        super.initialise();
-    }
-}
-
-public class RecoveryModuleUnitTest
+public class LockConflictUnitTest
 {
     @Test
     public void test () throws Exception
     {
-        DummyTOModule trm = new DummyTOModule();
-        AtomicAction A = new AtomicAction();
+        LockConflictManager manager = new LockConflictManager();
         
-        trm.intialise();
+        assertTrue(manager.wait(1, 100) != -1);
+        assertTrue(manager.wait(LockManager.waitTotalTimeout, 100) != -1);
         
-        A.begin();
-        
-        AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
-        
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
-        
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
-        
-        A.abort();
-        
-        trm.periodicWorkFirstPass();
-        trm.periodicWorkSecondPass();
+        manager.signal();
     }
 }

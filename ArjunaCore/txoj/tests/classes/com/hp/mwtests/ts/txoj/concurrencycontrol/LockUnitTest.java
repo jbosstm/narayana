@@ -29,52 +29,39 @@
  * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.recovery;
+package com.hp.mwtests.ts.txoj.concurrencycontrol;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import com.arjuna.ats.txoj.Lock;
+import com.arjuna.ats.txoj.LockMode;
+import com.arjuna.ats.txoj.LockStatus;
 
 import static org.junit.Assert.*;
 
-
-class DummyTOModule extends TORecoveryModule
-{
-    public void intialise ()
-    {
-        super.initialise();
-    }
-}
-
-public class RecoveryModuleUnitTest
+public class LockUnitTest
 {
     @Test
     public void test () throws Exception
     {
-        DummyTOModule trm = new DummyTOModule();
-        AtomicAction A = new AtomicAction();
+        Lock lock = new Lock();
         
-        trm.intialise();
+        lock = new Lock(LockMode.WRITE);
         
-        A.begin();
+        assertTrue(lock.getAllOwners() != null);
+        assertEquals(lock.getCurrentStatus(), LockStatus.LOCKFREE);
         
-        AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
+        assertFalse(lock.equals(new Object()));
+        assertFalse(lock.equals((Object) new Lock()));
+        assertTrue(lock.equals(lock));
         
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
+        assertTrue(lock.toString() != null);
         
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
+        assertEquals(lock.type(), "/StateManager/Lock");
         
-        A.abort();
-        
-        trm.periodicWorkFirstPass();
-        trm.periodicWorkSecondPass();
+        lock.print(new PrintWriter(new ByteArrayOutputStream()));
     }
 }
