@@ -73,6 +73,35 @@ public class OnePhaseUnitTest
     }
     
     @Test
+    public void testFailure () throws Exception
+    {
+        SampleOnePhaseResource res = new SampleOnePhaseResource(ErrorType.heurmix);
+        XAOnePhaseResource xares = new XAOnePhaseResource(res, new XidImple(new Uid()), null);
+        
+        assertEquals(xares.commit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        
+        res = new SampleOnePhaseResource(ErrorType.rmerr);
+        xares = new XAOnePhaseResource(res, new XidImple(new Uid()), null);
+        
+        assertEquals(xares.commit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+        
+        res = new SampleOnePhaseResource(ErrorType.nota);
+        xares = new XAOnePhaseResource(res, new XidImple(new Uid()), null);
+        
+        assertEquals(xares.commit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        
+        res = new SampleOnePhaseResource(ErrorType.inval);
+        xares = new XAOnePhaseResource(res, new XidImple(new Uid()), null);
+        
+        assertEquals(xares.commit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        
+        res = new SampleOnePhaseResource(ErrorType.proto);
+        xares = new XAOnePhaseResource(res, new XidImple(new Uid()), null);
+        
+        assertEquals(xares.commit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+    }
+    
+    @Test
     public void testInvalid ()
     {
         XAOnePhaseResource xares = new XAOnePhaseResource();

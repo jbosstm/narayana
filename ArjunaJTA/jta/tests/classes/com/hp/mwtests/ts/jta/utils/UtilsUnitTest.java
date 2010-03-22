@@ -19,10 +19,11 @@
  * @author JBoss Inc.
  */
 
-package com.hp.mwtests.ts.jta.basic;
+package com.hp.mwtests.ts.jta.utils;
 
 import javax.transaction.Status;
 import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
@@ -35,6 +36,28 @@ import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
 
 import static org.junit.Assert.*;
+
+class DummyXid implements Xid
+{
+    public byte[] getBranchQualifier ()
+    {
+        return _branch;
+    }
+
+    public int getFormatId ()
+    {
+        return 0;
+    }
+
+    public byte[] getGlobalTransactionId ()
+    {
+        return _gtid;
+    }
+    
+    private byte[] _branch = {1, 2};
+    private byte[] _gtid = {3, 4};
+}
+
 
 public class UtilsUnitTest
 {
@@ -170,5 +193,7 @@ public class UtilsUnitTest
         x.data = new byte[] { '1', '2' };
         
         assertTrue(x.toString() != null);
+        
+        XAHelper.xidToString(new DummyXid());
     }
 }

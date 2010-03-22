@@ -26,7 +26,7 @@ import javax.transaction.xa.Xid;
 
 public class SampleOnePhaseResource extends TestResource
 {
-    public enum ErrorType { none, heurcom, heurrb };
+    public enum ErrorType { none, heurcom, heurrb, heurmix, rmerr, nota, inval, proto };
     
     public SampleOnePhaseResource ()
     {
@@ -60,6 +60,31 @@ public class SampleOnePhaseResource extends TestResource
         {
             if (_heuristic == ErrorType.heurrb)
                 throw new XAException(XAException.XA_HEURRB);
+            else
+            {
+                if (_heuristic == ErrorType.heurmix)
+                    throw new XAException(XAException.XA_HEURMIX);
+                else
+                {
+                    if (_heuristic == ErrorType.rmerr)
+                        throw new XAException(XAException.XAER_RMERR);
+                    else
+                    {
+                        if (_heuristic == ErrorType.nota)
+                            throw new XAException(XAException.XAER_NOTA);
+                        else
+                        {
+                            if (_heuristic == ErrorType.inval)
+                                throw new XAException(XAException.XAER_INVAL);
+                            else
+                            {
+                                if (_heuristic == ErrorType.proto)
+                                    throw new XAException(XAException.XAER_PROTO);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     
