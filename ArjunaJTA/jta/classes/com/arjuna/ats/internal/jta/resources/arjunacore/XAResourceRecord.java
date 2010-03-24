@@ -718,6 +718,8 @@ public class XAResourceRecord extends AbstractRecord
 	                "XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
 	    }
 
+	    boolean commit = true;
+	    
 	    if (_tranID == null)
 	    {
 	        if (jtaLogger.loggerI18N.isWarnEnabled())
@@ -738,7 +740,6 @@ public class XAResourceRecord extends AbstractRecord
 	            if (_heuristic != TwoPhaseOutcome.FINISH_OK)
 	                return _heuristic;
 
-	            boolean commit = true;
 	            XAException endHeuristic = null;
 
 	            try
@@ -901,7 +902,10 @@ public class XAResourceRecord extends AbstractRecord
 	            return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	    }
 
-	    return TwoPhaseOutcome.FINISH_OK;
+	    if (commit)
+	        return TwoPhaseOutcome.FINISH_OK;
+	    else
+	        return TwoPhaseOutcome.FINISH_ERROR;
 	}
 
 	public boolean forgetHeuristic()

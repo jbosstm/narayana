@@ -55,6 +55,7 @@ public class SubordinateAtomicAction extends
 		super();  // does start for us
 
 		_activated = true;
+		_theXid = new XidImple(Uid.nullUid());
 	}
 
 	public SubordinateAtomicAction (Uid actId)
@@ -62,6 +63,7 @@ public class SubordinateAtomicAction extends
 		super(actId);
 		
 		_activated = activate(); // if this fails, we'll retry later.
+		_theXid = new XidImple(actId);
 	}
 	
 	public SubordinateAtomicAction (int timeout, Xid xid)

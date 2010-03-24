@@ -404,7 +404,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 
 		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
-
+		
 		if (_theTransaction != null)
 		{
 			return StatusConverter.convert(_theTransaction.status());

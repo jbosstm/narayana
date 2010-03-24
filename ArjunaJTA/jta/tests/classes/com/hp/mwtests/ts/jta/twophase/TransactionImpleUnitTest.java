@@ -46,12 +46,18 @@ import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
+import com.hp.mwtests.ts.jta.common.Synchronization;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 
 import static org.junit.Assert.*;
 
 class TxImpleOverride extends TransactionImple
 {
+    public TxImpleOverride ()
+    {
+        super();
+    }
+    
     public static void put (TransactionImple tx)
     {
         TransactionImple.putTransaction(tx);
@@ -237,5 +243,60 @@ public class TransactionImpleUnitTest
         catch (final IllegalStateException ex)
         {
         }
+    }
+    
+    @Test
+    public void testInvalid () throws Exception
+    {
+        ThreadActionData.purgeActions();
+        
+        TxImpleOverride tx = new TxImpleOverride();
+        
+        assertEquals(tx.hashCode(), -1);
+        assertEquals(tx.getStatus(), Status.STATUS_NO_TRANSACTION);
+        
+        try
+        {
+            tx.commit();
+            
+            fail();
+        }
+        catch (final IllegalStateException ex)
+        {
+        }
+        
+        try
+        {
+            tx.rollback();
+            
+            fail();
+        }
+        catch (final IllegalStateException ex)
+        {
+        }
+        
+        try
+        {
+            tx.setRollbackOnly();
+            
+            fail();
+        }
+        catch (final IllegalStateException ex)
+        {
+        }
+        
+        try
+        {
+            tx.registerSynchronization(new Synchronization());
+            
+            fail();
+        }
+        catch (final IllegalStateException ex)
+        {
+        }
+        
+        tx.toString();
+        
+        assertFalse(tx.isAlive());
     }
 }

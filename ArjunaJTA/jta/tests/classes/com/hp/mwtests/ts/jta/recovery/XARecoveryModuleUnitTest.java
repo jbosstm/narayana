@@ -35,8 +35,11 @@ import java.util.ArrayList;
 
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import com.arjuna.ats.jta.xa.XidImple;
+
 import org.junit.Test;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple;
@@ -80,6 +83,8 @@ public class XARecoveryModuleUnitTest
             xarm.periodicWorkFirstPass();
             xarm.periodicWorkSecondPass();
         }
+        
+        assertTrue(xarm.getNewXAResource(new XidImple(new Uid())) == null);
     }
 
     @Test

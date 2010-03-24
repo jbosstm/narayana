@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import javax.transaction.xa.XAException;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.ObjectType;
@@ -45,6 +47,8 @@ import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
 import com.hp.mwtests.ts.jta.common.TestResource;
+import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
+import com.hp.mwtests.ts.jta.common.FailureXAResource.FailType;
 
 import static org.junit.Assert.*;
 
@@ -93,6 +97,16 @@ public class XAResourceRecordUnitTest
         InputObjectState is = new InputObjectState(os);
         
         assertTrue(xares.restore_state(is, ObjectType.ANDPERSISTENT));
+        
+        xares = new XAResourceRecord(new TransactionImple(0), new DummyXA(false), new XidImple(new Uid()), null);
+        
+        os = new OutputObjectState();
+        
+        assertTrue(xares.save_state(os, ObjectType.ANDPERSISTENT));
+        
+        is = new InputObjectState(os);
+        
+        assertTrue(xares.restore_state(is, ObjectType.ANDPERSISTENT));
     }
     
     @Test
@@ -131,7 +145,7 @@ public class XAResourceRecordUnitTest
         XAResourceRecord xares = new XAResourceRecord(tx, fxa, tx.getTxId(), null);
         
         assertEquals(xares.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
-        assertEquals(xares.topLevelAbort(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        assertEquals(xares.topLevelAbort(), TwoPhaseOutcome.HEURISTIC_MIXED);
         assertTrue(xares.forgetHeuristic());
     }
     
@@ -154,6 +168,38 @@ public class XAResourceRecordUnitTest
         XAResourceRecord xares = new XAResourceRecord(tx, res, tx.getTxId(), null);
         
         assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_OK);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.end, FailType.normal), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.end, FailType.timeout), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_ERROR);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.heurcom), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_OK);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.timeout), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.nota), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.inval), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.proto), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.rmfail), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_ERROR);
     }
     
     @Test
