@@ -100,6 +100,12 @@ public class RecordTypeManager
     
     static
     {
-        // trawl through properties to find bindings
+        /*
+         * TODO
+         * At present all record types that we need are known at compile time or can be
+         * added programmatically. We may want to allow them to be specified dynamically,
+         * e.g., on the command line or in a configuration file, but when that requirement
+         * happens we can fill in this block ...
+         */
     }
 }
