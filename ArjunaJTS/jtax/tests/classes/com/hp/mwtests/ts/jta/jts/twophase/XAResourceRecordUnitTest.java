@@ -200,7 +200,7 @@ public class XAResourceRecordUnitTest extends TestBase
             
             fail();
         }
-        catch (final HeuristicHazard ex)
+        catch (final HeuristicMixed ex)
         {      
         }
         
