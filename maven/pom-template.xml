@@ -164,6 +164,16 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- warning: evil maven kludge -->
+            <dependency>
+                <groupId>org.jboss.ejb3.bom</groupId>
+                <artifactId>bom-as6</artifactId>
+                <version>0.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <!-- http://repository.jboss.com/maven2/org/jboss/jbossas/jboss-as-component-matrix/
                      http://snapshots.jboss.org/maven2/org/jboss/jbossas/jboss-as-component-matrix/ -->
