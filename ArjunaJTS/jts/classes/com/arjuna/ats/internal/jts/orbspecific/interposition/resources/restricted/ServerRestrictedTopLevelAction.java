@@ -74,12 +74,10 @@ public ServerRestrictedTopLevelAction (ServerControl myControl)
     {
 	super(myControl);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerRestrictedTopLevelAction::ServerRestrictedTopLevelAction ( "+
-					       ((myControl != null) ? myControl.get_uid() : Uid.nullUid())+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerRestrictedTopLevelAction::ServerRestrictedTopLevelAction ( " +
+                ((myControl != null) ? myControl.get_uid() : Uid.nullUid()) + " )");
+    }
     }
 
 public final synchronized ServerControl deepestControl ()

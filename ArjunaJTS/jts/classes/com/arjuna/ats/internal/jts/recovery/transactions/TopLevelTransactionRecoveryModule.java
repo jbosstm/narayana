@@ -36,7 +36,7 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 
@@ -58,12 +58,9 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
 {
     public TopLevelTransactionRecoveryModule ()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	  {
-	      jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					 FacilityCode.FAC_CRASH_RECOVERY, 
-					 "com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_1");
-	  }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_1");
+    }
 
 	// Set the transaction type that this module wants to recover
 	if (_transactionType == null)
@@ -73,13 +70,9 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
     public void finalize () throws Throwable
     {
 	super.finalize();
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.DESTRUCTORS, 
-					   VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_2");
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_2");
+    }
     }
 
     /**
@@ -108,13 +101,9 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
      */
     protected void initialise ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-					   VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "TopLevelTransactionRecoveryModule.initialise()");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransactionRecoveryModule.initialise()");
+    }
 	super.initialise();
     }
 

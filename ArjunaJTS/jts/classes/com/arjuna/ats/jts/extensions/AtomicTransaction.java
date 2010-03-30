@@ -85,10 +85,9 @@ public class AtomicTransaction
 
 	public AtomicTransaction ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::AtomicTransaction ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::AtomicTransaction ()");
+        }
 
 		_theAction = null;
 		_theStatus = Status.StatusNoTransaction;
@@ -108,10 +107,9 @@ public class AtomicTransaction
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction.finalize ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction.finalize ()");
+        }
 
 		if (_theAction != null)
 		{
@@ -170,10 +168,9 @@ public class AtomicTransaction
 
 	public String get_transaction_name () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::get_transaction_name ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::get_transaction_name ()");
+        }
 
 		if (_theAction != null)
 		{
@@ -210,10 +207,9 @@ public class AtomicTransaction
 
 	public void begin () throws SubtransactionsUnavailable, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::begin ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::begin ()");
+        }
 
 		// already begun?
 
@@ -234,11 +230,10 @@ public class AtomicTransaction
 
 		_theStatus = current.get_status();
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::begin create "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::begin create "
+                    + _theAction);
+        }
 	}
 
 	/*
@@ -269,11 +264,10 @@ public class AtomicTransaction
 	public void commit (boolean report_heuristics) throws NoTransaction,
 			HeuristicMixed, HeuristicHazard, WrongTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::commit ( "
-					+ report_heuristics + " ) for " + _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::commit ( "
+                    + report_heuristics + " ) for " + _theAction);
+        }
 
 		/*
 		 * We shouldn't need to synchronize for the entire duration of the
@@ -364,11 +358,10 @@ public class AtomicTransaction
 	public void rollback () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::rollback for "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::rollback for "
+                    + _theAction);
+        }
 
 		/*
 		 * We shouldn't need to synchronize for the entire duration of the
@@ -432,11 +425,10 @@ public class AtomicTransaction
 
 	public void set_timeout (int seconds) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::set_timeout ( "
-					+ seconds + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::set_timeout ( "
+                    + seconds + " )");
+        }
 
 		CurrentImple current = OTSImpleManager.current();
 
@@ -459,11 +451,10 @@ public class AtomicTransaction
 		{
 			int val = current.get_timeout();
 
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::get_timeout returning "
-						+ val);
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("AtomicTransaction::get_timeout returning "
+                        + val);
+            }
 
 			return val;
 		}
@@ -527,11 +518,10 @@ public class AtomicTransaction
 	public RecoveryCoordinator registerResource (Resource r) throws Inactive,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::registerResource ( "
-					+ r + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::registerResource ( "
+                    + r + " )");
+        }
 
 		RecoveryCoordinator rc = null;
 
@@ -560,11 +550,10 @@ public class AtomicTransaction
 	public void registerSubtranAware (SubtransactionAwareResource r)
 			throws Inactive, NotSubtransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::registerSubtranAware ( "
-					+ r + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::registerSubtranAware ( "
+                    + r + " )");
+        }
 
 		synchronized (_theStatus)
 		{
@@ -591,11 +580,10 @@ public class AtomicTransaction
 	public void registerSynchronization (Synchronization sync) throws Inactive,
 			SynchronizationUnavailable, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::registerSynchronization ( "
-					+ sync + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::registerSynchronization ( "
+                    + sync + " )");
+        }
 
 		synchronized (_theStatus)
 		{
@@ -685,11 +673,10 @@ public class AtomicTransaction
 	public void suspend () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::suspend called for "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::suspend called for "
+                    + _theAction);
+        }
 
 		synchronized (_theStatus)
 		{
@@ -724,11 +711,10 @@ public class AtomicTransaction
 
 	public void resume () throws InvalidControl, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::resume called for "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::resume called for "
+                    + _theAction);
+        }
 
 		synchronized (_theStatus)
 		{
@@ -747,13 +733,12 @@ public class AtomicTransaction
 	{
 		_theStatus = getStatus();
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::get_status called for "
-					+ _theAction
-					+ " returning "
-					+ Utility.stringStatus(_theStatus));
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::get_status called for "
+                    + _theAction
+                    + " returning "
+                    + Utility.stringStatus(_theStatus));
+        }
 
 		return _theStatus;
 	}
@@ -765,11 +750,10 @@ public class AtomicTransaction
 
 	public void rollbackOnly () throws SystemException, NoTransaction
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::rollbackOnly called for "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::rollbackOnly called for "
+                    + _theAction);
+        }
 
 		synchronized (_theStatus)
 		{
@@ -821,11 +805,10 @@ public class AtomicTransaction
 
 	protected final boolean validTransaction ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::validTransaction called for "
-					+ _theAction);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::validTransaction called for "
+                    + _theAction);
+        }
 
 		/*
 		 * If we get here then _theAction is not null.
@@ -893,10 +876,9 @@ public class AtomicTransaction
 
 	protected AtomicTransaction (ControlWrapper tx)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::AtomicTransaction ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("AtomicTransaction::AtomicTransaction ()");
+        }
 
 		_theAction = tx;
 		_theStatus = getStatus();

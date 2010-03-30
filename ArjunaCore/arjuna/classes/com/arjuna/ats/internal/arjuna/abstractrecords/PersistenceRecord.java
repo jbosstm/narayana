@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -43,8 +42,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import java.io.PrintWriter;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import java.io.IOException;
@@ -139,11 +136,10 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super(os, sm);
 
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::PersistenceRecord("
-					+ os + ", " + sm.get_uid() + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::PersistenceRecord("
+                    + os + ", " + sm.get_uid() + ")");
+        }
 
 		shadowMade = false;
 		store = objStore;
@@ -167,11 +163,10 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelAbort ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelAbort() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::topLevelAbort() for "
+                    + order());
+        }
 
 		Uid uid = null;
 		String type = null;
@@ -225,29 +220,25 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCommit ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelCommit() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCommit() for "
+                    + order());
+        }
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_1", new Object[]
-			{ order(), getTypeOfObject() });
-		}
+		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_1", new Object[]
+                    {order(), getTypeOfObject()});
+        }
 
 		if (tsLogger.arjLogger.isDebugEnabled())
 		{
-			if (store != null)
-			{
-				tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, ", store = "
-						+ store + "(" + store.typeIs() + ")");
-			}
-			else
-			{
-				tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "");
-			}
+			if (store != null) {
+                tsLogger.arjLogger.debug(", store = "
+                        + store + "(" + store.typeIs() + ")");
+            }
+			else {
+                tsLogger.arjLogger.debug("");
+            }
 		}
 
 		boolean result = false;
@@ -323,11 +314,10 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelPrepare ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelPrepare() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::topLevelPrepare() for "
+                    + order());
+        }
 
 		int result = TwoPhaseOutcome.PREPARE_NOTOK;
 		StateManager sm = super.objectAddr;
@@ -415,11 +405,10 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCleanup ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelCleanup() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCleanup() for "
+                    + order());
+        }
 
 		return TwoPhaseOutcome.FINISH_OK;
 	}
@@ -435,11 +424,10 @@ public class PersistenceRecord extends RecoveryRecord
 
     public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::restore_state() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::restore_state() for "
+                    + order());
+        }
 
 		boolean res = false;
 		int objStoreType = 0;
@@ -450,11 +438,10 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			objStoreType = os.unpackInt();
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
-			{
-				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_9", new Object[]
-				{ Integer.toString(objStoreType) });
-			}
+			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_9", new Object[]
+                        {Integer.toString(objStoreType)});
+            }
 
 			if (ObjectStoreType.valid(objStoreType))
 			{
@@ -494,11 +481,10 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public boolean save_state (OutputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::save_state() for "
-					+ order());
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::save_state() for "
+                    + order());
+        }
 
 		boolean res = true;
 
@@ -519,18 +505,16 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					os.packInt(store.typeIs());
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled())
-					{
-						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_12", new Object[]
-						{ Integer.toString(store.typeIs()) });
-					}
+					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_12", new Object[]
+                                {Integer.toString(store.typeIs())});
+                    }
 
 					store.pack(os);
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled())
-					{
-						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_13");
-					}
+					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_13");
+                    }
 
 					os.packBoolean(shadowMade);
 
@@ -601,10 +585,9 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-			tsLogger.arjLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_17");
-		}
+		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_17");
+        }
 
 		shadowMade = false;
 		store = null;

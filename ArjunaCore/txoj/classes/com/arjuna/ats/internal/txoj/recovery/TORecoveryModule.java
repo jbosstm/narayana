@@ -96,14 +96,8 @@ public class TORecoveryModule implements RecoveryModule
     @SuppressWarnings("unchecked")
     public TORecoveryModule()
     {
-        if (txojLogger.aitLoggerI18N.isDebugEnabled())
-        {
-            txojLogger.aitLoggerI18N
-                    .debug(
-                            DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1");
+        if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+            txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1");
         }
 
         /*
@@ -185,17 +179,10 @@ public class TORecoveryModule implements RecoveryModule
                                             _uncommittedTOTable.put(newUid,newTypeString);
                                             
                                             if (txojLogger.aitLoggerI18N
-                                                    .isDebugEnabled())
-                                            {
-                                                txojLogger.aitLoggerI18N
-                                                        .debug(
-                                                                DebugLevel.FUNCTIONS,
-                                                                VisibilityLevel.VIS_PUBLIC,
-                                                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                                                "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4",
-                                                                new Object[]
-                                                                { newUid,
-                                                                        newTypeString });
+                                                    .isDebugEnabled()) {
+                                                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4", new Object[]
+                                                        {newUid,
+                                                                newTypeString});
                                             }
                                         }
                                     }
@@ -260,31 +247,17 @@ public class TORecoveryModule implements RecoveryModule
                 }
                 else
                 {
-                    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-                    {
-                        txojLogger.aitLoggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                        "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7",
-                                        new Object[]
-                                        { objUid, objType });
+                    if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7", new Object[]
+                                {objUid, objType});
                     }
                 }
             }
             catch (ObjectStoreException ose)
             {
-                if (txojLogger.aitLoggerI18N.isDebugEnabled())
-                {
-                    txojLogger.aitLoggerI18N
-                            .debug(
-                                    DebugLevel.FUNCTIONS,
-                                    VisibilityLevel.VIS_PUBLIC,
-                                    com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                    "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8",
-                                    new Object[]
-                                    { objUid, objType });
+                if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                    txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8", new Object[]
+                            {objUid, objType});
                 }
             }
         }
@@ -296,28 +269,16 @@ public class TORecoveryModule implements RecoveryModule
 
     protected void initialise ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PROTECTED,
-                            com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                            "TORecoveryModule.initialise()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("TORecoveryModule.initialise()");
         }
     }
 
     private final void recoverObject (Uid objUid, String objType)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                            "TORecoveryModule.recoverObject(" + objUid + ", "
-                                    + objType + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("TORecoveryModule.recoverObject(" + objUid + ", "
+                    + objType + ")");
         }
 
         /*

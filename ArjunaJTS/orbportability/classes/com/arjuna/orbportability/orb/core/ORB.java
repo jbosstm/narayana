@@ -31,8 +31,8 @@
 
 package com.arjuna.orbportability.orb.core;
 
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.DebugLevel;
+
+
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.*;
 
@@ -142,10 +142,8 @@ private final void initialise ()
             }
         }
 
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_ORB_PORTABILITY, "ORB.initialise() - using ORB Implementation "+className);
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB.initialise() - using ORB Implementation " + className);
         }
 
 	try

@@ -101,12 +101,9 @@ public static final void setCreator (RecoveryCreator c)
 
 public static final RecoveryCoordinator createRecoveryCoordinator (Resource res, Object[] params) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-				   "RecoveryCreator::createRecoveryCoordinator");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("RecoveryCreator::createRecoveryCoordinator");
+    }
 
 	return getCreator().create(res, params);
     }

@@ -64,11 +64,9 @@ public class ServerRecoveryTopLevelAction extends ServerTopLevelAction
 
 	_theControl = control;
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				   com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerRecoveryTopLevelAction::ServerRecoveryTopLevelAction ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerRecoveryTopLevelAction::ServerRecoveryTopLevelAction ( " + _theUid + " )");
+    }
     }
 
     /*

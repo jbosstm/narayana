@@ -28,9 +28,6 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -94,11 +91,8 @@ public class VolatileStore extends ObjectStore
 
     public int currentState(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.currentState(Uid="+u+", typeName="+tn+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("VolatileStore.currentState(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return getState(u);
@@ -166,11 +160,8 @@ public class VolatileStore extends ObjectStore
 
     public InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.read_committed(Uid="+u+", typeName="+tn+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("VolatileStore.read_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return read(u, tn, StateStatus.OS_COMMITTED);
@@ -200,11 +191,8 @@ public class VolatileStore extends ObjectStore
 
     public boolean remove_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.remove_committed(Uid="+u+", typeName="+tn+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("VolatileStore.remove_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return remove(u, tn, StateStatus.OS_COMMITTED);
@@ -236,11 +224,8 @@ public class VolatileStore extends ObjectStore
 
     public boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.write_committed(Uid="+u+", typeName="+tn+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("VolatileStore.write_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return write(u, tn, buff, StateStatus.OS_COMMITTED);

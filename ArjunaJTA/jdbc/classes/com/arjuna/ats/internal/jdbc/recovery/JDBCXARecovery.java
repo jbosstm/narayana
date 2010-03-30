@@ -39,7 +39,7 @@ import javax.sql.*;
 import javax.transaction.xa.*;
 import com.arjuna.common.util.logging.*;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 
@@ -69,7 +69,7 @@ public class JDBCXARecovery implements XAResourceRecovery
         throws SQLException
     {
         if (jdbcLogger.logger.isDebugEnabled())
-            jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, "JDBCXARecovery()");
+            jdbcLogger.logger.debug("JDBCXARecovery()");
 
         _props                   = null;
         _hasMoreResources        = false;
@@ -89,7 +89,7 @@ public class JDBCXARecovery implements XAResourceRecovery
         throws SQLException
     {
         if (jdbcLogger.logger.isDebugEnabled())
-            jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, "JDBCXARecovery.initialise(" + parameter + ")");
+            jdbcLogger.logger.debug("JDBCXARecovery.initialise(" + parameter + ")");
 
         if (parameter == null)
             return false;

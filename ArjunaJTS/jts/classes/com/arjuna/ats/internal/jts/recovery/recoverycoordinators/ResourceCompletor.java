@@ -35,7 +35,7 @@ import com.arjuna.ats.arjuna.common.*;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 /**
@@ -71,25 +71,17 @@ public class ResourceCompletor extends Thread
     {
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
-		{
-		    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-					   VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "ResourceCompletor.rollback()");
-		}
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ResourceCompletor.rollback()");
+        }
 	    
 	    _res.rollback();
 	}
 	catch (Exception e)
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor_1", new Object[]{e});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor_1", new Object[]{e});
+        }
 	}
     }
 

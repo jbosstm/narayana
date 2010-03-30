@@ -75,27 +75,6 @@ public class LogFactory {
      */
     private static boolean m_isInitialized = false;
 
-    /**
-     * Level for finer-debug logging.
-     *
-     * @see DebugLevel for possible values.
-     */
-    private static long m_debugLevel = DebugLevel.NO_DEBUGGING;
-
-    /**
-     * log level for visibility-based logging
-     *
-     * @see VisibilityLevel for possible values.
-     */
-    private static long m_visLevel = VisibilityLevel.VIS_ALL;
-
-    /**
-     * log level for facility code
-     *
-     * @see FacilityCode for possible values.
-     */
-    private static long m_facLevel = FacilityCode.FAC_ALL;
-
     public static void initializeModuleLogger(Class moduleLogger, String bundleName, String name) {
 
         LogNoi18n logger = getLogNoi18n(name);
@@ -135,7 +114,7 @@ public class LogFactory {
     public static LogNoi18n getLogNoi18n(String name) {
         setupLogSystem();
         LogInterface logInterface = m_logFactory.getLog(name);
-        LogNoi18n log = new LogNoi18nImpl(logInterface, m_debugLevel, m_visLevel, m_facLevel);
+        LogNoi18n log = new LogNoi18nImpl(logInterface);
         return log;
     }
 
@@ -156,10 +135,10 @@ public class LogFactory {
             // TODO can all logging frameworks cope with having the same name used twice,
             // once with and once without a resBundle?
             Logi18nInterface logi18nInterface = m_logFactory.getLog(name, resBundle);
-            log = new Logi18nDelegatingImpl(logi18nInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
+            log = new Logi18nDelegatingImpl(logi18nInterface, resBundle);
         } else {
             LogInterface logInterface = m_logFactory.getLog(name);
-            log = new Logi18nImpl(logInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
+            log = new Logi18nImpl(logInterface, resBundle);
         }
         return log;
     }
@@ -176,42 +155,13 @@ public class LogFactory {
             return;
         }
 
-        String debugLevel;
-        String facLevel;
-        String visLevel;
         String logFactory;
 
         try
         {
-                // find out which log subsystem to use:
-                logFactory = commonPropertyManager.getLoggingEnvironmentBean().getLoggingFactory();
+            // find out which log subsystem to use:
+            logFactory = commonPropertyManager.getLoggingEnvironmentBean().getLoggingFactory();
 
-                debugLevel = commonPropertyManager.getLoggingEnvironmentBean().getDebugLevel();
-                facLevel = commonPropertyManager.getLoggingEnvironmentBean().getFacilityLevel();
-                visLevel = commonPropertyManager.getLoggingEnvironmentBean().getVisibilityLevel();
-
-            try {
-                m_debugLevel = Long.decode(debugLevel);
-            } catch (NumberFormatException nfe) {
-                m_debugLevel = 0x0;
-            }
-
-            try {
-                m_facLevel = Long.decode(facLevel);
-            }
-            catch (NumberFormatException nfe )
-            {
-                m_debugLevel = 0xfffffff;
-            }
-
-            try {
-                m_visLevel = Long.decode(visLevel);
-            }
-            catch (NumberFormatException nfe )
-            {
-                m_debugLevel = 0xfffffff;
-            }
-            
             int semicolonIndex = logFactory.indexOf(";");
             if(semicolonIndex == -1) {
                 m_logFactory = loadFactory(logFactory, null);

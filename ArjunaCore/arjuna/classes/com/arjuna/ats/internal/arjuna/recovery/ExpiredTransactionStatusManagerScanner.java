@@ -41,10 +41,7 @@ import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * This class is a plug-in module for the recovery manager.  This
@@ -65,13 +62,9 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     
    public ExpiredTransactionStatusManagerScanner()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled())
-       {
-	   tsLogger.arjLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_CRASH_RECOVERY, 
-					"com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1",
-					new Object[]{Integer.toString(_expiryTime)});
-      }
+       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1", new Object[]{Integer.toString(_expiryTime)});
+       }
 
       _objectStore  = TransactionStatusManagerItem.getStore() ;
       _itemTypeName = TransactionStatusManagerItem.typeName() ;
@@ -85,12 +78,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
       // calculate the time before which items will be removed
       Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000 ) ;
 
-      if (tsLogger.arjLoggerI18N.isDebugEnabled())
-      {
-	  tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_CRASH_RECOVERY, 
-					"com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2",
-					new Object[]{_timeFormat.format(oldestSurviving)});
+      if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
       }
 
       try
@@ -184,11 +173,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[]{Integer.toString(_expiryTime)});
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[]{Integer.toString(_expiryTime)});
         }
     }
 

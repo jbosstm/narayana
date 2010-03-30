@@ -37,12 +37,9 @@ import java.util.List;
 import java.util.LinkedList;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.recovery.Service;
-
-import com.arjuna.common.util.logging.*;
 
 public class Listener extends Thread
 {
@@ -137,17 +134,12 @@ public class Listener extends Thread
 
             Connection new_conn = new Connection( conn, _listener_service, callback );
 
-     	    if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-		tsLogger.arjLogger.debug
-		    ( DebugLevel.FUNCTIONS,
-		      VisibilityLevel.VIS_PUBLIC,
-		      FacilityCode.FAC_CRASH_RECOVERY,
-		      "Connected to " + conn.getInetAddress().getHostAddress() +
-		      " on port " + conn.getPort() + " on listener port " + 
-		      conn.getLocalPort() + " for service " + 
-		      _listener_service.getClass().getName() );
-	    }
+     	    if (tsLogger.arjLogger.isDebugEnabled()) {
+                 tsLogger.arjLogger.debug("Connected to " + conn.getInetAddress().getHostAddress() +
+                         " on port " + conn.getPort() + " on listener port " +
+                         conn.getLocalPort() + " for service " +
+                         _listener_service.getClass().getName());
+             }
 
             new_conn.start();
             }
@@ -159,11 +151,9 @@ public class Listener extends Thread
          catch (final SocketException ex)
          {
              // we get this if the socket is closed under a call to shutdown
-             if (tsLogger.arjLogger.isDebugEnabled())
-             {
-                 tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
-                         "Recovery listener existing "+ 
-                         _listener_service.getClass().getName() );
+             if (tsLogger.arjLogger.isDebugEnabled()) {
+                 tsLogger.arjLogger.debug("Recovery listener existing " +
+                         _listener_service.getClass().getName());
              }
          }
          catch ( final IOException ex )

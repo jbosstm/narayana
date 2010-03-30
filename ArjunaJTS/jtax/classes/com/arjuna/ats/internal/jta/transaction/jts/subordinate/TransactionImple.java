@@ -77,9 +77,8 @@ public class TransactionImple extends
 
         public boolean equals (Object obj)
         {
-                if (jtaxLogger.logger.isDebugEnabled())
-                {
-                        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+                if (jtaxLogger.logger.isDebugEnabled()) {
+                    jtaxLogger.logger.debug("TransactionImple.equals");
                 }
 
                 if (obj == null)

@@ -20,13 +20,13 @@
  */
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import javax.transaction.xa.Xid;
 import java.util.List;
@@ -57,13 +57,8 @@ public class NodeNameXAResourceOrphanFilter implements XAResourceOrphanFilter
 
         if ((_xaRecoveryNodes.contains(RECOVER_ALL_NODES)))
         {
-            if (jtaLogger.logger.isDebugEnabled())
-            {
-                jtaLogger.logger.debug(
-                        DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PRIVATE,
-                        FacilityCode.FAC_CRASH_RECOVERY,
-                        "Ignoring node name. Will recover "+ xid);
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("Ignoring node name. Will recover " + xid);
             }
 
             return Vote.ROLLBACK;
@@ -71,12 +66,8 @@ public class NodeNameXAResourceOrphanFilter implements XAResourceOrphanFilter
 
         String nodeName = XAUtils.getXANodeName(xid);
 
-        if (jtaLogger.logger.isDebugEnabled())
-        {
-            jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "node name of " + xid +" is "+nodeName);
+        if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("node name of " + xid + " is " + nodeName);
         }
 
         if (_xaRecoveryNodes.contains(nodeName))

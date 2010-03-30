@@ -86,14 +86,13 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 		super(actUid, myParent, parentImpl);
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction::ServerTransaction ( "
-					+ actUid
-					+ ", Control myParent, "
-					+ ((parentImpl != null) ? parentImpl.get_uid()
-							: Uid.nullUid()) + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction::ServerTransaction ( "
+                    + actUid
+                    + ", Control myParent, "
+                    + ((parentImpl != null) ? parentImpl.get_uid()
+                    : Uid.nullUid()) + " )");
+        }
 
 		_savingUid = new Uid();
 		_sync = null;
@@ -104,11 +103,10 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction.finalize ( "
-					+ get_uid() + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction.finalize ( "
+                    + get_uid() + " )");
+        }
 
 		_savingUid = null;
 
@@ -144,11 +142,10 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPrepare ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction::doPrepare ( "
-					+ get_uid() + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction::doPrepare ( "
+                    + get_uid() + " )");
+        }
 
 		/*
 		 * If transaction has already been prepared then return error status.
@@ -236,11 +233,10 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPhase2Commit ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction::doPhase2Commit ( "
-					+ get_uid() + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction::doPhase2Commit ( "
+                    + get_uid() + " )");
+        }
 
 		/*
 		 * If the transaction has already terminated, then return the status.
@@ -285,11 +281,10 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPhase2Abort ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction::doPhase2Abort ( "
-					+ get_uid() + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction::doPhase2Abort ( "
+                    + get_uid() + " )");
+        }
 
 		/*
 		 * If the transaction has already terminated, then return the status. If
@@ -655,11 +650,10 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 	    super(recoveringActUid);
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTransaction::ServerTransaction ( "
-					+ recoveringActUid + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTransaction::ServerTransaction ( "
+                    + recoveringActUid + " )");
+        }
 
 		_savingUid = recoveringActUid;
 		_sync = null;

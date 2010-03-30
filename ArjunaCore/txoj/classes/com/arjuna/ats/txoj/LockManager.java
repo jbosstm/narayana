@@ -38,9 +38,6 @@ import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.StateManager;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
@@ -146,12 +143,8 @@ public class LockManager extends StateManager
 
     public void finalize () throws Throwable
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.DESTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager.finalize()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager.finalize()");
         }
 
         boolean doSignal = false;
@@ -187,12 +180,8 @@ public class LockManager extends StateManager
 
     public final boolean propagate (Uid from, Uid to)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::propagate(" + from + ", " + to + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::propagate(" + from + ", " + to + ")");
         }
 
         boolean result = false;
@@ -295,12 +284,8 @@ public class LockManager extends StateManager
 
     public final boolean releaseAll (Uid actionUid)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::releaseAll(" + actionUid + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::releaseAll(" + actionUid + ")");
         }
 
         return doRelease(actionUid, true);
@@ -313,12 +298,8 @@ public class LockManager extends StateManager
 
     public final boolean releaselock (Uid lockUid)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::releaseLock(" + lockUid + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::releaseLock(" + lockUid + ")");
         }
 
         return doRelease(lockUid, false);
@@ -361,13 +342,9 @@ public class LockManager extends StateManager
 
     public final int setlock (Lock toSet, int retry, int sleepTime)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::setlock(" + toSet + ", " + retry + ", "
-                            + sleepTime + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::setlock(" + toSet + ", " + retry + ", "
+                    + sleepTime + ")");
         }
 
         int conflict = ConflictType.CONFLICT;
@@ -652,12 +629,8 @@ public class LockManager extends StateManager
     {
         super(storeUid, ot, om);
         
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::LockManager(" + storeUid + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::LockManager(" + storeUid + ")");
         }
 
         systemKey = null;
@@ -691,12 +664,8 @@ public class LockManager extends StateManager
     {
         super(ot, om);
         
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::LockManager(" + ot + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::LockManager(" + ot + ")");
         }
 
         systemKey = null;
@@ -717,12 +686,8 @@ public class LockManager extends StateManager
 
     protected void terminate ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::terminate() for object-id " + get_uid());
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::terminate() for object-id " + get_uid());
         }
 
         cleanUp();
@@ -732,12 +697,8 @@ public class LockManager extends StateManager
 
     private final void cleanUp ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::cleanUp() for object-id " + get_uid());
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::cleanUp() for object-id " + get_uid());
         }
 
         if (hasBeenLocked)
@@ -805,12 +766,8 @@ public class LockManager extends StateManager
 
     private final boolean doRelease (Uid u, boolean all)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::doRelease(" + u + ", " + all + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::doRelease(" + u + ", " + all + ")");
         }
 
         Lock previous = null;
@@ -916,12 +873,8 @@ public class LockManager extends StateManager
         {
             if (!deleted)
             {
-                if (txojLogger.aitLogger.isDebugEnabled())
-                {
-                    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            FacilityCode.FAC_CONCURRENCY_CONTROL,
-                            " *** CANNOT locate locks  ***");
+                if (txojLogger.aitLogger.isDebugEnabled()) {
+                    txojLogger.aitLogger.debug(" *** CANNOT locate locks  ***");
                 }
             }
 
@@ -963,12 +916,8 @@ public class LockManager extends StateManager
 
     private final void freeState ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::freeState()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::freeState()");
         }
 
         if (mutex != null)
@@ -1012,12 +961,8 @@ public class LockManager extends StateManager
 
     private final boolean initialise ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::initialise()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::initialise()");
         }
 
         boolean result = false;
@@ -1072,13 +1017,9 @@ public class LockManager extends StateManager
 
     private final boolean isAncestorOf (Lock heldLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::isAncestorOf(" + heldLock.getCurrentOwner()
-                            + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::isAncestorOf(" + heldLock.getCurrentOwner()
+                    + ")");
         }
 
         BasicAction action = BasicAction.Current();
@@ -1101,12 +1042,8 @@ public class LockManager extends StateManager
 
     private final boolean loadState ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::loadState()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::loadState()");
         }
 
         if (super.objectModel == ObjectModel.SINGLE)
@@ -1158,13 +1095,9 @@ public class LockManager extends StateManager
 
                         boolean cleanLoad = true;
 
-                        if (txojLogger.aitLogger.isDebugEnabled())
-                        {
-                            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                                    VisibilityLevel.VIS_PRIVATE,
-                                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                                    "LockManager::loadState() loading " + count
-                                            + " lock(s)");
+                        if (txojLogger.aitLogger.isDebugEnabled()) {
+                            txojLogger.aitLogger.debug("LockManager::loadState() loading " + count
+                                    + " lock(s)");
                         }
 
                         /*
@@ -1237,12 +1170,8 @@ public class LockManager extends StateManager
 
     private final int lockConflict (Lock otherLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::lockConflict(" + otherLock.get_uid() + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::lockConflict(" + otherLock.get_uid() + ")");
         }
 
         boolean matching = false;
@@ -1280,12 +1209,8 @@ public class LockManager extends StateManager
 
     private final boolean unloadState ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "LockManager::unloadState()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("LockManager::unloadState()");
         }
 
         /*
@@ -1309,13 +1234,9 @@ public class LockManager extends StateManager
 
             /* destroy old state from lock store */
 
-            if (txojLogger.aitLogger.isDebugEnabled())
-            {
-                txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PRIVATE,
-                        FacilityCode.FAC_CONCURRENCY_CONTROL,
-                        "LockManager::unloadState() unloading " + lockCount
-                                + " lock(s)");
+            if (txojLogger.aitLogger.isDebugEnabled()) {
+                txojLogger.aitLogger.debug("LockManager::unloadState() unloading " + lockCount
+                        + " lock(s)");
             }
 
             if (lockCount == 0)

@@ -52,11 +52,9 @@ public ServerStrictTopLevelAction (ServerControl control, boolean doRegister)
     {
 	super(control);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerStrictTopLevelAction::ServerStrictTopLevelAction (ServerControl, "+doRegister+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerStrictTopLevelAction::ServerStrictTopLevelAction (ServerControl, " + doRegister + " )");
+    }
 
 	_registered = false;
 	_theResource = null;

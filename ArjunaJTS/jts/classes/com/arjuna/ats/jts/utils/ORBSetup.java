@@ -38,8 +38,8 @@ import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.internal.InternalORB;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 import com.arjuna.ats.internal.jts.ORBManager;
 
 /**
@@ -61,10 +61,8 @@ public class ORBSetup implements InitClassInterface
     {
 	if ( !ORBManager.isInitialised() )
         {
-            if (jtsLogger.logger.isDebugEnabled())
-            {
-                jtsLogger.logger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,  com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                                        "The ORBSetup.invoke method has been invoked");
+            if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("The ORBSetup.invoke method has been invoked");
             }
 
             /**
@@ -77,10 +75,8 @@ public class ORBSetup implements InitClassInterface
 
                 if ( !( orb instanceof InternalORB ) )
                 {
-                    if (jtsLogger.logger.isDebugEnabled())
-                    {
-                        jtsLogger.logger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,  com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                                                "The JTS ORB has been set to "+orb);
+                    if (jtsLogger.logger.isDebugEnabled()) {
+                        jtsLogger.logger.debug("The JTS ORB has been set to " + orb);
                     }
 
                     /**
@@ -102,10 +98,8 @@ public class ORBSetup implements InitClassInterface
 
                 if ( ( oa != null ) && ( !( oa.getAssociatedORB() instanceof InternalORB ) ) )
                 {
-                    if (jtsLogger.logger.isDebugEnabled())
-                    {
-                        jtsLogger.logger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,  com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                                                "The JTS OA has been set "+oa);
+                    if (jtsLogger.logger.isDebugEnabled()) {
+                        jtsLogger.logger.debug("The JTS OA has been set " + oa);
                     }
                     ORBManager.setPOA(oa);
                 }

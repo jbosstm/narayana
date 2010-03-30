@@ -175,10 +175,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public boolean equals (Object obj)
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.equals");
+        }
 
 		if (obj == null)
 			return false;
@@ -238,10 +237,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commit");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.commit");
+        }
 
 		if (_theTransaction != null)
 		{   
@@ -331,10 +329,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollback");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.rollback");
+        }
 
 		boolean endSuspendedFailed = false;
 		
@@ -409,10 +406,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void setRollbackOnly () throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-	    if (jtaxLogger.logger.isDebugEnabled())
-	    {
-	        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.setRollbackOnly");
-	    }
+	    if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.setRollbackOnly");
+        }
 
 	    if (_theTransaction != null)
 	    {
@@ -462,10 +458,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public int getStatus () throws javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.getStatus");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.getStatus");
+        }
 
 		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
 
@@ -495,10 +490,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-        if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.registerSynchronization");
-		}
+        if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.registerSynchronization");
+        }
 
 		if (sync == null)
 			throw new javax.transaction.SystemException(
@@ -577,11 +571,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws RollbackException, IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.enlistResource ( "
-					+ xaRes + " )");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.enlistResource ( "
+                    + xaRes + " )");
+        }
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
@@ -984,11 +977,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public boolean delistResource (XAResource xaRes, int flags)
 			throws IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.delistResource ( "
-					+ xaRes + " )");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.delistResource ( "
+                    + xaRes + " )");
+        }
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
@@ -1388,10 +1380,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.commitAndDisassociate");
+        }
 
 		if (_theTransaction != null)
 		{
@@ -1468,10 +1459,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollbackAndDisassociate");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionImple.rollbackAndDisassociate");
+        }
 
 		if (_theTransaction != null)
 		{

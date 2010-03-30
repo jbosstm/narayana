@@ -38,16 +38,4 @@ public interface LoggingEnvironmentBeanMBean
     String getLoggingFactory();
 
     void setLoggingFactory(String loggingFactory);
-
-    String getDebugLevel();
-
-    void setDebugLevel(String debugLevel);
-
-    String getFacilityLevel();
-
-    void setFacilityLevel(String facilityLevel);
-
-    String getVisibilityLevel();
-
-    void setVisibilityLevel(String visibilityLevel);
 }

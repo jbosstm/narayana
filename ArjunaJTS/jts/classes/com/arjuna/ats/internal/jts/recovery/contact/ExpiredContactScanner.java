@@ -42,7 +42,7 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 
@@ -61,13 +61,9 @@ public class ExpiredContactScanner implements ExpiryScanner
     public ExpiredContactScanner ()
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					   FacilityCode.FAC_CRASH_RECOVERY,
-					   "com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_1", 
-					   new Object[]{Integer.toString(_expiryTime)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_1", new Object[]{Integer.toString(_expiryTime)});
+    }
 	_objectStore  = FactoryContactItem.getStore();
 	_itemTypeName = FactoryContactItem.getTypeName();
     
@@ -82,13 +78,9 @@ public class ExpiredContactScanner implements ExpiryScanner
 	// calculate the time before which items will be removed
 	Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					   FacilityCode.FAC_CRASH_RECOVERY,
-					   "com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_2", 
-					   new Object[]{_timeFormat.format(oldestSurviving)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
+    }
 	try
 	{
 
@@ -146,12 +138,8 @@ public class ExpiredContactScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_4",
-                    new Object[]{Integer.toString(_expiryTime)});
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_4", new Object[]{Integer.toString(_expiryTime)});
         }
     }
 

@@ -36,9 +36,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /*
  *
@@ -62,12 +59,8 @@ class CadaverLockManager extends LockManager
 
         objectTypeName = new String(tName);
 
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "CadaverLockManager::CadaverLockManager(" + objUid + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("CadaverLockManager::CadaverLockManager(" + objUid + ")");
         }
     }
 

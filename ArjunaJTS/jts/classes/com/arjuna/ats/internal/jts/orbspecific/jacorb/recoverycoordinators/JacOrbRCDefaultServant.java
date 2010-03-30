@@ -42,8 +42,10 @@ import org.omg.PortableServer.Current;
 import org.omg.PortableServer.CurrentHelper;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
+
+import java.lang.Object;
 
 /**
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbDefaultServant_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_1] - JacOrbDefaultServant replay_completion for recoverId {0}
@@ -66,25 +68,17 @@ public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 	super();    // ensure id is null
 	_ourOrb = orb;
 	
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "JacOrbDefaultServant(orb)");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("JacOrbDefaultServant(orb)");
+    }
 	
     }
     
     public Status replay_completion ( Resource res ) throws SystemException, NotPrepared
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "JacOrbDefaultServant::replay_completion)");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("JacOrbDefaultServant::replay_completion)");
+    }
 
 	try 
 	 {
@@ -99,18 +93,11 @@ public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 	     // convert that to the structured id
 	     RecoveryCoordinatorId  recovCoId = RecoveryCoordinatorId.reconstruct(objectIdString);
 	     
-	     if (jtsLogger.loggerI18N.isDebugEnabled())
-		 {
-		     jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						VisibilityLevel.VIS_PUBLIC, 
-						FacilityCode.FAC_CRASH_RECOVERY, 
-						"com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_1", new java.lang.Object[]{recovCoId});
-		     
-		     jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						VisibilityLevel.VIS_PUBLIC, 
-						FacilityCode.FAC_CRASH_RECOVERY, 
-						"com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_2", new java.lang.Object[]{objectIdString});
-		 }
+	     if (jtsLogger.loggerI18N.isDebugEnabled()) {
+             jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_1", new Object[]{recovCoId});
+
+             jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_2", new Object[]{objectIdString});
+         }
 	     
 	     // and do the real replay
 	     return GenericRecoveryCoordinator.replay_completion(recovCoId, res);

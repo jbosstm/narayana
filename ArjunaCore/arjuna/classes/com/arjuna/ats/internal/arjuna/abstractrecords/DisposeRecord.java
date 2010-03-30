@@ -39,7 +39,6 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
@@ -51,8 +50,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import java.io.PrintWriter;
 
 import java.io.IOException;
-
-import com.arjuna.common.util.logging.*;
 
 public class DisposeRecord extends CadaverRecord
 {
@@ -74,12 +71,9 @@ public class DisposeRecord extends CadaverRecord
 	    typeName = null;
 	}
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				     FacilityCode.FAC_ABSTRACT_REC,
-				     "DisposeRecord::DisposeRecord("+objStore+", "+objectUid+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::DisposeRecord(" + objStore + ", " + objectUid + ")");
+    }
     }
 
     public boolean propagateOnAbort ()
@@ -94,33 +88,27 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedAbort() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::nestedAbort() for " + order());
+    }
 	
 	return TwoPhaseOutcome.FINISH_OK;
     }
     
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedCommit() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::nestedCommit() for " + order());
+    }
 	
 	return TwoPhaseOutcome.FINISH_OK;
     }
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedPrepare() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::nestedPrepare() for " + order());
+    }
 	
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
 	    return TwoPhaseOutcome.PREPARE_OK;
@@ -130,11 +118,9 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::topLevelAbort() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::topLevelAbort() for " + order());
+    }
 	
 	return TwoPhaseOutcome.FINISH_OK;
     }
@@ -147,11 +133,9 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::topLevelCommit() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::topLevelCommit() for " + order());
+    }
 
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
 	{
@@ -185,11 +169,9 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
-				     "DisposeRecord::topLevelPrepare() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("DisposeRecord::topLevelPrepare() for " + order());
+    }
 	
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
 	{

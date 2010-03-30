@@ -32,12 +32,9 @@ import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.utils.FileLock;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogInstance.TransactionData;
 
@@ -502,24 +499,18 @@ public class LogStore extends FileSystemStore
 
 	public boolean hide_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-					"LogStore.hide_state(" + u + ", " + tn + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.hide_state(" + u + ", " + tn + ")");
+        }
 
 		return false;
 	}
 
 	public boolean reveal_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-					"LogStore.reveal_state(" + u + ", " + tn + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.reveal_state(" + u + ", " + tn + ")");
+        }
 
 		return false;
 	}
@@ -527,12 +518,9 @@ public class LogStore extends FileSystemStore
 	public InputObjectState read_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-					"LogStore.read_uncommitted(" + u + ", " + tn + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.read_uncommitted(" + u + ", " + tn + ")");
+        }
 
 		return null;
 	}
@@ -540,12 +528,9 @@ public class LogStore extends FileSystemStore
 	public boolean remove_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-					"LogStore.remove_uncommitted(" + u + ", " + tn + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.remove_uncommitted(" + u + ", " + tn + ")");
+        }
 
 		return false;
 	}
@@ -553,14 +538,10 @@ public class LogStore extends FileSystemStore
 	public boolean write_committed(Uid storeUid, String tName,
 			OutputObjectState state) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger
-					.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-							FacilityCode.FAC_OBJECT_STORE,
-							"LogStore.write_committed(" + storeUid + ", "
-									+ tName + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.write_committed(" + storeUid + ", "
+                    + tName + ")");
+        }
 
 		try
 		{
@@ -577,13 +558,10 @@ public class LogStore extends FileSystemStore
 	public boolean write_uncommitted(Uid u, String tn, OutputObjectState s)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-					"LogStore.write_uncommitted(" + u + ", " + tn + ", " + s
-							+ ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LogStore.write_uncommitted(" + u + ", " + tn + ", " + s
+                    + ")");
+        }
 
 		return false;
 	}
@@ -771,12 +749,9 @@ public class LogStore extends FileSystemStore
 
 	protected boolean unlockAndClose(File fd, RandomAccessFile rf)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_OBJECT_STORE,
-					"RandomAccessFile.unlockAndClose(" + fd + ", " + rf + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RandomAccessFile.unlockAndClose(" + fd + ", " + rf + ")");
+        }
 
 		boolean closedOk = unlock(fd);
 
@@ -805,14 +780,10 @@ public class LogStore extends FileSystemStore
 	protected boolean write_state(Uid objUid, String tName,
 			OutputObjectState state, int ft) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PROTECTED,
-					FacilityCode.FAC_OBJECT_STORE,
-					"ShadowingStore.write_state(" + objUid + ", " + tName
-							+ ", " + StateType.stateTypeString(ft) + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ShadowingStore.write_state(" + objUid + ", " + tName
+                    + ", " + StateType.stateTypeString(ft) + ")");
+        }
 
 		if (!storeValid())
 			return false;

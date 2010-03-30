@@ -50,7 +50,7 @@ import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CORBA.SystemException;
@@ -163,16 +163,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
     {
         super(actionUid);
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_1",
-                            new Object[]
-                            { getSavingUid() });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_1", new Object[]
+                    {getSavingUid()});
         }
 
         // Don't bother trying to activate a transaction that isn't in
@@ -269,16 +262,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
 
         Status theStatus = get_status();
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_4",
-                            new Object[]
-                            { get_uid(), Utility.stringStatus(theStatus) });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_4", new Object[]
+                    {get_uid(), Utility.stringStatus(theStatus)});
         }
 
         if (theStatus == Status.StatusPrepared)
@@ -289,16 +275,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
              */
             theStatus = getStatusFromParent();
 
-            if (jtsLogger.loggerI18N.isDebugEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_5",
-                                new Object[]
-                                { get_uid(), Utility.stringStatus(theStatus) });
+            if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_5", new Object[]
+                        {get_uid(), Utility.stringStatus(theStatus)});
             }
         }
 
@@ -344,16 +323,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
             _recoveryStatus = RecoveryStatus.REPLAY_FAILED;
         }
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_8",
-                            new Object[]
-                            { get_uid() });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_8", new Object[]
+                    {get_uid()});
         }
     }
 
@@ -419,16 +391,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
                     theStatus = super._recoveryCoordinator
                             .replay_completion(tla.getReference());
 
-                    if (jtsLogger.loggerI18N.isDebugEnabled())
-                    {
-                        jtsLogger.loggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        FacilityCode.FAC_CRASH_RECOVERY,
-                                        "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_9",
-                                        new Object[]
-                                        { Utility.stringStatus(theStatus) });
+                    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_9", new Object[]
+                                {Utility.stringStatus(theStatus)});
                     }
                 }
 
@@ -455,16 +420,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
                     // theStatus =
                     // org.omg.CosTransactions.Status.StatusNoTransaction;
 
-                    if (jtsLogger.loggerI18N.isDebugEnabled())
-                    {
-                        jtsLogger.loggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        FacilityCode.FAC_CRASH_RECOVERY,
-                                        "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_11",
-                                        new Object[]
-                                        { Utility.stringStatus(theStatus) });
+                    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_11", new Object[]
+                                {Utility.stringStatus(theStatus)});
                     }
                 }
                 catch (NotPrepared ex1)
@@ -502,14 +460,8 @@ public class RecoveredServerTransaction extends ServerTransaction implements
         }
         else
         {
-            if (jtsLogger.loggerI18N.isDebugEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_15");
+            if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_15");
             }
         }
 
@@ -587,16 +539,9 @@ public class RecoveredServerTransaction extends ServerTransaction implements
         super.objectUid = hdr.getTxId();
         _originalProcessUid = hdr.getProcessId();
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_16",
-                            new Object[]
-                            { get_uid(), _originalProcessUid });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_16", new Object[]
+                    {get_uid(), _originalProcessUid});
         }
     }
 

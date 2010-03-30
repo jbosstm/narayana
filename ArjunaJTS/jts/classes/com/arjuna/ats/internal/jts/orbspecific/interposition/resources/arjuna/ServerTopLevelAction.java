@@ -100,11 +100,9 @@ public ServerTopLevelAction (ServerControl control)
     {
 	super(control);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::ServerTopLevelAction ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::ServerTopLevelAction ( " + _theUid + " )");
+    }
 
 	_theResource = null;
 	_resourceRef = getReference();
@@ -172,11 +170,9 @@ public Resource getReference ()
 
 public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicHazard, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::prepare for "+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::prepare for " + _theUid);
+    }
 
 	if (_theControl == null)
 	{
@@ -223,11 +219,9 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 
 	ThreadActionData.popAction();
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::prepare for "+_theUid+" : "+TwoPhaseOutcome.stringForm(result));
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::prepare for " + _theUid + " : " + TwoPhaseOutcome.stringForm(result));
+    }
 
 	/*
 	 * If prepare failed, then rollback now.
@@ -287,11 +281,9 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 
 public void rollback () throws HeuristicCommit, HeuristicMixed, HeuristicHazard, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::rollback for "+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::rollback for " + _theUid);
+    }
 
 	if (_theControl == null)
 	{
@@ -353,11 +345,9 @@ public void rollback () throws HeuristicCommit, HeuristicMixed, HeuristicHazard,
 
 	ThreadActionData.popAction();
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::rollback for "+_theUid+" : "+ActionStatus.stringForm(actionStatus));
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::rollback for " + _theUid + " : " + ActionStatus.stringForm(actionStatus));
+    }
 
 	switch (actionStatus)
 	{
@@ -387,11 +377,9 @@ public void rollback () throws HeuristicCommit, HeuristicMixed, HeuristicHazard,
 
 public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, HeuristicHazard, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::commit for "+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::commit for " + _theUid);
+    }
 
 	if (_theControl == null)
 	{
@@ -424,11 +412,9 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	{
 	    if (actionStatus == ActionStatus.RUNNING)
 	    {
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-		    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::commit for "+_theUid+" : NotPrepared");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerTopLevelAction::commit for " + _theUid + " : NotPrepared");
+        }
 
 		notPrepared = true;
 	    }
@@ -439,11 +425,9 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	if (notPrepared)
 	    throw new NotPrepared();
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::commit for "+_theUid+" : "+ActionStatus.stringForm(actionStatus));
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::commit for " + _theUid + " : " + ActionStatus.stringForm(actionStatus));
+    }
 
 	switch (actionStatus)
 	{
@@ -474,11 +458,9 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 
 public void forget () throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::forget for "+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::forget for " + _theUid);
+    }
 
 	boolean forgot = true;
 
@@ -497,11 +479,9 @@ public void forget () throws SystemException
 
 public void commit_one_phase () throws HeuristicHazard, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::commit_one_phase for "+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::commit_one_phase for " + _theUid);
+    }
 
 	if (_theControl == null)
 	{
@@ -590,11 +570,9 @@ public String type ()
 
 protected ServerTopLevelAction ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::ServerTopLevelAction ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTopLevelAction::ServerTopLevelAction ()");
+    }
 
 	_theResource = null;
 	_resourceRef = null;

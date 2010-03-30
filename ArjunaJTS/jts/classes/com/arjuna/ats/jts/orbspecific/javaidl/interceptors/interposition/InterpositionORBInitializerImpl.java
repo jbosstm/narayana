@@ -66,8 +66,7 @@ public InterpositionORBInitializerImpl ()
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializerImpl ()");
+	    jtsLogger.logger.debug("InterpositionORBInitializerImpl ()");
 	}
 
 	/*
@@ -89,8 +88,7 @@ public void pre_init (ORBInitInfo init_info)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializer.pre_init ()");
+	    jtsLogger.logger.debug("InterpositionORBInitializer.pre_init ()");
 	}
 
 	/*
@@ -114,8 +112,7 @@ public void pre_init (ORBInitInfo init_info)
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
+		jtsLogger.logger.debug("InterpositionORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
 	    }
 
 	    Encoding cdr_encoding = new Encoding(ENCODING_CDR_ENCAPS.value, (byte)1, (byte)2);
@@ -141,8 +138,7 @@ public void pre_init (ORBInitInfo init_info)
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializerImpl - registering ClientRequestInterceptor");
+		jtsLogger.logger.debug("InterpositionORBInitializerImpl - registering ClientRequestInterceptor");
 	    }
 
 	    ClientRequestInterceptor client_interceptor = new InterpositionClientRequestInterceptorImpl(localSlot, cdr_codec);
@@ -168,8 +164,7 @@ public void pre_init (ORBInitInfo init_info)
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializerImpl - registering ServerRequestInterceptor");
+		jtsLogger.logger.debug("InterpositionORBInitializerImpl - registering ServerRequestInterceptor");
 	    }
 
 	    ServerRequestInterceptor server_interceptor = new InterpositionServerRequestInterceptorImpl(receivedSlot, cdr_codec);
@@ -192,8 +187,7 @@ public void post_init (ORBInitInfo init_info)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionORBInitializerImpl.post_init ()");
+	    jtsLogger.logger.debug("InterpositionORBInitializerImpl.post_init ()");
 	}
 
 	// nothing to do

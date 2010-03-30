@@ -154,10 +154,9 @@ public class ServerControlWrapper extends ControlWrapper
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerControlWrapper::create_subtransaction - subtransaction parent is inactive.");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ServerControlWrapper::create_subtransaction - subtransaction parent is inactive.");
+            }
 
 			throw new INVALID_TRANSACTION(
 					ExceptionCodes.UNAVAILABLE_COORDINATOR,

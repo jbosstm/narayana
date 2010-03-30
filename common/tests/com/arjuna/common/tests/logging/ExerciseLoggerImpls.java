@@ -63,11 +63,9 @@ public class ExerciseLoggerImpls
 
         LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();
         String originalFactory = loggingEnvironmentBean.getLoggingFactory();
-        String originalDebugLevel = loggingEnvironmentBean.getDebugLevel();
         Locale originalLocale = Locale.getDefault();
 
         loggingEnvironmentBean.setLoggingFactory(factory);
-        loggingEnvironmentBean.setDebugLevel("0xffffffff");
 
 		System.setOut(bufferedStream);
         LogFactory.reset(); // make sure it reloads the modified config.
@@ -84,7 +82,6 @@ public class ExerciseLoggerImpls
 
         } finally {
             loggingEnvironmentBean.setLoggingFactory(originalFactory);
-            loggingEnvironmentBean.setDebugLevel(originalDebugLevel);
             Locale.setDefault(originalLocale);
             System.setOut(originalStream);
             LogFactory.reset();

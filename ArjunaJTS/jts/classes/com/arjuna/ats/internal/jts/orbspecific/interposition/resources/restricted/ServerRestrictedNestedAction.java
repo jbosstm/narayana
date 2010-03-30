@@ -51,11 +51,9 @@ public ServerRestrictedNestedAction (ServerControl myControl)
     {
 	super(myControl);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerRestrictedNestedAction::ServerRestrictedNestedAction ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerRestrictedNestedAction::ServerRestrictedNestedAction ( " + _theUid + " )");
+    }
     }
 
 public final synchronized ServerControl deepestControl ()

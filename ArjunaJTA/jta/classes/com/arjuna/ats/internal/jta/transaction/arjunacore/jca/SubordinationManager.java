@@ -21,8 +21,8 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import javax.transaction.TransactionManager;
 import javax.resource.spi.XATerminator;
@@ -68,10 +68,9 @@ public class SubordinationManager
 
     public static void setTxType(TxType txType)
     {
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "SubordinationManager.setTxType("+txType+")");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("SubordinationManager.setTxType(" + txType + ")");
+        }
         
         if(SubordinationManager.txType != null && SubordinationManager.txType != txType)
         {

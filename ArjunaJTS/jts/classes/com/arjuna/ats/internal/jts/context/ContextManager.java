@@ -85,11 +85,9 @@ public class ContextManager
 
     public ContextManager ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::ContextManager ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::ContextManager ()");
+    }
 
 	try
 	{
@@ -158,11 +156,9 @@ public class ContextManager
 
     public ControlWrapper current () throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::current ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::current ()");
+    }
 
 	Object arg = otsCurrent.get(ThreadUtil.getThreadId());
 	ControlWrapper wrapper = null;
@@ -219,11 +215,9 @@ public class ContextManager
 
     public final ControlWrapper popAction (String threadId)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::popAction ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::popAction ()");
+    }
 
 	ControlWrapper action = null;
 	Object arg = otsCurrent.get(threadId);
@@ -304,11 +298,9 @@ public class ContextManager
 
     public final void purgeActions (String threadId)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::purgeActions ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::purgeActions ()");
+    }
 
 	/*
 	 * Don't do anything with these actions, i.e., do
@@ -355,11 +347,9 @@ public class ContextManager
 
     public final boolean addRemoteHierarchy (Control cont)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::addRemoteHierarchy ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::addRemoteHierarchy ()");
+    }
 
 	/*
 	 * Here until we can make this work with recreate.
@@ -432,11 +422,9 @@ public class ContextManager
 
     public final boolean addActionControlHierarchy (ActionControl cont)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::addActionControlHierarchy ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::addActionControlHierarchy ()");
+    }
 
 	boolean isError = false;
 
@@ -503,11 +491,9 @@ public class ContextManager
 
     public final boolean addControlImpleHierarchy (ControlImple which)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::addControlImpleHierarchy ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::addControlImpleHierarchy ()");
+    }
 
 	boolean isError = false;
 
@@ -564,11 +550,9 @@ public class ContextManager
 
     public final void pushAction (ControlWrapper action)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::pushAction ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ContextManager::pushAction ()");
+    }
 
 	final String threadId = ThreadUtil.getThreadId() ;
 	Stack sl = (Stack) otsCurrent.get(threadId);

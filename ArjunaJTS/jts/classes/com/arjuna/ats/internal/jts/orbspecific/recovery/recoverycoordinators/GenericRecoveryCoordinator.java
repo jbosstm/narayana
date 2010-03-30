@@ -45,7 +45,7 @@ import org.omg.CosTransactions.*;
 import org.omg.CORBA.SystemException;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 
@@ -79,12 +79,9 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
     {
 	_id = new RecoveryCoordinatorId(RCUid, actionUid, processUid, isServerTransaction);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	{
-	    jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1", new Object[]{_id});
-	}
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1", new Object[]{_id});
+    }
     }
     
     /** 
@@ -95,12 +92,9 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
      */
     protected GenericRecoveryCoordinator()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-			  FacilityCode.FAC_CRASH_RECOVERY, 
-			  "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2");
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2");
+    }
 	_id = null;
     }
     
@@ -137,13 +131,10 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
     protected static Status replay_completion ( RecoveryCoordinatorId id, Resource res ) throws SystemException, NotPrepared 
     {
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
-				   "GenericRecoveryCoordinator(" + id._RCUid + ").replay_completion(" 
-				   + ( res != null ? "resource supplied)" : "null resource)"));
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("GenericRecoveryCoordinator(" + id._RCUid + ").replay_completion("
+                + (res != null ? "resource supplied)" : "null resource)"));
+    }
 
 	Status currentStatus = Status.StatusUnknown;
 
@@ -233,13 +224,9 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 	    if ( (replayer.getRecoveryStatus() != com.arjuna.ats.internal.jts.recovery.transactions.RecoveryStatus.ACTIVATE_FAILED) &&
 		 (res != null) )
 	    {
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		    {
-			jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						   VisibilityLevel.VIS_PUBLIC, 
-						   FacilityCode.FAC_CRASH_RECOVERY, 
-						   "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4", new Object[]{id._RCUid});
-		    }
+		if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4", new Object[]{id._RCUid});
+        }
 
 		replayer.swapResource(id._RCUid, res);
 	    }
@@ -325,13 +312,9 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
      */
     public static GenericRecoveryCoordinator reconstruct(String encodedRCData)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "GenericRecoveryCoordinator.reconstruct(" + encodedRCData + ")");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("GenericRecoveryCoordinator.reconstruct(" + encodedRCData + ")");
+    }
 	
 	RecoveryCoordinatorId id = RecoveryCoordinatorId.reconstruct(encodedRCData);
 

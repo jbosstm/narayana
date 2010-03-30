@@ -147,15 +147,14 @@ public class ExtendedResourceRecord extends
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord: About to string_to_object on "
-							+ _stringifiedResourceHandle);
+					jtsLogger.logger.debug( "ExtendedResourceRecord: About to string_to_object on " + _stringifiedResourceHandle);
 				}
 
 				org.omg.CORBA.Object optr = theOrb.string_to_object(_stringifiedResourceHandle);
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord: Successfully stringed to object, next try to narrow");
+					jtsLogger.logger.debug("ExtendedResourceRecord: Successfully stringed to object, next try to narrow");
 				}
 
 				theOrb = null;
@@ -164,7 +163,7 @@ public class ExtendedResourceRecord extends
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord: Successfully narrowed");
+					jtsLogger.logger.debug("ExtendedResourceRecord: Successfully narrowed");
 				}
 
 				if (_resourceHandle == null)
@@ -180,7 +179,7 @@ public class ExtendedResourceRecord extends
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord: Failed to narrow to ArjunaSubtranAwareResource");
+					jtsLogger.logger.debug("ExtendedResourceRecord: Failed to narrow to ArjunaSubtranAwareResource");
 				}
 			}
 		}
@@ -324,8 +323,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::nestedAbort() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::nestedAbort() for " + order());
 		}
 
 		/*
@@ -370,8 +368,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::nestedCommit() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::nestedCommit() for " + order());
 		}
 
 		int o = TwoPhaseOutcome.FINISH_ERROR;
@@ -453,8 +450,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::nestedPrepare() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::nestedPrepare() for " + order());
 		}
 
 		int o = TwoPhaseOutcome.PREPARE_NOTOK;
@@ -494,8 +490,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::topLevelAbort() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::topLevelAbort() for " + order());
 		}
 
 		try
@@ -555,8 +550,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::topLevelCommit() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::topLevelCommit() for " + order());
 		}
 
 		try
@@ -602,8 +596,7 @@ public class ExtendedResourceRecord extends
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord::topLevelPrepare() for "
-					+ order());
+			jtsLogger.logger.debug("ExtendedResourceRecord::topLevelPrepare() for " + order());
 		}
 
 		try
@@ -813,10 +806,7 @@ public class ExtendedResourceRecord extends
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-
-					(com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord.restore_state: unpacked record with uid="
-							+ _recCoordUid);
+					jtsLogger.logger.debug("ExtendedResourceRecord.restore_state: unpacked record with uid=" + _recCoordUid);
 				}
 			}
 			else
@@ -907,8 +897,7 @@ public class ExtendedResourceRecord extends
 
 					if (jtsLogger.logger.isDebugEnabled())
 					{
-						jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "ExtendedResourceRecord: packed obj ref "
-								+ stringRef);
+						jtsLogger.logger.debug("ExtendedResourceRecord: packed obj ref " + stringRef);
 					}
 				}
 				else
@@ -925,8 +914,7 @@ public class ExtendedResourceRecord extends
 
 					if (jtsLogger.logger.isDebugEnabled())
 					{
-						jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC), "Packed rec co uid of "
-								+ _recCoordUid);
+						jtsLogger.logger.debug("Packed rec co uid of " + _recCoordUid);
 					}
 				}
 			}

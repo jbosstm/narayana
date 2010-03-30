@@ -33,7 +33,7 @@
 package com.arjuna.ats.internal.jts.recovery.contact;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import java.util.Hashtable;
@@ -120,11 +120,8 @@ static
  */
 public static Status get_status(Uid transactionUid, Uid itemUid) throws Inactive
 {
-    if (jtsLogger.logger.isDebugEnabled())
-    {
-	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			       FacilityCode.FAC_CRASH_RECOVERY,
-			       "StatusChecker.get_status("+transactionUid+", "+itemUid+")");
+    if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("StatusChecker.get_status(" + transactionUid + ", " + itemUid + ")");
     }
 
     return _checker.checkOriginalStatus(transactionUid, itemUid, true);
@@ -138,11 +135,8 @@ public static Status get_status(Uid transactionUid, Uid itemUid) throws Inactive
 
 public static Status get_current_status(Uid transactionUid, Uid itemUid) throws Inactive
 {
-    if (jtsLogger.logger.isDebugEnabled())
-    {
-	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			       FacilityCode.FAC_CRASH_RECOVERY,
-			       "StatusChecker.get_current_status("+transactionUid+", "+itemUid+")");
+    if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("StatusChecker.get_current_status(" + transactionUid + ", " + itemUid + ")");
     }
 
     return _checker.checkOriginalStatus(transactionUid, itemUid, false);
@@ -171,11 +165,8 @@ public StatusChecker()
 public Status checkOriginalStatus (Uid transactionUid, Uid itemUid, boolean checkTheObjectStore)
     throws Inactive
 {
-    if (jtsLogger.logger.isDebugEnabled())
-    {
-	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			       FacilityCode.FAC_CRASH_RECOVERY,
-			       "StatusChecker.checkOriginalStatus("+transactionUid+", "+itemUid+", "+checkTheObjectStore+")");
+    if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("StatusChecker.checkOriginalStatus(" + transactionUid + ", " + itemUid + ", " + checkTheObjectStore + ")");
     }
 
     FactoryContactItem item = getItem(itemUid);
@@ -199,11 +190,8 @@ public Status checkOriginalStatus (Uid transactionUid, Uid itemUid, boolean chec
 
 private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean checkTheObjectStore) throws Inactive
 {
-    if (jtsLogger.logger.isDebugEnabled())
-    {
-	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			       FacilityCode.FAC_CRASH_RECOVERY,
-			       "StatusChecker.getStatus("+transactionUid+", "+item+", "+checkTheObjectStore+")");
+    if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("StatusChecker.getStatus(" + transactionUid + ", " + item + ", " + checkTheObjectStore + ")");
     }
 
     ArjunaFactory factory = item.getFactory();
@@ -219,13 +207,9 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 
 	    otsStatus = factory.getCurrentStatus(otid);
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					   FacilityCode.FAC_CRASH_RECOVERY,
-					   "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_1",
-					   new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
-	    }
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_1", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+        }
 
 	    /*
 	     * If the factory doesn't know about the transaction, then
@@ -239,13 +223,9 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    {
 		otsStatus = factory.getStatus(otid);
 
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_2",
-					       new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
-		}
+		if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_2", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+        }
 
 		switch (otsStatus.value())
 		{
@@ -276,25 +256,17 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 		}
 	    }
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					   FacilityCode.FAC_CRASH_RECOVERY,
-					   "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_4",
-					   new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
-	    }
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_4", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+        }
 
 	    item.markAsAlive();
 	} catch ( NO_IMPLEMENT ex_noimp) {
 	    // the original application has died
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					   FacilityCode.FAC_CRASH_RECOVERY,
-					   "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_5",
-					   new Object[]{transactionUid});
-	    }
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_5", new Object[]{transactionUid});
+        }
 
 	    originalDead = true;
 
@@ -305,13 +277,9 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    if (ORBInfo.getOrbEnumValue() == ORBType.JACORB)
 	    {
 		    // the original application has (probably) died
-		    if (jtsLogger.loggerI18N.isDebugEnabled())
-			{
-			    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						       FacilityCode.FAC_CRASH_RECOVERY,
-						       "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_6",
-						       new Object[]{transactionUid});
-			}
+		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_6", new Object[]{transactionUid});
+            }
 		    originalDead = true;
 	    }
 
@@ -320,26 +288,18 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	     * Probably the original application has died, but only just - do
 	     * not mark either way.
 	     */
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_7",
-					       new Object[]{transactionUid});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_7", new Object[]{transactionUid});
+        }
 
 	} catch ( OBJECT_NOT_EXIST ex_noobj) {
 	    // the original process must have gone away, and another one
 	    // come up in the same place
 	    // (or, just possibly, the original closed the ots)
 	    originalDead = true;
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_8",
-					       new Object[]{transactionUid});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_8", new Object[]{transactionUid});
+        }
 
 	} catch ( BAD_PARAM ex_badparam) {
 	    jtsLogger.loggerI18N.warn(" com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_9");
@@ -373,13 +333,9 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
     else
     {
 	// factory in item is null - process already dead
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	{
-	    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CRASH_RECOVERY,
-				       "com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_13",
-				       new Object[]{transactionUid});
-	}
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_13", new Object[]{transactionUid});
+    }
 
 	/*
 	 * In which case we can use the current, in process local factory, to

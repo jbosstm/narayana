@@ -38,9 +38,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import java.io.*;
@@ -69,9 +66,7 @@ public class LockRecord extends AbstractRecord
 
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				     "LockRecord::LockRecord("+lm.get_uid()+", "
+	    txojLogger.aitLogger.debug("LockRecord::LockRecord("+lm.get_uid()+", "
 				       +(readOnly ? "PREPARE_READONLY" : "WRITEABLE")+")");
 	}
 	
@@ -102,9 +97,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::nestedAbort() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::nestedAbort() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -140,9 +133,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::nestedCommit() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::nestedCommit() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -171,9 +162,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::nestedPrepare() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::nestedPrepare() for "+order());
 	}
 	
 	return TwoPhaseOutcome.PREPARE_OK;
@@ -183,9 +172,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::topLevelAbort() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::topLevelAbort() for "+order());
 	}
 	
 	return nestedAbort();
@@ -195,9 +182,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::topLevelCommit() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::topLevelCommit() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -233,9 +218,7 @@ public class LockRecord extends AbstractRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::topLevelPrepare() for "+order());
+	    txojLogger.aitLogger.debug("LockRecord::topLevelPrepare() for "+order());
 	}
 	
 	if (readOnly)
@@ -344,9 +327,7 @@ public class LockRecord extends AbstractRecord
 
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "LockRecord::LockRecord()");
+	    txojLogger.aitLogger.debug("LockRecord::LockRecord()");
 	}
 	
 	actionHandle = null;

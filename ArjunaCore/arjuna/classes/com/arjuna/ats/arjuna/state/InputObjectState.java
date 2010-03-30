@@ -37,8 +37,8 @@ import java.io.PrintWriter;
 import com.arjuna.ats.arjuna.logging.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import java.io.IOException;
 
@@ -56,11 +56,9 @@ public class InputObjectState extends InputBuffer
 
 public InputObjectState ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("InputObjectState::InputObjectState()");
+    }
        	
 	bufferUid = new Uid(Uid.nullUid());
 	super._valid = false;
@@ -71,11 +69,9 @@ public InputObjectState (InputObjectState copyFrom)
     {
 	super(copyFrom);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState("+copyFrom+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("InputObjectState::InputObjectState(" + copyFrom + ")");
+    }
 	
 	try
 	{
@@ -94,11 +90,9 @@ public InputObjectState (OutputObjectState copyFrom)
     {
 	super(copyFrom.buffer());
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState("+copyFrom+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("InputObjectState::InputObjectState(" + copyFrom + ")");
+    }
 
 	try
 	{
@@ -117,12 +111,9 @@ public InputObjectState (Uid newUid, String tName, byte[] buff)
     {
 	super(buff);  // implicitly copies the array contents.
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_BUFFER_MAN, 
-				     "InputObjectState::InputObjectState("+newUid+", "+tName+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("InputObjectState::InputObjectState(" + newUid + ", " + tName + ")");
+    }
 
 	bufferUid = new Uid(newUid);
 	super._valid = bufferUid.valid();
@@ -192,9 +183,8 @@ public void print (PrintWriter strm)
 
 public synchronized void copy (InputObjectState objstate)
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	    tsLogger.arjLogger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::copy for "+bufferUid);
+        if (tsLogger.arjLogger.isDebugEnabled())
+            tsLogger.arjLogger.debug("InputObjectState::copy for " + bufferUid);
        
 	super.copy(objstate);
 

@@ -41,7 +41,7 @@ import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ArjunaOTS.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -206,12 +206,9 @@ void markAsAlive()
  
 private FactoryContactItem(ArjunaFactory factory)
 {
-    if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
-				   "FactoryContactItem(factory)");
-	}
+    if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("FactoryContactItem(factory)");
+    }
     // the Uid of this object is the Uid of the process that creates it by
     // this constructor.
     //  full class name needed to disambiguate from java.text.Utility

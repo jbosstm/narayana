@@ -32,14 +32,11 @@
 package com.arjuna.ats.arjuna.utils;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import java.io.*;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.lang.InterruptedException;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Sometimes it is necessary to lock a file at the disk level. Since there is no
@@ -102,12 +99,9 @@ public class FileLock
 
     public FileLock(File name, long timeout, long retry)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger
-                    .debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_GENERAL, "FileLock ( " + name
-                                    + ", " + timeout + ", " + retry + " )");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock ( " + name
+                    + ", " + timeout + ", " + retry + " )");
         }
 
         _theFile = name;
@@ -131,12 +125,9 @@ public class FileLock
 
     public synchronized boolean lock (int lmode, boolean create)
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_GENERAL,
-                    "com.arjuna.ats.arjuna.utils.FileLock_1", new Object[]
-                    { _lockFile });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_1", new Object[]
+                    {_lockFile});
         }
 
         boolean created = false;
@@ -231,12 +222,9 @@ public class FileLock
 
     public synchronized boolean unlock ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_GENERAL,
-                    "com.arjuna.ats.arjuna.utils.FileLock_2", new Object[]
-                    { _lockFile });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_2", new Object[]
+                    {_lockFile});
         }
 
         if (!_lockFile.exists())
@@ -318,12 +306,9 @@ public class FileLock
 
     private final boolean createFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_GENERAL,
-                    "com.arjuna.ats.arjuna.utils.FileLock_3", new Object[]
-                    { _lockFile });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_3", new Object[]
+                    {_lockFile});
         }
 
         byte b[] = new byte[1];
@@ -355,12 +340,9 @@ public class FileLock
 
     private final boolean lockFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_GENERAL,
-                    "com.arjuna.ats.arjuna.utils.FileLock_5", new Object[]
-                    { _lockFile });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_5", new Object[]
+                    {_lockFile});
         }
         
         for (int i = 0; i < _retry; i++)
@@ -393,12 +375,9 @@ public class FileLock
 
     private final boolean unlockFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_GENERAL,
-                    "com.arjuna.ats.arjuna.utils.FileLock_6", new Object[]
-                    { _lockFile });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_6", new Object[]
+                    {_lockFile});
         }
         return _lockFileLock.delete();
     }

@@ -99,10 +99,9 @@ public class CurrentImple extends LocalObject implements
 
 	public CurrentImple ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::CurrentImple ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::CurrentImple ()");
+        }
 
 		_theManager = new ContextManager();
 	}
@@ -113,10 +112,9 @@ public class CurrentImple extends LocalObject implements
 
 		if (currentAction == null) // no current, so create top-level action
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::begin - creating new top-level transaction.");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("CurrentImple::begin - creating new top-level transaction.");
+            }
 
 			if (OTSImpleManager.localFactory())
 				currentAction = new ControlWrapper(
@@ -127,10 +125,9 @@ public class CurrentImple extends LocalObject implements
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::begin - creating new subtransaction.");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("CurrentImple::begin - creating new subtransaction.");
+            }
 
 			/*
 			 * If the current transaction has terminated (by another thread)
@@ -220,11 +217,10 @@ public class CurrentImple extends LocalObject implements
 	public void commit (boolean report_heuristics) throws NoTransaction,
 			HeuristicMixed, HeuristicHazard, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::commit ( "
-					+ report_heuristics + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::commit ( "
+                    + report_heuristics + " )");
+        }
 
 		ControlWrapper currentAction = _theManager.current();
 
@@ -314,10 +310,9 @@ public class CurrentImple extends LocalObject implements
 
 	public void rollback () throws NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::rollback ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::rollback ()");
+        }
 
 		ControlWrapper currentAction = _theManager.current();
 
@@ -371,10 +366,9 @@ public class CurrentImple extends LocalObject implements
 
 	public void rollback_only () throws NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::rollback_only ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::rollback_only ()");
+        }
 
 		ControlWrapper currentAction = _theManager.current();
 
@@ -409,11 +403,10 @@ public class CurrentImple extends LocalObject implements
 		org.omg.CosTransactions.Status stat = ((currentAction == null) ? org.omg.CosTransactions.Status.StatusNoTransaction
 				: currentAction.get_status());
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::get_status - returning "
-					+ Utility.stringStatus(stat));
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::get_status - returning "
+                    + Utility.stringStatus(stat));
+        }
 
 		return stat;
 	}
@@ -424,22 +417,20 @@ public class CurrentImple extends LocalObject implements
 		String ch = ((currentAction == null) ? "null"
 				: currentAction.get_transaction_name());
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::get_transaction_name - returning "
-					+ ch);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::get_transaction_name - returning "
+                    + ch);
+        }
 
 		return ch;
 	}
 
 	public synchronized void set_timeout (int seconds) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::set_timeout ( "
-					+ seconds + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::set_timeout ( "
+                    + seconds + " )");
+        }
 
 		/*
 		 * Only bother if the value is anything other than the default.
@@ -475,32 +466,29 @@ public class CurrentImple extends LocalObject implements
 		else
 		    v = TxControl.getDefaultTimeout();
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::get_timeout - returning "
-					+ v);
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::get_timeout - returning "
+                    + v);
+        }
 
 		return v;
 	}
 
 	public void setCheckedAction (CheckedAction ca) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::setCheckedAction ( "
-					+ ca + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::setCheckedAction ( "
+                    + ca + " )");
+        }
 
 		CheckedActions.set(ca);
 	}
 
 	public CheckedAction getCheckedAction () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::getCheckedAction ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::getCheckedAction ()");
+        }
 
 		return CheckedActions.get();
 	}
@@ -591,10 +579,9 @@ public class CurrentImple extends LocalObject implements
 
 	public org.omg.CosTransactions.Control suspend () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::suspend ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::suspend ()");
+        }
 
 		ControlWrapper actPtr = _theManager.popAction();
 
@@ -645,11 +632,10 @@ public class CurrentImple extends LocalObject implements
 
 	public void resume (Control which) throws InvalidControl, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::resume ( "
-					+ which + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::resume ( "
+                    + which + " )");
+        }
 
 		/*
 		 * We must now "forget" any current transaction information. This is
@@ -790,11 +776,10 @@ public class CurrentImple extends LocalObject implements
 	public void resumeImple (ControlImple which) throws InvalidControl,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::resumeImple ( "
-					+ which + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::resumeImple ( "
+                    + which + " )");
+        }
 
 		/*
 		 * We must now "forget" any current transaction information. This is
@@ -841,11 +826,10 @@ public class CurrentImple extends LocalObject implements
 	public void resumeWrapper (ControlWrapper which) throws InvalidControl,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::resumeWrapper ( "
-					+ which + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::resumeWrapper ( "
+                    + which + " )");
+        }
 
 		if (which != null)
 		{
@@ -869,10 +853,9 @@ public class CurrentImple extends LocalObject implements
 
 	public ControlWrapper suspendWrapper () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::suspendWrapper ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple::suspendWrapper ()");
+        }
 
 		ControlWrapper actPtr = _theManager.popAction();
 
@@ -900,10 +883,9 @@ public class CurrentImple extends LocalObject implements
 
 	public ControlWrapper getControlWrapper () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple.getControlWrapper ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("CurrentImple.getControlWrapper ()");
+        }
 
 		return _theManager.current();
 	}

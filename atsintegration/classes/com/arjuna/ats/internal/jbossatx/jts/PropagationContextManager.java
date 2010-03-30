@@ -50,9 +50,9 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jts.ExplicitInterposition;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.FacilityCode;
+
+
+
 
 public class PropagationContextManager implements
         TransactionPropagationContextFactory,
@@ -68,12 +68,8 @@ public class PropagationContextManager implements
 
     public Object getTransactionPropagationContext ()
     {
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger
-                    .debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_ALL,
-                            "PropagationContextManager.getTransactionPropagationContext - called");
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext - called");
         }
 
         final String threadId = ThreadUtil.getThreadId();
@@ -95,15 +91,9 @@ public class PropagationContextManager implements
                     .get_txcontext();
             PropagationContextWrapper pcw = new PropagationContextWrapper(cxt);
 
-            if (jbossatxLogger.logger.isDebugEnabled())
-            {
-                jbossatxLogger.logger
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_ALL,
-                                "PropagationContextManager.getTransactionPropagationContext() - returned tpc = "
-                                        + pcw);
+            if (jbossatxLogger.logger.isDebugEnabled()) {
+                jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext() - returned tpc = "
+                        + pcw);
             }
 
             return pcw;
@@ -123,15 +113,9 @@ public class PropagationContextManager implements
 
     public Object getTransactionPropagationContext (Transaction tx)
     {
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_ALL,
-                            "PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = "
-                                    + tx);
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = "
+                    + tx);
         }
 
         Transaction oldTx = null;
@@ -164,15 +148,9 @@ public class PropagationContextManager implements
             e.printStackTrace();
         }
 
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_ALL,
-                            "PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = "
-                                    + tpc);
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = "
+                    + tpc);
         }
 
         return tpc;
@@ -199,15 +177,9 @@ public class PropagationContextManager implements
 
     public Transaction importTransactionPropagationContext (Object tpc)
     {
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_ALL,
-                            "PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = "
-                                    + tpc);
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = "
+                    + tpc);
         }
 
         javax.transaction.TransactionManager tm = TransactionManager
@@ -223,15 +195,9 @@ public class PropagationContextManager implements
                         true);
                 Transaction newTx = tm.getTransaction();
 
-                if (jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger
-                            .debug(
-                                    DebugLevel.FUNCTIONS,
-                                    VisibilityLevel.VIS_PUBLIC,
-                                    FacilityCode.FAC_ALL,
-                                    "PropagationContextManager.importTransactionPropagationContext(Object) - transaction = "
-                                            + newTx);
+                if (jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("PropagationContextManager.importTransactionPropagationContext(Object) - transaction = "
+                            + newTx);
                 }
 
                 ei.unregisterTransaction();

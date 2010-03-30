@@ -53,13 +53,9 @@ public class BaseTransaction
 	public void begin() throws javax.transaction.NotSupportedException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.begin");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.begin");
+        }
 
 		/*
 		 * We can supported subtransactions, so should have the option to let
@@ -121,13 +117,9 @@ public class BaseTransaction
 			java.lang.SecurityException, java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.commit");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.commit");
+        }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
 
@@ -149,13 +141,9 @@ public class BaseTransaction
 	public void rollback() throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.rollback");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.rollback");
+        }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
 
@@ -180,13 +168,9 @@ public class BaseTransaction
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.setRollbackOnly");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.setRollbackOnly");
+        }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
 
@@ -200,13 +184,9 @@ public class BaseTransaction
 
 	public int getStatus() throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.getStatus");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.getStatus");
+        }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
 
@@ -249,13 +229,9 @@ public class BaseTransaction
 
 	public TransactionImple createSubordinate () throws javax.transaction.NotSupportedException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"BaseTransaction.createSubordinate");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("BaseTransaction.createSubordinate");
+        }
 
 		try
 		{

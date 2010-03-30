@@ -53,11 +53,9 @@ public class SynchronizationRecord implements Comparable
 
     public SynchronizationRecord (Synchronization ptr)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "SynchronizationRecord::SynchronizationRecord ( "+ptr+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("SynchronizationRecord::SynchronizationRecord ( " + ptr + " )");
+    }
 
 	_ptr = ptr;
 	_uid = new Uid();
@@ -71,11 +69,9 @@ public class SynchronizationRecord implements Comparable
 
     public final Synchronization contents ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "SynchronizationRecord::contents - for "+_ptr);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("SynchronizationRecord::contents - for " + _ptr);
+    }
 
 	return _ptr;
     }

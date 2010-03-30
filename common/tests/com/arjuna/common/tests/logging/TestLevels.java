@@ -73,11 +73,9 @@ public class TestLevels
 
         LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();
         String originalFactory = loggingEnvironmentBean.getLoggingFactory();
-        String originalDebugLevel = loggingEnvironmentBean.getDebugLevel();
 
 		// test the releveling for AS integration:
         loggingEnvironmentBean.setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
-        loggingEnvironmentBean.setDebugLevel("0xffffffff");
 
 		System.setOut(bufferedStream);
         LogFactory.reset(); // make sure it reloads the modified config.
@@ -86,7 +84,6 @@ public class TestLevels
     		writeLogMessages();
         } finally {
             loggingEnvironmentBean.setLoggingFactory(originalFactory);
-            loggingEnvironmentBean.setDebugLevel(originalDebugLevel);
             System.setOut(originalStream);
             LogFactory.reset();
         }

@@ -36,7 +36,7 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
@@ -66,12 +66,9 @@ public class AssumedCompleteTransaction extends RecoveredTransaction
     {
 	super(actionUid,ourTypeName);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction_1", new Object[]{get_uid()});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction_1", new Object[]{get_uid()});
+    }
     }
 
     /**

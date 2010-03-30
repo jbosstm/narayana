@@ -26,7 +26,6 @@ import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -34,8 +33,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 
@@ -57,13 +54,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 {
     public SubordinateBACoordinatorRecoveryModule()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug
-                    ( DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "SubordinateBACoordinatorRecoveryModule created - default" );
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule created - default");
         }
 
         if (_transactionStore == null)
@@ -104,10 +96,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.arjLogger.isDebugEnabled())
-            {
-                XTSLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-                        FacilityCode.FAC_CRASH_RECOVERY, "StatusModule: first pass " );
+            if (XTSLogger.arjLogger.isDebugEnabled()) {
+                XTSLogger.arjLogger.debug("StatusModule: first pass ");
             }
 
             SubordinateCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -130,10 +120,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY, "SubordinateBACoordinatorRecoveryModule: Second pass " );
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule: Second pass ");
         }
 
         if (_transactionUidVector != null) {
@@ -146,13 +134,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
     protected SubordinateBACoordinatorRecoveryModule(String type)
     {
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug
-                    ( DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "SubordinateBACoordinatorRecoveryModule created " + type );
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule created " + type);
         }
 
         if (_transactionStore == null)
@@ -189,23 +172,16 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
         String Status = ActionStatus.stringForm( theStatus ) ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug
-                    ( DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "transaction type is "+ _transactionType + " uid is " +
-                                    recoverUid.toString() + "\n ActionStatus is " + Status +
-                                    " in flight is " + inFlight ) ;
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("transaction type is " + _transactionType + " uid is " +
+                    recoverUid.toString() + "\n ActionStatus is " + Status +
+                    " in flight is " + inFlight);
         }
 
         if ( ! inFlight )
         {
-            try
-            {
-                XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "jjh doing revovery here for "+recoverUid);
+            try {
+                XTSLogger.arjLogger.debug("jjh doing revovery here for " + recoverUid);
                 RecoverySubordinateBACoordinator rcvSubordinateCoordinator =
                         new RecoverySubordinateBACoordinator(recoverUid);
                 rcvSubordinateCoordinator.replayPhase2();
@@ -261,13 +237,9 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "processing " + _transactionType
-                            + " transactions" ) ;
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("processing " + _transactionType
+                    + " transactions");
         }
 
         final Uid NULL_UID = Uid.nullUid();
@@ -287,13 +259,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
             {
                 break;
             }
-            if (XTSLogger.arjLogger.isDebugEnabled())
-            {
-                XTSLogger.arjLogger.debug
-                        ( DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "found transaction "+ theUid ) ;
+            if (XTSLogger.arjLogger.isDebugEnabled()) {
+                XTSLogger.arjLogger.debug("found transaction " + theUid);
             }
 
             uidVector.addElement( theUid ) ;

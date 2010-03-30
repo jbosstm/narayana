@@ -44,7 +44,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState ;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 /**
@@ -70,13 +70,9 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     protected ExpiredAssumedCompleteScanner (String typeName, ObjectStore objectStore)
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					     FacilityCode.FAC_CRASH_RECOVERY, 
-					     "com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_1",
-					     new Object[]{Integer.toString(_expiryTime)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_1", new Object[]{Integer.toString(_expiryTime)});
+    }
 	
 	_objectStore  = objectStore;
 	_typeName = typeName;
@@ -90,13 +86,9 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 	Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000);
 
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					      FacilityCode.FAC_CRASH_RECOVERY, 
-					      "com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_2",
-					      new Object[]{_timeFormat.format(oldestSurviving)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
+    }
 
 	try
 	{
@@ -167,12 +159,8 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4",
-                    new Object[]{Integer.toString(_expiryTime)});
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4", new Object[]{Integer.toString(_expiryTime)});
         }
     }
 }

@@ -63,11 +63,9 @@ public ServerOSINestedAction (ServerControl control,
     {
 	super(control, doRegister);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerOSINestedAction::ServerOSINestedAction ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerOSINestedAction::ServerOSINestedAction ( " + _theUid + " )");
+    }
     }
 
 /*
@@ -77,11 +75,9 @@ public ServerOSINestedAction (ServerControl control,
 
 public void commit_subtransaction (Coordinator parent) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerOSINestedAction::commit_subtransaction :"+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerOSINestedAction::commit_subtransaction :" + _theUid);
+    }
 
 	/*
 	 * First remove entry for this transaction otid
@@ -96,11 +92,9 @@ public void commit_subtransaction (Coordinator parent) throws SystemException
 
 public void rollback_subtransaction () throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerOSINestedAction::rollback_subtransaction :"+_theUid);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerOSINestedAction::rollback_subtransaction :" + _theUid);
+    }
 
 	OTIDMap.remove(get_uid());
     

@@ -77,8 +77,7 @@ public interface LogNoi18n
    /**
     * Determine if this logger is enabled for DEBUG messages.
     *
-    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
-    * non zero and the underlying logger is configured with DEBUG level on.
+    * This method returns true when the underlying logger is configured with DEBUG level on.
     *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
@@ -141,22 +140,11 @@ public interface LogNoi18n
    void fatal(Throwable message);
 
    /**
-    * Log a message with the DEBUG Level and with finer granularity. The debug message
-    * is sent to the output only if the specified debug level, visibility level, and facility code
-    * match those allowed by the logger.
-    * <p>
+    * Log a message with the DEBUG Level
+    *
     * <b>Note:</b> this method does not use i18n. ie, message is directly used for log output.
     *
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
     * @param message The message to log.
     */
-   void debug(long dl, long vl, long fl, String message);
+   void debug(String message);
 }

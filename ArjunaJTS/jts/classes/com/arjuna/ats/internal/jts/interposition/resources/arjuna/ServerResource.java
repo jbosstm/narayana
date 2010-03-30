@@ -66,11 +66,9 @@ public class ServerResource
 
 public void finalize () throws Throwable
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerResource.finalize ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerResource.finalize ( " + _theUid + " )");
+    }
 
 	tidyup();
     // should always call parent finalize method
@@ -254,11 +252,9 @@ public final org.omg.CosTransactions.Status otsStatus ()
 
 protected ServerResource ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerResource::ServerResource ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerResource::ServerResource ()");
+    }
 
 	_theControl = null;
 	_parent = null;
@@ -274,11 +270,9 @@ protected ServerResource (ServerControl control)
 	_valid = true;
 	_destroyed = false;
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerResource::ServerResource ( "+_theUid+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerResource::ServerResource ( " + _theUid + " )");
+    }
     }
 
     protected void tidyup ()

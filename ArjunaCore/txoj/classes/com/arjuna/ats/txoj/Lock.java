@@ -39,10 +39,7 @@ import com.arjuna.ats.arjuna.utils.Utility;
 
 import java.io.*;
 
-import com.arjuna.ats.txoj.logging.FacilityCode;
 import com.arjuna.ats.txoj.logging.txojLogger;
-
-import com.arjuna.common.util.logging.*;
 
 import java.io.IOException;
 
@@ -85,12 +82,9 @@ public class Lock extends StateManager
     {
         super(ObjectType.NEITHER);
 
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock(" + lm
-                            + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::Lock(" + lm
+                    + ")");
         }
 
         currentStatus = LockStatus.LOCKFREE;
@@ -139,12 +133,9 @@ public class Lock extends StateManager
     {
         super(storeUid, ObjectType.NEITHER);
 
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock("
-                            + storeUid + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::Lock("
+                    + storeUid + ")");
         }
 
         currentStatus = LockStatus.LOCKFREE;
@@ -159,11 +150,8 @@ public class Lock extends StateManager
 
     public void finalize () throws Throwable
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.DESTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock.finalize()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock.finalize()");
         }
 
         super.terminate();
@@ -185,13 +173,8 @@ public class Lock extends StateManager
 
     public final int getLockMode ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger
-                    .debug(DebugLevel.TRIVIAL_FUNCS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CONCURRENCY_CONTROL,
-                            "Lock::getLockMode()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::getLockMode()");
         }
 
         return lMode;
@@ -203,12 +186,8 @@ public class Lock extends StateManager
 
     public final Uid getCurrentOwner ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::getCurrentOwner()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::getCurrentOwner()");
         }
 
         return owners.getDeepestActionUid();
@@ -220,12 +199,8 @@ public class Lock extends StateManager
 
     public final ActionHierarchy getAllOwners ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::getAllOwners()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::getAllOwners()");
         }
 
         return owners;
@@ -237,12 +212,8 @@ public class Lock extends StateManager
 
     public final int getCurrentStatus ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::getCurrentStatus()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::getCurrentStatus()");
         }
 
         return currentStatus;
@@ -255,12 +226,8 @@ public class Lock extends StateManager
 
     public final void changeHierarchy (ActionHierarchy newOwner)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::getCurrentOwner()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::getCurrentOwner()");
         }
 
         owners.copy(newOwner);
@@ -275,11 +242,8 @@ public class Lock extends StateManager
 
     public final void propagate ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::propagate()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::propagate()");
         }
 
         owners.forgetDeepest();
@@ -298,12 +262,8 @@ public class Lock extends StateManager
 
     public boolean modifiesObject ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::modifiesObject()");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::modifiesObject()");
         }
 
         return ((lMode == LockMode.WRITE) ? true : false);
@@ -320,13 +280,9 @@ public class Lock extends StateManager
 
     public boolean conflictsWith (Lock otherLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::conflictsWith(" + otherLock + ")\n" + "\tLock 1:\n"
-                            + this + "\n" + "\tLock 2:\n" + otherLock);
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::conflictsWith(" + otherLock + ")\n" + "\tLock 1:\n"
+                    + this + "\n" + "\tLock 2:\n" + otherLock);
         }
 
         if (!(getCurrentOwner().equals(otherLock.getCurrentOwner())))
@@ -366,13 +322,10 @@ public class Lock extends StateManager
 
     public boolean equals (Lock otherLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.OPERATORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::equals("
-                            + otherLock + ")\n" + "\tLock 1:\n" + this + "\n"
-                            + "\tLock 2:\n" + otherLock);
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::equals("
+                    + otherLock + ")\n" + "\tLock 1:\n" + this + "\n"
+                    + "\tLock 2:\n" + otherLock);
         }
 
         if (this == otherLock)
@@ -426,12 +379,8 @@ public class Lock extends StateManager
 
     public boolean restore_state (InputObjectState os, int ot)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL,
-                    "Lock::restore_state(" + os + ", " + ot + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::restore_state(" + os + ", " + ot + ")");
         }
 
         ActionHierarchy ah = new ActionHierarchy(0);
@@ -459,12 +408,9 @@ public class Lock extends StateManager
 
     public boolean save_state (OutputObjectState os, int ot)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::save_state("
-                            + os + ", " + ot + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("Lock::save_state("
+                    + os + ", " + ot + ")");
         }
 
         try

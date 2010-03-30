@@ -75,13 +75,9 @@ public class ServerNestedAction extends ServerResource implements
     {
         super(myControl);
 
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerNestedAction::ServerNestedAction ( " + _theUid
-                            + " )");
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerNestedAction::ServerNestedAction ( " + _theUid
+                    + " )");
         }
 
         _theResource = null;
@@ -134,12 +130,8 @@ public class ServerNestedAction extends ServerResource implements
     public void commit_subtransaction (Coordinator parent)
             throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerNestedAction::commit_subtransaction : " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerNestedAction::commit_subtransaction : " + _theUid);
         }
 
         if (_theControl == null)
@@ -284,12 +276,8 @@ public class ServerNestedAction extends ServerResource implements
 
     public void rollback_subtransaction () throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerNestedAction::rollback_subtransaction : " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerNestedAction::rollback_subtransaction : " + _theUid);
         }
 
         if (_theControl == null)
@@ -376,12 +364,8 @@ public class ServerNestedAction extends ServerResource implements
 
     protected ServerNestedAction()
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerNestedAction::ServerNestedAction ()");
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerNestedAction::ServerNestedAction ()");
         }
 
         _theResource = null;

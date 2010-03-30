@@ -44,9 +44,6 @@ import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1] - Exception when accessing data store {0}
@@ -228,13 +225,9 @@ public class TransactionStatusConnectionManager
 		    {
 			Uid newUid = new Uid (theUid) ;
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
-			{
-			    tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS,
-							  VisibilityLevel.VIS_PUBLIC,
-							  FacilityCode.FAC_CRASH_RECOVERY,
-							  "com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3", new Object[]{newUid});
-			}
+			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3", new Object[]{newUid});
+            }
 			tsmiVector.addElement(newUid) ;
 		    }
 		}
@@ -269,12 +262,9 @@ public class TransactionStatusConnectionManager
 		    _tscTable.put ( process_id, tsc ) ;
 		}
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-		    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 FacilityCode.FAC_CRASH_RECOVERY,
-						 "com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4", new Object[]{process_id});
-		}
+		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4", new Object[]{process_id});
+        }
 	    }
 	}
     }

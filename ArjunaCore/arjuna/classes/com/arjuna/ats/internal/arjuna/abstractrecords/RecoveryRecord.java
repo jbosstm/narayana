@@ -34,9 +34,6 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
@@ -54,12 +51,9 @@ public class RecoveryRecord extends AbstractRecord
     {
         super(sm.get_uid(), sm.type(), ObjectType.ANDPERSISTENT);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::RecoveryRecord(" + os + ", "
-                            + sm.get_uid() + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::RecoveryRecord(" + os + ", "
+                    + sm.get_uid() + ")");
         }
 
         objectAddr = sm;
@@ -69,12 +63,9 @@ public class RecoveryRecord extends AbstractRecord
 
     public void finalize () throws Throwable
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord.finalize() for " + order() + " type "
-                            + type());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord.finalize() for " + order() + " type "
+                    + type());
         }
         super.finalize();
     }
@@ -118,11 +109,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::nestedAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::nestedAbort() for " + order());
         }
 
         /*
@@ -165,11 +153,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::nestedCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::nestedCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -177,11 +162,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::nestedPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::nestedPrepare() for " + order());
         }
 
         forgetAction(true);
@@ -196,11 +178,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::topLevelAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::topLevelAbort() for " + order());
         }
 
         return nestedAbort(); /* i.e., same as nested case */
@@ -214,11 +193,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::topLevelCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::topLevelCommit() for " + order());
         }
 
         forgetAction(true);
@@ -233,11 +209,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::topLevelPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::topLevelPrepare() for " + order());
         }
 
         return TwoPhaseOutcome.PREPARE_READONLY;
@@ -324,13 +297,9 @@ public class RecoveryRecord extends AbstractRecord
     {
         super();
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_ABSTRACT_REC,
-                    "RecoveryRecord::RecoveryRecord()"
-                            + " - crash recovery constructor");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("RecoveryRecord::RecoveryRecord()"
+                    + " - crash recovery constructor");
         }
 
         objectAddr = null;

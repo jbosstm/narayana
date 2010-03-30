@@ -45,11 +45,9 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule ;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
-import com.arjuna.common.util.logging.*;
 
 /**
  * This class is a plug-in module for the recovery manager.
@@ -66,13 +64,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 {
    public AtomicActionRecoveryModule()
    {
-       if (tsLogger.arjLogger.isDebugEnabled())
-       {
-	   tsLogger.arjLogger.debug
-            ( DebugLevel.CONSTRUCTORS,
-              VisibilityLevel.VIS_PUBLIC,
-              FacilityCode.FAC_CRASH_RECOVERY,
-              "AtomicActionRecoveryModule created" );
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("AtomicActionRecoveryModule created");
        }
 
       if (_transactionStore == null)
@@ -96,11 +89,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       try
       {
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
-                  "com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4");
-	  }
+	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4");
+      }
 
 	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
 
@@ -122,10 +113,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
    public void periodicWorkSecondPass()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled())
-       {
-           tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
-                   "com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5");
+       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5");
        }
 
        processTransactionsStatus() ;
@@ -133,13 +122,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
     protected AtomicActionRecoveryModule (String type)
     {
-       if (tsLogger.arjLogger.isDebugEnabled())
-       {
-	   tsLogger.arjLogger.debug
-            ( DebugLevel.CONSTRUCTORS,
-              VisibilityLevel.VIS_PUBLIC,
-              FacilityCode.FAC_CRASH_RECOVERY,
-              "AtomicActionRecoveryModule created" );
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("AtomicActionRecoveryModule created");
        }
 
       if (_transactionStore == null)
@@ -163,15 +147,10 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       String Status = ActionStatus.stringForm( theStatus ) ;
 
-      if (tsLogger.arjLogger.isDebugEnabled())
-      {
-	  tsLogger.arjLogger.debug
-	      ( DebugLevel.FUNCTIONS,
-		VisibilityLevel.VIS_PUBLIC,
-		FacilityCode.FAC_CRASH_RECOVERY,
-		"transaction type is "+ _transactionType + " uid is " +
-		recoverUid.toString() + "\n ActionStatus is " + Status +
-		" in flight is " + inFlight ) ;
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("transaction type is " + _transactionType + " uid is " +
+                  recoverUid.toString() + "\n ActionStatus is " + Status +
+                  " in flight is " + inFlight);
       }
 
       if ( ! inFlight )
@@ -234,13 +213,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    {
       Vector uidVector = new Vector() ;
 
-      if (tsLogger.arjLogger.isDebugEnabled())
-      {
-	  tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_CRASH_RECOVERY,
-				    "processing " + _transactionType
-				    + " transactions" ) ;
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("processing " + _transactionType
+                  + " transactions");
       }
 
       Uid theUid = null;
@@ -261,14 +236,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
             {
                Uid newUid = new Uid( theUid ) ;
 
-	       if (tsLogger.arjLogger.isDebugEnabled())
-	       {
-		   tsLogger.arjLogger.debug
-		       ( DebugLevel.FUNCTIONS,
-			 VisibilityLevel.VIS_PUBLIC,
-			 FacilityCode.FAC_CRASH_RECOVERY,
-			 "found transaction "+ newUid ) ;
-	       }
+	       if (tsLogger.arjLogger.isDebugEnabled()) {
+               tsLogger.arjLogger.debug("found transaction " + newUid);
+           }
 
                uidVector.addElement( newUid ) ;
             }

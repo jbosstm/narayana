@@ -26,9 +26,6 @@ public class BeanPopulatorTest
 
         expectedKeys.add("com.arjuna.common.util.logging.language");
         expectedKeys.add("com.arjuna.common.util.logging.country");
-        expectedKeys.add("com.arjuna.common.util.logging.DebugLevel");
-        expectedKeys.add("com.arjuna.common.util.logging.FacilityLevel");
-        expectedKeys.add("com.arjuna.common.util.logging.VisibilityLevel");
 
         System.out.println("expected: "+expectedKeys);
         System.out.println("used: "+testProperties.usedKeys);

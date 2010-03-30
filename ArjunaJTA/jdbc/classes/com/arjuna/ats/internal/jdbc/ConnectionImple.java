@@ -80,13 +80,9 @@ public abstract class ConnectionImple
 
 	public ConnectionImple(String dbName, Properties info) throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-					"ConnectionImple.ConnectionImple ( " + dbName + " )");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("ConnectionImple.ConnectionImple ( " + dbName + " )");
+        }
 
 		String user = null;
 		String passwd = null;
@@ -127,14 +123,10 @@ public abstract class ConnectionImple
 	public ConnectionImple(String dbName, String user, String passwd,
 			String dynamic) throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-					"ConnectionImple.ConnectionImple ( " + dbName + ", " + user
-							+ ", " + passwd + ", " + dynamic + " )");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("ConnectionImple.ConnectionImple ( " + dbName + ", " + user
+                    + ", " + passwd + ", " + dynamic + " )");
+        }
 
 		if ((dynamic == null) || (dynamic.equals("")))
 		{
@@ -839,13 +831,9 @@ public abstract class ConnectionImple
 
 	protected final synchronized void registerDatabase() throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PRIVATE,
-					com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-					"ConnectionImple.registerDatabase ()");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("ConnectionImple.registerDatabase ()");
+        }
 
 		Connection theConnection = getConnection();
 
@@ -965,13 +953,9 @@ public abstract class ConnectionImple
 
 	protected final void checkTransaction() throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PRIVATE,
-					com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-					"ConnectionImple.checkTransaction ()");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("ConnectionImple.checkTransaction ()");
+        }
 
 		try
 		{

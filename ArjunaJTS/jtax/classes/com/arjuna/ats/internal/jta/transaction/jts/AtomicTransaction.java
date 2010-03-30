@@ -94,11 +94,10 @@ public class AtomicTransaction extends
 			throws NoTransaction, HeuristicMixed, HeuristicHazard,
 			WrongTransaction, SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::end ( "
-					+ report_heuristics + " ) for " + _theAction);
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("AtomicTransaction::end ( "
+                    + report_heuristics + " ) for " + _theAction);
+        }
 
 		if (_theAction == null)
 		{
@@ -156,11 +155,10 @@ public class AtomicTransaction extends
 	public synchronized void abort () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::abort for "
-					+ _theAction);
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("AtomicTransaction::abort for "
+                    + _theAction);
+        }
 
 		if (_theAction == null)
 		{

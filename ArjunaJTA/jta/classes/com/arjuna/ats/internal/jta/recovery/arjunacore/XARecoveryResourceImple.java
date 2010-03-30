@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jta.recovery.*;
@@ -95,12 +95,10 @@ public class XARecoveryResourceImple extends XAResourceRecord implements XARecov
     {
 	if (ex.errorCode == XAException.XAER_NOTA)
 	{ 
-	    if (jtaLogger.logger.isDebugEnabled())
-	    {
-		jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
-				      "XARecoveryResourceImple.notAProblem - no error with XAER_NOTA on "
-				      + (commit ? " commit" : " rollback"));
-	    }
+	    if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XARecoveryResourceImple.notAProblem - no error with XAER_NOTA on "
+                    + (commit ? " commit" : " rollback"));
+        }
 	    
 	    return true;
 	}

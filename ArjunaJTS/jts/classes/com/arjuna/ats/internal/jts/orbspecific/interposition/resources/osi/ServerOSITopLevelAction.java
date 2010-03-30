@@ -55,13 +55,9 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     {
         super(control, doRegister);
 
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::ServerOSITopLevelAction ( ServerControl, "
-                            + doRegister + " )");
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::ServerOSITopLevelAction ( ServerControl, "
+                    + doRegister + " )");
         }
     }
 
@@ -72,12 +68,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed,
             HeuristicHazard, SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::prepare for " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::prepare for " + _theUid);
         }
 
         /*
@@ -93,12 +85,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public void rollback () throws SystemException, HeuristicCommit,
             HeuristicMixed, HeuristicHazard
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::rollback for " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::rollback for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -109,12 +97,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public void commit () throws SystemException, NotPrepared,
             HeuristicRollback, HeuristicMixed, HeuristicHazard
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::commit for " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::commit for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -124,12 +108,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 
     public void forget () throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::forget for " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::forget for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -144,12 +124,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 
     public void commit_one_phase () throws HeuristicHazard, SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerOSITopLevelAction::commit_one_phase for " + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerOSITopLevelAction::commit_one_phase for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());

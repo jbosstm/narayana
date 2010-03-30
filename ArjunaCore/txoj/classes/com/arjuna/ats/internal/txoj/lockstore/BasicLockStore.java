@@ -36,9 +36,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
 
@@ -61,22 +58,16 @@ public class BasicLockStore extends LockStore
 
     public BasicLockStore(String key)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_LOCK_STORE,
-                    "BasicLockStore.BasicLockStore(" + key + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicLockStore.BasicLockStore(" + key + ")");
         }
     }
 
     public InputObjectState read_state (Uid u, String tName)
             throws LockStoreException
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_LOCK_STORE,
-                    "BasicLockStore.read_state(" + u + ", " + tName + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicLockStore.read_state(" + u + ", " + tName + ")");
         }
 
         return segmentStore.read_state(u, tName);
@@ -84,11 +75,8 @@ public class BasicLockStore extends LockStore
 
     public boolean remove_state (Uid u, String tName)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_LOCK_STORE,
-                    "BasicLockStore.remove_state(" + u + ", " + tName + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicLockStore.remove_state(" + u + ", " + tName + ")");
         }
 
         return segmentStore.remove_state(u, tName);
@@ -96,12 +84,9 @@ public class BasicLockStore extends LockStore
 
     public boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_LOCK_STORE,
-                    "BasicLockStore.write_committed(" + u + ", " + tName + ", "
-                            + state + ")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicLockStore.write_committed(" + u + ", " + tName + ", "
+                    + state + ")");
         }
 
         return segmentStore.write_committed(u, tName, state);

@@ -31,11 +31,8 @@
 
 package com.arjuna.ats.internal.arjuna.coordinator;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,13 +47,10 @@ public class ReaperElement implements Comparable<ReaperElement>
 
 	public ReaperElement(Reapable control, int timeout)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"ReaperElement::ReaperElement ( " + control + ", "
-							+ timeout + " )");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ReaperElement::ReaperElement ( " + control + ", "
+                    + timeout + " )");
+        }
 
 		_control = control;
 		_timeout = timeout;

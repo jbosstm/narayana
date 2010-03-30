@@ -37,10 +37,9 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
-import com.arjuna.ats.jts.logging.FacilityCode;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
@@ -105,8 +104,7 @@ public ContextClientRequestInterceptorImpl (int localSlot, Codec codec)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				   (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl ( "+localSlot+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl ( "+localSlot+" )");
 	}
 
 	_localSlot = localSlot;
@@ -127,8 +125,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl::send_request ( "+request_info+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::send_request ( "+request_info+" )");
 	}
 
 	if (systemCall(request_info))
@@ -281,8 +278,7 @@ public void send_poll (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl::send_poll ( "+request_info+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::send_poll ( "+request_info+" )");
 	}
     }
 
@@ -290,8 +286,7 @@ public void receive_reply (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl::receive_reply ( "+request_info+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_reply ( "+request_info+" )");
 	}
     }
 
@@ -299,8 +294,7 @@ public void receive_exception (ClientRequestInfo request_info) throws SystemExce
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl::receive_exception ( "+request_info+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_exception ( "+request_info+" )");
 	}
 
 	// mark transaction as rollback only if a system exception
@@ -310,8 +304,7 @@ public void receive_other (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (FacilityCode.FAC_OTS | FacilityCode.FAC_INTERCEPTOR), "ContextClientRequestInterceptorImpl::receive_other ( "+request_info+" )");
+	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_other ( "+request_info+" )");
 	}
     }
 

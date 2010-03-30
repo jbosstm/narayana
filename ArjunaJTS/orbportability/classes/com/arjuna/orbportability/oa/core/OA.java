@@ -31,8 +31,8 @@
 
 package com.arjuna.orbportability.oa.core;
 
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.DebugLevel;
+
+
 
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.*;
@@ -172,12 +172,8 @@ public class OA
             }
         }
 
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY,
-                    "OA.initialise() - using OA Implementation " + className);
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA.initialise() - using OA Implementation " + className);
         }
 
         try

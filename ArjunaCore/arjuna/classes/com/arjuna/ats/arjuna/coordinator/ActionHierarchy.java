@@ -39,10 +39,7 @@ import java.io.IOException;
 import java.lang.OutOfMemoryError;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Class that represents the transaction hierarchy. This class
@@ -64,12 +61,9 @@ public class ActionHierarchy
 
     public ActionHierarchy (int depth)
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-				     VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::ActionHierarchy("+depth+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("ActionHierarchy::ActionHierarchy(" + depth + ")");
+    }
 
 	hierarchy = null;
 	maxHierarchyDepth = depth;
@@ -212,11 +206,9 @@ public class ActionHierarchy
 
     public final boolean add (Uid actionId, int at)
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::add("+actionId+", "+at+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("ActionHierarchy::add(" + actionId + ", " + at + ")");
+    }
 
 	boolean result = true;
 
@@ -372,11 +364,9 @@ public class ActionHierarchy
 
     public final int findCommonPrefix (ActionHierarchy oldHierarchy)
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::findCommonPrefix()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("ActionHierarchy::findCommonPrefix()");
+    }
 
 	int common = 0;
 	int max = oldHierarchy.depth();
@@ -387,12 +377,9 @@ public class ActionHierarchy
 	    common++;
 	}
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ATOMIC_ACTION,
-				     "ActionHierarchy::::findCommonPrefix(): prefix is "+common);
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("ActionHierarchy::::findCommonPrefix(): prefix is " + common);
+    }
 
 	return common;
     }

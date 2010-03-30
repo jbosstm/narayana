@@ -41,7 +41,7 @@ import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
@@ -50,6 +50,8 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
+
+import java.lang.Object;
 
 /**
  * Implementation of RecoveryCreator for JacOrb
@@ -114,13 +116,9 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
 
 		rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
 
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS,
-					       VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1", new java.lang.Object[]{tranUid, rc});
-		}
+		if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1", new Object[]{tranUid, rc});
+        }
 	    }
 	    else
 	    {

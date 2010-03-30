@@ -104,12 +104,10 @@ public class XARecoveryResourceImple extends XAResourceRecord implements XARecov
     {
 	if (ex.errorCode == XAException.XAER_NOTA)
 	{ 
-	    if (jtaxLogger.logger.isDebugEnabled())
-	    {
-		jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY, "XARecoveryResourceImple.notAProblem - no error with XAER_NOTA on "
-				       + (commit ? " commit" : " rollback"));
-	    }
+	    if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("XARecoveryResourceImple.notAProblem - no error with XAER_NOTA on "
+                    + (commit ? " commit" : " rollback"));
+        }
 	    
 	    return true;
 	}

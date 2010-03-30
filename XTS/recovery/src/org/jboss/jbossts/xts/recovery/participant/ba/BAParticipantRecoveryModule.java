@@ -24,15 +24,12 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -59,13 +56,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
 {
     public BAParticipantRecoveryModule()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug
-                    ( DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "BAParticipantRecoveryModule created - default" );
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("BAParticipantRecoveryModule created - default");
         }
 
         if (_objectStore == null)
@@ -118,10 +110,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.arjLogger.isDebugEnabled())
-            {
-                XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "BAParticipantRecoveryModule: first pass");
+            if (XTSLogger.arjLogger.isDebugEnabled()) {
+                XTSLogger.arjLogger.debug("BAParticipantRecoveryModule: first pass");
             }
 
             BAParticipants = _objectStore.allObjUids(_participantType, acc_uids );
@@ -144,10 +134,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "BAParticipantRecoveryModule: Second pass");
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("BAParticipantRecoveryModule: Second pass");
         }
 
         processParticipantsStatus() ;
@@ -157,14 +145,9 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     {
         // Retrieve the participant from its original process.
 
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug
-                    ( DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "participant type is "+ _participantType + " uid is " +
-                                    recoverUid.toString()) ;
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("participant type is " + _participantType + " uid is " +
+                    recoverUid.toString());
         }
 
         // we don't need to use a lock here because we only attempt the read
@@ -247,13 +230,9 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled())
-        {
-            XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "processing " + _participantType
-                            + " WS-BA participants" ) ;
+        if (XTSLogger.arjLogger.isDebugEnabled()) {
+            XTSLogger.arjLogger.debug("processing " + _participantType
+                    + " WS-BA participants");
         }
 
         Uid NULL_UID = Uid.nullUid();
@@ -275,13 +254,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
                 break;
             }
 
-            if (XTSLogger.arjLogger.isDebugEnabled())
-            {
-                XTSLogger.arjLogger.debug
-                        ( DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "found WS-BA participant "+ theUid ) ;
+            if (XTSLogger.arjLogger.isDebugEnabled()) {
+                XTSLogger.arjLogger.debug("found WS-BA participant " + theUid);
             }
 
             uidVector.addElement( theUid ) ;

@@ -239,10 +239,9 @@ public class ControlWrapper implements Reapable
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlWrapper::create_subtransaction - subtransaction parent is inactive.");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ControlWrapper::create_subtransaction - subtransaction parent is inactive.");
+            }
 
 			throw new INVALID_TRANSACTION(
 					ExceptionCodes.UNAVAILABLE_COORDINATOR,

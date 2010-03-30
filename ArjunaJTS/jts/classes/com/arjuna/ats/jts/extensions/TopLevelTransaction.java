@@ -64,11 +64,9 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public TopLevelTransaction ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::TopLevelTransaction ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::TopLevelTransaction ()");
+    }
 
 	_originalTransaction = null;
     }
@@ -79,11 +77,9 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public void finalize ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction.finalize ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction.finalize ()");
+    }
 
 	if (_originalTransaction != null)
 	{
@@ -125,11 +121,9 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public synchronized void begin () throws SystemException, SubtransactionsUnavailable
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::begin ()");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::begin ()");
+    }
 
 	// already begun?
 
@@ -142,22 +136,18 @@ public class TopLevelTransaction extends AtomicTransaction
 
 	_originalTransaction = current.suspend();
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::begin - suspend transaction "+_originalTransaction);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::begin - suspend transaction " + _originalTransaction);
+    }
 
 	super.begin();
     }
 
     public synchronized void commit (boolean report_heuristics) throws SystemException, NoTransaction, HeuristicMixed, HeuristicHazard, WrongTransaction
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::commit ( "+report_heuristics+" ) called for "+_originalTransaction);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::commit ( " + report_heuristics + " ) called for " + _originalTransaction);
+    }
 
 	if (validTransaction())
 	{
@@ -186,11 +176,9 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public synchronized void rollback () throws SystemException, NoTransaction, WrongTransaction
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::rollback () called for "+_originalTransaction);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::rollback () called for " + _originalTransaction);
+    }
 
 	if (validTransaction())
 	{
@@ -219,11 +207,9 @@ public class TopLevelTransaction extends AtomicTransaction
 
     private final void resumeTransaction ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TopLevelTransaction::resumeTransaction for "+_originalTransaction);
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransaction::resumeTransaction for " + _originalTransaction);
+    }
 
 	try
 	{

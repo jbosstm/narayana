@@ -44,7 +44,7 @@ import com.arjuna.ats.jts.utils.*;
 import com.arjuna.ats.arjuna.exceptions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 /**
@@ -72,12 +72,9 @@ public abstract class TransactionRecoveryModule
 {
     public TransactionRecoveryModule ()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_1");
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_1");
+    }
 
 	if (_transactionStore == null)
 	{
@@ -109,12 +106,9 @@ public abstract class TransactionRecoveryModule
 
 	try
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_3", new Object[]{_transactionType});
-	    }
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_3", new Object[]{_transactionType});
+        }
 
 	    anyTransactions = _transactionStore.allObjUids(_transactionType, uids);
 	}
@@ -143,13 +137,9 @@ public abstract class TransactionRecoveryModule
 		    {
 			Uid newUid = new Uid (theUid);
 
-			if (jtsLogger.loggerI18N.isDebugEnabled())
-			    {
-				jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-							   VisibilityLevel.VIS_PUBLIC, 
-							   FacilityCode.FAC_CRASH_RECOVERY, 
-							   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_5", new Object[]{newUid});
-			    }
+			if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_5", new Object[]{newUid});
+            }
 			_transactionUidVector.addElement(newUid);
 		    }
 		}
@@ -194,26 +184,18 @@ public abstract class TransactionRecoveryModule
 		    recoverTransaction(currentUid);
 		} else {
 		    // Transaction has gone away - probably completed normally
-		    if (jtsLogger.loggerI18N.isDebugEnabled())
-			{
-			    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						       VisibilityLevel.VIS_PUBLIC, 
-						       FacilityCode.FAC_CRASH_RECOVERY, 
-						       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_7", new Object[]{currentUid});
-			}
+		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_7", new Object[]{currentUid});
+            }
 		}
 	    }
 	    catch (ObjectStoreException e4)
 	    {
 		// Transaction has gone away - probably completed normally
 	
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		    {
-			jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						   VisibilityLevel.VIS_PUBLIC, 
-						   FacilityCode.FAC_CRASH_RECOVERY, 
-						   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8", new Object[]{currentUid});
-		    }
+		if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8", new Object[]{currentUid});
+        }
 	    }
 	}
     }
@@ -224,25 +206,17 @@ public abstract class TransactionRecoveryModule
     protected void initialise ()
     {
 
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-					   VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "TransactionRecoveryModule.initialise()");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TransactionRecoveryModule.initialise()");
+    }
     }
 
     private void recoverTransaction (Uid tranUid)
 	//protected void recoverTransaction (Uid tranUid)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "TransactionRecoveryModule.recoverTransaction("+tranUid+")");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TransactionRecoveryModule.recoverTransaction(" + tranUid + ")");
+    }
 	
 	Status currentStatus = Status.StatusUnknown;
 
@@ -250,24 +224,16 @@ public abstract class TransactionRecoveryModule
 
 	currentStatus = cachedRecoveredTransaction.get_status();
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					   VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9", new Object[]{tranUid, Utility.stringStatus(currentStatus)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9", new Object[]{tranUid, Utility.stringStatus(currentStatus)});
+    }
 
 	// but first check that the original transaction isn't in mid-flight
 	if ( cachedRecoveredTransaction.originalBusy() ) 
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10", new Object[]{tranUid});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10", new Object[]{tranUid});
+        }
 	    return;
 	}
 		

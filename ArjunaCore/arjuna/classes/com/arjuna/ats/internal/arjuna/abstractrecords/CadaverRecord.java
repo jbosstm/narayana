@@ -33,14 +33,11 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import java.io.PrintWriter;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -95,12 +92,9 @@ public class CadaverRecord extends PersistenceRecord
 	    //	    ObjectStore.reference(store);
 	}
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC,
-				     "CadaverRecord::CadaverRecord("+os+", "+sm.get_uid()+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::CadaverRecord(" + os + ", " + sm.get_uid() + ")");
+    }
     }
 
     /**
@@ -136,11 +130,9 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedAbort() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::nestedAbort() for " + order());
+    }
 
 	if (oldState != null)
 	    newStateIsValid = false;
@@ -176,11 +168,9 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedPrepare() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::nestedPrepare() for " + order());
+    }
 
 	if (newStateIsValid)
 	    return super.nestedPrepare();
@@ -194,11 +184,9 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelAbort() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::topLevelAbort() for " + order());
+    }
 
 	newStateIsValid = false;
 
@@ -225,11 +213,9 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelCommit() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::topLevelCommit() for " + order());
+    }
 
 	boolean res = true;
 	OutputObjectState oState = super.state;
@@ -262,11 +248,9 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelPrepare() for "+order());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::topLevelPrepare() for " + order());
+    }
 
 	int tlpOk = TwoPhaseOutcome.PREPARE_NOTOK;
 	OutputObjectState oState = (newStateIsValid ? super.state : oldState);
@@ -427,11 +411,9 @@ public class CadaverRecord extends PersistenceRecord
 	oType = RecordType.NONE_RECORD;
 	store = null;
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::CadaverRecord ()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverRecord::CadaverRecord ()");
+    }
     }
 
     private boolean           newStateIsValid;

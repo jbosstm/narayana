@@ -36,8 +36,8 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_OPERATION;
@@ -121,8 +121,7 @@ public InterpositionServerRequestInterceptorImpl (int dataSlot, Codec codec)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl ( "+dataSlot+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl ( "+dataSlot+" )");
 	}
 
 	_dataSlot = dataSlot;
@@ -138,8 +137,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -219,8 +217,7 @@ public void receive_request (ServerRequestInfo request_info) throws SystemExcept
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
 	}
     }
 
@@ -236,8 +233,7 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -270,8 +266,7 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -304,8 +299,7 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl::send_other ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_other ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -347,8 +341,7 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
 	}
 
 	Any data = request_info.get_slot(_dataSlot);

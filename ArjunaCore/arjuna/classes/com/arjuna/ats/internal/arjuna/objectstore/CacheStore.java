@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
@@ -40,10 +39,6 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.util.LinkedList;
 
@@ -175,10 +170,8 @@ public class CacheStore extends HashedStore
     {
         super(locationOfStore, shareStatus);
 
-      if (tsLogger.arjLogger.isDebugEnabled())
-      {
-         tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-               FacilityCode.FAC_OBJECT_STORE, "CacheStore.CacheStore("+locationOfStore+")");
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("CacheStore.CacheStore(" + locationOfStore + ")");
       }
 
         /*
@@ -198,10 +191,8 @@ public class CacheStore extends HashedStore
    {
       super(shareStatus);
 
-      if (tsLogger.arjLogger.isDebugEnabled())
-      {
-         tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-               FacilityCode.FAC_OBJECT_STORE, "CacheStore.CacheStore( "+shareStatus+" )");
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("CacheStore.CacheStore( " + shareStatus + " )");
       }
 
       this.syncWrites = false;
@@ -292,10 +283,8 @@ class ShutdownThread extends Thread // used to flush on exit
              * that the thread isn't actively doing work.
              */
 
-          if (tsLogger.arjLogger.isDebugEnabled())
-          {
-              tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-                                       FacilityCode.FAC_OBJECT_STORE, "ShutdownThread.run () - terminating");
+          if (tsLogger.arjLogger.isDebugEnabled()) {
+              tsLogger.arjLogger.debug("ShutdownThread.run () - terminating");
           }
       }
    }

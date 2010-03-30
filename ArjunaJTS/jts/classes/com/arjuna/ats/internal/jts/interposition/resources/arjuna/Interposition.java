@@ -600,12 +600,9 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
         {
             if (!problem)
             {
-                if (jtsLogger.logger.isDebugEnabled())
-                {
-                    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, Utility.getHierarchy(ctx));
-                    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, hierarchytoString(action));
+                if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug(Utility.getHierarchy(ctx));
+                    jtsLogger.logger.debug(hierarchytoString(action));
                 }
             }
             else

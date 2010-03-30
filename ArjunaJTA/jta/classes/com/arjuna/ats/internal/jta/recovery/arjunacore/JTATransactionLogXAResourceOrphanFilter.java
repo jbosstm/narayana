@@ -22,7 +22,7 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
@@ -30,8 +30,8 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import javax.transaction.xa.Xid;
 
@@ -78,13 +78,9 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
         XidImple theXid = new XidImple(xid);
         Uid u = theXid.getTransactionUid();
 
-        if (jtaLogger.logger.isDebugEnabled())
-        {
-            jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "Checking whether Xid "
-                            + theXid + " exists in ObjectStore.");
+        if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("Checking whether Xid "
+                    + theXid + " exists in ObjectStore.");
         }
 
         if (!u.equals(Uid.nullUid()))
@@ -92,34 +88,22 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
             try
             {
 
-                if (jtaLogger.logger.isDebugEnabled())
-                {
-                    jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "Looking for "+u+" and "+transactionType);
+                if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("Looking for " + u + " and " + transactionType);
                 }
 
                 if (transactionStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
                 {
-                    if (jtaLogger.logger.isDebugEnabled())
-                    {
-                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PRIVATE,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "Found record for "+theXid);
+                    if (jtaLogger.logger.isDebugEnabled()) {
+                        jtaLogger.logger.debug("Found record for " + theXid);
                     }
 
                     return true;
                 }
                 else
                 {
-                    if (jtaLogger.logger.isDebugEnabled())
-                    {
-                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PRIVATE,
-                                FacilityCode.FAC_CRASH_RECOVERY,
-                                "No record found for "+theXid);
+                    if (jtaLogger.logger.isDebugEnabled()) {
+                        jtaLogger.logger.debug("No record found for " + theXid);
                     }
                 }
             }

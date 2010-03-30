@@ -110,13 +110,9 @@ public class XAResourceRecord extends AbstractRecord
 	{
 		super(new Uid(), null, ObjectType.ANDPERSISTENT);
 
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.XAResourceRecord ( " + xid + ", "+res+" )");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.XAResourceRecord ( " + xid + ", " + res + " )");
+        }
 
 		_theXAResource = res;
 		_recoveryObject = null;
@@ -220,13 +216,9 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelPrepare()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.topLevelPrepare for " + _tranID);
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.topLevelPrepare for " + _tranID);
+        }
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
 		{
@@ -330,13 +322,9 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelAbort()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.topLevelAbort for " + _tranID);
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.topLevelAbort for " + _tranID);
+        }
 
 		if (!_valid)
 			return TwoPhaseOutcome.FINISH_ERROR;
@@ -525,13 +513,9 @@ public class XAResourceRecord extends AbstractRecord
 	 */
 	public int topLevelCommit()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.topLevelCommit for " + _tranID);
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.topLevelCommit for " + _tranID);
+        }
 
 		if (!_prepared)
 			return TwoPhaseOutcome.NOT_PREPARED;
@@ -710,13 +694,9 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelOnePhaseCommit()
 	{
-	    if (jtaLogger.logger.isDebugEnabled())
-	    {
-	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-	                VisibilityLevel.VIS_PUBLIC,
-	                com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-	                "XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
-	    }
+	    if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
+        }
 
 	    boolean commit = true;
 	    
@@ -910,13 +890,9 @@ public class XAResourceRecord extends AbstractRecord
 
 	public boolean forgetHeuristic()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.forget for " + _tranID);
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.forget for " + _tranID);
+        }
 
 		forget();
 
@@ -948,13 +924,9 @@ public class XAResourceRecord extends AbstractRecord
 
 	protected int recover()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PROTECTED,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.recover");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("XAResourceRecord.recover");
+        }
 
 		if (_committed)
 		{
@@ -1104,15 +1076,9 @@ public class XAResourceRecord extends AbstractRecord
 						_theXAResource = (XAResource) o.readObject();
 						o.close();
 
-						if (jtaLogger.logger.isDebugEnabled())
-						{
-							jtaLogger.logger
-									.debug(
-											DebugLevel.FUNCTIONS,
-											VisibilityLevel.VIS_PUBLIC,
-											com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-											"XAResourceRecord.restore_state - XAResource de-serialized");
-						}
+						if (jtaLogger.logger.isDebugEnabled()) {
+                            jtaLogger.logger.debug("XAResourceRecord.restore_state - XAResource de-serialized");
+                        }
 					}
 					catch (Exception ex)
 					{
@@ -1166,14 +1132,10 @@ public class XAResourceRecord extends AbstractRecord
 				_recoveryObject.unpackFrom(os);
 				_theXAResource = _recoveryObject.getResource();
 
-				if (jtaLogger.logger.isDebugEnabled())
-				{
-					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-							VisibilityLevel.VIS_PUBLIC,
-							com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-							"XAResourceRecord.restore_state - XAResource got from "
-									+ creatorName);
-				}
+				if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("XAResourceRecord.restore_state - XAResource got from "
+                            + creatorName);
+                }
 			}
 
 			res = true;

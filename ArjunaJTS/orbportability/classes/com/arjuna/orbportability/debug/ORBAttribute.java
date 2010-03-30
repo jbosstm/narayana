@@ -32,8 +32,8 @@
 package com.arjuna.orbportability.debug;
 
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 /**
  * This class prints out all of the parameters passed to it.
@@ -50,26 +50,20 @@ public void initialise (String[] params)
     {
 	if (params != null)
 	{
-            if (opLogger.logger.isDebugEnabled())
-            {
-                opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_ORB_PORTABILITY, "ORBAttribute.initialise - parameters: ");
-	    }
+            if (opLogger.logger.isDebugEnabled()) {
+                opLogger.logger.debug("ORBAttribute.initialise - parameters: ");
+            }
 
 	    for (int i = 0; i < params.length; i++)
 	    {
-                if (opLogger.logger.isDebugEnabled())
-                {
-                    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			                  FacilityCode.FAC_ORB_PORTABILITY, params[i]);
-		}
+                if (opLogger.logger.isDebugEnabled()) {
+                    opLogger.logger.debug(params[i]);
+                }
 	    }
 
-            if (opLogger.logger.isDebugEnabled())
-            {
-                opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_ORB_PORTABILITY, "");
-	    }
+            if (opLogger.logger.isDebugEnabled()) {
+                opLogger.logger.debug("");
+            }
 	}
 		
     }

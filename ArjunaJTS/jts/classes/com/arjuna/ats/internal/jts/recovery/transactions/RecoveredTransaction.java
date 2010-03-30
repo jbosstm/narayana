@@ -43,7 +43,7 @@ import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
@@ -108,16 +108,9 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
     {
         super(actionUid);
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1",
-                            new Object[]
-                            { get_uid() });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1", new Object[]
+                    {get_uid()});
         }
 
         // Don't bother trying to activate a transaction that isn't in
@@ -236,16 +229,9 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
 
         Status theStatus = get_status();
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5",
-                            new Object[]
-                            { get_uid(), Utility.stringStatus(theStatus) });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]
+                    {get_uid(), Utility.stringStatus(theStatus)});
         }
 
         if ((theStatus == Status.StatusPrepared)
@@ -278,16 +264,9 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
             _recoveryStatus = RecoveryStatus.REPLAY_FAILED;
         }
 
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N
-                    .debug(
-                            DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5",
-                            new Object[]
-                            { get_uid() });
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]
+                    {get_uid()});
         }
     }
 

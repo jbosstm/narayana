@@ -40,9 +40,6 @@ import java.io.*;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * An refinement of the basic FileSystemStore which provides file-level locking.
@@ -68,12 +65,9 @@ public abstract class FileLockingStore extends FileSystemStore
     {
         super(locationOfStore, ss);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "FileLockingStore.FileLockingStore(" + locationOfStore
-                            + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLockingStore.FileLockingStore(" + locationOfStore
+                    + ")");
         }
     }
 
@@ -83,11 +77,8 @@ public abstract class FileLockingStore extends FileSystemStore
 
     protected synchronized boolean lock (File fd, int lmode, boolean create)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, 
-                                     "FileLockingStore.lock("+fd+", "+FileLock.modeString(lmode)+", "+create+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLockingStore.lock(" + fd + ", " + FileLock.modeString(lmode) + ", " + create + ")");
         }
 
         FileLock fileLock = new FileLock(fd);
@@ -97,10 +88,8 @@ public abstract class FileLockingStore extends FileSystemStore
 
     protected synchronized boolean unlock (File fd)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "FileLockingStore.unlock("+fd+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLockingStore.unlock(" + fd + ")");
         }
 
         FileLock fileLock = new FileLock(fd);

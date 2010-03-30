@@ -67,11 +67,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public DirectRecoverableConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.DirectRecoverableConnection()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.DirectRecoverableConnection()");
+    }
 
 	_dbName = null;
 	_user = null;
@@ -90,11 +88,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 				      String passwd, String dynamic,
 				      ConnectionImple conn) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.DirectRecoverableConnection( "+dbName+", "+user+", "+passwd+", "+dynamic+" )");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + dynamic + " )");
+    }
 
 	_dbName = dbName;
 	_user = user;
@@ -135,11 +131,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public boolean packInto (OutputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.packInto ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.packInto ()");
+    }
 
 	try
 	{
@@ -158,11 +152,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public boolean unpackFrom (InputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.unpackFrom ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.unpackFrom ()");
+    }
 
 	try
 	{
@@ -214,11 +206,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XAResource getResource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.getResource ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.getResource ()");
+    }
 
 	try
 	{
@@ -276,11 +266,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XAConnection getConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.getConnection ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.getConnection ()");
+    }
 
 	try
 	{
@@ -306,11 +294,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XADataSource getDataSource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.getDataSource ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.getDataSource ()");
+    }
 
 	return _theDataSource;
     }
@@ -364,11 +350,9 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     private final void createConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				    com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "DirectRecoverableConnection.createConnection");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("DirectRecoverableConnection.createConnection");
+    }
 
 	if ((_dynamic == null) || (_dynamic.equals("")))
 	{
@@ -388,22 +372,17 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
 		if ((_user == null) && (_passwd == null))
 		{
-		    if (jdbcLogger.logger.isDebugEnabled())
-		    {
-			jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-						com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-						"DirectRecoverableConnection - getting connection with no user");
-		    }
+		    if (jdbcLogger.logger.isDebugEnabled()) {
+                jdbcLogger.logger.debug("DirectRecoverableConnection - getting connection with no user");
+            }
 
 		    _theConnection = _theDataSource.getXAConnection();
 		}
 		else
 		{
-		    if (jdbcLogger.logger.isDebugEnabled())
-		    {
-			jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-						"DirectRecoverableConnection - getting connection for user " + _user);
-		    }
+		    if (jdbcLogger.logger.isDebugEnabled()) {
+                jdbcLogger.logger.debug("DirectRecoverableConnection - getting connection for user " + _user);
+            }
 
 		    _theConnection = _theDataSource.getXAConnection(_user, _passwd);
 		}

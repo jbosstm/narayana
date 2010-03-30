@@ -38,8 +38,8 @@ import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.internal.utils.*;
 
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.DebugLevel;
+
+
 
 import java.util.*;
 import java.applet.Applet;
@@ -67,11 +67,9 @@ public class ORB
 
 public synchronized void initORB () throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_ORB_PORTABILITY, "ORB::initORB ()");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::initORB ()");
+        }
 
 	/*
 	 * Since an ORB can be initialised multiple times we currently
@@ -119,11 +117,9 @@ public synchronized void initORB () throws SystemException
 
 public synchronized void initORB (Applet a, Properties p) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::initORB (Applet, Properties)");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::initORB (Applet, Properties)");
+        }
 
 	if (!_orb.initialised())
 	{
@@ -168,11 +164,9 @@ public synchronized void initORB (Applet a, Properties p) throws SystemException
 
 public synchronized void initORB (String[] s, Properties p) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::initORB (String[], Properties)");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::initORB (String[], Properties)");
+        }
 
 	if (!_orb.initialised())
 	{
@@ -210,11 +204,9 @@ public synchronized void initORB (String[] s, Properties p) throws SystemExcepti
 
 public synchronized boolean addAttribute (Attribute p)
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::addAttribute ("+p+")");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::addAttribute (" + p + ")");
+        }
 
 	if (_orb.initialised())  // orb already set up!
 	    return false;
@@ -233,11 +225,9 @@ public synchronized boolean addAttribute (Attribute p)
 
 public synchronized void shutdown ()
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::shutdown ()");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::shutdown ()");
+        }
 
 	/*
 	 * Do the cleanups first!
@@ -253,11 +243,9 @@ public synchronized void shutdown ()
 
 		if (c != null)
 		{
-                    if (opLogger.logger.isDebugEnabled())
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					      FacilityCode.FAC_ORB_PORTABILITY, "ORB - pre-orb shutdown on "+c.name());
-		    }
+                    if (opLogger.logger.isDebugEnabled()) {
+                        opLogger.logger.debug("ORB - pre-orb shutdown on " + c.name());
+                    }
 
 		    c.work();
 		    c = null;
@@ -280,11 +268,9 @@ public synchronized void shutdown ()
 
 		if (c != null)
 		{
-                    if (opLogger.logger.isDebugEnabled())
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					      FacilityCode.FAC_ORB_PORTABILITY, "ORB - post-orb shutdown on "+c.name());
-		    }
+                    if (opLogger.logger.isDebugEnabled()) {
+                        opLogger.logger.debug("ORB - post-orb shutdown on " + c.name());
+                    }
 
 		    c.work();
 		    c = null;
@@ -326,33 +312,27 @@ public synchronized boolean setOrb (org.omg.CORBA.ORB theORB)
 
 public synchronized void addPreShutdown (PreShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled())
-	{
-	    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_ORB_PORTABILITY, "ORB::addPreShutdown ("+c+")");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::addPreShutdown (" + c + ")");
+        }
 
 	_preORBShutdown.put(c, c);
     }
 
 public synchronized void addPostShutdown (PostShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled())
-	{
-	    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_ORB_PORTABILITY, "ORB::addPostShutdown ("+c+")");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::addPostShutdown (" + c + ")");
+        }
 
 	_postORBShutdown.put(c, c);
     }
 
 public synchronized void destroy() throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-	{
-	    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::destroyORB ()");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::destroyORB ()");
+        }
 
 	_orb.destroy();
     }
@@ -380,10 +360,8 @@ private void loadProperties (Properties p)
 
                 if ( PreInitLoader.isPreInitProperty(o) || PostInitLoader.isPostInitProperty(o) )
                 {
-                    if ( opLogger.logger.isDebugEnabled() )
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ORB_PORTABILITY,
-                                              "Adding property '"+o+"' to the ORB portability properties" );
+                    if ( opLogger.logger.isDebugEnabled() ) {
+                        opLogger.logger.debug("Adding property '" + o + "' to the ORB portability properties");
                     }
 
                     synchronized (ORB.class) {
@@ -398,11 +376,9 @@ private void loadProperties (Properties p)
 
 private void parseProperties (String[] params, boolean postInit)
     {
-        if (opLogger.logger.isDebugEnabled())
-	{
-	    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  FacilityCode.FAC_ORB_PORTABILITY, "ORB::parseProperties (String[], "+postInit+")");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("ORB::parseProperties (String[], " + postInit + ")");
+        }
 
 	Hashtable work = ((postInit) ? _postORBInitProperty : _preORBInitProperty);
 
@@ -416,11 +392,9 @@ private void parseProperties (String[] params, boolean postInit)
 
 		if (p != null)
 		{
-                    if (opLogger.logger.isDebugEnabled())
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					      FacilityCode.FAC_ORB_PORTABILITY, "Attribute "+p+" initialising.");
-		    }
+                    if (opLogger.logger.isDebugEnabled()) {
+                        opLogger.logger.debug("Attribute " + p + " initialising.");
+                    }
 
 		    p.initialise(params);
 		    p = null;

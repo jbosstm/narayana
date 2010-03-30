@@ -85,13 +85,9 @@ public class TransactionImple
 
 	public boolean equals(Object obj)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionImple.equals");
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("TransactionImple.equals");
+        }
 
 		if (obj == null)
 			return false;

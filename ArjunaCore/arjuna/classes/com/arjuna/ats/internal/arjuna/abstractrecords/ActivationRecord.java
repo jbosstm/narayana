@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectType;
@@ -40,8 +39,6 @@ import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
 import java.io.PrintWriter;
-
-import com.arjuna.common.util.logging.*;
 
 public class ActivationRecord extends AbstractRecord
 {
@@ -58,12 +55,9 @@ public class ActivationRecord extends AbstractRecord
         actionHandle = action;
         state = st;
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::ActivationRecord(" + state + ", "
-                            + sm.get_uid() + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::ActivationRecord(" + state + ", "
+                    + sm.get_uid() + ")");
         }
     }
 
@@ -97,11 +91,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::nestedAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::nestedAbort() for " + order());
         }
 
         int outcome = TwoPhaseOutcome.FINISH_ERROR;
@@ -122,11 +113,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::nestedCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::nestedCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -134,11 +122,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::nestedPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::nestedPrepare() for " + order());
         }
 
         if ((objectAddr != null) && (actionHandle != null))
@@ -163,11 +148,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::topLevelAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::topLevelAbort() for " + order());
         }
 
         return nestedAbort(); /* i.e., same as nested case */
@@ -180,11 +162,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::topLevelCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::topLevelCommit() for " + order());
         }
 
         if ((objectAddr != null) && (actionHandle != null))
@@ -198,11 +177,8 @@ public class ActivationRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::topLevelPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::topLevelPrepare() for " + order());
         }
 
         if (objectAddr == null)
@@ -295,12 +271,8 @@ public class ActivationRecord extends AbstractRecord
         actionHandle = null;
         state = ObjectStatus.PASSIVE;
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_ABSTRACT_REC,
-                    "ActivationRecord::ActivationRecord()");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActivationRecord::ActivationRecord()");
         }
     }
 

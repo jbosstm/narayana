@@ -33,7 +33,7 @@
 package com.arjuna.ats.internal.jts.recovery.contact;
 
 import com.arjuna.ats.jts.logging.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ArjunaOTS.*;
 
 import com.arjuna.common.util.logging.*;
@@ -61,11 +61,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
     public RecoveryContactWriter()
     {
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-                    FacilityCode.FAC_CRASH_RECOVERY, 
-            "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
         }
 
         _noted = false;
@@ -73,11 +70,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
     public void connected (org.omg.CORBA.Object obj)
     {    
-        if (jtsLogger.loggerI18N.isDebugEnabled())
-        {
-            jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-                    FacilityCode.FAC_CRASH_RECOVERY, 
-                    "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2", new Object[] {obj});
+        if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2", new Object[]{obj});
         }
 
         // only do this once - but shouldn't need this, since de-register on writing
@@ -90,11 +84,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
             if (theFactory != null) {
                 // if that didn't blow, we have a hit
-                if (jtsLogger.loggerI18N.isDebugEnabled())
-                {
-                    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-                            FacilityCode.FAC_CRASH_RECOVERY, 
-                    "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+                if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
                 }
 
                 FactoryContactItem.createAndSave(theFactory);

@@ -32,14 +32,11 @@
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import java.io.PrintWriter;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * AbstractRecord that helps us do the last resource commit optimization.
@@ -67,11 +64,8 @@ public class LastResourceRecord extends AbstractRecord
     {
         super(ONE_PHASE_RESOURCE_UID);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord()");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord()");
         }
 
         _lro = opr;
@@ -89,11 +83,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::nestedAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::nestedAbort() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -101,11 +92,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::nestedCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::nestedCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_ERROR;
@@ -117,11 +105,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::nestedPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::nestedPrepare() for " + order());
         }
 
         return TwoPhaseOutcome.PREPARE_NOTOK;
@@ -129,11 +114,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::topLevelAbort() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::topLevelAbort() for " + order());
         }
 
         if (_lro != null)
@@ -148,11 +130,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::topLevelCommit() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::topLevelCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -160,11 +139,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC,
-                    "LastResourceRecord::topLevelPrepare() for " + order());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("LastResourceRecord::topLevelPrepare() for " + order());
         }
 
         if (_lro == null)

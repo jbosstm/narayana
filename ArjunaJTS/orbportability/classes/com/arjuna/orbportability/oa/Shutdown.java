@@ -32,8 +32,8 @@
 package com.arjuna.orbportability.oa;
 
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.DebugLevel;
+
+
 
 import java.io.*;
 
@@ -59,11 +59,9 @@ protected Shutdown (String theName)
     {
 	_name = theName;
 
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-			          FacilityCode.FAC_ORB_PORTABILITY, "Shutdown.Shutdown ("+theName+")");
-	}
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("Shutdown.Shutdown (" + theName + ")");
+        }
     }
 
 private String _name;

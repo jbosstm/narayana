@@ -74,8 +74,7 @@ public class TransactionServiceMX
 	{
 		if (tsmxLogger.logger.isDebugEnabled())
 		{
-			tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-						 tsmxFacilityCode.FAC_TS_MX, "TransactionService Management Extentions initialising");
+			tsmxLogger.logger.debug("TransactionService Management Extentions initialising");
 		}
 
         try
@@ -190,8 +189,7 @@ public class TransactionServiceMX
 
 		if (tsmxLogger.logger.isDebugEnabled())
 		{
-			tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-						 tsmxFacilityCode.FAC_TS_MX, "Registering transaction service mbeans");
+			tsmxLogger.logger.debug("Registering transaction service mbeans");
 		}
 
 
@@ -210,8 +208,7 @@ public class TransactionServiceMX
 					{
 						if (tsmxLogger.logger.isDebugEnabled())
 						{
-							tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-										 tsmxFacilityCode.FAC_TS_MX, "Registering mbean '"+mbeanClassname+"' against '"+mbeanObjectName+"'");
+							tsmxLogger.logger.debug("Registering mbean '"+mbeanClassname+"' against '"+mbeanObjectName+"'");
 						}
 
 						_mbeanServer.createMBean(mbeanClassname, new ObjectName(mbeanObjectName));

@@ -35,10 +35,6 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.io.File;
 
@@ -69,13 +65,9 @@ public class ShadowNoFileLockStore extends ShadowingStore
     {
         super(locationOfStore, shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_OBJECT_STORE,
-                    "ShadowNoFileLockStore.ShadowNoFileLockStore("
-                            + locationOfStore + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore("
+                    + locationOfStore + ")");
         }
     }
 
@@ -86,10 +78,8 @@ public class ShadowNoFileLockStore extends ShadowingStore
 
     public ShadowNoFileLockStore(int shareStatus)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore("+shareStatus+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore(" + shareStatus + ")");
         }
     }
 

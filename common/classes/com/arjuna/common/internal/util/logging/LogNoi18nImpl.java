@@ -29,9 +29,6 @@
 package com.arjuna.common.internal.util.logging;
 
 import com.arjuna.common.util.logging.LogNoi18n;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.FacilityCode;
 
 /**
  * Logger for non-i18n messages. These should generally be debug (trace) level or raw exceptions. All
@@ -49,58 +46,26 @@ public class LogNoi18nImpl implements LogNoi18n
    private final LogInterface m_logInterface;
 
    /**
-    * Level for finer-debug logging.
-    *
-    * @see com.arjuna.common.util.logging.DebugLevel for possible values.
-    */
-   private final long m_debugLevel;
-
-   /**
-    * log level for visibility-based logging
-    *
-    * @see com.arjuna.common.util.logging.VisibilityLevel for possible values.
-    */
-   private final long m_visLevel;
-
-   /**
-    * log level for facility code
-    *
-    * @see com.arjuna.common.util.logging.FacilityCode for possible values.
-    */
-   private final long m_facLevel;
-
-
-   /**
     * constructor
     *
     * @param logInterface the underlying logger to wrap
-    * @param dl The finer debugging value.
-    *           See {@link com.arjuna.common.util.logging.DebugLevel DebugLevel} for possible values.
-    * @param vl The visibility level value.
-    *           See {@link com.arjuna.common.util.logging.VisibilityLevel VisibilityLevel} for possible values.
-    * @param fl The facility code level value.
-    *           See {@link com.arjuna.common.util.logging.FacilityCode FacilityCode} for possible values.
     */
-   public LogNoi18nImpl(LogInterface logInterface, long dl, long vl, long fl)
+   public LogNoi18nImpl(LogInterface logInterface)
    {
       m_logInterface = logInterface;
-      m_debugLevel = dl;
-      m_visLevel = vl;
-      m_facLevel = fl;
    }
 
 
    /**
     * Determine if this logger is enabled for DEBUG messages.
     *
-    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
-    * non zero and the underlying logger is configured with DEBUG level on.
+    * This method returns true when the underlying logger is configured with DEBUG level on.
     *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    public boolean isDebugEnabled()
    {
-       return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL, FacilityCode.FAC_ALL);
+       return m_logInterface.isDebugEnabled(); // TODO: reintro an ON|OFF flag for perf ortimization?
    }
 
    /**
@@ -140,66 +105,14 @@ public class LogNoi18nImpl implements LogNoi18n
    }
 
 
-   /**************************** Debug Granularity Extension ***************************/
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level,
-    * visibility level and facility code level?
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>,
-    *    visibility level <code>vLevel</code> and facility code level <code>fLevel</code>.
-    *    i.e., dLevel is equal or greater than the finer debug level assigned to the Logger
-    *    and vLevel is equal or greater than the visiblity level
-    *    and fLevel is equal or greater then the facility code level.
-    * @param dLevel The debug finer level to check for.
-    * @param vLevel The debug visibilty level to check for.
-    * @param fLevel The facility code level to check for.
-    */
-   private boolean debugAllowed(long dLevel, long vLevel, long fLevel)
-   {
-       // check the underlying logger threshold as well as (but after, due to cost) our own filters
-       return (((dLevel & m_debugLevel) != 0) && ((vLevel & m_visLevel) != 0) &&
-              ((fLevel & m_facLevel) != 0) && m_logInterface.isDebugEnabled());
-   }
-
-   /**********************************************************************************************************
-    * Finer-Granularity Debug Methods.
-    **********************************************************************************************************/
-
-
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity. The debug message
-    * is sent to the output only if the specified debug level, visibility level, and facility code
-    * match those allowed by the logger.
-    * <p>
-    * <b>Note:</b> this method does not use i18n. ie, message is directly used for log output.
-    *
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param message The message to log.
-    */
-   public void debug(long dl, long vl, long fl, String message)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(message);
-      }
-   }
-
    /**
     * Log a message with DEBUG Level
     *
+    * <b>Note:</b> this method does not use i18n. ie, message is directly used for log output.
+    *
     * @param message the message to log
     */
-   private void debug(String message)
+   public void debug(String message)
    {
       m_logInterface.debug(message);
    }

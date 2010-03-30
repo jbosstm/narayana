@@ -88,10 +88,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 
 	public Transaction suspend () throws javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled())
-		{
-			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.suspend");
-		}
+		if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionManagerImple.suspend");
+        }
 
 		try
 		{
@@ -116,10 +115,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 	public void resume (Transaction which) throws InvalidTransactionException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-	    if (jtaxLogger.logger.isDebugEnabled())
-	    {
-	        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.resume");
-	    }
+	    if (jtaxLogger.logger.isDebugEnabled()) {
+            jtaxLogger.logger.debug("TransactionManagerImple.resume");
+        }
 
 	    super.checkTransactionState();
 

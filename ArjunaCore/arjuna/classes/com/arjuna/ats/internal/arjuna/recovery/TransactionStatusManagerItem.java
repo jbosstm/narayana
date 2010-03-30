@@ -43,10 +43,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState ;
 import com.arjuna.ats.arjuna.state.OutputObjectState ;
 import com.arjuna.ats.arjuna.utils.Utility ;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1] - Problem with removing host/port item {0}

@@ -84,11 +84,10 @@ public class ExplicitInterposition
 
 	public ExplicitInterposition (boolean remember)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::ExplicitInterposition ( "
-					+ remember + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( "
+                    + remember + " )");
+        }
 
 		_remember = remember;
 		_inUse = false;
@@ -105,11 +104,10 @@ public class ExplicitInterposition
 	public ExplicitInterposition (Control action, boolean remember)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::ExplicitInterposition ( Control action, "
-					+ remember + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( Control action, "
+                    + remember + " )");
+        }
 
 		_remember = remember;
 		_inUse = false;
@@ -128,11 +126,10 @@ public class ExplicitInterposition
 	public ExplicitInterposition (PropagationContext ctx, boolean remember)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::ExplicitInterposition ( PropagationContext ctx, "
-					+ remember + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( PropagationContext ctx, "
+                    + remember + " )");
+        }
 
 		_remember = remember;
 		_inUse = false;
@@ -148,10 +145,9 @@ public class ExplicitInterposition
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition.finalize ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition.finalize ()");
+        }
 
 		if (_inUse)
 		{
@@ -177,10 +173,9 @@ public class ExplicitInterposition
 	public final synchronized void registerTransaction (Control action)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::registerTransaction ( Control action )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::registerTransaction ( Control action )");
+        }
 
 		if (_inUse)
 		{
@@ -265,10 +260,9 @@ public class ExplicitInterposition
 
 	public synchronized void unregisterTransaction () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::unregisterTransaction ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::unregisterTransaction ()");
+        }
 
 		if (!_inUse)
 			throw new INVALID_TRANSACTION(ExceptionCodes.INVALID_ACTION,
@@ -323,10 +317,9 @@ public class ExplicitInterposition
 	private final synchronized void registerTransaction (PropagationContext ctx)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ExplicitInterposition::registerTransaction ( PropagationContext ctx )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ExplicitInterposition::registerTransaction ( PropagationContext ctx )");
+        }
 
 		if (_inUse)
 		{

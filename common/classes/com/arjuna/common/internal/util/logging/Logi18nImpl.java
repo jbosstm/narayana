@@ -50,27 +50,6 @@ public class Logi18nImpl implements Logi18n
     private ResourceBundle m_resourceBundle = null;
 
     /**
-     * Level for finer-debug logging.
-     *
-     * @see DebugLevel for possible values.
-     */
-    private long m_debugLevel = DebugLevel.NO_DEBUGGING;
-
-    /**
-     * log level for visibility-based logging
-     *
-     * @see VisibilityLevel for possible values.
-     */
-    private long m_visLevel = VisibilityLevel.VIS_ALL;
-
-    /**
-     * log level for facility code
-     *
-     * @see FacilityCode for possible values.
-     */
-    private long m_facLevel = FacilityCode.FAC_ALL;
-
-    /**
      * Interface to the log subsystem to use
      */
     private final LogInterface m_logInterface;
@@ -80,18 +59,10 @@ public class Logi18nImpl implements Logi18n
      *
      * @param logInterface the underlying logger to wrap
      * @param resBundle bundle used for this logger (if a resource bundle is used per logger)
-     *
-    * @param dl The finer debugging value.
-    *           See {@link DebugLevel DebugLevel} for possible values.
-    * @param vl The visibility level value.
-    *           See {@link VisibilityLevel VisibilityLevel} for possible values.
-    * @param fl The facility code level value.
-    *           See {@link FacilityCode FacilityCode} for possible values.
      */
-    public Logi18nImpl(LogInterface logInterface, String resBundle, long dl, long vl, long fl)
+    public Logi18nImpl(LogInterface logInterface, String resBundle)
     {
        m_logInterface = logInterface;
-       setLevels(dl, vl, fl);
        addResourceBundle(resBundle);
     }
 
@@ -116,14 +87,13 @@ public class Logi18nImpl implements Logi18n
    /**
     * Determine if this logger is enabled for DEBUG messages.
     *
-    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
-    * non zero and the underlying logger is configured with DEBUG level on.
+    * This method returns true when the underlying logger is configured with DEBUG level on.
     *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    public boolean isDebugEnabled()
    {
-      return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL, FacilityCode.FAC_ALL);
+      return m_logInterface.isDebugEnabled();
    }
 
    /**
@@ -160,149 +130,6 @@ public class Logi18nImpl implements Logi18n
    public boolean isFatalEnabled()
    {
       return m_logInterface.isFatalEnabled();
-   }
-
-
-
-
-   /**************************** Debug Granularity Extension ***************************/
-
-   /**
-    * Set the debug level, the visibility level, and the facility code.
-    *
-    * @param dl The finer debugging value.
-    *           See {@link DebugLevel DebugLevel} for possible values.
-    * @param vl The visibility level value.
-    *           See {@link VisibilityLevel VisibilityLevel} for possible values.
-    * @param fl The facility code level value.
-    *           See {@link FacilityCode FacilityCode} for possible values.
-    */
-   private void setLevels(long dl, long vl, long fl)
-   {
-      m_debugLevel = dl;
-      m_visLevel = vl;
-      m_facLevel = fl;
-   }
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level,
-    * visibility level and facility code level?
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>,
-    *    visibility level <code>vLevel</code> and facility code level <code>fLevel</code>.
-    *    i.e., dLevel is equal or greater than the finer debug level assigned to the Logger
-    *    and vLevel is equal or greater than the visiblity level
-    *    and fLevel is equal or greater then the facility code level.
-    * @param dLevel The debug finer level to check for.
-    * @param vLevel The debug visibilty level to check for.
-    * @param fLevel The facility code level to check for.
-    */
-   private boolean debugAllowed(long dLevel, long vLevel, long fLevel)
-   {
-       // check the underlying logger threshold as well as (but after, due to cost) our own filters
-       return (((dLevel & m_debugLevel) != 0) && ((vLevel & m_visLevel) != 0) &&
-              ((fLevel & m_facLevel) != 0) && m_logInterface.isDebugEnabled());
-   }
-
-   /**********************************************************************************************************
-    * Finer-Granularity Debug Methods.
-    **********************************************************************************************************/
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity and with arguments. The debug message
-    * is sent to the output only if the specified debug level, visibility level, and facility code
-    * match those allowed by the logger.
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    */
-   public void debug(long dl, long vl, long fl, String key, Object[] params)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(key, params);
-      }
-   }
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity.
-    * The debug message is sent to the output only if the specified debug level, visibility level,
-    * and facility code match those allowed by the logger.
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param key resource bundle key for the message to log
-    */
-   public void debug(long dl, long vl, long fl, String key)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(key);
-      }
-
-   }
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity and throwable message.
-    * The debug message is sent to the output only if the specified debug level, visibility level,
-    * and facility code match those allowed by the logger.
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param key resource bundle key for the message to log
-    * @param throwable Throwable associated with the log message
-    */
-   public void debug(long dl, long vl, long fl, String key, Throwable throwable)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(key, throwable);
-      }
-   }
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity, arguments and throwable message.
-    * The debug message is sent to the output only if the specified debug level, visibility level,
-    * and facility code match those allowed by the logger.
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    */
-   public void debug(long dl, long vl, long fl, String key, Object[] params, Throwable throwable)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(key, params, throwable);
-      }
    }
 
 

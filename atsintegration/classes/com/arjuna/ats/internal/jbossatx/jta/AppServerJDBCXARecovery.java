@@ -22,9 +22,9 @@ package com.arjuna.ats.internal.jbossatx.jta;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.FacilityCode;
+
+
+
 
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.BadPaddingException;
@@ -107,9 +107,8 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
     public AppServerJDBCXARecovery()
         throws SQLException
     {
-        if(jbossatxLogger.logger.isDebugEnabled())
-		{
-            jbossatxLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL, "AppServerJDBCXARecovery<init>");
+        if(jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("AppServerJDBCXARecovery<init>");
         }
 
         _hasMoreResources        = false;
@@ -124,9 +123,8 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
     public boolean initialise(String parameter)
         throws SQLException
     {
-        if(jbossatxLogger.logger.isDebugEnabled())
-		{
-            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL, "AppServerJDBCXARecovery.initialise(" + parameter + ")");
+        if(jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("AppServerJDBCXARecovery.initialise(" + parameter + ")");
         }
 
         if (parameter == null)
@@ -213,10 +211,8 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
 
                 String className = (String)server.invoke(objectName, "getManagedConnectionFactoryAttribute", new Object[] {"XADataSourceClass"}, new String[] {"java.lang.String"});
 
-                if(jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
-                            "AppServerJDBCXARecovery datasource classname = "+className);
+                if(jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("AppServerJDBCXARecovery datasource classname = " + className);
                 }
 
                 if(_username !=null && _password !=null)
@@ -239,10 +235,8 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
 
                 String securityDomainName = (String) server.getAttribute(txCmObjectName, "SecurityDomainJndiName");
 
-                if(jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
-                            "Security domain name associated with JCA ConnectionManager jboss.jca:name=" +_dataSourceId + ",service=XATxCM"+" is:"+securityDomainName);
+                if(jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("Security domain name associated with JCA ConnectionManager jboss.jca:name=" + _dataSourceId + ",service=XATxCM" + " is:" + securityDomainName);
                 }
 
                 if(securityDomainName != null && !securityDomainName.equals(""))
@@ -356,17 +350,13 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
             } catch (NoSuchMethodException nsme) {
                 isConnectionValid = Boolean.FALSE;
                 _supportsIsValidMethod = false;
-                if(jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
-                            "XA datasource does not support isValid method - connection will always be recreated");
+                if(jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("XA datasource does not support isValid method - connection will always be recreated");
                 }
             } catch (Throwable t) {
                 isConnectionValid = Boolean.FALSE;
-                if(jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
-                            "XA connection is invalid - will recreate a new one. Cause: " + t);
+                if(jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("XA connection is invalid - will recreate a new one. Cause: " + t);
                 }
             }
 
@@ -390,10 +380,8 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                     _connection = _dataSource.getXAConnection(_dbUsername, _dbPassword);
                 }
                 _connection.addConnectionEventListener(_connectionEventListener);
-                if(jbossatxLogger.logger.isDebugEnabled())
-                {
-                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
-                            "Created new XAConnection");
+                if(jbossatxLogger.logger.isDebugEnabled()) {
+                    jbossatxLogger.logger.debug("Created new XAConnection");
                 }
             }
         }

@@ -102,11 +102,9 @@ public class OTSManager
 
     public static void destroyControl (ControlImple control) throws ActiveTransaction, ActiveThreads, BadControl, Destroyed, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl ( "+control+" )");
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("OTS::destroyControl ( " + control + " )");
+    }
 	
 	if (control == null)
 	    throw new BadControl();
@@ -140,11 +138,9 @@ public class OTSManager
 			 * add explicit add/removes for local instances.
 			 */
 
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-			    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						   com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl - removing control from reaper.");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("OTS::destroyControl - removing control from reaper.");
+            }
 
             // wrap the control so it gets compared against reaper list entries using the correct test
             PseudoControlWrapper wrapper = new PseudoControlWrapper(control);
@@ -171,11 +167,9 @@ public class OTSManager
 	 * remotely?
 	 */
 
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl - local transaction: "+control.get_uid());
-	}
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("OTS::destroyControl - local transaction: " + control.get_uid());
+    }
 
 	control.destroy();
 	    
@@ -240,11 +234,9 @@ public class OTSManager
 	     * the same control!
 	     */
 
-	    if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						     com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl - remote control.");
-	    }
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("OTS::destroyControl - remote control.");
+        }
 
 	    /*
 	     * Remote transaction, so memory management is different!
@@ -266,11 +258,9 @@ public class OTSManager
 
 	    if (action != null)
 	    {
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-		    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-							 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl - Arjuna control.");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("OTS::destroyControl - Arjuna control.");
+        }
 
 		/*
 		 * Is an Arjuna control, so we can call destroy on it?

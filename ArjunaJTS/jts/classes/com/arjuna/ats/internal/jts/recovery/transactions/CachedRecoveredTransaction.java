@@ -42,7 +42,7 @@ import com.arjuna.ats.jts.utils.Utility;
 import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 
 import com.arjuna.common.util.logging.*;
 
@@ -70,23 +70,17 @@ public class CachedRecoveredTransaction
 	_theTransactionUid = new Uid (actionUid);
 	_theTransactionType = theType;
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_1", new Object[]{_theTransactionUid, _theTransactionType});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_1", new Object[]{_theTransactionUid, _theTransactionType});
+    }
     }
     
     public Uid getTransactionUid()
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "CachedRecoveredTransaction.getTransactionUid() =" 
-				       +_theTransactionUid);
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction.getTransactionUid() ="
+                + _theTransactionUid);
+    }
 	return _theTransactionUid;
     }
 
@@ -98,14 +92,11 @@ public class CachedRecoveredTransaction
 
 	Status theStatus = TransactionCache.get_status(_theTransactionUid, _theTransactionType);
 
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "CachedRecoveredTransaction.get_status ["
-				       +_theTransactionUid+", "+_theTransactionType+"] = " 
-				       +Utility.stringStatus(theStatus));
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction.get_status ["
+                + _theTransactionUid + ", " + _theTransactionType + "] = "
+                + Utility.stringStatus(theStatus));
+    }
 	return theStatus;
     }
 
@@ -114,12 +105,9 @@ public class CachedRecoveredTransaction
     {
 	Status originalStatus = getOriginalStatus();
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_2", new Object[]{Utility.stringStatus(originalStatus)});
-	    }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_2", new Object[]{Utility.stringStatus(originalStatus)});
+    }
 
 	switch (originalStatus.value()) {
 	    // original process dead or finished with tran
@@ -173,14 +161,11 @@ public class CachedRecoveredTransaction
      */
     public void addResourceRecord (Uid rcUid, Resource r)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "CachedRecoveredTransaction.addResourceRecord ["
-				       +_theTransactionUid+", "+_theTransactionType+"]"
-				       +"("+rcUid+")");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction.addResourceRecord ["
+                + _theTransactionUid + ", " + _theTransactionType + "]"
+                + "(" + rcUid + ")");
+    }
 	TransactionCache.addResourceRecord(_theTransactionUid, _theTransactionType, rcUid, r);
     }
 
@@ -190,13 +175,10 @@ public class CachedRecoveredTransaction
     public void replayPhase2()
     {	
 
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "CachedRecoveredTransaction.replayPhase2 ["
-				       +_theTransactionUid+", "+_theTransactionType+"]");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction.replayPhase2 ["
+                + _theTransactionUid + ", " + _theTransactionType + "]");
+    }
 
 	TransactionCache.replayPhase2(_theTransactionUid, _theTransactionType);
     }

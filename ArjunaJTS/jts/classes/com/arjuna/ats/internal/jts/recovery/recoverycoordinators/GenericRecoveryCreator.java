@@ -35,7 +35,7 @@ import org.omg.CosTransactions.*;
 import org.omg.CORBA.SystemException;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.common.*;
@@ -102,13 +102,9 @@ public static void register(RcvCoManager theManager)
     {
 	RecoveryCoordinator recoveryCoordinator = null;
 
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "GenericRecoveryCreator.create()");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("GenericRecoveryCreator.create()");
+    }
 	
 	// we dont use the res parameter in this version
 	if ((params != null) && (params[0] != null) )

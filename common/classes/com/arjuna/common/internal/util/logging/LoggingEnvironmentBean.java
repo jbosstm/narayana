@@ -38,16 +38,6 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
 
     private volatile String loggingFactory = "com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger";
 
-    @FullPropertyName(name = "com.arjuna.common.util.logging.DebugLevel")
-    private volatile String debugLevel = "0x00000000";
-
-    @FullPropertyName(name = "com.arjuna.common.util.logging.FacilityLevel")
-    private volatile String facilityLevel = "0xffffffff";
-
-    @FullPropertyName(name = "com.arjuna.common.util.logging.VisibilityLevel")
-    private volatile String visibilityLevel = "0xffffffff";
-
-
     /**
      * Returns the language code. ISO language code format as used with Locale objects.
      * 
@@ -129,74 +119,5 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     public void setLoggingFactory(String loggingFactory)
     {
         this.loggingFactory = loggingFactory;
-    }
-
-    /**
-     * Returns the debug log level in hex form.
-     *
-     * Default: "0x00000000"
-     * Equivalent deprecated property: com.arjuna.common.util.logging.DebugLevel
-     *
-     * @return the debug log level.
-     */
-    public String getDebugLevel()
-    {
-        return debugLevel;
-    }
-
-    /**
-     * Sets the debug log level.
-     *
-     * @param debugLevel the debug log level, expressed as a hex string.
-     */
-    public void setDebugLevel(String debugLevel)
-    {
-        this.debugLevel = debugLevel;
-    }
-
-    /**
-     * Returns the logging facility level in hex form.
-     *
-     * Default: "0xffffffff"
-     * Equivalent deprecated property: com.arjuna.common.util.logging.FacilityLevel
-     *
-     * @return the facility log level.
-     */
-    public String getFacilityLevel()
-    {
-        return facilityLevel;
-    }
-
-    /**
-     * Sets the facility log level.
-     *
-     * @param facilityLevel the facility log level, expressed as a hex string.
-     */
-    public void setFacilityLevel(String facilityLevel)
-    {
-        this.facilityLevel = facilityLevel;
-    }
-
-    /**
-     * Returns the visibility log level in hex form.
-     *
-     * Default: "0xffffffff"
-     * Equivalent deprecated property: com.arjuna.common.util.logging.VisibilityLevel
-     *
-     * @return the visibility log level.
-     */
-    public String getVisibilityLevel()
-    {
-        return visibilityLevel;
-    }
-
-    /**
-     * Sets the visibility log level.
-     *
-     * @param visibilityLevel the visibility log level, expressed as a hex string.
-     */
-    public void setVisibilityLevel(String visibilityLevel)
-    {
-        this.visibilityLevel = visibilityLevel;
     }
 }

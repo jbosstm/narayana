@@ -41,10 +41,10 @@ import org.omg.PortableInterceptor.ClientRequestInfo;
 import org.omg.PortableInterceptor.ClientRequestInterceptor;
 import org.omg.PortableInterceptor.ForwardRequest;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 /**
  * This interceptor redirects requests towards the RecoveryCoordinator returned on register_resource
@@ -70,12 +70,9 @@ public class ClientForwardInterceptor
 				    int _IndicatorSlotId)
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_1");
-	      }
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_1");
+    }
 
 	piCurrent = _piCurrent;
 	IndicatorSlotId = _IndicatorSlotId;
@@ -175,13 +172,9 @@ public class ClientForwardInterceptor
 
     private String extractObjectId(String encodedRCData)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "RecoveryCoordinatorId(" + encodedRCData + ")");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("RecoveryCoordinatorId(" + encodedRCData + ")");
+    }
 
 	String ObjectId2SvcCtx = null; 
 	char delimiter = '#'; //JacOrbRCManager.rcKeyDelimiter;

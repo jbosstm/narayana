@@ -34,9 +34,6 @@ package com.arjuna.ats.arjuna.coordinator;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * This class manages instances of the classes derived from AbstractRecord in
@@ -357,15 +354,10 @@ public class RecordList
         {
             if (newRecord.shouldMerge(current))
             {
-                if (tsLogger.arjLoggerI18N.isDebugEnabled())
-                {
-                    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            FacilityCode.FAC_ABSTRACT_REC,
-                            "com.arjuna.ats.arjuna.coordinator.RecordList_1",
-                            new Object[]
-                            { this, newRecord.type(), current.type(),
-                                    newRecord.order() });
+                if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_1", new Object[]
+                            {this, newRecord.type(), current.type(),
+                                    newRecord.order()});
                 }
 
                 newRecord.merge(current);
@@ -377,18 +369,11 @@ public class RecordList
             {
                 if (newRecord.shouldReplace(current))
                 {
-                    if (tsLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        tsLogger.arjLoggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PRIVATE,
-                                        FacilityCode.FAC_ABSTRACT_REC,
-                                        "com.arjuna.ats.arjuna.coordinator.RecordList_2",
-                                        new Object[]
-                                        { this, current.type(),
-                                                newRecord.type(),
-                                                newRecord.order() });
+                    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_2", new Object[]
+                                {this, current.type(),
+                                        newRecord.type(),
+                                        newRecord.order()});
                     }
 
                     replace(newRecord, current);
@@ -399,18 +384,11 @@ public class RecordList
                 {
                     if (newRecord.shouldAdd(current))
                     {
-                        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-                        {
-                            tsLogger.arjLoggerI18N
-                                    .debug(
-                                            DebugLevel.FUNCTIONS,
-                                            VisibilityLevel.VIS_PRIVATE,
-                                            FacilityCode.FAC_ABSTRACT_REC,
-                                            "com.arjuna.ats.arjuna.coordinator.RecordList_3",
-                                            new Object[]
-                                            { this, newRecord.type(),
-                                                    current.type(),
-                                                    newRecord.order() });
+                        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_3", new Object[]
+                                    {this, newRecord.type(),
+                                            current.type(),
+                                            newRecord.order()});
                         }
 
                         insertBefore(newRecord, current);
@@ -428,18 +406,11 @@ public class RecordList
                         }
                         else if (newRecord.lessThan(current))
                         {
-                            if (tsLogger.arjLoggerI18N.isDebugEnabled())
-                            {
-                                tsLogger.arjLoggerI18N
-                                        .debug(
-                                                DebugLevel.FUNCTIONS,
-                                                VisibilityLevel.VIS_PRIVATE,
-                                                FacilityCode.FAC_ABSTRACT_REC,
-                                                "com.arjuna.ats.arjuna.coordinator.RecordList_4",
-                                                new Object[]
-                                                { this, newRecord.type(),
-                                                        newRecord.order(),
-                                                        current.type() });
+                            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_4", new Object[]
+                                        {this, newRecord.type(),
+                                                newRecord.order(),
+                                                current.type()});
                             }
 
                             insertBefore(newRecord, current);
@@ -455,29 +426,19 @@ public class RecordList
 
         if (current == null)
         {
-            if (tsLogger.arjLoggerI18N.isDebugEnabled())
-            {
-                tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PRIVATE,
-                        FacilityCode.FAC_ABSTRACT_REC,
-                        "com.arjuna.ats.arjuna.coordinator.RecordList_5",
-                        new Object[]
-                        { this, newRecord.type(), newRecord.order() });
+            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_5", new Object[]
+                        {this, newRecord.type(), newRecord.order()});
             }
 
             putRear(newRecord);
         }
         else
         {
-            if (tsLogger.arjLoggerI18N.isDebugEnabled())
-            {
-                tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PRIVATE,
-                        FacilityCode.FAC_ABSTRACT_REC,
-                        "com.arjuna.ats.arjuna.coordinator.RecordList_6",
-                        new Object[]
-                        { this, newRecord.type(), newRecord.order(),
-                                current.type(), current.order() });
+            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_6", new Object[]
+                        {this, newRecord.type(), newRecord.order(),
+                                current.type(), current.order()});
             }
 
             insertBefore(newRecord, current);

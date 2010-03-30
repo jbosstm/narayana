@@ -36,10 +36,7 @@ import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1] - RecoverAtomicAction.replayPhase2 recovering {0} ActionStatus is {1}
@@ -67,12 +64,8 @@ public class RecoverAtomicAction extends AtomicAction
     */
    public void replayPhase2()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled())
-       {
-	   tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_CRASH_RECOVERY, 
-					"com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1", 
-					new Object[]{get_uid(), ActionStatus.stringForm(_theStatus)});
+       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1", new Object[]{get_uid(), ActionStatus.stringForm(_theStatus)});
        }
 
        if ( _activated )
@@ -102,13 +95,9 @@ public class RecoverAtomicAction extends AtomicAction
 	       }
 	   }
 
-	   if (tsLogger.arjLoggerI18N.isDebugEnabled())
-	   {
-	       tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_CRASH_RECOVERY, 
-					    "com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3", 
-					    new Object[]{get_uid()});
-	   }
+	   if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3", new Object[]{get_uid()});
+       }
        }
        else
        {

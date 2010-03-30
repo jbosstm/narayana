@@ -55,13 +55,9 @@ public class ServerStrictNestedAction extends ServerNestedAction
     {
         super(control);
 
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerStrictNestedAction::ServerStrictNestedAction ( "
-                            + _theUid + " )");
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerStrictNestedAction::ServerStrictNestedAction ( "
+                    + _theUid + " )");
         }
 
         _registered = false;
@@ -135,13 +131,9 @@ public class ServerStrictNestedAction extends ServerNestedAction
     public void commit_subtransaction (Coordinator parent)
             throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS,
-                    "ServerStrictNestedAction::commit_subtransaction : "
-                            + _theUid);
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ServerStrictNestedAction::commit_subtransaction : "
+                    + _theUid);
         }
 
         try

@@ -29,9 +29,9 @@ public class Logi18nDelegatingImpl extends Logi18nImpl
 {
     private final Logi18nInterface logi18nInterface;
 
-    public Logi18nDelegatingImpl(Logi18nInterface logi18nInterface, String resBundle, long dl, long vl, long fl)
+    public Logi18nDelegatingImpl(Logi18nInterface logi18nInterface, String resBundle)
     {
-        super(logi18nInterface, resBundle, dl, vl, fl);
+        super(logi18nInterface, resBundle);
         this.logi18nInterface = logi18nInterface;
     }
 

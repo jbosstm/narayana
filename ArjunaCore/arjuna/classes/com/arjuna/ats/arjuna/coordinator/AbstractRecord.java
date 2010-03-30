@@ -35,13 +35,10 @@ import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-import com.arjuna.common.util.logging.*;
-
 import java.io.PrintWriter;
 import java.io.IOException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
@@ -598,11 +595,10 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = objType;
 
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "AbstractRecord::AbstractRecord ("
-					+ storeUid + ", " + otype + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord ("
+                    + storeUid + ", " + otype + ")");
+        }
 	}
 
 	/**
@@ -620,11 +616,10 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = null;
 
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "AbstractRecord::AbstractRecord ("
-					+ storeUid + ")");
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord ("
+                    + storeUid + ")");
+        }
 	}
 
 	/**
@@ -645,10 +640,9 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = new Uid(Uid.nullUid());
 		typeOfObject = null;
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-			tsLogger.arjLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.AbstractRecord_1");
-		}
+		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.AbstractRecord_1");
+        }
 	}
 
 	/**

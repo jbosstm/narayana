@@ -26,10 +26,7 @@ import java.util.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * RecoveryActivators are dynamically loaded. The recoveryActivator to load
@@ -96,14 +93,10 @@ public class RecActivatorLoader
 
   private static void loadActivator (String className)
   {
-      if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-		tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-					  VisibilityLevel.VIS_PRIVATE,
-					  FacilityCode.FAC_CRASH_RECOVERY,
-					  "Loading recovery activator "+
-					  className ) ;
-	    }
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("Loading recovery activator " +
+                  className);
+      }
 
       if (className == null)
 	  {

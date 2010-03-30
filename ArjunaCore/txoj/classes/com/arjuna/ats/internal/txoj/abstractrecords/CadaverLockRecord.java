@@ -38,9 +38,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.txoj.lockstore.*;
 import java.io.PrintWriter;
@@ -86,9 +83,7 @@ public class CadaverLockRecord extends LockRecord
 
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				     "CadaverLockRecord::CadaverLockRecord("+store+
+	    txojLogger.aitLogger.debug("CadaverLockRecord::CadaverLockRecord("+store+
 				       ", "+((lm != null) ? lm.get_uid() : Uid.nullUid())+")");
 	}
     }
@@ -113,9 +108,7 @@ public class CadaverLockRecord extends LockRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "CadaverLockRecord::nestedAbort() for "+order());
+	    txojLogger.aitLogger.debug("CadaverLockRecord::nestedAbort() for "+order());
 	}
 	
 	if (doRelease)
@@ -142,9 +135,7 @@ public class CadaverLockRecord extends LockRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "CadaverLockRecord::nestedCommit() for "+order());
+	    txojLogger.aitLogger.debug("CadaverLockRecord::nestedCommit() for "+order());
 	}
 	
 	if (doRelease)
@@ -177,9 +168,7 @@ public class CadaverLockRecord extends LockRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "CadaverLockRecord::topLevelAbort() for "+order());
+	    txojLogger.aitLogger.debug("CadaverLockRecord::topLevelAbort() for "+order());
 	}
 	
 	if (doRelease)
@@ -206,9 +195,7 @@ public class CadaverLockRecord extends LockRecord
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "CadaverLockRecord::topLevelCommit() for "+order());
+	    txojLogger.aitLogger.debug("CadaverLockRecord::topLevelCommit() for "+order());
 	}
 	
 	if (doRelease)
@@ -271,9 +258,7 @@ public class CadaverLockRecord extends LockRecord
 	
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     (FacilityCode.FAC_CONCURRENCY_CONTROL | com.arjuna.ats.arjuna.logging.FacilityCode.FAC_ABSTRACT_REC),
-				       "CadaverLockRecord::CadaverLockRecord ()");
+	    txojLogger.aitLogger.debug("CadaverLockRecord::CadaverLockRecord ()");
 	}
     }
 

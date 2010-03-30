@@ -40,9 +40,6 @@ import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Threaded object to run {@link ExpiryScanner} implementations to scan 
@@ -93,12 +90,9 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // no scanning wanted
 	      
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_CRASH_RECOVERY, 
-					    "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2");
-	  }
+	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2");
+      }
 	  
 	  return false;
       }
@@ -107,12 +101,9 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // nothing to do
 	  
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_CRASH_RECOVERY, 
-					    "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3");
-	  }
+	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3");
+      }
 	  
 	  return false;
       }
@@ -147,11 +138,8 @@ public class ExpiredEntryMonitor extends Thread
 
   private ExpiredEntryMonitor(boolean skipFirst)
   {
-    if (tsLogger.arjLoggerI18N.isDebugEnabled())
-    {
-	tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				      FacilityCode.FAC_CRASH_RECOVERY, 
-				      "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4");
+    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4");
     }
     _skipNext = skipFirst;
     _stop = false;
@@ -202,12 +190,10 @@ public class ExpiredEntryMonitor extends Thread
 
 		m.scan();
 			
-		if (tsLogger.arjLogger.isDebugEnabled())
-		{
-		    tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					      FacilityCode.FAC_CRASH_RECOVERY,"  "); 
-		    // bit of space if detailing
-		}
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("  ");
+            // bit of space if detailing
+        }
         }
 	}
 
@@ -249,12 +235,8 @@ public class ExpiredEntryMonitor extends Thread
 
         _scanIntervalSeconds = recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanInterval() * 60 * 60;
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1",
-                    new Object[]{Integer.toString(_scanIntervalSeconds)});
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1", new Object[]{Integer.toString(_scanIntervalSeconds)});
         }
 
         if (_scanIntervalSeconds != 0)
@@ -284,12 +266,8 @@ public class ExpiredEntryMonitor extends Thread
     
   private static void loadScanner( String className )
   {
-      if (tsLogger.arjLoggerI18N.isDebugEnabled())
-      {
-	  tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					FacilityCode.FAC_CRASH_RECOVERY, 
-					"com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6", 
-					new Object[]{className});
+      if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6", new Object[]{className});
       }
       
       if (className == null)
@@ -315,13 +293,9 @@ public class ExpiredEntryMonitor extends Thread
 		   }
 		   else
 		   {
-		       if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		       {
-			   tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-							FacilityCode.FAC_CRASH_RECOVERY, 
-							"com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8",
-							new Object[]{className});
-		       }
+		       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                   tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8", new Object[]{className});
+               }
 		   }
 		}
 		catch (ClassCastException e)

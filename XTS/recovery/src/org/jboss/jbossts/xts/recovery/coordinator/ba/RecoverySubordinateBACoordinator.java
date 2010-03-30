@@ -3,12 +3,10 @@ package org.jboss.jbossts.xts.recovery.coordinator.ba;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
 
 /**
  * This class is a plug-in module for the recovery manager.
@@ -68,12 +66,8 @@ public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
-       {
-	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_CRASH_RECOVERY,
-					"org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_1",
-					new Object[]{get_uid(), ActionStatus.stringForm(status)});
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
+           XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_1", new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
        if ( _activated )
@@ -104,13 +98,9 @@ public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
            SubordinateBACoordinator.removeRecoveredCoordinator(this);
        }
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
-	   {
-	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_CRASH_RECOVERY,
-					    "org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3",
-					    new Object[]{get_uid()});
-	   }
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
+           XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3", new Object[]{get_uid()});
+       }
        }
        else
        {

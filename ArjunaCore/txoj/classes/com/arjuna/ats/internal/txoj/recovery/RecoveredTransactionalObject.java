@@ -123,16 +123,9 @@ public class RecoveredTransactionalObject extends StateManager
         _objectStore = objectStore;
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
 
-        if (txojLogger.aitLoggerI18N.isDebugEnabled())
-        {
-            txojLogger.aitLoggerI18N
-                    .debug(
-                            DebugLevel.CONSTRUCTORS,
-                            VisibilityLevel.VIS_PACKAGE,
-                            com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1",
-                            new Object[]
-                            { _ourUid });
+        if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+            txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1", new Object[]
+                    {_ourUid});
         }
     }
 
@@ -146,31 +139,17 @@ public class RecoveredTransactionalObject extends StateManager
              * is, so leave that to the cache.
              */
 
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2",
-                                new Object[]
-                                { _owningTransactionUid });
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2", new Object[]
+                        {_owningTransactionUid});
             }
 
             int tranStatus = _transactionStatusConnectionMgr
                     .getTransactionStatus(_owningTransactionUid);
 
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3",
-                                new Object[]
-                                { ActionStatus.stringForm(tranStatus) });
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3", new Object[]
+                        {ActionStatus.stringForm(tranStatus)});
             }
 
             boolean inactive = false;
@@ -181,23 +160,11 @@ public class RecoveredTransactionalObject extends StateManager
                 if (txojLogger.aitLoggerI18N.isDebugEnabled())
                 {
                     if (inactive)
-                        txojLogger.aitLoggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                        "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4",
-                                        new Object[]
-                                        { Integer.toString(tranStatus), "true" });
+                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]
+                                {Integer.toString(tranStatus), "true"});
                     else
-                        txojLogger.aitLoggerI18N
-                                .debug(
-                                        DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                        "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4",
-                                        new Object[]
-                                        { Integer.toString(tranStatus), "false" });
+                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]
+                                {Integer.toString(tranStatus), "false"});
                 }
 
                 inactive = true;
@@ -219,14 +186,8 @@ public class RecoveredTransactionalObject extends StateManager
         }
         else
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
             }
         }
     }
@@ -248,16 +209,9 @@ public class RecoveredTransactionalObject extends StateManager
         }
         catch (ObjectStoreException e)
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PACKAGE,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6",
-                                new Object[]
-                                { e });
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6", new Object[]
+                        {e});
             }
 
             return false; // probably
@@ -280,32 +234,18 @@ public class RecoveredTransactionalObject extends StateManager
             _originalProcessUid = hdr.getProcessId();
             _owningTransactionUid = hdr.getTxId();
             
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7",
-                                new Object[]
-                                { _owningTransactionUid });
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7", new Object[]
+                        {_owningTransactionUid});
             }
 
             return _owningTransactionUid.notEquals(Uid.nullUid());
         }
         catch (Exception e)
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .debug(
-                                DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8",
-                                new Object[]
-                                { e });
+            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
+                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8", new Object[]
+                        {e});
             }
         }
 

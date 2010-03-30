@@ -105,14 +105,13 @@ public class ArjunaTransactionImple extends
 	{
 		super();
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple Begin for < "
-					+ get_uid()
-					+ " , "
-					+ ((parent != null) ? parent.get_uid() : Uid.nullUid())
-					+ " >");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple Begin for < "
+                    + get_uid()
+                    + " , "
+                    + ((parent != null) ? parent.get_uid() : Uid.nullUid())
+                    + " >");
+        }
 
 		parentTransaction = parent;
 		controlHandle = null;
@@ -192,14 +191,13 @@ public class ArjunaTransactionImple extends
 	{
 		super(actUid);
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple Begin for < "
-					+ get_uid()
-					+ " , "
-					+ ((parent != null) ? parent.get_uid() : Uid.nullUid())
-					+ " >");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple Begin for < "
+                    + get_uid()
+                    + " , "
+                    + ((parent != null) ? parent.get_uid() : Uid.nullUid())
+                    + " >");
+        }
 
 		parentTransaction = parent;
 		controlHandle = null;
@@ -267,11 +265,10 @@ public class ArjunaTransactionImple extends
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple.finalize - called for < "
-					+ get_uid() + " >");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple.finalize - called for < "
+                    + get_uid() + " >");
+        }
 
 		if (_synchs != null)
 		{
@@ -318,11 +315,10 @@ public class ArjunaTransactionImple extends
 	public void commit (boolean report_heuristics) throws HeuristicMixed,
 			HeuristicHazard, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::commit for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::commit for "
+                    + get_uid());
+        }
 
 		if (ArjunaTransactionImple._checkedTransactions && !checkAccess())
 		{
@@ -417,11 +413,10 @@ public class ArjunaTransactionImple extends
 
 	public void rollback () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::rollback for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::rollback for "
+                    + get_uid());
+        }
 
 		if (ArjunaTransactionImple._checkedTransactions && !checkAccess())
 		{
@@ -538,11 +533,10 @@ public class ArjunaTransactionImple extends
 	{
 		Status s = determineStatus(this);
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::get_status for "
-					+ get_uid() + " returning " + Utility.stringStatus(s));
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::get_status for "
+                    + get_uid() + " returning " + Utility.stringStatus(s));
+        }
 
 		return s;
 	}
@@ -575,11 +569,10 @@ public class ArjunaTransactionImple extends
 		 * transaction must be the same!
 		 */
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_same_transaction comparing hash codes: < "
-					+ tc.hash_transaction() + ", " + hash_transaction() + " >");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::is_same_transaction comparing hash codes: < "
+                    + tc.hash_transaction() + ", " + hash_transaction() + " >");
+        }
 
 		if (tc.hash_transaction() != hash_transaction())
 			return false;
@@ -599,11 +592,10 @@ public class ArjunaTransactionImple extends
 				String myUid = uid();
 				String compareUid = ptr.uid();
 
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_same_transaction comparing uids < "
-							+ compareUid + ", " + myUid + " >");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::is_same_transaction comparing uids < "
+                            + compareUid + ", " + myUid + " >");
+                }
 
 				if (myUid.compareTo(compareUid) == 0)
 					result = true;
@@ -652,11 +644,10 @@ public class ArjunaTransactionImple extends
 				String myTLUid = topLevelUid();
 				String compareTLUid = ptr.topLevelUid();
 
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_related_transaction comparing uids < "
-							+ compareTLUid + ", " + myTLUid + " >");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::is_related_transaction comparing uids < "
+                            + compareTLUid + ", " + myTLUid + " >");
+                }
 
 				if (myTLUid.compareTo(compareTLUid) == 0)
 					result = true;
@@ -690,10 +681,9 @@ public class ArjunaTransactionImple extends
 		if (tc == null)
 			return false;
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_ancestor_transaction ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::is_ancestor_transaction ()");
+        }
 
 		if (is_same_transaction(tc))
 			return true;
@@ -738,19 +728,17 @@ public class ArjunaTransactionImple extends
 				Uid lookingFor = new Uid(ptr.uid());
 				BasicAction lookingAt = this;
 
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_descendant_transaction - looking for "
-							+ lookingFor);
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::is_descendant_transaction - looking for "
+                            + lookingFor);
+                }
 
 				while (lookingAt != null)
 				{
-					if (jtsLogger.logger.isDebugEnabled())
-					{
-						jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::is_descendant_transaction - looking for "
-								+ lookingAt.get_uid());
-					}
+					if (jtsLogger.logger.isDebugEnabled()) {
+                        jtsLogger.logger.debug("ArjunaTransactionImple::is_descendant_transaction - looking for "
+                                + lookingAt.get_uid());
+                    }
 
 					if (lookingAt.get_uid().equals(lookingFor))
 						return true;
@@ -803,11 +791,10 @@ public class ArjunaTransactionImple extends
 	public RecoveryCoordinator register_resource (Resource r)
 			throws SystemException, Inactive
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource ( "
-					+ r + " ) - called for " + get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::register_resource ( "
+                    + r + " ) - called for " + get_uid());
+        }
 
 		if (r == null)
 			throw new BAD_PARAM(0, CompletionStatus.COMPLETED_NO);
@@ -816,11 +803,10 @@ public class ArjunaTransactionImple extends
 
 		if (currentStatus != Status.StatusActive)
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource - transaction not active: "
-						+ Utility.stringStatus(currentStatus));
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_resource - transaction not active: "
+                        + Utility.stringStatus(currentStatus));
+            }
 
 			if (currentStatus == Status.StatusMarkedRollback)
 			{
@@ -835,11 +821,10 @@ public class ArjunaTransactionImple extends
 		AbstractRecord corbaRec = null;
 		BasicAction registerIn = this;
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple "
-					+ get_uid() + " ::register_resource: ");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple "
+                    + get_uid() + " ::register_resource: ");
+        }
 
 		//
 		// Creation of recovery coordinator (DBI)
@@ -946,12 +931,11 @@ public class ArjunaTransactionImple extends
 
 			if (staResource != null)
 			{
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-							+ get_uid()
-							+ " - subtransaction aware resource: YES");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                            + get_uid()
+                            + " - subtransaction aware resource: YES");
+                }
 
 				/*
 				 * If here the narrow was ok so we have a subtran aware
@@ -983,11 +967,10 @@ public class ArjunaTransactionImple extends
 		}
 		catch (BAD_PARAM ex)
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-						+ get_uid() + " - subtransaction aware resource: NO");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                        + get_uid() + " - subtransaction aware resource: NO");
+            }
 
 			/* narrow failed must be a plain resource */
 
@@ -996,12 +979,11 @@ public class ArjunaTransactionImple extends
 			 * invocations at top-level.
 			 */
 
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple "
-						+ get_uid()
-						+ " ::register_resource: Simple resource - " + ex);
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple "
+                        + get_uid()
+                        + " ::register_resource: Simple resource - " + ex);
+            }
 
 			corbaRec = createOTSRecord(true, r, null, recoveryCoordinatorUid);
 		}
@@ -1011,21 +993,19 @@ public class ArjunaTransactionImple extends
 		}
 		catch (SystemException e2)
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-						+ get_uid() + " : catch (SystemException) - " + e2);
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                        + get_uid() + " : catch (SystemException) - " + e2);
+            }
 
 			throw e2;
 		}
 		catch (Exception e3)
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-						+ get_uid() + " : catch (...) - " + e3);
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                        + get_uid() + " : catch (...) - " + e3);
+            }
 
 			/*
 			 * Cannot just rethrow exception, so throw UNKNOWN.
@@ -1035,11 +1015,10 @@ public class ArjunaTransactionImple extends
 					CompletionStatus.COMPLETED_NO);
 		}
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-					+ get_uid() + " : try end");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                    + get_uid() + " : try end");
+        }
 
 		if (registerIn.add(corbaRec) != AddOutcome.AR_ADDED)
 		{
@@ -1050,11 +1029,10 @@ public class ArjunaTransactionImple extends
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_resource for "
-						+ get_uid() + " : resource registered");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_resource for "
+                        + get_uid() + " : resource registered");
+            }
 		}
 
 		return recoveryCoordinator;
@@ -1067,11 +1045,10 @@ public class ArjunaTransactionImple extends
 	public void register_subtran_aware (SubtransactionAwareResource r)
 			throws Inactive, NotSubtransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_subtran_aware called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::register_subtran_aware called for "
+                    + get_uid());
+        }
 
 		if (r == null)
 			throw new BAD_PARAM(0, CompletionStatus.COMPLETED_NO);
@@ -1092,11 +1069,10 @@ public class ArjunaTransactionImple extends
 
 		if (this == rootAction)
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_subtran_aware called for "
-						+ get_uid() + " : not a subtransaction!");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_subtran_aware called for "
+                        + get_uid() + " : not a subtransaction!");
+            }
 
 			throw new NotSubtransaction();
 		}
@@ -1124,31 +1100,28 @@ public class ArjunaTransactionImple extends
 
 			if (add(corbaRec) != AddOutcome.AR_ADDED)
 			{
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_subtran_aware called for "
-							+ get_uid() + " : could not add.");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::register_subtran_aware called for "
+                            + get_uid() + " : could not add.");
+                }
 
 				corbaRec = null;
 				throw new Inactive(); // what else to raise??
 			}
 		}
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_subtran_aware called for "
-					+ get_uid() + " : subtran_aware_resource registered");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::register_subtran_aware called for "
+                    + get_uid() + " : subtran_aware_resource registered");
+        }
 	}
 
 	public void rollback_only () throws SystemException, Inactive
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::rollback_only - called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::rollback_only - called for "
+                    + get_uid());
+        }
 
 		if (determineStatus(this) != Status.StatusPrepared)
 		{
@@ -1175,11 +1148,10 @@ public class ArjunaTransactionImple extends
 	public Control create_subtransaction () throws SystemException,
 			SubtransactionsUnavailable, Inactive
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::create_subtransaction - called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::create_subtransaction - called for "
+                    + get_uid());
+        }
 
 		if (determineStatus(this) != Status.StatusActive)
 			throw new Inactive();
@@ -1210,22 +1182,20 @@ public class ArjunaTransactionImple extends
 	public void register_synchronization (Synchronization sync)
 			throws Inactive, SynchronizationUnavailable, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_synchronization - called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::register_synchronization - called for "
+                    + get_uid());
+        }
 
 		if (sync == null)
 			throw new BAD_PARAM(0, CompletionStatus.COMPLETED_NO);
 
 		if (!is_top_level_transaction()) // are we a top-level transaction?
 		{
-			if (jtsLogger.logger.isDebugEnabled())
-			{
-				jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_synchronization - "
-						+ get_uid() + " is not a top-level transaction!");
-			}
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ArjunaTransactionImple::register_synchronization - "
+                        + get_uid() + " is not a top-level transaction!");
+            }
 
 			throw new SynchronizationUnavailable();
 		}
@@ -1279,13 +1249,12 @@ public class ArjunaTransactionImple extends
 			}
 			else
 			{
-			    if (jtsLogger.logger.isDebugEnabled())
-			    {
-			        jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_synchronization - "
-			                + get_uid()
-			                + " is not active: "
-			                + Utility.stringStatus(currentStatus));
-			    }
+			    if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ArjunaTransactionImple::register_synchronization - "
+                            + get_uid()
+                            + " is not active: "
+                            + Utility.stringStatus(currentStatus));
+                }
 
 			    if (currentStatus == Status.StatusMarkedRollback)
 			    {
@@ -1302,11 +1271,10 @@ public class ArjunaTransactionImple extends
 	public PropagationContext get_txcontext () throws Unavailable,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::get_txcontext - called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::get_txcontext - called for "
+                    + get_uid());
+        }
 
 		/*
 		 * Throw an exception if we are not active.
@@ -1403,11 +1371,10 @@ public class ArjunaTransactionImple extends
 	{
 		super(actUid);
 
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::ArjunaTransactionImple ( "
-					+ actUid + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::ArjunaTransactionImple ( "
+                    + actUid + " )");
+        }
 
 		parentTransaction = null;
 		controlHandle = null;
@@ -1440,11 +1407,10 @@ public class ArjunaTransactionImple extends
 
 	protected void doBeforeCompletion () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::doBeforeCompletion for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::doBeforeCompletion for "
+                    + get_uid());
+        }
 
 		boolean problem = false;
 		SystemException exp = null;
@@ -1599,11 +1565,10 @@ public class ArjunaTransactionImple extends
 	protected void doAfterCompletion (org.omg.CosTransactions.Status myStatus)
 			throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::doAfterCompletion for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::doAfterCompletion for "
+                    + get_uid());
+        }
 
 		if (myStatus == Status.StatusActive)
 		{
@@ -1684,11 +1649,10 @@ public class ArjunaTransactionImple extends
 				}
 				catch (SystemException e)
 				{
-					if (jtsLogger.logger.isDebugEnabled())
-					{
-						jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple.doAfterCompletion - caught exception "
-								+ e);
-					}
+					if (jtsLogger.logger.isDebugEnabled()) {
+                        jtsLogger.logger.debug("ArjunaTransactionImple.doAfterCompletion - caught exception "
+                                + e);
+                    }
 
 					problem = true;
 
@@ -1741,11 +1705,10 @@ public class ArjunaTransactionImple extends
 
 	final void forceRollback () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PACKAGE, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::forceRollback for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::forceRollback for "
+                    + get_uid());
+        }
 
 		if (super.status() == ActionStatus.RUNNING) // already aborted?
 		{
@@ -1873,11 +1836,10 @@ public class ArjunaTransactionImple extends
 
 	protected final AbstractRecord createOTSRecord (boolean propagate, Resource resource, Coordinator coord, Uid recCoordUid)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::createOTSRecord for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::createOTSRecord for "
+                    + get_uid());
+        }
 
 		/*
 		 * If the resource is an ArjunaOTS.OTSAbstractRecord or an
@@ -1996,11 +1958,10 @@ public class ArjunaTransactionImple extends
 	private final PropagationContext propagationContext () throws Unavailable,
 			Inactive, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::propagationContext for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::propagationContext for "
+                    + get_uid());
+        }
 
 		String theUid = null;
 		Control currentControl = controlHandle.getControl();
@@ -2221,11 +2182,10 @@ public class ArjunaTransactionImple extends
 
 	protected final void destroyAction ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::destroyAction for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ArjunaTransactionImple::destroyAction for "
+                    + get_uid());
+        }
 
 		/*
 		 * Only do if we are a top-level transaction, since otherwise we cannot

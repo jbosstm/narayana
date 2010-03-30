@@ -38,50 +38,6 @@ import static org.junit.Assert.*;
 public class LogConfig
 {
     @Test
-    public void testDebugLevels() {
-
-        DebugLevel d = new DebugLevel();
-        assertEquals(DebugLevel.NO_DEBUGGING, d.getLevel(d.printString(DebugLevel.NO_DEBUGGING)));
-        assertEquals(DebugLevel.CONSTRUCTORS, d.getLevel(d.printString(DebugLevel.CONSTRUCTORS)));
-        assertEquals(DebugLevel.DESTRUCTORS, d.getLevel(d.printString(DebugLevel.DESTRUCTORS)));
-
-        assertEquals(DebugLevel.FUNCTIONS, d.getLevel(d.printString(DebugLevel.FUNCTIONS)));
-        assertEquals(DebugLevel.OPERATORS, d.getLevel(d.printString(DebugLevel.OPERATORS)));
-
-
-        assertEquals(DebugLevel.TRIVIAL_FUNCS, d.getLevel(d.printString(DebugLevel.TRIVIAL_FUNCS)));
-        assertEquals(DebugLevel.TRIVIAL_OPERATORS, d.getLevel(d.printString(DebugLevel.TRIVIAL_OPERATORS)));
-
-        assertEquals(DebugLevel.ERROR_MESSAGES, d.getLevel(d.printString(DebugLevel.ERROR_MESSAGES)));
-        assertEquals(DebugLevel.FULL_DEBUGGING, d.getLevel(d.printString(DebugLevel.FULL_DEBUGGING)));
-    }
-
-    @Test
-    public void testFacilityCode() {
-
-        FacilityCode facilityCode = new FacilityCode();
-        assertEquals(FacilityCode.FAC_NONE, facilityCode.getLevel(facilityCode.printString(FacilityCode.FAC_NONE)));
-        assertEquals(FacilityCode.FAC_ALL, facilityCode.getLevel(facilityCode.printString(FacilityCode.FAC_ALL)));
-    }
-
-    @Test
-    public void testVisibilityLevel() {
-
-        VisibilityLevel visibilityLevel = new VisibilityLevel();
-        assertEquals(VisibilityLevel.VIS_NONE, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_NONE)));
-
-        System.out.println(""+VisibilityLevel.VIS_PRIVATE);
-        System.out.println(visibilityLevel.printString(VisibilityLevel.VIS_PRIVATE));
-        System.out.printf(""+visibilityLevel.getLevel("VIS_PRIVATE"));
-
-        assertEquals(VisibilityLevel.VIS_PRIVATE, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_PRIVATE)));
-        assertEquals(VisibilityLevel.VIS_PROTECTED, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_PROTECTED)));
-        assertEquals(VisibilityLevel.VIS_PUBLIC, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_PUBLIC)));
-        assertEquals(VisibilityLevel.VIS_PACKAGE, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_PACKAGE)));
-        assertEquals(VisibilityLevel.VIS_ALL, visibilityLevel.getLevel(visibilityLevel.printString(VisibilityLevel.VIS_ALL)));
-    }
-
-    @Test
     public void testBadFactory() {
 
         LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();

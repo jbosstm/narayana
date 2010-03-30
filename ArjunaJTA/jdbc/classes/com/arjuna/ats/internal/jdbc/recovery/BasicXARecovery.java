@@ -92,15 +92,9 @@ public class BasicXARecovery implements XAResourceRecovery
 
 	public BasicXARecovery () throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger
-					.debug(
-							DebugLevel.CONSTRUCTORS,
-							VisibilityLevel.VIS_PUBLIC,
-							com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-							"BasicXARecovery ()");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("BasicXARecovery ()");
+        }
 
 		numberOfConnections = 1;
 		connectionIndex = 0;
@@ -118,15 +112,9 @@ public class BasicXARecovery implements XAResourceRecovery
 
 	public boolean initialise (String parameter) throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger
-					.debug(
-							DebugLevel.CONSTRUCTORS,
-							VisibilityLevel.VIS_PUBLIC,
-							com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-							"BasicXARecovery.setDetail(" + parameter + ")");
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("BasicXARecovery.setDetail(" + parameter + ")");
+        }
 
 		if (parameter == null)
 			return true;
@@ -172,15 +160,9 @@ public class BasicXARecovery implements XAResourceRecovery
 			return false;
 		}
 
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger
-					.debug(
-							DebugLevel.CONSTRUCTORS,
-							VisibilityLevel.VIS_PUBLIC,
-							com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-							"BasicXARecovery properties file = " + parameter);
-		}
+		if (jdbcLogger.logger.isDebugEnabled()) {
+            jdbcLogger.logger.debug("BasicXARecovery properties file = " + parameter);
+        }
 
 		return true;
 	}

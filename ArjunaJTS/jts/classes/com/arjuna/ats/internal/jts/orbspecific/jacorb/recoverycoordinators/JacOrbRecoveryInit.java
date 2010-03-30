@@ -35,7 +35,7 @@ import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
 import com.arjuna.ats.jts.logging.*;
 import com.arjuna.common.util.logging.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 
 /**
  * Initialises JacORB RecoveryCoordinator IOR creation mechanism
@@ -61,12 +61,9 @@ public class JacOrbRecoveryInit
 	// and it's registration with CosTransactions)
 	GenericRecoveryCreator.register(theManager);
  
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	{
-	    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit_1");
-	}
+	if (jtsLogger.loggerI18N.isDebugEnabled()) {
+        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit_1");
+    }
     }
     
 };

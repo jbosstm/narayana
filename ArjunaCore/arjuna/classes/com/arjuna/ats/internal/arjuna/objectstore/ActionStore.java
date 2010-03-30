@@ -37,12 +37,9 @@ import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 /**
  * The basic transaction log implementation. Uses the no file-level locking
@@ -86,13 +83,9 @@ public class ActionStore extends ShadowNoFileLockStore
             path = null;
         }
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1",
-                    new Object[]
-                    { objUid, tName, StateStatus.stateStatusString(theState) });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1", new Object[]
+                    {objUid, tName, StateStatus.stateStatusString(theState)});
         }
 
         return theState;
@@ -107,11 +100,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean commit_state (Uid objUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.commit_state(" + objUid + ", " + tName + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.commit_state(" + objUid + ", " + tName + ")");
         }
 
         boolean result = false;
@@ -129,11 +119,8 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.hide_state(" + u + ", " + tn + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.hide_state(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -141,11 +128,8 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.reveal_state(" + u + ", " + tn + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.reveal_state(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -154,12 +138,9 @@ public class ActionStore extends ShadowNoFileLockStore
     public InputObjectState read_committed (Uid storeUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.read_committed(" + storeUid + ", " + tName
-                            + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.read_committed(" + storeUid + ", " + tName
+                    + ")");
         }
 
         return super.read_committed(storeUid, tName);
@@ -168,11 +149,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public InputObjectState read_uncommitted (Uid u, String tn)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.read_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.read_uncommitted(" + u + ", " + tn + ")");
         }
 
         return null;
@@ -181,12 +159,9 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean remove_committed (Uid storeUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.remove_committed(" + storeUid + ", " + tName
-                            + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.remove_committed(" + storeUid + ", " + tName
+                    + ")");
         }
 
         return super.remove_committed(storeUid, tName);
@@ -195,11 +170,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean remove_uncommitted (Uid u, String tn)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.remove_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.remove_uncommitted(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -208,12 +180,9 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean write_committed (Uid storeUid, String tName,
             OutputObjectState state) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.write_committed(" + storeUid + ", " + tName
-                            + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.write_committed(" + storeUid + ", " + tName
+                    + ")");
         }
 
         return super.write_committed(storeUid, tName, state);
@@ -222,12 +191,9 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s)
             throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                    "ActionStore.write_uncommitted(" + u + ", " + tn + ", " + s
-                            + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.write_uncommitted(" + u + ", " + tn + ", " + s
+                    + ")");
         }
 
         return false;

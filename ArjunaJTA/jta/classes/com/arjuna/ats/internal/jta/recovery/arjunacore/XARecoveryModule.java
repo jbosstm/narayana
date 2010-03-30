@@ -37,7 +37,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
@@ -193,13 +193,10 @@ public class XARecoveryModule implements RecoveryModule
 
 			transactionInitiatedRecovery();
 
-			if (jtaLogger.logger.isDebugEnabled())
-			{
-				jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-						VisibilityLevel.VIS_PUBLIC,
-						FacilityCode.FAC_CRASH_RECOVERY, _logName
-								+ ".transactionInitiatedRecovery completed");
-			}
+			if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug(_logName
+                        + ".transactionInitiatedRecovery completed");
+            }
 
 			/*
 			 * See the comment about this routine!!
@@ -208,13 +205,10 @@ public class XARecoveryModule implements RecoveryModule
 			resourceInitiatedRecovery();
             resourceInitiatedRecoveryForRecoveryHelpers();
 
-            if (jtaLogger.logger.isDebugEnabled())
-			{
-				jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-						VisibilityLevel.VIS_PUBLIC,
-						FacilityCode.FAC_CRASH_RECOVERY, _logName
-								+ ".resourceInitiatedRecovery completed");
-			}
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug(_logName
+                        + ".resourceInitiatedRecovery completed");
+            }
 		}
 		catch (Exception e)
 		{
@@ -443,15 +437,10 @@ public class XARecoveryModule implements RecoveryModule
 							{
 							case XARecoveryResource.RECOVERY_REQUIRED:
 							{
-								if (jtaLogger.logger.isDebugEnabled())
-								{
-									jtaLogger.logger.debug(
-											DebugLevel.FUNCTIONS,
-											VisibilityLevel.VIS_PUBLIC,
-											FacilityCode.FAC_CRASH_RECOVERY,
-											"XARecovery attempting recovery of "
-													+ theUid);
-								}
+								if (jtaLogger.logger.isDebugEnabled()) {
+                                    jtaLogger.logger.debug("XARecovery attempting recovery of "
+                                            + theUid);
+                                }
 
 								int recoveryStatus = record.recover();
 
@@ -510,15 +499,10 @@ public class XARecoveryModule implements RecoveryModule
 							case XARecoveryResource.INCOMPLETE_STATE:
 							default:
 							{
-								if (jtaLogger.logger.isDebugEnabled())
-								{
-									jtaLogger.logger.debug(
-											DebugLevel.FUNCTIONS,
-											VisibilityLevel.VIS_PUBLIC,
-											FacilityCode.FAC_CRASH_RECOVERY,
-											"XARecovery " + theUid
-													+ " is non-recoverable");
-								}
+								if (jtaLogger.logger.isDebugEnabled()) {
+                                    jtaLogger.logger.debug("XARecovery " + theUid
+                                            + " is non-recoverable");
+                                }
 							}
 								break;
 							}
@@ -730,12 +714,9 @@ public class XARecoveryModule implements RecoveryModule
 
 	private final boolean xaRecovery(XAResource xares)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_CRASH_RECOVERY, "xarecovery of " + xares);
-		}
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("xarecovery of " + xares);
+        }
 
 		try
 		{
@@ -745,14 +726,11 @@ public class XARecoveryModule implements RecoveryModule
 			{
 				trans = xares.recover(XAResource.TMSTARTRSCAN);
 
-				if (jtaLogger.logger.isDebugEnabled())
-				{
-					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-							VisibilityLevel.VIS_PUBLIC,
-							FacilityCode.FAC_CRASH_RECOVERY, "Found "
-									+ ((trans != null) ? trans.length : 0)
-									+ " xids in doubt");
-				}
+				if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("Found "
+                            + ((trans != null) ? trans.length : 0)
+                            + " xids in doubt");
+                }
 			}
 			catch (XAException e)
 			{
@@ -821,14 +799,11 @@ public class XARecoveryModule implements RecoveryModule
 
 			if (xids != null)
 			{
-				if (jtaLogger.logger.isDebugEnabled())
-				{
-					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-							VisibilityLevel.VIS_PUBLIC,
-							FacilityCode.FAC_CRASH_RECOVERY, "Have "
-									+ xids.length
-									+ " Xids to recover on this pass.");
-				}
+				if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("Have "
+                            + xids.length
+                            + " Xids to recover on this pass.");
+                }
 
 				for (int j = 0; j < xids.length; j++)
 				{
@@ -970,8 +945,7 @@ public class XARecoveryModule implements RecoveryModule
             XAResourceOrphanFilter.Vote vote = filter.checkXid(xid);
 
             if(jtaLogger.logger.isDebugEnabled()) {
-                jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-                        FacilityCode.FAC_CRASH_RECOVERY, "XAResourceOrphanFilter "+filter.getClass().getName()+" voted "+vote);
+                jtaLogger.logger.debug("XAResourceOrphanFilter " + filter.getClass().getName() + " voted " + vote);
             }
 
             if(vote == XAResourceOrphanFilter.Vote.LEAVE_ALONE)

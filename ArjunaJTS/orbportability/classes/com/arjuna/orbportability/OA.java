@@ -36,8 +36,8 @@ import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.exceptions.FatalError;
 
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
@@ -182,11 +182,8 @@ public abstract class OA
     public synchronized void initPOA (String[] args) throws InvalidName,
             SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::initPOA (String[])");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::initPOA (String[])");
         }
 
         if (!_oa.initialised())
@@ -251,12 +248,9 @@ public abstract class OA
     public synchronized ChildOA createPOA (String adapterName, Policy[] policies)
             throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::createPOA ("
-                            + adapterName + " )");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::createPOA ("
+                    + adapterName + " )");
         }
 
         if (!_oa.initialised())
@@ -305,12 +299,9 @@ public abstract class OA
 
     public synchronized boolean addAttribute (Attribute p)
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::addAttribute (" + p
-                            + ")");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::addAttribute (" + p
+                    + ")");
         }
 
         if ((_oa.initialised()) || (p == null)) // oa already set up!
@@ -350,12 +341,9 @@ public abstract class OA
 
     public synchronized void addPreShutdown (PreShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::addPreShutdown ("
-                            + c + ")");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::addPreShutdown ("
+                    + c + ")");
         }
 
         _preOAShutdown.put(c, c);
@@ -363,12 +351,9 @@ public abstract class OA
 
     public synchronized void addPostShutdown (PostShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::addPostShutdown ("
-                            + c + ")");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::addPostShutdown ("
+                    + c + ")");
         }
 
         _postOAShutdown.put(c, c);
@@ -420,11 +405,8 @@ public abstract class OA
 
     public void run (String name) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::run (" + name + ")");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::run (" + name + ")");
         }
 
         _oa.run(name);
@@ -432,11 +414,8 @@ public abstract class OA
 
     public void run () throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY, "OA::run ()");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::run ()");
         }
 
         _oa.run();
@@ -444,12 +423,8 @@ public abstract class OA
 
     private final void parseProperties (String[] params, boolean preInit)
     {
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_ORB_PORTABILITY,
-                    "OA::parseProperties (String[], " + preInit + ")");
+        if (opLogger.logger.isDebugEnabled()) {
+            opLogger.logger.debug("OA::parseProperties (String[], " + preInit + ")");
         }
 
         Hashtable work = ((preInit) ? _preOAInitProperty : _postOAInitProperty);
@@ -464,12 +439,9 @@ public abstract class OA
 
                 if (p != null)
                 {
-                    if (opLogger.logger.isDebugEnabled())
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS,
-                                VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_ORB_PORTABILITY, "Attribute "
-                                        + p + " initialising.");
+                    if (opLogger.logger.isDebugEnabled()) {
+                        opLogger.logger.debug("Attribute "
+                                + p + " initialising.");
                     }
 
                     p.initialise(params);

@@ -35,9 +35,6 @@ import java.lang.InterruptedException;
 
 import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * This is a reentrant Mutex implementation.
@@ -74,11 +71,9 @@ public class BasicMutex implements Mutex
     
     public int lock ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_GENERAL, "Mutex::lock()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("Mutex::lock()");
+    }
 	
 	synchronized (_lock)
 	{
@@ -126,11 +121,9 @@ public class BasicMutex implements Mutex
 	    
     public int unlock ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_GENERAL, "Mutex::unlock()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("Mutex::unlock()");
+    }
 	
 	synchronized (_lock)
 	{
@@ -182,12 +175,9 @@ public class BasicMutex implements Mutex
     
     public int tryLock ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-				     VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_GENERAL, "Mutex::tryLock()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("Mutex::tryLock()");
+    }
 	
 	synchronized (_lock)
 	{

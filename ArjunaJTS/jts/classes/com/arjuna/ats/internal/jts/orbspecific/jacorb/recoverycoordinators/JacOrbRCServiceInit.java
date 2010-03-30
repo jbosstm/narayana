@@ -40,7 +40,7 @@ import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.common.util.logging.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
@@ -96,11 +96,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     {
         String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
         
-        if (jtsLogger.logger.isDebugEnabled())
-        {
-            jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                   FacilityCode.FAC_CRASH_RECOVERY,
-                                   "JacOrbRCServiceInit.getRCPOA " + rcServiceName );
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("JacOrbRCServiceInit.getRCPOA " + rcServiceName);
         }
 
         if (_poa == null)
@@ -285,12 +282,9 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                         jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5");
           }
 
-                if (jtsLogger.loggerI18N.isDebugEnabled())
-                    {
-                        jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                                   FacilityCode.FAC_CRASH_RECOVERY,
-                                                   "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2");
-                    }
+                if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2");
+                }
 
                 // activate the poa
 

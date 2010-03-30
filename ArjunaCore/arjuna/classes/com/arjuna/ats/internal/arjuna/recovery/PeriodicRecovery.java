@@ -41,11 +41,8 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Utility;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Threaded object to perform the periodic recovery. Instantiated in
@@ -166,20 +163,16 @@ public class PeriodicRecovery extends Thread
 
         if (threaded)
         {
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting background scanner thread" );
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("PeriodicRecovery: starting background scanner thread");
             }
             start();
         }
 
         if(useListener && _listener != null)
         {
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting listener worker thread" );
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("PeriodicRecovery: starting listener worker thread");
             }
             _listener.start();
         }
@@ -202,10 +195,8 @@ public class PeriodicRecovery extends Thread
 
        synchronized (_stateLock) {
            if (getMode() != Mode.TERMINATED) {
-               if (tsLogger.arjLogger.isDebugEnabled())
-               {
-                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== TERMINATED" );
+               if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("PeriodicRecovery: Mode <== TERMINATED");
                }
                setMode(Mode.TERMINATED);
                _stateLock.notifyAll();
@@ -216,20 +207,16 @@ public class PeriodicRecovery extends Thread
                // changes to TERMINATED
                while (getStatus() == Status.SCANNING) {
                    try {
-                       if (tsLogger.arjLogger.isDebugEnabled())
-                       {
-                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: shutdown waiting for scan to end" );
+                       if (tsLogger.arjLogger.isDebugEnabled()) {
+                           tsLogger.arjLogger.debug("PeriodicRecovery: shutdown waiting for scan to end");
                        }
                        _stateLock.wait();
                    } catch(InterruptedException ie) {
                        // just ignore and retest condition
                    }
                }
-               if (tsLogger.arjLogger.isDebugEnabled())
-               {
-                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: shutdown scan wait complete" );
+               if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("PeriodicRecovery: shutdown scan wait complete");
                }
            }
        }
@@ -261,10 +248,8 @@ public class PeriodicRecovery extends Thread
            // only switch and kick everyone if we are currently ENABLED
 
            if (getMode() == Mode.ENABLED) {
-               if (tsLogger.arjLogger.isDebugEnabled())
-               {
-                   tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                           FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== SUSPENDED" );
+               if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("PeriodicRecovery: Mode <== SUSPENDED");
                }
                setMode(Mode.SUSPENDED);
                _stateLock.notifyAll();
@@ -273,19 +258,15 @@ public class PeriodicRecovery extends Thread
                // synchronous, so we keep waiting until the currently active scan stops
                while (getStatus() == Status.SCANNING) {
                    try {
-                       if (tsLogger.arjLogger.isDebugEnabled())
-                       {
-                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: suspendScan waiting for scan to end" );
+                       if (tsLogger.arjLogger.isDebugEnabled()) {
+                           tsLogger.arjLogger.debug("PeriodicRecovery: suspendScan waiting for scan to end");
                        }
                        _stateLock.wait();
                    } catch(InterruptedException ie) {
                        // just ignore and retest condition
                    }
-                   if (tsLogger.arjLogger.isDebugEnabled())
-                   {
-                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: suspendScan scan wait compelete" );
+                   if (tsLogger.arjLogger.isDebugEnabled()) {
+                       tsLogger.arjLogger.debug("PeriodicRecovery: suspendScan scan wait compelete");
                    }
                }
            }
@@ -303,10 +284,8 @@ public class PeriodicRecovery extends Thread
        synchronized (_stateLock)
        {
            if (getMode() == Mode.SUSPENDED) {
-               if (tsLogger.arjLogger.isDebugEnabled())
-               {
-                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== ENABLED" );
+               if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("PeriodicRecovery: Mode <== ENABLED");
                }
                setMode(Mode.ENABLED);
                _stateLock.notifyAll();
@@ -349,20 +328,16 @@ public class PeriodicRecovery extends Thread
            synchronized(_stateLock) {
                if (getStatus() == Status.SCANNING) {
                    // need to wait for some other scan to finish
-                   if (tsLogger.arjLogger.isDebugEnabled())
-                   {
-                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread waiting on other scan" );
+                   if (tsLogger.arjLogger.isDebugEnabled()) {
+                       tsLogger.arjLogger.debug("PeriodicRecovery: background thread waiting on other scan");
                    }
                    doScanningWait();
                    // we don't wait around if a worker scan request has just come in
                    if (getMode() == Mode.ENABLED && !_workerScanRequested) {
                        // the last guy just finished scanning so we ought to wait a bit rather than just
                        // pile straight in to do some work
-                       if (tsLogger.arjLogger.isDebugEnabled())
-                       {
-                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread backing off" );
+                       if (tsLogger.arjLogger.isDebugEnabled()) {
+                           tsLogger.arjLogger.debug("PeriodicRecovery: background thread backing off");
                        }
                        doPeriodicWait();
                        // if we got told to stop then do so
@@ -373,10 +348,8 @@ public class PeriodicRecovery extends Thread
                    switch (getMode()) {
                        case ENABLED:
                            // ok grab our chance to be the scanning thread
-                           if (tsLogger.arjLogger.isDebugEnabled())
-                           {
-                                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                          FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== SCANNING" );
+                           if (tsLogger.arjLogger.isDebugEnabled()) {
+                               tsLogger.arjLogger.debug("PeriodicRecovery: background thread Status <== SCANNING");
                            }
                            setStatus(Status.SCANNING);
                            // must kick any other waiting threads
@@ -385,10 +358,8 @@ public class PeriodicRecovery extends Thread
                            break;
                        case SUSPENDED:
                            // we need to wait while we are suspended
-                           if (tsLogger.arjLogger.isDebugEnabled())
-                           {
-                                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                          FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread wait while SUSPENDED" );
+                           if (tsLogger.arjLogger.isDebugEnabled()) {
+                               tsLogger.arjLogger.debug("PeriodicRecovery: background thread wait while SUSPENDED");
                            }
                            doSuspendedWait();
                            // we come out of here with the lock and either ENABLED or TERMINATED
@@ -418,18 +389,14 @@ public class PeriodicRecovery extends Thread
                }
 
                // we are in state SCANNING so actually do the scan
-               if (tsLogger.arjLogger.isDebugEnabled())
-               {
-                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread scanning");
+               if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("PeriodicRecovery: background thread scanning");
                }
                doWorkInternal();
                // clear the SCANNING state now we have done
                synchronized(_stateLock) {
-                   if (tsLogger.arjLogger.isDebugEnabled())
-                   {
-                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== INACTIVE");
+                   if (tsLogger.arjLogger.isDebugEnabled()) {
+                       tsLogger.arjLogger.debug("PeriodicRecovery: background thread Status <== INACTIVE");
                    }
                    setStatus(Status.INACTIVE);
                    // must kick any other waiting threads
@@ -443,10 +410,8 @@ public class PeriodicRecovery extends Thread
                    if (getMode() == Mode.ENABLED && !_workerScanRequested) {
                        // we managed a full scan and scanning is still enabled
                        // so wait a bit before the next attempt
-                       if (tsLogger.arjLogger.isDebugEnabled())
-                       {
-                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread backing off" );
+                       if (tsLogger.arjLogger.isDebugEnabled()) {
+                           tsLogger.arjLogger.debug("PeriodicRecovery: background thread backing off");
                        }
                        doPeriodicWait();
                    }
@@ -463,10 +428,8 @@ public class PeriodicRecovery extends Thread
            }
        }
 
-       if (tsLogger.arjLogger.isDebugEnabled())
-       {
-              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread exiting" );
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("PeriodicRecovery: background thread exiting");
        }
    }
 
@@ -484,10 +447,8 @@ public class PeriodicRecovery extends Thread
 
         synchronized(_stateLock) {
             if (getMode() == Mode.SUSPENDED) {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread wait while SUSPENDED" );
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread wait while SUSPENDED");
                 }
                 doSuspendedWait();
             }
@@ -495,10 +456,8 @@ public class PeriodicRecovery extends Thread
             // no longer SUSPENDED --  retest in case we got TERMINATED
 
             if (getMode() == Mode.TERMINATED) {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread scan TERMINATED" );
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread scan TERMINATED");
                 }
             } else {
 
@@ -506,10 +465,8 @@ public class PeriodicRecovery extends Thread
 
                 if (getStatus() == Status.SCANNING) {
                     // just wait for the other scan to finish
-                    if (tsLogger.arjLogger.isDebugEnabled())
-                    {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread waiting on other scan" );
+                    if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread waiting on other scan");
                     }
                     doScanningWait();
                 } else {
@@ -518,10 +475,8 @@ public class PeriodicRecovery extends Thread
                     setStatus(Status.SCANNING);
                     // must kick any other waiting threads
                     _stateLock.notifyAll();
-                    if (tsLogger.arjLogger.isDebugEnabled())
-                    {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread Status <== SCANNING" );
+                    if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread Status <== SCANNING");
                     }
                     workToDo = true;
                 }
@@ -545,19 +500,15 @@ public class PeriodicRecovery extends Thread
 
             // ok to start work -- we cannot be stopped now by a mode change to SUSPEND or TERMINATE
             // until we get through phase 1 and maybe phase 2 if we are lucky
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                   tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                           FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread scanning");
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread scanning");
             }
             doWorkInternal();
 
             // clear the scan for some other thread to have a go
             synchronized(_stateLock) {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread Status <== INACTIVE");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("PeriodicRecovery: ad hoc thread Status <== INACTIVE");
                 }
                 setStatus(Status.INACTIVE);
                 // must kick any other waiting threads
@@ -583,10 +534,8 @@ public class PeriodicRecovery extends Thread
             _workerScanRequested = true;
             // wake up the periodic recovery thread if no scan is in progress
             if (getStatus() != Status.SCANNING) {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: listener worker interrupts background thread");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("PeriodicRecovery: listener worker interrupts background thread");
                 }
                 _stateLock.notifyAll();
             }
@@ -603,10 +552,8 @@ public class PeriodicRecovery extends Thread
 
     public final void addModule (RecoveryModule module)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: adding module " + module.getClass().getName());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PeriodicRecovery: adding module " + module.getClass().getName());
         }
         _recoveryModules.add(module);
     }
@@ -618,10 +565,8 @@ public class PeriodicRecovery extends Thread
      */
     public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing module " + module.getClass().getName());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PeriodicRecovery: removing module " + module.getClass().getName());
         }
 
         if (waitOnScan) {
@@ -644,10 +589,8 @@ public class PeriodicRecovery extends Thread
     
     public final void removeAllModules (boolean waitOnScan)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing all modules.");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PeriodicRecovery: removing all modules.");
         }
         
         if (waitOnScan) {
@@ -800,10 +743,8 @@ public class PeriodicRecovery extends Thread
     {
         // n.b. we only get here if status is SCANNING
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14", new Object[] {_theTimestamper.format(new Date())});
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14", new Object[]{_theTimestamper.format(new Date())});
         }
 
         // n.b. this works on a copy of the modules list so it is not affected by
@@ -828,12 +769,8 @@ public class PeriodicRecovery extends Thread
                 restoreClassLoader(cl);
             }
 
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PUBLIC,
-                        FacilityCode.FAC_CRASH_RECOVERY,
-                        " " );
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug(" ");
             }
         }
 
@@ -852,10 +789,8 @@ public class PeriodicRecovery extends Thread
             // n.b. if we give up here the caller is responsible for clearing the active scan
 
             if (getMode() == Mode.TERMINATED) {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan TERMINATED at phase 1");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("PeriodicRecovery: scan TERMINATED at phase 1");
                 }
                 return;
             }
@@ -863,10 +798,8 @@ public class PeriodicRecovery extends Thread
 
         // move on to phase 2
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15", new Object[] {_theTimestamper.format(new Date())});
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15", new Object[]{_theTimestamper.format(new Date())});
         }
 
         modules = copyOfModules.elements();
@@ -882,9 +815,8 @@ public class PeriodicRecovery extends Thread
                 restoreClassLoader(cl);
             }
 
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug ( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, " " );
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug(" ");
             }
         }
 
@@ -900,10 +832,8 @@ public class PeriodicRecovery extends Thread
 
     private void notifyWorker()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan thread signals listener worker");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PeriodicRecovery: scan thread signals listener worker");
         }
         if(_workerService != null)
         {
@@ -966,13 +896,9 @@ public class PeriodicRecovery extends Thread
      */
    private void loadModule (String className)
    {
-       if (tsLogger.arjLogger.isDebugEnabled())
-       {
-         tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-				   VisibilityLevel.VIS_PRIVATE,
-				   FacilityCode.FAC_CRASH_RECOVERY,
-				   "Loading recovery module "+
-				   className );
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("Loading recovery module " +
+                   className);
        }
 
       if (className == null)
@@ -1042,26 +968,16 @@ public class PeriodicRecovery extends Thread
 
         _recoveryPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod();
 
-        if (_recoveryPeriod != _defaultRecoveryPeriod &&  tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug
-                    ( DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
-                                    ": Recovery period set to " + _recoveryPeriod + " seconds" );
+        if (_recoveryPeriod != _defaultRecoveryPeriod &&  tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
+                    ": Recovery period set to " + _recoveryPeriod + " seconds");
         }
 
         _backoffPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod();
 
-        if (_backoffPeriod != _defaultBackoffPeriod && tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug
-                    ( DebugLevel.FUNCTIONS,
-                            VisibilityLevel.VIS_PRIVATE,
-                            FacilityCode.FAC_CRASH_RECOVERY,
-                            "PeriodicRecovery" +
-                                    ": Backoff period set to " + _backoffPeriod + " seconds" );
+        if (_backoffPeriod != _defaultBackoffPeriod && tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PeriodicRecovery" +
+                    ": Backoff period set to " + _backoffPeriod + " seconds");
         }
     }
 

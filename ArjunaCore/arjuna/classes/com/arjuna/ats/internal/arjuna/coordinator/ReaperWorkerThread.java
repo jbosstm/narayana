@@ -22,11 +22,8 @@
 package com.arjuna.ats.internal.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Class to reap timed out transactions on behalf of the transaction reaper
@@ -52,10 +49,8 @@ public class ReaperWorkerThread extends Thread
 
 public void run ()
     {
-         if (tsLogger.arjLogger.isDebugEnabled())
-         {
-              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                       FacilityCode.FAC_ATOMIC_ACTION, "ReaperWorkerThread.run ()");
+         if (tsLogger.arjLogger.isDebugEnabled()) {
+             tsLogger.arjLogger.debug("ReaperWorkerThread.run ()");
          }
 
         for (;;)
@@ -63,12 +58,8 @@ public void run ()
              // wait for the reaper thread to queue some TXs for
              // this thread to cancel
 
-             if (tsLogger.arjLoggerI18N.isDebugEnabled())
-             {
-                  tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                               FacilityCode.FAC_ATOMIC_ACTION,
-                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1",
-                                               new Object[]{Thread.currentThread()});
+             if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1", new Object[]{Thread.currentThread()});
              }
 
              _theReaper.waitForCancellations();
@@ -80,12 +71,8 @@ public void run ()
 
              // get the reaper to cancel any TXs queued for cancellation.
 
-             if (tsLogger.arjLoggerI18N.isDebugEnabled())
-             {
-                  tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                               FacilityCode.FAC_ATOMIC_ACTION,
-                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2",
-                                               new Object[]{Thread.currentThread()});
+             if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2", new Object[]{Thread.currentThread()});
              }
 
              _theReaper.doCancellations();

@@ -39,7 +39,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import org.omg.CORBA.SystemException;
@@ -130,22 +130,14 @@ public class TransactionCache
 		RecoveringTransaction theTransaction = cacheItem.freshTransaction();
 		if (theTransaction != null)
 		{
-		    if (jtsLogger.loggerI18N.isDebugEnabled())
-			{
-			    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						       VisibilityLevel.VIS_PUBLIC, 
-						       FacilityCode.FAC_CRASH_RECOVERY, 
-						       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_1");
-			}
+		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_1");
+            }
 		    theStatus = theTransaction.getOriginalStatus();
 		} else {
-		    if (jtsLogger.loggerI18N.isDebugEnabled())
-			{
-			    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-						       VisibilityLevel.VIS_PUBLIC, 
-						       FacilityCode.FAC_CRASH_RECOVERY, 
-						       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_2");
-			}
+		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_2");
+            }
 		}
 	    }
 	}
@@ -241,13 +233,9 @@ public class TransactionCache
 			    int previousAttempts = cacheItem.countAttempts();
 			    if (previousAttempts >= attemptsBeforeConversion) {
 				converting = theTransaction.assumeComplete();
-				if (converting && (jtsLogger.loggerI18N.isDebugEnabled()))
-				    {
-					jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-								   VisibilityLevel.VIS_PUBLIC, 
-								   FacilityCode.FAC_CRASH_RECOVERY, 
-								   "com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_3", new Object[]{actionUid});
-				    }
+				if (converting && (jtsLogger.loggerI18N.isDebugEnabled())) {
+                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_3", new Object[]{actionUid});
+                }
 			    }
 			}
 			// replayPhase2 will cause a re-persist unless it completes
@@ -324,13 +312,9 @@ public class TransactionCache
 
 	if (cacheItem == null)
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_6", new Object[]{theUid});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_6", new Object[]{theUid});
+        }
 	}
 	else
 	{
@@ -339,13 +323,9 @@ public class TransactionCache
 		_theCache.remove(theUid);
 	    }
 	    
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_7", new Object[]{theUid});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_7", new Object[]{theUid});
+        }
 	}
     }
     

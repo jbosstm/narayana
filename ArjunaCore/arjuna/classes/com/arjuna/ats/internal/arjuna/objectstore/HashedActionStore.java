@@ -37,9 +37,6 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -79,12 +76,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_OBJECT_STORE,
-                    "HashedStore.HashedActionStore( " + shareStatus + " )");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("HashedStore.HashedActionStore( " + shareStatus + " )");
         }
         
         try
@@ -102,11 +95,8 @@ public class HashedActionStore extends HashedStore
     {
         this(locationOfStore, StateType.OS_SHARED);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE,
-                                     "HashedStore.HashedActionStore("+locationOfStore+")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try
@@ -125,12 +115,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED,
-                    FacilityCode.FAC_OBJECT_STORE,
-                    "HashedStore.HashedActionStore(" + locationOfStore + ")");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try

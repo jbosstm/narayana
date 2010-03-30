@@ -40,7 +40,7 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jts.recovery.*;
@@ -118,13 +118,9 @@ public class RecoveryCoordinatorId
 	    stringBuf.append(_isServerTransaction);
 	    rcObjectKey = stringBuf.toString();
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_1", new Object[]{rcObjectKey});
-		}
+	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_1", new Object[]{rcObjectKey});
+        }
 	}
 	catch (Exception e)
 	{
@@ -139,13 +135,9 @@ public class RecoveryCoordinatorId
      */
     public static RecoveryCoordinatorId reconstruct(String encodedRCData)
     {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, 
-				       VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "RecoveryCoordinatorId(" + encodedRCData + ")");
-	    }
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("RecoveryCoordinatorId(" + encodedRCData + ")");
+    }
 	Uid	      RCUid = null;
 	Uid	      actionUid = null;
 	Uid	    originalProcessUid = null;

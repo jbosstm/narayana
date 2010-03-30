@@ -36,7 +36,6 @@ import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
@@ -44,9 +43,6 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -100,11 +96,8 @@ public class JDBCStore extends ObjectStore
         public boolean commit_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.commit_state(" + objUid + ", " + tName + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
                 }
 
                 /* Bail out if the object store is not set up */
@@ -118,11 +111,8 @@ public class JDBCStore extends ObjectStore
         public boolean hide_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
                 }
 
                 /* Bail out if the object store is not set up */
@@ -136,12 +126,9 @@ public class JDBCStore extends ObjectStore
         public boolean reveal_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "ShadowingStore.reveal_state(" + objUid + ", " + tName
-                                                        + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("ShadowingStore.reveal_state(" + objUid + ", " + tName
+                            + ")");
                 }
 
                 if (storeValid())
@@ -172,13 +159,9 @@ public class JDBCStore extends ObjectStore
         public InputObjectState read_committed(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger
-                                        .debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                                        FacilityCode.FAC_OBJECT_STORE,
-                                                        "JDBCStore.read_committed(" + storeUid + ", "
-                                                                        + tName + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.read_committed(" + storeUid + ", "
+                            + tName + ")");
                 }
 
                 return read_state(storeUid, tName, StateStatus.OS_COMMITTED);
@@ -187,12 +170,9 @@ public class JDBCStore extends ObjectStore
         public InputObjectState read_uncommitted(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.read_uncommitted(" + storeUid + ", " + tName
-                                                        + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.read_uncommitted(" + storeUid + ", " + tName
+                            + ")");
                 }
 
                 return read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
@@ -201,12 +181,9 @@ public class JDBCStore extends ObjectStore
         public boolean remove_committed(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.remove_committed(" + storeUid + ", " + tName
-                                                        + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.remove_committed(" + storeUid + ", " + tName
+                            + ")");
                 }
 
                 return remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
@@ -215,12 +192,9 @@ public class JDBCStore extends ObjectStore
         public boolean remove_uncommitted(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
-                                                        + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
+                            + ")");
                 }
 
                 return remove_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
@@ -229,12 +203,9 @@ public class JDBCStore extends ObjectStore
         public boolean write_committed(Uid storeUid, String tName,
                         OutputObjectState state) throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.write_committed(" + storeUid + ", " + tName
-                                                        + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.write_committed(" + storeUid + ", " + tName
+                            + ")");
                 }
 
                 return write_state(storeUid, tName, state, StateStatus.OS_COMMITTED);
@@ -243,12 +214,9 @@ public class JDBCStore extends ObjectStore
         public boolean write_uncommitted(Uid storeUid, String tName,
                         OutputObjectState state) throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.write_uncommitted(" + storeUid + ", " + tName
-                                                        + ", " + state + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.write_uncommitted(" + storeUid + ", " + tName
+                            + ", " + state + ")");
                 }
 
                 return write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
@@ -267,12 +235,9 @@ public class JDBCStore extends ObjectStore
         public boolean allObjUids(String tName, InputObjectState state, int match)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.allObjUids(" + tName + ", " + state + ", "
-                                                        + match + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.allObjUids(" + tName + ", " + state + ", "
+                            + match + ")");
                 }
 
                 if (storeValid())
@@ -284,11 +249,8 @@ public class JDBCStore extends ObjectStore
         public boolean allTypes(InputObjectState foundTypes)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        "JDBCStore.allTypes(" + foundTypes + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.allTypes(" + foundTypes + ")");
                 }
 
                 if (storeValid())
@@ -325,13 +287,10 @@ public class JDBCStore extends ObjectStore
         protected boolean remove_state(Uid objUid, String name, int ft)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PROTECTED,
-                                        FacilityCode.FAC_OBJECT_STORE, "JDBCStore.remove_state("
-                                                        + objUid + ", " + name + ", "
-                                                        + StateType.stateTypeString(ft) + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("JDBCStore.remove_state("
+                            + objUid + ", " + name + ", "
+                            + StateType.stateTypeString(ft) + ")");
                 }
 
                 if (!storeValid())
@@ -352,11 +311,8 @@ public class JDBCStore extends ObjectStore
         
         protected JDBCStore()
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        getClass().getName() + "()");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug(getClass().getName() + "()");
                 }
 
                 try
@@ -371,11 +327,8 @@ public class JDBCStore extends ObjectStore
 
         protected JDBCStore(String tableName)
         {
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                        tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
-                                        getClass().getName() + "(" + tableName + ")");
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug(getClass().getName() + "(" + tableName + ")");
                 }
 
                 try

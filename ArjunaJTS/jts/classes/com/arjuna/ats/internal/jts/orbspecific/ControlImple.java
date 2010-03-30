@@ -82,12 +82,11 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	public ControlImple (Control parentCon, ArjunaTransactionImple parentTran)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::ControlImple ( Control parentCon, "
-					+ ((parentTran != null) ? parentTran.get_uid()
-							: Uid.nullUid()) + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::ControlImple ( Control parentCon, "
+                    + ((parentTran != null) ? parentTran.get_uid()
+                    : Uid.nullUid()) + " )");
+        }
 
 		_theTerminator = null;
 		_theCoordinator = null;
@@ -112,10 +111,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	public void finalize () throws Throwable
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple.finalize ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple.finalize ()");
+        }
 
 		if (!_destroyed)
 		{
@@ -250,11 +248,10 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 	public synchronized void destroy () throws ActiveTransaction,
 			ActiveThreads, BadControl, Destroyed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "Control::destroy called for "
-					+ get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Control::destroy called for "
+                    + get_uid());
+        }
 
 		canDestroy();
 
@@ -373,11 +370,10 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 			throws ActiveTransaction, ActiveThreads, BadControl, Destroyed,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "Control::canDestroy ( "
-					+ force + " ) called for " + get_uid());
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Control::canDestroy ( "
+                    + force + " ) called for " + get_uid());
+        }
 
 		if (_destroyed)
 			throw new Destroyed();
@@ -386,14 +382,13 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 		{
 			if ((_transactionHandle.activeThreads() != 0) && (!force))
 			{
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::canDestroy for "
-							+ get_uid()
-							+ " - transaction has "
-							+ _transactionHandle.activeThreads()
-							+ " active threads.");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("ControlImple::canDestroy for "
+                            + get_uid()
+                            + " - transaction has "
+                            + _transactionHandle.activeThreads()
+                            + " active threads.");
+                }
 
 				throw new ActiveThreads();
 			}
@@ -418,11 +413,10 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 			if (active)
 			{
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "Control::canDestroy for "
-							+ get_uid() + " - transaction active.");
-				}
+				if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("Control::canDestroy for "
+                            + get_uid() + " - transaction active.");
+                }
 
 				throw new ActiveTransaction();
 			}
@@ -453,11 +447,10 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected ControlImple (Coordinator coordinator, Terminator terminator, Control parentControl, Uid uid)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::ControlImple (Coordinator, Terminator, Control, "
-					+ uid + " )");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::ControlImple (Coordinator, Terminator, Control, "
+                    + uid + " )");
+        }
 
 		_theTerminator = terminator;
 		_theCoordinator = coordinator;
@@ -507,10 +500,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected ControlImple ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::ControlImple ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::ControlImple ()");
+        }
 
 		_theTerminator = null;
 		_theCoordinator = null;
@@ -524,10 +516,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected final void createTransactionHandle ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::createTransactionHandle ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::createTransactionHandle ()");
+        }
 
 		/* Create/bind the 2 IDL interfaces to the same implementation */
 
@@ -546,10 +537,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected final void duplicateTransactionHandle (Coordinator coord, Terminator term)
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::duplicateTransactionHandle ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::duplicateTransactionHandle ()");
+        }
 
 		_theCoordinator = coord;
 		_theTerminator = term;
@@ -562,10 +552,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected boolean addControl ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::addControl ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::addControl ()");
+        }
 
 		try
 		{
@@ -584,10 +573,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected boolean removeControl ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::removeControl ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::removeControl ()");
+        }
 
 		try
 		{
@@ -615,10 +603,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected final void tidyup ()
 	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ControlImple::tidyup ()");
-		}
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ControlImple::tidyup ()");
+        }
 
 		_myControl = null;
 		_parentControl = null;

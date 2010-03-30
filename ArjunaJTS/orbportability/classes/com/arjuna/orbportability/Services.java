@@ -33,8 +33,8 @@ package com.arjuna.orbportability;
 
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NameComponent;
@@ -369,11 +369,9 @@ public void registerService (org.omg.CORBA.Object objRef,
 	    
 		    rootContext.rebind(contextName, objRef);
 
-                    if (opLogger.logger.isDebugEnabled())
-                    {
-                        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                              FacilityCode.FAC_ORB_PORTABILITY, "Services.registerService - object "+serviceName+" registered with name service.");
-		    }		    
+                    if (opLogger.logger.isDebugEnabled()) {
+                        opLogger.logger.debug("Services.registerService - object " + serviceName + " registered with name service.");
+                    }
 		}
 		catch (org.omg.CORBA.ORBPackage.InvalidName e)
 		{
@@ -481,11 +479,9 @@ public void registerService (org.omg.CORBA.Object objRef,
 		outputFile = null;
 		nuFile = null;
 
-                if (opLogger.logger.isDebugEnabled())
-                {
-                    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					  FacilityCode.FAC_ORB_PORTABILITY, "Services.registerService - object "+serviceName+" registered with configuration file: "+configFile);
-		}
+                if (opLogger.logger.isDebugEnabled()) {
+                    opLogger.logger.debug("Services.registerService - object " + serviceName + " registered with configuration file: " + configFile);
+                }
 	    }
 	break;
 	case FILE:
@@ -504,11 +500,9 @@ public void registerService (org.omg.CORBA.Object objRef,
 		ofile.write(b);
 		ofile.close();
 
-                if (opLogger.logger.isDebugEnabled())
-                {
-                    opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					  FacilityCode.FAC_ORB_PORTABILITY, "Services.registerService - object "+serviceName+" reference file created: "+fileDir+serviceName);
-		}
+                if (opLogger.logger.isDebugEnabled()) {
+                    opLogger.logger.debug("Services.registerService - object " + serviceName + " reference file created: " + fileDir + serviceName);
+                }
 	    }
 	break;
 	case NAMED_CONNECT:

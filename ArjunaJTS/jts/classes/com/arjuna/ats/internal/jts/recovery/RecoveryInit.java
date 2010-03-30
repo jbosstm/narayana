@@ -37,7 +37,7 @@ import com.arjuna.common.util.logging.*;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode;
+
 
 import java.util.List;
 
@@ -130,17 +130,11 @@ public class RecoveryInit
 		    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.RecoveryInit_1");
+		if (jtsLogger.loggerI18N.isDebugEnabled()) {
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.RecoveryInit_1");
 
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.RecoveryInit_3",
-					       new Object[] {eventHandlerClassName});
-		}
+            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.RecoveryInit_3", new Object[]{eventHandlerClassName});
+        }
 	    }
 	}
     }

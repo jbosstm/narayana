@@ -32,11 +32,8 @@
 package com.arjuna.ats.internal.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * Class to record transactions with non-zero timeout values, and
@@ -64,11 +61,9 @@ public ReaperThread (TransactionReaper arg)
 
 public void run ()
     {
-    	if (tsLogger.arjLogger.isDebugEnabled())
-    	{
-    	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-    				     FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
-    	}
+    	if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ReaperThread.run ()");
+        }
 
     	for (;;)
     	{
@@ -92,13 +87,9 @@ public void run ()
                 {
                      try
                      {
-                          if (tsLogger.arjLoggerI18N.isDebugEnabled())
-                          {
-                               tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                                            FacilityCode.FAC_ATOMIC_ACTION,
-                                                            "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", 
-                                                            new Object[]{Thread.currentThread(),
-                                                                         Long.toString(sleepPeriod)});
+                          if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                              tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", new Object[]{Thread.currentThread(),
+                                      Long.toString(sleepPeriod)});
                           }
 
                           reaperObject.wait(sleepPeriod);
@@ -113,10 +104,8 @@ public void run ()
                 }
             }
     
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                          FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("ReaperThread.run ()");
             }
 
     	    reaperObject.check();

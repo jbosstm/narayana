@@ -28,9 +28,9 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.common.util.logging.FacilityCode;
+
+
+
 
 /**
  * Implementation of the InboundTransactionCurrent interface of the app server's
@@ -53,10 +53,8 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
      */
     public Transaction getCurrentTransaction()
     {
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "InboundTransactionCurrentImple.getCurrentTransaction() called");
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("InboundTransactionCurrentImple.getCurrentTransaction() called");
         }
 
         TransactionManager transactionManager = null;
@@ -87,10 +85,8 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
             throw new RuntimeException("InboundTransactionCurrentImple unable to determine inbound transaction context", e);
         }
 
-        if (jbossatxLogger.logger.isDebugEnabled())
-        {
-            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "InboundTransactionCurrentImple.getCurrentTransaction() returning tx="+transaction);
+        if (jbossatxLogger.logger.isDebugEnabled()) {
+            jbossatxLogger.logger.debug("InboundTransactionCurrentImple.getCurrentTransaction() returning tx=" + transaction);
         }
 
         return transaction;

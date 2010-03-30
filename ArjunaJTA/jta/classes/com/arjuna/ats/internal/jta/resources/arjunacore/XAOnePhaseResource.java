@@ -46,12 +46,11 @@ import com.arjuna.ats.arjuna.coordinator.OnePhaseResource;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.jta.logging.FacilityCode;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 /**
  * One Phase resource wrapper for XAResources.
@@ -116,11 +115,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final XAException xae)
         {
-            if (jtaLogger.logger.isDebugEnabled())
-            {
-                jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
-                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
-                        "XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
             }
             
             switch (xae.errorCode)
@@ -158,11 +154,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final Throwable ex)
         {
-            if (jtaLogger.logger.isDebugEnabled())
-            {
-                jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
-                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
-                        "XAOnePhaseResource.commit(" + xid + ") " + ex.getMessage());
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") " + ex.getMessage());
             }
         }
         finally
@@ -174,11 +167,8 @@ public class XAOnePhaseResource implements OnePhaseResource
             }
             catch (final Throwable ex)
             {
-                if (jtaLogger.logger.isDebugEnabled())
-                {
-                    jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
-                            VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
-                            "XAOnePhaseResource.commit(" + xid + ") called forget and got " + ex.getMessage());
+                if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") called forget and got " + ex.getMessage());
                 }
             }
         }
@@ -210,11 +200,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final Throwable ex)
         {
-            if (jtaLogger.logger.isDebugEnabled())
-            {
-                jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
-                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
-                        "XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
             }
         }
         

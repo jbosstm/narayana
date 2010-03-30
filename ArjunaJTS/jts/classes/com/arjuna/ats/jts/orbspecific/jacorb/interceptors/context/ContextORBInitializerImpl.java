@@ -52,8 +52,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializerImpl ()");
+	    jtsLogger.logger.debug("ContextORBInitializerImpl ()");
 	}
 
 	/*
@@ -75,8 +74,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializer.pre_init ()");
+	    jtsLogger.logger.debug("ContextORBInitializer.pre_init ()");
 	}
 
 	/*
@@ -100,8 +98,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
+		jtsLogger.logger.debug("ContextORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
 	    }
 
 	    Encoding cdr_encoding = new Encoding(ENCODING_CDR_ENCAPS.value, (byte)1, (byte)0);
@@ -127,8 +124,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializerImpl - registering ClientRequestInterceptor");
+		jtsLogger.logger.debug("ContextORBInitializerImpl - registering ClientRequestInterceptor");
 	    }
 
 	    ClientRequestInterceptor client_interceptor = new ContextClientRequestInterceptorImpl(localSlot, cdr_codec);
@@ -154,8 +150,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	{
 	    if (jtsLogger.logger.isDebugEnabled())
 	    {
-		jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializerImpl - registering ServerRequestInterceptor");
+		jtsLogger.logger.debug("ContextORBInitializerImpl - registering ServerRequestInterceptor");
 	    }
 
 	    ServerRequestInterceptor server_interceptor = new ContextServerRequestInterceptorImpl(receivedSlot, cdr_codec);
@@ -178,8 +173,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializerImpl.post_init ()");
+	    jtsLogger.logger.debug("ContextORBInitializerImpl.post_init ()");
 	}
 
 	// nothing to do

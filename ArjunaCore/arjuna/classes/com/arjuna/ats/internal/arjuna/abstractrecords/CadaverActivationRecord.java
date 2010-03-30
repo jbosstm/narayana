@@ -34,11 +34,8 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-
-import com.arjuna.common.util.logging.*;
 
 /*
  * This constructor is used to create a new instance of an
@@ -52,12 +49,9 @@ public class CadaverActivationRecord extends ActivationRecord
     {
 	super(ObjectStatus.PASSIVE, sm, null);
 	    
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::CadaverActivationRecord(" +sm.get_uid()+")");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::CadaverActivationRecord(" + sm.get_uid() + ")");
+    }
     }
     
     public boolean propagateOnAbort ()
@@ -71,12 +65,9 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::nestedAbort() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::nestedAbort() for " + get_uid());
+    }
 	
 	super.nestedAbort();
 	
@@ -85,24 +76,18 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::nestedCommit() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::nestedCommit() for " + get_uid());
+    }
 	
 	return TwoPhaseOutcome.FINISH_OK;	
     }
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::nestedPrepare() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::nestedPrepare() for " + get_uid());
+    }
 	
 	super.nestedPrepare();
 	
@@ -111,12 +96,9 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::topLevelAbort() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::topLevelAbort() for " + get_uid());
+    }
 	
 	super.topLevelAbort();
 	
@@ -125,11 +107,9 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::topLevelCommit() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::topLevelCommit() for " + get_uid());
+    }
 	
 	super.topLevelCommit();
 	
@@ -138,11 +118,9 @@ public class CadaverActivationRecord extends ActivationRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::topLevelPrepare() for "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::topLevelPrepare() for " + get_uid());
+    }
 	
 	// make sure SM instance forgets about action
 	
@@ -177,12 +155,9 @@ public class CadaverActivationRecord extends ActivationRecord
     {
 	super();
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "CadaverActivationRecord::CadaverActivationRecord ()");
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("CadaverActivationRecord::CadaverActivationRecord ()");
+    }
     }
     
 }

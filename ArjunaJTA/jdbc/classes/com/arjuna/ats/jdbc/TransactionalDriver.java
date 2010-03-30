@@ -69,20 +69,16 @@ public static final String createDb = "CREATE_DB";
 
     public TransactionalDriver ()
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				  com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "TransactionalDriver.TransactionalDriver ()");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("TransactionalDriver.TransactionalDriver ()");
+    }
     }
 
     public Connection connect (String url, Properties info) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "TransactionalDriver.connect ( "+url+" )");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("TransactionalDriver.connect ( " + url + " )");
+    }
 
 	if (!url.startsWith(TransactionalDriver.arjunaDriver))
 	{
@@ -96,11 +92,9 @@ public static final String createDb = "CREATE_DB";
     
     public boolean acceptsURL (String url) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "TransactionalDriver.acceptsURL ( "+url+" )");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("TransactionalDriver.acceptsURL ( " + url + " )");
+    }
 
 	if (url != null)
 	{
@@ -130,11 +124,9 @@ public static final String createDb = "CREATE_DB";
 
     public DriverPropertyInfo[] getPropertyInfo (String url, Properties info) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled())
-	{
-	    jdbcLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				  com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC, "TransactionalDriver.getPropertyInfo ( "+url+" )");
-	}
+	if (jdbcLogger.logger.isDebugEnabled()) {
+        jdbcLogger.logger.debug("TransactionalDriver.getPropertyInfo ( " + url + " )");
+    }
 
 	int index = url.indexOf(TransactionalDriver.arjunaDriver);
 

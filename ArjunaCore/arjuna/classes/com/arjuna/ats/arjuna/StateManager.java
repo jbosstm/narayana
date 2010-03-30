@@ -41,10 +41,7 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
 import java.io.PrintWriter;
 import java.util.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.Header;
@@ -188,12 +185,9 @@ public class StateManager
 
     public void finalize () throws Throwable
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "StateManager.finalize() for object-id " + get_uid()
-                            + " type " + type());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager.finalize() for object-id " + get_uid()
+                    + " type " + type());
         }
 
         if (currentStatus == ObjectStatus.ACTIVE_NEW)
@@ -250,13 +244,10 @@ public class StateManager
 
     public synchronized boolean activate (String rootName)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::activate( "
-                            + ((rootName != null) ? rootName : "null")
-                            + ") for object-id " + objectUid);
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::activate( "
+                    + ((rootName != null) ? rootName : "null")
+                    + ") for object-id " + objectUid);
         }
 
         if (myType == ObjectType.NEITHER)
@@ -474,13 +465,10 @@ public class StateManager
 
     public synchronized boolean deactivate (String rootName, boolean commit)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::deactivate("
-                            + ((rootName != null) ? rootName : "null") + ", "
-                            + commit + ") for object-id " + objectUid);
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::deactivate("
+                    + ((rootName != null) ? rootName : "null") + ", "
+                    + commit + ") for object-id " + objectUid);
         }
 
         boolean result = false;
@@ -586,12 +574,9 @@ public class StateManager
 
     public synchronized boolean destroy ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "com.arjuna.ats.arjuna.StateManager_5", new Object[]
-                    { objectUid });
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.StateManager_5", new Object[]
+                    {objectUid});
         }
 
         boolean result = false;
@@ -697,11 +682,8 @@ public class StateManager
 
     public final String getStoreRoot ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::getStoreRoot ()");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::getStoreRoot ()");
         }
 
         return storeRoot;
@@ -714,11 +696,8 @@ public class StateManager
 
     public ObjectStore getStore ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::getStore ()");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::getStore ()");
         }
 
         if (objectStore == null)
@@ -766,12 +745,9 @@ public class StateManager
             
             long birthDate = System.currentTimeMillis();
             
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                        "StateManager.packHeader for object-id " + get_uid()
-                                + " birth-date " + birthDate);
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("StateManager.packHeader for object-id " + get_uid()
+                        + " birth-date " + birthDate);
             }
             
             os.packLong(birthDate);
@@ -835,12 +811,9 @@ public class StateManager
             
             long birthDate = os.unpackLong();
             
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
-                        "StateManager.unpackHeader for object-id " + get_uid()
-                                + " birth-date " + birthDate);
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("StateManager.unpackHeader for object-id " + get_uid()
+                        + " birth-date " + birthDate);
             }
             
             hdr.setTxId(txId);
@@ -865,11 +838,8 @@ public class StateManager
 
     protected void terminate ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::terminate() for object-id " + get_uid());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::terminate() for object-id " + get_uid());
         }
 
         cleanup(true);
@@ -921,11 +891,8 @@ public class StateManager
 
         objectUid = objUid;
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::StateManager( " + get_uid() + " )");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::StateManager( " + get_uid() + " )");
         }
     }
 
@@ -965,11 +932,8 @@ public class StateManager
 
         objectUid = new Uid();
 
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::StateManager( " + ot + ", "+om+" )");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::StateManager( " + ot + ", " + om + " )");
         }
     }
 
@@ -986,11 +950,8 @@ public class StateManager
 
     protected synchronized boolean modified ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::modified() for object-id " + get_uid());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::modified() for object-id " + get_uid());
         }
 
         BasicAction action = BasicAction.Current();
@@ -1086,11 +1047,8 @@ public class StateManager
 
     protected final synchronized void persist ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::persist() for object-id " + get_uid());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::persist() for object-id " + get_uid());
         }
 
         if (currentStatus == ObjectStatus.ACTIVE)
@@ -1112,11 +1070,8 @@ public class StateManager
 
     protected final synchronized void cleanup (boolean fromTerminate)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::cleanup() for object-id " + get_uid());
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::cleanup() for object-id " + get_uid());
         }
 
         if (myType == ObjectType.NEITHER)
@@ -1274,12 +1229,9 @@ public class StateManager
     protected synchronized void setupStore (String rootName,
             String objectStoreType)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::setupStore ( "
-                            + ((rootName != null) ? rootName : "null") + " )");
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::setupStore ( "
+                    + ((rootName != null) ? rootName : "null") + " )");
         }
 
         if (!loadObjectState())
@@ -1418,14 +1370,11 @@ public class StateManager
     protected final synchronized boolean forgetAction (BasicAction action,
             boolean committed, int recordType)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::forgetAction("
-                            + ((action != null) ? action.get_uid() : Uid
-                                    .nullUid()) + ")" + " for object-id "
-                            + objectUid);
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::forgetAction("
+                    + ((action != null) ? action.get_uid() : Uid
+                    .nullUid()) + ")" + " for object-id "
+                    + objectUid);
         }
 
         synchronized (modifyingActions)
@@ -1472,14 +1421,11 @@ public class StateManager
     protected final synchronized boolean rememberAction (BasicAction action,
             int recordType, int state)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
-                    "StateManager::rememberAction("
-                            + ((action != null) ? action.get_uid() : Uid
-                                    .nullUid()) + ")" + " for object-id "
-                            + objectUid);
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::rememberAction("
+                    + ((action != null) ? action.get_uid() : Uid
+                    .nullUid()) + ")" + " for object-id "
+                    + objectUid);
         }
 
         boolean result = false;

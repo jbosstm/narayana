@@ -38,8 +38,8 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.common.util.logging.VisibilityLevel;
+
+
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
@@ -125,8 +125,7 @@ public InterpositionClientRequestInterceptorImpl (int localSlot, Codec codec)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl ( "+localSlot+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl ( "+localSlot+" )");
 	}
 
 	_localSlot = localSlot;
@@ -146,8 +145,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl::send_request ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::send_request ( "+request_info.operation()+" )");
 	}
 
 	if (systemCall(request_info))
@@ -294,8 +292,7 @@ public void send_poll (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl::send_poll ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::send_poll ( "+request_info.operation()+" )");
 	}
     }
 
@@ -303,8 +300,7 @@ public void receive_reply (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl::receive_reply ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_reply ( "+request_info.operation()+" )");
 	}
     }
 
@@ -312,8 +308,7 @@ public void receive_exception (ClientRequestInfo request_info) throws SystemExce
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl::receive_exception ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_exception ( "+request_info.operation()+" )");
 	}
 
 	// mark transaction as rollback only if a system exception
@@ -323,8 +318,7 @@ public void receive_other (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl::receive_other ( "+request_info.operation()+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_other ( "+request_info.operation()+" )");
 	}
     }
 
@@ -332,8 +326,7 @@ private final Any packPropagationContext (PropagationContext ctx)
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				   (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionClientRequestInterceptorImpl.packPropagationContext ( "+ctx+" )");
+	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl.packPropagationContext ( "+ctx+" )");
 	}
 
 	Any data = ORBManager.getORB().orb().create_any();

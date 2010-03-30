@@ -38,9 +38,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
@@ -66,10 +63,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public BasicPersistentLockStore(String key)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-                                     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.BasicPersistentLockStore("+key+")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicPersistentLockStore.BasicPersistentLockStore(" + key + ")");
         }
 
         lockStoreLocation = txojPropertyManager.getTxojEnvironmentBean()
@@ -89,10 +84,8 @@ public class BasicPersistentLockStore extends LockStore
     public InputObjectState read_state (Uid u, String tName)
             throws LockStoreException
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.read_state("+u+", "+tName+")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicPersistentLockStore.read_state(" + u + ", " + tName + ")");
         }
 
         try
@@ -107,10 +100,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public boolean remove_state (Uid u, String tName)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.remove_state("+u+", "+tName+")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicPersistentLockStore.remove_state(" + u + ", " + tName + ")");
         }
 
         try
@@ -125,11 +116,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
-        if (txojLogger.aitLogger.isDebugEnabled())
-        {
-            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                     FacilityCode.FAC_LOCK_STORE,
-                                     "BasicPersistentLockStore.write_committed("+u+", "+tName+", "+state+")");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("BasicPersistentLockStore.write_committed(" + u + ", " + tName + ", " + state + ")");
         }
 
         try

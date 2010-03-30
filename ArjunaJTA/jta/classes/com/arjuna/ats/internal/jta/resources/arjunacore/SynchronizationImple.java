@@ -90,11 +90,9 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 
     public boolean beforeCompletion ()
     {
-	if (jtaLogger.logger.isDebugEnabled())
-	{
-	    jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-				  "SynchronizationImple.beforeCompletion");
-	}
+	if (jtaLogger.logger.isDebugEnabled()) {
+        jtaLogger.logger.debug("SynchronizationImple.beforeCompletion");
+    }
 
 	if (_theSynch != null)
 	{
@@ -111,10 +109,8 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
      */
     public boolean afterCompletion (int status)
     {
-        if (jtaLogger.logger.isDebugEnabled())
-        {
-            jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-                    "SynchronizationImple.afterCompletion");
+        if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("SynchronizationImple.afterCompletion");
         }
 
         if (_theSynch != null)

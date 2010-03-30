@@ -40,10 +40,7 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 /**
  * @author Mark Little (mark@arjuna.com)
@@ -97,11 +94,9 @@ public class LogWriteStateManager extends StateManager
     
     protected synchronized boolean modified ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());
-	}
+	if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("StateManager::modified() for object-id " + get_uid());
+    }
 
 	if ((super.objectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
 	    return super.modified();
