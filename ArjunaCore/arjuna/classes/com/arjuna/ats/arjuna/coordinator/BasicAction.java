@@ -1302,21 +1302,16 @@ public class BasicAction extends StateManager
 	/**
 	 * Add the specified CheckedAction object to this transaction.
 	 * 
-	 * @return the previous <code>CheckedAction</code>.
 	 * @see com.arjuna.ats.arjuna.coordinator.CheckedAction
 	 */
 
-	public final synchronized CheckedAction setCheckedAction (CheckedAction c)
+	protected final synchronized void setCheckedAction (CheckedAction c)
 	{
 		criticalStart();
-
-		CheckedAction toReturn = _checkedAction;
 
 		_checkedAction = c;
 
 		criticalEnd();
-
-		return toReturn;
 	}
 
 	/**
@@ -4064,41 +4059,6 @@ public class BasicAction extends StateManager
 
 	//    private Mutex _lock = new Mutex(); // TODO
 	
-	private static CheckedActionFactory _checkedActionFactory;
-	
-	static
-	{
-	    /*
-	     * Make sure this can only be set once. Bad things can happen if the factory changes
-	     * during execution.
-	     */
-	    
-	    String checkedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
-	    
-	    if (checkedActionFactory != null)
-	    {
-	        try
-	        {
-	            Class factory = Thread.currentThread().getContextClassLoader().loadClass(checkedActionFactory);
-	            
-	            _checkedActionFactory = (CheckedActionFactory) factory.newInstance();
-	        }
-	        catch (final Exception ex)
-	        {
-	            ex.printStackTrace();
-	            
-	            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	            {
-	                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.checkedactionfactory",
-	                                            new Object[]{ checkedActionFactory }, ex);
-	            }
-	            
-	            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.cafactoryerror")+" "+checkedActionFactory, ex);
-	        }
-	    }
-	    else
-	        _checkedActionFactory = new CheckedActionFactoryImple();
-	}
-
+	private static CheckedActionFactory _checkedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
 }
 

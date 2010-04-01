@@ -46,7 +46,7 @@
             <tests>
                 <fileset dir="tests/classes" includes="**/*.java">
                     <exclude name="**/resources/**"/>
-                    <exclude name="**/DummyCheckedActionFactory.java"/>
+                    <exclude name="**/DummyCheckedAction.java"/>
                     <exclude name="**/MyAccess.java"/>
                     <exclude name="**/Worker.java"/>
                     <exclude name="**/BasicCrashRecord.java"/>

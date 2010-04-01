@@ -111,7 +111,7 @@ public interface CoordinatorEnvironmentBeanMBean
 
     void setBeforeCompletionWhenRollbackOnly(boolean beforeCompletionWhenRollbackOnly);
 
-    String getCheckedActionFactory();
+    String getCheckedActionFactoryClassName();
 
-    void setCheckedActionFactory(String checkedActionFactory);
+    void setCheckedActionFactoryClassName(String checkedActionFactory);
 }

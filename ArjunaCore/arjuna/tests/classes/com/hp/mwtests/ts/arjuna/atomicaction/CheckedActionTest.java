@@ -20,37 +20,23 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import java.util.Hashtable;
-
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-class DummyCheckedAction extends CheckedAction
-{
-    public void check (boolean isCommit, Uid actUid, Hashtable list)
-    {
-        _called = true;
-    }
-    
-    public boolean called ()
-    {
-        return _called;
-    }
-    
-    private boolean _called;
-}
+
 
 public class CheckedActionTest
 {
     @Test
     public void test()
     {
-        arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactory(DummyCheckedActionFactory.class.getCanonicalName());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactoryClassName(DummyCheckedAction.class.getName());
+        DummyCheckedAction.reset();
+        assertFalse(DummyCheckedAction.factoryCalled());
+        assertFalse(DummyCheckedAction.called());
 
         AtomicAction A = new AtomicAction();
 
@@ -58,14 +44,19 @@ public class CheckedActionTest
 
         A.commit();
 
-        assertTrue(success);
+        assertTrue(DummyCheckedAction.factoryCalled());
+        assertFalse(DummyCheckedAction.called());
     }
     
     @Test
     public void testCheckedAction ()
     {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactoryClassName(DummyCheckedAction.class.getName());
+        DummyCheckedAction.reset();
+        assertFalse(DummyCheckedAction.factoryCalled());
+        assertFalse(DummyCheckedAction.called());
+
         AtomicAction A = new AtomicAction();
-        DummyCheckedAction dca = new DummyCheckedAction();
         
         A.begin();
         
@@ -75,13 +66,10 @@ public class CheckedActionTest
          */
         
         A.addChildThread(new Thread());
-        
-        A.setCheckedAction(dca);
 
         A.commit();
 
-        assertTrue(dca.called());
+        assertTrue(DummyCheckedAction.factoryCalled());
+        assertTrue(DummyCheckedAction.called());
     }
-
-    public static boolean success = false;
 }

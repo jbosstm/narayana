@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
@@ -33,7 +35,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
 public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
-    private volatile String actionStore = HashedActionStore.class.getName();
+    private volatile String actionStore = HashedActionStore.class.getName();    
     private volatile boolean asyncCommit = false;
     private volatile boolean asyncPrepare = false;
     private volatile boolean asyncRollback = false;
@@ -64,11 +66,13 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     @FullPropertyName(name = "com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly")
     private volatile boolean beforeCompletionWhenRollbackOnly = false;
+
     @FullPropertyName(name = "com.arjuna.ats.coordinator.checkedActionFactory")
-    private volatile String checkedActionFactory = null;
+    private volatile String checkedActionFactoryClassName = "com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple";
+    private volatile CheckedActionFactory checkedActionFactory = null;
 
     private volatile boolean alternativeRecordOrdering = false;
-    
+
     /**
      * Returns the symbolic name for the action store type.
      *
@@ -563,24 +567,82 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     /**
      * Returns the class name of an implementation of CheckedActionFactory
      *
-     * Default: null
+     * Default: "com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple"
      * Equivalent deprecated property: com.arjuna.ats.coordinator.checkedActionFactory
      *
      * @return the class name of the CheckedActionFactory implementation to use.
      */
-    public String getCheckedActionFactory()
+    public String getCheckedActionFactoryClassName()
     {
+        return checkedActionFactoryClassName;
+    }
+
+    /**
+     * Sets the class name of the CheckedActionFactory implementation.
+     *
+     * @param checkedActionFactoryClassName the name of a class that implements CheckedActionFactory.
+     */
+    public void setCheckedActionFactoryClassName(String checkedActionFactoryClassName)
+    {
+        synchronized(this)
+        {
+            if(checkedActionFactoryClassName == null)
+            {
+                this.checkedActionFactory = null;
+            }
+            else if(!checkedActionFactoryClassName.equals(this.checkedActionFactoryClassName))
+            {
+                this.checkedActionFactory = null;
+            }
+            this.checkedActionFactoryClassName = checkedActionFactoryClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing CheckedActionFactory.
+     * 
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log appropriate warning and return null, not throw an exception.
+     *
+     * @return a CheckedActionFactory implementation instance, or null.
+     */
+    public CheckedActionFactory getCheckedActionFactory()
+    {
+        if(checkedActionFactory == null && checkedActionFactoryClassName != null)
+        {
+            synchronized (this) {
+                if(checkedActionFactory == null && checkedActionFactoryClassName != null) {
+                    CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName);
+                    checkedActionFactory = instance;
+                }
+            }
+        }
+
         return checkedActionFactory;
     }
 
     /**
-     * Sets the class name of the checked CheckedActionFactory implementation.
+     * Sets the instance of CheckedActionFactory.
      *
-     * @param checkedActionFactory the name of a class that implements CheckedActionFactory.
+     * @param instance an Object that implements CheckedActionFactory, or null.
      */
-    public void setCheckedActionFactory(String checkedActionFactory)
+    public void setCheckedActionFactory(CheckedActionFactory instance)
     {
-        this.checkedActionFactory = checkedActionFactory;
+        synchronized(this)
+        {
+            CheckedActionFactory oldInstance = this.checkedActionFactory;
+            checkedActionFactory = instance;
+
+            if(instance == null)
+            {
+                this.checkedActionFactoryClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.checkedActionFactoryClassName = name;
+            }
+        }
     }
     
 

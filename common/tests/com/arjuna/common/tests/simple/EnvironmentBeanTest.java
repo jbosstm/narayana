@@ -20,16 +20,17 @@
  */
 package com.arjuna.common.tests.simple;
 
-import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import org.junit.Test;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * EnvironmentBean tests
@@ -147,6 +148,11 @@ public class EnvironmentBeanTest
             inputValue = new Integer(1001);
             setter.invoke(bean, new Object[] {inputValue});
 
+        } else if(field.getType().toString().startsWith("interface ")) {
+
+            handleInterfaceField(bean, field, setter, getter);
+            return;
+
         } else {
 
             throw new Exception("unknown field type "+field.getType());
@@ -159,5 +165,43 @@ public class EnvironmentBeanTest
 
     private static String capitalizeFirstLetter(String string) {
         return (string.length()>0) ? (Character.toUpperCase(string.charAt(0))+string.substring(1)) : string;
+    }
+
+    private static void handleInterfaceField(Object bean, Field field, Method setter, Method getter)
+            throws Exception
+    {
+        Class interfaceType = field.getType();
+
+        String setterMethodName = setter.getName()+"ClassName";
+        Method classNameSetter = bean.getClass().getMethod(setterMethodName, new Class[] {String.class});
+
+        String getterMethodName = getter.getName()+"ClassName";
+        Method classNameGetter = bean.getClass().getMethod(getterMethodName, new Class[] {});
+
+        ///////
+
+        InvocationHandler invocationHandler = new DummyInvocationhandler();
+        Object proxy = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[] { interfaceType }, invocationHandler);
+
+        setter.invoke(bean, new Object[] { proxy }); // setFoo()
+        assertSame(getter.invoke(bean, new Object[] {}), proxy); // getFoo
+
+        setter.invoke(bean, new Object[] { null }); // setFoo()
+        assertNull(getter.invoke(bean, new Object[] {})); // getFoo
+        assertNull(classNameGetter.invoke(bean, new Object[] {})); // getFooClassName
+
+        String bogusClassName = "bogusClassName";
+        classNameSetter.invoke(bean, new Object[] { bogusClassName });
+        assertNull(getter.invoke(bean, new Object[] {}));
+        assertEquals(bogusClassName, classNameGetter.invoke(bean, new Object[] {}));
+    }
+
+    private static class DummyInvocationhandler implements InvocationHandler {
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+        {
+            return null;
+        }
     }
 }
