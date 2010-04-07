@@ -65,8 +65,8 @@ public class JTATest
 	String connectionString = null;
 	boolean tmCommit = true;
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
 	/*
 	 * We should have a reference to a factory object (see JTA

@@ -43,7 +43,6 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class SimpleTest
 {
@@ -62,8 +61,8 @@ public class SimpleTest
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
         javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 

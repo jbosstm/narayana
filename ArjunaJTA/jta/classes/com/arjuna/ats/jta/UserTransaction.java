@@ -78,38 +78,6 @@ public class UserTransaction
 	
 	public static synchronized javax.transaction.UserTransaction userTransaction ()
 	{
-		return userTransaction(false);
+		return jtaPropertyManager.getJTAEnvironmentBean().getUserTransaction();
 	}
-
-	/**
-	 * Retrieve the singleton UserTransaction reference.
-	 * 
-	 * @param reset if <code>true</code> then ignore any previous cached implementation
-     * and get a new instance.
-	 * @return The singleton UserTransaction reference. Can return null if the
-	 *         instantiation failed.
-	 */
-	
-	public static synchronized javax.transaction.UserTransaction userTransaction (boolean reset)
-	{
-		try
-		{
-			if ((_userTransaction == null) || (reset))
-			{
-				_userTransaction = (javax.transaction.UserTransaction) Thread.currentThread().getContextClassLoader().loadClass(jtaPropertyManager.getJTAEnvironmentBean().getJtaUTImplementation()).newInstance();
-			}
-		}
-		catch (Exception e)
-		{
-			if (jtaLogger.loggerI18N.isErrorEnabled())
-			{
-				jtaLogger.loggerI18N.error("com.arjuna.ats.jta.UserTransaction.generalfailure", e);
-			}
-		}
-
-		return _userTransaction;
-	}
-	
-	private static javax.transaction.UserTransaction _userTransaction = null;
-
 }

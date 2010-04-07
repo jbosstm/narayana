@@ -27,7 +27,7 @@ public class ToolInitializer implements IToolInitializer
 
     public void initialize(ToolPlugin plugin)
     {
-        String tmClassName = jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
+        String tmClassName = jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerClassName();
         isJTS = (JTS_TM_CLASSNAME_STANDALONE.equals(tmClassName)
                 || JTS_TM_CLASSNAME_ATS.equals(tmClassName));
 

@@ -73,41 +73,6 @@ public class TransactionManager
 	
     public synchronized static javax.transaction.TransactionManager transactionManager ()
     {
-		return transactionManager(false);
+		return jtaPropertyManager.getJTAEnvironmentBean().getTransactionManager();
     }
-
-    /**
-     * Retrieve the singleton transaction manager reference.
-     * 
-     * @param reset if <code>true</code> then ignore any previous cached implementation
-     * and get a new instance.
-     * @return The singleton transaction manager.  Can return null if the instantiation failed.
-     */
-	
-    public synchronized static javax.transaction.TransactionManager transactionManager (boolean reset)
-    {
-        if ((_transactionManager == null ) || (reset))
-        {
-            try
-            {
-                _transactionManager = (javax.transaction.TransactionManager) Thread.currentThread().getContextClassLoader().loadClass(jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation()).newInstance();
-            }
-            catch (Exception e)
-            {
-                if ( jtaLogger.loggerI18N.isErrorEnabled() )
-                {
-                    jtaLogger.loggerI18N.error("com.arjuna.ats.jta.TransactionManager.generalfailure", e);
-                }
-            }
-        }
-
-        return _transactionManager;
-    }
-	
-    public static final void initialise (String[] args)
-    {
-    }
-
-    private static javax.transaction.TransactionManager	_transactionManager = null;
-    
 }

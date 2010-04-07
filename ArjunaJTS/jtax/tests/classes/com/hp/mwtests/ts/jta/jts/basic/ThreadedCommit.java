@@ -31,7 +31,6 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -107,8 +106,8 @@ public class ThreadedCommit
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
         javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                 .transactionManager();

@@ -33,17 +33,17 @@ public interface JTAEnvironmentBeanMBean
 
     void setSupportSubtransactions(boolean supportSubtransactions);
 
-    String getJtaTMImplementation();
+    String getTransactionManagerClassName();
 
-    void setJtaTMImplementation(String jtaTMImplementation);
+    void setTransactionManagerClassName(String jtaTMImplementation);
 
-    String getJtaUTImplementation();
+    String getUserTransactionClassName();
 
-    void setJtaUTImplementation(String jtaUTImplementation);
+    void setUserTransactionClassName(String jtaUTImplementation);
 
-    String getJtaTSRImplementation();
+    String getTransactionSynchronizationRegistryClassName();
 
-    void setJtaTSRImplementation(String jtaTSRImplementation);
+    void setTransactionSynchronizationRegistryClassName(String jtaTSRImplementation);
 
     List<String> getXaRecoveryNodes();
 

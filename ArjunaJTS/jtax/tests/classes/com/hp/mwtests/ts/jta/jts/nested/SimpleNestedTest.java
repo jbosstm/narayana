@@ -31,8 +31,6 @@
 
 package com.hp.mwtests.ts.jta.jts.nested;
 
-import com.hp.mwtests.ts.jta.jts.common.TestResource;
-
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.ats.jta.common.*;
@@ -40,8 +38,6 @@ import com.arjuna.ats.jta.common.*;
 import com.arjuna.orbportability.*;
 
 import javax.transaction.NotSupportedException;
-import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -63,8 +59,8 @@ public class SimpleNestedTest
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(true);
 
         javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -97,8 +93,8 @@ public class SimpleNestedTest
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(false);
 
         javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();

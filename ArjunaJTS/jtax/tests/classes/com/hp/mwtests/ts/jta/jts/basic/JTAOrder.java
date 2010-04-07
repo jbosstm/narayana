@@ -42,7 +42,6 @@ import com.arjuna.orbportability.*;
 import javax.transaction.xa.*;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class JTAOrder
 {
@@ -63,8 +62,8 @@ public class JTAOrder
 
         boolean passed = false;
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
         try
         {

@@ -44,7 +44,6 @@ import javax.transaction.xa.*;
 import java.util.*;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 class Worker extends Thread
 {
@@ -147,8 +146,8 @@ public class JTAHammer
 	int threads = 10;
 	int work = 100;
 
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
 	/*
 	 * We should have a reference to a factory object (see JTA

@@ -20,9 +20,13 @@
  */
 package com.arjuna.ats.jta.common;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -37,9 +41,14 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 {
     private volatile boolean supportSubtransactions = false;
 
-    private volatile String jtaTMImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
-    private volatile String jtaUTImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
-    private volatile String jtaTSRImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
+    private volatile String transactionManagerClassName = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
+    private volatile TransactionManager transactionManager = null;
+
+    private volatile String userTransactionClassName = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
+    private volatile UserTransaction userTransaction = null;
+
+    private volatile String transactionSynchronizationRegistryClassName = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
+    private volatile TransactionSynchronizationRegistry transactionSynchronizationRegistry = null;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaRecoveryNode")
     private volatile List<String> xaRecoveryNodes = new ArrayList<String>();
@@ -91,72 +100,246 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the classname of the javax.transaction.TransactionManager implementation.
+     * Returns the class name of the javax.transaction.TransactionManager implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"
-     * Equivalent deprecated property: com.arjuna.ats.jta.jtaTMImplementation
+     * Equivalent deprecated property: com.arjuna.ats.jta.transactionManagerClassName
      *
      * @return the name of the class implementing TransactionManager.
      */
-    public String getJtaTMImplementation()
+    public String getTransactionManagerClassName()
     {
-        return jtaTMImplementation;
+        return transactionManagerClassName;
     }
 
     /**
-     * Sets the classname of the javax.transaction.TransactionManager implementation.
+     * Sets the class name of the javax.transaction.TransactionManager implementation.
      *
-     * @param jtaTMImplementation the name of a class which implements TransactionManager.
+     * @param transactionManagerClassName the name of a class which implements TransactionManager.
      */
-    public void setJtaTMImplementation(String jtaTMImplementation)
+    public void setTransactionManagerClassName(String transactionManagerClassName)
     {
-        this.jtaTMImplementation = jtaTMImplementation;
+        synchronized(this)
+        {
+            if(transactionManagerClassName == null)
+            {
+                this.transactionManagerClassName = null;
+            }
+            else if(!transactionManagerClassName.equals(this.transactionManagerClassName))
+            {
+                this.transactionManagerClassName = null;
+            }
+            this.transactionManagerClassName = transactionManagerClassName;
+        }
     }
 
     /**
-     * Returns the classname of the javax.transaction.UserTransaction implementation.
+     * Returns an instance of a class implementing javax.transaction.TransactionManager.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a javax.transaction.TransactionManager implementation instance, or null.
+     */
+    public TransactionManager getTransactionManager()
+    {
+        if(transactionManager == null && transactionManagerClassName != null)
+        {
+            synchronized(this) {
+                if(transactionManager == null && transactionManagerClassName != null) {
+                    TransactionManager instance = ClassloadingUtility.loadAndInstantiateClass(TransactionManager.class,  transactionManagerClassName);
+                    transactionManager = instance;
+                }
+            }
+        }
+
+        return transactionManager;
+    }
+
+    /**
+     * Sets the instance of javax.transaction.TransactionManager
+     *
+     * @param instance an Object that implements javax.transaction.TransactionManager, or null.
+     */
+    public void setTransactionManager(TransactionManager instance)
+    {
+        synchronized(this)
+        {
+            TransactionManager oldInstance = this.transactionManager;
+            transactionManager = instance;
+
+            if(instance == null)
+            {
+                this.transactionManagerClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.transactionManagerClassName = name;
+            }
+        }
+    }
+
+    /**
+     * Returns the class name of the javax.transaction.UserTransaction implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"
-     * Equivalent deprecated property: com.arjuna.ats.jta.jtaUTImplementation
+     * Equivalent deprecated property: com.arjuna.ats.jta.userTransactionClassName
      *
      * @return the name of the class implementing javax.transaction.UserTransaction.
      */
-    public String getJtaUTImplementation()
+    public String getUserTransactionClassName()
     {
-        return jtaUTImplementation;
+        return userTransactionClassName;
     }
 
     /**
-     * Sets the classname of the javax.transaction.UserTransaction implementation.
+     * Sets the class name of the javax.transaction.UserTransaction implementation.
      *
-     * @param jtaUTImplementation the name of a class which implements UserTransaction.
+     * @param userTransactionClassName the name of a class which implements javax.transaction.UserTransaction.
      */
-    public void setJtaUTImplementation(String jtaUTImplementation)
+    public void setUserTransactionClassName(String userTransactionClassName)
     {
-        this.jtaUTImplementation = jtaUTImplementation;
+        synchronized(this)
+        {
+            if(userTransactionClassName == null)
+            {
+                this.userTransaction = null;
+            }
+            else if(!userTransactionClassName.equals(this.userTransactionClassName))
+            {
+                this.userTransaction = null;
+            }
+            this.userTransactionClassName = userTransactionClassName;
+        }
     }
 
     /**
-     * Returns the classname of the javax.transaction.TransactionSynchronizationRegistry implementation.
+     * Returns an instance of a class implementing javax.transaction.UserTransaction.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a javax.transaction.UserTransaction implementation instance, or null.
+     */
+    public UserTransaction getUserTransaction()
+    {
+          if(userTransaction == null && userTransactionClassName != null)
+        {
+            synchronized (this) {
+                if(userTransaction == null && userTransactionClassName != null) {
+                    UserTransaction instance = ClassloadingUtility.loadAndInstantiateClass(UserTransaction.class, userTransactionClassName);
+                    userTransaction = instance;
+                }
+            }
+        }
+
+        return userTransaction;
+    }
+
+    /**
+     * Sets the instance of javax.transaction.UserTransaction
+     *
+     * @param instance an Object that implements javax.transaction.UserTransaction, or null.
+     */
+    public void setUserTransaction(UserTransaction instance)
+    {
+        synchronized(this)
+        {
+            UserTransaction oldInstance = this.userTransaction;
+            userTransaction = instance;
+
+            if(instance == null)
+            {
+                this.userTransactionClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.userTransactionClassName = name;
+            }
+        }
+    }
+
+    /**
+     * Returns the class name of the javax.transaction.TransactionSynchronizationRegistry implementation.
      *
      * Default: "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"
-     * Equivalent deprecated property: com.arjuna.ats.jta.jtaTSRImplementation
+     * Equivalent deprecated property: com.arjuna.ats.jta.transactionSynchronizationRegistryClassName
      *
      * @return the name of the class implementing javax.transaction.TransactionSynchronizationRegistry.
      */
-    public String getJtaTSRImplementation()
+    public String getTransactionSynchronizationRegistryClassName()
     {
-        return jtaTSRImplementation;
+        return transactionSynchronizationRegistryClassName;
     }
 
     /**
-     * Sets the classname of the javax.transaction.TransactionSynchronizationRegistry implementation.
+     * Sets the class name of the javax.transaction.TransactionSynchronizationRegistry implementation.
      *
-     * @param jtaTSRImplementation the name of a class which implements TransactionSynchronizationRegistry.
+     * @param transactionSynchronizationRegistryClassName the name of a class which implements TransactionSynchronizationRegistry.
      */
-    public void setJtaTSRImplementation(String jtaTSRImplementation)
+    public void setTransactionSynchronizationRegistryClassName(String transactionSynchronizationRegistryClassName)
     {
-        this.jtaTSRImplementation = jtaTSRImplementation;
+        synchronized(this)
+        {
+            if(transactionSynchronizationRegistryClassName == null)
+            {
+                this.transactionSynchronizationRegistry = null;
+            }
+            else if(!transactionSynchronizationRegistryClassName.equals(this.transactionSynchronizationRegistryClassName))
+            {
+                this.transactionSynchronizationRegistry = null;
+            }
+            this.transactionSynchronizationRegistryClassName = transactionSynchronizationRegistryClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing javax.transaction.transactionSynchronizationRegistry.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a javax.transaction.TransactionSynchronizationRegistry implementation instance, or null.
+     */
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
+    {
+          if(transactionSynchronizationRegistry == null && transactionSynchronizationRegistryClassName != null)
+        {
+            synchronized (this) {
+                if(transactionSynchronizationRegistry == null && transactionSynchronizationRegistryClassName != null) {
+                    TransactionSynchronizationRegistry instance = ClassloadingUtility.loadAndInstantiateClass(TransactionSynchronizationRegistry.class, transactionSynchronizationRegistryClassName);
+                    transactionSynchronizationRegistry = instance;
+                }
+            }
+        }
+
+        return transactionSynchronizationRegistry;
+    }
+
+    /**
+     * Sets the instance of javax.transaction.TransactionSynchronizationRegistry
+     *
+     * @param instance an Object that implements javax.transaction.TransactionSynchronizationRegistry, or null.
+     */
+    public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry instance)
+    {
+        synchronized(this)
+        {
+            TransactionSynchronizationRegistry oldInstance = this.transactionSynchronizationRegistry;
+            transactionSynchronizationRegistry = instance;
+
+            if(instance == null)
+            {
+                this.transactionSynchronizationRegistryClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.transactionSynchronizationRegistryClassName = name;
+            }
+        }
     }
 
     /**
