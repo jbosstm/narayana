@@ -165,7 +165,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- warning: evil maven kludge -->
+            <!-- warning: evil maven kludge to work around http://jira.codehaus.org/browse/MNG-3537 -->
             <dependency>
                 <groupId>org.jboss.ejb3.bom</groupId>
                 <artifactId>bom-as6</artifactId>
@@ -344,6 +344,7 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-spi</artifactId>
+            <version>2.2.0.CR1</version>
         </dependency>
 
         <dependency>
