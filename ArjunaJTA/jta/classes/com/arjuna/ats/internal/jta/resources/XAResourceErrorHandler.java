@@ -60,22 +60,9 @@ public class XAResourceErrorHandler
 
     static
     {
-        for(String theClass : jtaPropertyManager.getJTAEnvironmentBean().getXaErrorHandlers())
+        for(XAResourceMap xaResourceMap : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceMaps())
         {
-            // Given the recovery string, create the class it refers to and store it.
-
-            try
-            {
-                Class c = Thread.currentThread().getContextClassLoader().loadClass(theClass);
-
-                XAResourceMap map = (XAResourceMap) c.newInstance();
-
-                XAResourceErrorHandler.addXAResourceMap(map.getXAResourceName(), map);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
+            XAResourceErrorHandler.addXAResourceMap(xaResourceMap.getXAResourceName(), xaResourceMap);
         }
     }
 }

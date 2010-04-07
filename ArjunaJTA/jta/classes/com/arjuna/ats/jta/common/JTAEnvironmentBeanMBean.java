@@ -77,9 +77,9 @@ public interface JTAEnvironmentBeanMBean
 
     void setTransactionSynchronizationRegistryJNDIContext(String jtaTSRJNDIContext);
 
-    List<String> getXaErrorHandlers();
+    List<String> getXaResourceMapClassNames();
 
-    void setXaErrorHandlers(List<String> xaErrorHandlers);
+    void setXaResourceMapClassNames(List<String> xaErrorHandlers);
     
     boolean isXaTransactionTimeoutEnabled();
 

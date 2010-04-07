@@ -23,6 +23,7 @@ package com.arjuna.ats.jta.common;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.arjuna.ats.jta.resources.XAResourceMap;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
@@ -74,7 +75,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile String transactionSynchronizationRegistryJNDIContext = "java:/TransactionSynchronizationRegistry";
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaErrorHandler")
-    private volatile List<String> xaErrorHandlers = new ArrayList<String>();
+    private volatile List<String> xaResourceMapClassNames = new ArrayList<String>();
+    private volatile List<XAResourceMap> xaResourceMaps = null;
 
     private volatile boolean xaTransactionTimeoutEnabled = true;
     private volatile String lastResourceOptimisationInterface = null;
@@ -669,31 +671,88 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the set of XAResourceMap implementation classnames used to configure XAException handling.
+     * Returns the set of XAResourceMap implementation class names used to configure XAException handling.
      * The returned list is a copy. May return an empty list, will not return null.
      *
      * Default: empty list.
      * Equivalent deprecated property prefix: com.arjuna.ats.jta.xaErrorHandler
      *
-     * @return a set of classnames, each an implementation of XAResourceMap.
+     * @return a set of class names, each an implementation of XAResourceMap.
      */
-    public List<String> getXaErrorHandlers()
+    public List<String> getXaResourceMapClassNames()
     {
-        return new ArrayList<String>(xaErrorHandlers);
+        synchronized(this)
+        {
+            return new ArrayList<String>(xaResourceMapClassNames);
+        }
     }
 
     /**
      * Sets the names of the XAResourceMap classes used for XAException handling.
      * The provided list will be copied, not retained.
      *
-     * @param xaErrorHandlers a set of names of classes, each implementing XAResourceMap.
+     * @param xaResourceMapClassNames a set of names of classes, each implementing XAResourceMap.
      */
-    public void setXaErrorHandlers(List<String> xaErrorHandlers)
+    public void setXaResourceMapClassNames(List<String> xaResourceMapClassNames)
     {
-        if(xaErrorHandlers == null) {
-            this.xaErrorHandlers = new ArrayList<String>();
-        } else {
-            this.xaErrorHandlers = new ArrayList<String>(xaErrorHandlers);
+        synchronized(this)
+        {
+            if(xaResourceMapClassNames == null)
+            {
+                this.xaResourceMaps = null;
+                this.xaResourceMapClassNames = new ArrayList<String>();
+            }
+            else if(!xaResourceMapClassNames.equals(this.xaResourceMapClassNames))
+            {
+                this.xaResourceMaps = null;
+                this.xaResourceMapClassNames = new ArrayList<String>(xaResourceMapClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of XAResourceMap instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements. 
+     *
+     * @return the set of XAResourceMap instances.
+     */
+    public List<XAResourceMap> getXaResourceMaps()
+    {
+        synchronized(this)
+        {
+            if(xaResourceMaps == null) {
+                List<XAResourceMap> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(XAResourceMap.class, xaResourceMapClassNames);
+                xaResourceMaps = instances;
+            }
+            return new ArrayList<XAResourceMap>(xaResourceMaps);
+        }
+    }
+
+    /**
+     * Sets the instances of XAResourceMap.
+     * The provided list will be copied, not retained.
+     *
+     * @param xaResourceMaps the set of XAResourceMap instances.
+     */
+    public void setXaResourceMaps(List<XAResourceMap> xaResourceMaps)
+    {
+        synchronized(this)
+        {
+            if(xaResourceMaps == null)
+            {
+                this.xaResourceMaps = new ArrayList<XAResourceMap>();
+                this.xaResourceMapClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.xaResourceMaps = new ArrayList<XAResourceMap>(xaResourceMaps);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.xaResourceMaps);
+                this.xaResourceMapClassNames = names;
+            }
         }
     }
 
