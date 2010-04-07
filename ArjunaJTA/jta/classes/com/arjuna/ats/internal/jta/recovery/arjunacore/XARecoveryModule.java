@@ -294,25 +294,7 @@ public class XARecoveryModule implements RecoveryModule
         }
 
         _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
-
-        for(String xaResourceOrphanFilterClassname : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters())
-        {
-            try
-            {
-                Class c = Thread.currentThread().getContextClassLoader().loadClass(xaResourceOrphanFilterClassname);
-                XAResourceOrphanFilter filter = (XAResourceOrphanFilter)c.newInstance();
-                _xaResourceOrphanFilters.add(filter);
-            }
-            catch(Exception e)
-            {
-                if (jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaLogger.loggerI18N
-                            .warn("com.arjuna.ats.internal.jta.recovery.general",
-                                    new Object[] { e, xaResourceOrphanFilterClassname }, e);
-                }
-            }
-        }
+        _xaResourceOrphanFilters = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters();
     }
 
 	/**
@@ -1070,7 +1052,7 @@ public class XARecoveryModule implements RecoveryModule
 
     private final List<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new LinkedList<XAResourceRecoveryHelper>();
 
-    private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters = new LinkedList<XAResourceOrphanFilter>();
+    private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
 
     private Hashtable _failures = null;
 
@@ -1080,12 +1062,4 @@ public class XARecoveryModule implements RecoveryModule
 
 	private String _logName = null;
 
-	// 'type' within the Object Store for AtomicActions.
-	private String _transactionType = new AtomicAction().type();
-
-	// Reference to the Object Store.
-	private static ObjectStore _transactionStore = null;
-
-	private static final char BREAKCHARACTER = ';'; // delimiter for xaconnrecov
-	// property
 }

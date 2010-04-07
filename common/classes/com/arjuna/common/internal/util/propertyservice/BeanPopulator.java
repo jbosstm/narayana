@@ -193,13 +193,17 @@ public class BeanPopulator
             for(String name : listOfMatchingPropertyNames) {
                 String value = properties.getProperty(name);
                 lines.add(value);
-            }            
+            }
+
+            if(lines.size() == 0) {
+                return; // no relevant value in properties file, so leave bean defaults alone.
+            }
         }
 
         Object replacementValue = null;
 
         if(java.util.Map.class.isAssignableFrom(field.getType())) {
-            // we have a list but need a map. split eash element into key/value pair.
+            // we have a list but need a map. split each element into key/value pair.
             Map<String, String> map = new HashMap<String, String>();
             for(String element : lines) {
                 String[] tokens = element.split("=");

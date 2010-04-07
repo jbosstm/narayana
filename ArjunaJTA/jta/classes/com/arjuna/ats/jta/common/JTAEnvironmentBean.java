@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.common;
 
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
@@ -58,7 +59,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile List<String> xaResourceRecoveryClassNames = new ArrayList<String>();
     private volatile List<XAResourceRecovery> xaResourceRecoveries = null;
 
-    private volatile List<String> xaResourceOrphanFilters = new ArrayList<String>();
+    private volatile List<String> xaResourceOrphanFilterClassNames = new ArrayList<String>();
+    private volatile List<XAResourceOrphanFilter> xaResourceOrphanFilters = null;
 
     private volatile boolean xaRollbackOptimization = false;
     private volatile boolean xaAssumeRecoveryComplete = false;
@@ -433,8 +435,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
                 List<XAResourceRecovery> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(XAResourceRecovery.class, xaResourceRecoveryClassNames);
                 xaResourceRecoveries = instances;
             }
+            return new ArrayList<XAResourceRecovery>(xaResourceRecoveries);
         }
-        return new ArrayList<XAResourceRecovery>(xaResourceRecoveries);
     }
 
     /**
@@ -470,24 +472,81 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return a list of XAResourceOrphanFilter implementation class names.
      */
-    public List<String> getXaResourceOrphanFilters()
+    public List<String> getXaResourceOrphanFilterClassNames()
     {
-        return new ArrayList<String>(xaResourceOrphanFilters);
+        synchronized(this)
+        {
+            return new ArrayList<String>(xaResourceOrphanFilterClassNames);
+        }
     }
 
     /**
-     * Sets the XAResource orphan filters.
+     * Sets the class names of XAResourceOrphanFilter implementations.
      * List elements should be names of classes that implement XAResourceOrphanFilter.
      * The provided list will be copied, not retained.
      *
-     * @param xaResourceOrphanFilters a list of XAResourceOrphanFilter implementation classes.
+     * @param xaResourceOrphanFilterClassNames a list of XAResourceOrphanFilter implementation classes.
      */
-    public void setXaResourceOrphanFilters(List<String> xaResourceOrphanFilters)
+    public void setXaResourceOrphanFilterClassNames(List<String> xaResourceOrphanFilterClassNames)
     {
-        if(xaResourceOrphanFilters == null) {
-            this.xaResourceOrphanFilters = new ArrayList<String>();
-        } else {
-            this.xaResourceOrphanFilters = new ArrayList<String>(xaResourceOrphanFilters);
+        synchronized(this)
+        {
+            if(xaResourceOrphanFilterClassNames == null)
+            {
+                this.xaResourceOrphanFilters = null;
+                this.xaResourceOrphanFilterClassNames = new ArrayList<String>();
+            }
+            else if(!xaResourceOrphanFilterClassNames.equals(this.xaResourceOrphanFilterClassNames))
+            {
+                this.xaResourceOrphanFilters = null;
+                this.xaResourceOrphanFilterClassNames = new ArrayList<String>(xaResourceOrphanFilterClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of XAResourceOrphanFilter instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements. 
+     *
+     * @return the set of XAResourceOrphanFilter instances.
+     */
+    public List<XAResourceOrphanFilter> getXaResourceOrphanFilters()
+    {
+        synchronized(this)
+        {
+            if(xaResourceOrphanFilters == null) {
+                List<XAResourceOrphanFilter> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(XAResourceOrphanFilter.class, xaResourceOrphanFilterClassNames);
+                xaResourceOrphanFilters = instances;
+            }
+            return new ArrayList<XAResourceOrphanFilter>(xaResourceOrphanFilters);
+        }
+    }
+
+    /**
+     * Sets the instances of XAResourceOrphanFilter.
+     * The provided list will be copied, not retained.
+     *
+     * @param xaResourceOrphanFilters the set of XAResourceOrphanFilter instances.
+     */
+    public void setXaResourceOrphanFilters(List<XAResourceOrphanFilter> xaResourceOrphanFilters)
+    {
+        synchronized(this)
+        {
+            if(xaResourceOrphanFilters == null)
+            {
+                this.xaResourceOrphanFilters = new ArrayList<XAResourceOrphanFilter>();
+                this.xaResourceOrphanFilterClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.xaResourceOrphanFilters = new ArrayList<XAResourceOrphanFilter>(xaResourceOrphanFilters);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.xaResourceOrphanFilters);
+                this.xaResourceOrphanFilterClassNames = names;
+            }
         }
     }
 
