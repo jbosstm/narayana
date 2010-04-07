@@ -74,7 +74,7 @@ public class XARecoveryModuleUnitTest
         
         r.add("com.hp.mwtests.ts.jta.recovery.DummyXARecoveryResource");
 
-        jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryInstances(r);
+        jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryClassNames(r);
         
         XARecoveryModule xarm = new XARecoveryModule();
         

@@ -53,7 +53,7 @@ public class TransactionManager
 
 		try
 		{
-			transactionManager = (javax.transaction.TransactionManager)ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getJtaTMJNDIContext());
+			transactionManager = (javax.transaction.TransactionManager)ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
 		}
 		catch (Exception e)
 		{

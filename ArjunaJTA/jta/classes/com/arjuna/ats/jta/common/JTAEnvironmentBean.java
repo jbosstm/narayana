@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.common;
 
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
@@ -54,7 +55,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile List<String> xaRecoveryNodes = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery")
-    private volatile List<String> xaResourceRecoveryInstances = new ArrayList<String>();
+    private volatile List<String> xaResourceRecoveryClassNames = new ArrayList<String>();
+    private volatile List<XAResourceRecovery> xaResourceRecoveries = null;
 
     private volatile List<String> xaResourceOrphanFilters = new ArrayList<String>();
 
@@ -63,11 +65,11 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
     // com.arjuna.ats.jta.utils.
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.UTJNDIContext")
-    private volatile String jtaUTJNDIContext = "java:/UserTransaction";
+    private volatile String userTransactionJNDIContext = "java:/UserTransaction";
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.TMJNDIContext")
-    private volatile String jtaTMJNDIContext =  "java:/TransactionManager";
+    private volatile String transactionManagerJNDIContext =  "java:/TransactionManager";
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.TSRJNDIContext")
-    private volatile String jtaTSRJNDIContext = "java:/TransactionSynchronizationRegistry";
+    private volatile String transactionSynchronizationRegistryJNDIContext = "java:/TransactionSynchronizationRegistry";
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaErrorHandler")
     private volatile List<String> xaErrorHandlers = new ArrayList<String>();
@@ -372,7 +374,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the set of XAResourceRecovery implementation classnames,
+     * Returns the set of XAResourceRecovery implementation class names,
      * each of which may have configuration data appended to it.
      * The returned list is a copy. May return an empty list, will not return null.
      *
@@ -381,24 +383,81 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the set of XAResourceRecovery implementations with their configuration data. 
      */
-    public List<String> getXaResourceRecoveryInstances()
+    public List<String> getXaResourceRecoveryClassNames()
     {
-        return new ArrayList<String>(xaResourceRecoveryInstances);
+        synchronized(this)
+        {
+            return new ArrayList<String>(xaResourceRecoveryClassNames);
+        }
     }
 
     /**
-     * Sets the XAResourceRecovery implementations that will be used,
+     * Sets the class names of the XAResourceRecovery implementations that will be used,
      * each optionally including trailing configuration data.
      * The provided list will be copied, not retained.
      *
-     * @param xaResourceRecoveryInstances the XAResourceRecovery implementation classnames and configuration.
+     * @param xaResourceRecoveryClassNames the XAResourceRecovery implementation class names and configuration.
      */
-    public void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances)
+    public void setXaResourceRecoveryClassNames(List<String> xaResourceRecoveryClassNames)
     {
-        if(xaResourceRecoveryInstances == null) {
-            this.xaResourceRecoveryInstances = new ArrayList<String>();
-        } else {
-            this.xaResourceRecoveryInstances = new ArrayList<String>(xaResourceRecoveryInstances);
+        synchronized(this)
+        {
+            if(xaResourceRecoveryClassNames == null)
+            {
+                this.xaResourceRecoveries = null;
+                this.xaResourceRecoveryClassNames = new ArrayList<String>();
+            }
+            else if(!xaResourceRecoveryClassNames.equals(this.xaResourceRecoveryClassNames))
+            {
+                this.xaResourceRecoveries = null;
+                this.xaResourceRecoveryClassNames = new ArrayList<String>(xaResourceRecoveryClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of XAResourceRecovery instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements. 
+     *
+     * @return the set of XAResourceRecovery instances.
+     */
+    public List<XAResourceRecovery> getXaResourceRecoveries()
+    {
+        synchronized(this)
+        {
+            if(xaResourceRecoveries == null) {
+                List<XAResourceRecovery> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(XAResourceRecovery.class, xaResourceRecoveryClassNames);
+                xaResourceRecoveries = instances;
+            }
+        }
+        return new ArrayList<XAResourceRecovery>(xaResourceRecoveries);
+    }
+
+    /**
+     * Sets the instances of XAResourceRecovery.
+     * The provided list will be copied, not retained.
+     *
+     * @param xaResourceRecoveries the set of XAResourceRecovery instances.
+     */
+    public void setXaResourceRecoveries(List<XAResourceRecovery> xaResourceRecoveries)
+    {
+        synchronized(this)
+        {
+            if(xaResourceRecoveries == null)
+            {
+                this.xaResourceRecoveries = new ArrayList<XAResourceRecovery>();
+                this.xaResourceRecoveryClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.xaResourceRecoveries = new ArrayList<XAResourceRecovery>(xaResourceRecoveries);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.xaResourceRecoveries);
+                this.xaResourceRecoveryClassNames = names;
+            }
         }
     }
 
@@ -489,19 +548,19 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the JNDI bind location for the UserTransaction interface.
      */
-    public String getJtaUTJNDIContext()
+    public String getUserTransactionJNDIContext()
     {
-        return jtaUTJNDIContext;
+        return userTransactionJNDIContext;
     }
 
     /**
      * Sets the JNDI bind name for the implementation of UserTransaction.
      *
-     * @param jtaUTJNDIContext the JNDI bind location for the UserTransaction interface.
+     * @param userTransactionJNDIContext the JNDI bind location for the UserTransaction interface.
      */
-    public void setJtaUTJNDIContext(String jtaUTJNDIContext)
+    public void setUserTransactionJNDIContext(String userTransactionJNDIContext)
     {
-        this.jtaUTJNDIContext = jtaUTJNDIContext;
+        this.userTransactionJNDIContext = userTransactionJNDIContext;
     }
 
     /**
@@ -512,19 +571,19 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the JNDI bind location for the TransactionManager interface.
      */
-    public String getJtaTMJNDIContext()
+    public String getTransactionManagerJNDIContext()
     {
-        return jtaTMJNDIContext;
+        return transactionManagerJNDIContext;
     }
 
     /**
      * Sets the JNDI bind name for the implementation of TransactionManager.
      *
-     * @param jtaTMJNDIContext the JNDI bind location for the TransactionManager interface.
+     * @param transactionManagerJNDIContext the JNDI bind location for the TransactionManager interface.
      */
-    public void setJtaTMJNDIContext(String jtaTMJNDIContext)
+    public void setTransactionManagerJNDIContext(String transactionManagerJNDIContext)
     {
-        this.jtaTMJNDIContext = jtaTMJNDIContext;
+        this.transactionManagerJNDIContext = transactionManagerJNDIContext;
     }
 
     /**
@@ -535,19 +594,19 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the JNDI bind location for the TransactionSynchronizationRegistry interface.
      */
-    public String getJtaTSRJNDIContext()
+    public String getTransactionSynchronizationRegistryJNDIContext()
     {
-        return jtaTSRJNDIContext;
+        return transactionSynchronizationRegistryJNDIContext;
     }
 
     /**
      * Sets tje JNDI bind name for the implementation of TransactionSynchronizationRegistry.
      *
-     * @param jtaTSRJNDIContext the JNDI bind location for the TransactionSynchronizationRegistry implementation.
+     * @param transactionSynchronizationRegistryJNDIContext the JNDI bind location for the TransactionSynchronizationRegistry implementation.
      */
-    public void setJtaTSRJNDIContext(String jtaTSRJNDIContext)
+    public void setTransactionSynchronizationRegistryJNDIContext(String transactionSynchronizationRegistryJNDIContext)
     {
-        this.jtaTSRJNDIContext = jtaTSRJNDIContext;
+        this.transactionSynchronizationRegistryJNDIContext = transactionSynchronizationRegistryJNDIContext;
     }
 
     /**

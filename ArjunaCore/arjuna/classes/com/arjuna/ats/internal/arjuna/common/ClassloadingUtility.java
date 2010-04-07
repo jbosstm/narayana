@@ -22,6 +22,10 @@ package com.arjuna.ats.internal.arjuna.common;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utility functions, used mainly by the EnvironmentBeans, for managing dynamic classloading.
  *
@@ -48,9 +52,10 @@ public class ClassloadingUtility
      * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3] class {0} does not implement {1}
      * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4] can't create new instance of {0}
      * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5] can't access {0}
+     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6] can't initialize from string {0}
      */
-    public static <T> T loadAndInstantiateClass(Class<T> iface, String className) {
-
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className)
+    {
         if (tsLogger.arjLogger.isDebugEnabled()) {
             tsLogger.arjLogger.debug("Loading class " + className);
         }
@@ -88,17 +93,94 @@ public class ClassloadingUtility
         return instance;
     }
 
+    public static <T> List<T> loadAndInstantiateClassesWithInit(Class<T> iface, List<String> classNamesWithOptionalInitParams)
+    {
+        List<T> instances = new ArrayList<T>();
+
+        for(String theClassAndParameter : classNamesWithOptionalInitParams)
+        {
+            // see if there is a string parameter
+
+            int breakPosition = theClassAndParameter.indexOf(BREAKCHARACTER);
+
+            String theClass = null;
+            String theParameter = null;
+
+            if (breakPosition != -1)
+            {
+                theClass = theClassAndParameter.substring(0, breakPosition);
+                theParameter = theClassAndParameter.substring(breakPosition + 1);
+            }
+            else
+            {
+                theClass = theClassAndParameter;
+            }
+
+            T instance = loadAndInstantiateClass(iface, theClass);
+
+
+            if (theClass != null && theParameter != null)
+            {
+                try {
+                    Method method = instance.getClass().getMethod("initialise", new Class[] {String.class}); // yup, UK English spelling
+                    method.invoke(instance, theParameter);
+                } catch(Exception e) {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6", new Object[]{theClassAndParameter}, e);
+                    continue;
+                }
+            }
+
+            if(instance != null)
+            {
+                instances.add(instance);
+            }
+        }
+
+        return instances;
+    }
+
     /**
-     * Reverse mapping - obtain the class name for a given object.
+     * Reverse mapping - obtain the class name for a given Object.
      *
-     * @param instance the object of interest
-     * @return the class name of the object, or null.
+     * @param instance the Object of interest
+     * @return the class name of the Object, or null.
      */
-    public static String getNameForClass(Object instance) {
+    public static String getNameForClass(Object instance)
+    {
         if(instance == null) {
             return null;
         }
 
         return instance.getClass().getName();
     }
+
+    /**
+     * Reverse mapping - obtain the class names from a given set of Objects.
+     *
+     * If the input list is null a zero length list is returned.
+     * If the input list contains nulls, these will not be present in the returned list.
+     *
+     * @param instances a list of Objects of interest.
+     * @return a non-null list of zero or more elements, being class names of the Objects.
+     */
+    public static List<String> getNamesForClasses(List<? extends Object> instances)
+    {
+        List<String> names = new ArrayList<String>();
+
+        if(instances != null)
+        {
+            for(Object instance : instances)
+            {
+                String name = getNameForClass(instance);
+                if(name != null) {
+                    names.add(name);
+                }
+
+            }
+        }
+
+        return names;
+    }
+
+    private static final char BREAKCHARACTER = ';';
 }

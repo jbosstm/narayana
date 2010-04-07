@@ -56,7 +56,7 @@ public class UserTransaction
 
 		try
 		{
-			userTransaction = (javax.transaction.UserTransaction) ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getJtaUTJNDIContext());
+			userTransaction = (javax.transaction.UserTransaction) ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionJNDIContext());
 		}
 		catch (Exception e)
 		{

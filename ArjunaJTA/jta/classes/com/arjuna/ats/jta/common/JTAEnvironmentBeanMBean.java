@@ -49,9 +49,9 @@ public interface JTAEnvironmentBeanMBean
 
     void setXaRecoveryNodes(List<String> xaRecoveryNodes);
 
-    List<String> getXaResourceRecoveryInstances();
+    List<String> getXaResourceRecoveryClassNames();
 
-    void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances);
+    void setXaResourceRecoveryClassNames(List<String> xaResourceRecoveryInstances);
 
     List<String> getXaResourceOrphanFilters();
 
@@ -65,17 +65,17 @@ public interface JTAEnvironmentBeanMBean
 
     void setXaAssumeRecoveryComplete(boolean xaAssumeRecoveryComplete);
 
-    String getJtaUTJNDIContext();
+    String getUserTransactionJNDIContext();
 
-    void setJtaUTJNDIContext(String jtaUTJNDIContext);
+    void setUserTransactionJNDIContext(String jtaUTJNDIContext);
 
-    String getJtaTMJNDIContext();
+    String getTransactionManagerJNDIContext();
 
-    void setJtaTMJNDIContext(String jtaTMJNDIContext);
+    void setTransactionManagerJNDIContext(String jtaTMJNDIContext);
 
-    String getJtaTSRJNDIContext();
+    String getTransactionSynchronizationRegistryJNDIContext();
 
-    void setJtaTSRJNDIContext(String jtaTSRJNDIContext);
+    void setTransactionSynchronizationRegistryJNDIContext(String jtaTSRJNDIContext);
 
     List<String> getXaErrorHandlers();
 

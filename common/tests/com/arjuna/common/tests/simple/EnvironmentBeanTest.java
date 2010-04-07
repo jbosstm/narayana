@@ -121,6 +121,8 @@ public class EnvironmentBeanTest
         assertNotNull(outputValue);
         assertTrue(((Collection)outputValue).isEmpty());
 
+        // TODO if collection type is an interface (but how to know?) test matched Instance|ClassNames field sync. 
+
     }
 
     private static void handleSimpleProperty(Object bean, Field field, Method setter, Method getter)

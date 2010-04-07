@@ -144,11 +144,11 @@
     <entry key="RecoveryEnvironmentBean.recoveryActivators">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
 
 
-	<entry key="JTAEnvironmentBean.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>
+	<entry key="JTAEnvironmentBean.transactionManagerClassName">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>
 
-	<entry key="JTAEnvironmentBean.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</entry>
+	<entry key="JTAEnvironmentBean.userTransactionClassName">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</entry>
 
-    <entry key="JTAEnvironmentBean.jtaTSRImplementation">com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple</entry>
+    <entry key="JTAEnvironmentBean.transactionSynchronizationRegistryClassName">com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple</entry>
 
 
     <entry key="OrbPortabilityEnvironmentBean.bindMechanism">CONFIGURATION_FILE</entry>

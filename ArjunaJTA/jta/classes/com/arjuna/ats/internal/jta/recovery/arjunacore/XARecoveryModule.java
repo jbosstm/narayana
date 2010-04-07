@@ -47,8 +47,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.*;
 import com.arjuna.ats.jta.utils.XAHelper;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.*;
 import javax.transaction.xa.*;
 
@@ -274,121 +272,48 @@ public class XARecoveryModule implements RecoveryModule
 	 */
 
 	protected XARecoveryModule(String recoveryClass, String logName)
-	{
-		_xaRecoverers = new Vector();
-		_logName = logName;
+    {
+        _logName = logName;
 
-		try
-		{
-			Class c = Thread.currentThread().getContextClassLoader().loadClass(
-					recoveryClass);
-
-			_recoveryManagerClass = (XARecoveryResourceManager) c.newInstance();
-		}
-		catch (Exception ex)
-		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N.warn(
-						"com.arjuna.ats.internal.jta.recovery.constfail", ex);
-			}
-
-			_recoveryManagerClass = null;
-		}
-
-        List<String> instances = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveryInstances();
-
-        for(String theClassAndParameter : instances)
+        try
         {
-            /*
-                        * Given the recovery string, create the class it refers to
-                        * and store it.
-                        */
+            Class c = Thread.currentThread().getContextClassLoader().loadClass(
+                    recoveryClass);
 
-            // see if there is a string parameter
-
-            int breakPosition = theClassAndParameter.indexOf(BREAKCHARACTER);
-
-            String theClass = null;
-            String theParameter = null;
-
-            if (breakPosition != -1)
+            _recoveryManagerClass = (XARecoveryResourceManager) c.newInstance();
+        }
+        catch (Exception ex)
+        {
+            if (jtaLogger.loggerI18N.isWarnEnabled())
             {
-                theClass = theClassAndParameter.substring(0, breakPosition);
-                theParameter = theClassAndParameter.substring(breakPosition + 1);
-            }
-            else
-            {
-                theClass = theClassAndParameter;
+                jtaLogger.loggerI18N.warn(
+                        "com.arjuna.ats.internal.jta.recovery.constfail", ex);
             }
 
-            if (jtaLogger.loggerI18N.isInfoEnabled())
-            {
-                if (jtaLogger.loggerI18N.isInfoEnabled())
-                {
-                    jtaLogger.loggerI18N
-                            .info("com.arjuna.ats.internal.jta.recovery.info.loading",
-                                    new Object[] {
-                                        _logName,(theClass + ((theParameter != null) ? theParameter : "")) });
-                }
-            }
+            _recoveryManagerClass = null;
+        }
 
-            if (theClass == null)
+        _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
+
+        for(String xaResourceOrphanFilterClassname : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters())
+        {
+            try
+            {
+                Class c = Thread.currentThread().getContextClassLoader().loadClass(xaResourceOrphanFilterClassname);
+                XAResourceOrphanFilter filter = (XAResourceOrphanFilter)c.newInstance();
+                _xaResourceOrphanFilters.add(filter);
+            }
+            catch(Exception e)
             {
                 if (jtaLogger.loggerI18N.isWarnEnabled())
                 {
                     jtaLogger.loggerI18N
-                            .warn("com.arjuna.ats.internal.jta.recovery.classloadfail",
-                                new Object[] { _logName, theClassAndParameter });
-                }
-            }
-            else
-            {
-                try
-                {
-                    Class c = Thread.currentThread()
-                            .getContextClassLoader()
-                            .loadClass(theClass);
-
-                    XAResourceRecovery ri = (XAResourceRecovery) c
-                            .newInstance();
-
-                    if (theParameter != null)
-                        ri.initialise(theParameter);
-
-                    _xaRecoverers.addElement(ri);
-                }
-                catch (Exception e)
-                {
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N
-                                .warn("com.arjuna.ats.internal.jta.recovery.general",
-                                        new Object[] { e, theClass }, e);
-                    }
-                }
-            }
-
-            for(String xaResourceOrphanFilterClassname : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters())
-            {
-                try
-                {
-                    Class c = Thread.currentThread().getContextClassLoader().loadClass(xaResourceOrphanFilterClassname);
-                    XAResourceOrphanFilter filter = (XAResourceOrphanFilter)c.newInstance();
-                    _xaResourceOrphanFilters.add(filter);
-                }
-                catch(Exception e)
-                {
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N
-                                .warn("com.arjuna.ats.internal.jta.recovery.general",
-                                        new Object[] { e, xaResourceOrphanFilterClassname }, e);
-                    }
+                            .warn("com.arjuna.ats.internal.jta.recovery.general",
+                                    new Object[] { e, xaResourceOrphanFilterClassname }, e);
                 }
             }
         }
-	}
+    }
 
 	/**
 	 * @message com.arjuna.ats.internal.jta.recovery.recoveryfailed JTA failed
@@ -610,8 +535,7 @@ public class XARecoveryModule implements RecoveryModule
 
 				try
 				{
-					XAResourceRecovery ri = (XAResourceRecovery) _xaRecoverers
-							.elementAt(i);
+					XAResourceRecovery ri = (XAResourceRecovery) _xaRecoverers.get(i);
 
 					while (ri.hasMoreResources())
 					{
@@ -1142,15 +1066,13 @@ public class XARecoveryModule implements RecoveryModule
 
 	private InputObjectState _uids = new InputObjectState();
 
-	private Vector _xaRecoverers = null; // contains XAResourceRecovery instances
+	private final List<XAResourceRecovery> _xaRecoverers;
 
     private final List<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new LinkedList<XAResourceRecoveryHelper>();
 
     private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters = new LinkedList<XAResourceOrphanFilter>();
 
     private Hashtable _failures = null;
-
-	private Vector _xaRecoveryNodes = null;
 
 	private Hashtable _xidScans = null;
 

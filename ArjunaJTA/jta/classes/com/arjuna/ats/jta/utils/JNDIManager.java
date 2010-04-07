@@ -193,16 +193,16 @@ public class JNDIManager
 
 	private final static String getTransactionManagerJNDIName()
 	{
-        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTMJNDIContext();
+        return jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext();
 	}
 
 	private final static String getUserTransactionJNDIName()
 	{
-        return jtaPropertyManager.getJTAEnvironmentBean().getJtaUTJNDIContext();
+        return jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionJNDIContext();
 	}
 
 	private final static String getTransactionSynchronizationRegistryJNDIName()
 	{
-        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTSRJNDIContext();
+        return jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext();
 	}
 }
