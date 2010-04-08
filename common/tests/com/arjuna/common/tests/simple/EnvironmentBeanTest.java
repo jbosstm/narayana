@@ -119,7 +119,12 @@ public class EnvironmentBeanTest
         setter.invoke(bean, new Object[] {null});
         outputValue = getter.invoke(bean, new Object[] {});
         assertNotNull(outputValue);
-        assertTrue(((Collection)outputValue).isEmpty());
+
+        if(outputValue instanceof Collection) {
+            assertTrue(((Collection)outputValue).isEmpty());
+        } else {
+            assertTrue(((Map)outputValue).isEmpty());
+        }
 
         // TODO if collection type is an interface (but how to know?) test matched Instance|ClassNames field sync. 
 
