@@ -84,6 +84,23 @@ public class ReaperMonitorTest
         reaper.insert(A, 1);
 
         assertTrue(listener.checkSucceeded(30 * 1000));
+
+        assertTrue(reaper.removeListener(listener));
+
+        // insert a new transaction with a longer timeout and check that we can find the remaining time
+
+        A = new AtomicAction();
+
+        reaper.insert(A, 1000);
+
+        long remaining = reaper.getRemainingTimeoutMills(A);
+
+        assertTrue(remaining != 0);
+
+        // ok now remove it
+
+        reaper.remove(A);
+
     }
 
     public static boolean success = false;
