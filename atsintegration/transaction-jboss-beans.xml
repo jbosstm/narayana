@@ -97,6 +97,8 @@
 
         <property name="nodeIdentifier">1</property>
 
+        <property name="socketProcessIdMaxPorts">10</property>
+
     </bean>
 
     <bean name="CoordinatorEnvironmentBean" class="com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean">
@@ -132,9 +134,9 @@
 
         <property name="lastResourceOptimisationInterface">org.jboss.tm.LastResource</property>
 
-        <property name="jtaTMImplementation">com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate</property>
-        <property name="jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</property>
-        <property name="jtaTSRImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple</property>
+        <property name="transactionManagerClassName">com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate</property>
+        <property name="userTransactionClassName">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</property>
+        <property name="transactionSynchronizationRegistryClassName">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple</property>
 
         <property name="xaRecoveryNodes" preinstantiate="false">
             <list elementClass="java.lang.String">
@@ -189,6 +191,7 @@
     <bean name="TransactionStatistics" class="com.arjuna.ats.arjuna.coordinator.TxStats">
 
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=TransactionStatistics", exposedInterface=com.arjuna.ats.arjuna.coordinator.TxStatsMBean.class, registerDirectly=true)</annotation>
+        <annotation>@org.jboss.managed.api.annotation.ManagementObject(name="TransactionStatistics",componentType=@org.jboss.managed.api.annotation.ManagementComponent(type = "MCBean", subtype = "JTA"),targetInterface=com.arjuna.ats.arjuna.coordinator.TxStatsMBean.class)</annotation>
 
         <constructor factoryClass="com.arjuna.ats.arjuna.coordinator.TxStats" factoryMethod="getInstance"/>
     </bean>
@@ -197,10 +200,10 @@
 
         <property name="bindName">java:/TransactionManager</property>
         <property name="className">
-            <inject bean="JTAEnvironmentBean" property="jtaTMImplementation"/>
+            <inject bean="JTAEnvironmentBean" property="transactionManagerClassName"/>
         </property>
         <property name="factory">
-            <inject bean="JTAEnvironmentBean" property="jtaTMImplementation"/>
+            <inject bean="JTAEnvironmentBean" property="transactionManagerClassName"/>
         </property>
 
         <install method="bind"/>
@@ -212,10 +215,10 @@
         <!-- It's the job of individual components (EJB3, web, etc) to copy the ref to the java:/comp space) -->
         <property name="bindName">java:/TransactionSynchronizationRegistry</property>
         <property name="className">
-            <inject bean="JTAEnvironmentBean" property="jtaTSRImplementation"/>
+            <inject bean="JTAEnvironmentBean" property="transactionSynchronizationRegistryClassName"/>
         </property>
         <property name="factory">
-            <inject bean="JTAEnvironmentBean" property="jtaTSRImplementation"/>
+            <inject bean="JTAEnvironmentBean" property="transactionSynchronizationRegistryClassName"/>
         </property>
 
         <install method="bind"/>
@@ -243,8 +246,12 @@
         <uninstall method="unbind"/>
     </bean>
 
-
-
+    <!-- Ensure TransactionPropagationContextUtil's ref to TransactionPropagationContextFactory is set. See JBAS-7784. -->
+    <bean name="TransactionPropagationContextFactory" class="org.jboss.tm.TransactionPropagationContextFactory">
+       <constructor factoryClass="org.jboss.tm.TransactionPropagationContextUtil" factoryMethod="getTPCFactory"/>
+       <!--  The factory method looks up the JNDI binding, so we depend on it -->
+       <depends>TransactionPropagationContextExporterJNDIBinding</depends>
+    </bean>
 
     <!-- Make javax.transaction.TransactionManager available for injection -->
     <bean name="RealTransactionManager">
