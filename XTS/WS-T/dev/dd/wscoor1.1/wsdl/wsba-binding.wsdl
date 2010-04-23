@@ -220,8 +220,8 @@
     </wsdl:operation>
 
     <wsdl:operation name="CompensateOperation">
-      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Close" style="document"/>
-      <wsdl:input name="wsba:Close">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Compensate" style="document"/>
+      <wsdl:input name="wsba:Compensate">
 	<soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>

@@ -57,7 +57,7 @@ public interface BusinessAgreementWithCoordinatorCompletionParticipantPortType {
      * 
      * @param parameters
      */
-    @WebMethod(operationName = "CompensateOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Close")
+    @WebMethod(operationName = "CompensateOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Compensate")
     @Oneway
     public void compensateOperation(
         @WebParam(name = "Compensate", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
