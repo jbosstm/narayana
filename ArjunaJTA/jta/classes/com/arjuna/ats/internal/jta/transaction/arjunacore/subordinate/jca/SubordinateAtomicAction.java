@@ -63,7 +63,6 @@ public class SubordinateAtomicAction extends
 		super(actId);
 		
 		_activated = activate(); // if this fails, we'll retry later.
-		_theXid = new XidImple(actId);
 	}
 	
 	public SubordinateAtomicAction (int timeout, Xid xid)
