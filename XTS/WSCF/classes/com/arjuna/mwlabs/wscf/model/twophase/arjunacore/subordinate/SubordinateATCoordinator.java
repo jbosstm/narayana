@@ -71,6 +71,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	{
 		super();
         activated = true;
+        isReadonly = false;
 	}
 
     /**
@@ -80,6 +81,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	{
 		super();
         activated = true;
+        isReadonly = false;
         this.subordinateType = subordinateType;
 	}
 
@@ -91,6 +93,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	{
 		super(recovery);
         activated = false;
+        isReadonly = false;
         subordinateType = null;
 	}
 
@@ -152,7 +155,9 @@ public class SubordinateATCoordinator extends ATCoordinator
 
 	public int prepare ()
 	{
-        return super.prepare(true);
+        int status = super.prepare(true);
+        isReadonly = (status == TwoPhaseOutcome.PREPARE_READONLY);
+        return status;
 	}
 
     /**
@@ -160,7 +165,11 @@ public class SubordinateATCoordinator extends ATCoordinator
      */
     public void commitVolatile()
     {
-        super.afterCompletion(finalStatus);
+        if (isReadonly) {
+            super.afterCompletion(ActionStatus.COMMITTED);
+        } else {
+            super.afterCompletion(finalStatus);
+        }
     }
 
     /**
@@ -214,7 +223,11 @@ public class SubordinateATCoordinator extends ATCoordinator
      */
     public void rollbackVolatile()
     {
-        super.afterCompletion(finalStatus);
+        if (isReadonly) {
+            super.afterCompletion(ActionStatus.ABORTED);
+        } else {
+            super.afterCompletion(finalStatus);
+        }
     }
 
     /**
@@ -426,6 +439,12 @@ public class SubordinateATCoordinator extends ATCoordinator
      * for recovered transactions until they are activated
      */
     private boolean activated;
+
+    /**
+     * flag identifying whether prepare returned READ_ONLY and hence whether special case handling of
+     * commitVolatile and rollbackVolatile calls is required
+     */
+    private boolean isReadonly;
 
     /**
      * string identifying which type of subordinate transaction this is. the standard subordinate type is
