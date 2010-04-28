@@ -95,6 +95,8 @@ public class SubordinateAtomicAction extends
 	
 	public final Xid getXid ()
 	{
+	    // could be null if activation failed.
+	    
 		return _theXid;
 	}
 
