@@ -115,6 +115,9 @@ public class TransactionImporterImple implements TransactionImporter
 
 		TransactionImple recovered = new TransactionImple(actId);
 
+		if (recovered.baseXid() == null)
+		    throw new IllegalArgumentException();
+		
 		/*
 		 * Is the transaction already in the list? This may be the case because
 		 * we scan the object store periodically and may get Uids to recover for
