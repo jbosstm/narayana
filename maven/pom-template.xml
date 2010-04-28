@@ -169,7 +169,7 @@
             <dependency>
                 <groupId>org.jboss.ejb3.bom</groupId>
                 <artifactId>bom-as6</artifactId>
-                <version>0.1.0</version>
+                <version>0.1.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -205,7 +205,7 @@
         </dependency>
 
         <dependency>
-            <groupId>apache-httpclient</groupId>
+            <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>
         
