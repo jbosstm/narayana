@@ -362,9 +362,15 @@ public class XATerminatorUnitTest
         }
         
         Uid uid = new Uid();
-        Object obj = SubordinationManager.getTransactionImporter().recoverTransaction(uid);
         
-        assertTrue(obj != null);
-        assertEquals(obj, SubordinationManager.getTransactionImporter().recoverTransaction(uid));
+        try
+        {
+            Object obj = SubordinationManager.getTransactionImporter().recoverTransaction(uid);
+        
+            fail();
+        }
+        catch (IllegalArgumentException ex)
+        {
+        }
     }
 }
