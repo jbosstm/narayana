@@ -115,7 +115,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                         WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
-                    SOAPFault soapFault = factory.createFault();
+                    SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME);
                     soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME).addTextNode(th.getMessage());
                     throw new SOAPFaultException(soapFault);
                 }
