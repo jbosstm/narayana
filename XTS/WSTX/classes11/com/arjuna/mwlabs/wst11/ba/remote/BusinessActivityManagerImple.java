@@ -42,6 +42,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc.AlreadyRegisteredException;
+import com.arjuna.wsc.CannotRegisterException;
 import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.*;
@@ -70,7 +71,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     }
 
     public BAParticipantManager enlistForBusinessAgreementWithParticipantCompletion (BusinessAgreementWithParticipantCompletionParticipant bap, String id)
-        throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException
+        throws WrongStateException, UnknownTransactionException, SystemException
     {
         final QName service = BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_QNAME;
         final QName endpoint = BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_PORT_QNAME;
@@ -93,7 +94,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	{
     	    throw new WrongStateException();
     	}
-    	catch (com.arjuna.wsc.NoActivityException ex)
+    	catch (com.arjuna.wsc.CannotRegisterException ex)
     	{
     	    throw new UnknownTransactionException();
     	}
@@ -105,7 +106,8 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	}
     }
 
-    public com.arjuna.wst11.BAParticipantManager enlistForBusinessAgreementWithCoordinatorCompletion (BusinessAgreementWithCoordinatorCompletionParticipant bawcp, String id) throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException
+    public com.arjuna.wst11.BAParticipantManager enlistForBusinessAgreementWithCoordinatorCompletion (BusinessAgreementWithCoordinatorCompletionParticipant bawcp, String id)
+            throws WrongStateException, UnknownTransactionException, SystemException
     {
         final QName service = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_QNAME;
         final QName endpoint = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_PORT_QNAME;
@@ -128,7 +130,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	{
     	    throw new WrongStateException();
     	}
-    	catch (com.arjuna.wsc.NoActivityException ex)
+    	catch (com.arjuna.wsc.CannotRegisterException ex)
     	{
     	    ex.printStackTrace();
 
@@ -160,7 +162,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     }
 
     private final W3CEndpointReference registerParticipant(final W3CEndpointReference participant, final String protocol)
-        throws com.arjuna.wsc.InvalidProtocolException, com.arjuna.wsc.InvalidStateException, com.arjuna.wsc.NoActivityException, SystemException
+        throws com.arjuna.wsc.InvalidProtocolException, com.arjuna.wsc.InvalidStateException, com.arjuna.wsc.CannotRegisterException, SystemException
     {
     	TxContextImple currentTx = null;
 
@@ -179,10 +181,10 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
         {
             throw new SystemException(sf.getMessage());
         }
-    	catch (com.arjuna.wsc.NoActivityException ex)
-    	{
-    	    throw ex;
-    	}
+        catch (CannotRegisterException ex)
+        {
+            throw ex;
+        }
     	catch (Exception ex)
     	{
     	    ex.printStackTrace();

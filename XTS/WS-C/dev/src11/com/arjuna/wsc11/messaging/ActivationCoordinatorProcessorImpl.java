@@ -88,8 +88,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                         WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
-                    SOAPFault soapFault = factory.createFault() ;
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_EXCEPTION_QNAME).addTextNode(th.getMessage());
+                    SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME) ;
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME).addTextNode(th.getMessage());
                     throw new SOAPFaultException(soapFault);
                 }
             }

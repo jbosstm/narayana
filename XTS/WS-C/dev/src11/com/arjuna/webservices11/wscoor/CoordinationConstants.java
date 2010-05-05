@@ -189,21 +189,21 @@ public interface CoordinationConstants
      */
     public String WSCOOR_ACTION_FAULT = WSCOOR_NAMESPACE + "/fault" ;
     /**
-     * The AlreadyRegistered error code.
+     * The CannotRegister error code.
      */
-    public String WSCOOR_ERROR_CODE_ALREADY_REGISTERED = "AlreadyRegistered" ;
+    public String WSCOOR_ERROR_CODE_CANNOT_REGISTER = "CannotRegister" ;
     /**
-     * The AlreadyRegistered error code QName.
+     * The CannotRegister error code QName.
      */
-    public QName WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_ALREADY_REGISTERED, WSCOOR_PREFIX) ;
+    public QName WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_CANNOT_REGISTER, WSCOOR_PREFIX) ;
     /**
-     * The ContextRefused error code.
+     * The CannotCreateContext error code.
      */
-    public String WSCOOR_ERROR_CODE_CONTEXT_REFUSED = "ContextRefused" ;
+    public String WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT = "CannotCreateContext" ;
     /**
-     * The ContextRefused error code QName.
+     * The CannotCreateContext error code QName.
      */
-    public QName WSCOOR_ERROR_CODE_CONTEXT_REFUSED_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_CONTEXT_REFUSED, WSCOOR_PREFIX) ;
+    public QName WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT, WSCOOR_PREFIX) ;
     /**
      * The InvalidParameters error code.
      */

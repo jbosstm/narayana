@@ -33,8 +33,7 @@ public class TransactionManagerImple extends TransactionManager
 	}
 
 	public void enlistForDurableTwoPhase (Durable2PCParticipant tpp, String id)
-			throws WrongStateException, UnknownTransactionException,
-            AlreadyRegisteredException, SystemException
+			throws WrongStateException, UnknownTransactionException, SystemException
     {
 		try
 		{
@@ -51,15 +50,15 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			throw new WrongStateException();
 		}
-		catch (com.arjuna.wsc.NoActivityException ex)
+		catch (com.arjuna.wsc.CannotRegisterException ex)
 		{
+            // cause could actually be no activity or already registered
 			throw new UnknownTransactionException();
 		}
 	}
 
 	public void enlistForVolatileTwoPhase (Volatile2PCParticipant tpp, String id)
-			throws WrongStateException, UnknownTransactionException,
-			AlreadyRegisteredException, SystemException
+			throws WrongStateException, UnknownTransactionException, SystemException
 	{
 		try
 		{
@@ -76,8 +75,9 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			throw new WrongStateException();
 		}
-		catch (com.arjuna.wsc.NoActivityException ex)
+		catch (com.arjuna.wsc.CannotRegisterException ex)
 		{
+            // cause could actually be no activity or already registered
 			ex.printStackTrace();
 
 			throw new UnknownTransactionException();
@@ -123,15 +123,14 @@ public class TransactionManagerImple extends TransactionManager
 	}
 
 	protected W3CEndpointReference enlistForCompletion (final W3CEndpointReference participantEndpoint)
-			throws WrongStateException, UnknownTransactionException,
-			AlreadyRegisteredException, SystemException
+			throws WrongStateException, UnknownTransactionException, SystemException
 	{
 		try
 		{
 			TxContextImple currentTx = (TxContextImple) _ctxManager.currentTransaction();
 
 			if (currentTx == null)
-				throw new com.arjuna.wsc.NoActivityException();
+				throw new com.arjuna.wsc.CannotRegisterException();
 
 			return registerParticipant(participantEndpoint, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION);
 		}
@@ -145,8 +144,9 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			throw new WrongStateException();
 		}
-		catch (com.arjuna.wsc.NoActivityException ex)
+		catch (com.arjuna.wsc.CannotRegisterException ex)
 		{
+            // cause could actually be no activity or already registered
 			throw new UnknownTransactionException();
 		}
 	}
@@ -174,7 +174,7 @@ public class TransactionManagerImple extends TransactionManager
     }
 
 	private final W3CEndpointReference registerParticipant (final W3CEndpointReference participant, final String protocol)
-			throws InvalidProtocolException, InvalidStateException, NoActivityException, SystemException
+			throws InvalidProtocolException, InvalidStateException, CannotRegisterException, SystemException
 	{
 		TxContextImple currentTx = null;
 
@@ -183,7 +183,7 @@ public class TransactionManagerImple extends TransactionManager
 			currentTx = (TxContextImple) _ctxManager.suspend();
 
 			if (currentTx == null)
-				throw new NoActivityException();
+				throw new CannotRegisterException();
 
             final CoordinationContextType coordinationContext = currentTx.context().getCoordinationContext() ;
             final String messageId = MessageId.getMessageId() ;
@@ -194,9 +194,9 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			throw new SystemException(sf.getMessage());
 		}
-		catch (final NoActivityException nae)
+		catch (final CannotRegisterException cre)
 		{
-			throw nae ;
+			throw cre ;
 		}
         catch (final InvalidStateException ise)
         {

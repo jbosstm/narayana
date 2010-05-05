@@ -90,7 +90,7 @@ public abstract class TransactionManager
      * (e.g., it is terminating) then WrongStateException will be thrown.
      */
     public abstract void enlistForVolatileTwoPhase(final Volatile2PCParticipant pzp, final String id)
-        throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException;
+        throws WrongStateException, UnknownTransactionException, SystemException;
 
     /**
      * Enlist the specified participant with current transaction such that it
@@ -103,7 +103,7 @@ public abstract class TransactionManager
      * it is terminating) then WrongStateException will be thrown.
      */
     public abstract void enlistForDurableTwoPhase(final Durable2PCParticipant tpp, final String id)
-        throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException;
+        throws WrongStateException, UnknownTransactionException, SystemException;
 
     public abstract int replay () throws SystemException;
 

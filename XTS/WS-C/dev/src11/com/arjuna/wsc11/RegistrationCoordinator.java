@@ -4,10 +4,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.WSCOORClient;
-import com.arjuna.wsc.AlreadyRegisteredException;
-import com.arjuna.wsc.InvalidProtocolException;
-import com.arjuna.wsc.InvalidStateException;
-import com.arjuna.wsc.NoActivityException;
+import com.arjuna.wsc.*;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
@@ -40,8 +37,8 @@ public class RegistrationCoordinator
     public static W3CEndpointReference register(final CoordinationContextType coordinationContext,
         final String messageID, final W3CEndpointReference participantProtocolService,
         final String protocolIdentifier)
-        throws AlreadyRegisteredException, InvalidProtocolException,
-            InvalidStateException, NoActivityException, SoapFault
+        throws CannotRegisterException, InvalidProtocolException,
+            InvalidStateException, SoapFault
     {
         final W3CEndpointReference endpointReference = coordinationContext.getRegistrationService() ;
 
@@ -59,9 +56,9 @@ public class RegistrationCoordinator
             // TODO -- work out which faults we should really throw. in particular do we need to retain SoapFault
             final SOAPFault soapFault = sfe.getFault() ;
             final QName subcode = soapFault.getFaultCodeAsQName() ;
-            if (CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME.equals(subcode))
+            if (CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME.equals(subcode))
             {
-                throw new AlreadyRegisteredException(soapFault.getFaultString()) ;
+                throw new CannotRegisterException(soapFault.getFaultString()) ;
             }
             else if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME.equals(subcode))
             {
@@ -70,10 +67,6 @@ public class RegistrationCoordinator
             else if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME.equals(subcode))
             {
                 throw new InvalidStateException(soapFault.getFaultString()) ;
-            }
-            else if (CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME.equals(subcode))
-            {
-                throw new NoActivityException(soapFault.getFaultString()) ;
             }
             throw new SoapFault11(sfe);
         }

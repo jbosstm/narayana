@@ -83,7 +83,7 @@ public abstract class BusinessActivityManager
      */
     public abstract BAParticipantManager enlistForBusinessAgreementWithParticipantCompletion(
         final BusinessAgreementWithParticipantCompletionParticipant bap, final String id)
-        throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException;
+        throws WrongStateException, UnknownTransactionException, SystemException;
 
     /**
      * Enlist a participant for the BusinessAgreementWithCoordinatorCompletion protocol.
@@ -92,7 +92,7 @@ public abstract class BusinessActivityManager
      */
     public abstract BAParticipantManager enlistForBusinessAgreementWithCoordinatorCompletion(
         final BusinessAgreementWithCoordinatorCompletionParticipant bawcp, final String id)
-        throws WrongStateException, UnknownTransactionException, AlreadyRegisteredException, SystemException;
+        throws WrongStateException, UnknownTransactionException, SystemException;
 
     /**
      * The resume method can be used to (re-)associate a thread with a 

@@ -157,8 +157,7 @@ public class TransactionManagerImple extends TransactionManager
 	}
 
 	protected EndpointReferenceType enlistForCompletion (final EndpointReferenceType participantEndpoint)
-			throws WrongStateException, UnknownTransactionException,
-			AlreadyRegisteredException, SystemException
+			throws WrongStateException, UnknownTransactionException, SystemException
 	{
 		try
 		{

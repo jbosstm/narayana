@@ -243,19 +243,12 @@ public class UserTransactionImple extends UserTransaction
 			throws WrongStateException, UnknownTransactionException,
 			SystemException
 	{
-		try
-		{
-			TransactionManagerImple tm = (TransactionManagerImple) TransactionManager.getTransactionManager();
+        TransactionManagerImple tm = (TransactionManagerImple) TransactionManager.getTransactionManager();
 
-			final String id = ((TxContextImple) tm.currentTransaction()).identifier();
-			final EndpointReferenceType completionCoordinator = tm.enlistForCompletion(getCompletionParticipant(id));
+        final String id = ((TxContextImple) tm.currentTransaction()).identifier();
+        final EndpointReferenceType completionCoordinator = tm.enlistForCompletion(getCompletionParticipant(id));
 
-			_completionCoordinators.put(id, completionCoordinator);
-		}
-		catch (com.arjuna.wsc.AlreadyRegisteredException ex)
-		{
-			throw new SystemException(ex.toString());
-		}
+        _completionCoordinators.put(id, completionCoordinator);
 	}
 
     /**

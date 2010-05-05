@@ -55,8 +55,8 @@ public class TestRegistrationCoordinatorProcessor extends
         if (TestUtil.ALREADY_REGISTERED_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
             try {
                 SOAPFactory factory = SOAPFactory.newInstance();
-                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME);
-                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME).addTextNode("already registered");
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME).addTextNode("already registered");
                 throw new SOAPFaultException(soapFault);
             } catch (Throwable th) {
                 throw new ProtocolException(th);
@@ -85,8 +85,8 @@ public class TestRegistrationCoordinatorProcessor extends
         if (TestUtil.NO_ACTIVITY_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
             try {
                 SOAPFactory factory = SOAPFactory.newInstance();
-                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME);
-                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME).addTextNode("no activity");
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME).addTextNode("no activity");
                 throw new SOAPFaultException(soapFault);
             } catch (Throwable th) {
                 throw new ProtocolException(th);
