@@ -229,14 +229,6 @@ public interface CoordinationConstants
      */
     public QName WSCOOR_ERROR_CODE_INVALID_STATE_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_INVALID_STATE, WSCOOR_PREFIX) ;
     /**
-     * The NoActivity error code.
-     */
-    public String WSCOOR_ERROR_CODE_NO_ACTIVITY = "NoActivity" ;
-    /**
-     * The NoActivity error code QName.
-     */
-    public QName WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME = new QName(WSCOOR_NAMESPACE, WSCOOR_ERROR_CODE_NO_ACTIVITY, WSCOOR_PREFIX) ;
-    /**
      * The unexpected exception error code.
      */
     public String WSCOOR_ERROR_CODE_EXCEPTION = "Exception" ;
