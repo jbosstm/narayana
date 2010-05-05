@@ -50,14 +50,15 @@
     <property name="jbossts.install.lib.dir" location="${jbossts.install.dir}/lib"/>
 
         <!-- JBossTS resource bundle doclet code is in parent antbuildsystem build tree -->
-    <property name="jbossts.buildsystem.build.dir" location="${jbossts.dir}/antbuildsystem/build"/>
+    <property name="jbossts.buildsystem.dir" location="${jbossts.dir}/antbuildsystem"/>
+    <property name="jbossts.buildsystem.build.dir" location="${jbossts.buildsystem.dir}/build"/>
     <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
 
         <!-- required JBossTS product jars -->
     <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
 
         <!-- external jars also used by JBossTS -->
-    <property name="jbossts.build.extlib.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+    <property name="jbossts.build.extlib.jars" value="commons-logging-1.1.jar"/>
 
         <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
     <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
@@ -66,6 +67,21 @@
     <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
             geronimo-ws-metadata_2.0_spec.jar">
         <isset property="cxf.build"/>
+    </condition>
+
+    <!-- by default we build 1.0 and 1.1 for ease of testing,
+        but release bundles should use -Dsartype=sar-11 so that
+        they contain only the supported version. -->
+    <property name="sartype" value="sar-both"/>
+
+    <!-- if condition for 1.0 specific targets -->
+    <condition property="build10">
+        <equals arg1="${sartype}" arg2="sar-both"/>
+    </condition>
+
+    <!-- if condition for 1.1 only targets -->
+    <condition property="nobuild10">
+        <isfalse value="${build10}"/>
     </condition>
 
         <!-- external jars used by XTS for all builds -->
@@ -85,11 +101,93 @@
         <fileset dir="${jbossts.buildsystem.build.lib.dir}" includes="${jbossts.buildsystem.jars}"/>
     </path>
 
-    <!-- macros and associate defs -->
-
-    <!-- compilation -->
+    <!-- compilation flags -->
     
     <property name="debug" value="true"/>
     <property name="deprecation" value="true"/>
 
+    <!-- remember to turn emma off for prdn builds or it will be a runtime dep! -->
+    <property name="emma.enabled" value="false"/>
+
+    <!-- directory that contains emma.jar and emma_ant.jar: -->
+    <property name="emma.dir" value="${jbossts.build.extlib.dir}" />
+
+    <path id="emma.lib" >
+        <pathelement location="${emma.dir}/emma.jar" />
+        <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
+
+    <!-- enable emma ant tasks -->
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+
+    <!-- enable ant contrib tasks -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${jbossts.buildsystem.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <!-- macros to help perform individual build steps -->
+    <property name="included.classes" value="**"/>
+    <property name="excluded.classes" value=""/>
+    <property name="excluded.test.classes" value=""/>
+
+    <macrodef name="compile.macro">
+
+        <attribute name="src.dir" default="${src.dir}"/>
+        <attribute name="dest.dir" default="${build.classes.dir}"/>
+        <attribute name="excluded.classes" default="${excluded.classes}"/>
+        <attribute name="included.classes" default="${included.classes}"/>
+        <attribute name="includeant" default="false"/>
+        <attribute name="includeemma" default="${emma.enabled}"/>
+        <!-- default coverage filter == empty string == include everything, see
+            http://emma.sourceforge.net/reference_single/reference.html#filtersyntax.ANT -->
+        <attribute name="emmafilter" default=""/>
+
+        <element name="additional.classpath" optional="true"/>
+        <element name="additional.src.dirs" optional="true"/>
+        <sequential>
+        <mkdir dir="@{dest.dir}"/>
+        <javac srcdir="@{src.dir}" destdir="@{dest.dir}" debug="${debug}" includeantruntime="@{includeant}"
+               deprecation="${deprecation}" includes="**/*" excludes="@{excluded.classes}" fork="true">
+            <classpath>
+                <path refid="build.classpath"/>
+                <additional.classpath/>
+            </classpath>
+            <additional.src.dirs/>
+        </javac>
+            
+        <emma enabled="@{includeemma}">
+            <instr mode="overwrite"
+                   metadatafile="${xts.install.dir}/metadata.emma"
+                   merge="true"
+                   filter="@{emmafilter}">
+                <instrpath>
+                    <pathelement location="@{dest.dir}"/>
+                </instrpath>
+            </instr>
+        </emma>
+        </sequential>
+   </macrodef>
+
+    <macrodef name="resourcebundle.macro">
+        <attribute name="resourcebundle"/>
+        <attribute name="packagenames" default="com.arjuna.*"/>
+        <attribute name="classpathref" default="build.classpath"/>
+        <element name="packagesets" optional="true"/>
+        <sequential>
+            <javadoc packagenames="@{packagenames}"
+                           failonerror="yes"
+                           private="yes"
+                           defaultexcludes="yes"
+                           classpathref="@{classpathref}">
+                <packagesets/>
+                <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                   <path refid="doclet.classpath"/>
+                   <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
+                   <param name="-resourcebundle" value="@{resourcebundle}"/>
+                </doclet>
+        </javadoc>
+        </sequential>
+    </macrodef>
 </project>

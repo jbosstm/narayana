@@ -2,7 +2,7 @@ package com.arjuna.mwlabs.wst11.at.remote;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.common.Environment;
+import com.arjuna.mw.wst.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
@@ -43,7 +43,7 @@ public class UserTransactionImple extends UserTransaction
 	{
 		try
 		{
-            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR_URL);
+            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR11_URL);
 
 			/*
 			 * If the coordinator URL hasn't been specified via the

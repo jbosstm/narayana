@@ -53,8 +53,12 @@
 
 	</target>
 
+    <target name="init.install.dir">
+        <mkdir dir="${xts.installationdirectory}"/>
+    </target>
+
 	<!-- Project targets - must add all module names to each target -->
-    <target name="build-projects" depends="init, wsas.build,
+    <target name="build-projects" depends="init, init.install.dir, wsas.build,
                                             ws-c.build, wscf.build,
                                             ws-t.build, wstx.build,
                                             recovery.build, htdocs">
@@ -241,55 +245,84 @@
 	</target>
 
 
+    <!-- by default we build 1.0 and 1.1 for ease of testing,
+        but release bundles should use -Dsartype=sar-11 so that
+        they contain only the supported version. -->
+    <property name="sartype" value="sar-both"/>
+
 	<!-- Module targets -->
 	<target name="wsas.build">
-		<ant dir="${wsas.dir}" inheritall="false"/>
+		<ant dir="${wsas.dir}" inheritall="false">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
 	</target>
 
 	<target name="ws-c.build">
-		<ant dir="${ws-c.dir}" inheritall="false"/>
+		<ant dir="${ws-c.dir}" inheritall="false">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
 	</target>
 
 	<target name="wscf.build">
-		<ant dir="${wscf.dir}" inheritall="false"/>
+		<ant dir="${wscf.dir}" inheritall="false">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
 	</target>
 
 	<target name="ws-t.build">
-		<ant dir="${ws-t.dir}" inheritall="false"/>
+		<ant dir="${ws-t.dir}" inheritall="false">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+       </ant>
 	</target>
 
     <target name="wstx.build">
-        <ant dir="${wstx.dir}" inheritall="false"/>
+        <ant dir="${wstx.dir}" inheritall="false">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
     </target>
 
     <target name="recovery.build">
-        <ant dir="recovery"/>
+        <ant dir="recovery">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
     </target>
 
     <target name="sar.build">
-        <!-- by default we build 1.0 and 1.1 for ease of testing,
-            but release bundles should use -Dsartype=sar-11 so that
-            they contain only the supported version. -->
-        <property name="sartype" value="sar-both"/>
-        <ant dir="${sar.dir}" target="${sartype}"/>
+        <ant dir="${sar.dir}">
+            <property name="sartype" value="${sartype}"/> 
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
     </target>
 
-    <target name="test.settype">
-        <condition property="testtype" value="tests-11">
-            <equals arg1="${sartype}" arg2="sar-11"/>
-        </condition>
-    </target>
-    <target name="tests.build" depends="test.settype">
-        <!-- by default we build 1.0 and 1.1 for ease of testing,
-            but release bundles should use -Dtesttype=tests-11 so that
-            thay contain only the supported version. -->
-        <property name="testtype" value="tests-both"/>
-        <ant dir="${wsas.dir}" target="${testtype}"/>
-        <ant dir="${wscf.dir}" target="${testtype}"/>
-        <ant dir="${ws-c.dir}" target="${testtype}"/>
-        <ant dir="${ws-t.dir}" target="${testtype}"/>
-        <ant dir="${wstx.dir}" target="${testtype}"/>
-        <ant dir="${localjunit.dir}" target="all"/>
+    <target name="tests.build">
+        <ant dir="${wsas.dir}" target="tests">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+        <ant dir="${wscf.dir}" target="tests">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+        <ant dir="${ws-c.dir}" target="tests">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+        <ant dir="${ws-t.dir}" target="tests">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+        <ant dir="${wstx.dir}" target="tests">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+        <ant dir="${localjunit.dir}" target="all">
+        </ant>
     </target>
 
     <target name="interop-tests.build">

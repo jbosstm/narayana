@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.services.framework.startup.Sequencer;
-import com.arjuna.wsc11.common.Environment;
+import com.arjuna.wsc.common.Environment;
 
 /**
  * Activate the Participant Completion Participant service
@@ -44,9 +44,9 @@ public class ParticipantCompletionParticipantInitialisation implements ServletCo
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
            public void run() {
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-               String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
-               String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
-               String secureBindPort = System.getProperty(Environment.XTS_SECURE_BIND_PORT);
+               String bindAddress = System.getProperty(Environment.XTS11_BIND_ADDRESS);
+               String bindPort = System.getProperty(Environment.XTS11_BIND_PORT);
+               String secureBindPort = System.getProperty(Environment.XTS11_SECURE_BIND_PORT);
 
                if (bindAddress == null) {
                    bindAddress = "127.0.0.1";

@@ -165,16 +165,16 @@ public class XTSService implements XTSServiceMBean {
         }
 
         System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_ADDRESS, bindAddress);
-        System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS, bindAddress);
+        System.setProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_ADDRESS, bindAddress);
 
         if(httpPort != 0) {
             System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_PORT, ""+httpPort);
-            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_PORT, ""+httpPort);
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_PORT, ""+httpPort);
         }
 
         if(httpsPort != 0) {
             System.setProperty(com.arjuna.wsc.common.Environment.XTS_SECURE_BIND_PORT, ""+httpsPort);
-            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_SECURE_BIND_PORT, ""+httpsPort);
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS11_SECURE_BIND_PORT, ""+httpsPort);
         }
 
         // see if the coordinatorURL or host/port has been specified on the command line
@@ -216,14 +216,14 @@ public class XTSService implements XTSServiceMBean {
 
         // ok now do the same for the 1.1 env settings
 
-        if (System.getProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
-            String coordinatorURL = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL);
-            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_SCHEME);
-            String coordinatorHost = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_HOST);
-            String coordinatorPort = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PORT);
-            String coordinatorPath = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PATH);
+        if (System.getProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL) == null) {
+            String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL);
+            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_SCHEME);
+            String coordinatorHost = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_HOST);
+            String coordinatorPort = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_PORT);
+            String coordinatorPath = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_PATH);
             if (coordinatorURL != null) {
-                System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
             } else if (coordinatorScheme != null || coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
                 if (coordinatorScheme == null) {
                     coordinatorScheme = "http";
@@ -242,8 +242,8 @@ public class XTSService implements XTSServiceMBean {
                     coordinatorPath = "ws-c11/ActivationService";
                 }
                 coordinatorURL = coordinatorScheme + "://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
-                System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-                System.setProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL, coordinatorURL);
             }
         }
         // now it is safe to let the Sequencer class run any intiialisation routines it needs

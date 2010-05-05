@@ -19,6 +19,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
+
 <project name="WSCF" default="war" basedir=".">
 
 	<!-- Set module name -->
@@ -103,46 +104,43 @@
 	</target>
 
 	<!-- Compilation targets -->
-    <target name="compile" depends="compile10, compile11"/>
-    <target name="compile11" depends="compile-generic">
+    <target name="compile-generic">
+		<echo message="Compiling module generic code"/>
+        <compile.macro>
+            <additional.classpath>
+                <path refid="wscf.lib.classpath"/>
+            </additional.classpath>
+        </compile.macro>
+	</target>
+
+    <target name="compile11">
 		<echo message="Compiling module 1.1 code"/>
-		<javac srcdir="${src11.dir}"
-                       destdir="${build.classes11.dir}"
-                       debug="on">
-			<classpath>
+        <compile.macro src.dir="${src11.dir}" dest.dir="${build.classes11.dir}">
+            <additional.classpath>
                 <path>
                     <pathelement path="${build.classes.dir}"/>
                     <pathelement path="${wsc.build.lib.dir}/${wsc11.libs}"/>
                 </path>
-				<path refid="wscf.lib.classpath"/>
-			</classpath>
-		</javac>
+                <path refid="wscf.lib.classpath"/>
+            </additional.classpath>
+        </compile.macro>
 	</target>
-    <target name="compile10" depends="compile-generic">
+
+    <target name="compile10" if="build10">
 		<echo message="Compiling module 1.0 code"/>
-		<javac srcdir="${src10.dir}"
-                       destdir="${build.classes10.dir}"
-                       debug="on">
-			<classpath>
+        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}">
+            <additional.classpath>
                 <path>
                     <pathelement path="${build.classes.dir}"/>
                     <pathelement path="${wsc.build.lib.dir}/${wsc10.libs}"/>
                     <pathelement path="${wsc.build.lib.dir}/${wsc10.api.libs}"/>
                 </path>
-				<path refid="wscf.lib.classpath"/>
-			</classpath>
-		</javac>
+                <path refid="wscf.lib.classpath"/>
+            </additional.classpath>
+        </compile.macro>
 	</target>
-    <target name="compile-generic" depends="init">
-		<echo message="Compiling module generic code"/>
-		<javac srcdir="${src.dir}"
-                       destdir="${build.classes.dir}"
-                       debug="on">
-			<classpath>
-				<path refid="wscf.lib.classpath"/>
-			</classpath>
-		</javac>
-	</target>
+
+    <target name="compile" depends="init, compile-generic, compile10, compile11"/>
 
 	<!-- htdocs paths -->
 	<path id="htdocs.path">
@@ -152,30 +150,17 @@
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
 	<property name="htdocs.list" value="*"/>
 
-	<target name="war" depends="jar">
-	  <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wscf_web-app.xml"/>
-        <war warfile="${build.webapps.dir}/${modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
-	</target>
-
 	<!-- Jar targets -->
-    <target name="jar" depends="jar11, jar10"/>
-
-    <target name="jar11" depends="jar-generic">
-        <copy file="xml/ArjunaCoreHLS.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
-        <copy file="xml/JTAHLS.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
-        <copy file="xml/TwoPhase11HLSImple.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
-        <copy file="xml/Sagas11HLSImple.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/sagas/arjunacore/SagasHLSImple.xml"/>
-
-        <jar jarfile="${build.lib.dir}/${modulename}11.jar"
-            basedir="${build.classes11.dir}">
+    <target name="jar-generic">
+        <echo message="Building jar files"/>
+        <mkdir dir="${build.lib.dir}"/>
+        <jar jarfile="${build.lib.dir}/${modulename}.jar"
+            basedir="${build.classes.dir}">
         </jar>
     </target>
 
-    <target name="jar10" depends="jar-generic">
+    <target name="jar10" if="build10">
+        <echo message="Building 10 jar files"/>
         <copy file="xml/ArjunaCoreHLS.xml"
         tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
         <copy file="xml/JTAHLS.xml"
@@ -192,62 +177,101 @@
         </jar>
     </target>
 
-    <target name="jar-generic" depends="compile, htdocs, generateresourcebundle">
-        <echo message="Building jar files"/>
-        <mkdir dir="${build.lib.dir}"/>
-        <jar jarfile="${build.lib.dir}/${modulename}.jar"
-            basedir="${build.classes.dir}">
+    <target name="jar11">
+        <echo message="Building 11 jar files"/>
+        <copy file="xml/ArjunaCoreHLS.xml"
+        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
+        <copy file="xml/JTAHLS.xml"
+        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
+        <copy file="xml/TwoPhase11HLSImple.xml"
+        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
+        <copy file="xml/Sagas11HLSImple.xml"
+        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/sagas/arjunacore/SagasHLSImple.xml"/>
+
+        <jar jarfile="${build.lib.dir}/${modulename}11.jar"
+            basedir="${build.classes11.dir}">
         </jar>
     </target>
 
+    <target name="jar" depends ="compile, jar-generic, jar10, jar11"/>
 
-	<target name="htdocs"
-				depends="init">
-		<echo message="Building htdocs "/>
-		<mkdir dir="${htdocs.dest}"/>
+    <target name="htdocs11" if="nobuild10">
+        <echo message="Building htdocs "/>
+        <mkdir dir="${htdocs.dest}"/>
+        <javadoc
+            sourcepathref="htdocs.path"
+            destdir="${htdocs.dest}"
+            packagenames="${htdocs.list}"
+            >
+            <classpath>
+                <path refid="wscf.lib.classpath"/>
+                <path path="${src.dir}"/>
+                <path path="${src11.dir}"/>
+            </classpath>
+        </javadoc>
+    </target>
 
-		<javadoc
-			sourcepathref="htdocs.path"
-			destdir="${htdocs.dest}"
-			packagenames="${htdocs.list}"
-	        >
-			<classpath>
-				<path refid="wscf.lib.classpath"/>
-				<path path="${src.dir}"/>
-			</classpath>
-		</javadoc>
-	</target>
+    <target name="htdocs-both" if="build10">
+        <echo message="Building htdocs "/>
+        <mkdir dir="${htdocs.dest}"/>
+        <javadoc
+            sourcepathref="htdocs.path"
+            destdir="${htdocs.dest}"
+            packagenames="${htdocs.list}"
+            >
+            <classpath>
+                <path refid="wscf.lib.classpath"/>
+                <path path="${src.dir}"/>
+                <path path="${src11.dir}"/>
+                <path path="${src10.dir}"/>
+            </classpath>
+        </javadoc>
+    </target>
 
-        <target name="generateresourcebundle">
-
-            <echo message="Generating WSCF Bundle"/>
-
-            <javadoc    packagenames="com.arjuna.*"
-                        failonerror="yes"
-                        private="yes"
-                        defaultexcludes="yes"
-                        classpathref="build.classpath">
-
+    <target name="htdocs" depends="htdocs-both, htdocs11"/>
+    
+    <target name="resourcebundle11" if="nobuild10">
+        <echo message="Generating WSCF Bundle"/>
+        <resourcebundle.macro resourcebundle="${wscf.resourcebundle}">
+            <packagesets>
                 <packageset dir="${src.dir}" defaultexcludes="yes">
-                  <include name="com/arjuna/**"/>
+                    <include name="com/arjuna/**"/>
                 </packageset>
-
-                <packageset dir="${src10.dir}" defaultexcludes="yes">
-                  <include name="com/arjuna/**"/>
-                </packageset>
-
                 <packageset dir="${src11.dir}" defaultexcludes="yes">
-                  <include name="com/arjuna/**"/>
+                    <include name="com/arjuna/**"/>
                 </packageset>
+            </packagesets>
+        </resourcebundle.macro>
+    </target>
 
-                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                    <path refid="doclet.classpath"/>
-                    <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
-                    <param name="-resourcebundle" value="${wscf.resourcebundle}"/>
-                 </doclet>
-            </javadoc>
+    <target name="resourcebundle-both" if="build10">
+        <echo message="Generating WSCF Bundle"/>
+        <resourcebundle.macro resourcebundle="${wscf.resourcebundle}">
+            <packagesets>
+                <packageset dir="${src.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                </packageset>
+                <packageset dir="${src10.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                </packageset>
+                <packageset dir="${src11.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                </packageset>
+            </packagesets>
+        </resourcebundle.macro>
+    </target>
 
-        </target>
+    <target name="resourcebundle" depends="resourcebundle-both, resourcebundle11"/>
+
+    <target name="war10" if="build10">
+        <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wscf_web-app.xml"/>
+    </target>
+
+    <target name="war11">
+        <war warfile="${build.webapps.dir}/${modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
+    </target>
+
+    <target name="war" depends="jar, htdocs, resourcebundle, war10, war11"/>
 
 	<!-- test targets -->
 	<target name="tests.init">
@@ -262,24 +286,23 @@
 	</target>
     
     <!-- this assumes the required libs have already been built-->
-	<target name="tests.compile" depends="tests.init">
+	<target name="tests.compile10" if="build10">
 	  <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
 	    <classpath>
 	      <pathelement path="${build.lib.dir}/${modulename}.jar"/>
           <pathelement path="${build.lib.dir}/${modulename}10.jar"/>
-          <pathelement path="${build.lib.dir}/${modulename}11.jar"/>
           <pathelement path="${wsc.build.lib.dir}/${wsc10.libs}"/>
           <pathelement path="${wsc.build.lib.dir}/${wsc10.api.libs}"/>
-          <pathelement path="${wsc.build.lib.dir}/${wsc11.libs}"/>
 	      <path refid="tests.lib.path"/>
 	      <path refid="wscf.lib.classpath"/>
 	    </classpath>
 	    <src path="${tests.src.dir}"/>
+        <include name="com/arjuna/wscf/**"/>
 	  </javac>
 	</target>
 
     <!-- this assumes the required libs have already been built-->
-	<target name="tests.compile11" depends="tests.init">
+	<target name="tests.compile11">
 	  <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
 	    <classpath>
 	      <pathelement path="${build.lib.dir}/${modulename}.jar"/>
@@ -293,52 +316,46 @@
 	  </javac>
 	</target>
 
-    <target name="tests.webapps" depends="tests.compile">
-        <copy file="${tests.dd.dir}/wscf-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app.xml">
-        </copy>
-        <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml">
-        </copy>
+    <target name="tests.compile" depends="tests.init, tests.compile10, tests.compile11"/>
+
+    <target name="tests.jar" depends="tests.compile">
         <jar jarfile="${tests.build.webapps.dir}/wscf-tests.jar">
             <fileset dir="${tests.build.classes.dir}"/>
         </jar>
+    </target>
+
+    <target name="tests.webapps10" if="build10">
+        <copy file="${tests.dd.dir}/wscf-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app.xml"/>
+        <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml"/>
         <war warfile="${tests.build.webapps.dir}/wscf-tests.war" webxml="${tests,build.dd.dir}/web-app.xml"/>
+    </target>
+
+    <target name="tests.webapps11" depends="tests.compile11">
+        <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml"/>
         <war warfile="${tests.build.webapps.dir}/wscf11-tests.war" webxml="${tests,build.dd.dir}/web-app11.xml"/>
-        <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf-tests_application.xml">
-            <!-- we only need to deploy the ext test libs (junit) and
-	         the tests war in JBoss AS 5.0. the rest of the XTS
-	         code is deployed as a sar and the TS code is deployed
-	         in the server lib
-	         -->
+    </target>
+
+    <target name="tests.webapps" depends="tests.jar, tests.webapps10, tests.webapps11"/>
+
+    <target name="tests.ear-both" if="build10">
+            <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
-
-    <target name="tests.webapps11" depends="tests.compile11">
-        <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml">
-        </copy>
-        <jar jarfile="${tests.build.webapps.dir}/wscf-tests.jar">
-            <fileset dir="${tests.build.classes.dir}"/>
-        </jar>
-        <war warfile="${tests.build.webapps.dir}/wscf11-tests.war" webxml="${tests,build.dd.dir}/web-app11.xml"/>
+    
+    <target name="tests.ear11" if="nobuild10">
         <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf11-tests_application.xml">
-            <!-- we only need to deploy the ext test libs (junit) and
-	         the tests war in JBoss AS 5.0. the rest of the XTS
-	         code is deployed as a sar and the TS code is deployed
-	         in the server lib
-	         -->
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="wscf11-tests.war wscf-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 
-    <target name="tests.deploy" depends="tests.webapps, tests.undeploy">
-        <copy file="${tests.build.webapps.dir}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
-    </target>
+    <target name="tests.ear" depends="tests.webapps, tests.ear-both, tests.ear11"/>
 
-    <target name="tests.deploy11" depends="tests.webapps11, tests.undeploy">
+    <target name="tests.deploy" depends="tests.ear, tests.undeploy">
         <copy file="${tests.build.webapps.dir}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
     </target>
 
@@ -357,7 +374,6 @@
         <delete dir="${tests.build.dir}"/>
     </target>
 
-    <!-- production target for 1.1 tests -->
-    <target name="tests-11" depends="tests.webapps11"/>
-    <target name="tests-both" depends="tests.webapps"/>
+    <!-- production target for tests -->
+    <target name="tests" depends="tests.ear"/>
 </project>

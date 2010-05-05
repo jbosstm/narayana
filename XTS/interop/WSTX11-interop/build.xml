@@ -80,13 +80,12 @@
 	</target>
 	
 	<target name="compile" depends="init">
-		<javac destdir="${build.classes.dir}" srcdir="${src.dir}" debug="${compile.debug}">
-            <classpath>
+        <compile.macro includeemma="false">
+            <additional.classpath>
                 <fileset dir="${xts.home}/lib" includes="${xts.libs}"/>
                 <fileset dir="${jbossts.build.extlib.dir}" includes="${xts.ext.libs}"/>
-                <path refid="build.classpath"/>
-            </classpath>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
 	</target>
 	
     <target name="war" depends="compile">

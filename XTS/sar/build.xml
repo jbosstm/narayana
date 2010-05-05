@@ -20,7 +20,7 @@
   @author JBoss Inc.
 -->
 
-<project name="sar" default="sar-both" basedir=".">
+<project name="sar" default="sar" basedir=".">
 
     <!-- ================================================================== -->
     <!-- build and install the XTS component as a service archive           -->
@@ -32,6 +32,8 @@
     <!-- ================================================================== -->
 
     <!-- devs: run 'ant jta; cd XTS; ant install' after svn checkout -->
+
+    <property  name="root.dir" location=".."/>
 
     <import file="../sharedbuild.xml"/>
 
@@ -58,6 +60,7 @@
     <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
 
     <!-- we assume the core XTS modules have already been installedi.e. WSAS, WS-C, WS-T, WSCF, WSTX, recovery -->
+    <property name="src.dir" location="src"/>
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="webapps.dir" location="${xts.home}/webapps"/>
     <property name="conf.dir" location="${xts.home}/conf"/>
@@ -81,6 +84,21 @@
 
     <property name="bridge.api.class.files" value="org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class"/>
 
+    <!-- by default we build 1.0 and 1.1 for ease of testing,
+        but release bundles should use -Dsartype=sar-11 so that
+        they contain only the supported version. -->
+    <property name="sartype" value="sar-both"/>
+
+    <!-- if condition for 1.0 specific targets -->
+    <condition property="build10">
+        <equals arg1="${sartype}" arg2="sar-both"/>
+    </condition>
+
+    <!-- if condition for 1.1 only targets -->
+    <condition property="nobuild10">
+        <isfalse value="${build10}"/>
+    </condition>
+
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -93,53 +111,38 @@
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
 
-    <!-- by default build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar" depends="sar-11"/>
-
     <!-- compile the generic classes in the sar source -->
     <target name="compile" depends="init">
-        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" excludes="org/jboss/jbossts/xts/bridge/**/*" >
-            <classpath>
-                <path refid="build.classpath"/>
+        <compile.macro excluded.classes="org/jboss/jbossts/xts/bridge/**/*">
+            <additional.classpath>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
-            </classpath>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
     </target>
 
     <!-- compile the 1.1 specific classes in the sar source which support WS-AT 1.1. bridging -->
     <target name="compile.bridge" depends="compile">
-        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" includes="org/jboss/jbossts/xts/bridge/**/*" >
-            <classpath>
-                <path refid="build.classpath"/>
+        <compile.macro included.classes="org/jboss/jbossts/xts/bridge/**/*">
+            <additional.classpath>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
-            </classpath>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
     </target>
 
     <!-- build the messages resource bundle for use by the XTS logger -->
     <target name="resourcebundle">
         <echo message="Generating XTS Bundle"/>
-
-        <javadoc    packagenames="org.jboss.jbossts.*"
-                    failonerror="yes"
-                    private="yes"
-                    defaultexcludes="yes"
-                    classpath="${build.classes.dir}">
-
-            <packageset dir="src" defaultexcludes="yes">
-              <include name="org/jboss/jbossts/**"/>
-            </packageset>
-
-             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path refid="doclet.classpath"/>
-                <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
-                <param name="-resourcebundle" value="${xts.resourcebundle}"/>
-             </doclet>
-        </javadoc>
-    </target>            
+        <resourcebundle.macro packagenames="org.jboss.jbossts.*" resourcebundle="${xts.resourcebundle}">
+            <packagesets>
+                <packageset dir="src" defaultexcludes="yes">
+                  <include name="org/jboss/jbossts/**"/>
+                </packageset>
+            </packagesets>
+        </resourcebundle.macro>
+    </target>
 
     <!-- build the full api jar -->
-    <target name="api-both-jar">
+    <target name="api-both-jar" if="build10">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c10-api.jar" dest="${build.dir}/tmp/api"/>
@@ -159,7 +162,7 @@
     </target>
 
     <!-- build the 1.1 api jar -->
-    <target name="api11-jar">
+    <target name="api11-jar" if="nobuild10">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
@@ -175,22 +178,10 @@
         <delete dir="${build.dir}/tmp/api"/>
     </target>
     
-    <!-- build the 1.0 api jar -->
-    <target name="api10-jar">
-        <mkdir dir="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-c10-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
-        <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
-        <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
-        <delete dir="${build.dir}/tmp/api"/>
-    </target>
+    <target name="api-jar" depends="api-both-jar, api11-jar"/>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile.bridge, compile, resourcebundle, api-both-jar">
+    <target name="sar-both" if="build10">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -235,7 +226,7 @@
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile.bridge, compile, resourcebundle, api11-jar">
+    <target name="sar-11" if="nobuild10">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -276,68 +267,15 @@
         </jar>
     </target>
 
-    <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init, compile, resourcebundle, api10-jar">
-        <!-- create config jar containing conf files for 1.0 -->
-        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
-        <filter token="coordinator.port" value="${coordinator.port}"/>
-        <copy todir="${build.conf.dir}" filtering="true">
-            <fileset dir="${conf.dir}" includes="*.xml" excludes="*11.xml"/>
-        </copy>
-        <jar jarfile="${build.dir}/config.jar">
-            <fileset dir="${build.conf.dir}"/>
-        </jar>
-
-        <!-- copy 10 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
-
-        <!-- pack everything in the service archive -->
-        <jar jarfile="${build.dir}/jbossxts.sar">
-            <!-- include generic and 1.0 jars -->
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar *api.jar"/>
-
-            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
-
-            <!-- include 1.0 web apps -->
-            <fileset dir="${webapps.dir}" includes="*10.war"/>
-
-            <!-- include config jar -->
-            <fileset dir="${build.dir}" includes="config.jar"/>
-
-            <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
-
-            <!-- include classloading directives -->
-            <fileset dir="." includes="META-INF/jboss-classloading.xml"/>
-
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
-
-            <!-- include sar boot and shutdown code -->
-            <fileset dir="${build.classes.dir}" includes="**/*"/>
-        </jar>
-    </target>
+    <target name="sar" depends="compile.bridge, resourcebundle, api-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>
       <delete file="${lib.dir}/jbossxts-api.jar"/>
     </target>
 
-    <!-- convenience targets to build and deploy the service archive -->
-    <target name="deploy-11" depends="undeploy, sar-11">
-        <copy file="${build.dir}/jbossxts.sar" todir="${jboss.home}/server/default/deploy"/>
-    </target>
-
-    <target name="deploy-10" depends="undeploy, sar-10">
-        <copy file="${build.dir}/jbossxts.sar" todir="${jboss.home}/server/default/deploy"/>
-    </target>
-
-    <target name="deploy-both" depends="undeploy, sar-both">
+    <target name="deploy" depends="undeploy, sar">
         <copy file="${build.dir}/jbossxts.sar" todir="${deploy.dir}"/>
-    </target>
-
-    <!-- by default deploy sar implementing 1.1 and 1.0 WS-C/T protocols -->
-    <target name="deploy" depends="deploy-both">
     </target>
 
     <target name="undeploy">

@@ -57,7 +57,7 @@ public class TestUtil
 
     public static final String NONEXISTENT_PARTICIPANT_IDENTIFIER                    = "NONE123456PI";
 
-    final private static String bindHost = System.getProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS);
+    final private static String bindHost = System.getProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_ADDRESS);
 
     public static String participantServiceURI = "http://" + bindHost + ":8080/ws-t11/ParticipantService";
     public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CoordinatorService";

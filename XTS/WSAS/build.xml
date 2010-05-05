@@ -90,10 +90,8 @@
 
 	<!-- Compilation targets -->
 	<target name="compile" depends="init">
-		<echo message="Compiling module"/>
-		<javac srcdir="${src.dir}" destdir="${build.classes.dir}"
-               debug="${debug}" deprecation="${deprecation}"
-		       classpathref = "build.classpath"/>
+        <echo message="Compiling module"/>
+        <compile.macro/>
 	</target>
 
 	<!-- htdocs paths -->
@@ -127,22 +125,14 @@
 	</target>
 
     <target name="generateresourcebundle">
-
         <echo message="Generating WSAS Bundle"/>
-
-        <javadoc    sourcepath="${src.dir}"
-                    packagenames="com.arjuna.*"
-                    failonerror="yes"
-                    private="yes"
-                    defaultexcludes="yes"
-                classpathref="build.classpath">
-             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                 <path refid="doclet.classpath"/>
-                 <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
-                <param name="-resourcebundle" value="${wsas.resourcebundle}"/>
-             </doclet>
-        </javadoc>
-
+        <resourcebundle.macro resourcebundle="${wsas.resourcebundle}">
+            <packagesets>
+                <packageset dir="${src.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                </packageset>
+            </packagesets>
+        </resourcebundle.macro>
     </target>
 
 	<!-- test targets -->
@@ -169,27 +159,25 @@
 	  </javac>
 	</target>
 
-	<target name="tests.webapps" depends="tests.compile">
-	  <copy file="${tests.dd.dir}/wsas-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml">
-	  </copy>
+    <target name="tests.webapps" depends="tests.compile">
+      <copy file="${tests.dd.dir}/wsas-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml">
+      </copy>
         <jar jarfile="${tests.build.lib.dir}/wsas-tests.jar" basedir="${tests.build.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
         <jar jarfile="${tests.build.lib.dir}/xts-test-servlet.jar" basedir="${tests.build.classes.dir}" includes="com/arjuna/qa/junit/*.class"/>
-	  <war warfile="${tests.build.webapps.dir}/wsas-tests.war" webxml="${tests.build.dd.dir}/web-app.xml">
-	  </war>
-	  <ear earfile="${tests.build.webapps.dir}/wsas-tests.ear" appxml="${tests.dd.dir}/wsas-tests_application.xml">
-	    <!-- we only need to deploy the ext test libs (junit) and
-	         the tests war in JBoss AS 5.0. the rest of the XTS
-	         code is deployed as a sar and the TS code is deployed
-	         in the server lib
-	    -->
-	    <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
+      <war warfile="${tests.build.webapps.dir}/wsas-tests.war" webxml="${tests.build.dd.dir}/web-app.xml">
+      </war>
+    </target>
+
+    <target name="tests.ear" depends="tests.webapps">
+      <ear earfile="${tests.build.webapps.dir}/wsas-tests.ear" appxml="${tests.dd.dir}/wsas-tests_application.xml">
+        <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
           <fileset dir="${tests.build.webapps.dir}" includes="wsas-tests.war"/>
           <fileset dir="${tests.build.lib.dir}" includes="wsas-tests.jar"/>
           <fileset dir="${tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
-	  </ear>
-	</target>
+      </ear>
+    </target>
 
-	<target name="tests.deploy" depends="tests.webapps, tests.undeploy">
+	<target name="tests.deploy" depends="tests.ear, tests.undeploy">
 	  <copy file="${tests.build.webapps.dir}/wsas-tests.ear" tofile="${deploy.dir}/wsas-tests.ear"/>
 	</target>
 
@@ -208,7 +196,6 @@
 		<delete dir="${tests.build.dir}"/>
 	</target>
 
-	<!-- production target for 1.1 tests - tests are not version specific -->
-    <target name="tests-11" depends="tests.webapps"/>
-    <target name="tests-both" depends="tests.webapps"/>
+	<!-- production target for tests -->
+    <target name="tests" depends="tests.ear"/>
 </project>

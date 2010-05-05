@@ -43,4 +43,9 @@ public interface Environment
     public static final String COORDINATOR_PORT = "org.jboss.jbossts.xts.coordinator.port";
     public static final String COORDINATOR_PATH = "org.jboss.jbossts.xts.coordinator.path";
 
+    public static final String COORDINATOR11_URL = "org.jboss.jbossts.xts11.coordinatorURL";
+    public static final String COORDINATOR11_SCHEME = "org.jboss.jbossts.xts11.coordinator.scheme";
+    public static final String COORDINATOR11_HOST = "org.jboss.jbossts.xts11.coordinator.host";
+    public static final String COORDINATOR11_PORT = "org.jboss.jbossts.xts11.coordinator.port";
+    public static final String COORDINATOR11_PATH = "org.jboss.jbossts.xts11.coordinator.path";
 }

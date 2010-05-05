@@ -32,7 +32,7 @@
 package com.arjuna.mwlabs.wst11.ba.remote;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.common.Environment;
+import com.arjuna.mw.wst.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
@@ -77,7 +77,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     {
         try
         {
-            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR_URL);
+            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR11_URL);
 
             /*
              * If the coordinator URL hasn't been specified via the

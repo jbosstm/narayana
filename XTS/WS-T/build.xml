@@ -171,87 +171,90 @@
         <mkdir dir="${tests.build.webapps.dir}"/>
     </target>
 
-    <target name="compile" depends="compile10, compile11"/>
-
-    <target name="compile10" depends="compile-generic">
-        <javac destdir="${build.classes10.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
-            <classpath>
+    <target name="compile-generic">
+        <compile.macro>
+            <additional.classpath>
                 <path>
                     <pathelement path="${build.classes.dir}"/>
                 </path>
-                <path refid="build.classpath"/>
+                <path refid="ws-c.path"/>
+                <path refid="wscf.path"/>
+                <path refid="wsas.path"/>
+            </additional.classpath>
+        </compile.macro>
+    </target>
+
+    <target name="compile10" if="build10">
+        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}">
+            <additional.classpath>
+                <path>
+                    <pathelement path="${build.classes.dir}"/>
+                </path>
                 <path refid="ws-c.path"/>
                 <path refid="ws-c10.path"/>
                 <path refid="wscf.path"/>
                 <path refid="wscf10.path"/>
                 <path refid="wsas.path"/>
-            </classpath>
-            <src path="${src10.dir}"/>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
     </target>
 
-    <target name="compile11" depends="compile-generic">
-        <javac destdir="${build.classes11.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
-            <classpath>
+    <target name="compile11">
+        <compile.macro src.dir="${src11.dir}" dest.dir="${build.classes11.dir}">
+            <additional.classpath>
                 <path>
                     <pathelement path="${build.classes.dir}"/>
                 </path>
-                <path refid="build.classpath"/>
                 <path refid="ws-c.path"/>
                 <path refid="ws-c11.path"/>
                 <path refid="wscf.path"/>
                 <path refid="wscf11.path"/>
                 <path refid="wsas.path"/>
-            </classpath>
-            <src path="${src11.dir}"/>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
     </target>
 
-    <target name="compile-generic" depends="init">
-        <javac destdir="${build.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
-            <classpath>
-                <path refid="build.classpath"/>
-                <path refid="ws-c.path"/>
-                <path refid="wscf.path"/>
-                <path refid="wsas.path"/>
-            </classpath>
-            <src path="${src.dir}"/>
-        </javac>
-    </target>
+    <target name="compile" depends="init, compile-generic, compile10, compile11"/>
 
-    <target name="resourcebundle">
+    <target name="resourcebundle-both" if="build">
         <echo message="Generating WS-T Bundle"/>
-
-        <javadoc    packagenames="com.arjuna.*, org.jboss.jbossts.xts.*"
-                    failonerror="yes"
-                    private="yes"
-                    defaultexcludes="yes"
-                    classpathref="build.classpath">
-
-            <packageset dir="${src.dir}" defaultexcludes="yes">
-              <include name="com/arjuna/**"/>
-              <include name="org/jboss/jbossts/xts/**"/>
-            </packageset>
-
-            <packageset dir="${src10.dir}" defaultexcludes="yes">
-              <include name="com/arjuna/**"/>
-              <include name="org/jboss/jbossts/xts/**"/>
-            </packageset>
-
-            <packageset dir="${src11.dir}" defaultexcludes="yes">
-              <include name="com/arjuna/**"/>
-              <include name="org/jboss/jbossts/xts//**"/>
-            </packageset>
-
-             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path refid="doclet.classpath"/>
-                <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
-                <param name="-resourcebundle" value="${wst.resourcebundle}"/>
-             </doclet>
-        </javadoc>
+        <resourcebundle.macro resourcebundle="${wst.resourcebundle}">
+            <packagesets>
+                <packageset dir="${src.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                    <include name="org/jboss/jbossts/xts/**"/>
+                </packageset>
+                <packageset dir="${src10.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                    <include name="org/jboss/jbossts/xts/**"/>
+                </packageset>
+                <packageset dir="${src11.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                    <include name="org/jboss/jbossts/xts/**"/>
+                </packageset>
+            </packagesets>
+        </resourcebundle.macro>
     </target>
 
-    <target name="jars" depends="compile, resourcebundle" >
+    <target name="resourcebundle11" if="nobuild10">
+        <echo message="Generating WS-T Bundle"/>
+        <resourcebundle.macro resourcebundle="${wst.resourcebundle}">
+            <packagesets>
+                <packageset dir="${src.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                    <include name="org/jboss/jbossts/xts/**"/>
+                </packageset>
+                <packageset dir="${src11.dir}" defaultexcludes="yes">
+                    <include name="com/arjuna/**"/>
+                    <include name="org/jboss/jbossts/xts//**"/>
+                </packageset>
+            </packagesets>
+        </resourcebundle.macro>
+    </target>
+
+    <target name="resourcebundle" depends="resourcebundle-both, resourcebundle11"/>
+
+    <target name="wsdl11">
         <!-- wsdl files for services -->
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.dd.dir}/wsdl/wsat.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.dd.dir}/wsdl/wsat.xsd"/>
@@ -300,19 +303,27 @@
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx.wsdl"/>
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
+    </target>
 
+    <target name="jars-generic" >
         <jar jarfile="${build.lib.dir}/ws-t.jar">
             <fileset dir="${build.classes.dir}" excludes="${ws-t.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t-api.jar">
             <fileset dir="${build.classes.dir}" includes="${ws-t.api.classes}"/>
         </jar>
+    </target>
+
+    <target name="jars10" if="build10">
         <jar jarfile="${build.lib.dir}/ws-t10.jar">
             <fileset dir="${build.classes10.dir}" excludes="${ws-t10.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t10-api.jar">
             <fileset dir="${build.classes10.dir}" includes="${ws-t10.api.classes}"/>
         </jar>
+    </target>
+
+    <target name="jars11">
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes} com/arjuna/webservices11/wsat/sei/* com/arjuna/webservices11/wsba/sei/* com/arjuna/webservices11/wsarjtx/sei/* handlers.xml"/>
         </jar>
@@ -321,29 +332,33 @@
         </jar>
     </target>
 
-    <target name="webapps" depends="jars">
-        <copy file="${dd.dir}/ws-t_web-app.xml" tofile="${build.dd.dir}/web-app.xml">
-        </copy>
-        <copy file="${dd.dir}/ws-t11_web-app.xml" tofile="${build.dd.dir}/web-app11.xml">
-        </copy>
+    <target name="jars" depends="compile, resourcebundle, wsdl11, jars-generic, jars10, jars11"/>
+
+    <target name="webapps10" if="build10">
+        <copy file="${dd.dir}/ws-t_web-app.xml" tofile="${build.dd.dir}/web-app.xml"/>
         <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
         <war warfile="${build.webapps.dir}/ws-t10.war" webxml="${build.dd.dir}/web-app.xml"/>
+    </target>
+
+    <target name="webapps11" depends="jars11">
+        <copy file="${dd.dir}/ws-t11_web-app.xml" tofile="${build.dd.dir}/web-app11.xml"/>
+        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
         <war warfile="${build.webapps.dir}/ws-t11.war" webxml="${build.dd.dir}/web-app11.xml">
             <webinf dir="${build.dir}/classes11" includes="classes/com/arjuna/webservices11/wsat/sei/* classes/com/arjuna/webservices11/wsba/sei/* classes/com/arjuna/webservices11/wsarjtx/sei/* classes/handlers.xml"/>
             <webinf dir="${build.dd.dir}" includes="wsdl/**"/>
         </war>
     </target>
 
+    <target name="webapps" depends="jars, webapps10, webapps11"/>
+    
     <!-- this assumes all the required libs have been built -->
-    <target name="tests-compile">
+    <target name="tests-compile10" if="build10">
         <javac destdir="${tests.build.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <pathelement path="${build.lib.dir}/ws-t.jar"/>
                 <pathelement path="${build.lib.dir}/ws-t-api.jar"/>
                 <pathelement path="${build.lib.dir}/ws-t10.jar"/>
                 <pathelement path="${build.lib.dir}/ws-t10-api.jar"/>
-                <pathelement path="${build.lib.dir}/ws-t11.jar"/>
-                <pathelement path="${build.lib.dir}/ws-t11-api.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="build.classpath"/>
                 <path refid="ws-c.path"/>
@@ -355,6 +370,7 @@
                 <path refid="wsas.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
+            <exclude name="com/arjuna/wst11/tests/**"/>
         </javac>
     </target>
 
@@ -375,24 +391,34 @@
                 <path refid="wsas.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
-	    <include name="com/arjuna/qa/**"/>
-        <include name="com/arjuna/wst/tests/common/**"/>
-        <include name="com/arjuna/wst11/tests/**"/>
+            <include name="com/arjuna/wst/tests/common/**"/>
+            <include name="com/arjuna/wst11/tests/**"/>
         </javac>
     </target>
 
-    <target name="tests-webapps" depends="tests-compile">
+    <target name="tests-compile" depends="tests-compile10, tests-compile11"/>
+
+    <target name="tests-jar" depends="tests-compile">
         <jar jarfile="${tests.build.lib.dir}/ws-t-tests.jar">
             <fileset dir="${tests.build.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
         </jar>
-        <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml">
-        </copy>
+    </target>
+
+    <target name="tests-webapps10" if="build10">
+        <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml"/>
         <war warfile="${tests.build.webapps.dir}/ws-t-tests.war" webxml="${tests.build.dd.dir}/web-app.xml">
         </war>
-        <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml">
-        </copy>
+    </target>
+
+    <target name="tests-webapps11">
+        <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml"/>
         <war warfile="${tests.build.webapps.dir}/ws-t11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml">
         </war>
+    </target>
+
+    <target name="tests-webapps" depends="tests-jar, tests-webapps10, tests-webapps11"/>
+
+    <target name="tests-ear-both" if="build10">
         <ear earfile="${tests.build.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="ws-t-tests.war ws-t11-tests.war"/>
@@ -401,32 +427,21 @@
         </ear>
     </target>
 
-    <target name="tests-webapps11" depends="tests-compile11">
-        <jar jarfile="${tests.build.lib.dir}/ws-t11-tests.jar">
-            <fileset dir="${tests.build.classes.dir}"/>
-        </jar>
-        <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml">
-        </copy>
-        <war warfile="${tests.build.webapps.dir}/ws-t11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml">
-        </war>
+    <target name="tests-ear11" if="nobuild10">
         <ear earfile="${tests.build.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t11-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
             <fileset dir="${tests.build.webapps.dir}" includes="ws-t11-tests.war"/>
-            <fileset dir="${tests.build.lib.dir}" includes="ws-t11-tests.jar"/>
+            <fileset dir="${tests.build.lib.dir}" includes="ws-t-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
 
-    <!-- production target for 1.1 tests -->
-    <target name="tests-11" depends="tests-webapps11"/>
+    <target name="tests-ear" depends="tests-webapps, tests-ear-both, tests-ear11"/>
 
-    <target name="tests-both" depends="tests-webapps"/>
+    <!-- production target for tests -->
+    <target name="tests" depends="tests-ear"/>
 
-    <target name="tests-deploy" depends="tests-webapps, tests-undeploy">
-        <copy file="${tests.build.webapps.dir}/ws-t-tests.ear" tofile="${deploy.dir}/ws-t-tests.ear"/>
-    </target>
-
-    <target name="tests-deploy11" depends="tests-webapps11, tests-undeploy">
+    <target name="tests-deploy" depends="tests-ear, tests-undeploy">
         <copy file="${tests.build.webapps.dir}/ws-t-tests.ear" tofile="${deploy.dir}/ws-t-tests.ear"/>
     </target>
 

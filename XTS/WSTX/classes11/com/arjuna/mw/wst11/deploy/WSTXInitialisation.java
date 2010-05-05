@@ -25,7 +25,7 @@ import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wst11.*;
 import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices.util.ClassLoaderHelper;
-import com.arjuna.wsc11.common.Environment;
+import com.arjuna.wsc.common.Environment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -141,22 +141,22 @@ public class WSTXInitialisation implements ServletContextListener
     {
         // ok, if we just loaded a coordinator URL and one was already defined on
         // the command line then reinstate the command line version
-        String commandLineCoordinatrURL  = System.getProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL);
+        String commandLineCoordinatrURL  = System.getProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL);
         if (commandLineCoordinatrURL != null) {
-            System.setProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL, commandLineCoordinatrURL);
+            System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL, commandLineCoordinatrURL);
         }
 
         // if the coordinatorURL contains the symbolic names server.bind.address
         // or jboss.web.bind.port then we must substitute these with the actual
         // bind address and jboss web http port
 
-        String coordinatorURL = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL);
+        String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL);
 
         if (coordinatorURL != null) {
             boolean updated = false;
             int idx = coordinatorURL.indexOf(SERVER_BIND_ADDRESS_KEY);
             if (idx >= 0) {
-                String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
+                String bindAddress = System.getProperty(Environment.XTS11_BIND_ADDRESS);
                 if (bindAddress == null) {
                     bindAddress = "127.0.0.1";
                 }
@@ -166,7 +166,7 @@ public class WSTXInitialisation implements ServletContextListener
 
             idx = coordinatorURL.indexOf(JBOSS_WEB_BIND_PORT_KEY);
             if (idx >= 0) {
-                String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
+                String bindPort = System.getProperty(Environment.XTS11_BIND_PORT);
                 if (bindPort == null) {
                     bindPort = "8080";
                 }
@@ -175,7 +175,7 @@ public class WSTXInitialisation implements ServletContextListener
             }
 
             if (updated) {
-                System.setProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL, coordinatorURL);
             }
         }
     }
