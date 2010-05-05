@@ -175,12 +175,11 @@
             </dependency>
 
             <dependency>
-                <!-- http://repository.jboss.com/maven2/org/jboss/jbossas/jboss-as-component-matrix/
-                     http://snapshots.jboss.org/maven2/org/jboss/jbossas/jboss-as-component-matrix/ -->
+                <!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
                 <groupId>org.jboss.jbossas</groupId>
                 <artifactId>jboss-as-component-matrix</artifactId>
-                <!--<version>6.0.0.20100216-M2</version>-->
-                <version>6.0.0-SNAPSHOT</version>
+                <version>6.0.0.20100429-M3</version>
+                <!--<version>6.0.0-SNAPSHOT</version>-->
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
