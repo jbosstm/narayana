@@ -48,6 +48,7 @@ JTA and JTA in turn a superset of Core.
 calls maven to resolve the dependencies and populate build/extlib which other ant build scripts then reference
 in the classpath. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
 pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the pom-template.xml
+You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
 
 The build currently requires Java 6, ant 1.7.1 and maven 2.0.9. Later version may work.
 Although it's no longer tried and tested, it may remain possible for a time to build on Java 5 by editing
