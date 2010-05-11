@@ -70,13 +70,13 @@
     <property name="xts.home" value=".."/>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
-    <property name="ext.dir" location="${lib.dir}/ext"/>
+    <property name="jbossts.lib.dir" location="${jboss.home}/common/lib"/>
     <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
     <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
 
     <property name="lib.libs" value="jbossxts-api.jar"/>
 
-    <property name="ext.libs" value="jbossjta.jar jbossjts.jar jbossts-common.jar commons-logging.jar"/>
+    <property name="ext.libs" value="jbossjta.jar jbossjts.jar"/>
     <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
             geronimo-ws-metadata_2.0_spec.jar">
         <isset property="cxf.build"/>
@@ -113,7 +113,7 @@
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
     </path>
     <path id="ext.path">
-        <fileset dir="${ext.dir}" includes="${ext.libs}"/>
+        <fileset dir="${jbossts.lib.dir}" includes="${ext.libs}"/>
     </path>
 
     <path id="jboss.client.path">
