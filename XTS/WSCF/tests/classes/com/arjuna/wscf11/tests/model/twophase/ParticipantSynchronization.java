@@ -73,6 +73,7 @@ public class ParticipantSynchronization
 	catch (Exception ex)
 	{
 	    WSCF11TestUtils.cleanup(cm);
+        throw ex;
 	}
     }
 }

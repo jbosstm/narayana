@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
     @Suite.SuiteClasses({
-            com.arjuna.wscf11.tests.model.twophase.StartEnd.class,
+//            com.arjuna.wscf11.tests.model.twophase.StartEnd.class,
             com.arjuna.wscf11.tests.model.twophase.BeginConfirm.class,
             com.arjuna.wscf11.tests.model.twophase.BeginCancel.class,
             com.arjuna.wscf11.tests.model.twophase.Suspend.class,
@@ -40,7 +40,19 @@ import org.junit.runners.Suite;
             com.arjuna.wscf11.tests.model.twophase.AddParticipant.class,
             com.arjuna.wscf11.tests.model.twophase.SuspendParticipant.class,
             com.arjuna.wscf11.tests.model.twophase.AddSynchronization.class,
-            com.arjuna.wscf11.tests.model.twophase.ParticipantSynchronization.class
+            com.arjuna.wscf11.tests.model.twophase.ParticipantSynchronization.class,
+            com.arjuna.wscf11.tests.model.sagas.BeginClose.class,
+            com.arjuna.wscf11.tests.model.sagas.BeginCancel.class,
+            com.arjuna.wscf11.tests.model.sagas.Suspend.class,
+            com.arjuna.wscf11.tests.model.sagas.SuspendResume.class,
+            com.arjuna.wscf11.tests.model.sagas.SuspendClose.class,
+            com.arjuna.wscf11.tests.model.sagas.CancelOnlyCancel.class,
+            com.arjuna.wscf11.tests.model.sagas.CancelOnlyClose.class,
+            com.arjuna.wscf11.tests.model.sagas.ParticipantExitedClose.class,
+            com.arjuna.wscf11.tests.model.sagas.ParticipantCannotCompleteClose.class,
+            com.arjuna.wscf11.tests.model.sagas.ParticipantFaultedClose.class,
+            com.arjuna.wscf11.tests.model.sagas.AddParticipant.class,
+            com.arjuna.wscf11.tests.model.sagas.SuspendResumeMultiParticipant.class
     })
 public class WSCF11TestSuite
 {

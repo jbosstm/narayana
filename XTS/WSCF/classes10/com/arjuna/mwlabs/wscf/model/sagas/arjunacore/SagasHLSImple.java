@@ -218,7 +218,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 	    }
 	}
 	else
-	    return new com.arjuna.mwlabs.wscf.model.sagas.arjunacore.context.soap.ArjunaContextImple(_coordManager.currentCoordinator());
+        throw new SystemException("SAGAS context implementation must be specified by setting environment property " + Environment.SAGAS_CONTEXT);
     }
 
     /**

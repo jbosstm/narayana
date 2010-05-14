@@ -33,8 +33,6 @@ package com.arjuna.mw.wsas.context;
 
 import com.arjuna.mw.wsas.common.Environment;
 
-import com.arjuna.mwlabs.wsas.context.DeploymentContextImple;
-
 /**
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: DeploymentContextFactory.java,v 1.4 2004/03/15 13:25:00 nmcl Exp $
@@ -74,9 +72,6 @@ public class DeploymentContextFactory
 	{
 	    ex.printStackTrace();
 	}
-	
-	if (_deployContext == null)
-	    _deployContext = new DeploymentContextImple();
     }
-    
+
 }

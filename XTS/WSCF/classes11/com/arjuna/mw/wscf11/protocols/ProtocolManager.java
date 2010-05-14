@@ -395,7 +395,7 @@ public class ProtocolManager
 
 		try
 		{
-			Initializer init = new Initializer(this);
+            com.arjuna.mw.wsas.utils.Configuration.initialise("/wscf11.xml");
 		}
 		catch (Exception ex)
 		{

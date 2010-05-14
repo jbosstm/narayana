@@ -49,23 +49,7 @@ public class ProtocolEntry
 
     public ProtocolEntry (org.w3c.dom.Document doc)
     {
-	_doc = doc;
-	_implementation = null;
-
-	org.w3c.dom.Element rootElement = _doc.getDocumentElement();
-		    
-	_protocolType = DomUtil.getTextNode(rootElement, CoordinatorXSD.coordinatorType).getNodeValue();
-
-	/*
-	 * Optional part of schema.
-	 */
-
-	org.w3c.dom.Text name = DomUtil.getTextNode(rootElement, CoordinatorXSD.coordinatorName);
-	
-	if (name != null)
-	    _protocolName = name.getNodeValue();
-	else
-	    _protocolName = null;
+        this(doc, null);
     }
 
     public ProtocolEntry (org.w3c.dom.Document doc, Object implementation)

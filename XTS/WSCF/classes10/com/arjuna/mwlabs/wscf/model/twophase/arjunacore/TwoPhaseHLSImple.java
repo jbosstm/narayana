@@ -217,8 +217,7 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 			}
 		}
 		else
-			return new com.arjuna.mwlabs.wscf.model.twophase.arjunacore.context.soap.ArjunaContextImple(
-					_coordManager.currentCoordinator());
+            throw new SystemException("Two Phase context implementation must be specified by setting environment property " + Environment.TWO_PHASE_CONTEXT);
 	}
 
 	/**

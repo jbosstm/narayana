@@ -19,17 +19,6 @@ public class WSCFTestUtils {
         }
     }
 
-    static public void cleanup(com.arjuna.mw.wscf.UserCoordinator ua)
-    {
-        try {
-            while (ua.currentActivity() != null) {
-                ua.end();
-            }
-        } catch (Exception e) {
-            // do nothing -- caller will be dealing with exceptions
-        }
-    }
-
     static public void cleanup(com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager cm)
     {
         try {

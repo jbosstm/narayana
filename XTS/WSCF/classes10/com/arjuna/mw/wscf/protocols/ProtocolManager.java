@@ -35,8 +35,6 @@ import com.arjuna.mw.wscf.logging.wscfLogger;
 
 import com.arjuna.mw.wscf.common.Environment;
 
-import com.arjuna.mwlabs.wscf.protocols.Initializer;
-
 import com.arjuna.mw.wscf.utils.CoordinationXML;
 
 import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
@@ -404,7 +402,7 @@ public class ProtocolManager
 
 		try
 		{
-			Initializer init = new Initializer(this);
+            com.arjuna.mw.wsas.utils.Configuration.initialise("/wscf.xml");
 		}
 		catch (Exception ex)
 		{

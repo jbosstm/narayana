@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
     @Suite.SuiteClasses({
-            com.arjuna.wscf.tests.junit.model.twophase.StartEnd.class,
+//            com.arjuna.wscf.tests.junit.model.twophase.StartEnd.class,
             com.arjuna.wscf.tests.junit.model.twophase.BeginConfirm.class,
             com.arjuna.wscf.tests.junit.model.twophase.BeginCancel.class,
             com.arjuna.wscf.tests.junit.model.twophase.Suspend.class,

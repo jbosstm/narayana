@@ -128,7 +128,8 @@
 
     <target name="compile10" if="build10">
 		<echo message="Compiling module 1.0 code"/>
-        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}">
+        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}"
+                emmafilter="com.arjuna.mw.wscf.model.xa.* ">
             <additional.classpath>
                 <path>
                     <pathelement path="${build.classes.dir}"/>
