@@ -31,12 +31,10 @@
 
 package com.arjuna.mwlabs.wst.ba.local;
 
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mwlabs.wst.at.context.ArjunaContextImple;
+import com.arjuna.mwlabs.wst.ba.context.ArjunaContextImple;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -104,8 +102,7 @@ public class LocalContextFactoryImple implements ContextFactory
         
         		_coordManager.begin();
         
-        		DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-                ArjunaContextImple arjunaContext = (ArjunaContextImple)manager.context();
+                final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
 
                 final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
                 final String registrationCoordinatorURI = soapRegistry.getServiceURI(CoordinationConstants.SERVICE_REGISTRATION_COORDINATOR) ;

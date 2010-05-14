@@ -34,10 +34,10 @@ package com.arjuna.wscf.tests.junit.model.twophase;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.arjuna.mw.wsas.context.Context;
+import com.arjuna.mw.wsas.context.ContextManager;
 import org.w3c.dom.Element;
 
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
@@ -71,21 +71,25 @@ public class WscTranslateContext
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
-	    DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-	    SOAPContext theContext = (SOAPContext) manager.context();
+        ContextManager cxman = new ContextManager();
+        Context[] contexts = cxman.contexts();
+        for (int i = 0; i < contexts.length; i++)
+        {
+            SOAPContext theContext = (SOAPContext)contexts[i];
+            // this fails because the context toString method gets a NPE -- need a better test
+            System.out.println("" + i + " " + theContext);
 
-	    System.out.println(theContext);
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        org.w3c.dom.Document doc = builder.newDocument();
-        org.w3c.dom.Element ctx = doc.createElement("Context-test");
-        final Element context = ((SOAPContext)theContext).serialiseToElement(ctx) ;
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document doc = builder.newDocument();
+            org.w3c.dom.Element ctx = doc.createElement("Context-test");
+            final Element context = ((SOAPContext)theContext).serialiseToElement(ctx) ;
         
-        org.w3c.dom.Element wscCtx = translate(context);
+            org.w3c.dom.Element wscCtx = translate(context);
 	    
-	    System.out.println("\nNow got "+DomUtil.nodeAsString(wscCtx));
-
+            System.out.println("\nNow got "+DomUtil.nodeAsString(wscCtx));
+        }
+        
 	    ua.cancel();
 	}
 	catch (Exception ex)

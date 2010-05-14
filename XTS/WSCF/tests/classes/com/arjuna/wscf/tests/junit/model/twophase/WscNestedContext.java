@@ -32,8 +32,8 @@
 package com.arjuna.wscf.tests.junit.model.twophase;
 
 import com.arjuna.mw.wsas.context.Context;
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
+import com.arjuna.mw.wsas.context.ContextManager;
+import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.wscf.tests.WSCFTestUtils;
@@ -73,22 +73,37 @@ public class WscNestedContext
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
-	    DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-	    Context theContext = manager.context();
+        ContextManager cxman = new ContextManager();
+        Context[] contexts = cxman.contexts();
+        for (int i = 0; i < contexts.length; i++)
+        {
+            SOAPContext theContext = (SOAPContext)contexts[i];
 
-	    System.out.println("Context: " + theContext);
+            // this fails because the context toString method gets a NPE -- need a better test
+            System.out.println("Context: " + theContext);
+        }
 	    
 	    ua.cancel();
 
         System.out.println("Cancelled");
 
-        System.out.println("Context: " + theContext);
+        for (int i = 0; i < contexts.length; i++)
+        {
+            SOAPContext theContext = (SOAPContext)contexts[i];
+
+            System.out.println("Context: " + theContext);
+        }
 
 	    ua.cancel();
 
         System.out.println("Cancelled");
 
-        System.out.println("Context: " + theContext);
+        for (int i = 0; i < contexts.length; i++)
+        {
+            SOAPContext theContext = (SOAPContext)contexts[i];
+
+            System.out.println("Context: " + theContext);
+        }
 
 	    ua.cancel();
 

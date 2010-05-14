@@ -31,8 +31,6 @@
 
 package com.arjuna.mwlabs.wst.at.local;
 
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
@@ -113,8 +111,7 @@ public class LocalContextFactoryImple implements ContextFactory
 
 				_coordManager.begin();
 
-				DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-				ArjunaContextImple arjunaContext = (ArjunaContextImple)manager.context();
+                final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
 
                 final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
                 final String registrationCoordinatorURI = soapRegistry.getServiceURI(CoordinationConstants.SERVICE_REGISTRATION_COORDINATOR) ;

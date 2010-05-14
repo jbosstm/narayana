@@ -39,8 +39,6 @@ import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
 import com.arjuna.mw.wsas.activity.HLS;
 import com.arjuna.mw.wsas.context.Context;
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mwlabs.wsas.util.XMLUtils;
