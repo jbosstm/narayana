@@ -37,7 +37,6 @@ import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.exceptions.UnknownProtocolImplementationException;
 import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf.utils.CoordinationXML;
-import com.arjuna.mwlabs.wscf11.protocols.Initializer;
 import com.arjuna.mwlabs.wscf.protocols.ProtocolEntry;
 import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
 
