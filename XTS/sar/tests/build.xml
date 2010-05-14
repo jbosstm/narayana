@@ -38,16 +38,17 @@
   <!-- build and install the XTS Test Service Jar                         -->
   <!-- ================================================================== -->
 
-  <property name="src.dir" value="src"/>
-  <property name="dd.dir" value="dd"/>
-  <property name="wsdl.dir" value="${dd.dir}/wsdl"/>
-  <property name="meta.inf.dir" value="dd/META-INF"/>
-  <property name="web.inf.dir" value="dd/WEB-INF"/>
-  <property name="build.dir" value="build"/>
-  <property name="build.classes.dir" value="${build.dir}/classes"/>
-  <property name="build.meta.inf.dir" value="${build.dir}/META-INF"/>
-  <property name="build.lib.dir" value="${build.dir}/lib"/>
-  <property name="build.webapps.dir" value="${build.dir}/webapps"/>
+  <property name="root.dir" location="../.."/>
+  <property name="jbossts.dir" location="${root.dir}/.."/>
+  <property name="src.dir" location="src"/>
+  <property name="dd.dir" location="dd"/>
+  <property name="wsdl.dir" location="${dd.dir}/wsdl"/>
+  <property name="meta.inf.dir" location="dd/META-INF"/>
+  <property name="web.inf.dir" location="dd/WEB-INF"/>
+  <property name="build.dir" location="build"/>
+  <property name="build.classes.dir" location="${build.dir}/classes"/>
+  <property name="build.meta.inf.dir" location="${build.dir}/META-INF"/>
+  <property name="build.webapps.dir" location="${build.dir}/webapps"/>
 
     <!-- the directory in which XTS resides -->
   <property name="xts.home" value="../../xts-install"/>
@@ -56,11 +57,9 @@
   <!-- the list of jars containing the XTS API classes -->
   <property name="xts.lib.jars" value="jbossxts-api.jar"/>
 
-  <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
-  <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-client.jar stax-api.jar
-            jbossws-native-core.jar jbossws-common.jar jboss-jaxws.jar jboss-logging-spi.jar"/>
-    <property name="jboss.common.lib.dir" location="${jbossas.home}/common/lib"/>
-    <property name="jboss.common.lib.jars" value="jboss-servlet-api_3.0_spec.jar"/>
+  <property name="jbossts.build.extlib.dir" location="${jbossts.dir}/build/extlib"/>
+  <property name="jbossts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar stax-api.jar
+            jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar jboss-servlet-api_3.0_spec.jar"/>
 
   <target name="init">
     <delete dir="${build.dir}"/>
@@ -83,8 +82,7 @@
     <javac srcdir="${src.dir}" destdir="${build.classes.dir}" debug="yes">
         <classpath>
             <fileset dir="${xts.lib.dir}" includes="${xts.lib.jars}"/>
-            <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
-            <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${jbossts.build.extlib.jars}"/>
         </classpath>
     </javac>
   </target>
