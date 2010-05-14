@@ -1,0 +1,89 @@
+<project default="report">
+    <property name="root.dir" location=".."/>
+
+    <property name="xts.dir" location="${root.dir}/XTS"/>
+
+    <property name="wsas.src.dir" location="${xts.dir}/WSAS/classes"/>
+    <property name="wscf.src.dir" location="${xts.dir}/WSCF/classes"/>
+    <property name="wscf11.src.dir" location="${xts.dir}/WSCF/classes11"/>
+    <property name="wscf10.src.dir" location="${xts.dir}/WSCF/classes10"/>
+    <property name="ws-c.src.dir" location="${xts.dir}/WS-C/dev/src"/>
+    <property name="ws-c11.src.dir" location="${xts.dir}/WS-C/dev/src11"/>
+    <property name="ws-c10.src.dir" location="${xts.dir}/WS-C/dev/src10"/>
+    <property name="ws-t.src.dir" location="${xts.dir}/WS-T/dev/src"/>
+    <property name="ws-t11.src.dir" location="${xts.dir}/WS-T/dev/src11"/>
+    <property name="ws-t10.src.dir" location="${xts.dir}/WS-T/dev/src10"/>
+    <property name="wstx.src.dir" location="${xts.dir}/WSTX/classes"/>
+    <property name="wstx11.src.dir" location="${xts.dir}/WSTX/classes11"/>
+    <property name="wstx10.src.dir" location="${xts.dir}/WSTX/classes10"/>
+
+    <property name="emma.dir" location="${root.dir}/build/extlib"/>
+
+    <property name="emma.report.dir" location="${xts.dir}/emma-report"/>
+
+    <path id="emma.lib" >
+      <pathelement location="${emma.dir}/emma.jar" />
+      <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
+
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+
+    <target name="report-both">
+        <mkdir dir="${emma.report.dir}"/>
+        <emma>
+            <report>
+                <fileset dir="${emma.report.dir}" >
+                    <include name="coverage.ec"/>
+                    <include name="metadata.emma"/>
+                </fileset>
+                <sourcepath>
+                    <dirset dir="${wsas.src.dir}"/>
+                    <dirset dir="${wscf.src.dir}"/>
+                    <dirset dir="${wscf11.src.dir}"/>
+                    <dirset dir="${wscf10.src.dir}"/>
+                    <dirset dir="${ws-c.src.dir}"/>
+                    <dirset dir="${ws-c11.src.dir}"/>
+                    <dirset dir="${ws-c10.src.dir}"/>
+                    <dirset dir="${ws-t.src.dir}"/>
+                    <dirset dir="${ws-t11.src.dir}"/>
+                    <dirset dir="${ws-t10.src.dir}"/>
+                    <dirset dir="${wstx.src.dir}"/>
+                    <dirset dir="${wstx11.src.dir}"/>
+                    <dirset dir="${wstx10.src.dir}"/>
+                </sourcepath>
+                <txt outfile="${emma.report.dir}/coverage.txt" />
+                <html outfile="${emma.report.dir}/coverage.html" />
+            </report>
+        </emma>
+    </target>
+
+    <target name="report11">
+        <emma>
+            <report>
+                <fileset dir="${emma.report.dir}" >
+                    <include name="coverage.ec"/>
+                    <include name="metadata.emma"/>
+                </fileset>
+                <sourcepath>
+                    <dirset dir="${wsas.src.dir}"/>
+                    <dirset dir="${wscf.src.dir}"/>
+                    <dirset dir="${wscf11.src.dir}"/>
+                    <dirset dir="${wscf10.src.dir}"/>
+                    <dirset dir="${ws-c.src.dir}"/>
+                    <dirset dir="${ws-c11.src.dir}"/>
+                    <dirset dir="${ws-c10.src.dir}"/>
+                    <dirset dir="${ws-t.src.dir}"/>
+                    <dirset dir="${ws-t11.src.dir}"/>
+                    <dirset dir="${ws-t10.src.dir}"/>
+                    <dirset dir="${wstx.src.dir}"/>
+                    <dirset dir="${wstx11.src.dir}"/>
+                    <dirset dir="${wstx10.src.dir}"/>
+                </sourcepath>
+                <txt outfile="${emma.report.dir}/coverage.txt" />
+                <html outfile="${emma.report.dir}/coverage.html" />
+            </report>
+        </emma>
+    </target>
+
+    <target name="report" depends="report11"/>
+</project>

@@ -57,8 +57,13 @@
         <mkdir dir="${xts.installationdirectory}"/>
     </target>
 
+    <target name="init.emma.report.dir" if="@{includeemma}">
+        <mkdir dir="${emma.report.dir}"/>
+    </target>
+
 	<!-- Project targets - must add all module names to each target -->
-    <target name="build-projects" depends="init, init.install.dir, wsas.build,
+    <target name="build-projects" depends="init, init.install.dir,
+					    init.emma.report.dir, wsas.build,
                                             ws-c.build, wscf.build,
                                             ws-t.build, wstx.build,
                                             recovery.build, htdocs">

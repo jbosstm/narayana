@@ -112,6 +112,9 @@
     <!-- directory that contains emma.jar and emma_ant.jar: -->
     <property name="emma.dir" value="${jbossts.build.extlib.dir}" />
 
+    <!-- directory where emma metadata should go -->
+    <property name="emma.report.dir" value="${root.dir}/emma-report" />
+
     <path id="emma.lib" >
         <pathelement location="${emma.dir}/emma.jar" />
         <pathelement location="${emma.dir}/emma_ant.jar" />
@@ -159,7 +162,7 @@
             
         <emma enabled="@{includeemma}">
             <instr mode="overwrite"
-                   metadatafile="${xts.install.dir}/metadata.emma"
+                   metadatafile="${emma.report.dir}/metadata.emma"
                    merge="true"
                    filter="@{emmafilter}">
                 <instrpath>
