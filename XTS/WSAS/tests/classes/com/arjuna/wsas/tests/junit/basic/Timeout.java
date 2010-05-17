@@ -57,6 +57,7 @@ public class Timeout
             throws Exception
     {
 	    UserActivity ua = UserActivityFactory.userActivity();
+        int timeout = ua.getTimeout();
 	try {
 	    ua.setTimeout(1);
 
@@ -73,6 +74,7 @@ public class Timeout
         }
 		System.out.println("Activity status: "+ua.status());
     } finally {
+        ua.setTimeout(timeout);
         WSASTestUtils.cleanup(ua);
     }
     }
