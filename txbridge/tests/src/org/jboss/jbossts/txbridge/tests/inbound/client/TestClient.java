@@ -20,6 +20,7 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.client;
 
+import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.wst.TransactionRolledBackException;
@@ -68,7 +69,6 @@ public class TestClient extends HttpServlet
             Service service = Service.create(wsdlLocation, serviceName);
             testService = service.getPort(TestService.class);
 
-            // we could have used @HandlerChain but it's nice to show a bit of variety...
             BindingProvider bindingProvider = (BindingProvider)testService;
             List<Handler> handlers = new ArrayList<Handler>(1);
             handlers.add(new JaxWSHeaderContextProcessor());
@@ -84,14 +84,9 @@ public class TestClient extends HttpServlet
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String outcome = request.getParameter("outcome");
-        String failInBeforeCompletion = request.getParameter("failInBeforeCompletion");
-        String prepareXAErrorCode = request.getParameter("prepareXAErrorCode");
-        
-
         try
         {
-            com.arjuna.mw.wst11.UserTransaction ut = UserTransactionFactory.userTransaction();
+            UserTransaction ut = UserTransactionFactory.userTransaction();
 
             log.info("starting the transaction...");
 
@@ -101,28 +96,11 @@ public class TestClient extends HttpServlet
 
             log.info("calling business Web Services...");
 
-            //////////////////////
+            testService.doNothing();
 
-            if("true".equals(failInBeforeCompletion)) {
-                testService.arrangeBeforeCompletionFailure();
-            }
+            log.info("terminating the transaction...");
 
-            if(prepareXAErrorCode != null) {
-                testService.arrangeXAResourcePrepareXAException(Integer.parseInt(prepareXAErrorCode));
-            }
-
-            testService.doTestResourceEnlistment();
-            testService.doNothing();            
-
-            //////////////////////
-
-            log.info("calling "+outcome+" on the transaction...");
-
-            if("commit".equals(outcome)) {
-                ut.commit();
-            } else {
-                ut.rollback();
-            }
+            terminateTransaction(ut, false);
         }
         catch (final TransactionRolledBackException tre)
         {
@@ -133,8 +111,20 @@ public class TestClient extends HttpServlet
             log.info("problem: ", e);
         }
 
+        response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
-        out.println("done");
+        out.println("finished");
         out.close();
+    }
+
+    private void terminateTransaction(UserTransaction userTransaction, boolean shouldCommit) throws Exception
+    {
+        log.info("shouldCommit="+shouldCommit);
+
+        if(shouldCommit) {
+            userTransaction.commit();
+        } else {
+            userTransaction.rollback();
+        }
     }
 }

@@ -30,22 +30,20 @@
 
 	<property name="src" location="src"/>
     <property name="dd" location="dd"/>
-	<property name="build" location="build"/>
+	<property name="build.dir" location="build"/>
 
 	<path id="build-prereqs">
         <fileset dir="../../build/extlib">
-
-            <!-- TODO remove old names -->
-            <include name="servlet-api.jar"/>
-            <include name="jta.jar"/>
-            <include name="jboss-ejb-api.jar"/>            
-
             <include name="jboss-servlet-api_3.0_spec.jar"/>
             <include name="log4j.jar"/>
             <include name="jboss-transaction-api_1.1_spec.jar"/>
             <include name="hibernate-jpa-2.0-api.jar"/>
             <include name="jboss-ejb-api_3.1_spec.jar"/>
             <include name="junit.jar"/>
+            <include name="commons-httpclient.jar"/>
+            <include name="commons-logging.jar"/>
+            <include name="commons-codec.jar"/>
+            <!--<include name="byteman.jar"/>-->
         </fileset>
 
         <fileset dir="${jbossts.home}/install/lib">
@@ -53,49 +51,42 @@
             <include name="jbossjts.jar"/>
         </fileset>
 
-        <fileset dir="${jbossts.home}/XTS/xts-install/lib">
-            <include  name="jbossxts-api.jar"/>
+        <fileset dir="${jbossts.home}/XTS/xts-install">
+            <include name="lib/jbossxts-api.jar"/>
+            <include name="tests/localjunit.jar"/>
         </fileset>
+
+        <pathelement location="../build/txbridge.jar"/>
+
+        <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar"/>        
+        <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar"/>
 
 	</path>
 
 	<target name="clean" description="clean up">
-		<delete dir="${build}"/>
+		<delete dir="${build.dir}"/>
 	</target>
 
 	<target name="init">
 		<tstamp/>
-		<mkdir dir="${build}"/>
+		<mkdir dir="${build.dir}"/>
 	</target>
 
 	<target name="compile" depends="init"
 			description="compile the source ">
-		<mkdir dir="${build}/classes"/>
-		<javac srcdir="${src}" destdir="${build}/classes" debug="true" includeantruntime="false">
+		<mkdir dir="${build.dir}/classes"/>
+		<javac srcdir="${src}" destdir="${build.dir}/classes" debug="true" includeantruntime="false">
 			<classpath refid="build-prereqs"/>
 		</javac>
 	</target>
-
-    <target name="run" depends="compile">
-        <java classname="org.jboss.jbossts.txbridge.tests.Scratch" fork="true">
-            <classpath>
-                <pathelement location="${build}/classes"/>
-                <path refid="build-prereqs"/>
-            </classpath>
-
-            <jvmarg value="-Xdebug" />
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
-
-        </java>
-    </target>
 
     <target name="dist" depends="compile"
 			description="generate the distribution">
 
         <copy file="dd/inbound/jaxws-handlers-server.xml"
-              todir="${build}/classes/org/jboss/jbossts/txbridge/tests/inbound/service"/>
-        <jar destfile="${build}/txbridge-inbound-tests-service.jar">
-			<fileset dir="${build}/classes">
+              todir="${build.dir}/classes/org/jboss/jbossts/txbridge/tests/inbound/service"/>
+        <jar destfile="${build.dir}/txbridge-inbound-tests-service.jar">
+			<fileset dir="${build.dir}/classes">
 				<include name="org/jboss/jbossts/txbridge/tests/inbound/service/*"/>
                 <include name="org/jboss/jbossts/txbridge/tests/inbound/utility/*"/>
 			</fileset>
@@ -104,30 +95,92 @@
             </metainf>
 		</jar>
 
-        <war warfile="${build}/txbridge-inbound-tests-client.war" webxml="dd/inbound/web.xml">
-			<classes dir="${build}/classes">
+        <war warfile="${build.dir}/txbridge-inbound-tests-client.war" webxml="dd/inbound/web.xml">
+			<classes dir="${build.dir}/classes">
                 <include name="org/jboss/jbossts/txbridge/tests/inbound/client/*"/>
 			</classes>
 		</war>
 
         <copy file="dd/outbound/jaxws-handlers-server.xml"
-              todir="${build}/classes/org/jboss/jbossts/txbridge/tests/outbound/service"/>
-        <war warfile="${build}/txbridge-outbound-tests-service.war" webxml="dd/outbound/service-web.xml">
-			<classes dir="${build}/classes">
+              todir="${build.dir}/classes/org/jboss/jbossts/txbridge/tests/outbound/service"/>
+        <war warfile="${build.dir}/txbridge-outbound-tests-service.war" webxml="dd/outbound/service-web.xml">
+			<classes dir="${build.dir}/classes">
 				<include name="org/jboss/jbossts/txbridge/tests/outbound/service/*"/>
                 <include name="org/jboss/jbossts/txbridge/tests/outbound/utility/*"/>
 			</classes>
 		</war>
 
-        <copy file="dd/outbound/jaxws-handlers-client.xml"
-              todir="${build}/classes/org/jboss/jbossts/txbridge/tests/outbound/client"/>
-        <war warfile="${build}/txbridge-outbound-tests-client.war" webxml="${dd}/outbound/web.xml">
-			<classes dir="${build}/classes">
+        <war warfile="${build.dir}/txbridge-outbound-tests-client.war" webxml="${dd}/outbound/web.xml">
+			<classes dir="${build.dir}/classes">
                 <include name="org/jboss/jbossts/txbridge/tests/outbound/client/*"/>
 			</classes>
 		</war>
 
+        <jar destfile="${build.dir}/byteman-test-server.jar">
+            <fileset dir="${build.dir}/classes">
+                <include name="org/jboss/jbossts/txbridge/tests/inbound/junit/*.class"/>
+            </fileset>
+        </jar>
+
 	</target>
+
+    <!-- Note: running tests requires JBossAS to be started and the relevant artifacts
+        (XTS, txbridge, test -client and -service) to be deployted in it. Additionally,
+        the AS needs to be running with byteman installed e.g.
+
+        export JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Xmx1024m -javaagent:/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar=port:9091,listener:true -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true"
+    -->
+
+
+    <target name="run-inbound-tests" depends="compile">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="src" includes="**/inbound/**/BasicTests.java">
+                </fileset>
+            </tests>
+        </run.tests.macro>
+    </target>
+
+    <target name="run-outbound-tests" depends="compile">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="src" includes="**/outbound/**/BasicTests.java">
+                </fileset>
+            </tests>
+        </run.tests.macro>
+    </target>
+
+
+    <macrodef name="run.tests.macro">
+
+        <attribute name="showoutput" default="false"/>
+        <element name="tests"/>
+        <element name="additional.classpath" optional="true"/>
+        <element name="additional.jvmargs" optional="true"/>
+
+        <sequential>
+
+        <mkdir dir="${build.dir}/testresults"/>
+        <junit printsummary="yes" fork="yes" dir="${build.dir}" showoutput="@{showoutput}" includeantruntime="true">
+            <formatter type="plain"/>
+            <classpath>
+                <path refid="build-prereqs"/>
+                <pathelement location="${build.dir}/classes"/>
+                <additional.classpath/>
+            </classpath>
+
+            <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
+                <tests/>
+            </batchtest>
+
+            <jvmarg value="-Djava.rmi.server.codebase=file://build/classes/"/>
+            <!--<jvmarg value="-Xdebug"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>-->
+	        <additional.jvmargs/>
+        </junit>
+        </sequential>
+
+    </macrodef>
 
     <!-- ##################################################################################### -->
 
@@ -135,27 +188,27 @@
     <property name="jbossas.server" value="default"/>
 
     <target name="deploy-inbound-service" depends="dist" description="deploy EJB to JBossAS">
-        <copy file="${build}/txbridge-inbound-tests-service.jar"
+        <copy file="${build.dir}/txbridge-inbound-tests-service.jar"
               todir="${jbossas.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <!-- http://localhost:8080/txbridge-inbound-tests-client/testclient -->
     <target name="deploy-inbound-client" depends="dist" description="deploy Servlet to JBossAS">
-        <copy file="${build}/txbridge-inbound-tests-client.war"
+        <copy file="${build.dir}/txbridge-inbound-tests-client.war"
               todir="${jbossas.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <target name="deploy-outbound-service" depends="dist" description="deploy WS to JBossAS">
-        <copy file="${build}/txbridge-outbound-tests-service.war"
+        <copy file="${build.dir}/txbridge-outbound-tests-service.war"
               todir="${jbossas.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <!-- http://localhost:8080/txbridge-outbound-tests-client/testclient -->
     <target name="deploy-outbound-client" depends="dist" description="deploy Servlet to JBossAS">
-        <copy file="${build}/txbridge-outbound-tests-client.war"
+        <copy file="${build.dir}/txbridge-outbound-tests-client.war"
               todir="${jbossas.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>

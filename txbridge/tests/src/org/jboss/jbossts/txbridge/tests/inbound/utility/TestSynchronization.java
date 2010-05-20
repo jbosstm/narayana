@@ -33,53 +33,13 @@ public class TestSynchronization implements Synchronization
 {
     private static Logger log = Logger.getLogger(TestSynchronization.class);
 
-    private boolean beforeCompletionDone = false;
-    private boolean afterCompletionDone = false;
-
-    private boolean failInBeforeCompletion = false;
-
-    public boolean isBeforeCompletionDone()
+    public void beforeCompletion()
     {
-        return beforeCompletionDone;
-    }
-
-    public boolean isAfterCompletionDone()
-    {
-        return afterCompletionDone;
-    }
-
-    public boolean isFailInBeforeCompletion()
-    {
-        return failInBeforeCompletion;
-    }
-
-    public void setFailInBeforeCompletion(boolean failInBeforeCompletion)
-    {
-        this.failInBeforeCompletion = failInBeforeCompletion;
-    }
-
-    public void beforeCompletion() {
-        if(beforeCompletionDone) {
-            log.trace("beforeCompletion called more than once");
-            throw new RuntimeException("beforeCompletion called more than once");
-        }
-
-        beforeCompletionDone = true;
         log.trace("TestSynchronization.beforeCompletion()");
-
-        if(failInBeforeCompletion) {
-            log.trace("failing in beforeCompletion");
-            throw new RuntimeException("failed in beforeCompletion");
-        }
     }
 
-    public void afterCompletion(int i) {
-        if(afterCompletionDone) {
-            log.trace("afterCompletion called more than once");
-            throw new RuntimeException("afterCompletion called more than once");
-        }
-
-        afterCompletionDone = true;
+    public void afterCompletion(int i)
+    {
         log.trace("TestSynchronization.afterCompletion("+i+")");
     }
 }

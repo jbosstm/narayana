@@ -24,8 +24,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
-import com.arjuna.wst.Durable2PCParticipant;
-import com.arjuna.wst.Volatile2PCParticipant;
 
 import org.apache.log4j.Logger;
 
@@ -50,24 +48,32 @@ public class TestServiceImpl
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
 
     @WebMethod
-    public void doStuff()
+    public void doNothing()
     {
-        log.trace("doStuff()");
+        log.trace("doNothing()");
+    }
 
-        String transactionId = UserTransactionFactory.userTransaction().toString();
-
+    public void enlistVolatileParticipant(int count) {
+        TransactionManager tm = TransactionManagerFactory.transactionManager();
         try {
-            TransactionManager tm = TransactionManagerFactory.transactionManager();
-
-            Volatile2PCParticipant volatileParticipant = new TestVolatileParticipant();
-            tm.enlistForVolatileTwoPhase(volatileParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Volatile:" + new Uid().toString());
-
-            Durable2PCParticipant durableParticipant = new TestDurableParticipant();
-            tm.enlistForDurableTwoPhase(durableParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Durable:" + new Uid().toString());
-
+            for(int i = 0; i < count; i++) {
+                TestVolatileParticipant volatileParticipant = new TestVolatileParticipant();
+                tm.enlistForVolatileTwoPhase(volatileParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Volatile:" + new Uid().toString());
+            }
         } catch(Exception e) {
-            log.error("could not enlist participant", e);
+            log.error("could not enlist", e);
         }
+    }
 
+    public void enlistDurableParticipant(int count) {
+        TransactionManager tm = TransactionManagerFactory.transactionManager();
+        try {
+            for(int i = 0; i < count; i++) {
+                TestDurableParticipant durableParticipant = new TestDurableParticipant();
+                tm.enlistForDurableTwoPhase(durableParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Durable:" + new Uid().toString());
+            }
+        } catch(Exception e) {
+            log.error("could not enlist", e);
+        }
     }
 }

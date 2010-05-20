@@ -27,11 +27,5 @@ package org.jboss.jbossts.txbridge.tests.inbound.service;
  */
 public interface TestService
 {
-    public void doTestResourceEnlistment();
-
     public void doNothing();
-
-    public void arrangeBeforeCompletionFailure();
-
-    public void arrangeXAResourcePrepareXAException(int xaErrorCode);
 }

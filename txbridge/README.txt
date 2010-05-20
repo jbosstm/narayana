@@ -39,3 +39,8 @@ ant deploy-service
 ant deploy-client
 
 See docs/TransactionBridgingGuide for further details on the demo app.
+
+Testing:
+--------
+
+See tests/README.txt

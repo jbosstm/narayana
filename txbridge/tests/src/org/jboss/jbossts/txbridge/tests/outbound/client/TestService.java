@@ -32,8 +32,15 @@ import javax.jws.soap.SOAPBinding;
  */
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-@HandlerChain(file = "jaxws-handlers-client.xml") // relative path from the class file
 public interface TestService
 {
-    public void doStuff();
+    public void doTestResourceEnlistment();
+
+    public void doNothing();
+
+    public void arrangeBeforeCompletionFailure();
+
+    public void resetState();
+
+    public void arrangeDurableParticipantPrepareOutcome(String outcome);
 }

@@ -34,6 +34,8 @@ public class TestDurableParticipant implements Durable2PCParticipant, Serializab
 {
     private static Logger log = Logger.getLogger(TestDurableParticipant.class);
 
+    private String prepareOutcome = "prepared";
+
     /**
      * Perform any work necessary to allow it to either commit or rollback
      * the work performed by the Web service under the scope of the
@@ -47,7 +49,16 @@ public class TestDurableParticipant implements Durable2PCParticipant, Serializab
     public Vote prepare() throws WrongStateException, SystemException
     {
         log.trace("prepare()");
-        return new Prepared();
+
+        if("aborted".equals(prepareOutcome)) {
+            log.trace("prepare returning Aborted");
+            return new Aborted();
+        } else if("readonly".equals(prepareOutcome)) {
+            log.trace("prepare returning ReadOnly");
+            return new ReadOnly();
+        } else {
+            return new Prepared();
+        }
     }
 
     /**

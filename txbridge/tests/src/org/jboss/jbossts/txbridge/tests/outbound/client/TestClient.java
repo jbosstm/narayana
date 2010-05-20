@@ -21,7 +21,9 @@
 package org.jboss.jbossts.txbridge.tests.outbound.client;
 
 import com.arjuna.ats.jta.exceptions.RollbackException;
+import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,10 +35,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.Handler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Servlet which includes test methods for exercising the txbridge.
@@ -69,6 +75,12 @@ public class TestClient extends HttpServlet
             Service service = Service.create(wsdlLocation, serviceName);
             testService = service.getPort(TestService.class);
 
+            BindingProvider bindingProvider = (BindingProvider)testService;
+            List<Handler> handlers = new ArrayList<Handler>(2);
+            handlers.add(new JaxWSTxOutboundBridgeHandler());
+            handlers.add(new JaxWSHeaderContextProcessor());
+            bindingProvider.getBinding().setHandlerChain(handlers);
+
             context = config.getServletContext();
         }
         catch(Exception e)
@@ -79,10 +91,6 @@ public class TestClient extends HttpServlet
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String param = request.getParameter("param");
-
-        log.info("param: "+param);
-
         try
         {
             log.info("starting the transaction...");
@@ -93,15 +101,11 @@ public class TestClient extends HttpServlet
 
             log.info("calling business Web Services...");
 
-            //////////////////////
+            testService.doNothing();
 
-            testService.doStuff();
+            log.info("terminating the transaction...");
 
-            //////////////////////
-
-            log.info("calling commit on the transaction...");
-
-            userTransaction.commit();
+            terminateTransaction(false);
         }
         catch (final RollbackException re)
         {
@@ -112,8 +116,20 @@ public class TestClient extends HttpServlet
             log.info("problem: ", e);
         }
 
+        response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
-        out.println("done");
+        out.println("finished");
         out.close();
+    }
+
+    private void terminateTransaction(boolean shouldCommit) throws Exception
+    {
+        log.info("shouldCommit="+shouldCommit);
+
+        if(shouldCommit) {
+            userTransaction.commit();
+        } else {
+            userTransaction.rollback();
+        }
     }
 }

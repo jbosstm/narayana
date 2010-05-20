@@ -40,38 +40,6 @@ public class TestXAResource implements XAResource
     private Xid currentXid;
 
     private int prepareReturnValue = XAResource.XA_OK;
-    private XAException prepareException = null;
-    private XAException commitException = null;
-
-    public int getPrepareReturnValue()
-    {
-        return prepareReturnValue;
-    }
-
-    public void setPrepareReturnValue(int prepareReturnValue)
-    {
-        this.prepareReturnValue = prepareReturnValue;
-    }
-
-    public XAException getPrepareException()
-    {
-        return prepareException;
-    }
-
-    public void setPrepareException(XAException prepareException)
-    {
-        this.prepareException = prepareException;
-    }
-
-    public XAException getCommitException()
-    {
-        return commitException;
-    }
-
-    public void setCommitException(XAException commitException)
-    {
-        this.commitException = commitException;
-    }
 
     public void commit(Xid xid, boolean b) throws XAException
     {
@@ -80,19 +48,17 @@ public class TestXAResource implements XAResource
             log.trace("TestXAResource.commit - wrong Xid!");
         }
 
-        if(commitException != null) {
-            throw commitException;
-        }
-
         currentXid = null;
         TestXAResourceRecoveryHelper.getInstance().removeLog(xid);
     }
 
-    public void end(Xid xid, int i) throws XAException {
+    public void end(Xid xid, int i) throws XAException
+    {
         log.trace("TestXAResource.end(Xid="+xid+", b="+i+")");
     }
 
-    public void forget(Xid xid) throws XAException {
+    public void forget(Xid xid) throws XAException
+    {
         log.trace("TestXAResource.forget(Xid="+xid+")");
         if(!xid.equals(currentXid)) {
             log.trace("TestXAResource.forget - wrong Xid!");
@@ -100,7 +66,8 @@ public class TestXAResource implements XAResource
         currentXid = null;
     }
 
-    public int getTransactionTimeout() throws XAException {
+    public int getTransactionTimeout() throws XAException
+    {
         log.trace("TestXAResource.getTransactionTimeout() [returning "+txTimeout+"]");
         return txTimeout;
     }
@@ -110,13 +77,9 @@ public class TestXAResource implements XAResource
         return false;
     }
 
-    public int prepare(Xid xid) throws XAException {
+    public int prepare(Xid xid) throws XAException
+    {
         log.trace("TestXAResource.prepare(Xid="+xid+") returning "+prepareReturnValue);
-
-        if(prepareException != null) {
-            log.trace("prepare throwing XAException "+prepareException.errorCode);
-            throw prepareException;
-        }
 
         if(prepareReturnValue == XA_OK) {
             TestXAResourceRecoveryHelper.getInstance().logPrepared(xid);
@@ -124,12 +87,14 @@ public class TestXAResource implements XAResource
         return prepareReturnValue;
     }
 
-    public Xid[] recover(int i) throws XAException {
+    public Xid[] recover(int i) throws XAException
+    {
         log.trace("TestXAResource.recover(i="+i+")");
         return new Xid[0];
     }
 
-    public void rollback(Xid xid) throws XAException {
+    public void rollback(Xid xid) throws XAException
+    {
         log.trace("TestXAResource.rollback(Xid="+xid+")");
         if(!xid.equals(currentXid)) {
             log.trace("TestXAResource.rollback - wrong Xid!");
@@ -138,13 +103,15 @@ public class TestXAResource implements XAResource
         TestXAResourceRecoveryHelper.getInstance().removeLog(xid);
     }
 
-    public boolean setTransactionTimeout(int i) throws XAException {
+    public boolean setTransactionTimeout(int i) throws XAException
+    {
         log.trace("TestXAResource.setTransactionTimeout(i="+i+")");
         txTimeout= i;
         return true;
     }
 
-    public void start(Xid xid, int i) throws XAException {
+    public void start(Xid xid, int i) throws XAException
+    {
         log.trace("TestXAResource.start(Xid="+xid+", i="+i+")");
         if(currentXid != null) {
             log.trace("TestXAResource.start - wrong Xid!");
@@ -152,7 +119,8 @@ public class TestXAResource implements XAResource
         currentXid = xid;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return new String("TestXAResourcee("+txTimeout+", "+currentXid+")");
     }
 }

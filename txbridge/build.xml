@@ -28,8 +28,22 @@
 
     <property name="jbossts.home" location=".."/>
 
-	<property name="src" location="src"/>
-	<property name="build" location="build"/>
+    <property name="global.ext.lib.dir" value="${jbossts.home}/build/extlib"/>
+
+    <!-- remember to turn emma off for prdn builds or it will be a runtime dep! -->
+    <property name="emma.enabled" value="false"/>
+
+    <!-- directory that contains emma.jar and emma_ant.jar: -->
+    <property name="emma.dir" value="${global.ext.lib.dir}" />
+
+    <path id="emma.lib" >
+        <pathelement location="${emma.dir}/emma.jar" />
+        <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+
+	<property name="src.dir" location="src"/>
+	<property name="build.dir" location="build"/>
 
 	<path id="build-prereqs">
         <fileset dir="${jbossts.home}/install/lib">
@@ -37,7 +51,7 @@
             <include name="jbossjts.jar"/>
         </fileset>
 
-        <fileset dir="../build/extlib">
+        <fileset dir="${global.ext.lib.dir}">
             <include name="log4j.jar"/>
             <include name="jboss-transaction-api_1.1_spec.jar"/>
             <include name="jboss-connector-api_1.5_spec.jar"/>
@@ -49,26 +63,39 @@
 	</path>
 
 	<target name="clean" description="clean up">
-		<delete dir="${build}"/>
+		<delete dir="${build.dir}"/>
 	</target>
 
 	<target name="init">
 		<tstamp/>
-		<mkdir dir="${build}"/>
+		<mkdir dir="${build.dir}"/>
 	</target>
 
 	<target name="compile" depends="init"
 			description="compile the source ">
-		<mkdir dir="${build}/classes"/>
-		<javac srcdir="${src}" destdir="${build}/classes" debug="true" includeantruntime="false">
+
+		<mkdir dir="${build.dir}/classes"/>
+		<javac srcdir="${src.dir}" destdir="${build.dir}/classes" debug="true" includeantruntime="false">
 			<classpath refid="build-prereqs"/>
 		</javac>
+
+        <emma enabled="${emma.enabled}">
+            <instr mode="overwrite"
+                   metadatafile="${build.dir}/metadata.emma"
+                   merge="true"
+                   filter="">
+                <instrpath>
+                    <pathelement location="${build.dir}/classes"/>
+                </instrpath>
+            </instr>
+        </emma>
+
 	</target>
 
 	<target name="dist" depends="compile"
 			description="generate the distribution">
-		<jar jarfile="${build}/txbridge.jar">
-			<fileset dir="${build}/classes">
+		<jar jarfile="${build.dir}/txbridge.jar">
+			<fileset dir="${build.dir}/classes">
 				<include name="org/jboss/**"/>
 			</fileset>
             <fileset dir=".">
@@ -86,7 +113,7 @@
     <property name="jbossas.server" value="default"/>
 
     <target name="deploy" depends="dist" description="deploy to JBossAS">
-        <copy file="${build}/txbridge.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy/"/>
+        <copy file="${build.dir}/txbridge.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy/"/>
     </target>
 
     <target name="install-jts">
@@ -106,6 +133,28 @@
         <mkdir dir="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar"/>
         <unzip src="${jbossas.home}/docs/examples/transactions/jbossxts.sar"
                dest="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar"/>
+    </target>
+
+    <target name="install-emma">
+        <copy file="${global.ext.lib.dir}/emma.jar" todir="${jbossas.home}/common/lib"/>
+    </target>
+
+    <!-- file:///home/jhalli/IdeaProjects/jboss/jbossts_trunk/txbridge/build/emma/coverage.html -->
+    <target name="emma-report">
+        <emma enabled="true">
+            <report>
+                <fileset dir="${build.dir}" includes="metadata.emma"/>
+                <fileset dir="${jbossas.home}" includes="coverage.ec"/>
+                <sourcepath>
+                    <dirset dir="${src.dir}"/>
+                </sourcepath>
+                <txt outfile="${build.dir}/emma/coverage.txt" />
+                <html outfile="${build.dir}/emma/coverage.html" />
+                <sourcepath>
+                    <dirset dir="${src.dir}"/>
+                </sourcepath>
+            </report>
+        </emma>
     </target>
 
 </project>

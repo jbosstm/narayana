@@ -52,14 +52,16 @@ public class TestXAResourceRecovered extends TestXAResource implements XAResourc
     }
 
     @Override
-    public Xid[] recover(int i) throws XAException {
+    public Xid[] recover(int i) throws XAException
+    {
         log.trace("TestXAResourceRecovered.recover(i="+i+")");
         
         return TestXAResourceRecoveryHelper.getInstance().recover();
     }
 
     @Override
-    public void forget(Xid xid) throws XAException {
+    public void forget(Xid xid) throws XAException
+    {
         log.trace("TestXAResource.forget(Xid="+xid+")");
 
         TestXAResourceRecoveryHelper.getInstance().removeLog(xid);

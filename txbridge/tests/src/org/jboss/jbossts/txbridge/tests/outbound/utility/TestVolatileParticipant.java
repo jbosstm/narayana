@@ -45,7 +45,8 @@ public class TestVolatileParticipant implements Volatile2PCParticipant
     public Vote prepare() throws WrongStateException, SystemException
     {
         log.trace("prepare()");
-        return new Prepared();
+
+        return new Prepared(); // or Aborted()
     }
 
     /**
