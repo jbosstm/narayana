@@ -118,9 +118,4 @@ public interface ObjectStoreEnvironmentBeanMBean
     long getPurgeTime();
 
     void setPurgeTime(long purgeTime);
-
-    boolean isJmxEnabled();
-
-    void setJmxEnabled(boolean enable);
-
 }

@@ -20,142 +20,141 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.util;
 
-import com.arjuna.ats.arjuna.tools.osb.mbean.common.BasicBean;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Constructor;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Simple wrapper for accessing the JMX server
  *
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1] - registering bean {0}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1] - registering bean {0}.
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2] - Instance already exists: {0}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2] - Instance already exists: {0}.
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3] - Error registrating {0} - {1}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3] - Error registrating {0} - {1}.
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4] - Try to unregister mbean with invalid name {0}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4] - Try to unregister mbean with invalid name {0}.
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5]
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5] - Unable to unregister bean {0} error: {1}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5] - Unable to unregister bean {0} error: {1}.
  * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6
- *          [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6] - Unable to unregister bean {0} error: {1}.
+ *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6] - Unable to unregister bean {0} error: {1}.
  */
 
 public class JMXServer
 {
-    private static MBeanServer server;
-    private static JMXServer agent = new JMXServer();
+	public static String JTS_INITIALISER_CNAME = "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ToolsInitialiser";
+	public static String AJT_RECORD_TYPE = "CosTransactions/XAResourceRecord";
+	public static String AJT_WRAPPER_TYPE = "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper";
+	public static String AJT_XAREC_TYPE = "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.XAResourceRecordBean";
 
-    public static JMXServer getAgent() { return agent; }
+	private static MBeanServer server;
+	private static JMXServer agent = new JMXServer();
+	public static JMXServer getAgent() { return agent; }
 
-    private List<BasicBean> registeredBeans = new ArrayList<BasicBean>();
+	public static boolean isJTS() {return getAgent().isJTS;}
 
-    public JMXServer()
-    {
-        Class<?> c1;
-        Class<?> c2;
+	private boolean isJTS;
 
-        try {
-            c1 = Class.forName("com.arjuna.ats.internal.jta.Implementations");
-            c1.getMethod("initialise").invoke(null);
-        } catch (Exception e) {
-        }
-
-        try {
-            c1 = Class.forName("com.arjuna.ats.internal.jts.Implementations");
-            c2 = Class.forName("com.arjuna.ats.internal.jta.Implementationsx"); // needed for XAResourceRecord
-
-            c1.getMethod("initialise").invoke(null);
-            c2.getMethod("initialise").invoke(null);
-        } catch (Exception e) {
-        }
-    }
-
-    public MBeanServer getServer()
-    {
-        if (server == null)
-        {
-            List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-
-            if (servers != null && servers.size() > 0)
-                server = servers.get(0);
-            else
-                server = ManagementFactory.getPlatformMBeanServer();
-
-            if (server == null)
-                server = MBeanServerFactory.createMBeanServer();
-        }
-
-        return server;
-    }
-
-    public ObjectInstance registerMBean(BasicBean bean)
-    {
-        ObjectInstance oi = null;
-
-        try {
-            if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1",
-                        new Object[] { bean.getObjectName() });
-            oi = getServer().registerMBean(bean, new ObjectName(bean.getObjectName()));
-            registeredBeans.add(bean);
-        } catch (InstanceAlreadyExistsException e) {
-            if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2",
-                        new Object[] { bean.getObjectName() });
-        } catch (javax.management.JMException e) {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3",
-                        new Object[] { bean.getObjectName(), e.getMessage() });
-        }
-
-		return oi;
-    }
-
-    public boolean unregisterMBean(String objectName)
+	public JMXServer()
 	{
-        boolean unregistered = false;
-        try {
-			unregistered = unregisterMBean(new ObjectName(objectName));
-            Iterator<BasicBean> i = registeredBeans.iterator();
+		Class<?> c1;
+		Class<?> c2;
 
-            while (i.hasNext()) {
-                BasicBean bb = i.next();
-
-                if (objectName.equals(bb.getObjectName())) {
-                    i.remove();
-                    break;
-                }
-            }
-        } catch (MalformedObjectNameException e) {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4",
-                        new Object[] { e.getMessage() });
+		try {
+			Class cl = Class.forName(JTS_INITIALISER_CNAME);
+			Constructor constructor = cl.getConstructor();
+			constructor.newInstance();
+			isJTS = true;
+		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				tsLogger.arjLoggerI18N.debug("JTS not available: " + e);
 		}
 
-        return unregistered;
-    }
 
-    public boolean unregisterMBean(ObjectName objectName)
-    {
-        try {
-            getServer().unregisterMBean(objectName);
-        	return true;
-        } catch (InstanceNotFoundException e) {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5",
-                        new Object[] { objectName, e.getMessage() });
-        } catch (MBeanRegistrationException e) {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6",
-                        new Object[] { objectName, e.getMessage() });
-        }
+		try {
+			c1 = Class.forName("com.arjuna.ats.internal.jta.Implementations");
+			c1.getMethod("initialise").invoke(null);
+		} catch (Exception e) {
+		}
 
-        return false;
-    }
+		try {
+			c2 = Class.forName("com.arjuna.ats.internal.jta.Implementationsx"); // needed for XAResourceRecord
+
+			c2.getMethod("initialise").invoke(null);
+		} catch (Exception e) {
+		}
+	}
+
+	public MBeanServer getServer()
+	{
+		if (server == null)
+		{
+			List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
+
+			if (servers != null && servers.size() > 0)
+				server = servers.get(0);
+			else
+				server = ManagementFactory.getPlatformMBeanServer();
+
+			if (server == null)
+				server = MBeanServerFactory.createMBeanServer();
+		}
+
+		return server;
+	}
+
+	public ObjectInstance registerMBean(String name, ObjStoreItemMBean bean)
+	{
+		ObjectInstance oi = null;
+
+		try {
+			if (tsLogger.arjLoggerI18N.isInfoEnabled())
+				tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1",
+						new Object[] { name });
+			oi = getServer().registerMBean(bean, new ObjectName(name));
+		} catch (InstanceAlreadyExistsException e) {
+			if (tsLogger.arjLoggerI18N.isInfoEnabled())
+				tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2",
+						new Object[] { name });
+		} catch (javax.management.JMException e) {
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3",
+						new Object[] { name, e.getMessage() });
+		}
+
+		return oi;
+	}
+
+	public boolean unregisterMBean(String name)
+	{
+		try {
+			getServer().unregisterMBean(new ObjectName(name));
+			return true;
+		} catch (MalformedObjectNameException e) {
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5",
+						new Object[] { name, e.getMessage() });
+		} catch (InstanceNotFoundException e) {
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5",
+						new Object[] { name, e.getMessage() });
+		} catch (MBeanRegistrationException e) {
+			// can't happen - none of our beans implement the MBeanRegistration interface
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6",
+						new Object[] { name, e.getMessage() });
+		}
+
+		return false;
+	}
+
+	public Set<ObjectName> queryNames(String name, QueryExp query) throws MalformedObjectNameException {
+		return getServer().queryNames(new ObjectName(name), query);
+	}
 }

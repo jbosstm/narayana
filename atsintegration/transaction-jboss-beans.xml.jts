@@ -126,9 +126,19 @@
         <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
     </bean>
 
-    <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean">
-        <constructor factoryClass="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean" factoryMethod="getObjectStoreBrowserBean"/>
-        <demand state="Create">ObjectStoreEnvironmentBean</demand>
+    <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser">
+        <property name="types" preinstantiate="false">
+			<map keyClass="java.lang.String" valueClass="java.lang.String">
+				<entry>
+					<key>StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple</key>
+					<value>com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean</value>
+				</entry>
+				<entry>
+					<key>StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction</key>
+					<value>com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean</value>
+				</entry>
+            </map>
+        </property>
     </bean>
 
     <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
