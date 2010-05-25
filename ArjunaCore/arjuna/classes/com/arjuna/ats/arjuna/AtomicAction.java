@@ -82,23 +82,6 @@ public class AtomicAction extends TwoPhaseCoordinator
 	}
 
 	/**
-	 * AtomicAction destructor. Under normal circumstances we do very little.
-	 * However there exists the possibility that this action is being deleted
-	 * while still running (user forgot to commit/abort) - in which case we do
-	 * an abort for him and mark all our parents as unable to commit.
-	 * Additionally due to scoping we may not be the current action - but in
-	 * that case the current action must be one of our nested actions so by
-	 * applying abort to it we should end up at ourselves!
-	 */
-
-	public void finalize ()
-	{
-		ThreadActionData.purgeAction(this);
-
-		super.finalize();
-	}
-
-	/**
 	 * Start the transaction running.
 	 *
 	 * If the transaction is already running or has terminated, then an error
@@ -319,7 +302,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	{
 		if (t != null)
 		{
-			ThreadActionData.purgeAction(this);
+			ThreadActionData.purgeAction(this, t);
 			return true;
 		}
 
