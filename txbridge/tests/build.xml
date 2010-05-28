@@ -43,6 +43,9 @@
             <include name="commons-httpclient.jar"/>
             <include name="commons-logging.jar"/>
             <include name="commons-codec.jar"/>
+            <include name="jboss-server-manager.jar"/>
+            <include name="jboss-logging-spi.jar"/>
+            <include name="jnp-client.jar"/>
             <!--<include name="byteman.jar"/>-->
         </fileset>
 
@@ -60,6 +63,7 @@
 
         <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar"/>        
         <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar"/>
+        <pathelement location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/client/jboss-system-client.jar"/>
 
 	</path>
 
@@ -108,6 +112,9 @@
 				<include name="org/jboss/jbossts/txbridge/tests/outbound/service/*"/>
                 <include name="org/jboss/jbossts/txbridge/tests/outbound/utility/*"/>
 			</classes>
+            <webinf dir="dd/outbound">
+                <include name="jboss-beans.xml"/>
+            </webinf>
 		</war>
 
         <war warfile="${build.dir}/txbridge-outbound-tests-client.war" webxml="${dd}/outbound/web.xml">
@@ -141,6 +148,15 @@
         </run.tests.macro>
     </target>
 
+    <target name="run-inbound-crashrec-tests" depends="compile">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="src" includes="**/inbound/**/CrashRecoveryTests.java">
+                </fileset>
+            </tests>
+        </run.tests.macro>
+    </target>
+
     <target name="run-outbound-tests" depends="compile">
         <run.tests.macro>
             <tests>
@@ -150,10 +166,18 @@
         </run.tests.macro>
     </target>
 
+    <target name="run-outbound-crashrec-tests" depends="compile">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="src" includes="**/outbound/**/CrashRecoveryTests.java">
+                </fileset>
+            </tests>
+        </run.tests.macro>
+    </target>
 
     <macrodef name="run.tests.macro">
 
-        <attribute name="showoutput" default="false"/>
+        <attribute name="showoutput" default="true"/>
         <element name="tests"/>
         <element name="additional.classpath" optional="true"/>
         <element name="additional.jvmargs" optional="true"/>
@@ -174,8 +198,8 @@
             </batchtest>
 
             <jvmarg value="-Djava.rmi.server.codebase=file://build/classes/"/>
-            <!--<jvmarg value="-Xdebug"/>-->
-            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>-->
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
 	        <additional.jvmargs/>
         </junit>
         </sequential>

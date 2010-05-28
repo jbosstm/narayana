@@ -70,7 +70,7 @@ public class TestServiceImpl
         try {
             for(int i = 0; i < count; i++) {
                 TestDurableParticipant durableParticipant = new TestDurableParticipant();
-                tm.enlistForDurableTwoPhase(durableParticipant, "org.jboss.jbossts.txbridge.tests.outbound.Durable:" + new Uid().toString());
+                tm.enlistForDurableTwoPhase(durableParticipant, TestDurableParticipant.TYPE_IDENTIFIER + new Uid().toString());
             }
         } catch(Exception e) {
             log.error("could not enlist", e);

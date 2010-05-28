@@ -145,6 +145,7 @@
             <report>
                 <fileset dir="${build.dir}" includes="metadata.emma"/>
                 <fileset dir="${jbossas.home}" includes="coverage.ec"/>
+                <fileset dir="${jbossas.home}/bin" includes="coverage.ec"/>
                 <sourcepath>
                     <dirset dir="${src.dir}"/>
                 </sourcepath>

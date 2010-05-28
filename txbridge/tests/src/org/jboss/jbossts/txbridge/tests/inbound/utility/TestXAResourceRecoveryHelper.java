@@ -46,6 +46,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper
     private static Logger log = Logger.getLogger(TestXAResourceRecoveryHelper.class);
 
     private static final TestXAResourceRecoveryHelper instance = new TestXAResourceRecoveryHelper();
+    private static final TestXAResourceRecovered xaResourceInstance = new TestXAResourceRecovered();
 
     private final Set<Xid> preparedXids = new HashSet<Xid>();
 
@@ -102,7 +103,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper
         log.trace("getXAResources()");
 
         XAResource values[] = new XAResource[1];
-        values[0] = new TestXAResourceRecovered();
+        values[0] = xaResourceInstance;
 
         return values;
     }

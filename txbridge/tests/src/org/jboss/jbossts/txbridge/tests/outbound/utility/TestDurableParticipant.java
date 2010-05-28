@@ -34,6 +34,12 @@ public class TestDurableParticipant implements Durable2PCParticipant, Serializab
 {
     private static Logger log = Logger.getLogger(TestDurableParticipant.class);
 
+    /*
+     * Uniq String used to prefix ids at participant registration,
+     * so that the recovery module can identify relevant instances.
+     */
+    public static final String TYPE_IDENTIFIER = "TestDurableParticipant_";
+    
     private String prepareOutcome = "prepared";
 
     /**

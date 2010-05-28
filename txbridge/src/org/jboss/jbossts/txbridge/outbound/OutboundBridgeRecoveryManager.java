@@ -75,10 +75,18 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     @Override
     public void periodicWorkSecondPass()
     {
+        // by the time we are called, the JTA tx recovery module has already been called, as it is registered
+        // and hence ordered before us. Therefore by the time we get here any BridgeWrappers belonging to
+        // a parent that was logged, will have been resolved top down. Anything left at this point can therefore
+        // be assumed orphaned and hence we apply presumed abort.
+
         log.trace("periodicWorkSecondPass()");
 
         BridgeWrapper[] bridgeWrappers = BridgeWrapper.scan(OutboundBridgeManager.BRIDGEWRAPPER_PREFIX);
-        // TODO: do something useful with the results.
 
+        for(BridgeWrapper bridgeWrapper : bridgeWrappers) {
+            log.info("rolling back orphaned subordinate BridgeWrapper "+bridgeWrapper.getIdentifier());
+            bridgeWrapper.rollback();
+        }
     }
 }
