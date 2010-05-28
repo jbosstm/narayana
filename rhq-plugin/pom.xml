@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss</groupId>
+  <artifactId>jbossts-jopr-plugin</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.0.SNAPSHOT</version>
+  <name>JBoss Transaction Management JOPR plugin</name>
+  <url>http://www.jboss.org/jbosstm</url>
+  <description>JBossTS JOPR plugin</description>
+
+  <build>
+    <finalName>${artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+       <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+       </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <!-- Compile (global dependencies) -->
+     <dependency>
+        <groupId>org.jboss.integration</groupId>
+        <artifactId>jboss-profileservice-spi</artifactId>
+        <version>6.0.0.Alpha9</version>
+     </dependency>
+    <dependency>
+       <groupId>org.jboss.man</groupId>
+       <artifactId>jboss-managed</artifactId>
+       <version>2.1.1.SP1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-core-domain</artifactId>
+       <version>1.4.0.B01</version>
+       <scope>compile</scope>
+     </dependency>
+     <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-core-plugin-api</artifactId>
+      <version>1.4.0.B01</version>
+      <scope>compile</scope>
+     </dependency>
+      <dependency>
+         <groupId>org.rhq</groupId>
+         <artifactId>rhq-jmx-plugin</artifactId>
+         <version>1.4.0.B01</version>
+         <scope>provided</scope>
+      </dependency>
+     <!--we dont compile without these, some strange annotation dependency-->
+     <dependency>
+        <groupId>org.hibernate.javax.persistence</groupId>
+        <artifactId>hibernate-jpa-2.0-api</artifactId>
+        <version>1.0.0-CR-1</version>
+     </dependency>
+     <dependency>
+        <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+        <version>3.5.0-CR-1</version>
+     </dependency>
+
+     <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1</version>
+     </dependency>
+  </dependencies>
+
+   <repositories>
+      <repository>
+         <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+         </snapshots>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>interval:10080</updatePolicy>
+         </releases>
+         <id>jboss.release</id>
+         <name>JBoss releases</name>
+         <url>http://repository.jboss.org/maven2</url>
+      </repository>
+   </repositories>
+
+   <pluginRepositories>
+      <pluginRepository>
+         <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+         </snapshots>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>interval:10080</updatePolicy>
+         </releases>
+         <id>jboss.release</id>
+         <name>JBoss releases</name>
+         <url>http://repository.jboss.org/maven2</url>
+      </pluginRepository>
+   </pluginRepositories>
+
+   <distributionManagement>
+      <repository>
+         <id>repository.jboss.org</id>
+         <name>JBoss.org Release Distribution Repository</name>
+         <url>dav:https://svn.jboss.org/repos/repository.jboss.org/maven2</url>
+      </repository>
+      <snapshotRepository>
+         <id>snapshots.jboss.org</id>
+         <name>JBoss.org Development Snapshot Repository</name>
+         <url>dav:https://snapshots.jboss.org/maven2</url>
+      </snapshotRepository>
+   </distributionManagement>
+
+</project>

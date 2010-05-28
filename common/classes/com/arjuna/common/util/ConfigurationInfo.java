@@ -61,6 +61,13 @@ public class ConfigurationInfo
     }
 
     /**
+     * @return the build identification line indicating the os name and version and build date
+     */
+    public static String getBuildId() {
+        return buildId;
+    }
+
+    /**
      * Print config info to stdout.
      * @param args unused
      */
@@ -110,6 +117,11 @@ public class ConfigurationInfo
                 sourceId = attributes.getValue(name);
             }
 
+            name = new Attributes.Name("arjuna-builder");
+            if(attributes.containsKey(name)) {
+                buildId = attributes.getValue(name);
+            }
+
         } catch(Exception exception) {
             exception.printStackTrace();
         } finally {
@@ -123,6 +135,7 @@ public class ConfigurationInfo
 
     private static volatile String sourceId = "unknown";
     private static volatile String propertiesFile = "arjuna-properties.xml";
+    private static volatile String buildId = "arjuna-builder";
 
     static {
         getBuildTimeProperties();

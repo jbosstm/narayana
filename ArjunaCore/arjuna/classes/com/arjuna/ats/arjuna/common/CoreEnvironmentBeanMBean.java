@@ -58,4 +58,8 @@ public interface CoreEnvironmentBeanMBean
     boolean isDisableMultipleLastResourcesWarning();
 
     void setDisableMultipleLastResourcesWarning(boolean disableMultipleLastResourcesWarning);
+
+    String getBuildVersion();
+
+    String getBuildId();
 }

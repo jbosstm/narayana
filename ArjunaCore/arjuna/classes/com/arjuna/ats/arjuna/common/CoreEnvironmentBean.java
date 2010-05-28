@@ -23,6 +23,7 @@ package com.arjuna.ats.arjuna.common;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import java.io.File;
 
@@ -241,4 +242,21 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     {
         this.disableMultipleLastResourcesWarning = disableMultipleLastResourcesWarning;
     }
+
+    /**
+     * @return the version control tag of the source used, or "unknown"
+     */
+    public String getBuildVersion()
+    {
+        return ConfigurationInfo.getVersion();
+    }
+
+    /**
+     *  @return the build identification line indicating the os name and version and build date
+     */
+    public String getBuildId()
+    {
+        return ConfigurationInfo.getBuildId();
+    }
+
 }
