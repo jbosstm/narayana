@@ -92,6 +92,7 @@
     <target  name="jbossall" depends="jbossjts">
         <ant dir="XTS" target="clean"/>
         <ant dir="XTS" target="install"/>
+        <ant dir="rhq-plugin" target="install"/>
     </target>
 
     <target name="antbuildsystem" depends="clean">
@@ -117,6 +118,13 @@
             <available file="ArjunaJTS"/>
             <then>
                 <ant dir="ArjunaJTS" target="clean"/>
+            </then>
+        </if>
+
+        <if>
+            <available file="rhq-plugin"/>
+            <then>
+                <ant dir="rhq-plugin" target="clean"/>
             </then>
         </if>
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="rhq-plugin" default="maven:package" basedir=".">
+
+	<property name="maven.project.build.directory" value="target"/>
+	<property name="maven.artifactId" value="jbossts-jopr-plugin"/>
+	<property name="pluginjar" value="${basedir}/${maven.project.build.directory}/${maven.artifactId}.jar"/>
+
+	<target name="maven:package" depends="clean">
+		<exec executable="mvn" dir="${basedir}">
+			<arg value="package"/>
+		</exec>
+	</target>
+
+	<target name="install" depends="maven:package">
+		<copy file="${pluginjar}" todir="../install/bin"/>
+	</target>
+
+	<target name="clean">
+		<exec executable="mvn" dir="${basedir}">
+			<arg value="clean"/>
+		</exec>
+		<delete dir="build"/>
+	</target>
+</project> 

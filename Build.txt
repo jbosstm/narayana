@@ -26,7 +26,8 @@ JBossTS consists of a number of modules, various combinations of which are bundl
  jbossjta = jta + JBossAS integration code.
  jbossjts = jts + JBossAS integration code.
 
-In addition the XTS (web services transactions) and txbridge (XTS/JTA integration) modules may be built separately.
+In addition the XTS (web services transactions), txbridge (XTS/JTA integration) and rhq-plugin modules may be built
+separately.
 
 See http://jbossts.blogspot.com/2007/07/trying-to-put-jbossts-into-perspective_6770.html or the docs for more
  on the module architecture.
