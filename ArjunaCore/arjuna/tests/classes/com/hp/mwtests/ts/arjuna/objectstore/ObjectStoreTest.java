@@ -45,6 +45,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.utils.FileLock;
 import com.arjuna.ats.internal.arjuna.objectstore.ActionStore;
+import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
 import com.arjuna.ats.internal.arjuna.objectstore.FileLockingStore;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
@@ -297,6 +298,47 @@ public class ObjectStoreTest
             as.read_committed(u, tn);
             
             assertTrue(!as.remove_uncommitted(u, tn));
+            
+            as.remove_committed(u, tn);
+            
+            assertTrue(!as.hide_state(u, tn));
+            
+            assertTrue(!as.reveal_state(u, tn));
+        }
+    }
+    
+    @Test
+    public void testCacheStore () throws Exception
+    {
+        CacheStore as = new CacheStore();
+        
+        as = new CacheStore(System.getProperty("java.io.tmpdir"));
+        
+        assertTrue(as.typeIs() != -1);
+        
+        final OutputObjectState buff = new OutputObjectState();
+        final String tn = "/StateManager/junit";
+        
+        for (int i = 0; i < 100; i++)
+        {
+            Uid u = new Uid();
+            
+            as.write_uncommitted(u, tn, buff);
+            
+            as.commit_state(u, tn);
+            
+            assertTrue(as.currentState(u, tn) != StateStatus.OS_UNCOMMITTED);
+            
+            InputObjectState ios = new InputObjectState();
+            
+            as.allObjUids("", ios);
+            
+            as.read_uncommitted(u, tn);  // may or may not be there if cache flush hasn't happened
+            
+            as.write_committed(u, tn, buff);
+            as.read_committed(u, tn);
+            
+            as.remove_uncommitted(u, tn);  // may or may not be there if cache flush hasn't happened
             
             as.remove_committed(u, tn);
             

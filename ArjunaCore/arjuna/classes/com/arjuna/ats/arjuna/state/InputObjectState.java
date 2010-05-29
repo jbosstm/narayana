@@ -97,7 +97,7 @@ public InputObjectState (OutputObjectState copyFrom)
 	try
 	{
 	    bufferUid = new Uid(copyFrom.stateUid());
-	    super._valid = bufferUid.valid();
+	    super._valid = super._valid && bufferUid.valid();
 	
 	    imageType = new String((copyFrom.type() == null) ? "" : copyFrom.type());
 	}
@@ -116,7 +116,7 @@ public InputObjectState (Uid newUid, String tName, byte[] buff)
     }
 
 	bufferUid = new Uid(newUid);
-	super._valid = bufferUid.valid();
+	super._valid = super._valid && bufferUid.valid();
 	
 	imageType = new String(tName);
     }

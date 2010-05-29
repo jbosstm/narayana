@@ -142,6 +142,10 @@ public class OutputBuffer
 
             initBuffer();
         }
+        catch (final NullPointerException ex)
+        {
+            _valid = false;
+        }
         catch (IOException e)
         {
             _valid = false;

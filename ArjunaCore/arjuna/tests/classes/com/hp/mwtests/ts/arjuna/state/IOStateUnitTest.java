@@ -142,5 +142,9 @@ public class IOStateUnitTest
         oos.copy(new OutputObjectState());
         
         assertTrue(oos.toString() != null);
+        
+        temp = new OutputObjectState(new Uid(), "", null);
+        
+        assertFalse(temp.valid());
     }
 }

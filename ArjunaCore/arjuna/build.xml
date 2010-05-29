@@ -65,9 +65,6 @@
                     <exclude name="**/objectstore/LogStoreRecoveryTest.java"/>
                     <exclude name="**/objectstore/LogStoreTest2.java"/>
 
-                    <!-- TODO cached store is broken, fails from tiem to time. needs fixing -->
-                    <exclude name="**/objectstore/CachedTest.java"/>
-
                     <exclude name="**/recovery/RecoveryManagerStartStopTest.java"/>
                     <!-- auxilairy code used by reaper test classes -->
                     <exclude name="**/reaper/ReaperTestCaseControl.java"/>
