@@ -425,52 +425,55 @@ class AsyncStore extends Thread // keep priority same as app. threads
             elements = null;
         }
 
-        if (elements == null)
-            return NOT_PRESENT;
-
         int status = NOT_PRESENT;
+        
+        if (elements == null)
+            return status;
 
-        for (int i = 0; i < elements.length; i++)
+        synchronized (elements)
         {
-            StoreElement element = (StoreElement) elements[i];
-
-            if ((element != null) && !element.removed
-                    && element.objUid.equals(objUid))
+            for (int i = 0; i < elements.length; i++)
             {
-                switch (element.typeOfWork)
+                StoreElement element = (StoreElement) elements[i];
+    
+                if ((element != null) && !element.removed
+                        && element.objUid.equals(objUid))
                 {
-                case AsyncStore.REMOVE:
-                    element.remove();
-
-                    synchronized (_workList)
+                    switch (element.typeOfWork)
                     {
-                        _removedItems++;
-                    }
-
-                    if (status != IN_USE)
-                        status = REMOVED;
-
-                    break;
-                case AsyncStore.WRITE:
-                    // if (element.fileType == ft)
-                {
-                    synchronized (_workList)
+                    case AsyncStore.REMOVE:
+                        element.remove();
+    
+                        synchronized (_workList)
+                        {
+                            _removedItems++;
+                        }
+    
+                        if (status != IN_USE)
+                            status = REMOVED;
+    
+                        break;
+                    case AsyncStore.WRITE:
+                        // if (element.fileType == ft)
                     {
-                        if (element.state != null)
-                            _currentCacheSize -= element.state.size();
-
-                        _removedItems++;
+                        synchronized (_workList)
+                        {
+                            if (element.state != null)
+                                _currentCacheSize -= element.state.size();
+    
+                            _removedItems++;
+                        }
+    
+                        element.remove();
+    
+                        if (status != IN_USE)
+                            status = REMOVED;
                     }
-
-                    element.remove();
-
-                    if (status != IN_USE)
-                        status = REMOVED;
-                }
-
-                    break;
-                default:
-                    break;
+    
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
         }
@@ -603,9 +606,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
             {
                 StoreElement element = (StoreElement) list.get(i);
 
-                if ((element != null) && !element.removed
-                        && (element.objUid.equals(objUid)))
-                    ;
+                if ((element != null) && !element.removed && (element.objUid.equals(objUid)))
                 {
                     if (element.fileType == ft)
                         return element.state;
@@ -616,8 +617,11 @@ class AsyncStore extends Thread // keep priority same as app. threads
              * If not in cache then maybe we're working on it?
              */
 
-            if ((_work != null) && (objUid.equals(_work.objUid)))
-                return _work.state;
+            synchronized (_workList)
+            {
+                if ((_work != null) && (objUid.equals(_work.objUid)))
+                    return _work.state;
+            }
         }
 
         return null;
@@ -676,11 +680,14 @@ class AsyncStore extends Thread // keep priority same as app. threads
     {
         try
         {
-            if (_work != null)
+            synchronized (_workList)
             {
-                if (_work.objUid.equals(objUid) && (_work.fileType == ft))
+                if (_work != null)
                 {
-                    return true;
+                    if (_work.objUid.equals(objUid) && (_work.fileType == ft))
+                    {
+                        return true;
+                    }
                 }
             }
         }

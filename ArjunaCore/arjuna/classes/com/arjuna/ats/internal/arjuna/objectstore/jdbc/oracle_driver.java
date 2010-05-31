@@ -56,244 +56,298 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 /**
- * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1 [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1] - oracle:read_state failed
- * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2 [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2] - oracle:write_state caught exception: {0}
+ * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1
+ *          [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1] -
+ *          oracle:read_state failed
+ * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2
+ *          [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2] -
+ *          oracle:write_state caught exception: {0}
  */
 
 public class oracle_driver extends JDBCImple
 {
-    private static final int MAX_RETRIES = 10 ;
+    private static final int MAX_RETRIES = 10;
 
-	public InputObjectState read_state (Uid objUid, String tName, int ft, String tableName) throws ObjectStoreException
-	{
-		InputObjectState newImage = null;
+    public InputObjectState read_state (Uid objUid, String tName, int ft,
+            String tableName) throws ObjectStoreException
+    {
+        if (!storeValid())
+            return null;
 
-		if (!storeValid())
-			return newImage;
+        InputObjectState newImage = null;
 
-		if (tName != null)
-		{
-			if ((ft == StateStatus.OS_COMMITTED) || (ft == StateStatus.OS_UNCOMMITTED))
-			{
-				int pool = getPool();
-				ResultSet rs = null;
+        if (tName != null)
+        {
+            if ((ft == StateStatus.OS_COMMITTED)
+                    || (ft == StateStatus.OS_UNCOMMITTED))
+            {
+                int pool = getPool();
+                ResultSet rs = null;
 
                 try
                 {
-                    for(int count = 0 ; count < MAX_RETRIES ; count++)
+                    for (int count = 0; count < MAX_RETRIES; count++)
                     {
-        				try
-        				{
-        					PreparedStatement pstmt = _preparedStatements[pool][READ_STATE];
+                        try
+                        {
+                            PreparedStatement pstmt = _preparedStatements[pool][READ_STATE];
 
-        					if (pstmt == null)
-        					{
-        						pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+                            if (pstmt == null)
+                            {
+                                pstmt = _theConnection[pool]
+                                        .prepareStatement("SELECT ObjectState FROM "
+                                                + tableName
+                                                + " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
 
-        						_preparedStatements[pool][READ_STATE] = pstmt;
-        					}
+                                _preparedStatements[pool][READ_STATE] = pstmt;
+                            }
 
-        					pstmt.setString(1, objUid.stringForm());
-        					pstmt.setString(2, tName);
-        					pstmt.setInt(3, ft);
+                            pstmt.setString(1, objUid.stringForm());
+                            pstmt.setString(2, tName);
+                            pstmt.setInt(3, ft);
 
-        					rs = pstmt.executeQuery();
+                            rs = pstmt.executeQuery();
 
-        					if(! rs.next()) {
-        						return null; // no matching state in db
-        					}
+                            if (!rs.next())
+                            {
+                                return null; // no matching state in db
+                            }
 
-        					Blob myBlob = (Blob)rs.getBlob(1);
-        					byte[] buffer = myBlob.getBytes(1, (int)myBlob.length());
+                            Blob myBlob = (Blob) rs.getBlob(1);
+                            byte[] buffer = myBlob.getBytes(1, (int) myBlob
+                                    .length());
 
-        					if (buffer != null)
-        					{
-        						newImage = new InputObjectState(objUid, tName, buffer);
-        					}
-        					else {
-        					    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-        						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1");
-        					}
+                            if (buffer != null)
+                            {
+                                newImage = new InputObjectState(objUid, tName,
+                                        buffer);
+                            }
+                            else
+                            {
+                                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                    tsLogger.arjLoggerI18N
+                                            .warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1");
+                            }
 
                             return newImage;
-        				}
-        				catch (Throwable e)
-        				{
-                            if (count == MAX_RETRIES-1)
+                        }
+                        catch (Throwable e)
+                        {
+                            if (count == MAX_RETRIES - 1)
                             {
                                 throw new ObjectStoreException(e.toString(), e);
                             }
                             try
                             {
-                                reconnect(pool) ;
+                                reconnect(pool);
                             }
                             catch (final Throwable th)
                             {
                                 throw new ObjectStoreException(e.toString(), th);
                             }
-        				}
+                        }
                     }
                 }
-				finally
-				{
-					try
-					{
-						if (rs != null)
-							rs.close();
-					}
-					// Ignore
-					catch (Exception re) {}
-					freePool(pool);
-				}
-			}
+                finally
+                {
+                    try
+                    {
+                        if (rs != null)
+                            rs.close();
+                    }
+                    // Ignore
+                    catch (Exception re)
+                    {
+                    }
+                    freePool(pool);
+                }
+            }
             return newImage;
-		}
-		else
-			throw new ObjectStoreException("oracle.read_state - object with uid "+objUid+" has no TypeName");
-	}
+        }
+        else
+            throw new ObjectStoreException(
+                    "oracle.read_state - object with uid " + objUid
+                            + " has no TypeName");
+    }
 
+    public boolean write_state (Uid objUid, String tName,
+            OutputObjectState state, int stateType, String tableName)
+            throws ObjectStoreException
+    {
+        int imageSize = (int) state.length();
 
-	public boolean write_state (Uid objUid, String tName, OutputObjectState state, int s, String tableName) throws ObjectStoreException
-	{
-		int imageSize = (int) state.length();
+        if (imageSize > getMaxStateSize())
+            throw new ObjectStoreException(
+                    "Object state is too large - maximum size allowed: "
+                            + getMaxStateSize());
 
-		if (imageSize > getMaxStateSize())
-			throw new ObjectStoreException("Object state is too large - maximum size allowed: " + getMaxStateSize());
+        byte[] b = state.buffer();
 
-		byte[] b = state.buffer();
-
-		if (imageSize > 0 && storeValid())
-		{
-			int pool = getPool();
-			ResultSet rs = null;
-			ResultSet rs3 = null;
+        if (imageSize > 0 && storeValid())
+        {
+            int pool = getPool();
+            ResultSet rs = null;
+            ResultSet rs3 = null;
 
             try
             {
-                for(int count = 0 ; count < MAX_RETRIES ; count++)
+                for (int count = 0; count < MAX_RETRIES; count++)
                 {
-        			try
-        			{
-        				PreparedStatement pstmt = _preparedStatements[pool][READ_WRITE_SHORTCUT];
+                    try
+                    {
+                        PreparedStatement pstmt = _preparedStatements[pool][READ_WRITE_SHORTCUT];
 
-        				_theConnection[pool].setAutoCommit(false);
-
-        				if (pstmt == null)
-        				{
-        					pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND StateType = ? AND TypeName = ? FOR UPDATE", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-        					_preparedStatements[pool][READ_WRITE_SHORTCUT] = pstmt;
-        				}
-        				pstmt.setString(1, objUid.stringForm());
-        				pstmt.setInt(2, s);
-        				pstmt.setString(3, tName);
-
-        				rs = pstmt.executeQuery();
-
-        				if( rs.next() ) {
-
-        					Blob myBlob = rs.getBlob(1);
-        					myBlob.setBytes(1, b);
-
-        				} else {
-        					// not in database, do insert:
-        					PreparedStatement pstmt2 = _preparedStatements[pool][WRITE_STATE_NEW];
-
-        					if (pstmt2 == null)
-        					{
-        						pstmt2 = _theConnection[pool].prepareStatement("INSERT INTO "+tableName+" (StateType,TypeName,UidString,ObjectState) VALUES (?,?,?,empty_blob())");
-
-        						_preparedStatements[pool][WRITE_STATE_NEW] = pstmt2;
-        					}
-
-        					pstmt2.setInt(1, s);
-        					pstmt2.setString(2, tName);
-        					pstmt2.setString(3, objUid.stringForm());
-
-        					pstmt2.executeUpdate();
-        					_theConnection[pool].commit();
-
-        					PreparedStatement pstmt3 = _preparedStatements[pool][SELECT_FOR_WRITE_STATE];
-        					if(pstmt3 == null) {
-        						pstmt3 = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND TypeName = ? AND StateType = ? FOR UPDATE");
-        						_preparedStatements[pool][SELECT_FOR_WRITE_STATE] = pstmt3;
-        					}
-
-        					pstmt3.setString(1, objUid.stringForm());
-        					pstmt3.setString(2, tName);
-        					pstmt3.setInt(3, s);
-
-        					rs3 = pstmt3.executeQuery();
-        					rs3.next();
-        					Blob myBlob = rs3.getBlob(1);
-        					myBlob.setBytes(1, b);
-        				}
-
-        				_theConnection[pool].commit();
-                        return true ;
-
-        			}
-        			catch(Throwable e)
-        			{
-                        if (count == MAX_RETRIES-1)
+                        _theConnection[pool].setAutoCommit(false);
+                        
+                        if (pstmt == null)
                         {
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2", new Object[] {e});
+                            pstmt = _theConnection[pool]
+                                    .prepareStatement(
+                                            "SELECT ObjectState FROM "
+                                                    + tableName
+                                                    + " WHERE UidString = ? AND StateType = ? AND TypeName = ? FOR UPDATE",
+                                            ResultSet.TYPE_FORWARD_ONLY,
+                                            ResultSet.CONCUR_UPDATABLE);
+                            
+                            _preparedStatements[pool][READ_WRITE_SHORTCUT] = pstmt;
+                        }
+                        pstmt.setString(1, objUid.stringForm());
+                        pstmt.setInt(2, stateType);
+                        pstmt.setString(3, tName);
+
+                        rs = pstmt.executeQuery();
+
+                        if (rs.next())
+                        {
+
+                            Blob myBlob = rs.getBlob(1);
+                            myBlob.setBytes(1, b);
+
+                        }
+                        else
+                        {
+                            // not in database, do insert:
+                            PreparedStatement pstmt2 = _preparedStatements[pool][WRITE_STATE_NEW];
+
+                            if (pstmt2 == null)
+                            {
+                                pstmt2 = _theConnection[pool]
+                                        .prepareStatement("INSERT INTO "
+                                                + tableName
+                                                + " (StateType,TypeName,UidString,ObjectState) VALUES (?,?,?,empty_blob())");
+
+                                _preparedStatements[pool][WRITE_STATE_NEW] = pstmt2;
                             }
-                            return false ;
+
+                            pstmt2.setInt(1, stateType);
+                            pstmt2.setString(2, tName);
+                            pstmt2.setString(3, objUid.stringForm());
+
+                            pstmt2.executeUpdate();
+                            _theConnection[pool].commit();
+
+                            PreparedStatement pstmt3 = _preparedStatements[pool][SELECT_FOR_WRITE_STATE];
+                            if (pstmt3 == null)
+                            {
+                                pstmt3 = _theConnection[pool]
+                                        .prepareStatement("SELECT ObjectState FROM "
+                                                + tableName
+                                                + " WHERE UidString = ? AND TypeName = ? AND StateType = ? FOR UPDATE");
+                                _preparedStatements[pool][SELECT_FOR_WRITE_STATE] = pstmt3;
+                            }
+
+                            pstmt3.setString(1, objUid.stringForm());
+                            pstmt3.setString(2, tName);
+                            pstmt3.setInt(3, stateType);
+                            
+                            rs3 = pstmt3.executeQuery();
+                            rs3.next();
+                            Blob myBlob = rs3.getBlob(1);
+                            myBlob.setBytes(1, b);
+                        }
+
+                        _theConnection[pool].commit();
+                        
+                        return true;
+                    }
+                    catch (Throwable e)
+                    {
+                        if (count == MAX_RETRIES - 1)
+                        {
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            {
+                                tsLogger.arjLoggerI18N
+                                        .warn(
+                                                "com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2",
+                                                new Object[]
+                                                { e });
+                            }
+                            return false;
                         }
                         try
                         {
-                            reconnect(pool) ;
+                            reconnect(pool);
                         }
                         catch (final Throwable th)
                         {
                             throw new ObjectStoreException(e.toString(), th);
                         }
-        			}
+                    }
                 }
             }
-			finally
-			{
-				try
-				{
-					_theConnection[pool].setAutoCommit(true);
-				}
-				catch(Exception e) {}
-				try
-				{
-					if (rs != null)
-						rs.close();
-				}
-				// Ignore
-				catch (Exception re) {
-				}
-				try
-				{
-					if (rs3 != null)
-						rs3.close();
-				}
-				// Ignore
-				catch (Exception re3) {
-				}
-				freePool(pool);
-			}
-		}
-		return false ;
-	}
+            finally
+            {
+                try
+                {
+                    _theConnection[pool].setAutoCommit(true);
+                }
+                catch (Exception e)
+                {
+                }
+                try
+                {
+                    if (rs != null)
+                        rs.close();
+                }
+                // Ignore
+                catch (Exception re)
+                {
+                }
+                try
+                {
+                    if (rs3 != null)
+                        rs3.close();
+                }
+                // Ignore
+                catch (Exception re3)
+                {
+                }
+                freePool(pool);
+            }
+        }
+        return false;
+    }
 
-	protected void createTable (Statement stmt, String tableName) throws SQLException
-	{
-		stmt.executeUpdate("CREATE TABLE "+tableName+" (StateType INTEGER, TypeName VARCHAR(1024),UidString VARCHAR(255), ObjectState BLOB, CONSTRAINT "+tableName+"_pk PRIMARY KEY(UidString, StateType, TypeName))");
-	}
-
-	public String name ()
-	{
-		return "oracle";
-	}
-
-    protected int getMaxStateSize()
+    protected void createTable (Statement stmt, String tableName)
+            throws SQLException
     {
-        // Oracle BLOBs should be OK up to > 4 GB, but cap @ 10 MB for testing/performance:
+        stmt
+                .executeUpdate("CREATE TABLE "
+                        + tableName
+                        + " (StateType INTEGER, TypeName VARCHAR(1024),UidString VARCHAR(255), ObjectState BLOB, CONSTRAINT "
+                        + tableName
+                        + "_pk PRIMARY KEY(UidString, StateType, TypeName))");
+    }
+
+    public String name ()
+    {
+        return "oracle";
+    }
+
+    protected int getMaxStateSize ()
+    {
+        // Oracle BLOBs should be OK up to > 4 GB, but cap @ 10 MB for
+        // testing/performance:
         return 1024 * 1024 * 10;
     }
 }

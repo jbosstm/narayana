@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
@@ -133,6 +132,11 @@ public abstract class JDBCImple
 			}
 			catch (Throwable e)
 			{
+			    e.printStackTrace();
+			    
+			    if (true)
+			        return false;
+			    
 				cleanup = false;
 				if (retryConnection(e, pool))
 				{
@@ -387,7 +391,7 @@ public abstract class JDBCImple
 									+ " WHERE UidString = ? AND TypeName = ?");
 					_preparedStatements[pool][CURRENT_STATE] = pstmt;
 				}
-
+				
 				pstmt.setString(1, objUid.stringForm());
 				pstmt.setString(2, typeName);
 
@@ -405,7 +409,6 @@ public abstract class JDBCImple
 
 				while (rs.next())
 				{
-
 					int stateStatus = rs.getInt(1);
 
 					switch (stateStatus)
@@ -461,11 +464,16 @@ public abstract class JDBCImple
 				}
 				else
 				{
+				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+				    {
 					tsLogger.arjLoggerI18N
 							.warn(
 									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3",
 									new Object[]
 									{ e });
+					
+					e.printStackTrace();
+				    }
 
 					return StateStatus.OS_UNKNOWN;
 				}
@@ -883,7 +891,7 @@ public abstract class JDBCImple
 					pstmt.setInt(3, ft);
 
 					rs = pstmt.executeQuery();
-
+					
 					if(! rs.next()) {
 						return null; // no matching state in db
 					}
@@ -901,6 +909,8 @@ public abstract class JDBCImple
 				}
 				catch (Throwable e)
 				{
+				    e.printStackTrace();
+				    
 					if(retryConnection(e, pool)) {
 						return read_state(objUid, tName, ft, tableName);
 					} else {
@@ -1194,6 +1204,7 @@ public abstract class JDBCImple
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_14] -
 	 *          getState caught exception: {0}
 	 */
+    
 	protected final int getState(String state)
 	{
 		try

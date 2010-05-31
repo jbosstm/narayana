@@ -19,47 +19,33 @@
  * @author JBoss Inc.
  */
 /*
- * $Id: microsoft_driver.java 2342 2006-03-30 13:06:17Z  $
+ * Copyright (C) 2004,
  *
- * Copyright (c) 2001 Hewlett-Packard Company
- * Hewlett-Packard Company Confidential
- * Copyright (c) 2004 Arjuna Technologies Limited
+ * Arjuna Technologies Limited,
+ * Newcastle upon Tyne,
+ * Tyne and Wear,
+ * UK.
  *
- * $Project: ArjunaCore$
- * $Revision: 2342 $
- * $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
- * $Author: $
+ * $Id: SyncRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-/*
- * Note: This impl has come from HP-TS-2.2 via. HP-MS 1.0
- */
-
-package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
+package com.hp.mwtests.ts.arjuna.resources.mock;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.mysql_ab_driver;
 
-/**
- * JDBC store implementation driver-specific code.
- * This version for MS SQL Server JDBC Drivers 2 (server 2005/2008).
- */
-public class microsoft_driver extends JDBCImple
+public class MockMySqlDriver extends mysql_ab_driver
 {
-	protected void createTable (Statement stmt, String tableName) throws SQLException
-	{
-		stmt.executeUpdate("CREATE TABLE "+tableName+" (StateType INTEGER, TypeName VARCHAR(1024), UidString VARCHAR(255), ObjectState VARBINARY(MAX), PRIMARY KEY(UidString, StateType, TypeName))");
-	}
-
-	public String name ()
-	{
-		return "mssqlserver";
-	}
-
-    protected int getMaxStateSize()
+    public void createTable (Statement stmt, String tableName) throws SQLException
     {
-        return 65535;
+        super.createTable(stmt, tableName);
+    }
+
+    public int getMaxStateSize()
+    {
+        return super.getMaxStateSize();
     }
 }
+

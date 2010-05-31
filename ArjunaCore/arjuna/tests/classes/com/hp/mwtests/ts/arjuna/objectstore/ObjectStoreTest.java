@@ -475,6 +475,8 @@ public class ObjectStoreTest
         as.makeInvalid();
         
         assertFalse(as.storeValid());
+        
+        new NullActionStore("foo");
     }
 
     @Test
