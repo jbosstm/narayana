@@ -29,24 +29,34 @@
     don't sneak into the release bundle.
 
     usage:
+
       Tag the JBossTS release in svn.
         or you can do a snapshot release direct from trunk, see properties below.
-      Check out the necessary bits of repository.jboss.org
-        artifacts for use by other projects e.g. JBossAS get published here
-        You don't need to check out JBossTS, the script does that.
-      Check out the jbossts web pages project
-        source and binary bundles for download by end users get published here
+
       Check the version of JBossAS referenced in maven/pom-template.xml is sane.
         You MUST NOT use a snapshot release if doing a tagged build of JBossTS.
         In general, use the oldest JBossAS release the JBossTS release is intended to support.
-      Update the properties section below to suit your machine.
-      Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
-      ant -f build-release-pkgs.xml dist mvn-repository cms-repository
-      check in the repository.jboss.org and the cms updates to publish the files.
-      Update the project.xml in the cms to link the release bundles from the web pages.
-      Update appropriate wiki pages, such as the 'which version to use' page.
 
-      This version is for JBossTS 4.8 onwards. Don't use it for earlier releases, they are structured differently.
+      Update the properties section below to suit your machine.
+
+      Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
+
+      ant -f build-release-pkgs.xml dist downloads
+
+      rsync or sftp the downloads to publish to the web site (careful with the trailing '/') e.g.
+        rsync \-\-protocol=29 -avz 4.11.0.Final jbosstm@filemgmt.jboss.org:downloads_htdocs/jbosstm/
+
+      Log in to magnolia cms at https://www.jboss.org/author, create page under jbosstm/downloads
+       (note: 'magnolia' target below may help) then edit downloads node itself to update table in downloads.html
+
+      Update appropriate wiki pages, such as the 'which version to use' page.
+        http://community.jboss.org/wiki/JBossTransactionsVersionGuide
+
+      ant -f build-release-pkgs.xml mvn-repository
+        to upload releases to the mvn staging server. Note: this requires you to have login info in your settings.xml
+      Then login to https://repository.jboss.org/nexus/ and publish the artifacts.
+
+      This version is for JBossTS 4.11 onwards. Don't use it for earlier releases, they are structured differently.
 -->
 <project name="JBossTS Release Packaging" default="dist" basedir=".">
     <description>
@@ -59,13 +69,12 @@
             you need permissions to webdav upload to the server for this to work
             http://www.jboss.org/community/docs/DOC-11381  -->
 
-
 <!--
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
-    <property name="filename" value="4.9.0.GA"/>
-    <property name="mvn.repositoryId" value="snapshots.jboss.org"/>
-    <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
+    <property name="filename" value="4.12.0.SNAPSHOT"/>
+    <property name="mvn.repositoryId" value="jboss-snapshots-repository"/>
+    <property name="mvn.repo.url" value="https://repository.jboss.org/nexus/content/repositories/snapshots/"/>
 -->
 
     <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
@@ -73,19 +82,17 @@
     <!-- where to get the source -->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm/tags"/>
     <!-- The tag as it appears under svnbase -->
-    <property name="tag" value="JBOSSTS_4_9_0_GA"/>
+    <property name="tag" value="JBOSSTS_4_11_0_Final"/>
     <!-- The file name base for the user downloadable files. Derive it from the tag -->
-    <property name="filename" value="4.9.0.GA"/>
-    <!-- the location the JBossTS web site content svn is checked out to -->
-    <property name="cmsdir" value="/home/jhalli/IdeaProjects/jboss/jbosstm-cms/"/>
-    <!-- the location the maven repository svn is checked out to.
-        Hint: checkout only the subtree you need, the full thing is huge -->
-    <property name="mvn.repodir" value="/home/jhalli/IdeaProjects/jboss/repository.jboss.org/maven2"/>
+    <property name="filename" value="4.11.0.Final"/>
+    <!-- the location the JBossTS web site content is copied to -->
+    <property name="downloads.dir" value="/home/jhalli/IdeaProjects/jboss/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
+    <!-- the mvn repo to upload to -->
+    <property name="mvn.repo.url" value="https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/"/>
 
     <!-- you probably don't need to change anything below here -->
 
-    <property name="mvn.repositoryId" value="repository.jboss.org"/>
-    <property name="mvn.url" value="file:///${mvn.repodir}"/>
+    <property name="mvn.repositoryId" value="jboss-releases-repository"/>
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
@@ -163,16 +170,16 @@
              includes="${tag}/**"/>
     </target>
 
-    <!-- copy the release into the cms svn tree (http://www.jboss.org/jbosstm web site content) -->
-    <target name="cms-repository" description="copy release bundles to JBossTS web site content">
-        <mkdir dir="${cmsdir}/downloads/${filename}"/>
-        <mkdir dir="${cmsdir}/downloads/${filename}/src"/>
-        <mkdir dir="${cmsdir}/downloads/${filename}/binary"/>
-        <mkdir dir="${cmsdir}/downloads/${filename}/notes"/>
-        <copy todir="${cmsdir}/downloads/${filename}/src">
+    <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
+    <target name="downloads" description="copy release bundles to JBossTS web site content">
+        <mkdir dir="${downloads.dir}/${filename}"/>
+        <mkdir dir="${downloads.dir}/${filename}/src"/>
+        <mkdir dir="${downloads.dir}/${filename}/binary"/>
+        <mkdir dir="${downloads.dir}/${filename}/notes"/>
+        <copy todir="${downloads.dir}/${filename}/src">
             <fileset dir="${workdir}" includes="jbossts-*-${filename}-src.zip"/>
         </copy>
-        <copy todir="${cmsdir}/downloads/${filename}/binary">
+        <copy todir="${downloads.dir}/${filename}/binary">
             <fileset dir="${workdir}" includes="jbossts-*-${filename}.zip"/>
         </copy>
         <!-- TODO: notes dir, xml generation? project.xml edits -->
@@ -187,7 +194,8 @@
                  TODO: when we add in proper dependency info we may wind up needing separate
                  poms for each artifact with a shared parent for common info -->
 
-        <!-- http://wiki.jboss.org/wiki/MavenReleaseRepository -->
+        <!-- http://community.jboss.org/wiki/MavenGettingStarted-Developers
+                http://community.jboss.org/wiki/MavenDeployingaRelease -->
 
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
@@ -230,6 +238,9 @@
     </target>
 
     <!-- macro to process a pom template into an actual pom and use it with mvn deploy-file to upload to the repo -->
+
+    <!-- http://community.jboss.org/wiki/MavenDeployingaRelease -->
+
     <macrodef name="mvn-artifact.macro">
 
         <attribute name="artifact"/>
@@ -238,7 +249,7 @@
 
         <sequential>
 
-            <property name="groupid" value="jboss.jbossts"/>
+            <property name="groupid" value="org.jboss.jbossts"/>
 
             <!-- where a -sources.jar exists, upload it first as we need the latter binary .jar to overwrite the
                 generated pom due to the requirement for working around http://jira.codehaus.org/browse/MDEPLOY-48
@@ -250,7 +261,7 @@
                         <arg value="deploy:deploy-file"/>
                         <arg value="-Dfile=@{dir}/@{artifact}-sources.jar"/>
                         <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-                        <arg value="-Durl=${mvn.url}"/>
+                        <arg value="-Durl=${mvn.repo.url}"/>
 
                         <arg value="-DgroupId=${groupid}"/>
                         <arg value="-DartifactId=@{artifact}"/>
@@ -278,7 +289,7 @@
                 <arg value="deploy:deploy-file"/>
                 <arg value="-Dfile=@{dir}/@{artifact}.@{packaging}"/>
                 <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-                <arg value="-Durl=${mvn.url}"/>
+                <arg value="-Durl=${mvn.repo.url}"/>
                 <arg value="-DpomFile=${workdir}/build/${tag}/pom-@{artifact}.xml"/>
                 <arg value="-DuniqueVersion=false"/>
             </exec>
@@ -286,5 +297,38 @@
         </sequential>
         
    </macrodef>
+
+    <!-- magnolia (the cms that sits behind jboss.org/jbosstm pages) is a pain. This target generates
+     xml for /downloads/somerelease.xml pages to ease some of the pain in publishing an upload
+      right click jbosstm/downloads node, import from xml, then right click new node and activate.
+      download ordering in the rollover menu is determined by ordering the GUI - move new page as needed.
+      edit the 'downloads' node itself to link the new release from downloads.html, it's not automatic. -->
+    <target name="magnolia">
+
+        <exec executable="date" outputproperty="date">
+            <arg line="+'%FT%H:%M:%S.000Z'"/>
+        </exec>
+
+        <length property="jta-src-length" file="${workdir}/jbossts-jta-${filename}-src.zip"/>
+        <length property="full-src-length" file="${workdir}/jbossts-full-${filename}-src.zip"/>
+        <length property="jta-bin-length" file="${workdir}/jbossts-jta-${filename}.zip"/>
+        <length property="full-bin-length" file="${workdir}/jbossts-full-${filename}.zip"/>
+
+        <copy  file="magnolia-release-download-page-template.xml"
+               tofile="${workdir}/website.jbosstm.downloads.${filename}.xml"
+               filtering="true"
+               overwrite="true">
+            <filterset>
+                <filter token="tag" value="${tag}"/>
+                <filter token="filename" value="${filename}"/>
+                <filter token="date" value="${date}"/>
+                <filter token="jta-src-length" value="${jta-src-length}"/>
+                <filter token="full-src-length" value="${full-src-length}"/>
+                <filter token="jta-bin-length" value="${jta-bin-length}"/>
+                <filter token="full-bin-length" value="${full-bin-length}"/>
+            </filterset>
+        </copy>
+
+    </target>
 
 </project>

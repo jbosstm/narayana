@@ -43,7 +43,7 @@
     <property name="ext.lib.src" value="../ext"/>
     <property name="ext.lib.dest" value="../build/extlib"/>
 
-    <property name="groupid" value="jboss.jbossts"/>
+    <property name="groupid" value="org.jboss.jbossts"/>
     <property name="artifact" value="jbossts-build"/>
     <property name="version" value="unknown"/>
 
@@ -72,6 +72,8 @@
         </copy>
 
         <exec executable="mvn" dir="${basedir}">
+            <arg value="-s"/>
+            <arg value="settings.xml"/>
             <arg value="dependency:copy-dependencies"/>
         </exec>
 

@@ -119,28 +119,17 @@
     </scm>
 
     <repositories>
-      <repository>
-      <id>repository.jboss.org</id>
-      <name>JBoss Releases Repository</name>
-      <url>http://repository.jboss.org/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>snapshots.jboss.org</id>
-      <name>JBoss Snapshots Repository</name>
-      <url>http://snapshots.jboss.org/maven2</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <build>
@@ -322,6 +311,12 @@
             <groupId>org.jboss.remoting</groupId>
             <artifactId>jboss-remoting</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.naming</groupId>
+            <artifactId>jnp-client</artifactId>
+        </dependency>
+
 
         <!-- XTS: -->
 
