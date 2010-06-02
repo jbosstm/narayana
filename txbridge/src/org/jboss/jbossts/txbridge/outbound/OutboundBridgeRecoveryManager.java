@@ -25,6 +25,11 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import org.apache.log4j.Logger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide
  * recovery services for outbound bridged transactions.
@@ -36,6 +41,8 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     private static final Logger log = Logger.getLogger(OutboundBridgeRecoveryManager.class);
 
     private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
+
+    private volatile boolean orphanedBridgeWrappersAreIdentifiable = false;
 
     /**
      * MC lifecycle callback, used to register components with the recovery manager.
@@ -75,18 +82,22 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     @Override
     public void periodicWorkSecondPass()
     {
-        // by the time we are called, the JTA tx recovery module has already been called, as it is registered
-        // and hence ordered before us. Therefore by the time we get here any BridgeWrappers belonging to
-        // a parent that was logged, will have been resolved top down. Anything left at this point can therefore
-        // be assumed orphaned and hence we apply presumed abort.
-
         log.trace("periodicWorkSecondPass()");
+
+        BridgeXAResource.cleanupRecoveredXAResources();
+
+        // the JTA top level tx recovery module is registered and hence run before us. Therefore by the time
+        // we get here we know readObject has been called for any BridgeXAResource for which a log exists.
+        // thus if it's not in our xaResourcesAwaitingRecovery list by now, it's presumed rollback.
+        orphanedBridgeWrappersAreIdentifiable = true;
 
         BridgeWrapper[] bridgeWrappers = BridgeWrapper.scan(OutboundBridgeManager.BRIDGEWRAPPER_PREFIX);
 
         for(BridgeWrapper bridgeWrapper : bridgeWrappers) {
-            log.info("rolling back orphaned subordinate BridgeWrapper "+bridgeWrapper.getIdentifier());
-            bridgeWrapper.rollback();
+            if( !BridgeXAResource.isAwaitingRecovery(bridgeWrapper.getIdentifier()) ) {
+                log.info("rolling back orphaned subordinate BridgeWrapper "+bridgeWrapper.getIdentifier());
+                bridgeWrapper.rollback();
+            }
         }
     }
 }

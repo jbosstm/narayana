@@ -184,7 +184,7 @@ public class CrashRecoveryTests
         manager.startServer("default");
     }
 
-    //@Test
+    @Test
     public void testCrashOneLog() throws Exception {
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$1 = true"); // shouldCommit=true
@@ -245,7 +245,7 @@ public class CrashRecoveryTests
     }
 
     // this one requires <property name="commitOnePhase">false</property> on CoordinatorEnvironmentBean
-    //@Test
+    @Test
     public void testCrashThreeLogs() throws Exception {
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$1 = true"); // shouldCommit=true

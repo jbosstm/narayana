@@ -62,9 +62,7 @@ public class BasicTests
         instrumentedTestSynchronization = instrumentor.instrumentClass(TestSynchronization.class);
         instrumentedTestXAResource = instrumentor.instrumentClass(TestXAResource.class);
 
-        //instrumentor.captureLogging(TestSynchronization.class, null, org.apache.log4j.Logger.class, "error");
         instrumentor.injectOnCall(TestServiceImpl.class, "doNothing", "$0.enlistSynchronization(1), $0.enlistXAResource(1)");
-
     }
 
     @After

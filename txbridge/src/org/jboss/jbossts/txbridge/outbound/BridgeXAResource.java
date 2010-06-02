@@ -38,6 +38,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Provides method call mapping between JTA parent coordinator and WS-AT subordinate transaction.
@@ -51,11 +55,16 @@ public class BridgeXAResource implements XAResource, Serializable
 
     private static final Logger log = Logger.getLogger(BridgeXAResource.class);
 
+    private static final List<BridgeXAResource> xaResourcesAwaitingRecovery =
+            Collections.synchronizedList(new LinkedList<BridgeXAResource>());
+
     private transient volatile BridgeWrapper bridgeWrapper;
 
     private volatile Uid externalTxId; // JTA i.e. parent id
 
     private volatile String bridgeWrapperId; // XTS i.e. subordinate.
+
+    private transient volatile boolean isAwaitingRecovery = false;
 
     /**
      * Create a new XAResource which wraps the subordinate WS-AT transaction.
@@ -102,6 +111,12 @@ public class BridgeXAResource implements XAResource, Serializable
         //in.defaultReadObject();
         externalTxId = (Uid)in.readObject();
         bridgeWrapperId = (String)in.readObject();
+
+        // this readObject method executes only when a log is being read at recovery time:
+        isAwaitingRecovery = true;
+        synchronized(xaResourcesAwaitingRecovery) {
+            xaResourcesAwaitingRecovery.add(this);
+        }
 
         try
         {
@@ -169,7 +184,7 @@ public class BridgeXAResource implements XAResource, Serializable
                 log.trace("prepare returning XAResource.XA_OK");
                 return XAResource.XA_OK;
             case TwoPhaseOutcome.PREPARE_READONLY:
-                OutboundBridgeManager.removeMapping(externalTxId);
+                cleanupRefs();
                 log.trace("prepare returning XAResource.XA_RDONLY");
                 return XAResource.XA_RDONLY;
             default:
@@ -181,6 +196,45 @@ public class BridgeXAResource implements XAResource, Serializable
                 throw xaException;
         }
     }
+
+    /**
+     * Release any BridgeXAResource instances that have been driven
+     * through to completion by their parent JTA transaction.
+     */
+    public static void cleanupRecoveredXAResources()
+    {
+        log.trace("cleanupRecoveredXAResources()");
+
+        synchronized(xaResourcesAwaitingRecovery) {
+            Iterator<BridgeXAResource> iter = xaResourcesAwaitingRecovery.iterator();
+            while(iter.hasNext()) {
+                BridgeXAResource xaResource = iter.next();
+                if(!xaResource.isAwaitingRecovery()) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Determine if the specified BridgeWrapper is awaiting recovery or not.
+     *
+     * @param bridgeWrapperId the Id to search for.
+     * @return true if the BridgeWrapper is known to be awaiting recovery, false otherwise.
+     */
+    public static boolean isAwaitingRecovery(String bridgeWrapperId)
+    {
+        synchronized(xaResourcesAwaitingRecovery) {
+            for(BridgeXAResource bridgeXAResource : xaResourcesAwaitingRecovery) {
+                if(bridgeXAResource.bridgeWrapperId.equals(bridgeWrapperId)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Informs the resource manager to roll back work done on behalf of a transaction branch.
@@ -202,7 +256,7 @@ public class BridgeXAResource implements XAResource, Serializable
         }
         finally
         {
-            OutboundBridgeManager.removeMapping(externalTxId);
+            cleanupRefs();
         }
     }
 
@@ -235,7 +289,7 @@ public class BridgeXAResource implements XAResource, Serializable
         }
         finally
         {
-            OutboundBridgeManager.removeMapping(externalTxId);
+            cleanupRefs();
         }
     }
 
@@ -320,5 +374,17 @@ public class BridgeXAResource implements XAResource, Serializable
         log.trace("getTransactionTimeout()");
 
         return 0;  // TODO
+    }
+
+    public boolean isAwaitingRecovery() {
+        return isAwaitingRecovery;
+    }
+
+    private void cleanupRefs()
+    {
+        log.trace("cleanupRefs()");
+
+        OutboundBridgeManager.removeMapping(externalTxId);
+        isAwaitingRecovery = false;
     }
 }
