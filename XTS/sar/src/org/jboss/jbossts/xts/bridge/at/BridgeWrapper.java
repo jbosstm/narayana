@@ -95,7 +95,7 @@ public class BridgeWrapper
             return bridgeWrapper;
         } else {
             XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
-            if (recoveryManager.isCoordinatorRecoveryStarted()) {
+            if (recoveryManager != null && recoveryManager.isCoordinatorRecoveryStarted()) {
                 throw new UnknownTransactionException();
             } else {
                 return null;
