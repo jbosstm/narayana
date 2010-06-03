@@ -6,6 +6,7 @@ The installation procedure has changed from earlier releases due to the move fro
 a JMX configuration style to the POJO microcontainer used by AS 6.x, packaging and config files changes.
 Upgrading users should take care to read the steps below carefully.
 
+
 Installing JBossTS 4.11 JTA into JBossAS 6
 ------------------------------------------------------------
 
@@ -22,7 +23,6 @@ do so the steps are as follows:
 - Replace JBossAS server/<name>/deploy/transaction-jboss-beans.xml with the newer JBossTS version.
 
 
-
 Installing JBossTS 4.11 JTS into JBossAS 6
 ------------------------------------------------------------
 
@@ -30,9 +30,8 @@ The JTS binaries are now bundled with JBossAS. To change the default JTA to JTS 
 follow the instructions in the app server's docs/examples/transactions/README.txt file.
 
 To upgrade the version of JTS bundled with JBossAS to the one from this JBossTS release,
-follow the install steps as for the JTA (see above), but install the JTS vesion of
+follow the install steps as for the JTA (see above), but install the JTS version of
 transaction-jboss-beans.xml ensuring that the selected server profile contains an ORB.
-
 
 
                          Web Services Transactions
@@ -54,14 +53,14 @@ build the sar so that only the 1.0 or the 1.1 implementations are
 deployed (see the build script in XTS/sar for details).
 
 The default XTS build produces a service archive which contains both
-sets of partipant and coordinator services configured to support
+sets of participant and coordinator services configured to support
 transactional web service invocations within a single JVM. The services
 employ the JBoss Application Server bind address and JBoss Web listener
 port which default to address localhost and port 8080. This default build
 is suitable for demonstrating the functionality of XTS using the supplied
 demo programs. One of the demos displays use of the WS 1.1 protocols when
 invoking web services via JaxWS. The other displays use of the WS 1.0
-protcols when invoking web services via JaxRPC.
+protocols when invoking web services via JaxRPC.
 
 To build the default sar, cd to the XTS root directory and invoke the
 ant build script
@@ -83,14 +82,14 @@ directory
 
   cp <JBossTSDir>/xts-install/sar/jbossxts.sar <JBossDir>/server/<xxx>/deploy
 
-Alternatively, you can set the environmwent variable JBOSS_HOME and
-then deploy using the build script in the XTS/sar subdirectory:
+Alternatively, you can set the environment variable JBOSS_HOME and
+then deploy using the build script in the XTS/sar sub-directory:
 
   setenv JBOSS_HOME <JBossDir>
   cd <JBossTSDir>/XTS/sar
   ant deploy
 
-This will install the sar in subdirectory server/default/deploy of
+This will install the sar in sub-directory server/default/deploy of
 $JBOSS_HOME
 
 Stand-alone coordinator configuration
@@ -165,7 +164,7 @@ XTS Trailmap Documentation
 We recommend that you run through the XTS trailmap in order to
 understand how to build and use transaction-aware Web Services, before
 deciding whether or not to use a stand alone coordinator service. The
-trail map web pages are located in the htdocs subdirectory of the XTS
+trail map web pages are located in the htdocs sub-directory of the XTS
 installed tree.
 
                          Embedded Tools
@@ -175,17 +174,17 @@ JMX Instrumentation
 -------------------
 
 With this release it is now possible to monitor the transaction Object
-Store using JMX. Monitoring the Object Store is useful for trouble 
-shooting problems that occur when transactions are committed (it does 
+Store using JMX. Monitoring the Object Store is useful for trouble
+shooting problems that occur when transactions are committed (it does
 not expose transactions prior to commit). The JMX instrumentation
-(of the ObjectStore) is a new feature and is not necessarily suitable 
+(of the ObjectStore) is a new feature and is not necessarily suitable
 for monitoring production systems.
 
-In any compliant JMX browser (such as jconsole) there should appear an 
+In any compliant JMX browser (such as jconsole) there should appear an
 MBean with the name
     jboss.jta:type=ObjectStore
-This MBean corresponds to the object store and provides a naming context 
-for other MBeans (for example in a JMX client such as jconsole the MBeans 
+This MBean corresponds to the object store and provides a naming context
+for other MBeans (for example in a JMX client such as jconsole the MBeans
 will be displayed in the form of a tree control). The various MBeans
 corresponding to this ObjectStore will have names prefixed by this
 'top level' MBean.
@@ -197,11 +196,11 @@ been is being initialised in transaction-jboss-beans.xml:
     </bean>
 
 If JBossTS is deployed in the JBoss application server then JMX
-instrumentation of the ObjectStore is enabled by default. It can be disabled 
+instrumentation of the ObjectStore is enabled by default. It can be disabled
 commenting out the ObjectStoreBrowserBean bean definition in the file
 transaction-jboss-beans.xml file. Furthermore, if the JBossTS JOPR plugin
 (see below for details) is copied to the admin console deploy directory then
-the sam information is available via the JBoss AS Admin Console.
+the same information is available via the JBoss AS Admin Console.
 
 The JMX instrumentation is also available when running JBossTS in stand-alone
 mode. Simply instantiate an object of type com.hp.mwtests.ts.arjuna.tools.ObjStoreBrowser
@@ -212,7 +211,7 @@ Please refer to the unit tests in the src distribution for more details.
 Tools Deployment
 ----------------
 
-Embedded tools is an applet that runs in proccess with the AS which
+Embedded tools is an applet that runs in process with the AS which
 includes an interface for inspecting transactions. It is deployed as
 a service archive and can be found in the product install directory:
 <install directory>/bin/jbossts-tools.sar

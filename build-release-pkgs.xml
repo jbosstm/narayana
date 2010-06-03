@@ -158,6 +158,10 @@
             <property  name="testtype" value="tests-11"/>
         </ant>
 
+        <ant dir="${workdir}/build/${tag}/rhq-plugin" antfile="build.xml" target="dist">
+            <property name="version" value="${filename}"/>
+        </ant>
+
         <!-- package the full release -->
         <copy todir="${workdir}/build/${tag}/${tag}">
             <fileset dir="${workdir}/build/${tag}/install"/>
@@ -196,7 +200,6 @@
 
         <!-- http://community.jboss.org/wiki/MavenGettingStarted-Developers
                 http://community.jboss.org/wiki/MavenDeployingaRelease -->
-
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
@@ -220,6 +223,8 @@
 
         <mvn-artifact.macro artifact="jbossts-tools" packaging="sar"
                             dir="${workdir}/build/${tag}/bin"/>
+        <mvn-artifact.macro artifact="jbossts-jopr-plugin" packaging="jar"
+                            dir="${workdir}/build/${tag}/bin"/>
 
         <!-- xts -->
 
@@ -236,7 +241,6 @@
 
         
     </target>
-
     <!-- macro to process a pom template into an actual pom and use it with mvn deploy-file to upload to the repo -->
 
     <!-- http://community.jboss.org/wiki/MavenDeployingaRelease -->

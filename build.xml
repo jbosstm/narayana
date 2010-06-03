@@ -92,7 +92,7 @@
     <target  name="jbossall" depends="jbossjts">
         <ant dir="XTS" target="clean"/>
         <ant dir="XTS" target="install"/>
-        <ant dir="rhq-plugin" target="install"/>
+        <ant dir="rhq-plugin" target="dist"/>
     </target>
 
     <target name="antbuildsystem" depends="clean">

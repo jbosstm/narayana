@@ -361,11 +361,6 @@
             <artifactId>jaxws-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>javax.xml.ws</groupId>
-            <artifactId>jaxws-api</artifactId>
-        </dependency>
-
         <!-- txbridge demo -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
