@@ -29,35 +29,19 @@ public interface CoreEnvironmentBeanMBean
 {
     String getVarDir();
 
-    void setVarDir(String varDir);
-
     String getNodeIdentifier();
-
-    void setNodeIdentifier(String nodeIdentifier);
 
     int getSocketProcessIdPort();
 
-    void setSocketProcessIdPort(int socketProcessIdPort);
-
     int getSocketProcessIdMaxPorts();
-
-    void setSocketProcessIdMaxPorts(int socketProcessIdMaxPorts);
 
     String getProcessImplementation();
 
-    void setProcessImplementation(String processImplementation);
-
     int getPid();
-
-    void setPid(int pid);
 
     boolean isAllowMultipleLastResources();
 
-    void setAllowMultipleLastResources(boolean allowMultipleLastResources);
-
     boolean isDisableMultipleLastResourcesWarning();
-
-    void setDisableMultipleLastResourcesWarning(boolean disableMultipleLastResourcesWarning);
 
     String getBuildVersion();
 

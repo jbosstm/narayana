@@ -29,17 +29,9 @@ public interface TxojEnvironmentBeanMBean
 {
     String getLockStoreDir();
 
-    void setLockStoreDir(String lockStoreDir);
-
     String getMultipleLockStore();
-
-    void setMultipleLockStore(String multipleLockStore);
 
     String getSingleLockStore();
 
-    void setSingleLockStore(String singleLockStore);
-
     boolean isAllowNestedLocking();
-
-    void setAllowNestedLocking(boolean allowNestedLocking);
 }

@@ -31,53 +31,27 @@ public interface RecoveryEnvironmentBeanMBean
 {
     int getPeriodicRecoveryPeriod();
 
-    void setPeriodicRecoveryPeriod(int periodicRecoveryPeriod);
-
     int getRecoveryBackoffPeriod();
-
-    void setRecoveryBackoffPeriod(int recoveryBackoffPeriod);
 
     boolean isRecoveryListener();
 
-    void setRecoveryListener(boolean recoveryListener);
-
     int getRecoveryPort();
-
-    void setRecoveryPort(int recoveryPort);
 
     String getRecoveryAddress();
 
-    void setRecoveryAddress(String recoveryAddress);
-
     int getTransactionStatusManagerPort();
-
-    void setTransactionStatusManagerPort(int transactionStatusManagerPort);
 
     String getTransactionStatusManagerAddress();
 
-    void setTransactionStatusManagerAddress(String transactionStatusManagerAddress);
-
     int getExpiryScanInterval();
-
-    void setExpiryScanInterval(int expiryScanInterval);
 
     int getTransactionStatusManagerExpiryTime();
 
-    void setTransactionStatusManagerExpiryTime(int transactionStatusManagerExpiryTime);
-
     List<String> getExpiryScanners();
-
-    void setExpiryScanners(List<String> expiryScanners);
 
     List<String> getRecoveryExtensions();
 
-    void setRecoveryExtensions(List<String> recoveryExtensions);
-
     List<String> getRecoveryActivators();
 
-    void setRecoveryActivators(List<String> recoveryActivators);
-
     boolean isTimeoutSocket();
-
-    void setTimeoutSocket(boolean timeoutSocket);
 }

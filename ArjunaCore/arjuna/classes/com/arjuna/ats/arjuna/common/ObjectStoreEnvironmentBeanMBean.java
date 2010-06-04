@@ -29,93 +29,47 @@ public interface ObjectStoreEnvironmentBeanMBean
 {
     int getCacheStoreSize();
 
-    void setCacheStoreSize(int cacheStoreSize);
-
     boolean isCacheStoreSync();
-
-    void setCacheStoreSync(boolean cacheStoreSync);
 
     int getCacheStoreRemovedItems();
 
-    void setCacheStoreRemovedItems(int cacheStoreRemovedItems);
-
     int getCacheStoreScanPeriod();
-
-    void setCacheStoreScanPeriod(int cacheStoreScanPeriod);
 
     int getCacheStoreWorkItems();
 
-    void setCacheStoreWorkItems(int cacheStoreWorkItems);
-
     int getCacheStoreHash();
-
-    void setCacheStoreHash(int cacheStoreHash);
 
     String getLocalOSRoot();
 
-    void setLocalOSRoot(String localOSRoot);
-
     String getObjectStoreDir();
-
-    void setObjectStoreDir(String objectStoreDir);
 
     boolean isObjectStoreSync();
 
-    void setObjectStoreSync(boolean objectStoreSync);
-
     String getObjectStoreType();
-
-    void setObjectStoreType(String objectStoreType);
 
     int getHashedDirectories();
 
-    void setHashedDirectories(int hashedDirectories);
-
     boolean isTransactionSync();
-
-    void setTransactionSync(boolean transactionSync);
 
     String getJdbcUserDbAccess();
 
-    void setJdbcUserDbAccess(String jdbcUserDbAccess);
-
     String getJdbcTxDbAccess();
-
-    void setJdbcTxDbAccess(String jdbcTxDbAccess);
 
     int getJdbcPoolSizeInitial();
 
-    void setJdbcPoolSizeInitial(int jdbcPoolSizeInitial);
-
     int getJdbcPoolSizeMaximum();
-
-    void setJdbcPoolSizeMaximum(int jdbcPoolSizeMaximum);
 
     boolean isJdbcPoolPutConnections();
 
-    void setJdbcPoolPutConnections(boolean jdbcPoolPutConnections);
-
     int getShare();
-
-    void setShare(int share);
 
     int getHierarchyRetry();
 
-    void setHierarchyRetry(int hierarchyRetry);
-
     int getHierarchyTimeout();
-
-    void setHierarchyTimeout(int hierarchyTimeout);
 
     boolean isSynchronousRemoval();
 
-    void setSynchronousRemoval(boolean synchronousRemoval);
-
     long getTxLogSize();
 
-    void setTxLogSize(long txLogSize);
-
     long getPurgeTime();
-
-    void setPurgeTime(long purgeTime);
 }

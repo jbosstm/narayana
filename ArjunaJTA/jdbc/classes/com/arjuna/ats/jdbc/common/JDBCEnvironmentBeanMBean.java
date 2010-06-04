@@ -31,9 +31,5 @@ public interface JDBCEnvironmentBeanMBean
 {
     int getIsolationLevel();
 
-    void setIsolationLevel(int isolationLevel);
-
     public Hashtable getJndiProperties();
-
-    public void setJndiProperties(Hashtable jndiProperties);
 }

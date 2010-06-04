@@ -32,37 +32,19 @@ public interface OrbPortabilityEnvironmentBeanMBean
 {
     String getInitialReferencesRoot();
 
-    void setInitialReferencesRoot(String initialReferencesRoot);
-
     String getInitialReferencesFile();
-
-    void setInitialReferencesFile(String initialReferencesFile);
 
     String getFileDir();
 
-    void setFileDir(String fileDir);
-
     String getResolveService();
-
-    void setResolveService(String resolveService);
 
     List<String> getEventHandlers();
 
-    void setEventHandlers(List<String> eventHandler);
-
     String getOrbImplementation();
-
-    void setOrbImplementation(String orbImplementation);
 
     String getOaImplementation();
 
-    void setOaImplementation(String oaImplementation);
-
     String getBindMechanism();
 
-    void setBindMechanism(String bindMechanism);
-
     public Map<String, String> getOrbInitializationProperties();
-
-    public void setOrbInitializationProperties(Map<String, String> orbInitializationProperties);
 }

@@ -31,61 +31,31 @@ public interface JTAEnvironmentBeanMBean
 {
     boolean isSupportSubtransactions();
 
-    void setSupportSubtransactions(boolean supportSubtransactions);
-
     String getTransactionManagerClassName();
-
-    void setTransactionManagerClassName(String jtaTMImplementation);
 
     String getUserTransactionClassName();
 
-    void setUserTransactionClassName(String jtaUTImplementation);
-
     String getTransactionSynchronizationRegistryClassName();
-
-    void setTransactionSynchronizationRegistryClassName(String jtaTSRImplementation);
 
     List<String> getXaRecoveryNodes();
 
-    void setXaRecoveryNodes(List<String> xaRecoveryNodes);
-
     List<String> getXaResourceRecoveryClassNames();
-
-    void setXaResourceRecoveryClassNames(List<String> xaResourceRecoveryInstances);
 
     List<String> getXaResourceOrphanFilterClassNames();
 
-    void setXaResourceOrphanFilterClassNames(List<String> xaResourceOrphanFilters);
-
     boolean isXaRollbackOptimization();
-
-    void setXaRollbackOptimization(boolean xaRollbackOptimization);
 
     boolean isXaAssumeRecoveryComplete();
 
-    void setXaAssumeRecoveryComplete(boolean xaAssumeRecoveryComplete);
-
     String getUserTransactionJNDIContext();
-
-    void setUserTransactionJNDIContext(String jtaUTJNDIContext);
 
     String getTransactionManagerJNDIContext();
 
-    void setTransactionManagerJNDIContext(String jtaTMJNDIContext);
-
     String getTransactionSynchronizationRegistryJNDIContext();
-
-    void setTransactionSynchronizationRegistryJNDIContext(String jtaTSRJNDIContext);
 
     List<String> getXaResourceMapClassNames();
 
-    void setXaResourceMapClassNames(List<String> xaErrorHandlers);
-    
     boolean isXaTransactionTimeoutEnabled();
 
-    void setXaTransactionTimeoutEnabled(boolean xaTransactionTimeoutEnabled);
-
     String getLastResourceOptimisationInterface();
-
-    void setLastResourceOptimisationInterface(String lastResourceOptimisationInterface);
 }

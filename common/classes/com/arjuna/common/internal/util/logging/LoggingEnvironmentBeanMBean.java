@@ -29,13 +29,7 @@ public interface LoggingEnvironmentBeanMBean
 {
     String getLanguage();
 
-    void setLanguage(String language);
-
     String getCountry();
 
-    void setCountry(String country);
-
     String getLoggingFactory();
-
-    void setLoggingFactory(String loggingFactory);
 }

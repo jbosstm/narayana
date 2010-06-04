@@ -29,43 +29,23 @@ public interface CoordinatorEnvironmentBeanMBean
 {
     String getActionStore();
 
-    void setActionStore(String actionStore);
-
     boolean isAsyncCommit();
-
-    void setAsyncCommit(boolean asyncCommit);
 
     boolean isAsyncPrepare();
 
-    void setAsyncPrepare(boolean asyncPrepare);
-
     boolean isAsyncRollback();
-
-    void setAsyncRollback(boolean asyncRollback);
 
     boolean isCommitOnePhase();
 
-    void setCommitOnePhase(boolean commitOnePhase);
-
     boolean isMaintainHeuristics();
-
-    void setMaintainHeuristics(boolean maintainHeuristics);
 
     boolean isTransactionLog();
 
-    void setTransactionLog(boolean transactionLog);
-
     boolean isWriteOptimisation();
-
-    void setWriteOptimisation(boolean writeOptimisation);
 
     boolean isReadonlyOptimisation();
 
-    void setReadonlyOptimisation(boolean readonlyOptimisation);
-
     boolean isClassicPrepare();
-
-    void setClassicPrepare(boolean classicPrepare);
 
     boolean isEnableStatistics();
 
@@ -73,45 +53,23 @@ public interface CoordinatorEnvironmentBeanMBean
 
     boolean isSharedTransactionLog();
 
-    void setSharedTransactionLog(boolean sharedTransactionLog);
-
     boolean isStartDisabled();
-
-    void setStartDisabled(boolean startDisabled);
 
     String getTxReaperMode();
 
-    void setTxReaperMode(String txReaperMode);
-
     long getTxReaperTimeout();
-
-    void setTxReaperTimeout(long txReaperTimeout);
 
     long getTxReaperCancelWaitPeriod();
 
-    void setTxReaperCancelWaitPeriod(long txReaperCancelWaitPeriod);
-
     long getTxReaperCancelFailWaitPeriod();
-
-    void setTxReaperCancelFailWaitPeriod(long txReaperCancelFailWaitPeriod);
 
     int getTxReaperZombieMax();
 
-    void setTxReaperZombieMax(int txReaperZombieMax);
-
     int getDefaultTimeout();
-
-    void setDefaultTimeout(int defaultTimeout);
 
     boolean isTransactionStatusManagerEnable();
 
-    void setTransactionStatusManagerEnable(boolean transactionStatusManagerEnable);
-
     boolean isBeforeCompletionWhenRollbackOnly();
 
-    void setBeforeCompletionWhenRollbackOnly(boolean beforeCompletionWhenRollbackOnly);
-
     String getCheckedActionFactoryClassName();
-
-    void setCheckedActionFactoryClassName(String checkedActionFactory);
 }
