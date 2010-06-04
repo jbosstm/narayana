@@ -89,7 +89,7 @@ class ThreadWriter extends Thread
 
 public class CachedTest
 {
-    //@Test
+    @Test
     public void test() throws Exception
     {
         int cacheSize = 2048;

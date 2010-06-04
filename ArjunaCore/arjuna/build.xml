@@ -54,6 +54,7 @@
                     <exclude name="**/CrashAbstractRecord*.java"/>
                     <exclude name="**/RecoveryTransaction.java"/>
                     <exclude name="**/UserDefFirst0Setup.java"/>
+                    <exclude name="**/CachedTest.java"/>
 
                     <!-- LogStressTest2 takes too long - needs moving to /qa -->
                     <exclude name="**/LogStressTest2.java"/>
