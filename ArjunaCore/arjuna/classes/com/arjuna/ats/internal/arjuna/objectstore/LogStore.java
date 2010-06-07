@@ -1590,8 +1590,6 @@ public class LogStore extends FileSystemStore
 
 	static
 	{
-        System.out.println(arjPropertyManager.getObjectStoreEnvironmentBean().getPurgeTime());
-
             _synchronousRemoval = arjPropertyManager.getObjectStoreEnvironmentBean().isSynchronousRemoval();
 
             _purgeTime = arjPropertyManager.getObjectStoreEnvironmentBean().getPurgeTime();
