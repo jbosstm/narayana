@@ -307,7 +307,7 @@ public class ObjectStoreTest
         }
     }
     
-    @Test
+    //@Test
     public void testCacheStore () throws Exception
     {
         CacheStore as = new CacheStore();
