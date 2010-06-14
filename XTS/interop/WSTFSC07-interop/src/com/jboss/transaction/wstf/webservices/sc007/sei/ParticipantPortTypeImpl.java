@@ -33,6 +33,7 @@ import com.arjuna.wsc11.messaging.MessageId;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.ProtocolException;
@@ -66,6 +67,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompletionCommit", action = "http://www.wstf.org/docs/scenarios/sc007/CompletionCommit")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/CompletionCommit")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void completionCommit(
             @WebParam(name = "CompletionCommit", targetNamespace = "http://www.wstf.org/sc007", partName = "parameters")
@@ -88,6 +90,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompletionRollback", action = "http://www.wstf.org/docs/scenarios/sc007/CompletionRollback")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/CmopletionRollback")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void completionRollback(
         @WebParam(name = "CompletionRollback", targetNamespace = "http://www.wstf.org/sc007", partName = "parameters")
@@ -109,6 +112,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Commit", action = "http://www.wstf.org/docs/scenarios/sc007/Commit")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/Commit")
     @RequestWrapper(localName = "Commit", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void commit()
     {
@@ -129,6 +133,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Rollback", action = "http://www.wstf.org/docs/scenarios/sc007/Rollback")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/Rollback")
     @RequestWrapper(localName = "Rollback", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void rollback()
     {
@@ -149,6 +154,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Phase2Rollback", action = "http://www.wstf.org/docs/scenarios/sc007/Phase2Rollback")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/Phase2Rollback")
     @RequestWrapper(localName = "Phase2Rollback", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void phase2Rollback()
     {
@@ -169,6 +175,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Readonly", action = "http://www.wstf.org/docs/scenarios/sc007/Readonly")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/Readonly")
     @RequestWrapper(localName = "Readonly", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void readonly()
     {
@@ -189,6 +196,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "VolatileAndDurable", action = "http://www.wstf.org/docs/scenarios/sc007/VolatileAndDurable")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/VolatileAndDurable")
     @RequestWrapper(localName = "VolatileAndDurable", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void volatileAndDurable()
     {
@@ -209,6 +217,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "EarlyReadonly", action = "http://www.wstf.org/docs/scenarios/sc007/EarlyReadonly")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/EarlyReadOnly")
     @RequestWrapper(localName = "EarlyReadonly", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void earlyReadonly()
     {
@@ -229,6 +238,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "EarlyAborted", action = "http://www.wstf.org/docs/scenarios/sc007/EarlyAborted")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/EarlyAborted")
     @RequestWrapper(localName = "EarlyAborted", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void earlyAborted()
     {
@@ -249,6 +259,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "ReplayCommit", action = "http://www.wstf.org/docs/scenarios/sc007/ReplayCommit")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/ReplayCommit")
     @RequestWrapper(localName = "ReplayCommit", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void replayCommit()
     {
@@ -269,6 +280,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryPreparedCommit", action = "http://www.wstf.org/docs/scenarios/sc007/RetryPreparedCommit")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/RetryPreparedCommit")
     @RequestWrapper(localName = "RetryPreparedCommit", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void retryPreparedCommit()
     {
@@ -289,6 +301,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryPreparedAbort", action = "http://www.wstf.org/docs/scenarios/sc007/RetryPreparedAbort")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/RetryPreparedAbort")
     @RequestWrapper(localName = "RetryPreparedAbort", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void retryPreparedAbort()
     {
@@ -309,6 +322,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryCommit", action = "http://www.wstf.org/docs/scenarios/sc007/RetryCommit")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/RetryCommit")
     @RequestWrapper(localName = "RetryCommit", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void retryCommit()
     {
@@ -329,6 +343,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "PreparedAfterTimeout", action = "http://www.wstf.org/docs/scenarios/sc007/PreparedAfterTimeout")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/PreparedAfterTimeout")
     @RequestWrapper(localName = "PreparedAfterTimeout", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void preparedAfterTimeout()
     {
@@ -349,6 +364,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "LostCommitted", action = "http://www.wstf.org/docs/scenarios/sc007/LostCommitted")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/LostCommitted")
     @RequestWrapper(localName = "LostCommitted", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void lostCommitted()
     {

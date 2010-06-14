@@ -7,6 +7,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
+import javax.xml.ws.Action;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
@@ -42,6 +43,7 @@ public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorP
      */
     @WebMethod(operationName = "CommitOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit")
     public void commitOperation(
         @WebParam(name = "Commit", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -64,6 +66,7 @@ public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorP
      */
     @WebMethod(operationName = "RollbackOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback")
     public void rollbackOperation(
         @WebParam(name = "Rollback", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)

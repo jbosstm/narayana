@@ -36,18 +36,14 @@ This document and the information contained herein is provided on an "AS IS" bas
   <!-- Port Types -->
   <wsdl:portType name="ActivationPortType">
     <wsdl:operation name="CreateCoordinationContextOperation">
-      <wsdl:input message="wscoor:CreateCoordinationContext"
-        wsa:Action="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContext"/>
-      <wsdl:output message="wscoor:CreateCoordinationContextResponse"
-        wsa:Action="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContextResponse"/>
+      <wsdl:input message="wscoor:CreateCoordinationContext"/>
+      <wsdl:output message="wscoor:CreateCoordinationContextResponse"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="RegistrationPortType">
     <wsdl:operation name="RegisterOperation">
-      <wsdl:input message="wscoor:Register"
-        wsa:Action="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register"/>
-      <wsdl:output message="wscoor:RegisterResponse"
-        wsa:Action="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/RegisterResponse"/>
+      <wsdl:input message="wscoor:Register"/>
+      <wsdl:output message="wscoor:RegisterResponse"/>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>

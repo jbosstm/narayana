@@ -26,6 +26,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
 
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
@@ -66,6 +67,7 @@ public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortTy
      */
     @WebMethod(operationName = "Response", action = "http://www.wstf.org/docs/scenarios/sc007/Response")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/Response")
     @RequestWrapper(localName = "Response", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void response()
     {
@@ -77,6 +79,7 @@ public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortTy
 
     @WebMethod(operationName = "SoapFault", action = "http://www.wstf.org/docs/scenarios/sc007/SoapFault")
     @Oneway
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/SoapFault")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void soapFault(
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")

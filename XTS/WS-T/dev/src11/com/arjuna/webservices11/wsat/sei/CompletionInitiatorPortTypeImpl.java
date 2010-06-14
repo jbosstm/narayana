@@ -8,6 +8,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
+import javax.xml.ws.Action;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
@@ -46,6 +47,7 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
      */
     @WebMethod(operationName = "CommittedOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed")
     public void committedOperation(
         @WebParam(name = "Committed", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -68,6 +70,7 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
      */
     @WebMethod(operationName = "AbortedOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted")
     public void abortedOperation(
         @WebParam(name = "Aborted", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -86,6 +89,7 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
 
     @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     public void fault(
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)

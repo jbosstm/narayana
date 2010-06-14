@@ -28,6 +28,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -64,6 +65,7 @@ public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortTy
      */
     @WebMethod(operationName = "Response", action = "http://fabrikam123.com/wsba/Response")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/Response")
     @RequestWrapper(localName = "Response", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void response()
     {

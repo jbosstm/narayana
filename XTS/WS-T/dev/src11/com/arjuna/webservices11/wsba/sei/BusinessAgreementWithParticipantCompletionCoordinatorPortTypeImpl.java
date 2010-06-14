@@ -18,6 +18,7 @@ import org.jboss.jbossts.xts.soapfault.Fault;
 import javax.annotation.Resource;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Action;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
@@ -47,6 +48,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "CompletedOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Completed")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Completed")
     public void completedOperation(
         @WebParam(name = "Completed", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -69,6 +71,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "FailOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail")
     public void failOperation(
         @WebParam(name = "Fail", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         ExceptionType parameters)
@@ -91,6 +94,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "CompensatedOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Compensated")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Compensated")
     public void compensatedOperation(
         @WebParam(name = "Compensated", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -113,6 +117,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "ClosedOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Closed")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Closed")
     public void closedOperation(
         @WebParam(name = "Closed", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -135,6 +140,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "CanceledOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Canceled")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Canceled")
     public void canceledOperation(
         @WebParam(name = "Canceled", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -157,6 +163,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "ExitOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Exit")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Exit")
     public void exitOperation(
         @WebParam(name = "Exit", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -179,6 +186,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "CannotComplete", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/CannotComplete")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/CannotComplete")
     public void cannotComplete(
         @WebParam(name = "CannotComplete", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -201,6 +209,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "GetStatusOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/GetStatus")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/GetStatus")
     public void getStatusOperation(
         @WebParam(name = "GetStatus", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
@@ -223,6 +232,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
      */
     @WebMethod(operationName = "StatusOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Status")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Status")
     public void statusOperation(
         @WebParam(name = "Status", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         StatusType parameters)
@@ -241,6 +251,7 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl i
 
     @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault")
     public void fault(
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)

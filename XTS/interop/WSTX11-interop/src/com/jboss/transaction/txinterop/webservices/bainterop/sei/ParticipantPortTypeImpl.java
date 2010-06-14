@@ -32,6 +32,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
 import javax.jws.*;
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.ProtocolException;
@@ -64,6 +65,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Cancel", action = "http://fabrikam123.com/wsba/Cancel")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/Cancel")
     @RequestWrapper(localName = "Cancel", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void cancel()
     {
@@ -84,6 +86,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Exit", action = "http://fabrikam123.com/wsba/Exit")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/Exit")
     @RequestWrapper(localName = "Exit", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void exit()
     {
@@ -104,6 +107,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Fail", action = "http://fabrikam123.com/wsba/Fail")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/Fail")
     @RequestWrapper(localName = "Fail", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void fail()
     {
@@ -124,6 +128,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CannotComplete", action = "http://fabrikam123.com/wsba/CannotComplete")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/CannotComplete")
     @RequestWrapper(localName = "CannotComplete", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void cannotComplete()
     {
@@ -144,6 +149,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "ParticipantCompleteClose", action = "http://fabrikam123.com/wsba/ParticipantCompleteClose")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/ParticipantCompleteClose")
     @RequestWrapper(localName = "ParticipantCompleteClose", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void participantCompleteClose()
     {
@@ -164,6 +170,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CoordinatorCompleteClose", action = "http://fabrikam123.com/wsba/CoordinatorCompleteClose")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/CoordinatorCompleteClose")
     @RequestWrapper(localName = "CoordinatorCompleteClose", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void coordinatorCompleteClose()
     {
@@ -184,6 +191,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "UnsolicitedComplete", action = "http://fabrikam123.com/wsba/UnsolicitedComplete")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/UnsolicitedComplete")
     @RequestWrapper(localName = "UnsolicitedComplete", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void unsolicitedComplete()
     {
@@ -204,6 +212,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Compensate", action = "http://fabrikam123.com/wsba/Compensate")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/Compensate")
     @RequestWrapper(localName = "Compensate", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void compensate()
     {
@@ -224,6 +233,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompensationFail", action = "http://fabrikam123.com/wsba/CompensationFail")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/CompensationFail")
     @RequestWrapper(localName = "CompensationFail", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void compensationFail()
     {
@@ -244,6 +254,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "ParticipantCancelCompletedRace", action = "http://fabrikam123.com/wsba/ParticipantCancelCompletedRace")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/ParticipantCancelCompletedRace")
     @RequestWrapper(localName = "ParticipantCancelCompletedRace", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void participantCancelCompletedRace()
     {
@@ -264,6 +275,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "MessageLossAndRecovery", action = "http://fabrikam123.com/wsba/MessageLossAndRecovery")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/MessageLossAndRecovery")
     @RequestWrapper(localName = "MessageLossAndRecovery", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void messageLossAndRecovery()
     {
@@ -284,6 +296,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "MixedOutcome", action = "http://fabrikam123.com/wsba/MixedOutcome")
     @Oneway
+    @Action(input="http://fabrikam123.com/wsba/MixedOoutcome")
     @RequestWrapper(localName = "MixedOutcome", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void mixedOutcome()
     {

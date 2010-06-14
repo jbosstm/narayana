@@ -8,6 +8,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
+import javax.xml.ws.Action;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
@@ -46,6 +47,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
      */
     @WebMethod(operationName = "PrepareOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepare")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepare")
     public void prepareOperation(
         @WebParam(name = "Prepare", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -68,6 +70,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
      */
     @WebMethod(operationName = "CommitOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committ")
     public void commitOperation(
         @WebParam(name = "Commit", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -90,6 +93,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
      */
     @WebMethod(operationName = "RollbackOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback")
     public void rollbackOperation(
         @WebParam(name = "Rollback", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
@@ -108,6 +112,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
 
     @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     public void fault(
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)

@@ -33,6 +33,7 @@ import com.arjuna.wsc11.messaging.MessageId;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.ProtocolException;
@@ -66,6 +67,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompletionCommit", action = "http://fabrikam123.com/CompletionCommit")
     @Oneway
+    @Action(input="http://fabrikam123.com/CompletionCommit")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void completionCommit(
             @WebParam(name = "CompletionCommit", targetNamespace = "http://fabrikam123.com", partName = "parameters")
@@ -88,6 +90,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompletionRollback", action = "http://fabrikam123.com/CompletionRollback")
     @Oneway
+    @Action(input="http://fabrikam123.com/CompletionRollback")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void completionRollback(
         @WebParam(name = "CompletionRollback", targetNamespace = "http://fabrikam123.com", partName = "parameters")
@@ -109,6 +112,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Commit", action = "http://fabrikam123.com/Commit")
     @Oneway
+    @Action(input="http://fabrikam123.com/Commit")
     @RequestWrapper(localName = "Commit", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void commit()
     {
@@ -129,6 +133,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Rollback", action = "http://fabrikam123.com/Rollback")
     @Oneway
+    @Action(input="http://fabrikam123.com/Rollback")
     @RequestWrapper(localName = "Rollback", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void rollback()
     {
@@ -149,6 +154,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Phase2Rollback", action = "http://fabrikam123.com/Phase2Rollback")
     @Oneway
+    @Action(input="http://fabrikam123.com/Phase2Rollback")
     @RequestWrapper(localName = "Phase2Rollback", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void phase2Rollback()
     {
@@ -169,6 +175,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "Readonly", action = "http://fabrikam123.com/Readonly")
     @Oneway
+    @Action(input="http://fabrikam123.com/Readonly")
     @RequestWrapper(localName = "Readonly", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void readonly()
     {
@@ -189,6 +196,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "VolatileAndDurable", action = "http://fabrikam123.com/VolatileAndDurable")
     @Oneway
+    @Action(input="http://fabrikam123.com/VolatileAndDurable")
     @RequestWrapper(localName = "VolatileAndDurable", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void volatileAndDurable()
     {
@@ -209,6 +217,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "EarlyReadonly", action = "http://fabrikam123.com/EarlyReadonly")
     @Oneway
+    @Action(input="http://fabrikam123.com/EarlyReadonly")
     @RequestWrapper(localName = "EarlyReadonly", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void earlyReadonly()
     {
@@ -229,6 +238,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "EarlyAborted", action = "http://fabrikam123.com/EarlyAborted")
     @Oneway
+    @Action(input="http://fabrikam123.com/EarlyAborted")
     @RequestWrapper(localName = "EarlyAborted", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void earlyAborted()
     {
@@ -249,6 +259,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "ReplayCommit", action = "http://fabrikam123.com/ReplayCommit")
     @Oneway
+    @Action(input="http://fabrikam123.com/ReplayCommit")
     @RequestWrapper(localName = "ReplayCommit", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void replayCommit()
     {
@@ -269,6 +280,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryPreparedCommit", action = "http://fabrikam123.com/RetryPreparedCommit")
     @Oneway
+    @Action(input="http://fabrikam123.com/RetryPreparedCommit")
     @RequestWrapper(localName = "RetryPreparedCommit", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void retryPreparedCommit()
     {
@@ -289,6 +301,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryPreparedAbort", action = "http://fabrikam123.com/RetryPreparedAbort")
     @Oneway
+    @Action(input="http://fabrikam123.com/RetryPreparedAbort")
     @RequestWrapper(localName = "RetryPreparedAbort", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void retryPreparedAbort()
     {
@@ -309,6 +322,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "RetryCommit", action = "http://fabrikam123.com/RetryCommit")
     @Oneway
+    @Action(input="http://fabrikam123.com/RetryCommit")
     @RequestWrapper(localName = "RetryCommit", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void retryCommit()
     {
@@ -329,6 +343,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "PreparedAfterTimeout", action = "http://fabrikam123.com/PreparedAfterTimeout")
     @Oneway
+    @Action(input="http://fabrikam123.com/PrepareAfterTimeout")
     @RequestWrapper(localName = "PreparedAfterTimeout", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void preparedAfterTimeout()
     {
@@ -349,6 +364,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "LostCommitted", action = "http://fabrikam123.com/LostCommitted")
     @Oneway
+    @Action(input="http://fabrikam123.com/LostCommitted")
     @RequestWrapper(localName = "LostCommitted", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void lostCommitted()
     {
