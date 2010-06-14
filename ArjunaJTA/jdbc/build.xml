@@ -24,7 +24,7 @@
 
     <property name="excluded.classes" value="**/*JDBC3.java"/>
 
-    <property name="global.ext.libs" value="jboss-transaction-api_1.1_spec.jar"/>
+    <property name="global.ext.libs" value="jboss-transaction-api_1.1_spec.jar,jboss-logging.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 

@@ -24,22 +24,20 @@ import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.util.logging.LogNoi18n;
 import com.arjuna.common.util.logging.Logi18n;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2010-01
  */
 public class jtaxLogger
 {
-
     public static LogNoi18n logger;
     public static Logi18n loggerI18N;
+    public static jtaxI18NLogger i18NLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         logger = noi18n;
         loggerI18N = i18n;
+        i18NLogger = new jtaxI18NLoggerImpl(i18n);
     }
 
     static

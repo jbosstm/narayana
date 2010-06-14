@@ -41,8 +41,9 @@
     <property name="global.ext.lib.dir" value="${sharedbuild.base.dir}/build/extlib"/>
 
     <!-- using an empty string does not work, it's treated as undefined
-        and that results in everything being included by default. -->
-    <property name="global.ext.libs" value="fakefile.jar"/>
+        and that results in everything being included by default. use
+         e.g. "fakefile.jar" if needed. -->
+    <property name="global.ext.libs" value="jboss-logging.jar"/>
     <property name="global.ext.test.libs" value="junit.jar"/>
 
     <property name="excluded.classes" value=""/>
@@ -502,7 +503,7 @@
                 <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
-                <fileset dir="${global.ext.lib.dir}" includes="commons-logging.jar,log4j.jar"/>
+                <fileset dir="${global.ext.lib.dir}" includes="commons-logging.jar,jboss-logging.jar,log4j.jar"/>
                 <additional.classpath.aux/>
                 <path refid="emma.lib" />
             </classpath>

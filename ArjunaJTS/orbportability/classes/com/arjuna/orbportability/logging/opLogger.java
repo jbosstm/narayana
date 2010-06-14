@@ -23,22 +23,17 @@ package com.arjuna.orbportability.logging;
 
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.common.internal.util.logging.commonPropertyManager;
-import com.arjuna.orbportability.common.opPropertyManager;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 public class opLogger
 {
-
 	public static LogNoi18n logger;
 	public static Logi18n loggerI18N;
+    public static orbportabilityI18NLogger i18NLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         logger = noi18n;
         loggerI18N = i18n;
+        i18NLogger = new orbportabilityI18NLoggerImpl(i18n);
     }
 
     static

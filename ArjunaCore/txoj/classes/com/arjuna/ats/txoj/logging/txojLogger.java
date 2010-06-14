@@ -23,21 +23,17 @@ package com.arjuna.ats.txoj.logging;
 
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.common.internal.util.logging.commonPropertyManager;
-import com.arjuna.ats.txoj.common.txojPropertyManager;
-
-import java.util.*;
-
 public class txojLogger
 {
-
 	public static LogNoi18n aitLogger;
 	public static Logi18n aitLoggerI18N;
+    public static txojI18NLogger i18NLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         aitLogger = noi18n;
         aitLoggerI18N = i18n;
+        i18NLogger = new txojI18NLoggerImpl(i18n);
     }
 
     static

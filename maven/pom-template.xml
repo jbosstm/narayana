@@ -342,6 +342,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.0.0.Beta3-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
         </dependency>

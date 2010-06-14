@@ -22,7 +22,7 @@
 
     <property name="modulename" value="tsmx"/>
 
-    <property name="global.ext.libs" value="jcommon.jar,jfreechart.jar"/>
+    <property name="global.ext.libs" value="jcommon.jar,jfreechart.jar,jboss-logging.jar"/>
     
     <import file="../../sharedbuild.xml"/>
 
