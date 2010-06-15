@@ -123,9 +123,6 @@ import java.io.SyncFailedException;
  * @message com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_21
  *          [com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_21] -
  *          ShadowingStore.renameFromTo - failed to lock: {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22
- *          [com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22] -
- *          ShadowingStore.currentState({0}, {1}) - returning {2}
  * @message com.arjuna.ats.internal.arjuna.objectstore.notypenameuid No typename
  *          for object:
  */
@@ -187,10 +184,9 @@ public class ShadowingStore extends FileSystemStore
             }
         }    
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22", new Object[]
-                    {objUid, tName,
-                            StateStatus.stateStatusString(theState)});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ShadowingStore.currentState("+objUid+", "+tName+") - returning "+
+                    StateStatus.stateStatusString(theState));
         }
 
         return theState;

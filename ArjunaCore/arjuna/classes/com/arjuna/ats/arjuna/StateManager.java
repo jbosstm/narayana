@@ -75,9 +75,6 @@ import java.io.IOException;
  * @message com.arjuna.ats.arjuna.StateManager_4
  *          [com.arjuna.ats.arjuna.StateManager_4] - StateManager::deactivate -
  *          save_state error
- * @message com.arjuna.ats.arjuna.StateManager_5
- *          [com.arjuna.ats.arjuna.StateManager_5] - StateManager::destroy for
- *          object-id {0}
  * @message com.arjuna.ats.arjuna.StateManager_6
  *          [com.arjuna.ats.arjuna.StateManager_6] - StateManager.destroy -
  *          failed to add abstract record to transaction {0}; check transaction status.
@@ -574,9 +571,8 @@ public class StateManager
 
     public synchronized boolean destroy ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.StateManager_5", new Object[]
-                    {objectUid});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("StateManager::destroy for object-id "+objectUid);
         }
 
         boolean result = false;

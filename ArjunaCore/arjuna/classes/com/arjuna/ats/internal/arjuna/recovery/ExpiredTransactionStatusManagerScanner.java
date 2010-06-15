@@ -53,17 +53,14 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
 {
 
     /**
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1] - ExpiredTransactionStatusManagerScanner created, with expiry time of {0}  seconds
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2] - ExpiredTransactionStatusManagerScanner - scanning to remove items from before {0}
      * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3] - Removing old transaction status manager item {0}
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4] - Expiry scan interval set to  {0}  seconds
      * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5] - {0}  has inappropriate value ({1})
      */
     
    public ExpiredTransactionStatusManagerScanner()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1", new Object[]{Integer.toString(_expiryTime)});
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("ExpiredTransactionStatusManagerScanner created, with expiry time of "+Integer.toString(_expiryTime)+"  seconds");
        }
 
       _objectStore  = TransactionStatusManagerItem.getStore() ;
@@ -78,8 +75,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
       // calculate the time before which items will be removed
       Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000 ) ;
 
-      if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("ExpiredTransactionStatusManagerScanner - scanning to remove items from before "+_timeFormat.format(oldestSurviving));
       }
 
       try
@@ -173,8 +170,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[]{Integer.toString(_expiryTime)});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("Expiry scan interval set to  "+Integer.toString(_expiryTime)+"  seconds");
         }
     }
 

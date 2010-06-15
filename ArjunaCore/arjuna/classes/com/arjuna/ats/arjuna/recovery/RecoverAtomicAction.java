@@ -39,9 +39,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner;
 
 /**
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1] - RecoverAtomicAction.replayPhase2 recovering {0} ActionStatus is {1}
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2] - RecoverAtomicAction.replayPhase2: Unexpected status: {0}
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3] - RecoverAtomicAction.replayPhase2( {0} )  finished 
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4] - RecoverAtomicAction: transaction {0} not activated, unable to replay phase 2 commit. Check state has not already been completed.
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5] - RecoverAtomicAction - tried to move failed activation log {0}
  */
@@ -64,8 +62,8 @@ public class RecoverAtomicAction extends AtomicAction
     */
    public void replayPhase2()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1", new Object[]{get_uid(), ActionStatus.stringForm(_theStatus)});
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
        }
 
        if ( _activated )
@@ -95,8 +93,8 @@ public class RecoverAtomicAction extends AtomicAction
 	       }
 	   }
 
-	   if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3", new Object[]{get_uid()});
+	   if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2( "+get_uid()+" )  finished");
        }
        }
        else

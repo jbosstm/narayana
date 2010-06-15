@@ -48,8 +48,8 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 				Constructor<ActionBeanWrapperInterface> constructor = cl.getConstructor(ActionBean.class, UidWrapper.class);
 				ra = constructor.newInstance(this, w);
 			} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
-					tsLogger.arjLoggerI18N.debug("Error constructing " + JMXServer.AJT_WRAPPER_TYPE + ": " + e);
+				if (tsLogger.arjLogger.isDebugEnabled())
+					tsLogger.arjLogger.debug("Error constructing " + JMXServer.AJT_WRAPPER_TYPE + ": " + e);
 				ra = new AtomicActionWrapper(w);
 			}
 		} else {
@@ -133,8 +133,8 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 						lw = (LogRecordWrapper) p;
 						lw.init(this, rec, listType);
 					} else {
-						if (tsLogger.arjLoggerI18N.isDebugEnabled())
-							tsLogger.arjLoggerI18N.debug("participant record is not a LogRecordWrapper");
+						if (tsLogger.arjLogger.isDebugEnabled())
+							tsLogger.arjLogger.debug("participant record is not a LogRecordWrapper");
 						lw = createParticipant(rec, listType);
 					}
 				} else {

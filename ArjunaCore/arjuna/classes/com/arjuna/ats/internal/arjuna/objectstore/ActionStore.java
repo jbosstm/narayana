@@ -63,9 +63,6 @@ public class ActionStore extends ShadowNoFileLockStore
      * @return current state of object. Assumes that genPathName allocates
      *         enough extra space to allow extra chars to be added. Action
      *         stores only store committed objects
-     * @message com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1
-     *          [com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1] -
-     *          ActionStore.currentState({0}, {1}) - returning {2}
      */
 
     public int currentState (Uid objUid, String tName)
@@ -83,9 +80,9 @@ public class ActionStore extends ShadowNoFileLockStore
             path = null;
         }
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1", new Object[]
-                    {objUid, tName, StateStatus.stateStatusString(theState)});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("ActionStore.currentState("+objUid+", "+tName+") - returning "+
+                    StateStatus.stateStatusString(theState));
         }
 
         return theState;

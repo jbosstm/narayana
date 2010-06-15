@@ -74,75 +74,12 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_5a
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_5a] - Deactivate of
  *          atomic action with id {0} and type {1} unexpectedly failed, could not save state.
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_6
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_6] -
- *          BasicAction::addChildThread () action {0} adding {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_7
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_7] -
- *          BasicAction::addChildThread () action {0} adding {1} result = {2}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_8
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_8] -
- *          BasicAction::removeChildThread () action {0} removing {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_9
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_9] - \
- *          BasicAction::removeChildThread () action {0} removing {1} result =
- *          {2}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_10
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_10] -
- *          BasicAction::addAction () action {0} adding {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_11
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_11] -
- *          BasicAction::addChildAction () action {0} adding {1} result = {2}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_12
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_12] -
- *          BasicAction::removeChildAction () action {0} removing {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_13
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_13] -
- *          BasicAction::removeChildAction () action {0} removing {1} result =
- *          {2}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_14
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_14] -
- *          BasicAction::save_state - next record to pack is a \n {0} record
- *          ({1}) should save it? = {2}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_15
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_15] - Packing a {0}
- *          record
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_16
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_16] - Packing a
- *          NONE_RECORD
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_17
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_17] - HeuristicList -
- *          packing a {0} record
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_18
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_18] - HeuristicList -
- *          packing a NONE_RECORD
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_19
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_19] - Packing action
- *          status of {0}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_20
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_20] - Unpacked a {0}
- *          record
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_21
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_21] -
  *          BasicAction.restore_state - could not recover {0}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_22
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_22] - HeuristicList -
- *          Unpacked heuristic list size of {0}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_23
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_23] - HeuristicList -
- *          Unpacked a {0} record
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_24
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_24] -
  *          BasicAction.restore_state - error unpacking action status.
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_25
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_25] - Restored action
- *          status of {0} {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_26
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_26] - Restored action
- *          type {0} {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_27
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_27] - Restored
- *          heuristic decision of {0} {1}
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_28
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_28] -
  *          BasicAction.destroy called on {0}
@@ -215,9 +152,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_50
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_50] - Prepare phase
  *          of action {0} received heuristic decision: {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_51
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_51] -
- *          BasicAction.doCommit for {0} received {1} from {2}
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_52
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_52] - Top-level abort
  *          of action {0} received heuristic decision: {1}
@@ -252,9 +186,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_62
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_62] - \tNow aborting
  *          self: {0}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_63
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_63] -
- *          BasicAction::removeAllChildThreads () action {0} removing {1}
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_64
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_64] -
  *          BasicAction.updateState - Could not create ObjectState for
@@ -262,12 +193,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_65
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_65] - BasicAction.End -
  *          Could not write failed list
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_66
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_66] - Action {0} with
- *          parent status {1}
- * @message com.arjuna.ats.arjuna.coordinator.BasicAction_67
- *          [com.arjuna.ats.arjuna.coordinator.BasicAction_67] - Running Top
- *          Level Action {0} from within nested action ({1})
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_68
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_68] - (Internal)
  *          BasicAction.merge - record rejected
@@ -844,9 +769,8 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildThread (Thread t)
 	{
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_6", new Object[]
-                    {get_uid(), t});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("BasicAction::addChildThread () action "+get_uid()+" adding "+t);
         }
 
 		if (t == null)
@@ -872,9 +796,8 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_7", new Object[]
-                    {get_uid(), t, new Boolean(result)});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("BasicAction::addChildThread () action "+get_uid()+" adding "+t+" result = "+result);
         }
 
 		return result;
@@ -905,9 +828,8 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildThread (String threadId)
 	{
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_8", new Object[]
-                    {get_uid(), threadId});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId);
         }
 
 		if (threadId == null)
@@ -928,14 +850,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
-            if (result)
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_9", new Object[]
-                        {get_uid(), threadId, "true"});
-            else
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_9", new Object[]
-                        {get_uid(), threadId, "false"});
+                tsLogger.arjLogger.debug("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId+" result = "+result);
 		}
 
 		return result;
@@ -950,9 +867,8 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildAction (BasicAction act)
 	{
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_10", new Object[]
-                    {get_uid(), ((act != null) ? act.get_uid() : Uid.nullUid())});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("BasicAction::addAction () action "+get_uid()+" adding "+((act != null) ? act.get_uid() : Uid.nullUid()));
         }
 
 		if (act == null)
@@ -981,14 +897,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
-            if (result)
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_11", new Object[]
-                        {get_uid(), act.get_uid(), "true"});
-            else
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_11", new Object[]
-                        {get_uid(), act.get_uid(), "false"});
+            tsLogger.arjLogger.debug("BasicAction::addChildAction () action "+get_uid()+" adding "+act.get_uid()+" result = "+result);
 		}
 
 		return result;
@@ -1101,14 +1012,10 @@ public class BasicAction extends StateManager
     		 * which type of record to create when restoring.
     		 */
     
-    		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+    		if (tsLogger.arjLogger.isDebugEnabled())
     		{
-                if (temp.doSave())
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
-                            {Integer.toString(temp.typeIs()), temp.type(), "true"});
-                else
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
-                            {Integer.toString(temp.typeIs()), temp.type(), "false"});
+                tsLogger.arjLogger.debug("BasicAction::save_state - next record to pack is a "+temp.typeIs()
+                        +" record "+temp.type()+" should save it? = "+temp.doSave());
     		}
     
     		if (temp.doSave())
@@ -1117,9 +1024,8 @@ public class BasicAction extends StateManager
     
     			try
     			{
-    				if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_15", new Object[]
-                                {Integer.toString(temp.typeIs())});
+    				if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("Packing a "+temp.typeIs()+" record");
                     }
     
     				os.packInt(temp.typeIs());
@@ -1149,8 +1055,8 @@ public class BasicAction extends StateManager
     	{
     		try
     		{
-    			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_16");
+    			if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("Packing a NONE_RECORD");
                 }
     
     			os.packInt(RecordType.NONE_RECORD);
@@ -1191,9 +1097,8 @@ public class BasicAction extends StateManager
     
     					try
     					{
-    						if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_17", new Object[]
-                                        {Integer.toString(temp.typeIs())});
+    						if (tsLogger.arjLogger.isDebugEnabled()) {
+                                tsLogger.arjLogger.debug("HeuristicList - packing a "+temp.typeIs()+" record");
                             }
     
     						os.packInt(temp.typeIs());
@@ -1218,8 +1123,8 @@ public class BasicAction extends StateManager
     			{
     				try
     				{
-    					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_18");
+    					if (tsLogger.arjLogger.isDebugEnabled()) {
+                            tsLogger.arjLogger.debug("HeuristicList - packing a NONE_RECORD");
                         }
     
     					os.packInt(RecordType.NONE_RECORD);
@@ -1236,9 +1141,8 @@ public class BasicAction extends StateManager
     	{
     		try
     		{
-    			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_19", new Object[]
-                            {ActionStatus.stringForm(actionStatus)});
+    			if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("Packing action status of "+ActionStatus.stringForm(actionStatus));
                 }
     
     			os.packInt(actionStatus);
@@ -1263,9 +1167,8 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildAction (BasicAction act)
 	{
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_12", new Object[]
-                    {get_uid(), ((act != null) ? act.get_uid() : Uid.nullUid())});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("BasicAction::removeChildAction () action "+get_uid()+" removing "+((act != null) ? act.get_uid() : Uid.nullUid()));
         }
 
 		if (act == null)
@@ -1286,14 +1189,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
-            if (result)
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_13", new Object[]
-                        {get_uid(), act.get_uid(), "true"});
-            else
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_13", new Object[]
-                        {get_uid(), act.get_uid(), "false"});
+            tsLogger.arjLogger.debug("BasicAction::removeChildAction () action "+get_uid()+" removing "+act.get_uid()+" result = "+result);
 		}
 
 		return result;
@@ -1376,9 +1274,8 @@ public class BasicAction extends StateManager
 		{
 			record_type = os.unpackInt();
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_20", new Object[]
-                        {Integer.toString(record_type)});
+			if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("Unpacked a "+record_type+" record");
             }
 		}
 		catch (IOException e)
@@ -1409,9 +1306,8 @@ public class BasicAction extends StateManager
 				{
 					record_type = os.unpackInt();
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_20", new Object[]
-                                {Integer.toString(record_type)});
+					if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("Unpacked a "+record_type+" record");
                     }
 				}
 				catch (IOException e)
@@ -1431,9 +1327,8 @@ public class BasicAction extends StateManager
 			{
 				hSize = os.unpackInt();
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_22", new Object[]
-                            {Integer.toString(hSize)});
+				if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("HeuristicList - Unpacked heuristic list size of "+hSize);
                 }
 			}
 			catch (IOException e)
@@ -1448,9 +1343,8 @@ public class BasicAction extends StateManager
 			{
 				record_type = os.unpackInt();
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_23", new Object[]
-                            {Integer.toString(record_type)});
+				if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("HeuristicList - Unpacked a "+record_type+" record");
                 }
 			}
 			catch (IOException e)
@@ -1468,9 +1362,8 @@ public class BasicAction extends StateManager
 
 					record_type = os.unpackInt();
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_23", new Object[]
-                                {Integer.toString(record_type)});
+					if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("HeuristicList - Unpacked a "+record_type+" record");
                     }
 				}
 				catch (IOException e)
@@ -1506,16 +1399,16 @@ public class BasicAction extends StateManager
 
 		if (res)
 		{
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_25", new Object[]
-                        {ActionStatus.stringForm(tempActionStatus), Integer.toString(tempActionStatus)});
+			if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("Restored action status of "+ActionStatus.stringForm(tempActionStatus)+
+                        " "+Integer.toString(tempActionStatus));
 
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_26", new Object[]
-                        {((tempActionType == ActionType.NESTED) ? "Nested"
-                                : "Top-level"), Integer.toString(tempActionType)});
+                tsLogger.arjLogger.debug("Restored action type "+
+                        ((tempActionType == ActionType.NESTED) ? "Nested" : "Top-level")+
+                        " "+Integer.toString(tempActionType));
 
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_27", new Object[]
-                        {TwoPhaseOutcome.stringForm(tempHeuristicDecision), Integer.toString(tempHeuristicDecision)});
+                tsLogger.arjLogger.debug(" Restored heuristic decision of "+
+                        TwoPhaseOutcome.stringForm(tempHeuristicDecision)+" "+Integer.toString(tempHeuristicDecision));
             }
 
 			actionStatus = tempActionStatus;
@@ -3217,9 +3110,9 @@ public class BasicAction extends StateManager
 				}
 				else
 				{				
-					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_51", new Object[]
-                                {get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs())});
+					if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("BasicAction.doCommit for "+get_uid()+" received "+
+                                TwoPhaseOutcome.stringForm(ok)+" from "+RecordType.typeToClass(recordBeingHandled.typeIs()));
                     }
 
 					if ((reportHeuristics)
@@ -3816,9 +3709,8 @@ public class BasicAction extends StateManager
 			{
 				t = (Thread) iter.nextElement();
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_63", new Object[]
-                            {get_uid(), t});
+				if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("BasicAction::removeAllChildThreads () action "+get_uid()+" removing "+t);
                 }
 
 				if (t != currentThread)
@@ -3845,9 +3737,8 @@ public class BasicAction extends StateManager
 
 		if (parent != null) /* ie not top_level */
 		{
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_66", new Object[]
-                        {get_uid(), Integer.toString(parent.actionStatus)});
+			if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("Action "+get_uid()+" with parent status "+parent.actionStatus);
             }
 
 			currentHierarchy = new ActionHierarchy(parent.getHierarchy());
@@ -3875,9 +3766,9 @@ public class BasicAction extends StateManager
 				 * nested top-level actions are used for.
 				 */
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.BasicAction_67", new Object[]
-                            {get_uid(), parent.get_uid()});
+				if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("Running Top Level Action "+get_uid()+" from within " +
+                            "nested action ("+parent.get_uid()+")");
                 }
 			}
 			break;

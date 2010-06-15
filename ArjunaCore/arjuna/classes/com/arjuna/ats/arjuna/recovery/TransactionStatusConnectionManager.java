@@ -48,8 +48,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 /**
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1] - Exception when accessing data store {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2] - Object store exception {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3] - found process uid {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4] - added TransactionStatusConnector to table for process uid {0}
 */
 
 public class TransactionStatusConnectionManager
@@ -225,8 +223,8 @@ public class TransactionStatusConnectionManager
 		    {
 			Uid newUid = new Uid (theUid) ;
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3", new Object[]{newUid});
+			if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("found process uid "+newUid);
             }
 			tsmiVector.addElement(newUid) ;
 		    }
@@ -262,8 +260,8 @@ public class TransactionStatusConnectionManager
 		    _tscTable.put ( process_id, tsc ) ;
 		}
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4", new Object[]{process_id});
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("added TransactionStatusConnector to table for process uid "+process_id);
         }
 	    }
 	}

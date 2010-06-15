@@ -52,14 +52,8 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * Singleton, instantiated in the RecoveryManager. 
  * <P>
  *
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1] - Expiry scan interval set to {0} seconds
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2] - Expiry scan zero - not scanning
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3] - No Expiry scanners loaded - not scanning
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4] - ExpiredEntryMonitor - constructed
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5] - ExpiredEntryMonitor - no scans on first iteration
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6] - Loading expiry scanner {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_7 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_7] - Attempt to load expiry scanner with null class name!
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8] - Loading expiry scanner {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9] - Expiry scanner {0} does not conform to ExpiryScanner interface
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10] - Loading expiry scanner: could not find class {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11] - {0} has inappropriate value ({1})
@@ -90,8 +84,8 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // no scanning wanted
 	      
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2");
+	  if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("Expiry scan zero - not scanning");
       }
 	  
 	  return false;
@@ -101,8 +95,8 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // nothing to do
 	  
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3");
+	  if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("No Expiry scanners loaded - not scanning");
       }
 	  
 	  return false;
@@ -138,8 +132,8 @@ public class ExpiredEntryMonitor extends Thread
 
   private ExpiredEntryMonitor(boolean skipFirst)
   {
-    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4");
+    if (tsLogger.arjLogger.isDebugEnabled()) {
+        tsLogger.arjLogger.debug("ExpiredEntryMonitor - constructed");
     }
     _skipNext = skipFirst;
     _stop = false;
@@ -235,8 +229,8 @@ public class ExpiredEntryMonitor extends Thread
 
         _scanIntervalSeconds = recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanInterval() * 60 * 60;
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1", new Object[]{Integer.toString(_scanIntervalSeconds)});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("Expiry scan interval set to "+Integer.toString(_scanIntervalSeconds)+" seconds");
         }
 
         if (_scanIntervalSeconds != 0)
@@ -266,8 +260,8 @@ public class ExpiredEntryMonitor extends Thread
     
   private static void loadScanner( String className )
   {
-      if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6", new Object[]{className});
+      if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("Loading expiry scanner "+className);
       }
       
       if (className == null)
@@ -293,8 +287,8 @@ public class ExpiredEntryMonitor extends Thread
 		   }
 		   else
 		   {
-		       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                   tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8", new Object[]{className});
+		       if (tsLogger.arjLogger.isDebugEnabled()) {
+                   tsLogger.arjLogger.debug("Loading expiry scanner "+className);
                }
 		   }
 		}

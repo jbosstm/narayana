@@ -625,10 +625,6 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Creates a 'blank' abstract record. This is used during crash recovery
 	 * when recreating the prepared list of a server atomic action.
-	 *
-	 * @message com.arjuna.ats.arjuna.coordinator.AbstractRecord_1
-	 *          [com.arjuna.ats.arjuna.coordinator.AbstractRecord_1] -
-	 *          AbstractRecord::AbstractRecord () - crash recovery constructor
 	 */
 
 	public AbstractRecord ()
@@ -640,8 +636,8 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = new Uid(Uid.nullUid());
 		typeOfObject = null;
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.AbstractRecord_1");
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord () - crash recovery constructor");
         }
 	}
 

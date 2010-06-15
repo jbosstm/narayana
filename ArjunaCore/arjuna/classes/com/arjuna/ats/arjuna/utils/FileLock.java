@@ -54,24 +54,9 @@ import java.lang.InterruptedException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: FileLock.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- * @message com.arjuna.ats.arjuna.utils.FileLock_1
- *          [com.arjuna.ats.arjuna.utils.FileLock_1] - FileLock.lock called for
- *          {0}
- * @message com.arjuna.ats.arjuna.utils.FileLock_2
- *          [com.arjuna.ats.arjuna.utils.FileLock_2] - FileLock.unlock called
- *          for {0}
- * @message com.arjuna.ats.arjuna.utils.FileLock_3
- *          [com.arjuna.ats.arjuna.utils.FileLock_3] - FileLock.createFile
- *          called for {0}
  * @message com.arjuna.ats.arjuna.utils.FileLock_4
  *          [com.arjuna.ats.arjuna.utils.FileLock_4] - An error occurred while
  *          creating file {0}
- * @message com.arjuna.ats.arjuna.utils.FileLock_5
- *          [com.arjuna.ats.arjuna.utils.FileLock_5] - FileLock.lockFile called
- *          for {0}
- * @message com.arjuna.ats.arjuna.utils.FileLock_6
- *          [com.arjuna.ats.arjuna.utils.FileLock_6] - FileLock.unlockFile
- *          called for {0}
  */
 
 public class FileLock
@@ -125,9 +110,8 @@ public class FileLock
 
     public synchronized boolean lock (int lmode, boolean create)
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_1", new Object[]
-                    {_lockFile});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock.lock called for "+_lockFile);
         }
 
         boolean created = false;
@@ -222,9 +206,8 @@ public class FileLock
 
     public synchronized boolean unlock ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_2", new Object[]
-                    {_lockFile});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock.unlock called "+_lockFile);
         }
 
         if (!_lockFile.exists())
@@ -306,9 +289,8 @@ public class FileLock
 
     private final boolean createFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_3", new Object[]
-                    {_lockFile});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock.createFile "+_lockFile);
         }
 
         byte b[] = new byte[1];
@@ -340,9 +322,8 @@ public class FileLock
 
     private final boolean lockFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_5", new Object[]
-                    {_lockFile});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock.lockFile called "+_lockFile);
         }
         
         for (int i = 0; i < _retry; i++)
@@ -375,9 +356,8 @@ public class FileLock
 
     private final boolean unlockFile ()
     {
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.utils.FileLock_6", new Object[]
-                    {_lockFile});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("FileLock.unlockFile called for "+_lockFile);
         }
         return _lockFileLock.delete();
     }

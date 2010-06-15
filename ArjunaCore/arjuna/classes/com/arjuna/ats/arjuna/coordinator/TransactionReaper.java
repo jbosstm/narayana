@@ -55,18 +55,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_1
  * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_1] -
  * TransactionReaper - attempting to insert an element that is already present.
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_2
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_2] -
- * TransactionReaper::check - comparing {0}
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_3
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_3] -
- * TransactionReaper::getTimeout for {0} returning {1}
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_17
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_17] -
- * TransactionReaper::getRemainingTimeoutMillis for {0} returning {1}
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_4
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_4] -
- * TransactionReaper::check interrupting cancel in progress for {0}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_5
  * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_5] -
  * TransactionReaper::check worker zombie count {0} exceeds specified limit
@@ -177,8 +165,8 @@ public class TransactionReaper
                 final long now = System.currentTimeMillis();
                 final long next = nextDynamicCheckTime.get();
 
-                if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.TransactionReaper_2", new Object[]{Long.toString(next)});
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("TransactionReaper::check - comparing "+Long.toString(next));
                 }
 
                 if (now < next) {
@@ -271,8 +259,8 @@ public class TransactionReaper
 
                         // log that we interrupted cancel()
 
-                        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.TransactionReaper_4", new Object[]{reaperElement._control.get_uid()});
+                        if (tsLogger.arjLogger.isDebugEnabled()) {
+                            tsLogger.arjLogger.debug("TransactionReaper::check interrupting cancel in progress for "+reaperElement._control.get_uid());
                         }
                     }
                     break;
@@ -739,9 +727,8 @@ public class TransactionReaper
             timeout = reaperElement.getAbsoluteTimeout() - System.currentTimeMillis();
         }
 
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.TransactionReaper_17", new Object[]
-                    {control, timeout});
+        if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("TransactionReaper::getRemainingTimeoutMillis for "+control+" returning "+timeout);
         }
 
         return timeout;
@@ -771,8 +758,7 @@ public class TransactionReaper
 
         int timeout = (reaperElement == null ? 0 : reaperElement._timeout);
 
-        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.TransactionReaper_3", new Object[]
-                {control, timeout});
+        tsLogger.arjLogger.debug("TransactionReaper::getTimeout for "+control+" returning "+timeout);
 
         return timeout;
     }

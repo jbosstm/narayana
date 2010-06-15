@@ -111,8 +111,6 @@ public class Listener extends Thread
    /**
     * Loops waiting for connection requests from client,
     * creates a new Connection object for each connection.
-    *
-    * @message com.arjuna.ats.internal.arjuna.recovery.Listener_2 [com.arjuna.ats.internal.arjuna.recovery.Listener_2] Listener - IOException
     */
 
    public void run()
@@ -158,8 +156,8 @@ public class Listener extends Thread
          }
          catch ( final IOException ex )
          {
-	     if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.Listener_2"+" "+ex);
+	     if (tsLogger.arjLogger.isDebugEnabled())
+		 tsLogger.arjLogger.debug("Listener - IOException"+" "+ex);
          }
          catch (final Exception ex)
          {

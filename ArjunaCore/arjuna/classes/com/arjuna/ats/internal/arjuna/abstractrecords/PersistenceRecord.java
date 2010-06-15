@@ -57,10 +57,6 @@ import java.io.IOException;
  * @since JTS 1.0.
  *
  *
- * @message com.arjuna.ats.arjuna.PersistenceRecord_1
- *          [com.arjuna.ats.arjuna.PersistenceRecord_1]
- *          PersistenceRecord::topLevelCommit() : About to commit state, uid =
- *          {0}, ObjType = {1}
  * @message com.arjuna.ats.arjuna.PersistenceRecord_2
  *          [com.arjuna.ats.arjuna.PersistenceRecord_2]
  *          PersistenceRecord::topLevelCommit - commit_state call failed for {0}
@@ -82,22 +78,12 @@ import java.io.IOException;
  * @message com.arjuna.ats.arjuna.PersistenceRecord_8
  *          [com.arjuna.ats.arjuna.PersistenceRecord_8]
  *          PersistenceRecord.topLevelPrepare - setup error!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_9
- *          [com.arjuna.ats.arjuna.PersistenceRecord_9]
- *          PersistenceRecord::restore_state: Just unpacked object store type =
- *          {0}
  * @message com.arjuna.ats.arjuna.PersistenceRecord_10
  *          [com.arjuna.ats.arjuna.PersistenceRecord_10]
  *          PersistenceRecord::restore_state: Failed to unpack object store type
  * @message com.arjuna.ats.arjuna.PersistenceRecord_11
  *          [com.arjuna.ats.arjuna.PersistenceRecord_11]
  *          PersistenceRecord::save_state - type of store is unknown
- * @message com.arjuna.ats.arjuna.PersistenceRecord_12
- *          [com.arjuna.ats.arjuna.PersistenceRecord_12]
- *          PersistenceRecord::save_state: Packed object store type = {0}
- * @message com.arjuna.ats.arjuna.PersistenceRecord_13
- *          [com.arjuna.ats.arjuna.PersistenceRecord_13]
- *          PersistenceRecord::save_state: Packed object store root
  * @message com.arjuna.ats.arjuna.PersistenceRecord_14
  *          [com.arjuna.ats.arjuna.PersistenceRecord_14]
  *          PersistenceRecord::save_state - packing top level state failed
@@ -107,9 +93,6 @@ import java.io.IOException;
  * @message com.arjuna.ats.arjuna.PersistenceRecord_16
  *          [com.arjuna.ats.arjuna.PersistenceRecord_16]
  *          PersistenceRecord::save_state - no object store defined for object
- * @message com.arjuna.ats.arjuna.PersistenceRecord_17
- *          [com.arjuna.ats.arjuna.PersistenceRecord_17]
- *          PersistenceRecord::PersistenceRecord() - crash recovery constructor
  * @message com.arjuna.ats.arjuna.PersistenceRecord_18
  *          [com.arjuna.ats.arjuna.PersistenceRecord_18]
  *          PersistenceRecord::topLevelAbort() - Expecting state but found none!
@@ -221,13 +204,8 @@ public class PersistenceRecord extends RecoveryRecord
 	public int topLevelCommit ()
 	{
 		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCommit() for "
-                    + order());
-        }
-
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_1", new Object[]
-                    {order(), getTypeOfObject()});
+            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCommit() : About to commit state, "+
+                    "uid = "+order()+", ObjType = "+getTypeOfObject());
         }
 
 		if (tsLogger.arjLogger.isDebugEnabled())
@@ -438,9 +416,8 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			objStoreType = os.unpackInt();
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_9", new Object[]
-                        {Integer.toString(objStoreType)});
+			if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug(" PersistenceRecord::restore_state: Just unpacked object store type = "+Integer.toString(objStoreType));
             }
 
 			if (ObjectStoreType.valid(objStoreType))
@@ -505,15 +482,14 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					os.packInt(store.typeIs());
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_12", new Object[]
-                                {Integer.toString(store.typeIs())});
+					if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("PersistenceRecord::save_state: Packed object store type = "+Integer.toString(store.typeIs()));
                     }
 
 					store.pack(os);
 
-					if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_13");
+					if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("PersistenceRecord::save_state: Packed object store root");
                     }
 
 					os.packBoolean(shadowMade);
@@ -585,8 +561,8 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super();
 
-		if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.PersistenceRecord_17");
+		if (tsLogger.arjLogger.isDebugEnabled()) {
+            tsLogger.arjLogger.debug("PersistenceRecord::PersistenceRecord() - crash recovery constructor");
         }
 
 		shadowMade = false;

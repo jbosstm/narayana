@@ -52,25 +52,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: RecordList.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_1
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_1] -
- *          RecordList::insert({0}) : merging {1} and {2} for {3}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_2
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_2] -
- *          RecordList::insert({0}) : replacing {1} and {2} for {3}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_3
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_3] -
- *          RecordList::insert({0}) : adding extra record of type {1} before {2}
- *          for {3}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_4
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_4] -
- *          RecordList::insert({0}) : inserting {1} for {2} before {3}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_5
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_5] -
- *          RecordList::insert({0}) : appending {1} for {2}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_6
- *          [com.arjuna.ats.arjuna.coordinator.RecordList_6] -
- *          RecordList::insert({0}) : inserting {1} for {2} before {3} for {4}
  */
 
 public class RecordList
@@ -354,10 +335,9 @@ public class RecordList
         {
             if (newRecord.shouldMerge(current))
             {
-                if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                    tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_1", new Object[]
-                            {this, newRecord.type(), current.type(),
-                                    newRecord.order()});
+                if (tsLogger.arjLogger.isDebugEnabled()) {
+                    tsLogger.arjLogger.debug("RecordList::insert("+this+") : merging "+newRecord.type()+
+                            " and "+current.type()+" for "+newRecord.order());
                 }
 
                 newRecord.merge(current);
@@ -369,11 +349,9 @@ public class RecordList
             {
                 if (newRecord.shouldReplace(current))
                 {
-                    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                        tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_2", new Object[]
-                                {this, current.type(),
-                                        newRecord.type(),
-                                        newRecord.order()});
+                    if (tsLogger.arjLogger.isDebugEnabled()) {
+                        tsLogger.arjLogger.debug("RecordList::insert("+this+") : replacing "+current.type()+
+                                " and "+newRecord.type()+" for "+newRecord.order());
                     }
 
                     replace(newRecord, current);
@@ -384,11 +362,9 @@ public class RecordList
                 {
                     if (newRecord.shouldAdd(current))
                     {
-                        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                            tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_3", new Object[]
-                                    {this, newRecord.type(),
-                                            current.type(),
-                                            newRecord.order()});
+                        if (tsLogger.arjLogger.isDebugEnabled()) {
+                            tsLogger.arjLogger.debug("RecordList::insert("+this+") : adding extra record of type "+
+                                newRecord.type()+" before "+current.type()+" for "+newRecord.order());
                         }
 
                         insertBefore(newRecord, current);
@@ -406,11 +382,9 @@ public class RecordList
                         }
                         else if (newRecord.lessThan(current))
                         {
-                            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_4", new Object[]
-                                        {this, newRecord.type(),
-                                                newRecord.order(),
-                                                current.type()});
+                            if (tsLogger.arjLogger.isDebugEnabled()) {
+                                tsLogger.arjLogger.debug("RecordList::insert("+this+") : inserting "+
+                                        newRecord.type()+" for "+newRecord.order()+" before "+current.type());
                             }
 
                             insertBefore(newRecord, current);
@@ -426,19 +400,17 @@ public class RecordList
 
         if (current == null)
         {
-            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_5", new Object[]
-                        {this, newRecord.type(), newRecord.order()});
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("RecordList::insert("+this+") : appending "+newRecord.type()+" for "+newRecord.order());
             }
 
             putRear(newRecord);
         }
         else
         {
-            if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.coordinator.RecordList_6", new Object[]
-                        {this, newRecord.type(), newRecord.order(),
-                                current.type(), current.order()});
+            if (tsLogger.arjLogger.isDebugEnabled()) {
+                tsLogger.arjLogger.debug("RecordList::insert("+this+") : inserting "+newRecord.type()+" for "+newRecord.order()+
+                        " before "+current.type()+" for "+current.order());
             }
 
             insertBefore(newRecord, current);

@@ -42,11 +42,6 @@ public class ReaperWorkerThread extends Thread
         _shutdown = false;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_1] - Thread {0} waiting for cancelled TXs
-     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_2] - Thread {0} performing cancellations
-     */
-
 public void run ()
     {
          if (tsLogger.arjLogger.isDebugEnabled()) {
@@ -58,8 +53,8 @@ public void run ()
              // wait for the reaper thread to queue some TXs for
              // this thread to cancel
 
-             if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1", new Object[]{Thread.currentThread()});
+             if (tsLogger.arjLogger.isDebugEnabled()) {
+                 tsLogger.arjLogger.debug("Thread "+Thread.currentThread()+" waiting for cancelled TXs");
              }
 
              _theReaper.waitForCancellations();
@@ -71,8 +66,8 @@ public void run ()
 
              // get the reaper to cancel any TXs queued for cancellation.
 
-             if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2", new Object[]{Thread.currentThread()});
+             if (tsLogger.arjLogger.isDebugEnabled()) {
+                 tsLogger.arjLogger.debug("Thread "+Thread.currentThread()+" performing cancellations");
              }
 
              _theReaper.doCancellations();

@@ -54,10 +54,6 @@ public ReaperThread (TransactionReaper arg)
 	sleepPeriod = reaperObject.checkingPeriod();
 	_shutdown = false;
     }
-    
-    /**
-     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1 [com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1] - Thread {0} sleeping for {1}
-     */
 
 public void run ()
     {
@@ -87,9 +83,8 @@ public void run ()
                 {
                      try
                      {
-                          if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                              tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", new Object[]{Thread.currentThread(),
-                                      Long.toString(sleepPeriod)});
+                          if (tsLogger.arjLogger.isDebugEnabled()) {
+                              tsLogger.arjLogger.debug("Thread "+Thread.currentThread()+" sleeping for "+Long.toString(sleepPeriod));
                           }
 
                           reaperObject.wait(sleepPeriod);

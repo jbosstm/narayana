@@ -72,8 +72,8 @@ public class JMXServer
 			constructor.newInstance();
 			isJTS = true;
 		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
-				tsLogger.arjLoggerI18N.debug("JTS not available: " + e);
+			if (tsLogger.arjLogger.isDebugEnabled())
+				tsLogger.arjLogger.debug("JTS not available: " + e);
 		}
 
 
@@ -115,12 +115,12 @@ public class JMXServer
 
 		try {
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1",
+				tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1",
 						new Object[] { name });
 			oi = getServer().registerMBean(bean, new ObjectName(name));
 		} catch (InstanceAlreadyExistsException e) {
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				tsLogger.arjLoggerI18N.debug("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2",
+				tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2",
 						new Object[] { name });
 		} catch (javax.management.JMException e) {
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())

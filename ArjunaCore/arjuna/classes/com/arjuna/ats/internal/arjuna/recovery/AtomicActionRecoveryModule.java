@@ -56,8 +56,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
  * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2] - failed to recover Transaction {0} {1}
  * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3] - failed to access transaction store {0} {1}
- * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4] - AtomicActionRecoveryModule first pass
- * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5] - AtomicActionRecoveryModule second pass
 */
 
 public class AtomicActionRecoveryModule implements RecoveryModule
@@ -89,8 +87,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       try
       {
-	  if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-          tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4");
+	  if (tsLogger.arjLogger.isDebugEnabled()) {
+          tsLogger.arjLogger.debug("AtomicActionRecoveryModule first pass");
       }
 
 	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
@@ -113,8 +111,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
    public void periodicWorkSecondPass()
    {
-       if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-           tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5");
+       if (tsLogger.arjLogger.isDebugEnabled()) {
+           tsLogger.arjLogger.debug("AtomicActionRecoveryModule second pass");
        }
 
        processTransactionsStatus() ;
