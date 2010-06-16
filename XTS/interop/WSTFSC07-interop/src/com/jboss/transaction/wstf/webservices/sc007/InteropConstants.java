@@ -47,13 +47,17 @@ public interface InteropConstants
     public String INTEROP_PREFIX = "sc007" ;
     
     /**
+     * The interop action Namespace for the soap action.
+     */
+    public String INTEROP_ACTION_NAMESPACE = "http://www.wstf.org/docs/scenarios/sc007" ;
+    /**
      * The participant action prefix.
      */
-    public String INTEROP_ACTION_PARTICIPANT_PREFIX = INTEROP_NAMESPACE + "/ParticipantPortType/" ;
+    public String INTEROP_ACTION_PARTICIPANT_PREFIX = INTEROP_ACTION_NAMESPACE + "/";
     /**
      * The initiator action prefix.
      */
-    public String INTEROP_ACTION_INITIATOR_PREFIX = INTEROP_NAMESPACE + "/InitiatorPortType/" ;
+    public String INTEROP_ACTION_INITIATOR_PREFIX = INTEROP_ACTION_NAMESPACE + "/";
 
     /**
      * The completion commit element.

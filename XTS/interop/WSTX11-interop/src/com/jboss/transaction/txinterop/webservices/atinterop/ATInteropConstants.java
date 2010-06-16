@@ -49,11 +49,11 @@ public interface ATInteropConstants
     /**
      * The participant action prefix.
      */
-    public String INTEROP_ACTION_PARTICIPANT_PREFIX = INTEROP_NAMESPACE + "/ParticipantPortType/" ;
+    public String INTEROP_ACTION_PARTICIPANT_PREFIX = INTEROP_NAMESPACE + "/";
     /**
      * The initiator action prefix.
      */
-    public String INTEROP_ACTION_INITIATOR_PREFIX = INTEROP_NAMESPACE + "/InitiatorPortType/" ;
+    public String INTEROP_ACTION_INITIATOR_PREFIX = INTEROP_NAMESPACE + "/";
 
     /**
      * The completion commit element.
