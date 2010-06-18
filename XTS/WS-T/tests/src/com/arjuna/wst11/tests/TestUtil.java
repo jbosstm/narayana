@@ -100,7 +100,7 @@ public class TestUtil
     public static W3CEndpointReference getCompletionInitiatorEndpoint(String id)
     {
         return getEndpoint(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME,
-                AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME,
+                AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME,
                 completionInitiatorServiceURI,
                 id);
     }
