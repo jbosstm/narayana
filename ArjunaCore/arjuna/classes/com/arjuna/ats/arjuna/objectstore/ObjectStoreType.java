@@ -34,6 +34,7 @@ package com.arjuna.ats.arjuna.objectstore;
 import java.io.*;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.type.ObjectStoreTypeManager;
 import com.arjuna.ats.internal.arjuna.objectstore.ActionStore;
@@ -185,17 +186,15 @@ public class ObjectStoreType
             return HASHED_ACTION;
         if (c.equals(CacheStore.class))
             return CACHED;
-        
+
         int type = ObjectStoreTypeManager.manager().getType(c);
 
         if (type >= 0)
             return type;
-        
-        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_objectstore_ObjectStoreType_1(c.getCanonicalName());
-        }
 
-        throw new com.arjuna.ats.arjuna.exceptions.FatalError(
+        tsLogger.i18NLogger.warn_objectstore_ObjectStoreType_1(c.getCanonicalName());
+
+        throw new FatalError(
                 tsLogger.i18NLogger.get_objectstore_ObjectStoreType_2()
                         + c);
     }

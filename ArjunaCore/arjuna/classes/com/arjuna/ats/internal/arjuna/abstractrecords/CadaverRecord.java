@@ -137,12 +137,9 @@ public class CadaverRecord extends PersistenceRecord
 	if (oldState != null)
 	    newStateIsValid = false;
 
-	if (oType == RecordType.RECOVERY)
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
-        }
-	}
+	if (oType == RecordType.RECOVERY) {
+        tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
+    }
 
 	/*
 	 * No need to forget the action since this object is
@@ -188,12 +185,9 @@ public class CadaverRecord extends PersistenceRecord
 
 	newStateIsValid = false;
 
-	if (oType == RecordType.RECOVERY)
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
-        }
-	}
+	if (oType == RecordType.RECOVERY) {
+        tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
+    }
 
 	// super.forgetAction(false);
 

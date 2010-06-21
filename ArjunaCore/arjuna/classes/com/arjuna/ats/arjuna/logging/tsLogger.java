@@ -37,13 +37,11 @@ import org.jboss.logging.Logger;
 public class tsLogger
 {
 	public static LogNoi18n arjLogger;
-	public static Logi18n arjLoggerI18N;
     public static arjunaI18NLogger i18NLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         arjLogger = noi18n;
-        arjLoggerI18N = i18n;
         i18NLogger = new arjunaI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.arjuna"));
     }
 

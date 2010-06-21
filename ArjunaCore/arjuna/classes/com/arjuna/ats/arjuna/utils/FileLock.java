@@ -306,12 +306,9 @@ public class FileLock
             else
                 return false;
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
 
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_utils_FileLock_4(_lockFile.getName());
-            }
+            tsLogger.i18NLogger.warn_utils_FileLock_4(_lockFile.getName());
 
             return false;
         }

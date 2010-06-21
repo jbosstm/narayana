@@ -111,10 +111,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
               
                      if ( timeOfDeath != null && timeOfDeath.before(oldestSurviving) )
                      {
-			 if (tsLogger.arjLoggerI18N.isInfoEnabled())
-			 {
-                 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
-			 }
+			 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
 			 
 			 _objectStore.remove_committed( newUid, _itemTypeName ) ;
                      }
@@ -134,10 +131,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                   
                         if ( tsc.isDead() )
                         {
-			    if (tsLogger.arjLoggerI18N.isInfoEnabled())
-			    {
-                    tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
-			    }
+                            tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
 			    
                            tsc.delete() ;
                            tsc = null ;

@@ -209,10 +209,8 @@ public class ShadowingStore extends FileSystemStore
 
         /* Bail out if the object store is not set up */
 
-        if (!storeValid())
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_1();
+        if (!storeValid()) {
+            tsLogger.i18NLogger.warn_objectstore_ShadowingStore_1();
 
             return false;
         }
@@ -248,12 +246,8 @@ public class ShadowingStore extends FileSystemStore
 
                 result = renameFromTo(shadowState, originalState);
 
-                if (!result)
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_2(shadow, filename);
-                    }
+                if (!result) {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_2(shadow, filename);
                 }
                 else
                 {
@@ -316,12 +310,8 @@ public class ShadowingStore extends FileSystemStore
                     super.removeFromCache(path1);
                     super.addToCache(path2);
                 }
-                else
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
-                    }
+                else {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
                 }
 
                 newState = null;
@@ -342,12 +332,8 @@ public class ShadowingStore extends FileSystemStore
                     super.removeFromCache(path1);
                     super.addToCache(path2);
                 }
-                else
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
-                    }
+                else {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
                 }
 
                 newState = null;
@@ -395,12 +381,8 @@ public class ShadowingStore extends FileSystemStore
                     super.removeFromCache(path2);
                     super.addToCache(path1);
                 }
-                else
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
-                    }
+                else {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
                 }
 
                 newState = null;
@@ -421,12 +403,8 @@ public class ShadowingStore extends FileSystemStore
                     super.removeFromCache(path2);
                     super.addToCache(path1);
                 }
-                else
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
-                    }
+                else {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
                 }
 
                 newState = null;
@@ -490,10 +468,8 @@ public class ShadowingStore extends FileSystemStore
             tsLogger.arjLogger.debug("ShadowingStore.read_state(" + objUid + ", " + tName + ", " + StateType.stateTypeString(ft) + ")");
         }
 
-        if (!storeValid())
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_6();
+        if (!storeValid()) {
+            tsLogger.i18NLogger.warn_objectstore_ShadowingStore_6();
 
             return null;
         }
@@ -560,11 +536,8 @@ public class ShadowingStore extends FileSystemStore
                                 "ShadowingStore::read_state failed: " + e, e);
                     }
 
-                    if (!closeAndUnlock(fd, ifile, null))
-                    {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_objectstore_ShadowingStore_8(fname);
-                        }
+                    if (!closeAndUnlock(fd, ifile, null)) {
+                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_8(fname);
                     }
                 }
             }
@@ -606,19 +579,11 @@ public class ShadowingStore extends FileSystemStore
                     {
                         removeOk = false;
 
-                        if (ft == StateType.OS_ORIGINAL)
-                        {
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            {
-                                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_9(objUid, name);
-                            }
+                        if (ft == StateType.OS_ORIGINAL) {
+                            tsLogger.i18NLogger.warn_objectstore_ShadowingStore_9(objUid, name);
 
-                            if (!fd.exists())
-                            {
-                                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                {
-                                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_10(objUid, name);
-                                }
+                            if (!fd.exists()) {
+                                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_10(objUid, name);
                             }
                         }
                     }
@@ -628,22 +593,16 @@ public class ShadowingStore extends FileSystemStore
                         {
                             removeOk = false;
 
-                            if (ft == StateType.OS_ORIGINAL)
-                            {
-                                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_11(fname);
-                                }
+                            if (ft == StateType.OS_ORIGINAL) {
+                                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_11(fname);
                             }
                         }
                     }
 
                     closeAndUnlock(fd, null, null);
                 }
-                else
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_12(objUid);
-                    }
+                else {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_12(objUid);
 
                     removeOk = false;
                 }
@@ -661,13 +620,10 @@ public class ShadowingStore extends FileSystemStore
                     tsLogger.i18NLogger.info_objectstore_ShadowingStore_15(objUid, name);
             }
         }
-        else
-        {
+        else {
             removeOk = false;
 
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_17(objUid);
-            }
+            tsLogger.i18NLogger.warn_objectstore_ShadowingStore_17(objUid);
         }
 
         return removeOk;
@@ -696,11 +652,8 @@ public class ShadowingStore extends FileSystemStore
             File fd = openAndLock(fname, FileLock.F_WRLCK, true);
             int imageSize = (int) state.length();
 
-            if (fd == null)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_18(fname);
-                }
+            if (fd == null) {
+                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_18(fname);
 
                 return false;
             }
@@ -756,11 +709,8 @@ public class ShadowingStore extends FileSystemStore
                 }
             }
 
-            if (!closeAndUnlock(fd, null, ofile))
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_19(fname);
-                }
+            if (!closeAndUnlock(fd, null, ofile)) {
+                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_19(fname);
             }
 
             super.addToCache(fname);

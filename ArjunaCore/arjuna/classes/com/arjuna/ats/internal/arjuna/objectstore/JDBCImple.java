@@ -193,14 +193,12 @@ public abstract class JDBCImple
 					_preparedStatements[pool][HIDE_STATE] = pstmt;
 				}
 			}
-			catch (Exception e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_1(e);
+			catch (Exception e) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_1(e);
 
-				freePool(pool);
-				return false;
-			}
+                freePool(pool);
+                return false;
+            }
 
 			try
 			{
@@ -288,14 +286,12 @@ public abstract class JDBCImple
 					_preparedStatements[pool][REVEAL_STATE] = pstmt;
 				}
 			}
-			catch (Exception e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_2(e);
+			catch (Exception e) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_2(e);
 
-				freePool(pool);
-				return false;
-			}
+                freePool(pool);
+                return false;
+            }
 
 			try
 			{
@@ -456,11 +452,7 @@ public abstract class JDBCImple
 				}
 				else
 				{
-				    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
-
-                        e.printStackTrace();
-                    }
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
 
 					return StateStatus.OS_UNKNOWN;
 				}
@@ -527,27 +519,21 @@ public abstract class JDBCImple
 						theUid = new Uid(rs.getString(1));
 						UidHelper.packInto(theUid, store);
 					}
-					catch (IOException ex)
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_5(ex);
+					catch (IOException ex) {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_5(ex);
 
-						return false;
-					}
-					catch (Exception e)
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
+                        return false;
+                    }
+					catch (Exception e) {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 
-						finished = true;
-					}
+                        finished = true;
+                    }
 				}
 			}
-			catch (Exception e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
-			}
+			catch (Exception e) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
+            }
 			finally
 			{
 				try
@@ -585,11 +571,9 @@ public abstract class JDBCImple
 
 			return true;
 		}
-		catch (Exception e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
-		}
+		catch (Exception e) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
+        }
 		finally
 		{
 			freePool(pool);
@@ -637,27 +621,21 @@ public abstract class JDBCImple
 						String type = rs.getString(1);
 						store.packString(type);
 					}
-					catch (IOException ex)
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_7(ex);
+					catch (IOException ex) {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_7(ex);
 
-						return false;
-					}
-					catch (Exception e)
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
+                        return false;
+                    }
+					catch (Exception e) {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 
-						finished = true;
-					}
+                        finished = true;
+                    }
 				}
 			}
-			catch (Exception e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
-			}
+			catch (Exception e) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
+            }
 			finally
 			{
 				try
@@ -693,11 +671,9 @@ public abstract class JDBCImple
 
 			return true;
 		}
-		catch (Exception e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
-		}
+		catch (Exception e) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
+        }
 		finally
 		{
 			freePool(pool);
@@ -764,13 +740,11 @@ public abstract class JDBCImple
 					{
 						return remove_state(objUid, name, ft, tableName);
 					}
-					else
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
+					else {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
 
-						removeOk = false;
-					}
+                        removeOk = false;
+                    }
 				}
 				finally
 				{
@@ -778,24 +752,17 @@ public abstract class JDBCImple
 						freePool(pool);
 				}
 			}
-			else
-			{
-				removeOk = false;
-				// can only remove (UN)COMMITTED objs
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_9(Integer.toString(ft), objUid);
-				}
-			}
-		}
-		else
-		{
-			removeOk = false;
-
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_10(objUid);
+			else {
+                removeOk = false;
+                // can only remove (UN)COMMITTED objs
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_9(Integer.toString(ft), objUid);
             }
 		}
+		else {
+            removeOk = false;
+
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_10(objUid);
+        }
 
 		return removeOk;
 	}
@@ -845,9 +812,8 @@ public abstract class JDBCImple
 						newImage = new InputObjectState(objUid, tName, buffer);
 					}
 					else {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_readfailed();
-					}
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_readfailed();
+                    }
 				}
 				catch (Throwable e)
 				{
@@ -945,9 +911,8 @@ public abstract class JDBCImple
 				if(retryConnection(e, pool)) {
 					return write_state(objUid, tName, state, s, tableName);
 				} else {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
-				}
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
+                }
 			}
 			finally
 			{
@@ -980,20 +945,14 @@ public abstract class JDBCImple
 			String tableName) throws SQLException
 	{
         _poolSizeInit = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeInitial();
-        if (_poolSizeInit < 1)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_11(Integer.toString(_poolSizeInit));
-            }
+        if (_poolSizeInit < 1) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_11(Integer.toString(_poolSizeInit));
             _poolSizeInit = 1;
         }
 
         _poolSizeMax = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeMaximum();
-        if (_poolSizeMax < _poolSizeInit)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_12(Integer.toString(_poolSizeMax));
-            }
+        if (_poolSizeMax < _poolSizeInit) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_12(Integer.toString(_poolSizeMax));
             _poolSizeMax = _poolSizeInit;
         }
 
@@ -1012,14 +971,12 @@ public abstract class JDBCImple
 				_theConnection[i].setAutoCommit(true);
 			}
 		}
-		catch (Exception e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
+		catch (Exception e) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
 
-			_isValid = false;
-			return _isValid;
-		}
+            _isValid = false;
+            return _isValid;
+        }
 
 		for (int i = _poolSizeInit; i < _poolSizeMax; i++)
 		{
@@ -1075,13 +1032,11 @@ public abstract class JDBCImple
 
 			_isValid = true;
 		}
-		catch (Exception e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
+		catch (Exception e) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
 
-			_isValid = false;
-		}
+            _isValid = false;
+        }
 
 		return _isValid;
 	}
@@ -1140,12 +1095,9 @@ public abstract class JDBCImple
 				return st.intValue();
 			}
 		}
-		catch (Exception ex)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(ex);
-            }
-		}
+		catch (Exception ex) {
+            tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(ex);
+        }
 
 		return StateStatus.OS_UNKNOWN;
 	}
@@ -1174,12 +1126,9 @@ public abstract class JDBCImple
 	{
 		if (shareStatus == StateType.OS_UNSHARED)
 		{
-			if ((stateCache.remove(state) == null) && warn)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_15(state);
-                }
-			}
+			if ((stateCache.remove(state) == null) && warn) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_15(state);
+            }
 		}
 	}
 
@@ -1301,11 +1250,9 @@ public abstract class JDBCImple
 							rtn = i;
 							break;
 						}
-						catch (Exception e)
-						{
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                tsLogger.i18NLogger.warn_objectstore_JDBCImple_16(e);
-						}
+						catch (Exception e) {
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_16(e);
+                        }
 					}
 					else
 					{
@@ -1325,10 +1272,7 @@ public abstract class JDBCImple
 					}
 					catch (InterruptedException ie)
 					{
-						if (tsLogger.arjLoggerI18N.isInfoEnabled())
-						{
-                            tsLogger.i18NLogger.info_objectstore_JDBCImple_17();
-						}
+						tsLogger.i18NLogger.info_objectstore_JDBCImple_17();
 					}
 				}
 			}
@@ -1352,11 +1296,9 @@ public abstract class JDBCImple
 
 		synchronized (_inUse)
 		{
-			if (_inUse[pool] == false)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_18();
-			}
+			if (_inUse[pool] == false) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_18();
+            }
 			_inUse[pool] = false;
 			_inUse.notifyAll();
 		}

@@ -66,11 +66,9 @@ public class StateManagerFriend
 
             return b.booleanValue();
         }
-        catch (final Throwable ex)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_abstractrecords_smf1(ex);
-            
+        catch (final Throwable ex) {
+            tsLogger.i18NLogger.warn_abstractrecords_smf1(ex);
+
             return false;
         }
     }
@@ -88,11 +86,9 @@ public class StateManagerFriend
 
             return b.booleanValue();
         }
-        catch (final Throwable ex)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_abstractrecords_smf3(ex);
-            
+        catch (final Throwable ex) {
+            tsLogger.i18NLogger.warn_abstractrecords_smf3(ex);
+
             return false;
         }
     }
@@ -107,10 +103,8 @@ public class StateManagerFriend
             m.invoke(inst, (Object[]) null);
             m.setAccessible(false);
         }
-        catch (final Throwable ex)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_abstractrecords_smf2(ex);
+        catch (final Throwable ex) {
+            tsLogger.i18NLogger.warn_abstractrecords_smf2(ex);
         }
     }
 

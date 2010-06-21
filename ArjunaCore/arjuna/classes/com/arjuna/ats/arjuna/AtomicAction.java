@@ -331,14 +331,11 @@ public class AtomicAction extends TwoPhaseCoordinator
 		{
 			if (curr instanceof AtomicAction)
 				ThreadActionData.purgeActions();
-			else
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_ats_atomicaction_1(curr.toString());
-                }
+			else {
+                tsLogger.i18NLogger.warn_ats_atomicaction_1(curr.toString());
 
-				curr = null;
-			}
+                curr = null;
+            }
 		}
 
 		return (AtomicAction) curr;

@@ -84,12 +84,9 @@ public class RecoverAtomicAction extends AtomicAction
 	   {
 	       super.phase2Abort( _reportHeuristics ) ;
 	   }
-	   else
-	   {
-	       if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-               tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_2(ActionStatus.stringForm(_theStatus));
-           }
-	   }
+	   else {
+           tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_2(ActionStatus.stringForm(_theStatus));
+       }
 
 	   if (tsLogger.arjLogger.isDebugEnabled()) {
            tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2( "+get_uid()+" )  finished");
@@ -108,9 +105,7 @@ public class RecoverAtomicAction extends AtomicAction
                scanner.moveEntry(get_uid());
            }
            catch (final Exception ex) {
-               if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                   tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_5(get_uid());
-               }
+               tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_5(get_uid());
            }
        }
    }

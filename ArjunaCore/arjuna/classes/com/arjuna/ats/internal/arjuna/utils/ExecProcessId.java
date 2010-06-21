@@ -149,11 +149,8 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                         {
                             bstream.close();
                         }
-                        catch (final Exception ex)
-                        {
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                tsLogger.i18NLogger.warn_utils_ExecProcessId_5(ex);
-                            }
+                        catch (final Exception ex) {
+                            tsLogger.i18NLogger.warn_utils_ExecProcessId_5(ex);
                         }
                     }
 

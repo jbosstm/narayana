@@ -108,13 +108,11 @@ public class LogWriteStateManager extends StateManager
 	    return true;
 	}
     
-	if (super.status() == ObjectStatus.PASSIVE)
-	{
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            tsLogger.i18NLogger.warn_StateManager_10();
+	if (super.status() == ObjectStatus.PASSIVE) {
+        tsLogger.i18NLogger.warn_StateManager_10();
 
-	    activate();
-	}
+        activate();
+    }
 	
 	/*
 	 * Need not have gone through active if new object.

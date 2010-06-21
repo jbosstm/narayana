@@ -65,10 +65,8 @@ public class Connection extends Thread
       {
 	  _server_socket.setSoTimeout(0);
       }
-      catch (java.net.SocketException ex)
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_Connection_2();
+      catch (java.net.SocketException ex) {
+          tsLogger.i18NLogger.warn_recovery_Connection_2();
       }
 
       _service = service;
@@ -92,10 +90,8 @@ public class Connection extends Thread
 
          _service.doWork ( is, os );
       }
-      catch ( IOException ex )
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_Connection_1();
+      catch ( IOException ex ) {
+          tsLogger.i18NLogger.warn_recovery_Connection_1();
       }
       finally
       {

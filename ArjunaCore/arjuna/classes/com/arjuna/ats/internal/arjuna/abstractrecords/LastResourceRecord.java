@@ -191,24 +191,17 @@ public class LastResourceRecord extends AbstractRecord
     {
         if (a.typeIs() == typeIs())
         {
-            if (ALLOW_MULTIPLE_LAST_RESOURCES)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    if (!_disableMLRWarning
-                            || (_disableMLRWarning && !_issuedWarning)) {
-                        tsLogger.i18NLogger.warn_lastResource_multipleWarning(a.toString());
-                        _issuedWarning = true;
-                    }
+            if (ALLOW_MULTIPLE_LAST_RESOURCES) {
+                if (!_disableMLRWarning
+                        || (_disableMLRWarning && !_issuedWarning)) {
+                    tsLogger.i18NLogger.warn_lastResource_multipleWarning(a.toString());
+                    _issuedWarning = true;
                 }
 
                 return true;
             }
-            else
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_lastResource_disallow(a.toString());
-                }
+            else {
+                tsLogger.i18NLogger.warn_lastResource_disallow(a.toString());
 
                 return false;
             }
@@ -277,8 +270,7 @@ public class LastResourceRecord extends AbstractRecord
         ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager
                 .getCoreEnvironmentBean().isAllowMultipleLastResources();
 
-        if (ALLOW_MULTIPLE_LAST_RESOURCES
-                && tsLogger.arjLoggerI18N.isWarnEnabled()) {
+        if (ALLOW_MULTIPLE_LAST_RESOURCES) {
             tsLogger.i18NLogger.warn_lastResource_startupWarning();
         }
 

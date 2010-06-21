@@ -127,14 +127,11 @@ public class BasicMutex implements Mutex
 	
 	synchronized (_lock)
 	{
-	    if (_users <= 0)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+	    if (_users <= 0) {
             tsLogger.i18NLogger.warn_common_Mutex_2();
+
+            return BasicMutex.ERROR;
         }
-		
-		return BasicMutex.ERROR;
-	    }
 	    else
 	    {
 		boolean done = false;
@@ -148,14 +145,11 @@ public class BasicMutex implements Mutex
 
 			done = true;
 		    }
-		    else
-		    {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+		    else {
                 tsLogger.i18NLogger.warn_common_Mutex_2();
+
+                return BasicMutex.LOCKED;
             }
-			
-			return BasicMutex.LOCKED;
-		    }
 		}
 
 		if (!done)

@@ -507,8 +507,7 @@ public abstract class FileSystemStore extends ObjectStore
         {
             //      FileLock fl = new FileLock(to);
 
-            if (!from.exists())
-            {
+            if (!from.exists()) {
                 /*
                  * from is in the cache, but not on disk. So, either
                  *
@@ -525,9 +524,7 @@ public abstract class FileSystemStore extends ObjectStore
 
                 removeFromCache(from.toString());
 
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_FileSystemStore_20(from.getName());
-                }
+                tsLogger.i18NLogger.warn_objectstore_FileSystemStore_20(from.getName());
 
                 return true;
             }
@@ -701,11 +698,8 @@ public abstract class FileSystemStore extends ObjectStore
 
         /* The root of the objectstore must exist and be writable */
 
-        if ((fullStoreName == null) || !createHierarchy(fullStoreName))
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_FileSystemStore_1(fullStoreName);
-            }
+        if ((fullStoreName == null) || !createHierarchy(fullStoreName)) {
+            tsLogger.i18NLogger.warn_objectstore_FileSystemStore_1(fullStoreName);
 
             isValid = false;
         }
@@ -861,11 +855,8 @@ public abstract class FileSystemStore extends ObjectStore
     {
         if (super.shareStatus == StateType.OS_UNSHARED)
         {
-            if ((FileSystemStore.fileCache.remove(fname) == null) && warn)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_FileSystemStore_2(fname);
-                }
+            if ((FileSystemStore.fileCache.remove(fname) == null) && warn) {
+                tsLogger.i18NLogger.warn_objectstore_FileSystemStore_2(fname);
             }
         }
     }

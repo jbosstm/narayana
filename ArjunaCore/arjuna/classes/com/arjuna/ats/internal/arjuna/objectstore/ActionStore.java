@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
@@ -209,14 +210,12 @@ public class ActionStore extends ShadowNoFileLockStore
         {
             setupStore(locationOfStore);
         }
-        catch (ObjectStoreException e)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLogger.warn(e);
+        catch (ObjectStoreException e) {
+            tsLogger.arjLogger.warn(e);
 
             super.makeInvalid();
 
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
+            throw new FatalError(e.toString(),
                     e);
         }
     }

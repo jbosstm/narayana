@@ -143,15 +143,11 @@ public class PeriodicRecovery extends Thread
                 _listener = new Listener(getServerSocket(), _workerService);
                 _listener.setDaemon(true);
 
-                if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                    tsLogger.i18NLogger.info_recovery_PeriodicRecovery_13(_socket.getInetAddress().getHostAddress(),
+                tsLogger.i18NLogger.info_recovery_PeriodicRecovery_13(_socket.getInetAddress().getHostAddress(),
                             Integer.toString(_socket.getLocalPort()));
             }
-            catch (Exception ex)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_9(ex);
-                }
+            catch (Exception ex) {
+                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_9(ex);
             }
         }
 
@@ -895,12 +891,10 @@ public class PeriodicRecovery extends Thread
                    className);
        }
 
-      if (className == null)
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_1();
+      if (className == null) {
+          tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_1();
 
-         return;
+          return;
       }
       else
       {
@@ -913,32 +907,20 @@ public class PeriodicRecovery extends Thread
                RecoveryModule m = (RecoveryModule) c.newInstance();
                _recoveryModules.add(m);
             }
-            catch (ClassCastException e)
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_2(className);
-        }
+            catch (ClassCastException e) {
+                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_2(className);
             }
-            catch (IllegalAccessException iae)
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_3(iae);
-        }
+            catch (IllegalAccessException iae) {
+                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_3(iae);
             }
-            catch (InstantiationException ie)
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_4(ie);
-        }
+            catch (InstantiationException ie) {
+                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_4(ie);
             }
 
             c = null;
          }
-         catch ( ClassNotFoundException cnfe )
-         {
- 	     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-              tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_5(className);
-          }
+         catch ( ClassNotFoundException cnfe ) {
+             tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_5(className);
          }
       }
    }

@@ -26,6 +26,7 @@ import java.util.Stack;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
@@ -678,15 +679,13 @@ public class LogStore extends FileSystemStore
 		{
 			setupStore(locationOfStore);
 		}
-		catch (ObjectStoreException e)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLogger.warn(e);
+		catch (ObjectStoreException e) {
+            tsLogger.arjLogger.warn(e);
 
-			super.makeInvalid();
+            super.makeInvalid();
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-		}
+            throw new FatalError(e.toString(), e);
+        }
 	}
 
 	public LogStore()
@@ -702,14 +701,12 @@ public class LogStore extends FileSystemStore
                 {
                         setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
                 }
-                catch (ObjectStoreException e)
-                {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                tsLogger.arjLogger.warn(e);
+                catch (ObjectStoreException e) {
+                    tsLogger.arjLogger.warn(e);
 
-                        super.makeInvalid();
+                    super.makeInvalid();
 
-                        throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+                    throw new FatalError(e.toString(), e);
                 }
 	}
 
@@ -810,14 +807,11 @@ public class LogStore extends FileSystemStore
 				fname = genPathName(theLog.getName(), tName, ft);
 				fd = openAndLock(fname, FileLock.F_WRLCK, true);
 
-				if (fd == null)
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_18(fname);
-                    }
+				if (fd == null) {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_18(fname);
 
-					return false;
-				}
+                    return false;
+                }
 
 				boolean setLength = !fd.exists();
 
@@ -900,12 +894,9 @@ public class LogStore extends FileSystemStore
 				}
 			}
 
-			if (!unlockAndClose(fd, ofile))
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_19(fname);
-                }
-			}
+			if (!unlockAndClose(fd, ofile)) {
+                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_19(fname);
+            }
 
 			super.addToCache(fname);
 

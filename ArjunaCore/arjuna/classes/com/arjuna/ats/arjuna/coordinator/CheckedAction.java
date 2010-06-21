@@ -68,13 +68,10 @@ public class CheckedAction
 
     public void check (boolean isCommit, Uid actUid, Hashtable list)
     {
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-        {
-            if (isCommit)
-                tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(list.size()));
-            else
-                tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(list.size()));
-        }
+        if (isCommit)
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(list.size()));
+        else
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(list.size()));
     }
 
 }

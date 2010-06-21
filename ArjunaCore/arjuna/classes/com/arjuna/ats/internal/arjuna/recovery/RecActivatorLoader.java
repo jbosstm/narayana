@@ -64,10 +64,7 @@ public class RecActivatorLoader
   public void startRecoveryActivators()
       //public void run()
   {
-      if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	  {
-          tsLogger.i18NLogger.info_recovery_RecActivatorLoader_6();
-	  }
+      tsLogger.i18NLogger.info_recovery_RecActivatorLoader_6();
 
       Enumeration activators = _recoveryActivators.elements();
 
@@ -98,13 +95,11 @@ public class RecActivatorLoader
                   className);
       }
 
-      if (className == null)
-	  {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_1();
+      if (className == null) {
+          tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_1();
 
-	      return;
-	  }
+          return;
+      }
       else
 	  {
 	      try
@@ -116,33 +111,21 @@ public class RecActivatorLoader
 			      RecoveryActivator ra = (RecoveryActivator) c.newInstance() ;
 			      _recoveryActivators.add( ra );
 			  }
-		      catch (ClassCastException e)
-			  {
-			      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                      tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_2(className);
-                  }
-			  }
-		      catch (IllegalAccessException iae)
-			  {
-			      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                      tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_3(iae);
-                  }
-			    }
-		      catch (InstantiationException ie)
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_4(ie);
-        }
-            }
+		      catch (ClassCastException e) {
+                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_2(className);
+              }
+		      catch (IllegalAccessException iae) {
+                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_3(iae);
+              }
+		      catch (InstantiationException ie) {
+                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_4(ie);
+              }
 
 		      c = null;
 		  }
-	      catch ( ClassNotFoundException cnfe )
-		  {
-		      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_5(className);
-              }
-		  }
+	      catch ( ClassNotFoundException cnfe ) {
+              tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_5(className);
+          }
       }
   }
 

@@ -128,10 +128,8 @@ public class Uid implements Cloneable, Serializable
 
             generateHash();
         }
-        catch (UnknownHostException e)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_common_Uid_1();
+        catch (UnknownHostException e) {
+            tsLogger.i18NLogger.warn_common_Uid_1();
             _valid = false;
         }
     }
@@ -168,11 +166,9 @@ public class Uid implements Cloneable, Serializable
             
             _valid = true;
         }
-        catch (final Throwable ex)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_common_Uid_bytes(ex);
-            
+        catch (final Throwable ex) {
+            tsLogger.i18NLogger.warn_common_Uid_bytes(ex);
+
             _valid = false;
         }
         
@@ -259,31 +255,22 @@ public class Uid implements Cloneable, Serializable
             }
             catch (NumberFormatException e)
             {
-                if (!errsOk)
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_common_Uid_3(uidString, e);
-                    }
+                if (!errsOk) {
+                    tsLogger.i18NLogger.warn_common_Uid_3(uidString, e);
                 }
 
                 _valid = false;
             }
             catch (StringIndexOutOfBoundsException e)
             {
-                if (!errsOk)
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_common_Uid_3(uidString, e);
-                    }
+                if (!errsOk) {
+                    tsLogger.i18NLogger.warn_common_Uid_3(uidString, e);
                 }
 
                 _valid = false;
             }
-            catch (final Throwable ex)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_common_Uid_npe(uidString, ex);
-                }
+            catch (final Throwable ex) {
+                tsLogger.i18NLogger.warn_common_Uid_npe(uidString, ex);
 
                 _valid = false;
             }
@@ -310,9 +297,7 @@ public class Uid implements Cloneable, Serializable
                 }
                 catch (Exception e)
                 {
-                    if (tsLogger.arjLoggerI18N.isFatalEnabled()) {
-                        tsLogger.i18NLogger.fatal_common_Uid_4(uidString);
-                    }
+                    tsLogger.i18NLogger.fatal_common_Uid_4(uidString);
 
                     throw new FatalError(tsLogger.i18NLogger.get_common_Uid_2(), e);
                 }
@@ -429,11 +414,9 @@ public class Uid implements Cloneable, Serializable
                 
                 _byteForm = ba.toByteArray();
             }
-            catch (final Throwable ex)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_common_Uid_getbytes(ex);
-                
+            catch (final Throwable ex) {
+                tsLogger.i18NLogger.warn_common_Uid_getbytes(ex);
+
                 _byteForm = null;
             }
         }
@@ -758,10 +741,8 @@ public class Uid implements Cloneable, Serializable
             if (_hashValue < 0)
                 _hashValue = -_hashValue;
         }
-        else
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_common_Uid_6();
+        else {
+            tsLogger.i18NLogger.warn_common_Uid_6();
         }
     }
 

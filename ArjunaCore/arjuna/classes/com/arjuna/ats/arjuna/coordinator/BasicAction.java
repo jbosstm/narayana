@@ -305,59 +305,48 @@ public class BasicAction extends StateManager
         }
 
 		if ((actionStatus == ActionStatus.RUNNING)
-				|| (actionStatus == ActionStatus.ABORT_ONLY))
-		{
-			/* If current action is one of my children there's an error */
+				|| (actionStatus == ActionStatus.ABORT_ONLY)) {
+            /* If current action is one of my children there's an error */
 
-			BasicAction currentAct = BasicAction.Current();
+            BasicAction currentAct = BasicAction.Current();
 
-			if ((currentAct != null) && (currentAct != this))
-			{
-				/*
-				 * Is the current action a child of this action? If so, abort
-				 * until we get to the current action. This works even in a
-				 * multi-threaded environment where each thread may have a
-				 * different notion of current, since Current returns the thread
-				 * specific current.
-				 */
+            if ((currentAct != null) && (currentAct != this)) {
+                /*
+                     * Is the current action a child of this action? If so, abort
+                     * until we get to the current action. This works even in a
+                     * multi-threaded environment where each thread may have a
+                     * different notion of current, since Current returns the thread
+                     * specific current.
+                     */
 
-				if (currentAct.isAncestor(get_uid()))
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_1(get_uid());
+                if (currentAct.isAncestor(get_uid())) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_1(get_uid());
+
+                    while ((currentAct != this) && (currentAct != null)) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_2(currentAct.get_uid());
+
+                        currentAct.Abort();
+
+                        currentAct = BasicAction.Current();
                     }
-
-					while ((currentAct != this) && (currentAct != null))
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_2(currentAct.get_uid());
-                        }
-
-						currentAct.Abort();
-
-						currentAct = BasicAction.Current();
-					}
-				}
-			}
-
-			BasicAction parentAct = parent();
-
-			/* prevent commit of parents (safety) */
-
-			while (parentAct != null)
-			{
-				parentAct.preventCommit();
-				parentAct = parentAct.parent();
-			}
-
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_BasicAction_3(get_uid());
+                }
             }
 
-			/* This will also kill any children */
+            BasicAction parentAct = parent();
 
-			Abort();
-		}
+            /* prevent commit of parents (safety) */
+
+            while (parentAct != null) {
+                parentAct.preventCommit();
+                parentAct = parentAct.parent();
+            }
+
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_3(get_uid());
+
+            /* This will also kill any children */
+
+            Abort();
+        }
 		else
 		{
 			if (actionStatus == ActionStatus.PREPARED)
@@ -655,14 +644,11 @@ public class BasicAction extends StateManager
 
 				oState = null;
 			}
-			else
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_5(get_uid(), type());
-                }
+			else {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_5(get_uid(), type());
 
-				restored = false;
-			}
+                restored = false;
+            }
 
 			return restored;
 		}
@@ -718,12 +704,9 @@ public class BasicAction extends StateManager
 			}
 
 			/** If we failed to deactivate then output warning * */
-			if (!deactivated)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_5a(get_uid(), type());
-                }
-			}
+			if (!deactivated) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_5a(get_uid(), type());
+            }
 		}
 		catch (ObjectStoreException e)
 		{
@@ -1277,14 +1260,11 @@ public class BasicAction extends StateManager
 		{
 		    AbstractRecord record = AbstractRecord.create(record_type);
 
-			if (record == null)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_21(Integer.toString(record_type));
-                }
+			if (record == null) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_21(Integer.toString(record_type));
 
-				res = false;
-			}
+                res = false;
+            }
 			else
 				res = (record.restore_state(os, ot) && preparedList.insert(record));
 
@@ -1358,13 +1338,11 @@ public class BasicAction extends StateManager
 				{
 					res = false;
 				}
-				catch (final NullPointerException ex)
-				{
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_coordinator_norecordfound(Integer.toString(record_type));
-				    
-				    res = false;
-				}
+				catch (final NullPointerException ex) {
+                    tsLogger.i18NLogger.warn_coordinator_norecordfound(Integer.toString(record_type));
+
+                    res = false;
+                }
 			}
 		}
 
@@ -1376,13 +1354,11 @@ public class BasicAction extends StateManager
 				tempActionType = os.unpackInt();
 				tempHeuristicDecision = os.unpackInt();
 			}
-			catch (IOException e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_24();
+			catch (IOException e) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_24();
 
-				res = false;
-			}
+                res = false;
+            }
 		}
 
 		if (res)
@@ -1526,26 +1502,20 @@ public class BasicAction extends StateManager
 		
 		// check to see if transaction system is enabled
 		
-		if (!TxControl.isEnabled())
-		{
-		    /*
-		     * Prevent transaction from making forward progress.
-		     */
-		    
-		    actionStatus = ActionStatus.ABORT_ONLY;
-		    
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_notrunning();
-            }
-		}
+		if (!TxControl.isEnabled()) {
+            /*
+                * Prevent transaction from making forward progress.
+                */
+
+            actionStatus = ActionStatus.ABORT_ONLY;
+
+            tsLogger.i18NLogger.warn_coordinator_notrunning();
+        }
 		else
 		{   
-		    if (actionStatus != ActionStatus.CREATED)
-		    {
-		        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_29(get_uid(), ActionStatus.stringForm(actionStatus));
-                }
-		    }
+		    if (actionStatus != ActionStatus.CREATED) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_29(get_uid(), ActionStatus.stringForm(actionStatus));
+            }
 		    else
 		    {
 		        actionInitialise(parentAct);
@@ -1556,17 +1526,12 @@ public class BasicAction extends StateManager
 		        {
 		            actionStatus = ActionStatus.ABORT_ONLY;
 
-		            if (parentAct == null)
-		            {
-		                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_30(get_uid());
-                        }
-		            }
+		            if (parentAct == null) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_30(get_uid());
+                    }
 		            else
 		            {
-		                if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_31(get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()));
-                        }
+		                tsLogger.i18NLogger.warn_coordinator_BasicAction_31(get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()));
 		            }
 		        }
 
@@ -1615,25 +1580,21 @@ public class BasicAction extends StateManager
 		/* Check for superfluous invocation */
 
 		if ((actionStatus != ActionStatus.RUNNING)
-				&& (actionStatus != ActionStatus.ABORT_ONLY))
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				switch (actionStatus) {
-                    case ActionStatus.CREATED:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_33(get_uid());
-                        break;
-                    case ActionStatus.COMMITTED:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_34(get_uid());
-                        break;
-                    default:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_35(get_uid());
-                        break;
-                }
-			}
+				&& (actionStatus != ActionStatus.ABORT_ONLY)) {
+            switch (actionStatus) {
+                case ActionStatus.CREATED:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_33(get_uid());
+                    break;
+                case ActionStatus.COMMITTED:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_34(get_uid());
+                    break;
+                default:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_35(get_uid());
+                    break;
+            }
 
-			return actionStatus;
-		}
+            return actionStatus;
+        }
 
 		/*
 		 * Check we are the current action. Abort parents if not true. Check we
@@ -1661,30 +1622,21 @@ public class BasicAction extends StateManager
 			}
 			else
 			{			
-				if (prepare(reportHeuristics) == TwoPhaseOutcome.PREPARE_NOTOK)
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_36(get_uid());
+				if (prepare(reportHeuristics) == TwoPhaseOutcome.PREPARE_NOTOK) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_36(get_uid());
+
+                    if (heuristicDecision != TwoPhaseOutcome.PREPARE_OK) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_37(TwoPhaseOutcome.stringForm(heuristicDecision));
                     }
 
-					if (heuristicDecision != TwoPhaseOutcome.PREPARE_OK)
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_37(TwoPhaseOutcome.stringForm(heuristicDecision));
-                        }
-					}
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_38();
 
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_38();
-
-					if (!reportHeuristics && TxControl.asyncCommit
-							&& (parentAction == null))
-					{
-						AsyncCommit.create(this, false);
-					}
-					else
-						phase2Abort(reportHeuristics); /* first phase failed */
-				}
+                    if (!reportHeuristics && TxControl.asyncCommit
+                            && (parentAction == null)) {
+                        AsyncCommit.create(this, false);
+                    } else
+                        phase2Abort(reportHeuristics); /* first phase failed */
+                }
 				else
 				{
 					if (!reportHeuristics && TxControl.asyncCommit
@@ -1780,25 +1732,21 @@ public class BasicAction extends StateManager
 
 		if ((actionStatus != ActionStatus.RUNNING)
 				&& (actionStatus != ActionStatus.ABORT_ONLY)
-				&& (actionStatus != ActionStatus.COMMITTING))
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				switch (actionStatus) {
-                    case ActionStatus.CREATED:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_39(get_uid());
-                        break;
-                    case ActionStatus.ABORTED:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_40(get_uid());
-                        break;
-                    default:
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_41(get_uid());
-                        break;
-                }
-			}
+				&& (actionStatus != ActionStatus.COMMITTING)) {
+            switch (actionStatus) {
+                case ActionStatus.CREATED:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_39(get_uid());
+                    break;
+                case ActionStatus.ABORTED:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_40(get_uid());
+                    break;
+                default:
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_41(get_uid());
+                    break;
+            }
 
-			return actionStatus;
-		}
+            return actionStatus;
+        }
 
 		/*
 		 * Check we are the current action. Abort parents if not true. Some
@@ -1984,16 +1932,13 @@ public class BasicAction extends StateManager
                     + get_uid());
         }
 
-		if ((pendingList != null) && (pendingList.size() > 0))
-		{
-			int size = ((pendingList == null) ? 0 : pendingList.size());
+		if ((pendingList != null) && (pendingList.size() > 0)) {
+            int size = ((pendingList == null) ? 0 : pendingList.size());
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_BasicAction_42(get_uid(), Integer.toString(size), pendingList.toString());
-            }
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_42(get_uid(), Integer.toString(size), pendingList.toString());
 
-			phase2Abort(reportHeuristics);
-		}
+            phase2Abort(reportHeuristics);
+        }
 		else
 		{
 			criticalStart();
@@ -2168,16 +2113,13 @@ public class BasicAction extends StateManager
 
 		/* If we cannot commit - say the prepare failed */
 
-		if (!commitAllowed)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
-            }
+		if (!commitAllowed) {
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
 
-			actionStatus = ActionStatus.PREPARED;
+            actionStatus = ActionStatus.PREPARED;
 
-			return TwoPhaseOutcome.PREPARE_NOTOK;
-		}
+            return TwoPhaseOutcome.PREPARE_NOTOK;
+        }
 
 		/*
 		 * Make sure the object store is set up for a top-level atomic action.
@@ -2335,11 +2277,9 @@ public class BasicAction extends StateManager
 
 				if (parentAction != null)
 					parentAction.preventCommit();
-				else
-				{
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_44();
-				}
+				else {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_44();
+                }
 			}
 
 			criticalEnd();
@@ -2433,31 +2373,25 @@ public class BasicAction extends StateManager
 			String tn = type();
 			OutputObjectState state = new OutputObjectState(u, tn);
 
-			if (!save_state(state, ObjectType.ANDPERSISTENT))
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_45(get_uid());
-                }
+			if (!save_state(state, ObjectType.ANDPERSISTENT)) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_45(get_uid());
 
-				criticalEnd();
+                criticalEnd();
 
-				return TwoPhaseOutcome.PREPARE_NOTOK;
-			}
+                return TwoPhaseOutcome.PREPARE_NOTOK;
+            }
 
 			if (state.notempty())
 			{
 				try
 				{
-					if (!currentStore.write_committed(u, tn, state))
-					{                                               
-						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_46(get_uid());
-                        }
+					if (!currentStore.write_committed(u, tn, state)) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_46(get_uid());
 
-						criticalEnd();
+                        criticalEnd();
 
-						return TwoPhaseOutcome.PREPARE_NOTOK;
-					}
+                        return TwoPhaseOutcome.PREPARE_NOTOK;
+                    }
 					else
 						savedIntentionList = true;
 				}
@@ -2492,16 +2426,13 @@ public class BasicAction extends StateManager
 
 		/* Are we forced to abort? */
 
-		if (actionStatus == ActionStatus.ABORT_ONLY)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
-            }
+		if (actionStatus == ActionStatus.ABORT_ONLY) {
+            tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
 
-			Abort();
+            Abort();
 
-			return;
-		}
+            return;
+        }
 
 		actionStatus = ActionStatus.COMMITTING;
 
@@ -2578,53 +2509,44 @@ public class BasicAction extends StateManager
 			    else			    
 			        actionStatus = ActionStatus.ABORTED;
 			}
-			else
-			{
-        			/*
-        			 * Heuristic decision!!
-        			 */
-        
-        			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_47(get_uid(), TwoPhaseOutcome.stringForm(p));
+			else {
+                /*
+                         * Heuristic decision!!
+                         */
+
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_47(get_uid(), TwoPhaseOutcome.stringForm(p));
+
+                if (reportHeuristics) {
+                    updateHeuristic(p, true);
+
+                    if (!heuristicList.insert(recordBeingHandled))
+                        recordBeingHandled = null;
+                    else {
+                        if (!stateToSave)
+                            stateToSave = recordBeingHandled.doSave();
                     }
-        
-        			if (reportHeuristics)
-        			{
-        			    updateHeuristic(p, true);
-        
-        			    if (!heuristicList.insert(recordBeingHandled))
-        			        recordBeingHandled = null;
-        			    else
-        			    {
-        			        if (!stateToSave)
-        			            stateToSave = recordBeingHandled.doSave();
-        			    }
-        			}
-        
-        			if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
-        			{
-        			    /*
-        			     * Signal that the action outcome is the same as the
-        			     * heuristic decision.
-        			     */
-        
-        			    heuristicDecision = TwoPhaseOutcome.PREPARE_OK; // means no
-        			    // heuristic
-        			    // was
-        			    // raised.
-        
-        			    actionStatus = ActionStatus.ABORTED;
-        			}
-        			else if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT)
-        			{
-        			    heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-        			    actionStatus = ActionStatus.COMMITTED;
-        			}
-        			else
-        			    actionStatus = ActionStatus.H_HAZARD; // can't really say
-        			// (could have
-        			// aborted)
-        		}
+                }
+
+                if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK) {
+                    /*
+                              * Signal that the action outcome is the same as the
+                              * heuristic decision.
+                              */
+
+                    heuristicDecision = TwoPhaseOutcome.PREPARE_OK; // means no
+                    // heuristic
+                    // was
+                    // raised.
+
+                    actionStatus = ActionStatus.ABORTED;
+                } else if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT) {
+                    heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
+                    actionStatus = ActionStatus.COMMITTED;
+                } else
+                    actionStatus = ActionStatus.H_HAZARD; // can't really say
+                // (could have
+                // aborted)
+            }
 		}
 
 		if (actionType == ActionType.TOP_LEVEL)
@@ -2633,10 +2555,7 @@ public class BasicAction extends StateManager
 			{
 				if (store() == null)
 				{
-					if (tsLogger.arjLoggerI18N.isFatalEnabled())
-					{
-						tsLogger.i18NLogger.fatal_coordinator_BasicAction_48();
-					}
+					tsLogger.i18NLogger.fatal_coordinator_BasicAction_48();
 
 					throw new com.arjuna.ats.arjuna.exceptions.FatalError(
                             tsLogger.i18NLogger.get_coordinator_BasicAction_69()
@@ -2843,37 +2762,34 @@ public class BasicAction extends StateManager
 						if (actionType == ActionType.NESTED)
 						{
 							if ((preparedList.size() > 0)
-									&& (p == TwoPhaseOutcome.ONE_PHASE_ERROR))
-							{
-								if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_49(get_uid());
-                                }
+									&& (p == TwoPhaseOutcome.ONE_PHASE_ERROR)) {
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_49(get_uid());
 
-								/*
-								 * Force parent to rollback. If this is not the
-								 * desired result then we may need to check some
-								 * environment variable (either here or in the
-								 * OTS) and act accordingly. If we check in the
-								 * OTS then we need to return something other
-								 * than PREPARE_NOTOK.
-								 */
+                                /*
+                                         * Force parent to rollback. If this is not the
+                                         * desired result then we may need to check some
+                                         * environment variable (either here or in the
+                                         * OTS) and act accordingly. If we check in the
+                                         * OTS then we need to return something other
+                                         * than PREPARE_NOTOK.
+                                         */
 
-								/*
-								 * For the OTS we must merge those records told
-								 * to commit with the parent, as the rollback
-								 * invocation must come from that since they
-								 * have already been told this transaction has
-								 * committed!
-								 * 
-								 * However, since we may be multi-threaded
-								 * (asynchronous prepare) we don't do the
-								 * merging yet. Wait until all threads have
-								 * terminated and then do it.
-								 * 
-								 * Therefore, can't force parent to rollback
-								 * state at present, or merge will fail.
-								 */
-							}
+                                /*
+                                         * For the OTS we must merge those records told
+                                         * to commit with the parent, as the rollback
+                                         * invocation must come from that since they
+                                         * have already been told this transaction has
+                                         * committed!
+                                         *
+                                         * However, since we may be multi-threaded
+                                         * (asynchronous prepare) we don't do the
+                                         * merging yet. Wait until all threads have
+                                         * terminated and then do it.
+                                         *
+                                         * Therefore, can't force parent to rollback
+                                         * state at present, or merge will fail.
+                                         */
+                            }
 						}
 
 						/*
@@ -2889,55 +2805,49 @@ public class BasicAction extends StateManager
 
 						return p;
 					}
-					else
-					{
-						/*
-						 * Heuristic decision!!
-						 */
+					else {
+                        /*
+                               * Heuristic decision!!
+                               */
 
-						/*
-						 * Only report if request to do so.
-						 */
+                        /*
+                               * Only report if request to do so.
+                               */
 
-						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_BasicAction_50(get_uid(), TwoPhaseOutcome.stringForm(p));
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_50(get_uid(), TwoPhaseOutcome.stringForm(p));
+
+                        if (reportHeuristics)
+                            updateHeuristic(p, false);
+
+                        /*
+                               * Don't add to the prepared list. We process heuristics
+                               * separately during phase 2. The processing of records
+                               * will not be in the same order as during phase 1, but
+                               * does this matter for heuristic decisions? If so, then
+                               * we need to modify RecordList so that records can
+                               * appear on multiple lists at the same time.
+                               */
+
+                        record = insertRecord(heuristicList, record);
+
+                        /*
+                               * If we have had a heuristic decision, then attempt to
+                               * make the action outcome the same. If we have a
+                               * conflict, then we will abort.
+                               */
+
+                        if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_COMMIT) {
+                            actionStatus = ActionStatus.PREPARED;
+
+                            return TwoPhaseOutcome.PREPARE_NOTOK;
+                        } else {
+                            /*
+                                    * Heuristic commit, which is ok since we want to
+                                    * commit anyway! So, ignore it (but remember the
+                                    * resource so we can tell it to forget later.)
+                                    */
                         }
-
-						if (reportHeuristics)
-							updateHeuristic(p, false);
-
-						/*
-						 * Don't add to the prepared list. We process heuristics
-						 * separately during phase 2. The processing of records
-						 * will not be in the same order as during phase 1, but
-						 * does this matter for heuristic decisions? If so, then
-						 * we need to modify RecordList so that records can
-						 * appear on multiple lists at the same time.
-						 */
-
-						record = insertRecord(heuristicList, record);
-
-						/*
-						 * If we have had a heuristic decision, then attempt to
-						 * make the action outcome the same. If we have a
-						 * conflict, then we will abort.
-						 */
-
-						if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_COMMIT)
-						{
-							actionStatus = ActionStatus.PREPARED;
-
-							return TwoPhaseOutcome.PREPARE_NOTOK;
-						}
-						else
-						{
-							/*
-							 * Heuristic commit, which is ok since we want to
-							 * commit anyway! So, ignore it (but remember the
-							 * resource so we can tell it to forget later.)
-							 */
-						}
-					}
+                    }
 				}
 			}
 		}
@@ -3183,35 +3093,27 @@ public class BasicAction extends StateManager
 					if ((reportHeuristics)
 							&& ((ok == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
 									|| (ok == TwoPhaseOutcome.HEURISTIC_COMMIT)
-									|| (ok == TwoPhaseOutcome.HEURISTIC_MIXED) || (ok == TwoPhaseOutcome.HEURISTIC_HAZARD)))
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-                            if (actionType == ActionType.TOP_LEVEL)
-                                tsLogger.i18NLogger.warn_coordinator_BasicAction_52(get_uid(), TwoPhaseOutcome.stringForm(ok));
-                            else
-                                tsLogger.i18NLogger.warn_coordinator_BasicAction_53(get_uid(), TwoPhaseOutcome.stringForm(ok));
-						}
+									|| (ok == TwoPhaseOutcome.HEURISTIC_MIXED) || (ok == TwoPhaseOutcome.HEURISTIC_HAZARD))) {
+                        if (actionType == ActionType.TOP_LEVEL)
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_52(get_uid(), TwoPhaseOutcome.stringForm(ok));
+                        else
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_53(get_uid(), TwoPhaseOutcome.stringForm(ok));
 
-						updateHeuristic(ok, false);
-						heuristicList.insert(recordBeingHandled);
-					}
+                        updateHeuristic(ok, false);
+                        heuristicList.insert(recordBeingHandled);
+                    }
 					else
 					{
-						if (ok != TwoPhaseOutcome.FINISH_OK)
-						{
-							if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							{
-                                if (actionType == ActionType.TOP_LEVEL)
-                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_54(get_uid(),
-                                            TwoPhaseOutcome.stringForm(ok),
-                                            RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
-                                else
-                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_55(get_uid(),
-                                            TwoPhaseOutcome.stringForm(ok),
-                                            RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
-							}
-						}
+						if (ok != TwoPhaseOutcome.FINISH_OK) {
+                            if (actionType == ActionType.TOP_LEVEL)
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_54(get_uid(),
+                                        TwoPhaseOutcome.stringForm(ok),
+                                        RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
+                            else
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_55(get_uid(),
+                                        TwoPhaseOutcome.stringForm(ok),
+                                        RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
+                        }
 					}
 				}
 
@@ -3482,29 +3384,24 @@ public class BasicAction extends StateManager
 
 			/* Ensure I am the currently active action */
 
-			if ((currentAct != null) && (currentAct != this))
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_56(currentAct.get_uid(), get_uid());
+			if ((currentAct != null) && (currentAct != this)) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_56(currentAct.get_uid(), get_uid());
+
+                isCurrent = false;
+
+                if (currentAct.isAncestor(get_uid())) {
+                    /* current action is one of my children */
+
+                    BasicAction parentAct = parent();
+
+                    /* prevent commit of my parents (ensures safety) */
+
+                    while (parentAct != null) {
+                        parentAct.preventCommit();
+                        parentAct = parentAct.parent();
+                    }
                 }
-
-				isCurrent = false;
-
-				if (currentAct.isAncestor(get_uid()))
-				{
-					/* current action is one of my children */
-
-					BasicAction parentAct = parent();
-
-					/* prevent commit of my parents (ensures safety) */
-
-					while (parentAct != null)
-					{
-						parentAct.preventCommit();
-						parentAct = parentAct.parent();
-					}
-				}
-			}
+            }
 
 			currentAct = null;
 		}
@@ -3524,28 +3421,23 @@ public class BasicAction extends StateManager
 		if ((_childThreads != null) && (_childThreads.size() > 0))
 		{
 			if ((_childThreads.size() != 1)
-					|| ((_childThreads.size() == 1) && (!_childThreads.contains(Thread.currentThread()))))
-			{
-				/*
-				 * More than one thread or the one thread is not the current
-				 * thread
-				 */
+					|| ((_childThreads.size() == 1) && (!_childThreads.contains(Thread.currentThread())))) {
+                /*
+                     * More than one thread or the one thread is not the current
+                     * thread
+                     */
 
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					if (isCommit) {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_57(get_uid());
-                    }
-					else {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_58(get_uid());
-                    }
-				}
+                if (isCommit) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_57(get_uid());
+                } else {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_58(get_uid());
+                }
 
-				if (_checkedAction != null)
-					_checkedAction.check(isCommit, get_uid(), _childThreads);
+                if (_checkedAction != null)
+                    _checkedAction.check(isCommit, get_uid(), _childThreads);
 
-				removeAllChildThreads();
-			}
+                removeAllChildThreads();
+            }
 		}
 
 		/* Ensure I have no child actions */
@@ -3571,40 +3463,29 @@ public class BasicAction extends StateManager
 			{
 				child = (BasicAction) iter.nextElement();
 
-				if (child.status() != ActionStatus.ABORTED)
-				{
-					if (printError)
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							if (isCommit) {
-                                tsLogger.i18NLogger.warn_coordinator_BasicAction_59(get_uid());
-                            }
-							else {
-                                tsLogger.i18NLogger.warn_coordinator_BasicAction_60(get_uid());
-                            }
-						}
+				if (child.status() != ActionStatus.ABORTED) {
+                    if (printError) {
+                        if (isCommit) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_59(get_uid());
+                        } else {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_60(get_uid());
+                        }
 
-						printError = false;
-					}
-
-					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_BasicAction_61(child.get_uid());
+                        printError = false;
                     }
 
-					child.Abort();
-					child = null;
-				}
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_61(child.get_uid());
+
+                    child.Abort();
+                    child = null;
+                }
 			}
 
 			iter = null;
 
-			if (isCommit)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_BasicAction_62(((child != null ? child.get_uid().toString() : "null")));
-                }
-			}
+			if (isCommit) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_62(((child != null ? child.get_uid().toString() : "null")));
+            }
 		}
 
 		return problem;

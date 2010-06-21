@@ -96,8 +96,7 @@ public class RecoveryManagerImple
 
                 if (useListener && isRecoveryManagerEndPointInUse())
                 {
-            if (tsLogger.arjLoggerI18N.isFatalEnabled())
-            {
+
                 try
                 {
                     tsLogger.i18NLogger.fatal_recovery_fail(RecoveryManager.getRecoveryManagerHost().getHostAddress(),
@@ -107,7 +106,7 @@ public class RecoveryManagerImple
                 {
                     tsLogger.i18NLogger.fatal_recovery_fail("unknown", "unknown");
                 }
-            }
+
 
             throw new FatalError("Recovery manager already active (or recovery port and address are in use)!");
                 }
@@ -141,11 +140,8 @@ public class RecoveryManagerImple
                 }
             }
                 }
-                catch (IOException ex)
-                {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
-                        }
+                catch (IOException ex) {
+                    tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
                 }
         }
 

@@ -153,23 +153,16 @@ public class ActionStatusService implements Service
                out.println( strStatus );
                out.flush();
 
-	       if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	       {
-               tsLogger.i18NLogger.info_recovery_ActionStatusService_1(transactionType, strUid, strStatus);
-	       }
+	           tsLogger.i18NLogger.info_recovery_ActionStatusService_1(transactionType, strUid, strStatus);
+
 	    }
          }
       }
-      catch ( IOException ex )
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_ActionStatusService_7();
+      catch ( IOException ex ) {
+          tsLogger.i18NLogger.warn_recovery_ActionStatusService_7();
       }
-      catch ( Exception ex )
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-              tsLogger.i18NLogger.warn_recovery_ActionStatusService_2(ex);
-          }
+      catch ( Exception ex ) {
+          tsLogger.i18NLogger.warn_recovery_ActionStatusService_2(ex);
       }
    }
 
@@ -205,12 +198,9 @@ public class ActionStatusService implements Service
 		action_status = getObjectStoreStatus( tranUid, transactionType );
 	    }
 	}
-	catch ( Exception ex )
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_ActionStatusService_3(ex);
-        }
-	}
+	catch ( Exception ex ) {
+        tsLogger.i18NLogger.warn_recovery_ActionStatusService_3(ex);
+    }
 
 	return action_status;
     }
@@ -245,11 +235,8 @@ public class ActionStatusService implements Service
             action_status = getOsStatus( tranUid );
          }
       }
-      catch ( Exception ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+      catch ( Exception ex ) {
           tsLogger.i18NLogger.warn_recovery_ActionStatusService_3(ex);
-      }
       }
 
       return action_status;
@@ -315,45 +302,27 @@ public class ActionStatusService implements Service
                                  // add to vector
                                  matchingUidVector.addElement( tranUid );
                                  matchingUidTypeVector.addElement( theTypeName );
-                                 if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				 {
-				     tsLogger.i18NLogger.info_recovery_ActionStatusService_4(tranUid);
-				 }
+                                 tsLogger.i18NLogger.info_recovery_ActionStatusService_4(tranUid);
 			      }
                            }
                         }
                      }
-                     catch ( Exception ex )
-                     {
-			 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                 tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-             }
+                     catch ( Exception ex ) {
+                         tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
                      }
                   }
                }
             }
-            catch ( IOException ex )
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-		}
+            catch ( IOException ex ) {
+                tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
             }
-            catch ( Exception ex )
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-		}
+            catch ( Exception ex ) {
+                tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
             }
          }
       }
-      catch ( Exception ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-	  }
+      catch ( Exception ex ) {
+          tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
       }
 
       int uidVectorSize = matchingUidVector.size();
@@ -421,11 +390,8 @@ public class ActionStatusService implements Service
 	     break;
          }
       }
-      catch ( Exception ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+      catch ( Exception ex ) {
           tsLogger.i18NLogger.warn_recovery_ActionStatusService_6(ex);
-      }
       }
 
       return action_status;

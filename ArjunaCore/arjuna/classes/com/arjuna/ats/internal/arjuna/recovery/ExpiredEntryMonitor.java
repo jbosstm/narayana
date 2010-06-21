@@ -148,10 +148,7 @@ public class ExpiredEntryMonitor extends Thread
   {
     while( true )
     {
-	if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	{
-        tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_12(_theTimestamper.format(new Date()));
-	}
+	    tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_12(_theTimestamper.format(new Date()));
 	
 	if (_skipNext)
     {
@@ -159,10 +156,7 @@ public class ExpiredEntryMonitor extends Thread
 
         _skipNext = false;
 
-        if (tsLogger.arjLoggerI18N.isInfoEnabled())
-        {
-            tsLogger.i18NLogger.info_recovery_ExpiredEntryMonitor_5();
-        }
+         tsLogger.i18NLogger.info_recovery_ExpiredEntryMonitor_5();
     }
     else
 	{
@@ -263,12 +257,10 @@ public class ExpiredEntryMonitor extends Thread
           tsLogger.arjLogger.debug("Loading expiry scanner "+className);
       }
       
-      if (className == null)
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_7();
-	  
-	  return;
+      if (className == null) {
+          tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_7();
+
+          return;
       }
       else
       {
@@ -291,33 +283,21 @@ public class ExpiredEntryMonitor extends Thread
                }
 		   }
 		}
-		catch (ClassCastException e)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_9(className);
-            }
-		}
-		catch (IllegalAccessException e1)
-		{
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e1);
-            }
-		}
-		catch (InstantiationException e2)
-		{
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e2);
-            }
-		}
+		catch (ClassCastException e) {
+            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_9(className);
+        }
+		catch (IllegalAccessException e1) {
+            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e1);
+        }
+		catch (InstantiationException e2) {
+            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e2);
+        }
 		
 		c = null;
 	  }
-	  catch (ClassNotFoundException e)
-	  {
-	      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-              tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_10(className);
-          }
-	  }
+	  catch (ClassNotFoundException e) {
+          tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_10(className);
+      }
       }
   }
 

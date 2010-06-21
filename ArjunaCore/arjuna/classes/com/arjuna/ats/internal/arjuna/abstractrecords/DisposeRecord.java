@@ -154,12 +154,9 @@ public class DisposeRecord extends CadaverRecord
 		    return TwoPhaseOutcome.FINISH_OK;
 		}
 	    }
-	    catch (final Throwable e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+	    catch (final Throwable e) {
             tsLogger.i18NLogger.warn_DisposeRecord_5(e);
         }
-	    }
 	}
 	
 	return TwoPhaseOutcome.FINISH_ERROR;
@@ -203,13 +200,11 @@ public class DisposeRecord extends CadaverRecord
 	
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
 	{
-	    if (!ObjectStoreType.valid(store.typeIs()))
-	    {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_DisposeRecord_1();
-			
-		res = false;
-	    }
+	    if (!ObjectStoreType.valid(store.typeIs())) {
+            tsLogger.i18NLogger.warn_DisposeRecord_1();
+
+            res = false;
+        }
 	    else
 	    {
 		try
@@ -220,21 +215,17 @@ public class DisposeRecord extends CadaverRecord
 		    UidHelper.packInto(objectUid, os);
 		    os.packString(typeName);
 		}
-		catch (IOException e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_DisposeRecord_2();
-		    res = false;
-		}
+		catch (IOException e) {
+            tsLogger.i18NLogger.warn_DisposeRecord_2();
+            res = false;
+        }
 	    }
 	}
-	else
-	{
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            tsLogger.i18NLogger.warn_DisposeRecord_3();
-		
-	    res = false;
-	}
+	else {
+        tsLogger.i18NLogger.warn_DisposeRecord_3();
+
+        res = false;
+    }
 	
 	return res;
     }
@@ -258,14 +249,11 @@ public class DisposeRecord extends CadaverRecord
 		objectUid = UidHelper.unpackFrom(os);
 		typeName = os.unpackString();
 	    }
-	    else
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+	    else {
             tsLogger.i18NLogger.warn_DisposeRecord_4(Integer.toString(objStoreType));
-        }
 
-		res = false;
-	    }
+            res = false;
+        }
 	}
 	catch (final Exception e)
 	{

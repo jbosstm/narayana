@@ -115,8 +115,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 							else
 							// log is present in this iteration, so move it
 							{
-								if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                                    tsLogger.i18NLogger.info_recovery_ExpiredTransactionScanner_4(newUid);
+								tsLogger.i18NLogger.info_recovery_ExpiredTransactionScanner_4(newUid);
 
 								try
 								{

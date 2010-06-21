@@ -108,17 +108,12 @@ public class WorkerService implements Service
 
 	    out.flush();
 	}
-	catch (IOException ex)
-	{
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            tsLogger.i18NLogger.warn_recovery_WorkerService_2();
-	}
-	catch ( Exception ex )
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_WorkerService_1(ex);
-        }
-	}
+	catch (IOException ex) {
+        tsLogger.i18NLogger.warn_recovery_WorkerService_2();
+    }
+	catch ( Exception ex ) {
+        tsLogger.i18NLogger.warn_recovery_WorkerService_1(ex);
+    }
     }
 
     public synchronized void notifyDone()

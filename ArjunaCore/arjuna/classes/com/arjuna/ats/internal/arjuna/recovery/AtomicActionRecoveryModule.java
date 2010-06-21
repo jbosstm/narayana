@@ -94,11 +94,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
 
       }
-      catch ( ObjectStoreException ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+      catch ( ObjectStoreException ex ) {
           tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_1(ex);
-      }
       }
 
       if ( AtomicActions )
@@ -158,12 +155,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
             rcvAtomicAction.replayPhase2() ;
          }
-         catch ( Exception ex )
-         {
-	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	     {
+         catch ( Exception ex ) {
              tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_2(recoverUid, ex);
-	     }
          }
       }
    }

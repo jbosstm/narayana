@@ -90,10 +90,8 @@ public class RecoveryRecord extends AbstractRecord
     {
         if (newState instanceof OutputObjectState)
             state = (OutputObjectState) newState;
-        else
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_RecoveryRecord_1();
+        else {
+            tsLogger.i18NLogger.warn_RecoveryRecord_1();
         }
     }
 
@@ -129,10 +127,8 @@ public class RecoveryRecord extends AbstractRecord
                         ObjectType.RECOVERABLE) ? TwoPhaseOutcome.FINISH_OK
                         : TwoPhaseOutcome.FINISH_ERROR;
 
-                if (result == TwoPhaseOutcome.FINISH_ERROR)
-                {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_RecoveryRecord_2();
+                if (result == TwoPhaseOutcome.FINISH_ERROR) {
+                    tsLogger.i18NLogger.warn_RecoveryRecord_2();
                 }
 
                 return result;

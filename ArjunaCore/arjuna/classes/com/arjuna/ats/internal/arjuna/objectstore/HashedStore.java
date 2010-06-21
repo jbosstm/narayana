@@ -355,11 +355,8 @@ public class HashedStore extends ShadowNoFileLockStore
     {
         NUMBEROFDIRECTORIES = arjPropertyManager.getObjectStoreEnvironmentBean().getHashedDirectories();
 
-        if (NUMBEROFDIRECTORIES <= 0)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_objectstore_HashedStore_2(Integer.toString(NUMBEROFDIRECTORIES));
-            }
+        if (NUMBEROFDIRECTORIES <= 0) {
+            tsLogger.i18NLogger.warn_objectstore_HashedStore_2(Integer.toString(NUMBEROFDIRECTORIES));
 
             NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
         }

@@ -121,11 +121,8 @@ public class TransactionStatusConnectionManager
             {
                 status = ass.getTransactionStatus(transactionType, tranUid.stringForm());
             }
-            catch ( Exception ex )
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_1(ex);
-                }
+            catch ( Exception ex ) {
+                tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_1(ex);
             }
         }
 
@@ -191,12 +188,9 @@ public class TransactionStatusConnectionManager
 	{
 	    tsmis = _objStore.allObjUids( _typeName, uids ) ;
 	}
-	catch ( ObjectStoreException ex )
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_2(ex);
-        }
-	}
+	catch ( ObjectStoreException ex ) {
+        tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_2(ex);
+    }
 
 	// cycle through each item, and update tsmTable with any
 	// new TransactionStatusManagerItems

@@ -161,12 +161,12 @@ public class TransactionReaper
         do {
             final ReaperElement reaperElement;
 
-            synchronized (this) {
+            synchronized(this) {
                 final long now = System.currentTimeMillis();
                 final long next = nextDynamicCheckTime.get();
 
                 if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("TransactionReaper::check - comparing "+Long.toString(next));
+                    tsLogger.arjLogger.debug("TransactionReaper::check - comparing " + Long.toString(next));
                 }
 
                 if (now < next) {
@@ -176,19 +176,17 @@ public class TransactionReaper
                 reaperElement = _reaperElements.getFirst();
                 // TODO close window where first can change - maybe record nextDynamicCheckTime before probing first,
                 // then use compareAndSet? Although something will need to check before sleeping anyhow...
-                if(reaperElement == null) {
+                if (reaperElement == null) {
                     nextDynamicCheckTime.set(Long.MAX_VALUE);
                     return;
                 } else {
-                    if(reaperElement.getAbsoluteTimeout() > now) {
+                    if (reaperElement.getAbsoluteTimeout() > now) {
                         return; // nothing to do yet.
                     }
                 }
             }
 
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_18(reaperElement._control.get_uid(), reaperElement.statusName());
-            }
+            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_18(reaperElement._control.get_uid(), reaperElement.statusName());
 
             // if we have to synchronize on multiple objects we always
             // do so in a fixed order ReaperElement before Reaper and
@@ -196,7 +194,7 @@ public class TransactionReaper
             // ensure we don't deadlock. We never sychronize on the
             // reaper and the cancel queue at the same time.
 
-            synchronized (reaperElement) {
+            synchronized(reaperElement) {
                 switch (reaperElement._status) {
                     case ReaperElement.RUN: {
                         // this tx has just timed out. remove it from the
@@ -217,7 +215,7 @@ public class TransactionReaper
                         // thread to process and then make sure a worker
                         // thread is awake
 
-                        synchronized (_workQueue) {
+                        synchronized(_workQueue) {
                             _workQueue.add(reaperElement);
                             _workQueue.notifyAll();
                         }
@@ -259,7 +257,7 @@ public class TransactionReaper
                         // log that we interrupted cancel()
 
                         if (tsLogger.arjLogger.isDebugEnabled()) {
-                            tsLogger.arjLogger.debug("TransactionReaper::check interrupting cancel in progress for "+reaperElement._control.get_uid());
+                            tsLogger.arjLogger.debug("TransactionReaper::check interrupting cancel in progress for " + reaperElement._control.get_uid());
                         }
                     }
                     break;
@@ -273,7 +271,7 @@ public class TransactionReaper
 
                         reaperElement._status = ReaperElement.ZOMBIE;
 
-                        synchronized (this) {
+                        synchronized(this) {
                             _zombieCount++;
 
                             if (tsLogger.arjLogger.isDebugEnabled()) {
@@ -283,9 +281,7 @@ public class TransactionReaper
                             if (_zombieCount == _zombieMax) {
                                 // log zombie overflow error call()
 
-                                if (tsLogger.arjLoggerI18N.isErrorEnabled()) {
-                                    tsLogger.i18NLogger.error_coordinator_TransactionReaper_5(Integer.toString(_zombieCount));
-                                }
+                                tsLogger.i18NLogger.error_coordinator_TransactionReaper_5(Integer.toString(_zombieCount));
                             }
                         }
 
@@ -296,10 +292,8 @@ public class TransactionReaper
 
                         // log a failed cancel()
 
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_6(reaperElement._worker.toString(),
-                                    reaperElement._control.get_uid());
-                        }
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_6(reaperElement._worker.toString(),
+                                reaperElement._control.get_uid());
 
                         // ok, since the worker was wedged we need to
                         // remove the entry from the timeouts and
@@ -314,25 +308,19 @@ public class TransactionReaper
 
                                 // log a successful preventCommit()
 
-                                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_10(reaperElement._control.get_uid());
-                                }
+                                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_10(reaperElement._control.get_uid());
 
                                 notifyListeners(reaperElement._control, false);
                             } else {
                                 // log a failed preventCommit()
 
-                                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_11(reaperElement._control.get_uid());
-                                }
+                                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_11(reaperElement._control.get_uid());
                             }
                         }
                         catch (Exception e1) {
                             // log an exception under preventCommit()
 
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_12(reaperElement._control.get_uid(), e1);
-                            }
+                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_12(reaperElement._control.get_uid(), e1);
                         }
                     }
                     break;
@@ -452,14 +440,12 @@ public class TransactionReaper
                     ReaperWorkerThread worker = (ReaperWorkerThread) Thread.currentThread();
                     worker.shutdown();
 
-                    synchronized (this) {
+                    synchronized(this) {
                         _zombieCount--;
                     }
 
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_13(Thread.currentThread().toString(),
-                                e._control.get_uid(), Integer.toString(_zombieCount));
-                    }
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_13(Thread.currentThread().toString(),
+                            e._control.get_uid(), Integer.toString(_zombieCount));
 
                     // this gets us out of the for(;;) loop and
                     // the shutdown call above makes sure we exit
@@ -488,47 +474,35 @@ public class TransactionReaper
             // the transactions queue and mark TX as rollback only
 
             if (cancelled) {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_7(Thread.currentThread().toString(),
-                            e._control.get_uid());
-                }
+                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_7(Thread.currentThread().toString(),
+                        e._control.get_uid());
             } else if (e._control.running()) {
                 if (exception != null) {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_9(Thread.currentThread().toString(), e._control.get_uid(), exception);
-                    }
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_9(Thread.currentThread().toString(), e._control.get_uid(), exception);
                 } else {
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_8(Thread.currentThread().toString(),
-                                e._control.get_uid());
-                    }
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_8(Thread.currentThread().toString(),
+                            e._control.get_uid());
                 }
 
                 try {
                     if (e._control.preventCommit()) {
                         // log a successful preventCommit()
 
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_14(Thread.currentThread().toString(),
-                                    e._control.get_uid());
-                        }
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_14(Thread.currentThread().toString(),
+                                e._control.get_uid());
 
                         notifyListeners(e._control, false);
                     } else {
                         // log a failed preventCommit()
 
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_15(Thread.currentThread().toString(),
-                                    e._control.get_uid());
-                        }
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_15(Thread.currentThread().toString(),
+                                e._control.get_uid());
                     }
                 }
                 catch (Exception e1) {
                     // log an exception under preventCommit()
 
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_16(Thread.currentThread().toString(), e._control.get_uid(), e1);
-                    }
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_16(Thread.currentThread().toString(), e._control.get_uid(), e1);
                 }
             }
 
@@ -887,9 +861,7 @@ public class TransactionReaper
             if (mode.compareTo(TransactionReaper.NORMAL) == 0) {
                 TransactionReaper._dynamic = false;
 
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_19();
-                }
+                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_19();
             }
 
             long checkPeriod = Long.MAX_VALUE;

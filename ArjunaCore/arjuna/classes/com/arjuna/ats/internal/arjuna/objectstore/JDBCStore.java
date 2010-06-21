@@ -419,12 +419,7 @@ public class JDBCStore extends ObjectStore
 
                 if (jdbcAccessClassName == null)
                 {
-                        if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                                tsLogger.arjLoggerI18N
-                                                .fatal("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5");
-
-                        throw new FatalError(
-                                tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
+                        throw new FatalError(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
                 }
 
                 try
@@ -433,11 +428,8 @@ public class JDBCStore extends ObjectStore
                 }
                 catch (Exception e)
                 {
-                        if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                        {
-                            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
-                        }
-                        throw e;
+                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
+                    throw e;
                 }
 
                 _isValid = true;
@@ -474,10 +466,7 @@ public class JDBCStore extends ObjectStore
                                 }
                                 catch (final Exception ex)
                                 {
-                                        if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                                        {
-                                            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(jdbcAccessClassName, ex);
-                                        }
+                                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(jdbcAccessClassName, ex);
                                         throw ex;
                                 }
                                 _theAccesses.put(jdbcAccessClassName, jdbcAccess);
@@ -530,19 +519,13 @@ public class JDBCStore extends ObjectStore
                                         }
                                         catch (final SQLException sqle)
                                         {
-                                                if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                                                {
-                                                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2("getConnection()", sqle);
-                                                }
+                                                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2("getConnection()", sqle);
                                                 throw sqle;
                                         }
 
                                         if (connection == null)
                                         {
-                                                if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                                                {
-                                                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
-                                                }
+                                                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
                                                 throw new SQLException("getConnection returned null");
                                         }
                                         boolean success = false;
@@ -559,19 +542,14 @@ public class JDBCStore extends ObjectStore
                                                 }
                                                 catch (final Exception ex)
                                                 {
-                                                        if (tsLogger.arjLoggerI18N.isFatalEnabled())
-                                                        {
-                                                            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(getJDBCAccess().toString(), ex);
-                                                        }
+                                                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(getJDBCAccess().toString(), ex);
                                                         throw ex;
                                                 }
 
                                                 if (!jdbcImple.initialise(connection, jdbcAccess,
-                                                                impleTableName))
-                                                {
-                                                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                                        tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
-                                                        throw new ObjectStoreException();
+                                                                impleTableName)) {
+                                                    tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
+                                                    throw new ObjectStoreException();
                                                 }
                                                 else
                                                 {

@@ -23,16 +23,14 @@ public class StateManagerWrapper extends StateManager {
 	public StateManagerWrapper(ObjectStore os, Uid uid, String type) {
 		super(uid);
 
-		try {
-			
-			unpackHeader(os.read_committed(uid, type));
-		} catch (IOException e) {
-			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
-		} catch (ObjectStoreException e) {
-			  if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                  tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
-		}
+        try {
+
+            unpackHeader(os.read_committed(uid, type));
+        } catch (IOException e) {
+            tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
+        } catch (ObjectStoreException e) {
+            tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
+        }
 	}
 
 	public String getCreationTime()

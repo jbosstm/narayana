@@ -449,14 +449,11 @@ public abstract class AbstractRecord extends StateManager
         
         	    return (AbstractRecord) recordClass.newInstance();
 	    }
-	    catch (final NullPointerException ex)
-	    {
-	        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_AbstractRecord_npe(Integer.toString(type));
-            }
-	        
-	        return null;
-	    }
+	    catch (final NullPointerException ex) {
+            tsLogger.i18NLogger.warn_coordinator_AbstractRecord_npe(Integer.toString(type));
+
+            return null;
+        }
 	    catch (final Throwable ex)
 	    {
 	        ex.printStackTrace();

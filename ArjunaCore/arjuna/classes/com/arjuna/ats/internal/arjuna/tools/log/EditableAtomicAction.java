@@ -42,12 +42,8 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
    
         _activated = activate();
         
-        if (!_activated)
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.i18NLogger.warn_tools_log_eaa1(u, type());
-            }
+        if (!_activated) {
+            tsLogger.i18NLogger.warn_tools_log_eaa1(u, type());
         }
     }
     
@@ -101,11 +97,8 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
                 
                 super.updateState();
             }
-            else
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_tools_log_eaa2();
-                }
+            else {
+                tsLogger.i18NLogger.warn_tools_log_eaa2();
             }
         }
     }

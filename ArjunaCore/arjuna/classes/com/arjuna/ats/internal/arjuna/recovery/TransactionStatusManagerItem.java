@@ -176,12 +176,9 @@ public class TransactionStatusManagerItem
 	  {
 	      ret_status = getStore().remove_committed( pidUid, _typeName ) ;
 	  }
-      catch ( ObjectStoreException ex )
-	  {
-	      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-              tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_1(ex);
-          }
-	  }
+      catch ( ObjectStoreException ex ) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_1(ex);
+      }
       
       return ret_status ;
     }
@@ -212,14 +209,11 @@ public class TransactionStatusManagerItem
             return ret_status = true ;
 	      }
       }
-       catch ( ObjectStoreException ex )
-	   {
-	       ret_status = false ;
-	       
-	       if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-               tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
-           }
-	   }
+       catch ( ObjectStoreException ex ) {
+           ret_status = false;
+
+           tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+       }
        
        return ret_status ;
    }
@@ -245,12 +239,9 @@ public class TransactionStatusManagerItem
             
 	    ret_status = true ;
 	}
-	catch ( IOException ex )
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_3(ex);
-        }
-	    }
+	catch ( IOException ex ) {
+        tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_3(ex);
+    }
 	
 	return ret_status ;
     }
@@ -276,12 +267,9 @@ public class TransactionStatusManagerItem
 		
 		ret_status = true ;
 	    }
-	catch ( IOException ex )
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
-        }
-	    }
+	catch ( IOException ex ) {
+        tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+    }
 	
 	return ret_status ;
     }
@@ -305,12 +293,9 @@ public class TransactionStatusManagerItem
 								  objstate ) ;
          }
 	    }
-	catch ( ObjectStoreException ex )
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
-        }
-	    }
+	catch ( ObjectStoreException ex ) {
+        tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+    }
 	
 	return ret_status ;
    }
@@ -328,17 +313,11 @@ public class TransactionStatusManagerItem
 	{
 	    _host = InetAddress.getLocalHost().getHostAddress() ;
          
-	    if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	    {
-            tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
-	    }
+	    tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
 	}
-	catch ( UnknownHostException ex )
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
-        }
-	}
+	catch ( UnknownHostException ex ) {
+        tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
+    }
     }
 
     /**
@@ -356,16 +335,10 @@ public class TransactionStatusManagerItem
             Utility.hostNameToInetAddress(host);
             _host = host;
 
-            if (tsLogger.arjLoggerI18N.isInfoEnabled())
-            {
-                tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
-            }
+            tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
         }
-        catch ( UnknownHostException ex )
-        {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
-            }
+        catch ( UnknownHostException ex ) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
         }
     }
 

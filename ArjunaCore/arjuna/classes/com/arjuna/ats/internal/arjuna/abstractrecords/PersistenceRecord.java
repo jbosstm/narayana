@@ -174,23 +174,17 @@ public class PersistenceRecord extends RecoveryRecord
 
 		try
 		{
-			if (!store.remove_uncommitted(uid, type))
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_PersistenceRecord_19();
-                }
+			if (!store.remove_uncommitted(uid, type)) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_19();
 
-				return TwoPhaseOutcome.FINISH_ERROR;
-			}
-		}
-		catch (ObjectStoreException e)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_PersistenceRecord_20(e);
+                return TwoPhaseOutcome.FINISH_ERROR;
             }
-
-			return TwoPhaseOutcome.FINISH_ERROR;
 		}
+		catch (ObjectStoreException e) {
+            tsLogger.i18NLogger.warn_PersistenceRecord_20(e);
+
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 
 		return nestedAbort();
 	}
@@ -227,12 +221,9 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					result = store.commit_state(order(), super.getTypeOfObject());
 
-					if (!result)
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
-                        }
-					}
+					if (!result) {
+                        tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
+                    }
 				}
 				else
 				{
@@ -240,32 +231,24 @@ public class PersistenceRecord extends RecoveryRecord
 					{
 						result = store.write_committed(order(), super.getTypeOfObject(), topLevelState);
 					}
-					else
-					{
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.i18NLogger.warn_PersistenceRecord_3();
-					}
+					else {
+                        tsLogger.i18NLogger.warn_PersistenceRecord_3();
+                    }
 				}
 			}
-			catch (ObjectStoreException e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_PersistenceRecord_4(e);
+			catch (ObjectStoreException e) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_4(e);
 
-				result = false;
-			}
+                result = false;
+            }
 		}
-		else
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_5();
-		}
+		else {
+            tsLogger.i18NLogger.warn_PersistenceRecord_5();
+        }
 
-		if (!result)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_6();
-		}
+		if (!result) {
+            tsLogger.i18NLogger.warn_PersistenceRecord_6();
+        }
 
 		super.forgetAction(true);
 
@@ -353,18 +336,14 @@ public class PersistenceRecord extends RecoveryRecord
 
 					result = TwoPhaseOutcome.PREPARE_OK;
 				}
-				else
-				{
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_PersistenceRecord_7();
-				}
+				else {
+                    tsLogger.i18NLogger.warn_PersistenceRecord_7();
+                }
 			}
 		}
-		else
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_8();
-		}
+		else {
+            tsLogger.i18NLogger.warn_PersistenceRecord_8();
+        }
 
 		return result;
 	}
@@ -441,11 +420,9 @@ public class PersistenceRecord extends RecoveryRecord
 				return (res && super.restore_state(os, ot));
 			}
 		}
-		catch (final Exception e)
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_10();
-		}
+		catch (final Exception e) {
+            tsLogger.i18NLogger.warn_PersistenceRecord_10();
+        }
 
 		return res;
 	}
@@ -461,14 +438,11 @@ public class PersistenceRecord extends RecoveryRecord
 
 		if (store != null)
 		{
-			if (!ObjectStoreType.valid(store.typeIs()))
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.i18NLogger.warn_PersistenceRecord_11();
-                }
+			if (!ObjectStoreType.valid(store.typeIs())) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_11();
 
-				res = false;
-			}
+                res = false;
+            }
 			else
 			{
 				try
@@ -499,36 +473,28 @@ public class PersistenceRecord extends RecoveryRecord
 
 						if (res)
 							topLevelState.packInto(os);
-						else
-						{
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                tsLogger.i18NLogger.warn_PersistenceRecord_14();
-						}
+						else {
+                            tsLogger.i18NLogger.warn_PersistenceRecord_14();
+                        }
 					}
 				}
-				catch (IOException e)
-				{
-					res = false;
+				catch (IOException e) {
+                    res = false;
 
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.i18NLogger.warn_PersistenceRecord_15();
-				}
+                    tsLogger.i18NLogger.warn_PersistenceRecord_15();
+                }
 			}
 		}
-		else
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_16();
+		else {
+            tsLogger.i18NLogger.warn_PersistenceRecord_16();
 
-			try
-			{
-				os.packString(null);
-			}
-			catch (IOException e)
-			{
-				res = false;
-			}
-		}
+            try {
+                os.packString(null);
+            }
+            catch (IOException e) {
+                res = false;
+            }
+        }
 
 		return res && super.save_state(os, ot);
 	}

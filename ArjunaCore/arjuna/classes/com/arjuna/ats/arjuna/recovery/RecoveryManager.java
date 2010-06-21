@@ -376,10 +376,7 @@ public class RecoveryManager
     {
         Socket socket = new Socket(getRecoveryManagerHost(), getRecoveryManagerPort());
 
-        if (tsLogger.arjLoggerI18N.isInfoEnabled())
-        {
-            tsLogger.i18NLogger.info_recovery_RecoveryManager_4(socket.getInetAddress().getHostAddress(), Integer.toString(socket.getLocalPort()));
-        }
+        tsLogger.i18NLogger.info_recovery_RecoveryManager_4(socket.getInetAddress().getHostAddress(), Integer.toString(socket.getLocalPort()));
 
         return socket;
     }

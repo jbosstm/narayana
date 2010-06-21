@@ -292,14 +292,11 @@ public class TxControl
 
 	public static void setXANodeName(byte[] name)
 	{
-	    if (name.length > NODE_NAME_SIZE)
-	    {
-	        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_toolong();
-            }
-	        
-	        throw new IllegalArgumentException();
-	    }
+	    if (name.length > NODE_NAME_SIZE) {
+            tsLogger.i18NLogger.warn_coordinator_toolong();
+
+            throw new IllegalArgumentException();
+        }
 	    
 		xaNodeName = name;
 	}
@@ -404,50 +401,41 @@ public class TxControl
 		{
 			xaNodeName = env.getBytes();
 		}
-		else
-		{
-		    /*
-		     * In the past we used a Uid as the default node name. However, this is too
-		     * big for the way in which we use it within Xids now that we also support
-		     * ipv6. Hence the need to limit the size of a node name to 10 bytes.
-		     */
-		    
-		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
+		else {
+            /*
+                * In the past we used a Uid as the default node name. However, this is too
+                * big for the way in which we use it within Xids now that we also support
+                * ipv6. Hence the need to limit the size of a node name to 10 bytes.
+                */
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_TxControl_1(nodeName);
-            }
+            String nodeName = DEFAULT_NODE_NAME + Utility.getpid();
 
-			xaNodeName = nodeName.getBytes();
+            tsLogger.i18NLogger.warn_coordinator_TxControl_1(nodeName);
 
-			writeNodeName = true;
-		}
+            xaNodeName = nodeName.getBytes();
 
-		if (xaNodeName.length > NODE_NAME_SIZE)
-		{
-		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
+            writeNodeName = true;
+        }
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_TxControl_2(nodeName);
-            }
+		if (xaNodeName.length > NODE_NAME_SIZE) {
+            String nodeName = DEFAULT_NODE_NAME + Utility.getpid();
 
-			xaNodeName = nodeName.getBytes();
+            tsLogger.i18NLogger.warn_coordinator_TxControl_2(nodeName);
 
-			writeNodeName = true;
-		}
+            xaNodeName = nodeName.getBytes();
 
-		if ((env != null) && (env.indexOf('-') != -1))
-		{
-		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
+            writeNodeName = true;
+        }
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.i18NLogger.warn_coordinator_TxControl_3(nodeName);
-            }
+		if ((env != null) && (env.indexOf('-') != -1)) {
+            String nodeName = DEFAULT_NODE_NAME + Utility.getpid();
 
-			xaNodeName = nodeName.getBytes();
+            tsLogger.i18NLogger.warn_coordinator_TxControl_3(nodeName);
 
-			writeNodeName = true;
-		}
+            xaNodeName = nodeName.getBytes();
+
+            writeNodeName = true;
+        }
 
 		if (writeNodeName)
 		{

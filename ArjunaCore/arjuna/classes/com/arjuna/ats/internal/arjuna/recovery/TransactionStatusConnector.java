@@ -94,10 +94,8 @@ public class TransactionStatusConnector
       {
          TransactionStatusManagerItem.removeThis( _pidUid ) ;
       }
-      else
-      {
-          if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_1();
+      else {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_1();
       }
    }
    
@@ -155,21 +153,15 @@ public class TransactionStatusConnector
 	       //	       _to_server.close();
 	       //	       _from_server.close();
             }
-            catch ( IOException ex )
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_2();
-        }
-		
-		_tsmFound = false ;
+            catch ( IOException ex ) {
+                tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_2();
+
+                _tsmFound = false;
             }
-            catch ( Exception other )
-            {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_3();
-        }
-		
-		_tsmFound = false ;
+            catch ( Exception other ) {
+                tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_3();
+
+                _tsmFound = false;
             }
          }
       }
@@ -223,11 +215,8 @@ public class TransactionStatusConnector
                {
                   _to_server.println ( "OK" ) ;
                   _to_server.flush() ;
-		  
-		  if (tsLogger.arjLoggerI18N.isInfoEnabled())
-		  {
-              tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_4(_pid, serverHost, Integer.toString(serverPort), _connector_socket.toString());
-		  }
+
+                   tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_4(_pid, serverHost, Integer.toString(serverPort), _connector_socket.toString());
                }
                else
                {
@@ -250,19 +239,13 @@ public class TransactionStatusConnector
                
                setDeadTSM() ;
 	       
-       	       if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	       {
-               tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_5(_pid);
-	       }
+       	       tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_5(_pid);
 	       
             }
          }
          catch ( IOException ex )
          {
-	     if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	     {
-             tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_6();
-	     }
+	        tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_6();
          }
 
          _attempts_to_establish_connection = connectionEstablished ? 0 : _attempts_to_establish_connection + 1 ;

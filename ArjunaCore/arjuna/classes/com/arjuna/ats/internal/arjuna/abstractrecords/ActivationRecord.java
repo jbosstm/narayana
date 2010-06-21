@@ -79,8 +79,7 @@ public class ActivationRecord extends AbstractRecord
 
     public void setValue (Object v)
     {
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            tsLogger.i18NLogger.warn_ActivationRecord_1();
+        tsLogger.i18NLogger.warn_ActivationRecord_1();
     }
 
     /**
@@ -198,9 +197,7 @@ public class ActivationRecord extends AbstractRecord
 
     public boolean restore_state (InputObjectState os, int v)
     {
-        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-            tsLogger.i18NLogger.warn_ActivationRecord_2(type(), order());
-        }
+        tsLogger.i18NLogger.warn_ActivationRecord_2(type(), order());
 
         return false;
     }

@@ -89,12 +89,9 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 		{
 		    result = store.commit_state(order(), super.getTypeOfObject());
 			    
-		    if (!result)
-		    {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+		    if (!result) {
                 tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
             }
-		    }
 		}
 		else
 		{
@@ -198,18 +195,14 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 		    
 		    result = TwoPhaseOutcome.PREPARE_OK;
 		}
-		else
-		{
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.i18NLogger.warn_PersistenceRecord_7();
-		}
+		else {
+            tsLogger.i18NLogger.warn_PersistenceRecord_7();
+        }
 	    }
 	}
-	else
-	{
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            tsLogger.i18NLogger.warn_PersistenceRecord_8();
-	}
+	else {
+        tsLogger.i18NLogger.warn_PersistenceRecord_8();
+    }
 
 	return result;
     }

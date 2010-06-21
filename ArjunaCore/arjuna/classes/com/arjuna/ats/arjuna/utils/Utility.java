@@ -202,12 +202,10 @@ public class Utility
             { 
                 addr = InetAddress.getLocalHost(); 
             }
-            catch (final UnknownHostException uhe)
-            { 
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_utils_Utility_2();
+            catch (final UnknownHostException uhe) {
+                tsLogger.i18NLogger.warn_utils_Utility_2();
 
-                addr = InetAddress.getByName(null); 
+                addr = InetAddress.getByName(null);
             } 
              
             if (addr instanceof Inet6Address)
@@ -349,10 +347,8 @@ public class Utility
 
                 processHandle = (Process) c.newInstance();
             }
-            catch (final Exception e)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.i18NLogger.warn_utils_Utility_1(e);
+            catch (final Exception e) {
+                tsLogger.i18NLogger.warn_utils_Utility_1(e);
             }
         }
     }
