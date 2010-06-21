@@ -46,13 +46,6 @@ public class ClassloadingUtility
      * @param className the name of the class to load and instantiate.
      * @param <T>
      * @return an instantiate of the specified class, or null.
-     *
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_1 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_1] className is null
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_2 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_2] attempt to load {0} threw ClassNotFound. Wrong classloader?
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3] class {0} does not implement {1}
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4] can't create new instance of {0}
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5] can't access {0}
-     * @message com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6 [com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6] can't initialize from string {0}
      */
     public static <T> T loadAndInstantiateClass(Class<T> iface, String className)
     {

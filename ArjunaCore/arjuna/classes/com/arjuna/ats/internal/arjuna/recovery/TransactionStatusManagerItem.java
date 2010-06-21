@@ -45,14 +45,6 @@ import com.arjuna.ats.arjuna.utils.Utility ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-/**
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1] - Problem with removing host/port item {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2] - Problem with storing host/port {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3] - Problem retrieving host/port {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4] - Failed to obtain host {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5] - TransactionStatusManagerItem host: {0} port: {1}
- */
-
 // similar to FactoryContactItem
 public class TransactionStatusManagerItem
 {

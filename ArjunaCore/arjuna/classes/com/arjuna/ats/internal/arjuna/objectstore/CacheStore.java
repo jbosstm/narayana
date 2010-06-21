@@ -698,21 +698,6 @@ class AsyncStore extends Thread // keep priority same as app. threads
         return false;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.arjuna.objectstore.CacheStore_1
-     *          [com.arjuna.ats.internal.arjuna.objectstore.CacheStore_1] -
-     *          Commit state failed for {0} and {1}
-     * @message com.arjuna.ats.internal.arjuna.objectstore.CacheStore_2
-     *          [com.arjuna.ats.internal.arjuna.objectstore.CacheStore_2] -
-     *          Remove state failed for {0} and {1} and {2}
-     * @message com.arjuna.ats.internal.arjuna.objectstore.CacheStore_3
-     *          [com.arjuna.ats.internal.arjuna.objectstore.CacheStore_3] -
-     *          Write state failed for {0} and {1} and {2} and {3}
-     * @message com.arjuna.ats.internal.arjuna.objectstore.CacheStore_4
-     *          [com.arjuna.ats.internal.arjuna.objectstore.CacheStore_4] -
-     *          Unknown work type {0}
-     */
-
     private final void doWork ()
     {
         synchronized (_workList)

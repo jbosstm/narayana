@@ -54,9 +54,6 @@ import java.lang.InterruptedException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: FileLock.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- * @message com.arjuna.ats.arjuna.utils.FileLock_4
- *          [com.arjuna.ats.arjuna.utils.FileLock_4] - An error occurred while
- *          creating file {0}
  */
 
 public class FileLock

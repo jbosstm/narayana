@@ -51,52 +51,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: TransactionReaper.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- *
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_1
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_1] -
- * TransactionReaper - attempting to insert an element that is already present.
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_5
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_5] -
- * TransactionReaper::check worker zombie count {0} exceeds specified limit
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_6
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_6] -
- * TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_7
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_7] -
- * TransactionReaper::doCancellations worker {0} successfully canceled TX {1}
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_8
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_8] -
- * TransactionReaper::doCancellations worker {0} failed to cancel TX {1} -- rescheduling for mark-as-rollback
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_9
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_9] -
- * TransactionReaper::doCancellations worker {0} exception during cancel of TX {1} -- rescheduling for mark-as-rollback
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_10
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_10] -
- * TransactionReaper::check successfuly marked TX {0} as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_11
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_11] -
- * TransactionReaper::check failed to mark TX {0}  as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_12
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_12] -
- * TransactionReaper::check exception while marking TX {0} as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_13
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_13] -
- * TransactionReaper::doCancellations worker {0} missed interrupt when cancelling TX {1} -- exiting as zombie (zombie count decremented to {2})
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_14
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_14] -
- * TransactionReaper::doCancellations worker {0} successfuly marked TX {1} as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_15
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_15] -
- * TransactionReaper::doCancellations worker {0} failed to mark TX {1}  as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_16
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_16] -
- * TransactionReaper::doCancellations worker {0} exception while marking TX {1} as rollback only
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_18
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_18] -
- * TransactionReaper::check timeout for TX {0} in state  {1}
- * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_19
- * [com.arjuna.ats.arjuna.coordinator.TransactionReaper_19] -
- * TransactionReaper NORMAL mode is deprecated. Update config to use PERIODIC for equivalent behaviour.
  */
 
 public class TransactionReaper

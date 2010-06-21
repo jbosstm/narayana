@@ -319,8 +319,6 @@ public class AtomicAction extends TwoPhaseCoordinator
 	 * @return a handle on the current AtomicAction (if any) so that the thread
 	 *         can later resume association if required.
 	 *
-	 * @message com.arjuna.ats.atomicaction_1 [com.arjuna.ats.atomicaction_1] Attempt to suspend a
-	 * non-AtomicAction transaction. Type is {0}
 	 */
 
 	public static final AtomicAction suspend ()

@@ -42,22 +42,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 public class ExpiredTransactionScanner implements ExpiryScanner
 {
-    /**
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_1
-     *          [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_1] -
-     *          ExpiredTransactionScanner created, with expiry time of {0} seconds
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_2
-     *          [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_2] -
-     *          ExpiredTransactionScanner - exception during attempted move {0} {1}
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_3
-     *          [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_3] -
-     *          ExpiredTransactionScanner - could not moved log {0}
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_4
-     *          [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_4] -
-     *          ExpiredTransactionScanner - log {0} is assumed complete and will be
-     *          moved.
-     */
-    
 	public ExpiredTransactionScanner(String typeName, String movedTypeName)
 	{
 		_objectStore = TxControl.getStore();

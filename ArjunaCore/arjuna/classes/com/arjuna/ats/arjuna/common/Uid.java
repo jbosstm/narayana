@@ -57,40 +57,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: Uid.java 2342 2006-03-30 13:06:17Z $
  * @since 1.0.
- * @message com.arjuna.ats.arjuna.common.Uid_1
- *          [com.arjuna.ats.arjuna.common.Uid_1] - cannot get local host.
- * @message com.arjuna.ats.arjuna.common.Uid_2
- *          [com.arjuna.ats.arjuna.common.Uid_2] - Uid.Uid string constructor
- *          could not create nullUid
- * @message com.arjuna.ats.arjuna.common.Uid_3
- *          [com.arjuna.ats.arjuna.common.Uid_3] - Uid general parsing error:
- *          {0}
- * @message com.arjuna.ats.arjuna.common.Uid_4
- *          [com.arjuna.ats.arjuna.common.Uid_4] - Uid.Uid string constructor
- *          could not create nullUid for incorrect string: {0}
- * @message com.arjuna.ats.arjuna.common.Uid_5
- *          [com.arjuna.ats.arjuna.common.Uid_5] - Uid.Uid string constructor
- *          incorrect: {0}
- * @message com.arjuna.ats.arjuna.common.Uid_6
- *          [com.arjuna.ats.arjuna.common.Uid_6] - Uid.generateHash called for
- *          invalid Uid. Will ignore.
- * @message com.arjuna.ats.arjuna.common.Uid_7
- *          [com.arjuna.ats.arjuna.common.Uid_7] - nullUid error for
- * @message com.arjuna.ats.arjuna.common.Uid_8
- *          [com.arjuna.ats.arjuna.common.Uid_8] - Invalid string:
- * @message com.arjuna.ats.arjuna.common.Uid_9
- *          [com.arjuna.ats.arjuna.common.Uid_9] - Invalid Uid object.
- * @message com.arjuna.ats.arjuna.common.Uid_10
- *          [com.arjuna.ats.arjuna.common.Uid_10] - Cannot unpack into nullUid!
- * @message com.arjuna.ats.arjuna.common.Uid_11
- *          [com.arjuna.ats.arjuna.common.Uid_11] - Uid.Uid recreate constructor
- *          could not recreate Uid!
- * @message com.arjuna.ats.arjuna.common.Uid_npe
- *          [com.arjuna.ats.arjuna.common.Uid_npe] - Uid.Uid string constructor {0} caught other throwable: {1}
- * @message com.arjuna.ats.arjuna.common.Uid_getbytes
- *          [com.arjuna.ats.arjuna.common.Uid_getbytes] - Exception thrown getting bytes!
- * @message com.arjuna.ats.arjuna.common.Uid_bytes
- *          [com.arjuna.ats.arjuna.common.Uid_bytes] - Exception thrown creating Uid from bytes!
  */
 
 public class Uid implements Cloneable, Serializable

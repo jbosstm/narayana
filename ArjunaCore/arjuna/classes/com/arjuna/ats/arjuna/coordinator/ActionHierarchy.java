@@ -299,8 +299,6 @@ public class ActionHierarchy
     /**
      * CAREFULLY unpack the 'new' hierarchy. We unpack into
      * a temporary to ensure that the current hierarchy is not corrupted.
-     *
-     * @message com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1 [com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1] - Memory exhausted.
      */
 
     public void unpack (InputBuffer state) throws IOException

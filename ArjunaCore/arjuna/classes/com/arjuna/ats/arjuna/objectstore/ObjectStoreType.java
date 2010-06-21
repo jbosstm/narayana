@@ -153,12 +153,6 @@ public class ObjectStoreType
     /**
      * @return the <code>int</code> value for this object store.
      *         <code>Class</code>.
-     * @message com.arjuna.ats.arjuna.objectstore.ObjectStoreType_1
-     *          [com.arjuna.ats.arjuna.objectstore.ObjectStoreType_1] - unknown
-     *          store: {0}
-     * @message com.arjuna.ats.arjuna.objectstore.ObjectStoreType_2
-     *          [com.arjuna.ats.arjuna.objectstore.ObjectStoreType_2] - unknown
-     *          store:
      */
 
     @SuppressWarnings("unchecked")

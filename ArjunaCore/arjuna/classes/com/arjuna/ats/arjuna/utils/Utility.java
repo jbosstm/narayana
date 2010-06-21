@@ -50,13 +50,6 @@ import java.lang.NumberFormatException;
  * @version $Id: Utility.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
-
-/**
- * @message com.arjuna.ats.arjuna.utils.Utility_2
- *          [com.arjuna.ats.arjuna.utils.Utility_2] -
- *          Unable to use InetAddress.getLocalHost() to resolve address.
- */
-
 public class Utility
 {
 
@@ -331,11 +324,6 @@ public class Utility
         processHandle = p;
     }
 
-    /**
-     * @message com.arjuna.ats.arjuna.utils.Utility_1
-     *          [com.arjuna.ats.arjuna.utils.Utility_1] -
-     *          Utility.getDefaultProcess - failed with
-     */
     @SuppressWarnings("unchecked")
     private static synchronized void initDefaultProcess ()
     {

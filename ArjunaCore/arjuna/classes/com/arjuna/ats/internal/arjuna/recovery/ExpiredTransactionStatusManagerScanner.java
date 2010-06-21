@@ -51,12 +51,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
 {
-
-    /**
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3] - Removing old transaction status manager item {0}
-     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5] - {0}  has inappropriate value ({1})
-     */
-    
    public ExpiredTransactionStatusManagerScanner()
    {
        if (tsLogger.arjLogger.isDebugEnabled()) {

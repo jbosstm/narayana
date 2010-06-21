@@ -61,18 +61,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: FileSystemStore.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- *
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_1 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_1] - FileSystemStore::setupStore - cannot access root of object store: {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2] - FileSystemStore.removeFromCache - no entry for {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3] - FileSystemStore::allObjUids - could not pack Uid.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3] - FileSystemStore::allObjUids - could not pack end of list Uid.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4] - FileSytemStore::allTypes - could not pack entry string.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5] - FileSystemStore::allTypes - could not pack end of list string.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6] - FileSystemStore::setupStore - error from unpack object store.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7] - FileSystemStore::allTypes - could not pack entry string.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8] - FileSystemStore::createHierarchy - null directory name.
- * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20] - FileSystemStore.renameFromTo - from {0} not present. Possibly renamed by crash recovery.
  */
 
 public abstract class FileSystemStore extends ObjectStore

@@ -51,13 +51,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * <P>
  * Singleton, instantiated in the RecoveryManager. 
  * <P>
- *
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5] - ExpiredEntryMonitor - no scans on first iteration
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_7 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_7] - Attempt to load expiry scanner with null class name!
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9] - Expiry scanner {0} does not conform to ExpiryScanner interface
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10] - Loading expiry scanner: could not find class {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11] - {0} has inappropriate value ({1})
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12] - ExpiredEntryMonitor running at {0}
  */
 
 public class ExpiredEntryMonitor extends Thread

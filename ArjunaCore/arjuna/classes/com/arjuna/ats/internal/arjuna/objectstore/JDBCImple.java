@@ -160,11 +160,6 @@ public abstract class JDBCImple
 		return result;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_1
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_1] -
-	 *          hide_state caught exception: {0}
-	 */
 	public boolean hide_state(Uid objUid, String typeName, String tableName)
 			throws ObjectStoreException
 	{
@@ -255,11 +250,6 @@ public abstract class JDBCImple
 		return hiddenOk;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_2
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_2] -
-	 *          reveal_state caught exception: {0}
-	 */
 	public boolean reveal_state(Uid objUid, String typeName, String tableName)
 			throws ObjectStoreException
 	{
@@ -352,10 +342,6 @@ public abstract class JDBCImple
 	 * currentState - determine the current state of an object. State search is
 	 * ordered OS_UNCOMMITTED, OS_UNCOMMITTED_HIDDEN, OS_COMMITTED,
 	 * OS_COMMITTED_HIDDEN
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3] -
-	 *          currentState caught exception: {0}
 	 */
 	public int currentState(Uid objUid, String typeName, String tableName)
 			throws ObjectStoreException
@@ -481,13 +467,6 @@ public abstract class JDBCImple
 	/**
 	 * allObjUids - Given a type name, return an ObjectState that contains all
 	 * of the uids of objects of that type.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4] -
-	 *          allObjUids caught exception: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_5
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_5] -
-	 *          allObjUids - pack of Uid failed: {0}
 	 */
 	public boolean allObjUids(String typeName, InputObjectState state,
 			int match, String tableName) throws ObjectStoreException
@@ -582,17 +561,6 @@ public abstract class JDBCImple
 		return false;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6] -
-	 *          allTypes caught exception: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_7
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_7] -
-	 *          allTypes - pack of Uid failed:{0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.packProblem
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.packProblem] -
-	 *          allTypes - could not pack end of list string.
-	 */
 	public boolean allTypes(InputObjectState foundTypes, String tableName)
 			throws ObjectStoreException
 	{
@@ -682,19 +650,6 @@ public abstract class JDBCImple
 		return false;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_8
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_8] -
-	 *          remove_state caught exception: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_9
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_9] -
-	 *          remove_state() attempted removal of {0} state for object with
-	 *          uid {1}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_10
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_10] -
-	 *          remove_state - type() operation of object with uid {0} returns
-	 *          NULL
-	 */
 	public boolean remove_state(Uid objUid, String name, int ft,
 			String tableName) throws ObjectStoreException
 	{
@@ -767,9 +722,6 @@ public abstract class JDBCImple
 		return removeOk;
 	}
 
-    /**
-     * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed] - JDBCImple:read_state failed
-     */
 	public InputObjectState read_state (Uid objUid, String tName, int ft, String tableName) throws ObjectStoreException
 	{
 		InputObjectState newImage = null;
@@ -843,10 +795,6 @@ public abstract class JDBCImple
 		return newImage;
 	}
 
-
-    /**
-     * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed] - JDBCImple:write_state caught exception: {0}
-     */
     public boolean write_state (Uid objUid, String tName, OutputObjectState state, int s, String tableName) throws ObjectStoreException
 	{
 		boolean result = false;
@@ -930,16 +878,6 @@ public abstract class JDBCImple
 
 	/**
 	 * Set up the store for use.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11] -
-	 *          invalid initial pool size: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12] -
-	 *          invalid maximum pool size: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_13
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_13] -
-	 *          initialise caught exception: {0}
 	 */
 	public boolean initialise(Connection conn, JDBCAccess jdbcAccess,
 			String tableName) throws SQLException
@@ -1078,12 +1016,6 @@ public abstract class JDBCImple
 
 	// protected abstract boolean exists (String state);
 
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_14
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_14] -
-	 *          getState caught exception: {0}
-	 */
-    
 	protected final int getState(String state)
 	{
 		try
@@ -1117,10 +1049,6 @@ public abstract class JDBCImple
 
 	/**
 	 * Print a warning if the file to be removed is not in the cache.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15] -
-	 *          removeFromCache - no entry for {0}
 	 */
 	protected final void removeFromCache(String state, boolean warn)
 	{
@@ -1219,13 +1147,6 @@ public abstract class JDBCImple
 	 * Allocate a database connection from the pool: Walks the array and
 	 * allocates the first available connection. If non are free, waits before
 	 * trying again.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16] -
-	 *          getPool caught exception: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_17
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_17] -
-	 *          getPool - interrupted while waiting for a free connection
 	 */
 	protected int getPool()
 	{
@@ -1283,10 +1204,6 @@ public abstract class JDBCImple
 
 	/**
 	 * return a connection to the free pool, optionally closing it.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18] -
-	 *          freePool - freeing a connection which is already free!
 	 */
 	protected void freePool(int pool)
 	{

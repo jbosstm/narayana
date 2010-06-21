@@ -168,25 +168,6 @@ public class LastResourceRecord extends AbstractRecord
         return "/StateManager/AbstractRecord/LastResourceRecord";
     }
 
-    /**
-     * @message com.arjuna.ats.arjuna.lastResource.multipleWarning
-     *          [com.arjuna.ats.arjuna.lastResource.multipleWarning] Multiple
-     *          last resources have been added to the current transaction. This
-     *          is transactionally unsafe and should not be relied upon. Current
-     *          resource is {0}
-     * @message com.arjuna.ats.arjuna.lastResource.disallow
-     *          [com.arjuna.ats.arjuna.lastResource.disallow] Adding multiple
-     *          last resources is disallowed. Current resource is {0}
-     * @message com.arjuna.ats.arjuna.lastResource.startupWarning
-     *          [com.arjuna.ats.arjuna.lastResource.startupWarning] You have
-     *          chosen to enable multiple last resources in the transaction
-     *          manager. This is transactionally unsafe and should not be relied
-     *          upon.
-     * @message com.arjuna.ats.arjuna.lastResource.disableWarning
-     *          [com.arjuna.ats.arjuna.lastResource.disableWarning] You have
-     *          chosen to disable the Multiple Last Resources warning. You will
-     *          see it only once.
-     */
     public boolean shouldAdd (AbstractRecord a)
     {
         if (a.typeIs() == typeIs())

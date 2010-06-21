@@ -127,8 +127,6 @@ public class DisposeRecord extends CadaverRecord
     
     /**
      * At topLevelCommit we remove the state from the object store.
-     *
-     * @message com.arjuna.ats.arjuna.DisposeRecord_5 [com.arjuna.ats.arjuna.DisposeRecord_5] DisposeRecord::topLevelCommit - exception while deleting state {0}
      */
     
     public int topLevelCommit ()
@@ -186,13 +184,6 @@ public class DisposeRecord extends CadaverRecord
     {
 	return true;
     }
-    
-    /**
-     * @message com.arjuna.ats.arjuna.DisposeRecord_1 [com.arjuna.ats.arjuna.DisposeRecord_1] DisposeRecord::save_state - type of store is unknown
-     * @message com.arjuna.ats.arjuna.DisposeRecord_2 [com.arjuna.ats.arjuna.DisposeRecord_2] DisposeRecord::save_state - failed
-     * @message com.arjuna.ats.arjuna.DisposeRecord_3 [com.arjuna.ats.arjuna.DisposeRecord_3] DisposeRecord::save_state - no object store defined.
-     * @message com.arjuna.ats.arjuna.DisposeRecord_4 [com.arjuna.ats.arjuna.DisposeRecord_4] DisposeRecord::restore_state - invalid store type {0}
-     */
 
     public boolean save_state (OutputObjectState os, int ot)
     {

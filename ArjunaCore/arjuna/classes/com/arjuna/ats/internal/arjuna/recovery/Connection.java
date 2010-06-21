@@ -51,8 +51,6 @@ public class Connection extends Thread
 
     /**
      * Takes socket and service to execute and a callback to run when processing of the connection has completed
-     *
-     * @message com.arjuna.ats.internal.arjuna.recovery.Connection_2 [com.arjuna.ats.internal.arjuna.recovery.Connection_2] - Setting timeout exception.
      */
 
     public Connection( Socket server_socket, Service service, Callback callback )
@@ -77,8 +75,6 @@ public class Connection extends Thread
    /**
     * Obtains input and output streams and executes work
     * required by the service.
-    *
-    * @message com.arjuna.ats.internal.arjuna.recovery.Connection_1 [com.arjuna.ats.internal.arjuna.recovery.Connection_1] - Connection - IOException
     */
 
    public void run()

@@ -55,15 +55,6 @@ import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-/**
- * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1
- *          [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1] -
- *          oracle:read_state failed
- * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2
- *          [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2] -
- *          oracle:write_state caught exception: {0}
- */
-
 public class oracle_driver extends JDBCImple
 {
     private static final int MAX_RETRIES = 10;

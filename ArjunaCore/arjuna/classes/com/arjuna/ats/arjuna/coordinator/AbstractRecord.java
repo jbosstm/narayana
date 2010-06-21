@@ -433,12 +433,7 @@ public abstract class AbstractRecord extends StateManager
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
 	}
-	
-	/**
-	 * @message com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe
-         *          [com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe] -
-         *          AbstractRecord.create {0} failed to find record.
-         */
+
 	
 	@SuppressWarnings("unchecked")
         public static AbstractRecord create (int type)

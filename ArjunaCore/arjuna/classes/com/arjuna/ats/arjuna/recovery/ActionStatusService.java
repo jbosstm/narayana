@@ -47,16 +47,6 @@ import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
-/**
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_1 [com.arjuna.ats.arjuna.recovery.ActionStatusService_1] - transactionType: {0} uid: {1} \n Status is {2}
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_2 [com.arjuna.ats.arjuna.recovery.ActionStatusService_2] - Other Exception: {0}
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_3 [com.arjuna.ats.arjuna.recovery.ActionStatusService_3] - Exception retrieving action status
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_4 [com.arjuna.ats.arjuna.recovery.ActionStatusService_4] - matching Uid {0} found
- * @message com.arjuna.ats.arjuna.recovery.ActionStatucService_5 [com.arjuna.ats.arjuna.recovery.ActionStatusService_5] - ActionStatusService: searching for uid: {0}
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_6 [com.arjuna.ats.arjuna.recovery.ActionStatusService_6] - Exception when accessing transaction store {0}
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_7 [com.arjuna.ats.arjuna.recovery.ActionStatusService_7] - Connection Lost to Recovery Manager
-*/
-
 public class ActionStatusService implements Service
 {
    /**

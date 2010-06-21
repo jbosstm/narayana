@@ -50,12 +50,6 @@ public class MBeanProcessId implements com.arjuna.ats.arjuna.utils.Process
     /**
      * @return the process id. This had better be unique between processes on
      *         the same machine. If not we're in trouble!
-     * @message com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1
-     *          [com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1]-
-     *          Could not get back a valid pid.
-     * @message com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2
-     *          [com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2] -
-     *          getName returned unrecognized format:
      */
 
     public int getpid ()

@@ -45,11 +45,6 @@ import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-/**
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1] - Exception when accessing data store {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2] - Object store exception {0}
-*/
-
 public class TransactionStatusConnectionManager
 {
     /**

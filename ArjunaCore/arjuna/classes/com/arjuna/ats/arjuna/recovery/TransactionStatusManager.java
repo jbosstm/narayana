@@ -47,21 +47,6 @@ import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
  * @author Dave Elsworthy (david_elsworthy@hp.com)
  * @version $Id: TransactionStatusManager.java 2342 2006-03-30 13:06:17Z  $
  * @since HPTS 3.0.
- *
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1] - Starting service {0} on port {1}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2] - Listener failed
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3] - TransactionStatusManager started on port {0} and host {1} with service {2}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4] - Class not found: {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5] - Failed to instantiate service class: {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6] - Illegal access to service class: {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7] - Failed to create server socket on port: {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8] - Invalid port specified {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9] - Could not get unique port.
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10] - Unknown host {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11] - Invalid port specified
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_12 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_12] - Unknown host specified
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13] - Invalid host or port
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14] - Failed to create server socket on address {0} and port: {1}
  */
 
 public class TransactionStatusManager

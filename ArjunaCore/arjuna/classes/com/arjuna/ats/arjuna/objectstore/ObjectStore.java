@@ -55,8 +55,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ObjectStore.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- * @message com.arjuna.ats.arjuna.objectstore.ObjectStore_1 [com.arjuna.ats.arjuna.objectstore.ObjectStore_1] - No implementation!
  */
 
 // TODO may make this class private when we refactor in terms of templates

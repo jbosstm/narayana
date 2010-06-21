@@ -63,50 +63,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: StateManager.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- * @message com.arjuna.ats.arjuna.StateManager_1
- *          [com.arjuna.ats.arjuna.StateManager_1] - StateManager::terminate()
- *          should be invoked in every destructor
- * @message com.arjuna.ats.arjuna.StateManager_2
- *          [com.arjuna.ats.arjuna.StateManager_2] - Activate of object with id
- *          = {0} and type {1} unexpectedly failed"
- * @message com.arjuna.ats.arjuna.StateManager_3
- *          [com.arjuna.ats.arjuna.StateManager_3] - StateManager::deactivate -
- *          object store error
- * @message com.arjuna.ats.arjuna.StateManager_4
- *          [com.arjuna.ats.arjuna.StateManager_4] - StateManager::deactivate -
- *          save_state error
- * @message com.arjuna.ats.arjuna.StateManager_6
- *          [com.arjuna.ats.arjuna.StateManager_6] - StateManager.destroy -
- *          failed to add abstract record to transaction {0}; check transaction status.
- * @message com.arjuna.ats.arjuna.StateManager_7
- *          [com.arjuna.ats.arjuna.StateManager_7] - StateManager.destroy -
- *          caught object store exception: {0}
- * @message com.arjuna.ats.arjuna.StateManager_8
- *          [com.arjuna.ats.arjuna.StateManager_8] - StateManager.destroy -
- *          called on non-persistent or new object!
- * @message com.arjuna.ats.arjuna.StateManager_9
- *          [com.arjuna.ats.arjuna.StateManager_9] - StateManager.restore_state
- *          - could not find StateManager state in object state!
- * @message com.arjuna.ats.arjuna.StateManager_10
- *          [com.arjuna.ats.arjuna.StateManager_10] - StateManager::modified()
- *          invocation on an object whose state has not been restored -
- *          activating object
- * @message com.arjuna.ats.arjuna.StateManager_11
- *          [com.arjuna.ats.arjuna.StateManager_11] - Delete called on object
- *          with uid {0} and type {1} within atomic action.
- * @message com.arjuna.ats.arjuna.StateManager_12
- *          [com.arjuna.ats.arjuna.StateManager_12] - StateManager.cleanup -
- *          could not save_state from terminate!
- * @message com.arjuna.ats.arjuna.StateManager_13
- *          [com.arjuna.ats.arjuna.StateManager_13] - Attempt to use volatile
- *          store.
- * @message com.arjuna.ats.arjuna.StateManager_14
- *          [com.arjuna.ats.arjuna.StateManager_14] - Volatile store not
- *          implemented!
- * @message com.arjuna.ats.arjuna.StateManager_15
- *          [com.arjuna.ats.arjuna.StateManager_15] - Invalid object state.
- * @message com.arjuna.ats.arjuna.StateManager_16
- *          [com.arjuna.ats.arjuna.StateManager_16] - Invalid object store type:
  */
 
 public class StateManager

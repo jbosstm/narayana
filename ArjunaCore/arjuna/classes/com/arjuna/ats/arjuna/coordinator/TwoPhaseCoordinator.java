@@ -213,16 +213,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		super(u, at);
 	}
 
-	/**
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1]
-	 *          TwoPhaseCoordinator.beforeCompletion - attempted rollback_only
-	 *          failed!
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2]
-	 *          TwoPhaseCoordinator.beforeCompletion - failed for {0}
-	 */
-
 	protected boolean beforeCompletion ()
 	{
 		boolean problem = false;
@@ -325,23 +315,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		return !problem;
 	}
-
-	/**
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_3
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_3]
-	 *          TwoPhaseCoordinator.beforeCompletion
-	 *          TwoPhaseCoordinator.afterCompletion called on still running
-	 *          transaction!
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4]
-	 *          TwoPhaseCoordinator.afterCompletion - returned failure for {0}
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a]
-	 *          TwoPhaseCoordinator.afterCompletion - failed for {0} with exception {1}
-	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b
-	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b]
-	 *          TwoPhaseCoordinator.afterCompletion - failed for {0} with error {1}
-	 */
 
 	protected boolean afterCompletion (int myStatus)
 	{

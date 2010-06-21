@@ -31,19 +31,6 @@ import java.util.Set;
 
 /**
  * Simple wrapper for accessing the JMX server
- *
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1] - registering bean {0}.
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2] - Instance already exists: {0}.
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3] - Error registrating {0} - {1}.
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4] - Try to unregister mbean with invalid name {0}.
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5]
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5] - Unable to unregister bean {0} error: {1}.
- * @message com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6
- *		  [com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6] - Unable to unregister bean {0} error: {1}.
  */
 
 public class JMXServer

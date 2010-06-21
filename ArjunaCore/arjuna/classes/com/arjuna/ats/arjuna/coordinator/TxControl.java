@@ -47,20 +47,6 @@ import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: TxControl.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.2.
- * 
- * @message com.arjuna.ats.arjuna.coordinator.TxControl_1
- *          [com.arjuna.ats.arjuna.coordinator.TxControl_1] - Name of XA node
- *          not defined. Using {0}
- * @message com.arjuna.ats.arjuna.coordinator.TxControl_2
- *          [com.arjuna.ats.arjuna.coordinator.TxControl_2] - Supplied name of
- *          node is too long. Using {0}
- * @message com.arjuna.ats.arjuna.coordinator.TxControl_3
- *          [com.arjuna.ats.arjuna.coordinator.TxControl_3] - Supplied name of
- *          node contains reserved character '-'. Using {0}
- * @message com.arjuna.ats.arjuna.coordinator.toolong
- *          [com.arjuna.ats.arjuna.coordinator.toolong] - Node name cannot exceed 64 bytes!
- * @message com.arjuna.ats.arjuna.coordinator.invalidos
- *          [com.arjuna.ats.arjuna.coordinator.invalidos] - Could not create ObjectStore type:
  */
 
 public class TxControl

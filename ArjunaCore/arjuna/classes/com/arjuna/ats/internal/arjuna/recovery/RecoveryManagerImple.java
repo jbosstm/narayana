@@ -58,22 +58,6 @@ public class RecoveryManagerImple
          * @param threaded
          *            if <code>true</code> then the manager will start a separate
          *            thread to run recovery periodically.
-         *
-         * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1
-         *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -
-         *          property io exception {0}
-         * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2
-         *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -
-         *          socket io exception {0}
-         * @message com.arjuna.ats.internal.arjuna.recovery.socketready
-         *          [com.arjuna.ats.internal.arjuna.recovery.socketready]
-         *          RecoveryManagerImple is ready on port {0}
-     * @message com.arjuna.ats.internal.arjuna.recovery.localready
-         *          [com.arjuna.ats.internal.arjuna.recovery.localready]
-         *          RecoveryManagerImple is ready. Socket listener is turned off.
-     * @message com.arjuna.ats.internal.arjuna.recovery.fail
-         *          [com.arjuna.ats.internal.arjuna.recovery.fail]
-         *          RecoveryManagerImple: cannot bind to socket on address {0} and port {1}
          */
 
         public RecoveryManagerImple (boolean threaded)

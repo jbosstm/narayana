@@ -40,15 +40,6 @@ import com.arjuna.ats.arjuna.utils.Utility ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-/**
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1] - TransactionStatusConnector.delete called erroneously
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_2 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_2] - Connection lost to TransactionStatusManagers' process
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_3 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_3] - Connection lost to TransactionStatusManagers' process
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_4 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_4] - TransactionStatusManager process for uid {0} is ALIVE. connected to host: {1}, port: {2} on socket: {3}
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_5 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_5] - TransactionStatusManager process for uid {0} is DEAD.
- * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_6 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_6] - Failed to establish connection to server
- */
-
 public class TransactionStatusConnector
 {
    /**

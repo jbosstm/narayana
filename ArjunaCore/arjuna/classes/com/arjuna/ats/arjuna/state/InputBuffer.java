@@ -46,38 +46,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: InputBuffer.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_1
- *          com.arjuna.ats.arjuna.state.InputBuffer_1 - Invalid input buffer:
- *          byte.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_2
- *          com.arjuna.ats.arjuna.state.InputBuffer_2 - Invalid input buffer:
- *          bytes.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_3
- *          com.arjuna.ats.arjuna.state.InputBuffer_3 - Invalid input buffer:
- *          boolean.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_4
- *          com.arjuna.ats.arjuna.state.InputBuffer_4 - Invalid input buffer:
- *          char.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_5
- *          com.arjuna.ats.arjuna.state.InputBuffer_5 - Invalid input buffer:
- *          short.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_6
- *          com.arjuna.ats.arjuna.state.InputBuffer_6 - Invalid input buffer:
- *          int.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_7
- *          com.arjuna.ats.arjuna.state.InputBuffer_7 - Invalid input buffer:
- *          long.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_8
- *          com.arjuna.ats.arjuna.state.InputBuffer_8 - Invalid input buffer:
- *          float.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_9
- *          com.arjuna.ats.arjuna.state.InputBuffer_9 - Invalid input buffer:
- *          double
- * @message com.arjuna.ats.arjuna.state.InputBuffer_10
- *          com.arjuna.ats.arjuna.state.InputBuffer_10 - Invalid input buffer:
- *          string.
- * @message com.arjuna.ats.arjuna.state.InputBuffer_11
- *          com.arjuna.ats.arjuna.state.InputBuffer_11 - Invalid from buffer
  */
 
 public class InputBuffer

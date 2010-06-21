@@ -37,13 +37,6 @@ import com.arjuna.ats.arjuna.recovery.Service;
 
 import java.io.*;
 
-/**
- * @message com.arjuna.ats.internal.arjuna.recovery.WorkerService_1 [com.arjuna.ats.internal.arjuna.recovery.WorkerService_1] - Other Exception:
- * @message com.arjuna.ats.internal.arjuna.recovery.WorkerService_2 [com.arjuna.ats.internal.arjuna.recovery.WorkerService_2] - IOException
- * @message com.arjuna.ats.internal.arjuna.recovery.WorkerService_3 [com.arjuna.ats.internal.arjuna.recovery.WorkerService_3] RecoveryManager scan scheduled to begin.
- * @message com.arjuna.ats.internal.arjuna.recovery.WorkerService_4 [com.arjuna.ats.internal.arjuna.recovery.WorkerService_4] RecoveryManager scan completed.
- */ 
-
 public class WorkerService implements Service
 {
     public WorkerService (PeriodicRecovery pr)

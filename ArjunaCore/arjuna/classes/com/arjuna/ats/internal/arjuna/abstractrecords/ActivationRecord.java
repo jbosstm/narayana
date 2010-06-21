@@ -71,12 +71,6 @@ public class ActivationRecord extends AbstractRecord
         return (Object) new Integer(state);
     }
 
-    /**
-     * @message com.arjuna.ats.arjuna.ActivationRecord_1
-     *          [com.arjuna.ats.arjuna.ActivationRecord_1]
-     *          ActivationRecord::set_value() called illegally
-     */
-
     public void setValue (Object v)
     {
         tsLogger.i18NLogger.warn_ActivationRecord_1();
@@ -188,11 +182,6 @@ public class ActivationRecord extends AbstractRecord
     /**
      * Saving of ActivationRecords is only undertaken during the Prepare phase
      * of the top level 2PC.
-     * 
-     * @message com.arjuna.ats.arjuna.ActivationRecord_2
-     *          [com.arjuna.ats.arjuna.ActivationRecord_2] Invocation of
-     *          ActivationRecord::restore_state for {0} inappropriate - ignored
-     *          for {1}
      */
 
     public boolean restore_state (InputObjectState os, int v)

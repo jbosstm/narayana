@@ -56,9 +56,6 @@ public class FileProcessId implements com.arjuna.ats.arjuna.utils.Process
      * on the same machine. If not we're in trouble!
      *
      * @since JTS 2.1.
-     *
-     * @message com.arjuna.ats.internal.arjuna.utils.FileProcessId_1 [com.arjuna.ats.internal.arjuna.utils.FileProcessId_1] - FileProcessId.getpid - could not locate temporary directory.
-     * @message com.arjuna.ats.internal.arjuna.utils.FileProcessId_2 [com.arjuna.ats.internal.arjuna.utils.FileProcessId_2] - FileProcessId.getpid could not create unique file.
      */
 
 public int getpid ()

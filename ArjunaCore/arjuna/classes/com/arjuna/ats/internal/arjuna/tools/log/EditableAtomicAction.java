@@ -29,11 +29,6 @@ import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-/**
- * @message com.arjuna.ats.internal.arjuna.tools.log.eaa1 [com.arjuna.ats.internal.arjuna.tools.log.eaa1] Transaction {0} and {1} not activate.
- * @message com.arjuna.ats.internal.arjuna.tools.log.eaa2 [com.arjuna.ats.internal.arjuna.tools.log.eaa2] Error - could not get resource to forget heuristic. Left on Heuristic List.
- */
-
 public class EditableAtomicAction extends AtomicAction implements EditableTransaction  // going to have to be one per action type because of state differences
 {
     public EditableAtomicAction (final Uid u)

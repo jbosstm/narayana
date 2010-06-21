@@ -66,11 +66,6 @@ import java.lang.NumberFormatException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: HashedStore.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.0.
- *
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1] - HashedStore.create caught: {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2] - invalid number of hash directories: {0}. Will use default.
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5] - HashedStore.allObjUids - could not pack Uid.
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6] - HashedStore.allObjUids - could not pack end of list Uid.
  */
 
 public class HashedStore extends ShadowNoFileLockStore

@@ -43,13 +43,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.common.util.ConfigurationInfo;
 
-/**
- * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_1 [com.arjuna.ats.arjuna.recovery.RecoveryManager_1] - Invalid recovery manager port specified {0}
- * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_2 [com.arjuna.ats.arjuna.recovery.RecoveryManager_2] - Invalid recovery manager host specified {0}
- * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_3 [com.arjuna.ats.arjuna.recovery.RecoveryManager_3] - Recovery manager bound to {0}:{1}
- * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_4 [com.arjuna.ats.arjuna.recovery.RecoveryManager_4] - Connected to recovery manager on {0}:{1}
- * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_5 [com.arjuna.ats.arjuna.recovery.RecoveryManager_5] - Invalid recovery manager port specified
- */
 class ScanThread extends Thread
 {
 

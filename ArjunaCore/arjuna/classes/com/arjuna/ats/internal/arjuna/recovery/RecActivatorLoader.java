@@ -34,13 +34,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * <P>
  * @author Malik Saheb
  * @since ArjunaTS 3.0
- *
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_1 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_1] - Attempt to load recovery activator with null class name!
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_2 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_2] - Recovery module {0} does not conform to RecoveryActivator interface
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_3 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_3] - Loading recovery activator: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_4 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_4] - Loading recovery activator: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_5 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_5] - Loading recovery module: could not find class {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6] - Start RecoveryActivators
 */
 
 public class RecActivatorLoader

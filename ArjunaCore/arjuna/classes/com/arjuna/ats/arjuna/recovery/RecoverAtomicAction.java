@@ -38,12 +38,6 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner;
 
-/**
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2] - RecoverAtomicAction.replayPhase2: Unexpected status: {0}
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4] - RecoverAtomicAction: transaction {0} not activated, unable to replay phase 2 commit. Check state has not already been completed.
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5] - RecoverAtomicAction - tried to move failed activation log {0}
- */
-
 public class RecoverAtomicAction extends AtomicAction
 {
    /**

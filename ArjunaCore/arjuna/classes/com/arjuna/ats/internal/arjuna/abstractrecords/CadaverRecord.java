@@ -124,8 +124,6 @@ public class CadaverRecord extends PersistenceRecord
     /**
      * The nested transaction has aborted. The record will invalidate any
      * new state.
-     *
-     * @message com.arjuna.ats.arjuna.CadaverRecord_1 [com.arjuna.ats.arjuna.CadaverRecord_1] Attempted abort operation on deleted object id {0} of type {1} ignored
      */
 
     public int nestedAbort ()

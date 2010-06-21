@@ -53,21 +53,6 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
     /**
      * @return the process id. This had better be unique between processes on
      *         the same machine. If not we're in trouble!
-     * @message com.arjuna.ats.internal.arjuna.utils.ExecProcessId_1
-     *          [com.arjuna.ats.internal.arjuna.utils.ExecProcessId_1]-
-     *          Could not get back a valid pid.
-     * @message com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2
-     *          [com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2] -
-     *          Problem executing getpids utility:
-     * @message com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3
-     *          [com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3] -
-     *          Problem executing command:
-     * @message com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4
-     *          [com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4] -
-     *          Problem getting pid information from stream:
-     * @message com.arjuna.ats.internal.arjuna.utils.ExecProcessId_5
-     *          [com.arjuna.ats.internal.arjuna.utils.ExecProcessId_5] -
-     *          Encountered a problem when closing the data stream {0}
      */
 
     public int getpid ()

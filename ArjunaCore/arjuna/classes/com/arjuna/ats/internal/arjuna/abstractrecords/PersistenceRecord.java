@@ -55,57 +55,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: PersistenceRecord.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- *
- * @message com.arjuna.ats.arjuna.PersistenceRecord_2
- *          [com.arjuna.ats.arjuna.PersistenceRecord_2]
- *          PersistenceRecord::topLevelCommit - commit_state call failed for {0}
- * @message com.arjuna.ats.arjuna.PersistenceRecord_3
- *          [com.arjuna.ats.arjuna.PersistenceRecord_3]
- *          PersistenceRecord::topLevelCommit - no state to commit!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_4
- *          [com.arjuna.ats.arjuna.PersistenceRecord_4]
- *          PersistenceRecord::topLevelCommit - caught exception: {0}
- * @message com.arjuna.ats.arjuna.PersistenceRecord_5
- *          [com.arjuna.ats.arjuna.PersistenceRecord_5]
- *          PersistenceRecord::topLevelCommit - no object store specified!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_6
- *          [com.arjuna.ats.arjuna.PersistenceRecord_6]
- *          PersistenceRecord::topLevelCommit - commit_state error
- * @message com.arjuna.ats.arjuna.PersistenceRecord_7
- *          [com.arjuna.ats.arjuna.PersistenceRecord_7] PersistenceRecord
- *          deactivate error, object probably already deactivated!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_8
- *          [com.arjuna.ats.arjuna.PersistenceRecord_8]
- *          PersistenceRecord.topLevelPrepare - setup error!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_10
- *          [com.arjuna.ats.arjuna.PersistenceRecord_10]
- *          PersistenceRecord::restore_state: Failed to unpack object store type
- * @message com.arjuna.ats.arjuna.PersistenceRecord_11
- *          [com.arjuna.ats.arjuna.PersistenceRecord_11]
- *          PersistenceRecord::save_state - type of store is unknown
- * @message com.arjuna.ats.arjuna.PersistenceRecord_14
- *          [com.arjuna.ats.arjuna.PersistenceRecord_14]
- *          PersistenceRecord::save_state - packing top level state failed
- * @message com.arjuna.ats.arjuna.PersistenceRecord_15
- *          [com.arjuna.ats.arjuna.PersistenceRecord_15]
- *          PersistenceRecord::save_state - failed
- * @message com.arjuna.ats.arjuna.PersistenceRecord_16
- *          [com.arjuna.ats.arjuna.PersistenceRecord_16]
- *          PersistenceRecord::save_state - no object store defined for object
- * @message com.arjuna.ats.arjuna.PersistenceRecord_18
- *          [com.arjuna.ats.arjuna.PersistenceRecord_18]
- *          PersistenceRecord::topLevelAbort() - Expecting state but found none!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_19
- *          [com.arjuna.ats.arjuna.PersistenceRecord_19]
- *          PersistenceRecord::topLevelAbort() - Could not remove state from object store!
- * @message com.arjuna.ats.arjuna.PersistenceRecord_20
- *          [com.arjuna.ats.arjuna.PersistenceRecord_20]
- *          PersistenceRecord::topLevelAbort() - Received ObjectStoreException
- *          {0}
- * @message com.arjuna.ats.arjuna.PersistenceRecord_21
- *          [com.arjuna.ats.arjuna.PersistenceRecord_21]
- *          PersistenceRecord.topLevelPrepare - write_uncommitted error
  */
 
 public class PersistenceRecord extends RecoveryRecord

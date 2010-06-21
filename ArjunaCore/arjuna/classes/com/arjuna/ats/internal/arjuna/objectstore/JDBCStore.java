@@ -57,22 +57,6 @@ import java.io.IOException;
  *
  * It is assumed that only one object will use a given instance of the
  * JDBCStore. Hence, there is no need for synchronizations.
- *
- * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_1
- *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_1] - JDBCStore
- *          could not setup store < {0} , {1} >
- * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_2
- *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_2] - Received:
- *          {0} for: {1}
- * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_3
- *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_3] -
- *          JDBCStore.setupStore failed to initialise!
- * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_4
- *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_4] - JDBCStore
- *          invalid Object parameter: {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5
- *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5] - No
- *          JDBCAccess implementation provided!
  */
 
 public class JDBCStore extends ObjectStore

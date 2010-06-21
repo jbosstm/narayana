@@ -88,8 +88,6 @@ public class Listener extends Thread
    /*
     * Close down the socket.
     *
-    * @message com.arjuna.ats.internal.arjuna.recovery.Listener_1 [com.arjuna.ats.internal.arjuna.recovery.Listener_1] - failed to close listener socket
-
     * this is pointless because this instance is a thread so never gets garbage collected until it has stopped running.
     * but that means shutdown will have been called making the call to close in this method redundant.
 

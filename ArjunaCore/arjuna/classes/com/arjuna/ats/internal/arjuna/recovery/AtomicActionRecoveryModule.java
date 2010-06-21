@@ -52,10 +52,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 /**
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering failed AtomicAction transactions.
- *
- * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2] - failed to recover Transaction {0} {1}
- * @message com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3 [com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3] - failed to access transaction store {0} {1}
 */
 
 public class AtomicActionRecoveryModule implements RecoveryModule

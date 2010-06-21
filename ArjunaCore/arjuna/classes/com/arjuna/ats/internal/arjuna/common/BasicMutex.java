@@ -42,10 +42,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: Mutex.java 2342 2006-03-30 13:06:17Z  $
  * @since 1.0.
- *
- * @message com.arjuna.ats.arjuna.common.Mutex_1 [com.arjuna.ats.arjuna.common.Mutex_1] - Mutex being destroyed with waiters.
- * @message com.arjuna.ats.arjuna.common.Mutex_2 [com.arjuna.ats.arjuna.common.Mutex_2] - Mutex.unlock - called by non-owning thread!
- * 
  */
 
 public class BasicMutex implements Mutex

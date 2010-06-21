@@ -42,15 +42,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * C++ valid users (specific AbstractRecord instances) were friends of StateManager.
  */
 
-/**
- * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf1
- *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf1] - StateManagerFriend.forgetAction
- * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf2
- *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf2] - StateManagerFriend.destroyed
- * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf3
- *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf3] - StateManagerFriend.rememberAction
- */
-
 public class StateManagerFriend
 {
     public static final boolean forgetAction (StateManager inst,

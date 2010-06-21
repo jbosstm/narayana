@@ -19,13 +19,6 @@ import java.util.List;
 
 /**
  * MBean implementation of an ObjectStore entry that represents an AtomicAction
- *
- * @message com.arjuna.ats.arjuna.tools.osb.mbean.m_1
- *		  [com.arjuna.ats.arjuna.tools.osb.mbean.m_1] - remove committed failed.
- * @message com.arjuna.ats.arjuna.tools.osb.mbean.m_2
- *		  [com.arjuna.ats.arjuna.tools.osb.mbean.m_2] - remove ok.
- * @message com.arjuna.ats.arjuna.tools.osb.mbean.m_3
- *		  [com.arjuna.ats.arjuna.tools.osb.mbean.m_3] - remove committed exception: {0}.
  */
 public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 	// Basic properties this enty

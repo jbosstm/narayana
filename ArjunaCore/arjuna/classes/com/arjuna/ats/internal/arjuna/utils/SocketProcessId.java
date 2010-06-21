@@ -52,9 +52,6 @@ import java.io.IOException;
 
 public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 {
-    /**
-     * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2] - SocketProcessId.getpid could not get unique port.
-     */
     public SocketProcessId()
     {
         int port = arjPropertyManager.getCoreEnvironmentBean().getSocketProcessIdPort();

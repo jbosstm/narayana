@@ -86,15 +86,6 @@ public class ManualProcessId implements com.arjuna.ats.arjuna.utils.Process
     /**
      * @return the process id. This had better be unique between processes on
      *         the same machine. If not we're in trouble!
-     * @message com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1
-     *          [com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1]-
-     *          Could not get back a valid pid.
-     * @message com.arjuna.ats.internal.arjuna.utils.ManualProcessId_2
-     *          [com.arjuna.ats.internal.arjuna.utils.ManualProcessId_2] -
-     *          No process identifier specified in configuration!
-     * @message com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3
-     *          [com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3] -
-     *          Invalid process identifier specified:
      */
 
     public int getpid ()

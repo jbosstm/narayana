@@ -80,12 +80,6 @@ public class RecoveryRecord extends AbstractRecord
         return state;
     }
 
-    /**
-     * @message com.arjuna.ats.arjuna.RecoveryRecord_1
-     *          [com.arjuna.ats.arjuna.RecoveryRecord_1] -
-     *          RecoveryRecord::setValue not given OutputObjectState.
-     */
-
     public void setValue (Object newState)
     {
         if (newState instanceof OutputObjectState)
@@ -98,10 +92,6 @@ public class RecoveryRecord extends AbstractRecord
     /**
      * nestedAbort causes the restore_state function of the object to be invoked
      * passing it the saved ObjectState.
-     * 
-     * @message com.arjuna.ats.arjuna.RecoveryRecord_2
-     *          [com.arjuna.ats.arjuna.RecoveryRecord_2] -
-     *          RecoveryRecord::nestedAbort - restore_state on object failed!
      */
 
     public int nestedAbort ()

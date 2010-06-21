@@ -54,20 +54,6 @@ import com.arjuna.ats.arjuna.utils.Utility;
  * and by other ad hoc threads
  * @author
  * @version $Id: PeriodicRecovery.java 2342 2006-03-30 13:06:17Z  $
- *
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1] - Attempt to load recovery module with null class name!
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_2 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_2] - Recovery module {0} does not conform to RecoveryModule interface
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_3 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_3] - Loading recovery module: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_4 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_4] - Loading recovery module: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_5 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_5] - Loading recovery module: could not find class {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6] - {0} has inappropriate value ( {1} )
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7] - {0} has inappropriate value ( {1} )
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8] - Invalid port specified {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9] - Could not create recovery listener {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10] - Ignoring request to scan because RecoveryManager state is: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11] - Invalid host specified {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12] - Could not create recovery listener
- * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13] - Recovery manager listening on endpoint {0}:{1}
  */
 
 public class PeriodicRecovery extends Thread
