@@ -108,7 +108,7 @@ public class ManualProcessId implements com.arjuna.ats.arjuna.utils.Process
         }
 
         if (_pid == -1)
-            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1"));
+            throw new FatalError(tsLogger.i18NLogger.get_utils_ManualProcessId_1());
 
         return _pid;
     }

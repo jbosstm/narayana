@@ -210,7 +210,7 @@ public class TxControl
             }
             catch (final Throwable ex)
             {
-                throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+recoveryType);
+                throw new FatalError(tsLogger.i18NLogger.get_coordinator_invalidos() + " "+recoveryType);
             }
             
             return _recoveryStore;
@@ -264,7 +264,7 @@ public class TxControl
 	        {
 	            ex.printStackTrace();
 	            
-	            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+actionStoreType);
+	            throw new FatalError(tsLogger.i18NLogger.get_coordinator_invalidos() + " "+actionStoreType);
 	        }
 
         return _objectStore;
@@ -294,11 +294,9 @@ public class TxControl
 	{
 	    if (name.length > NODE_NAME_SIZE)
 	    {
-	        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                        tsLogger.arjLoggerI18N.warn(
-                                        "com.arjuna.ats.arjuna.coordinator.toolong");
-                }
+	        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_toolong();
+            }
 	        
 	        throw new IllegalArgumentException();
 	    }
@@ -416,13 +414,9 @@ public class TxControl
 		    
 		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn(
-						"com.arjuna.ats.arjuna.coordinator.TxControl_1",
-						new Object[]
-						{ nodeName });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_TxControl_1(nodeName);
+            }
 
 			xaNodeName = nodeName.getBytes();
 
@@ -433,13 +427,9 @@ public class TxControl
 		{
 		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn(
-						"com.arjuna.ats.arjuna.coordinator.TxControl_2",
-						new Object[]
-						{ nodeName });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_TxControl_2(nodeName);
+            }
 
 			xaNodeName = nodeName.getBytes();
 
@@ -450,13 +440,9 @@ public class TxControl
 		{
 		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn(
-						"com.arjuna.ats.arjuna.coordinator.TxControl_3",
-						new Object[]
-						{ nodeName });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_TxControl_3(nodeName);
+            }
 
 			xaNodeName = nodeName.getBytes();
 

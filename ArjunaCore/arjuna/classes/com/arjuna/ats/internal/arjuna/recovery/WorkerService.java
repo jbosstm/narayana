@@ -81,7 +81,7 @@ public class WorkerService implements Service
             // now we only need to hold one lock
 		_periodicRecovery.wakeUp();
 
-		tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
+            tsLogger.i18NLogger.info_recovery_WorkerService_3();
 
 		if (request.equals(RecoveryDriver.SCAN))
 		{
@@ -96,7 +96,7 @@ public class WorkerService implements Service
 		    }
 		    catch (Exception ex)
 		    {
-    			tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_4");
+                tsLogger.i18NLogger.info_recovery_WorkerService_4();
 		    }
                 }
             }
@@ -110,15 +110,14 @@ public class WorkerService implements Service
 	}
 	catch (IOException ex)
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_2");
+        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            tsLogger.i18NLogger.warn_recovery_WorkerService_2();
 	}
 	catch ( Exception ex )
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_1", new Object[]{ex});
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_WorkerService_1(ex);
+        }
 	}
     }
 

@@ -111,8 +111,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final Exception ex)
                     {
                         throw new FatalError(
-                                tsLogger.arjLoggerI18N
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2")+" "+ex, ex);
+                                tsLogger.i18NLogger.get_utils_ExecProcessId_2() + " "+ex, ex);
                     }
                 }
 
@@ -127,8 +126,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final IOException ex)
                     {
                         throw new FatalError(
-                                tsLogger.arjLoggerI18N
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3")+" "+ex, ex);
+                                tsLogger.i18NLogger.get_utils_ExecProcessId_3() + " "+ex, ex);
                     }
 
                     ByteArrayOutputStream bstream = new ByteArrayOutputStream();
@@ -143,8 +141,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final Exception ex)
                     {
                         throw new FatalError(
-                                tsLogger.arjLoggerI18N
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4")+" "+ex, ex);
+                                tsLogger.i18NLogger.get_utils_ExecProcessId_4() + " "+ex, ex);
                     }
                     finally
                     {
@@ -154,10 +151,8 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                         }
                         catch (final Exception ex)
                         {
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            {
-                                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_5", new Object[]
-                                    { ex });
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                                tsLogger.i18NLogger.warn_utils_ExecProcessId_5(ex);
                             }
                         }
                     }
@@ -184,8 +179,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
 
         if (_pid == -1)
             throw new FatalError(
-                    tsLogger.arjLoggerI18N
-                            .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_1"));
+                    tsLogger.i18NLogger.get_utils_ExecProcessId_1());
 
         return _pid;
     }

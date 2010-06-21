@@ -28,12 +28,10 @@ public class StateManagerWrapper extends StateManager {
 			unpackHeader(os.read_committed(uid, type));
 		} catch (IOException e) {
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				  tsLogger.arjLoggerI18N.info("org.jboss.jbosstm.tools.jmx.osb.MbState.m_1",
-						  new Object[] { e.getMessage() });
+                tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
 		} catch (ObjectStoreException e) {
 			  if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				  tsLogger.arjLoggerI18N.info("org.jboss.jbosstm.tools.jmx.osb.MbState.m_1",
-						  new Object[] { e.getMessage() });
+                  tsLogger.i18NLogger.info_osb_StateManagerWrapperFail(e);
 		}
 	}
 

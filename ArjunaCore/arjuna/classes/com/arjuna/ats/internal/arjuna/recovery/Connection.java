@@ -67,8 +67,8 @@ public class Connection extends Thread
       }
       catch (java.net.SocketException ex)
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Connection_2");
+          if (tsLogger.arjLoggerI18N.isWarnEnabled())
+              tsLogger.i18NLogger.warn_recovery_Connection_2();
       }
 
       _service = service;
@@ -94,8 +94,8 @@ public class Connection extends Thread
       }
       catch ( IOException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Connection_1");
+          if (tsLogger.arjLoggerI18N.isWarnEnabled())
+              tsLogger.i18NLogger.warn_recovery_Connection_1();
       }
       finally
       {

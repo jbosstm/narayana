@@ -112,7 +112,7 @@ public class TORecoveryModule implements RecoveryModule
         }
         catch (final Throwable ex)
         {
-            throw new FatalError(tsLogger.arjLoggerI18N
+            throw new FatalError(txojLogger.aitLoggerI18N
                     .getString("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem"), ex);
         }
     }

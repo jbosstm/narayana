@@ -191,15 +191,12 @@ public class ObjectStoreType
         if (type >= 0)
             return type;
         
-        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-        {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_1", new Object[]
-            { c });
+        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_objectstore_ObjectStoreType_1(c.getCanonicalName());
         }
 
         throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-                tsLogger.arjLoggerI18N
-                        .getString("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_2")
+                tsLogger.i18NLogger.get_objectstore_ObjectStoreType_2()
                         + c);
     }
 

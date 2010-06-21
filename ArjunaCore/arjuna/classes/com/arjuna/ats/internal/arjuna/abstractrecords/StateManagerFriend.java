@@ -69,8 +69,7 @@ public class StateManagerFriend
         catch (final Throwable ex)
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf1", ex);
+                tsLogger.i18NLogger.warn_abstractrecords_smf1(ex);
             
             return false;
         }
@@ -92,8 +91,7 @@ public class StateManagerFriend
         catch (final Throwable ex)
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf3", ex);
+                tsLogger.i18NLogger.warn_abstractrecords_smf3(ex);
             
             return false;
         }
@@ -112,8 +110,7 @@ public class StateManagerFriend
         catch (final Throwable ex)
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf2", ex);
+                tsLogger.i18NLogger.warn_abstractrecords_smf2(ex);
         }
     }
 

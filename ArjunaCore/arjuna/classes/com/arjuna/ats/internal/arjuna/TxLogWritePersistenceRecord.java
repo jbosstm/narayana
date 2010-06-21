@@ -91,10 +91,9 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 			    
 		    if (!result)
 		    {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_2", new Object[] {order()});
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
+            }
 		    }
 		}
 		else
@@ -180,10 +179,9 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 			store.write_uncommitted(sm.get_uid(), sm.type(), dummy);
 			result = TwoPhaseOutcome.PREPARE_OK;
 		    }
-		    catch (ObjectStoreException e)
-		    {
-			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_21",e);
-		    }
+		    catch (ObjectStoreException e) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_21(e);
+            }
 		
 		    dummy = null;
 		}
@@ -202,15 +200,15 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 		}
 		else
 		{
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_7");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_7();
 		}
 	    }
 	}
 	else
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_8");
+        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            tsLogger.i18NLogger.warn_PersistenceRecord_8();
 	}
 
 	return result;

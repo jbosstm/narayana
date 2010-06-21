@@ -20,7 +20,10 @@
  */
 package com.arjuna.ats.arjuna.logging;
 
-import com.arjuna.common.util.logging.Logi18n;
+import org.jboss.logging.Logger;
+import static org.jboss.logging.Logger.Level.*;
+import java.text.MessageFormat;
+import com.arjuna.ats.arjuna.common.Uid;
 
 /**
  * i18n log messages for the arjuna module.
@@ -30,2577 +33,1280 @@ import com.arjuna.common.util.logging.Logi18n;
  */
 public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 
-	private final Logi18n logi18n;
+	private final Logger logger;
 
-	arjunaI18NLoggerImpl(Logi18n logi18n) {
-		this.logi18n = logi18n;
+	arjunaI18NLoggerImpl(Logger logger) {
+		this.logger = logger;
 	}
 
-	public void log_ActivationRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.ActivationRecord_1");
-		}
+	public void warn_ActivationRecord_1() {
+		logger.logv(WARN, "ARJUNA-12001 ActivationRecord::set_value() called illegally", (Object)null);
 	}
 
-	public void log_ActivationRecord_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.ActivationRecord_2", new Object[] {arg0, arg1});
-		}
+	public void warn_ActivationRecord_2(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12002 Invocation of ActivationRecord::restore_state for {0} inappropriate - ignored for {1}", arg0, arg1);
 	}
 
-	public void log_CadaverRecord_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.CadaverRecord_1", new Object[] {arg0, arg1});
-		}
+	public void warn_CadaverRecord_1(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12003 Attempted abort operation on deleted object id {0} of type {1} ignored", arg0, arg1);
 	}
 
-	public void log_DisposeRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.DisposeRecord_1");
-		}
+	public void warn_DisposeRecord_1() {
+		logger.logv(WARN, "ARJUNA-12004 DisposeRecord::save_state - type of store is unknown", (Object)null);
 	}
 
-	public void log_DisposeRecord_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.DisposeRecord_2");
-		}
+	public void warn_DisposeRecord_2() {
+		logger.logv(WARN, "ARJUNA-12005 DisposeRecord::save_state - failed", (Object)null);
 	}
 
-	public void log_DisposeRecord_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.DisposeRecord_3");
-		}
+	public void warn_DisposeRecord_3() {
+		logger.logv(WARN, "ARJUNA-12006 DisposeRecord::save_state - no object store defined.", (Object)null);
 	}
 
-	public void log_DisposeRecord_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.DisposeRecord_4", new Object[] {arg0});
-		}
+	public void warn_DisposeRecord_4(String arg0) {
+		logger.logv(WARN, "ARJUNA-12007 DisposeRecord::restore_state - invalid store type {0}", arg0);
 	}
 
-	public void log_DisposeRecord_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.DisposeRecord_5", new Object[] {arg0});
-		}
+	public void warn_DisposeRecord_5(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12008 DisposeRecord::topLevelCommit - exception while deleting state", (Object)null);
 	}
 
-	public void log_PersistenceRecord_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_1", new Object[] {arg0, arg1});
-		}
+	public void warn_PersistenceRecord_10() {
+		logger.logv(WARN, "ARJUNA-12009 PersistenceRecord::restore_state: Failed to unpack object store type", (Object)null);
 	}
 
-	public void log_PersistenceRecord_10() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_10");
-		}
+	public void warn_PersistenceRecord_11() {
+		logger.logv(WARN, "ARJUNA-12010 PersistenceRecord::save_state - type of store is unknown", (Object)null);
 	}
 
-	public void log_PersistenceRecord_11() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_11");
-		}
+	public void warn_PersistenceRecord_14() {
+		logger.logv(WARN, "ARJUNA-12011 PersistenceRecord::save_state - packing top level state failed", (Object)null);
 	}
 
-	public void log_PersistenceRecord_12(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_12", new Object[] {arg0});
-		}
+	public void warn_PersistenceRecord_15() {
+		logger.logv(WARN, "ARJUNA-12012 PersistenceRecord::save_state - failed", (Object)null);
 	}
 
-	public void log_PersistenceRecord_13() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_13");
-		}
+	public void warn_PersistenceRecord_16() {
+		logger.logv(WARN, "ARJUNA-12013 PersistenceRecord::save_state - no object store defined for object", (Object)null);
 	}
 
-	public void log_PersistenceRecord_14() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_14");
-		}
+	public void warn_PersistenceRecord_19() {
+		logger.logv(WARN, "ARJUNA-12015 PersistenceRecord::topLevelAbort() - Could not remove state from object store!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_15() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_15");
-		}
+	public void warn_PersistenceRecord_2(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12016 PersistenceRecord::topLevelCommit - commit_state call failed for {0}", arg0);
 	}
 
-	public void log_PersistenceRecord_16() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_16");
-		}
+	public void warn_PersistenceRecord_20(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12017 PersistenceRecord::topLevelAbort() - Received ObjectStoreException", (Object)null);
 	}
 
-	public void log_PersistenceRecord_17() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_17");
-		}
+	public void warn_PersistenceRecord_21(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12018 PersistenceRecord.topLevelPrepare - write_uncommitted error", (Object)null);
 	}
 
-	public void log_PersistenceRecord_18() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_18");
-		}
+	public void warn_PersistenceRecord_3() {
+		logger.logv(WARN, "ARJUNA-12019 PersistenceRecord::topLevelCommit - no state to commit!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_19() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_19");
-		}
+	public void warn_PersistenceRecord_4(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12020 PersistenceRecord::topLevelCommit - caught exception", (Object)null);
 	}
 
-	public void log_PersistenceRecord_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_2", new Object[] {arg0});
-		}
+	public void warn_PersistenceRecord_5() {
+		logger.logv(WARN, "ARJUNA-12021 PersistenceRecord::topLevelCommit - no object store specified!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_20(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_20", new Object[] {arg0});
-		}
+	public void warn_PersistenceRecord_6() {
+		logger.logv(WARN, "ARJUNA-12022 PersistenceRecord::topLevelCommit - commit_state error", (Object)null);
 	}
 
-	public void log_PersistenceRecord_21() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_21");
-		}
+	public void warn_PersistenceRecord_7() {
+		logger.logv(WARN, "ARJUNA-12023 PersistenceRecord deactivate error, object probably already deactivated!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_3");
-		}
+	public void warn_PersistenceRecord_8() {
+		logger.logv(WARN, "ARJUNA-12024 PersistenceRecord.topLevelPrepare - setup error!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_4", new Object[] {arg0});
-		}
+	public void warn_RecoveryRecord_1() {
+		logger.logv(WARN, "ARJUNA-12025 RecoveryRecord::setValue not given OutputObjectState.", (Object)null);
 	}
 
-	public void log_PersistenceRecord_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_5");
-		}
+	public void warn_RecoveryRecord_2() {
+		logger.logv(WARN, "ARJUNA-12026 RecoveryRecord::nestedAbort - restore_state on object failed!", (Object)null);
 	}
 
-	public void log_PersistenceRecord_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_6");
-		}
+	public void warn_StateManager_1() {
+		logger.logv(WARN, "ARJUNA-12027 StateManager::terminate() should be invoked in every destructor", (Object)null);
 	}
 
-	public void log_PersistenceRecord_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_7");
-		}
+	public void warn_StateManager_10() {
+		logger.logv(WARN, "ARJUNA-12028 StateManager::modified() invocation on an object whose state has not been restored - activating object", (Object)null);
 	}
 
-	public void log_PersistenceRecord_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_8");
-		}
+	public void warn_StateManager_11(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12029 Delete called on object with uid {0} and type {1} within atomic action.", arg0, arg1);
 	}
 
-	public void log_PersistenceRecord_9(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.PersistenceRecord_9", new Object[] {arg0});
-		}
+	public void warn_StateManager_12() {
+		logger.logv(WARN, "ARJUNA-12030 StateManager.cleanup - could not save_state from terminate!", (Object)null);
 	}
 
-	public void log_RecoveryRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.RecoveryRecord_1");
-		}
+	public void warn_StateManager_13() {
+		logger.logv(WARN, "ARJUNA-12031 Attempt to use volatile store.", (Object)null);
 	}
 
-	public void log_RecoveryRecord_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.RecoveryRecord_2");
-		}
+	public String get_StateManager_14() {
+		return "ARJUNA-12032 Volatile store not implemented!";
 	}
 
-	public void log_StateManager_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_1");
-		}
+	public String get_StateManager_15() {
+		return "ARJUNA-12033 Invalid object state.";
 	}
 
-	public void log_StateManager_10() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_10");
-		}
+	public String get_StateManager_16() {
+		return "ARJUNA-12034 Invalid object store type:";
 	}
 
-	public void log_StateManager_11(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_11", new Object[] {arg0, arg1});
-		}
+	public void warn_StateManager_2(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12035 Activate of object with id = {0} and type {1} unexpectedly failed", arg0, arg1);
 	}
 
-	public void log_StateManager_12() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_12");
-		}
+	public void warn_StateManager_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12036 StateManager::deactivate - object store error", (Object)null);
 	}
 
-	public void log_StateManager_13() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_13");
-		}
+	public void warn_StateManager_4() {
+		logger.logv(WARN, "ARJUNA-12037 StateManager::deactivate - save_state error", (Object)null);
 	}
 
-	public void log_StateManager_14() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_14");
-		}
+	public void warn_StateManager_6(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12038 StateManager.destroy - failed to add abstract record to transaction {0}; check transaction status.", arg0);
 	}
 
-	public void log_StateManager_15() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_15");
-		}
+	public void warn_StateManager_7(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12039 StateManager.destroy - caught object store exception", (Object)null);
 	}
 
-	public void log_StateManager_16() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_16");
-		}
+	public void warn_StateManager_8() {
+		logger.logv(WARN, "ARJUNA-12040 StateManager.destroy - called on non-persistent or new object!", (Object)null);
 	}
 
-	public void log_StateManager_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_2", new Object[] {arg0, arg1});
-		}
+	public void warn_StateManager_9() {
+		logger.logv(WARN, "ARJUNA-12041 StateManager.restore_state - could not find StateManager state in object state!", (Object)null);
 	}
 
-	public void log_StateManager_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_3");
-		}
+	public void warn_common_Mutex_2() {
+		logger.logv(WARN, "ARJUNA-12043 Mutex.unlock - called by non-owning thread!", (Object)null);
 	}
 
-	public void log_StateManager_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_4");
-		}
+	public void warn_common_Uid_1() {
+		logger.logv(WARN, "ARJUNA-12044 cannot get local host.", (Object)null);
 	}
 
-	public void log_StateManager_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_5", new Object[] {arg0});
-		}
+	public String get_common_Uid_11() {
+		return "ARJUNA-12046 Uid.Uid recreate constructor could not recreate Uid!";
 	}
 
-	public void log_StateManager_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_6", new Object[] {arg0});
-		}
+	public String get_common_Uid_2() {
+		return "ARJUNA-12047 Uid.Uid string constructor could not create nullUid";
 	}
 
-	public void log_StateManager_7(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_7", new Object[] {arg0});
-		}
+	public void warn_common_Uid_3(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12048 Uid general parsing error: {0}", arg0);
 	}
 
-	public void log_StateManager_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_8");
-		}
+	public void fatal_common_Uid_4(String arg0) {
+		logger.logv(FATAL, "ARJUNA-12049 Uid.Uid string constructor could not create nullUid for incorrect string: {0}", arg0);
 	}
 
-	public void log_StateManager_9() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.StateManager_9");
-		}
+	public String get_common_Uid_5(String arg0) {
+		return MessageFormat.format("ARJUNA-12050 Uid.Uid string constructor incorrect: {0}", arg0);
 	}
 
-	public void log_common_Mutex_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Mutex_1");
-		}
+	public void warn_common_Uid_6() {
+		logger.logv(WARN, "ARJUNA-12051 Uid.generateHash called for invalid Uid. Will ignore.", (Object)null);
 	}
 
-	public void log_common_Mutex_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Mutex_2");
-		}
+	public void warn_common_Uid_bytes(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12055 Exception thrown creating Uid from bytes!", (Object)null);
 	}
 
-	public void log_common_Uid_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_1");
-		}
+	public void warn_common_Uid_getbytes(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12056 Exception thrown getting bytes!", (Object)null);
 	}
 
-	public void log_common_Uid_10() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_10");
-		}
+	public void warn_common_Uid_npe(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12057 Uid.Uid string constructor {0} caught other throwable", arg0);
 	}
 
-	public void log_common_Uid_11() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_11");
-		}
+	public void warn_coordinator_AbstractRecord_npe(String arg0) {
+		logger.logv(WARN, "ARJUNA-12058 AbstractRecord.create {0} failed to find record.", arg0);
 	}
 
-	public void log_common_Uid_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_2");
-		}
+	public String get_coordinator_ActionHierarchy_1() {
+		return "ARJUNA-12059 Memory exhausted.";
 	}
 
-	public void log_common_Uid_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_3", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_1(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12060 Action nesting error - deletion of action id {0} invoked while child actions active", arg0);
 	}
 
-	public void log_common_Uid_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_4", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_2(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12061 Aborting child {0}", arg0);
 	}
 
-	public void log_common_Uid_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_5", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_21(String arg0) {
+		logger.logv(WARN, "ARJUNA-12062 BasicAction.restore_state - could not recover {0}", arg0);
 	}
 
-	public void log_common_Uid_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_6");
-		}
+	public void warn_coordinator_BasicAction_24() {
+		logger.logv(WARN, "ARJUNA-12063 BasicAction.restore_state - error unpacking action status.", (Object)null);
 	}
 
-	public void log_common_Uid_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_7");
-		}
+	public void warn_coordinator_BasicAction_29(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12065 BasicAction.Begin of action {0} ignored - incorrect invocation sequence {1}", arg0, arg1);
 	}
 
-	public void log_common_Uid_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_8");
-		}
+	public void warn_coordinator_BasicAction_3(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12066 Destructor of still running action id {0} invoked - Aborting", arg0);
 	}
 
-	public void log_common_Uid_9() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_9");
-		}
+	public void warn_coordinator_BasicAction_30(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12067 BasicAction.Begin of action {0} ignored - no parent and set as nested action!", arg0);
 	}
 
-	public void log_common_Uid_bytes() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_bytes");
-		}
+	public void warn_coordinator_BasicAction_31(Uid arg0, Uid arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12068 BasicAction.Begin of action {0} ignored - parent action {1} is not running: {2}", arg0, arg1, arg2);
 	}
 
-	public void log_common_Uid_getbytes() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_getbytes");
-		}
+	public void warn_coordinator_BasicAction_33(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12070 End called on non-running atomic action {0}", arg0);
 	}
 
-	public void log_common_Uid_npe(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.common.Uid_npe", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_34(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12071 End called on already committed atomic action {0}", arg0);
 	}
 
-	public void log_coordinator_AbstractRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.AbstractRecord_1");
-		}
+	public void warn_coordinator_BasicAction_35(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12072 End called illegally on atomic action {0}", arg0);
 	}
 
-	public void log_coordinator_AbstractRecord_npe(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_36(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12073 BasicAction.End() - prepare phase of action-id {0} failed.", arg0);
 	}
 
-	public void log_coordinator_ActionHierarchy_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1");
-		}
+	public void warn_coordinator_BasicAction_37(String arg0) {
+		logger.logv(WARN, "ARJUNA-12074 Received heuristic: {0} .", arg0);
 	}
 
-	public void log_coordinator_BasicAction_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_1", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_38() {
+		logger.logv(WARN, "ARJUNA-12075 Action Aborting", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_10(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_10", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_39(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12076 Abort called on non-running atomic action {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_11(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_11", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_BasicAction_40(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12077 Abort called on already aborted atomic action {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_12(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_12", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_41(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12078 Abort called illegaly on atomic action {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_13(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_13", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_BasicAction_42(Uid arg0, String arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12079 BasicAction {0} - non-empty ( {1} ) pendingList {2}", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_BasicAction_14(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_BasicAction_43(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12080 Transaction {0} marked as rollback only. Will abort.", arg0);
 	}
 
-	public void log_coordinator_BasicAction_15(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_15", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_44() {
+		logger.logv(WARN, "ARJUNA-12081 Cannot force parent to rollback - no handle!", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_16() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_16");
-		}
+	public void warn_coordinator_BasicAction_45(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12082 BasicAction::prepare - creating intentions list failed for {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_17(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_17", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_46(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12083 BasicAction::prepare - intentions list write failed for {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_18() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_18");
-		}
+	public void warn_coordinator_BasicAction_47(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12084 One-phase commit of action {0} received heuristic decision: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_19(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_19", new Object[] {arg0});
-		}
+	public void fatal_coordinator_BasicAction_48() {
+		logger.logv(FATAL, "ARJUNA-12085 BasicAction.onePhaseCommit failed - no object store for atomic action state!", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_2", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_49(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12086 Prepare phase of nested action {0} received inconsistent outcomes.", arg0);
 	}
 
-	public void log_coordinator_BasicAction_20(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_20", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_5(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12087 Activate of atomic action with id {0} and type {1} unexpectedly failed, could not load state.", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_21(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_21", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_50(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12088 Prepare phase of action {0} received heuristic decision: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_22(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_22", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_52(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12089 Top-level abort of action {0} received heuristic decision: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_23(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_23", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_53(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12090 Nested abort of action {0} received heuristic decision: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_24() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_24");
-		}
+	public void warn_coordinator_BasicAction_54(Uid arg0, String arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12091 Top-level abort of action {0} received {1} from {2}", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_BasicAction_25(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_25", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_55(Uid arg0, String arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12092 Nested abort of action {0} received {1} from {2}", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_BasicAction_26(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_26", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_56(Uid arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12093 BasicAction.checkIsCurrent {0} - terminating non-current transaction: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_27(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_27", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_57(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12094 Commit of action id {0} invoked while multiple threads active within it.", arg0);
 	}
 
-	public void log_coordinator_BasicAction_28(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_28", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_58(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12095 Abort of action id {0} invoked while multiple threads active within it.", arg0);
 	}
 
-	public void log_coordinator_BasicAction_29(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_29", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_BasicAction_59(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12096 Commit of action id {0} invoked while child actions active", arg0);
 	}
 
-	public void log_coordinator_BasicAction_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_3", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_5a(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12097 Deactivate of atomic action with id {0} and type {1} unexpectedly failed, could not save state.", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_30(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_30", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_60(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12098 Abort of action id {0} invoked while child actions active", arg0);
 	}
 
-	public void log_coordinator_BasicAction_31(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_31", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_BasicAction_61(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12099 Aborting child: {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_32() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_32");
-		}
+	public void warn_coordinator_BasicAction_62(String arg0) {
+		logger.logv(WARN, "ARJUNA-12100 Now aborting self: {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_33(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_33", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_64() {
+		logger.logv(WARN, "ARJUNA-12101 BasicAction.updateState - Could not create ObjectState for failedList", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_34(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_34", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_65() {
+		logger.logv(WARN, "ARJUNA-12102 BasicAction.End - Could not write failed list", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_35(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_35", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_68() {
+		logger.logv(WARN, "ARJUNA-12103 (Internal) BasicAction.merge - record rejected", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_36(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_36", new Object[] {arg0});
-		}
+	public String get_coordinator_BasicAction_69() {
+		return "ARJUNA-12104 No object store for:";
 	}
 
-	public void log_coordinator_BasicAction_37(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_37", new Object[] {arg0});
-		}
+	public void warn_coordinator_BasicAction_70(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12105 Could not remove intentions list:", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_38() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_38");
-		}
+	public void warn_coordinator_CheckedAction_1(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12107 CheckedAction::check - atomic action {0} commiting with {1} threads active!", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_39(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_39", new Object[] {arg0});
-		}
+	public void warn_coordinator_CheckedAction_2(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12108 CheckedAction::check - atomic action {0} aborting with {1} threads active!", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_40(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_40", new Object[] {arg0});
-		}
+	public String get_coordinator_TransactionReaper_1() {
+		return "ARJUNA-12109 TransactionReaper - attempting to insert an element that is already present.";
 	}
 
-	public void log_coordinator_BasicAction_41(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_41", new Object[] {arg0});
-		}
+	public void warn_coordinator_TransactionReaper_10(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12110 TransactionReaper::check successfuly marked TX {0} as rollback only", arg0);
 	}
 
-	public void log_coordinator_BasicAction_42(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_42", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_TransactionReaper_11(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12111 TransactionReaper::check failed to mark TX {0}  as rollback only", arg0);
 	}
 
-	public void log_coordinator_BasicAction_43(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_43", new Object[] {arg0});
-		}
+	public void warn_coordinator_TransactionReaper_12(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12112 TransactionReaper::check exception while marking TX {0} as rollback only", arg0);
 	}
 
-	public void log_coordinator_BasicAction_44() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_44");
-		}
+	public void warn_coordinator_TransactionReaper_13(String arg0, Uid arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12113 TransactionReaper::doCancellations worker {0} missed interrupt when cancelling TX {1} -- exiting as zombie (zombie count decremented to {2})", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_BasicAction_45(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_45", new Object[] {arg0});
-		}
+	public void warn_coordinator_TransactionReaper_14(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12114 TransactionReaper::doCancellations worker {0} successfuly marked TX {1} as rollback only", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_46(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_46", new Object[] {arg0});
-		}
+	public void warn_coordinator_TransactionReaper_15(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12115 TransactionReaper::doCancellations worker {0} failed to mark TX {1}  as rollback only", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_47(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_47", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TransactionReaper_16(String arg0, Uid arg1, Throwable arg2) {
+		logger.logv(WARN, arg2, "ARJUNA-12116 TransactionReaper::doCancellations worker {0} exception while marking TX {1} as rollback only", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_48() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_48");
-		}
+	public void warn_coordinator_TransactionReaper_18(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12117 TransactionReaper::check timeout for TX {0} in state  {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_49(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_49", new Object[] {arg0});
-		}
+	public void warn_coordinator_TransactionReaper_19() {
+		logger.logv(WARN, "ARJUNA-12118 TransactionReaper NORMAL mode is deprecated. Update config to use PERIODIC for equivalent behaviour.", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_5(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5", new Object[] {arg0, arg1});
-		}
+	public void error_coordinator_TransactionReaper_5(String arg0) {
+		logger.logv(ERROR, "ARJUNA-12119 TransactionReaper::check worker zombie count {0} exceeds specified limit", arg0);
 	}
 
-	public void log_coordinator_BasicAction_50(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_50", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TransactionReaper_6(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12120 TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_51(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_51", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_TransactionReaper_7(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12121 TransactionReaper::doCancellations worker {0} successfully canceled TX {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_52(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_52", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TransactionReaper_8(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12122 TransactionReaper::doCancellations worker {0} failed to cancel TX {1} -- rescheduling for mark-as-rollback", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_53(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_53", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TransactionReaper_9(String arg0, Uid arg1, Throwable arg2) {
+		logger.logv(WARN, arg2, "ARJUNA-12123 TransactionReaper::doCancellations worker {0} exception during cancel of TX {1} -- rescheduling for mark-as-rollback", arg0, arg1);
 	}
 
-	public void log_coordinator_BasicAction_54(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_54", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_1() {
+		logger.logv(WARN, "ARJUNA-12124 TwoPhaseCoordinator.beforeCompletion - attempted rollback_only failed!", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_55(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_55", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_2(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12125 TwoPhaseCoordinator.beforeCompletion - failed for {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_56(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_56", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_3() {
+		logger.logv(WARN, "ARJUNA-12126 TwoPhaseCoordinator.beforeCompletion TwoPhaseCoordinator.afterCompletion called on still running transaction!", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_57(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_57", new Object[] {arg0});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_4(String arg0) {
+		logger.logv(WARN, "ARJUNA-12127 TwoPhaseCoordinator.afterCompletion - returned failure for {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_58(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_58", new Object[] {arg0});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_4a(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12128 TwoPhaseCoordinator.afterCompletion - failed for {0} with exception", arg0);
 	}
 
-	public void log_coordinator_BasicAction_59(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_59", new Object[] {arg0});
-		}
+	public void warn_coordinator_TwoPhaseCoordinator_4b(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12129 TwoPhaseCoordinator.afterCompletion - failed for {0} with error", arg0);
 	}
 
-	public void log_coordinator_BasicAction_5a(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5a", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TxControl_1(String arg0) {
+		logger.logv(WARN, "ARJUNA-12130 Name of XA node not defined. Using {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_6(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_6", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_TxControl_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12131 Supplied name of node is too long. Using {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_60(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_60", new Object[] {arg0});
-		}
+	public void warn_coordinator_TxControl_3(String arg0) {
+		logger.logv(WARN, "ARJUNA-12132 Supplied name of node contains reserved character '-'. Using {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_61(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_61", new Object[] {arg0});
-		}
+	public String get_coordinator_invalidos() {
+		return "ARJUNA-12135 Could not create ObjectStore type:";
 	}
 
-	public void log_coordinator_BasicAction_62(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_62", new Object[] {arg0});
-		}
+	public void warn_coordinator_norecordfound(String arg0) {
+		logger.logv(WARN, "ARJUNA-12136 Could not recreate abstract record {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_63(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_63", new Object[] {arg0, arg1});
-		}
+	public void warn_coordinator_notrunning() {
+		logger.logv(WARN, "ARJUNA-12137 Cannot begin new transaction as TM is disabled. Marking as rollback-only.", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_64() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_64");
-		}
+	public void warn_coordinator_toolong() {
+		logger.logv(WARN, "ARJUNA-12138 Node name cannot exceed 64 bytes!", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_65() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_65");
-		}
+	public void warn_lastResource_disableWarning() {
+		logger.logv(WARN, "ARJUNA-12139 You have chosen to disable the Multiple Last Resources warning. You will see it only once.", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_66(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_66", new Object[] {arg0, arg1});
-		}
+	public void warn_lastResource_disallow(String arg0) {
+		logger.logv(WARN, "ARJUNA-12140 Adding multiple last resources is disallowed. Current resource is {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_67(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_67", new Object[] {arg0, arg1});
-		}
+	public void warn_lastResource_multipleWarning(String arg0) {
+		logger.logv(WARN, "ARJUNA-12141 Multiple last resources have been added to the current transaction. This is transactionally unsafe and should not be relied upon. Current resource is {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_68() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_68");
-		}
+	public void warn_lastResource_startupWarning() {
+		logger.logv(WARN, "ARJUNA-12142 You have chosen to enable multiple last resources in the transaction manager. This is transactionally unsafe and should not be relied upon.", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_69() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_69");
-		}
+	public void warn_objectstore_ObjectStoreType_1(String arg0) {
+		logger.logv(WARN, "ARJUNA-12143 unknown store: {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_7(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_7", new Object[] {arg0, arg1, arg2});
-		}
+	public String get_objectstore_ObjectStoreType_2() {
+		return "ARJUNA-12144 unknown store:";
 	}
 
-	public void log_coordinator_BasicAction_70() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_70");
-		}
+	public void warn_recovery_ActionStatusService_5(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12146 ActionStatusService: searching for uid: {0}", arg0);
 	}
 
-	public void log_coordinator_BasicAction_71(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_71", new Object[] {arg0, arg1});
-		}
+	public void info_recovery_ActionStatusService_1(String arg0, String arg1, String arg2) {
+		logger.logv(INFO, "ARJUNA-12147 transactionType: {0} uid: {1}   Status is {2}", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_BasicAction_8(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_8", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_ActionStatusService_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12148 Other Exception", (Object)null);
 	}
 
-	public void log_coordinator_BasicAction_9(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_9", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_recovery_ActionStatusService_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12149 Exception retrieving action status", (Object)null);
 	}
 
-	public void log_coordinator_CheckedAction_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.CheckedAction_1", new Object[] {arg0, arg1});
-		}
+	public void info_recovery_ActionStatusService_4(Uid arg0) {
+		logger.logv(INFO, "ARJUNA-12150 matching Uid {0} found", arg0);
 	}
 
-	public void log_coordinator_CheckedAction_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.CheckedAction_2", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_ActionStatusService_6(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12151 Exception when accessing transaction store", (Object)null);
 	}
 
-	public void log_coordinator_RecordList_1(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_1", new Object[] {arg0, arg1, arg2, arg3});
-		}
+	public void warn_recovery_ActionStatusService_7() {
+		logger.logv(WARN, "ARJUNA-12152 Connection Lost to Recovery Manager", (Object)null);
 	}
 
-	public void log_coordinator_RecordList_2(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_2", new Object[] {arg0, arg1, arg2, arg3});
-		}
+	public void warn_recovery_RecoverAtomicAction_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12153 RecoverAtomicAction.replayPhase2: Unexpected status: {0}", arg0);
 	}
 
-	public void log_coordinator_RecordList_3(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_3", new Object[] {arg0, arg1, arg2, arg3});
-		}
+	public void warn_recovery_RecoverAtomicAction_4(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12154 RecoverAtomicAction: transaction {0} not activated, unable to replay phase 2 commit. Check state has not already been completed.", arg0);
 	}
 
-	public void log_coordinator_RecordList_4(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_4", new Object[] {arg0, arg1, arg2, arg3});
-		}
+	public void warn_recovery_RecoverAtomicAction_5(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12155 RecoverAtomicAction - tried to move failed activation log {0}", arg0);
 	}
 
-	public void log_coordinator_RecordList_5(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_5", new Object[] {arg0, arg1, arg2});
-		}
+	public void info_recovery_RecoveryManager_4(String arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-12159 Connected to recovery manager on {0}:{1}", arg0, arg1);
 	}
 
-	public void log_coordinator_RecordList_6(String arg0, String arg1, String arg2, String arg3, String arg4) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.RecordList_6", new Object[] {arg0, arg1, arg2, arg3, arg4});
-		}
+	public void warn_recovery_TransactionStatusConnectionManager_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12161 Exception when accessing data store", (Object)null);
 	}
 
-	public void log_coordinator_TransactionReaper_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_1");
-		}
+	public void warn_recovery_TransactionStatusConnectionManager_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12162 Object store exception", (Object)null);
 	}
 
-	public void log_coordinator_TransactionReaper_10(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_10", new Object[] {arg0});
-		}
+	public void info_recovery_TransactionStatusManager_1(String arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-12163 Starting service {0} on port {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_TransactionReaper_11(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_11", new Object[] {arg0});
-		}
+	public String get_recovery_TransactionStatusManager_13() {
+		return "ARJUNA-12167 Invalid host or port";
 	}
 
-	public void log_coordinator_TransactionReaper_12(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_12", new Object[] {arg0});
-		}
+	public void warn_recovery_TransactionStatusManager_14(String arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12168 Failed to create server socket on address {0} and port: {1}", arg0, arg1);
 	}
 
-	public void log_coordinator_TransactionReaper_13(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_13", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_recovery_TransactionStatusManager_2() {
+		logger.logv(WARN, "ARJUNA-12169 Listener failed", (Object)null);
 	}
 
-	public void log_coordinator_TransactionReaper_14(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_14", new Object[] {arg0, arg1});
-		}
+	public void info_recovery_TransactionStatusManager_3(String arg0, String arg1, String arg2) {
+		logger.logv(INFO, "ARJUNA-12170 TransactionStatusManager started on port {0} and host {1} with service {2}", arg0, arg1, arg2);
 	}
 
-	public void log_coordinator_TransactionReaper_15(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_15", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_TransactionStatusManager_4(String arg0) {
+		logger.logv(WARN, "ARJUNA-12171 Class not found: {0}", arg0);
 	}
 
-	public void log_coordinator_TransactionReaper_16(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_16", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_TransactionStatusManager_5(String arg0) {
+		logger.logv(WARN, "ARJUNA-12172 Failed to instantiate service class: {0}", arg0);
 	}
 
-	public void log_coordinator_TransactionReaper_17(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_17", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_TransactionStatusManager_6(String arg0) {
+		logger.logv(WARN, "ARJUNA-12173 Illegal access to service class: {0}", arg0);
 	}
 
-	public void log_coordinator_TransactionReaper_18(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_18", new Object[] {arg0, arg1});
-		}
+	public String get_recovery_TransactionStatusManager_9() {
+		return "ARJUNA-12176 Could not get unique port.";
 	}
 
-	public void log_coordinator_TransactionReaper_19() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_19");
-		}
+	public String get_state_InputBuffer_1() {
+		return "ARJUNA-12177 com.arjuna.ats.arjuna.state.InputBuffer_1 - Invalid input buffer: byte.";
 	}
 
-	public void log_coordinator_TransactionReaper_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_2", new Object[] {arg0});
-		}
+	public String get_state_InputBuffer_10() {
+		return "ARJUNA-12178 com.arjuna.ats.arjuna.state.InputBuffer_10 - Invalid input buffer: string.";
 	}
 
-	public void log_coordinator_TransactionReaper_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_3", new Object[] {arg0, arg1});
-		}
+	public String get_state_InputBuffer_11() {
+		return "ARJUNA-12179 com.arjuna.ats.arjuna.state.InputBuffer_11 - Invalid from buffer";
 	}
 
-	public void log_coordinator_TransactionReaper_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_4", new Object[] {arg0});
-		}
+	public String get_state_InputBuffer_2() {
+		return "ARJUNA-12180 com.arjuna.ats.arjuna.state.InputBuffer_2 - Invalid input buffer: bytes.";
 	}
 
-	public void log_coordinator_TransactionReaper_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_5", new Object[] {arg0});
-		}
+	public String get_state_InputBuffer_3() {
+		return "ARJUNA-12181 com.arjuna.ats.arjuna.state.InputBuffer_3 - Invalid input buffer: boolean.";
 	}
 
-	public void log_coordinator_TransactionReaper_6(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_6", new Object[] {arg0, arg1});
-		}
+	public String get_state_InputBuffer_4() {
+		return "ARJUNA-12182 com.arjuna.ats.arjuna.state.InputBuffer_4 - Invalid input buffer: char.";
 	}
 
-	public void log_coordinator_TransactionReaper_7(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_7", new Object[] {arg0, arg1});
-		}
+	public String get_state_InputBuffer_5() {
+		return "ARJUNA-12183 com.arjuna.ats.arjuna.state.InputBuffer_5 - Invalid input buffer: short.";
 	}
 
-	public void log_coordinator_TransactionReaper_8(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_8", new Object[] {arg0, arg1});
-		}
+	public String get_state_InputBuffer_6() {
+		return "ARJUNA-12184 com.arjuna.ats.arjuna.state.InputBuffer_6 - Invalid input buffer: int.";
 	}
 
-	public void log_coordinator_TransactionReaper_9(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_9", new Object[] {arg0, arg1});
-		}
+	public String get_state_InputBuffer_7() {
+		return "ARJUNA-12185 com.arjuna.ats.arjuna.state.InputBuffer_7 - Invalid input buffer: long.";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1");
-		}
+	public String get_state_InputBuffer_8() {
+		return "ARJUNA-12186 com.arjuna.ats.arjuna.state.InputBuffer_8 - Invalid input buffer: float.";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[] {arg0});
-		}
+	public String get_state_InputBuffer_9() {
+		return "ARJUNA-12187 com.arjuna.ats.arjuna.state.InputBuffer_9 - Invalid input buffer: double";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_3");
-		}
+	public String get_state_OutputBuffer_1() {
+		return "ARJUNA-12188 com.arjuna.ats.arjuna.state.OutputBuffer_1 - Invalid input buffer: byte.";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_10() {
+		return "ARJUNA-12189 com.arjuna.ats.arjuna.state.OutputBuffer_10 - Invalid input buffer: string.";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_4a(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[] {arg0, arg1});
-		}
+	public String get_state_OutputBuffer_11() {
+		return "ARJUNA-12190 com.arjuna.ats.arjuna.state.OutputBuffer_11 - Invalid from buffer";
 	}
 
-	public void log_coordinator_TwoPhaseCoordinator_4b(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[] {arg0, arg1});
-		}
+	public String get_state_OutputBuffer_2() {
+		return "ARJUNA-12191 com.arjuna.ats.arjuna.state.OutputBuffer_2 - Invalid input buffer: bytes.";
 	}
 
-	public void log_coordinator_TxControl_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TxControl_1", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_3() {
+		return "ARJUNA-12192 com.arjuna.ats.arjuna.state.OutputBuffer_3 - Invalid input buffer: boolean.";
 	}
 
-	public void log_coordinator_TxControl_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TxControl_2", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_4() {
+		return "ARJUNA-12193 com.arjuna.ats.arjuna.state.OutputBuffer_4 - Invalid input buffer: char.";
 	}
 
-	public void log_coordinator_TxControl_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.TxControl_3", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_5() {
+		return "ARJUNA-12194 com.arjuna.ats.arjuna.state.OutputBuffer_5 - Invalid input buffer: short.";
 	}
 
-	public void log_coordinator_cafactoryerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.cafactoryerror");
-		}
+	public String get_state_OutputBuffer_6() {
+		return "ARJUNA-12195 com.arjuna.ats.arjuna.state.OutputBuffer_6 - Invalid input buffer: int.";
 	}
 
-	public void log_coordinator_checkedactionfactory(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.checkedactionfactory", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_7() {
+		return "ARJUNA-12196 com.arjuna.ats.arjuna.state.OutputBuffer_7 - Invalid input buffer: long.";
 	}
 
-	public void log_coordinator_invalidos() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.invalidos");
-		}
+	public String get_state_OutputBuffer_8() {
+		return "ARJUNA-12197 com.arjuna.ats.arjuna.state.OutputBuffer_8 - Invalid input buffer: float.";
 	}
 
-	public void log_coordinator_norecordfound(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.norecordfound", new Object[] {arg0});
-		}
+	public String get_state_OutputBuffer_9() {
+		return "ARJUNA-12198 com.arjuna.ats.arjuna.state.OutputBuffer_9 - Invalid input buffer: double";
 	}
 
-	public void log_coordinator_notrunning() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.notrunning");
-		}
+	public void info_tools_osb_util_JMXServer_m_1(String arg0) {
+		logger.logv(INFO, "ARJUNA-12202 registering bean {0}.", arg0);
 	}
 
-	public void log_coordinator_toolong() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.coordinator.toolong");
-		}
+	public void info_tools_osb_util_JMXServer_m_2(String arg0) {
+		logger.logv(INFO, "ARJUNA-12203 Instance already exists: {0}.", arg0);
 	}
 
-	public void log_lastResource_disableWarning() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.lastResource.disableWarning");
-		}
+	public void warn_tools_osb_util_JMXServer_m_3(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12204 Error registering {0}", arg0);
 	}
 
-	public void log_lastResource_disallow(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.lastResource.disallow", new Object[] {arg0});
-		}
+	public void warn_tools_osb_util_JMXServer_m_5(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12206 Unable to unregister bean {0}", arg0);
 	}
 
-	public void log_lastResource_multipleWarning(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.lastResource.multipleWarning", new Object[] {arg0});
-		}
+	public void warn_tools_osb_util_JMXServer_m_6(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12207 Unable to unregister bean {0}", arg0);
 	}
 
-	public void log_lastResource_startupWarning() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.lastResource.startupWarning");
-		}
+	public void warn_utils_FileLock_4(String arg0) {
+		logger.logv(WARN, "ARJUNA-12208 An error occurred while creating file {0}", arg0);
 	}
 
-	public void log_objectstore_ObjectStoreType_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_1", new Object[] {arg0});
-		}
+	public void warn_utils_Utility_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12209 Utility.getDefaultProcess - failed with", (Object)null);
 	}
 
-	public void log_objectstore_ObjectStoreType_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_2");
-		}
+	public void warn_utils_Utility_2() {
+		logger.logv(WARN, "ARJUNA-12210 Unable to use InetAddress.getLocalHost() to resolve address.", (Object)null);
 	}
 
-	public void log_objectstore_ObjectStore_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.objectstore.ObjectStore_1");
-		}
+	public void warn_ats_atomicaction_1(String arg0) {
+		logger.logv(WARN, "ARJUNA-12211 Attempt to suspend a non-AtomicAction transaction. Type is {0}", arg0);
 	}
 
-	public void log_recovery_ActionStatucService_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatucService_5", new Object[] {arg0});
-		}
+	public void warn_abstractrecords_smf1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12212 StateManagerFriend.forgetAction", (Object)null);
 	}
 
-	public void log_recovery_ActionStatusService_1(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_1", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_abstractrecords_smf2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12213 StateManagerFriend.destroyed", (Object)null);
 	}
 
-	public void log_recovery_ActionStatusService_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_2", new Object[] {arg0});
-		}
+	public void warn_abstractrecords_smf3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12214 StateManagerFriend.rememberAction", (Object)null);
 	}
 
-	public void log_recovery_ActionStatusService_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3");
-		}
+	public void warn_common_ClassloadingUtility_1() {
+		logger.logv(WARN, "ARJUNA-12215 className is null", (Object)null);
 	}
 
-	public void log_recovery_ActionStatusService_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_4", new Object[] {arg0});
-		}
+	public void warn_common_ClassloadingUtility_2(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12216 attempt to load {0} threw ClassNotFound. Wrong classloader?", arg0);
 	}
 
-	public void log_recovery_ActionStatusService_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_6", new Object[] {arg0});
-		}
+	public void warn_common_ClassloadingUtility_3(String arg0, String arg1, Throwable arg2) {
+		logger.logv(WARN, arg2, "ARJUNA-12217 class {0} does not implement {1}", arg0, arg1);
 	}
 
-	public void log_recovery_ActionStatusService_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_7");
-		}
+	public void warn_common_ClassloadingUtility_4(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12218 can't create new instance of {0}", arg0);
 	}
 
-	public void log_recovery_RecoverAtomicAction_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1", new Object[] {arg0, arg1});
-		}
+	public void warn_common_ClassloadingUtility_5(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12219 can't access {0}", arg0);
 	}
 
-	public void log_recovery_RecoverAtomicAction_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2", new Object[] {arg0});
-		}
+	public void warn_common_ClassloadingUtility_6(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12220 can't initialize from string {0}", arg0);
 	}
 
-	public void log_recovery_RecoverAtomicAction_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3", new Object[] {arg0});
-		}
+	public void warn_objectstore_CacheStore_1(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12221 Commit state failed for {0} and {1}", arg0, arg1);
 	}
 
-	public void log_recovery_RecoverAtomicAction_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4", new Object[] {arg0});
-		}
+	public void warn_objectstore_CacheStore_2(Uid arg0, String arg1, String arg2) {
+		logger.logv(WARN, "ARJUNA-12222 Remove state failed for {0} and {1} and {2}", arg0, arg1, arg2);
 	}
 
-	public void log_recovery_RecoverAtomicAction_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5", new Object[] {arg0});
-		}
+	public void warn_objectstore_CacheStore_3(Uid arg0, String arg1, String arg2, String arg3) {
+		logger.logv(WARN, "ARJUNA-12223 Write state failed for {0} and {1} and {2} and {3}", arg0, arg1, arg2, arg3);
 	}
 
-	public void log_recovery_RecoveryManager_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoveryManager_1", new Object[] {arg0});
-		}
+	public void warn_objectstore_CacheStore_4(String arg0) {
+		logger.logv(WARN, "ARJUNA-12224 Unknown work type {0}", arg0);
 	}
 
-	public void log_recovery_RecoveryManager_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoveryManager_2", new Object[] {arg0});
-		}
+	public void warn_objectstore_FileSystemStore_1(String arg0) {
+		logger.logv(WARN, "ARJUNA-12225 FileSystemStore::setupStore - cannot access root of object store: {0}", arg0);
 	}
 
-	public void log_recovery_RecoveryManager_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoveryManager_3", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_FileSystemStore_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12226 FileSystemStore.removeFromCache - no entry for {0}", arg0);
 	}
 
-	public void log_recovery_RecoveryManager_4(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoveryManager_4", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_FileSystemStore_20(String arg0) {
+		logger.logv(WARN, "ARJUNA-12227 FileSystemStore.renameFromTo - from {0} not present. Possibly renamed by crash recovery.", arg0);
 	}
 
-	public void log_recovery_RecoveryManager_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.RecoveryManager_5");
-		}
+	public String get_objectstore_FileSystemStore_2a() {
+		return "ARJUNA-12228 FileSystemStore::allObjUids - could not pack Uid.";
 	}
 
-	public void log_recovery_TransactionStatusConnectionManager_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1", new Object[] {arg0});
-		}
+	public String get_objectstore_FileSystemStore_3() {
+		return "ARJUNA-12229 FileSystemStore::allObjUids - could not pack end of list Uid.";
 	}
 
-	public void log_recovery_TransactionStatusConnectionManager_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2", new Object[] {arg0});
-		}
+	public String get_objectstore_FileSystemStore_4() {
+		return "ARJUNA-12230 FileSytemStore::allTypes - could not pack entry string.";
 	}
 
-	public void log_recovery_TransactionStatusConnectionManager_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3", new Object[] {arg0});
-		}
+	public String get_objectstore_FileSystemStore_5() {
+		return "ARJUNA-12231 FileSystemStore::allTypes - could not pack end of list string.";
 	}
 
-	public void log_recovery_TransactionStatusConnectionManager_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4", new Object[] {arg0});
-		}
+	public String get_objectstore_FileSystemStore_6() {
+		return "ARJUNA-12232 FileSystemStore::setupStore - error from unpack object store.";
 	}
 
-	public void log_recovery_TransactionStatusManager_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1", new Object[] {arg0, arg1});
-		}
+	public String get_objectstore_FileSystemStore_7() {
+		return "ARJUNA-12233 FileSystemStore::allTypes - could not pack entry string.";
 	}
 
-	public void log_recovery_TransactionStatusManager_10(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10", new Object[] {arg0});
-		}
+	public String get_objectstore_FileSystemStore_8() {
+		return "ARJUNA-12234 FileSystemStore::createHierarchy - null directory name.";
 	}
 
-	public void log_recovery_TransactionStatusManager_11() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11");
-		}
+	public void warn_objectstore_HashedStore_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12236 invalid number of hash directories: {0}. Will use default.", arg0);
 	}
 
-	public void log_recovery_TransactionStatusManager_12() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_12");
-		}
+	public String get_objectstore_HashedStore_5() {
+		return "ARJUNA-12237 HashedStore.allObjUids - could not pack Uid.";
 	}
 
-	public void log_recovery_TransactionStatusManager_13() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13");
-		}
+	public String get_objectstore_HashedStore_6() {
+		return "ARJUNA-12238 HashedStore.allObjUids - could not pack end of list Uid.";
 	}
 
-	public void log_recovery_TransactionStatusManager_14(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_JDBCImple_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12239 hide_state caught exception", (Object)null);
 	}
 
-	public void log_recovery_TransactionStatusManager_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2");
-		}
+	public void warn_objectstore_JDBCImple_10(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12240 remove_state - type() operation of object with uid {0} returns NULL", arg0);
 	}
 
-	public void log_recovery_TransactionStatusManager_3(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_objectstore_JDBCImple_11(String arg0) {
+		logger.logv(WARN, "ARJUNA-12241 invalid initial pool size: {0}", arg0);
 	}
 
-	public void log_recovery_TransactionStatusManager_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4", new Object[] {arg0});
-		}
+	public void warn_objectstore_JDBCImple_12(String arg0) {
+		logger.logv(WARN, "ARJUNA-12242 invalid maximum pool size: {0}", arg0);
 	}
 
-	public void log_recovery_TransactionStatusManager_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5", new Object[] {arg0});
-		}
+	public void warn_objectstore_JDBCImple_13(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12243 initialise caught exceptionatorLoader_3", (Object)null);
 	}
 
-	public void log_recovery_TransactionStatusManager_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6", new Object[] {arg0});
-		}
+	public void warn_objectstore_JDBCImple_14(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12244 getState caught exception", (Object)null);
 	}
 
-	public void log_recovery_TransactionStatusManager_7(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7", new Object[] {arg0});
-		}
+	public void warn_objectstore_JDBCImple_15(String arg0) {
+		logger.logv(WARN, "ARJUNA-12245 removeFromCache - no entry for {0}", arg0);
 	}
 
-	public void log_recovery_TransactionStatusManager_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8", new Object[] {arg0});
-		}
+	public void warn_objectstore_JDBCImple_16(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12246 getPool caught exception", (Object)null);
 	}
 
-	public void log_recovery_TransactionStatusManager_9() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9");
-		}
+	public void info_objectstore_JDBCImple_17() {
+		logger.logv(INFO, "ARJUNA-12247 getPool - interrupted while waiting for a free connection", (Object)null);
 	}
 
-	public void log_state_InputBuffer_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_1");
-		}
+	public void warn_objectstore_JDBCImple_18() {
+		logger.logv(WARN, "ARJUNA-12248 freePool - freeing a connection which is already free!", (Object)null);
 	}
 
-	public void log_state_InputBuffer_10() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_10");
-		}
+	public void warn_objectstore_JDBCImple_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12249 reveal_state caught exception", (Object)null);
 	}
 
-	public void log_state_InputBuffer_11() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_11");
-		}
+	public void warn_objectstore_JDBCImple_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12250 currentState caught exception", (Object)null);
 	}
 
-	public void log_state_InputBuffer_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_2");
-		}
+	public void warn_objectstore_JDBCImple_4(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12251 allObjUids caught exception", (Object)null);
 	}
 
-	public void log_state_InputBuffer_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_3");
-		}
+	public void warn_objectstore_JDBCImple_5(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12252 allObjUids - pack of Uid failed", (Object)null);
 	}
 
-	public void log_state_InputBuffer_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_4");
-		}
+	public void warn_objectstore_JDBCImple_6(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12253 allTypes caught exception", (Object)null);
 	}
 
-	public void log_state_InputBuffer_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_5");
-		}
+	public void warn_objectstore_JDBCImple_7(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12254 allTypes - pack of Uid failed", (Object)null);
 	}
 
-	public void log_state_InputBuffer_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_6");
-		}
+	public void warn_objectstore_JDBCImple_8(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12255 remove_state caught exception", (Object)null);
 	}
 
-	public void log_state_InputBuffer_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_7");
-		}
+	public void warn_objectstore_JDBCImple_9(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-12256 remove_state() attempted removal of {0} state for object with uid {1}", arg0, arg1);
 	}
 
-	public void log_state_InputBuffer_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_8");
-		}
+	public void warn_objectstore_JDBCImple_readfailed() {
+		logger.logv(WARN, "ARJUNA-12257 JDBCImple:read_state failed", (Object)null);
 	}
 
-	public void log_state_InputBuffer_9() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.InputBuffer_9");
-		}
+	public void warn_objectstore_JDBCImple_writefailed(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12258 JDBCImple:write_state caught exception", (Object)null);
 	}
 
-	public void log_state_OutputBuffer_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_1");
-		}
+	public void fatal_objectstore_JDBCStore_1(String arg0, String arg1) {
+		logger.logv(FATAL, "ARJUNA-12259 JDBCStore could not setup store < {0} , {1} >", arg0, arg1);
 	}
 
-	public void log_state_OutputBuffer_10() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_10");
-		}
+	public void fatal_objectstore_JDBCStore_2(String arg0, Throwable arg1) {
+		logger.logv(FATAL, arg1, "ARJUNA-12260 Received exception for {0}", arg0);
 	}
 
-	public void log_state_OutputBuffer_11() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_11");
-		}
+	public void warn_objectstore_JDBCStore_3() {
+		logger.logv(WARN, "ARJUNA-12261 JDBCStore.setupStore failed to initialise!", (Object)null);
 	}
 
-	public void log_state_OutputBuffer_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_2");
-		}
+	public String get_objectstore_JDBCStore_5() {
+		return "ARJUNA-12263 No JDBCAccess implementation provided!";
 	}
 
-	public void log_state_OutputBuffer_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_3");
-		}
+	public void warn_objectstore_ShadowingStore_1() {
+		logger.logv(WARN, "ARJUNA-12264 ShadowingStore.commit_state - store invalid!", (Object)null);
 	}
 
-	public void log_state_OutputBuffer_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_4");
-		}
+	public void warn_objectstore_ShadowingStore_10(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12265 ShadowingStore::remove_state() - state {0} does not exist for type {1}", arg0, arg1);
 	}
 
-	public void log_state_OutputBuffer_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_5");
-		}
+	public void warn_objectstore_ShadowingStore_11(String arg0) {
+		logger.logv(WARN, "ARJUNA-12266 ShadowingStore::remove_state() - unlink failed on {0}", arg0);
 	}
 
-	public void log_state_OutputBuffer_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_6");
-		}
+	public void warn_objectstore_ShadowingStore_12(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12267 ShadowingStore.remove_state() - fd error for {0}", arg0);
 	}
 
-	public void log_state_OutputBuffer_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_7");
-		}
+	public void info_objectstore_ShadowingStore_14(Uid arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-12269 UNKNOWN state for object with uid {0} , type {1}", arg0, arg1);
 	}
 
-	public void log_state_OutputBuffer_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_8");
-		}
+	public void info_objectstore_ShadowingStore_15(Uid arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-12270 HIDDEN state for object with uid {0} , type {1}", arg0, arg1);
 	}
 
-	public void log_state_OutputBuffer_9() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.state.OutputBuffer_9");
-		}
+	public void warn_objectstore_ShadowingStore_17(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-12272 ShadowingStore.remove_state - type() operation of object with uid {0} returns NULL", arg0);
 	}
 
-	public void log_tools_osb_mbean_m_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.mbean.m_1");
-		}
+	public void warn_objectstore_ShadowingStore_18(String arg0) {
+		logger.logv(WARN, "ARJUNA-12273 ShadowingStore::write_state() - openAndLock failed for {0}", arg0);
 	}
 
-	public void log_tools_osb_mbean_m_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.mbean.m_2");
-		}
+	public void warn_objectstore_ShadowingStore_19(String arg0) {
+		logger.logv(WARN, "ARJUNA-12274 ShadowingStore::write_state - unlock or close of {0} failed.", arg0);
 	}
 
-	public void log_tools_osb_mbean_m_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.mbean.m_3", new Object[] {arg0});
-		}
+	public void warn_objectstore_ShadowingStore_2(String arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12275 ShadowStore::commit_state - failed to rename {0} to {1}", arg0, arg1);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1", new Object[] {arg0});
-		}
+	public void warn_objectstore_ShadowingStore_3(String arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12278 ShadowStore::hide_state - failed to rename {0} to {1}", arg0, arg1);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2", new Object[] {arg0});
-		}
+	public void warn_objectstore_ShadowingStore_4(String arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12279 ShadowStore::reveal_state - failed to rename {0} to {1}", arg0, arg1);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_ShadowingStore_6() {
+		logger.logv(WARN, "ARJUNA-12281 ShadowingStore.read_state - store invalid!", (Object)null);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_4", new Object[] {arg0});
-		}
+	public void warn_objectstore_ShadowingStore_7() {
+		logger.logv(WARN, "ARJUNA-12282 ShadowingStore::read_state() failed", (Object)null);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_5(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5]", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_ShadowingStore_8(String arg0) {
+		logger.logv(WARN, "ARJUNA-12283 ShadowingStore::read_state - unlock or close of {0} failed", arg0);
 	}
 
-	public void log_tools_osb_util_JMXServer_m_6(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6", new Object[] {arg0, arg1});
-		}
+	public void warn_objectstore_ShadowingStore_9(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12284 ShadowingStore::remove_state() - access problems on {0} and {1}", arg0, arg1);
 	}
 
-	public void log_utils_FileLock_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_1", new Object[] {arg0});
-		}
+	public void warn_objectstore_jdbc_oracle_1() {
+		logger.logv(WARN, "ARJUNA-12285 oracle:read_state failed", (Object)null);
 	}
 
-	public void log_utils_FileLock_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_2", new Object[] {arg0});
-		}
+	public void warn_objectstore_jdbc_oracle_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12286 oracle:write_state caught exception", (Object)null);
 	}
 
-	public void log_utils_FileLock_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_3", new Object[] {arg0});
-		}
+	public String get_objectstore_notypenameuid() {
+		return "ARJUNA-12287 No typename for object:";
 	}
 
-	public void log_utils_FileLock_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_4", new Object[] {arg0});
-		}
+	public String get_objectstore_packProblem() {
+		return "ARJUNA-12288 allTypes - could not pack end of list string.";
 	}
 
-	public void log_utils_FileLock_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_5", new Object[] {arg0});
-		}
+	public void warn_recovery_AtomicActionRecoveryModule_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12289 RecoveryManagerStatusModule: Object store exception", (Object)null);
 	}
 
-	public void log_utils_FileLock_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.FileLock_6", new Object[] {arg0});
-		}
+	public void warn_recovery_AtomicActionRecoveryModule_2(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12290 failed to recover Transaction {0}", arg0);
 	}
 
-	public void log_utils_Utility_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.Utility_1");
-		}
+	public void warn_recovery_AtomicActionRecoveryModule_3(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12291 failed to access transaction store {0}", arg0);
 	}
 
-	public void log_utils_Utility_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.arjuna.utils.Utility_2");
-		}
+	public void warn_recovery_Connection_1() {
+		logger.logv(WARN, "ARJUNA-12292 Connection - IOException", (Object)null);
 	}
 
-	public void log_ats_atomicaction_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.atomicaction_1", new Object[] {arg0});
-		}
+	public void warn_recovery_Connection_2() {
+		logger.logv(WARN, "ARJUNA-12293 Setting timeout exception.", (Object)null);
 	}
 
-	public void log_abstractrecords_smf1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf1");
-		}
+	public void warn_recovery_ExpiredEntryMonitor_10(String arg0) {
+		logger.logv(WARN, "ARJUNA-12294 Loading expiry scanner: could not find class {0}", arg0);
 	}
 
-	public void log_abstractrecords_smf2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf2");
-		}
+	public void warn_recovery_ExpiredEntryMonitor_12(String arg0) {
+		logger.logv(WARN, "ARJUNA-12296 ExpiredEntryMonitor running at {0}", arg0);
 	}
 
-	public void log_abstractrecords_smf3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf3");
-		}
+	public void info_recovery_ExpiredEntryMonitor_5() {
+		logger.logv(INFO, "ARJUNA-12297 ExpiredEntryMonitor - no scans on first iteration", (Object)null);
 	}
 
-	public void log_common_ClassloadingUtility_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_1");
-		}
+	public void warn_recovery_ExpiredEntryMonitor_7() {
+		logger.logv(WARN, "ARJUNA-12298 Attempt to load expiry scanner with null class name!", (Object)null);
 	}
 
-	public void log_common_ClassloadingUtility_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_2", new Object[] {arg0});
-		}
+	public void warn_recovery_ExpiredEntryMonitor_9(String arg0) {
+		logger.logv(WARN, "ARJUNA-12299 Expiry scanner {0} does not conform to ExpiryScanner interface", arg0);
 	}
 
-	public void log_common_ClassloadingUtility_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_ExpiredTransactionScanner_2(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-12301 ExpiredTransactionScanner - exception during attempted move {0}", arg0);
 	}
 
-	public void log_common_ClassloadingUtility_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4", new Object[] {arg0});
-		}
+	public void info_recovery_ExpiredTransactionScanner_4(Uid arg0) {
+		logger.logv(INFO, "ARJUNA-12303 ExpiredTransactionScanner - log {0} is assumed complete and will be moved.", arg0);
 	}
 
-	public void log_common_ClassloadingUtility_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5", new Object[] {arg0});
-		}
+	public void info_recovery_ExpiredTransactionStatusManagerScanner_3(Uid arg0) {
+		logger.logv(INFO, "ARJUNA-12304 Removing old transaction status manager item {0}", arg0);
 	}
 
-	public void log_common_ClassloadingUtility_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6", new Object[] {arg0});
-		}
+	public void warn_recovery_PeriodicRecovery_1() {
+		logger.logv(WARN, "ARJUNA-12306 Attempt to load recovery module with null class name!", (Object)null);
 	}
 
-	public void log_coordinator_ReaperThread_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", new Object[] {arg0, arg1});
-		}
+	public void info_recovery_PeriodicRecovery_13(String arg0, String arg1) {
+        System.out.println("jjh1");
+		logger.logv(INFO, "ARJUNA-12310 Recovery manager listening on endpoint {0}:{1}", arg0, arg1);
 	}
 
-	public void log_coordinator_ReaperWorkerThread_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1", new Object[] {arg0});
-		}
+	public void warn_recovery_PeriodicRecovery_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12311 Recovery module {0} does not conform to RecoveryModule interface", arg0);
 	}
 
-	public void log_coordinator_ReaperWorkerThread_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2", new Object[] {arg0});
-		}
+	public void warn_recovery_PeriodicRecovery_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12312 Loading recovery module", (Object)null);
 	}
 
-	public void log_objectstore_ActionStore_1(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_recovery_PeriodicRecovery_4(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12313 Loading recovery module", (Object)null);
 	}
 
-	public void log_objectstore_CacheStore_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.CacheStore_1", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_PeriodicRecovery_5(String arg0) {
+		logger.logv(WARN, "ARJUNA-12314 Loading recovery module: could not find class {0}", arg0);
 	}
 
-	public void log_objectstore_CacheStore_2(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.CacheStore_2", new Object[] {arg0, arg1, arg2});
-		}
+	public void warn_recovery_PeriodicRecovery_9(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12318 Could not create recovery listener", (Object)null);
 	}
 
-	public void log_objectstore_CacheStore_3(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.CacheStore_3", new Object[] {arg0, arg1, arg2, arg3});
-		}
+	public void warn_recovery_RecActivatorLoader_1() {
+		logger.logv(WARN, "ARJUNA-12319 Attempt to load recovery activator with null class name!", (Object)null);
 	}
 
-	public void log_objectstore_CacheStore_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.CacheStore_4", new Object[] {arg0});
-		}
+	public void warn_recovery_RecActivatorLoader_2(String arg0) {
+		logger.logv(WARN, "ARJUNA-12320 Recovery module {0} does not conform to RecoveryActivator interface", arg0);
 	}
 
-	public void log_objectstore_FileSystemStore_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_1", new Object[] {arg0});
-		}
+	public void warn_recovery_RecActivatorLoader_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12321 Loading recovery activator", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2", new Object[] {arg0});
-		}
+	public void warn_recovery_RecActivatorLoader_4(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12322 Loading recovery activator", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_20(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20", new Object[] {arg0});
-		}
+	public void warn_recovery_RecActivatorLoader_5(String arg0) {
+		logger.logv(WARN, "ARJUNA-12323 Loading recovery module: could not find class {0}", arg0);
 	}
 
-	public void log_objectstore_FileSystemStore_2a() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a");
-		}
+	public void info_recovery_RecActivatorLoader_6() {
+		logger.logv(INFO, "ARJUNA-12324 Start RecoveryActivators", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3");
-		}
+	public void warn_recovery_RecoveryManagerImple_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12326 socket I/O exception", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4");
-		}
+	public void warn_recovery_TransactionStatusConnector_1() {
+		logger.logv(WARN, "ARJUNA-12327 TransactionStatusConnector.delete called erroneously", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5");
-		}
+	public void warn_recovery_TransactionStatusConnector_2() {
+		logger.logv(WARN, "ARJUNA-12328 Connection lost to TransactionStatusManagers' process", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6");
-		}
+	public void warn_recovery_TransactionStatusConnector_3() {
+		logger.logv(WARN, "ARJUNA-12329 Connection lost to TransactionStatusManagers' process", (Object)null);
 	}
 
-	public void log_objectstore_FileSystemStore_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7");
-		}
+	public void info_recovery_TransactionStatusConnector_4(String arg0, String arg1, String arg2, String arg3) {
+		logger.logv(INFO, "ARJUNA-12330 TransactionStatusManager process for uid {0} is ALIVE. connected to host: {1}, port: {2} on socket: {3}", arg0, arg1, arg2, arg3);
 	}
 
-	public void log_objectstore_FileSystemStore_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8");
-		}
+	public void info_recovery_TransactionStatusConnector_5(String arg0) {
+		logger.logv(INFO, "ARJUNA-12331 TransactionStatusManager process for uid {0} is DEAD.", arg0);
 	}
 
-	public void log_objectstore_HashedStore_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1", new Object[] {arg0});
-		}
+	public void info_recovery_TransactionStatusConnector_6() {
+		logger.logv(INFO, "ARJUNA-12332 Failed to establish connection to server", (Object)null);
 	}
 
-	public void log_objectstore_HashedStore_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2", new Object[] {arg0});
-		}
+	public void warn_recovery_TransactionStatusManagerItem_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12333 Problem with removing host/port item", (Object)null);
 	}
 
-	public void log_objectstore_HashedStore_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5");
-		}
+	public void warn_recovery_TransactionStatusManagerItem_2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12334 Problem with storing host/port", (Object)null);
 	}
 
-	public void log_objectstore_HashedStore_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6");
-		}
+	public void warn_recovery_TransactionStatusManagerItem_3(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12335 Problem retrieving host/port", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_1", new Object[] {arg0});
-		}
+	public void warn_recovery_TransactionStatusManagerItem_4(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12336 Failed to obtain host", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_10(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_10", new Object[] {arg0});
-		}
+	public void info_recovery_TransactionStatusManagerItem_5(String arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-12337 TransactionStatusManagerItem host: {0} port: {1}", arg0, arg1);
 	}
 
-	public void log_objectstore_JDBCImple_11(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11", new Object[] {arg0});
-		}
+	public void warn_recovery_WorkerService_1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12338 Other Exception:", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_12(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12", new Object[] {arg0});
-		}
+	public void warn_recovery_WorkerService_2() {
+		logger.logv(WARN, "ARJUNA-12339 IOException", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_13(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_13", new Object[] {arg0});
-		}
+	public void info_recovery_WorkerService_3() {
+		logger.logv(INFO, "ARJUNA-12340 RecoveryManager scan scheduled to begin.", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_14(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_14", new Object[] {arg0});
-		}
+	public void info_recovery_WorkerService_4() {
+		logger.logv(INFO, "ARJUNA-12341 RecoveryManager scan completed.", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_15(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15", new Object[] {arg0});
-		}
+	public void fatal_recovery_fail(String arg0, String arg1) {
+		logger.logv(FATAL, "ARJUNA-12342 RecoveryManagerImple: cannot bind to socket on address {0} and port {1}", arg0, arg1);
 	}
 
-	public void log_objectstore_JDBCImple_16(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16", new Object[] {arg0});
-		}
+	public void info_recovery_localready() {
+		logger.logv(INFO, "ARJUNA-12343 RecoveryManagerImple is ready. Socket listener is turned off.", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_17() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_17");
-		}
+	public void info_recovery_socketready(String arg0) {
+		logger.logv(INFO, "ARJUNA-12344 RecoveryManagerImple is ready on port {0}", arg0);
 	}
 
-	public void log_objectstore_JDBCImple_18() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18");
-		}
+	public void warn_tools_log_eaa1(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-12345 Transaction {0} and {1} not activate.", arg0, arg1);
 	}
 
-	public void log_objectstore_JDBCImple_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_2", new Object[] {arg0});
-		}
+	public void warn_tools_log_eaa2() {
+		logger.logv(WARN, "ARJUNA-12346 Error - could not get resource to forget heuristic. Left on Heuristic List.", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3", new Object[] {arg0});
-		}
+	public String get_utils_ExecProcessId_1() {
+		return "ARJUNA-12347 Could not get back a valid pid.";
 	}
 
-	public void log_objectstore_JDBCImple_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4", new Object[] {arg0});
-		}
+	public String get_utils_ExecProcessId_2() {
+		return "ARJUNA-12348 Problem executing getpids utility:";
 	}
 
-	public void log_objectstore_JDBCImple_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_5", new Object[] {arg0});
-		}
+	public String get_utils_ExecProcessId_3() {
+		return "ARJUNA-12349 Problem executing command:";
 	}
 
-	public void log_objectstore_JDBCImple_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6", new Object[] {arg0});
-		}
+	public String get_utils_ExecProcessId_4() {
+		return "ARJUNA-12350 Problem getting pid information from stream:";
 	}
 
-	public void log_objectstore_JDBCImple_7(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_7", new Object[] {arg0});
-		}
+	public void warn_utils_ExecProcessId_5(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12351 Encountered a problem when closing the data stream", (Object)null);
 	}
 
-	public void log_objectstore_JDBCImple_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_8", new Object[] {arg0});
-		}
+	public String get_utils_FileProcessId_1() {
+		return "ARJUNA-12352 FileProcessId.getpid - could not locate temporary directory.";
 	}
 
-	public void log_objectstore_JDBCImple_9(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_9", new Object[] {arg0, arg1});
-		}
+	public String get_utils_FileProcessId_2() {
+		return "ARJUNA-12353 FileProcessId.getpid could not create unique file.";
 	}
 
-	public void log_objectstore_JDBCImple_readfailed() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed");
-		}
+	public String get_utils_MBeanProcessId_1() {
+		return "ARJUNA-12354 Could not get back a valid pid.";
 	}
 
-	public void log_objectstore_JDBCImple_writefailed(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed", new Object[] {arg0});
-		}
+	public String get_utils_MBeanProcessId_2() {
+		return "ARJUNA-12355 getName returned unrecognized format:";
 	}
 
-	public void log_objectstore_JDBCStore_1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_1", new Object[] {arg0, arg1});
-		}
+	public String get_utils_ManualProcessId_1() {
+		return "ARJUNA-12356 Could not get back a valid pid.";
 	}
 
-	public void log_objectstore_JDBCStore_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_2", new Object[] {arg0, arg1});
-		}
+	public String get_utils_SocketProcessId_2() {
+		return "ARJUNA-12359 SocketProcessId.getpid could not get unique port.";
 	}
 
-	public void log_objectstore_JDBCStore_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_3");
-		}
+	public void warn_recovery_ExpiredEntryMonitor_6(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-12360 Unable to instantiate ExpiryScanner", (Object)null);
 	}
 
-	public void log_objectstore_JDBCStore_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_4", new Object[] {arg0});
-		}
+	public void info_osb_MBeanCtorFail(Throwable arg0) {
+		logger.logv(INFO, arg0, "ARJUNA-12361 Error constructing mbean", (Object)null);
 	}
 
-	public void log_objectstore_JDBCStore_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5");
-		}
+	public void info_osb_StateManagerWrapperFail(Throwable arg0) {
+		logger.logv(INFO, arg0, "ARJUNA-12362 Failed to create StateManagerWrapper", (Object)null);
 	}
 
-	public void log_objectstore_ShadowingStore_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_1");
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_10(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_10", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_11(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_11", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_12(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_12", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_13() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_13");
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_14(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_14", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_15(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_15", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_16(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_16", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_17(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_17", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_18(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_18", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_19(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_19", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_2", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_20(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_20", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_21(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_21", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_22(String arg0, String arg1, String arg2) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22", new Object[] {arg0, arg1, arg2});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_3", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_4(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_4", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_5", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_6");
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_7");
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_8", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_ShadowingStore_9(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_9", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_objectstore_jdbc_oracle_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1");
-		}
-	}
-
-	public void log_objectstore_jdbc_oracle_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_objectstore_notypenameuid() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid");
-		}
-	}
-
-	public void log_objectstore_packProblem() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.objectstore.packProblem");
-		}
-	}
-
-	public void log_recovery_AtomicActionRecoveryModule_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_AtomicActionRecoveryModule_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_AtomicActionRecoveryModule_3(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_AtomicActionRecoveryModule_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_4");
-		}
-	}
-
-	public void log_recovery_AtomicActionRecoveryModule_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_5");
-		}
-	}
-
-	public void log_recovery_Connection_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.Connection_1");
-		}
-	}
-
-	public void log_recovery_Connection_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.Connection_2");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_10(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_11(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_12(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_2");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_3");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_6", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_7");
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_8", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredEntryMonitor_9(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionScanner_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionScanner_2(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_2", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionScanner_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_3", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionScanner_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_4", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionStatusManagerScanner_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionStatusManagerScanner_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionStatusManagerScanner_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionStatusManagerScanner_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_ExpiredTransactionStatusManagerScanner_5(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_Listener_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.Listener_2");
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1");
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_10(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_11(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_12() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12");
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_13(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_14(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_15(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_3", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_4", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_5", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_6(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_7(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_PeriodicRecovery_9(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_1");
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_3", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_4", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_5", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecActivatorLoader_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6");
-		}
-	}
-
-	public void log_recovery_RecoveryManagerImple_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_RecoveryManagerImple_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_TransactionStatusConnector_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1");
-		}
-	}
-
-	public void log_recovery_TransactionStatusConnector_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_2");
-		}
-	}
-
-	public void log_recovery_TransactionStatusConnector_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_3");
-		}
-	}
-
-	public void log_recovery_TransactionStatusConnector_4(String arg0, String arg1, String arg2, String arg3) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_4", new Object[] {arg0, arg1, arg2, arg3});
-		}
-	}
-
-	public void log_recovery_TransactionStatusConnector_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_5", new Object[] {arg0});
-		}
-	}
 
-	public void log_recovery_TransactionStatusConnector_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_6");
-		}
-	}
-
-	public void log_recovery_TransactionStatusManagerItem_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_TransactionStatusManagerItem_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_TransactionStatusManagerItem_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_TransactionStatusManagerItem_4(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4", new Object[] {arg0});
-		}
-	}
-
-	public void log_recovery_TransactionStatusManagerItem_5(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_WorkerService_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_1");
-		}
-	}
-
-	public void log_recovery_WorkerService_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_2");
-		}
-	}
-
-	public void log_recovery_WorkerService_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
-		}
-	}
-
-	public void log_recovery_WorkerService_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.WorkerService_4");
-		}
-	}
-
-	public void log_recovery_fail(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.fail", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_recovery_localready() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.localready");
-		}
-	}
-
-	public void log_recovery_socketready(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.recovery.socketready", new Object[] {arg0});
-		}
-	}
-
-	public void log_tools_log_eaa1(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa1", new Object[] {arg0, arg1});
-		}
-	}
-
-	public void log_tools_log_eaa2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa2");
-		}
-	}
-
-	public void log_utils_ExecProcessId_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_1");
-		}
-	}
-
-	public void log_utils_ExecProcessId_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2");
-		}
-	}
-
-	public void log_utils_ExecProcessId_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3");
-		}
-	}
-
-	public void log_utils_ExecProcessId_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4");
-		}
-	}
-
-	public void log_utils_ExecProcessId_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_5", new Object[] {arg0});
-		}
-	}
-
-	public void log_utils_FileProcessId_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.FileProcessId_1");
-		}
-	}
-
-	public void log_utils_FileProcessId_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.FileProcessId_2");
-		}
-	}
-
-	public void log_utils_MBeanProcessId_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1");
-		}
-	}
-
-	public void log_utils_MBeanProcessId_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2");
-		}
-	}
-
-	public void log_utils_ManualProcessId_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1");
-		}
-	}
-
-	public void log_utils_ManualProcessId_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_2");
-		}
-	}
-
-	public void log_utils_ManualProcessId_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3");
-		}
-	}
-
-	public void log_utils_SocketProcessId_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2");
-		}
-	}
 }

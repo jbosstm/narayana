@@ -205,7 +205,7 @@ public class Utility
             catch (final UnknownHostException uhe)
             { 
                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.arjLoggerI18N.warn("Utility_2");
+                    tsLogger.i18NLogger.warn_utils_Utility_2();
 
                 addr = InetAddress.getByName(null); 
             } 
@@ -276,29 +276,13 @@ public class Utility
      *
      * @param host
      *            if empty or null then the loopback address is used
-     * @param messageKey
-     *            message key to a report warning if host is unknown
      * @return an InetAddress structure corresponding the desired host name
      * @throws UnknownHostException
      *             if the hostname cannot be found
      */
-    public static InetAddress hostNameToInetAddress (String host,
-            String messageKey) throws UnknownHostException
+    public static InetAddress hostNameToInetAddress (String host) throws UnknownHostException
     {
-        try
-        {
-            return InetAddress.getByName(host);
-        }
-        catch (UnknownHostException ex)
-        {
-            /*
-             * The hostname is unknown
-             */
-            if (tsLogger.arjLoggerI18N.isWarnEnabled() && messageKey != null)
-                tsLogger.arjLoggerI18N.warn(messageKey, ex);
-
-            throw ex;
-        }
+        return InetAddress.getByName(host);
     }
 
     /**
@@ -368,7 +352,7 @@ public class Utility
             catch (final Exception e)
             {
                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.arjLoggerI18N.warn("Utility_1", e);
+                    tsLogger.i18NLogger.warn_utils_Utility_1(e);
             }
         }
     }

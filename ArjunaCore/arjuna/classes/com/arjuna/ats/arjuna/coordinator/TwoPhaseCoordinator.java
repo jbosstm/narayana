@@ -282,37 +282,32 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		                    // we want later, so we keep a reference to it as well as logging it.
 
 		                }
-		                catch (Exception ex)
-		                {
-		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-		                                                                                                                      { _currentRecord }, ex);
-		                    if(_deferredThrowable == null) {
-		                        _deferredThrowable = ex;
-		                    }
-		                    problem = true;
-		                }
-		                catch (Error er)
-		                {
-		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-		                                                                                                                      { _currentRecord }, er);
-		                    if(_deferredThrowable == null) {
-		                        _deferredThrowable = er;
-		                    }
-		                    problem = true;
-		                }
+		                catch (Exception ex) {
+                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), ex);
+                            if (_deferredThrowable == null) {
+                                _deferredThrowable = ex;
+                            }
+                            problem = true;
+                        }
+		                catch (Error er) {
+                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), er);
+                            if (_deferredThrowable == null) {
+                                _deferredThrowable = er;
+                            }
+                            problem = true;
+                        }
 		            }
 
 		            if (problem)
 		            {
-		                if (!preventCommit())
-		                {
-		                    /*
-		                     * This should not happen. If it does, continue with commit
-		                     * to tidy-up.
-		                     */
+		                if (!preventCommit()) {
+                            /*
+                                    * This should not happen. If it does, continue with commit
+                                    * to tidy-up.
+                                    */
 
-		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1");
-		                }
+                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_1();
+                        }
 		            }
 		        }
 		    }
@@ -350,12 +345,11 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	protected boolean afterCompletion (int myStatus)
 	{
-		if (myStatus == ActionStatus.RUNNING)
-		{
-			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_3");
+		if (myStatus == ActionStatus.RUNNING) {
+            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_3();
 
-			return false;
-		}
+            return false;
+        }
 
 		boolean problem = false;
 
@@ -387,26 +381,20 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 						try
 						{
-							if (!record.afterCompletion(myStatus))
-							{
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
-								{ record });
+							if (!record.afterCompletion(myStatus)) {
+                                tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4(record.toString());
 
-								problem = true;
-							}
+                                problem = true;
+                            }
 						}
-						catch (Exception ex)
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[]
-							{ record, ex }, ex);
-							problem = true;
-						}
-						catch (Error er)
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
-							{ record, er }, er);
-							problem = true;
-						}
+						catch (Exception ex) {
+                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4a(record.toString(), ex);
+                            problem = true;
+                        }
+						catch (Error er) {
+                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_4b(record.toString(), er);
+                            problem = true;
+                        }
 					}
 
                     synchronized (_synchs) {

@@ -114,7 +114,7 @@ public class InFlightTransactionPseudoStore extends ObjectStore
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"), e);
+            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_packProblem(), e);
         }
     }
 

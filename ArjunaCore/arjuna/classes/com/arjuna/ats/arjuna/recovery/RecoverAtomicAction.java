@@ -86,39 +86,32 @@ public class RecoverAtomicAction extends AtomicAction
 	   }
 	   else
 	   {
-	       if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	       {
-		   tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2", 
-					       new Object[]{ActionStatus.stringForm(_theStatus)});
-	       }
+	       if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+               tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_2(ActionStatus.stringForm(_theStatus));
+           }
 	   }
 
 	   if (tsLogger.arjLogger.isDebugEnabled()) {
            tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2( "+get_uid()+" )  finished");
        }
        }
-       else
-       {
-	   tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4", new Object[]{get_uid()});
-	   
-	   /*
-	    * Failure to activate so move the log. Unlikely to get better automatically!
-	    */
-	   
-	  AtomicActionExpiryScanner scanner = new AtomicActionExpiryScanner();
-	  
-	  try
-	  {
-	      scanner.moveEntry(get_uid());
-	  }
-	  catch (final Exception ex)
-	  {
-	      if (tsLogger.arjLoggerI18N.isWarnEnabled())
-              {
-                  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_5", 
-                                              new Object[]{get_uid()});
-              }
-	  }
+       else {
+           tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_4(get_uid());
+
+           /*
+          * Failure to activate so move the log. Unlikely to get better automatically!
+          */
+
+           AtomicActionExpiryScanner scanner = new AtomicActionExpiryScanner();
+
+           try {
+               scanner.moveEntry(get_uid());
+           }
+           catch (final Exception ex) {
+               if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                   tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_5(get_uid());
+               }
+           }
        }
    }
    

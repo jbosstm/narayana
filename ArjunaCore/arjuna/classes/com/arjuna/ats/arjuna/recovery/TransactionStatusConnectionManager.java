@@ -123,9 +123,8 @@ public class TransactionStatusConnectionManager
             }
             catch ( Exception ex )
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1", ex);
+                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_1(ex);
                 }
             }
         }
@@ -194,10 +193,9 @@ public class TransactionStatusConnectionManager
 	}
 	catch ( ObjectStoreException ex )
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2", new Object[]{ex});
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_2(ex);
+        }
 	}
 
 	// cycle through each item, and update tsmTable with any

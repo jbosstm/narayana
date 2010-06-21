@@ -129,10 +129,9 @@ public class BasicMutex implements Mutex
 	{
 	    if (_users <= 0)
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_2");
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_common_Mutex_2();
+        }
 		
 		return BasicMutex.ERROR;
 	    }
@@ -151,10 +150,9 @@ public class BasicMutex implements Mutex
 		    }
 		    else
 		    {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_2");
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_common_Mutex_2();
+            }
 			
 			return BasicMutex.LOCKED;
 		    }

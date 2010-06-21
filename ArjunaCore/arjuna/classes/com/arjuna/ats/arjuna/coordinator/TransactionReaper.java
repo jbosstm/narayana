@@ -187,8 +187,7 @@ public class TransactionReaper
             }
 
             if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_18",
-                                new Object[] {reaperElement._control.get_uid(), reaperElement.statusName()});
+                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_18(reaperElement._control.get_uid(), reaperElement.statusName());
             }
 
             // if we have to synchronize on multiple objects we always
@@ -285,9 +284,7 @@ public class TransactionReaper
                                 // log zombie overflow error call()
 
                                 if (tsLogger.arjLoggerI18N.isErrorEnabled()) {
-                                    tsLogger.arjLoggerI18N.error(
-                                                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_5",
-                                                    new Object[]{new Integer(_zombieCount)});
+                                    tsLogger.i18NLogger.error_coordinator_TransactionReaper_5(Integer.toString(_zombieCount));
                                 }
                             }
                         }
@@ -300,10 +297,8 @@ public class TransactionReaper
                         // log a failed cancel()
 
                         if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.arjLoggerI18N.warn(
-                                            "com.arjuna.ats.arjuna.coordinator.TransactionReaper_6",
-                                            new Object[]{reaperElement._worker,
-                                                    reaperElement._control.get_uid()});
+                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_6(reaperElement._worker.toString(),
+                                    reaperElement._control.get_uid());
                         }
 
                         // ok, since the worker was wedged we need to
@@ -320,9 +315,7 @@ public class TransactionReaper
                                 // log a successful preventCommit()
 
                                 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.arjLoggerI18N.warn(
-                                                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_10",
-                                                    new Object[]{reaperElement._control.get_uid()});
+                                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_10(reaperElement._control.get_uid());
                                 }
 
                                 notifyListeners(reaperElement._control, false);
@@ -330,9 +323,7 @@ public class TransactionReaper
                                 // log a failed preventCommit()
 
                                 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                    tsLogger.arjLoggerI18N.warn(
-                                                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_11",
-                                                    new Object[]{reaperElement._control.get_uid()});
+                                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_11(reaperElement._control.get_uid());
                                 }
                             }
                         }
@@ -340,9 +331,7 @@ public class TransactionReaper
                             // log an exception under preventCommit()
 
                             if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                                tsLogger.arjLoggerI18N
-                                        .warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_12",
-                                                new Object[]{reaperElement._control.get_uid()}, e1);
+                                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_12(reaperElement._control.get_uid(), e1);
                             }
                         }
                     }
@@ -468,12 +457,8 @@ public class TransactionReaper
                     }
 
                     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.arjuna.coordinator.TransactionReaper_13",
-                                        new Object[]{Thread.currentThread(),
-                                                e._control.get_uid(),
-                                                new Integer(_zombieCount)});
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_13(Thread.currentThread().toString(),
+                                e._control.get_uid(), Integer.toString(_zombieCount));
                     }
 
                     // this gets us out of the for(;;) loop and
@@ -504,29 +489,18 @@ public class TransactionReaper
 
             if (cancelled) {
                 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.arjLoggerI18N
-                            .warn(
-                                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_7",
-                                    new Object[]{Thread.currentThread(),
-                                            e._control.get_uid()});
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_7(Thread.currentThread().toString(),
+                            e._control.get_uid());
                 }
             } else if (e._control.running()) {
                 if (exception != null) {
                     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.arjuna.coordinator.TransactionReaper_9",
-                                        new Object[]{Thread.currentThread(),
-                                                e._control.get_uid()},
-                                        exception);
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_9(Thread.currentThread().toString(), e._control.get_uid(), exception);
                     }
                 } else {
                     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.arjuna.coordinator.TransactionReaper_8",
-                                        new Object[]{Thread.currentThread(),
-                                                e._control.get_uid()});
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_8(Thread.currentThread().toString(),
+                                e._control.get_uid());
                     }
                 }
 
@@ -535,11 +509,8 @@ public class TransactionReaper
                         // log a successful preventCommit()
 
                         if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.arjLoggerI18N
-                                    .warn(
-                                            "com.arjuna.ats.arjuna.coordinator.TransactionReaper_14",
-                                            new Object[]{Thread.currentThread(),
-                                                    e._control.get_uid()});
+                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_14(Thread.currentThread().toString(),
+                                    e._control.get_uid());
                         }
 
                         notifyListeners(e._control, false);
@@ -547,11 +518,8 @@ public class TransactionReaper
                         // log a failed preventCommit()
 
                         if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                            tsLogger.arjLoggerI18N
-                                    .warn(
-                                            "com.arjuna.ats.arjuna.coordinator.TransactionReaper_15",
-                                            new Object[]{Thread.currentThread(),
-                                                    e._control.get_uid()});
+                            tsLogger.i18NLogger.warn_coordinator_TransactionReaper_15(Thread.currentThread().toString(),
+                                    e._control.get_uid());
                         }
                     }
                 }
@@ -559,12 +527,7 @@ public class TransactionReaper
                     // log an exception under preventCommit()
 
                     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.arjuna.coordinator.TransactionReaper_16",
-                                        new Object[]{Thread.currentThread(),
-                                                e._control.get_uid()},
-                                        e1);
+                        tsLogger.i18NLogger.warn_coordinator_TransactionReaper_16(Thread.currentThread().toString(), e._control.get_uid(), e1);
                     }
                 }
             }
@@ -635,7 +598,7 @@ public class TransactionReaper
         if ((_timeouts.putIfAbsent(reaperElement._control, reaperElement) == null)) {
             _reaperElements.add(reaperElement);
         } else {
-            throw new IllegalStateException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.TransactionReaper_1"));
+            throw new IllegalStateException(tsLogger.i18NLogger.get_coordinator_TransactionReaper_1());
         }
 
         if (_dynamic && reaperElement.getAbsoluteTimeout() < nextDynamicCheckTime.get()) {
@@ -925,7 +888,7 @@ public class TransactionReaper
                 TransactionReaper._dynamic = false;
 
                 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_19");
+                    tsLogger.i18NLogger.warn_coordinator_TransactionReaper_19();
                 }
             }
 

@@ -115,17 +115,14 @@ public class JMXServer
 
 		try {
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_1",
-						new Object[] { name });
+                tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_1(name);
 			oi = getServer().registerMBean(bean, new ObjectName(name));
 		} catch (InstanceAlreadyExistsException e) {
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_2",
-						new Object[] { name });
+                tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_2(name);
 		} catch (javax.management.JMException e) {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_3",
-						new Object[] { name, e.getMessage() });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_3(name, e);
 		}
 
 		return oi;
@@ -137,18 +134,15 @@ public class JMXServer
 			getServer().unregisterMBean(new ObjectName(name));
 			return true;
 		} catch (MalformedObjectNameException e) {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5",
-						new Object[] { name, e.getMessage() });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_5(name, e);
 		} catch (InstanceNotFoundException e) {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_5",
-						new Object[] { name, e.getMessage() });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_5(name, e);
 		} catch (MBeanRegistrationException e) {
 			// can't happen - none of our beans implement the MBeanRegistration interface
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.tools.osb.util.JMXServer.m_6",
-						new Object[] { name, e.getMessage() });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_6(name, e);
 		}
 
 		return false;

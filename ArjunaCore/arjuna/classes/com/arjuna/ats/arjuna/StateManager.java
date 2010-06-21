@@ -194,8 +194,7 @@ public class StateManager
             if ((action != null) && (action.status() == ActionStatus.RUNNING))
             {
                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    tsLogger.arjLoggerI18N
-                            .warn("com.arjuna.ats.arjuna.StateManager_1");
+                    tsLogger.i18NLogger.warn_StateManager_1();
                 cleanup(false);
             }
         }
@@ -348,12 +347,8 @@ public class StateManager
                     }
                     else
                     {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                            tsLogger.arjLoggerI18N.warn(
-                                    "com.arjuna.ats.arjuna.StateManager_2",
-                                    new Object[]
-                                    { objectUid, type() });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_StateManager_2(objectUid, type());
                         }
 
                         return false;
@@ -501,8 +496,7 @@ public class StateManager
                     catch (ObjectStoreException e)
                     {
                         if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            tsLogger.arjLoggerI18N.warn(
-                                    "com.arjuna.ats.arjuna.StateManager_3", e);
+                            tsLogger.i18NLogger.warn_StateManager_3(e);
 
                         result = false;
                     }
@@ -510,8 +504,7 @@ public class StateManager
                 else
                 {
                     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.arjLoggerI18N
-                                .warn("com.arjuna.ats.arjuna.StateManager_4");
+                        tsLogger.i18NLogger.warn_StateManager_4();
                 }
 
                 /*
@@ -589,10 +582,8 @@ public class StateManager
                 {
                     dr = null;
 
-                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        tsLogger.arjLoggerI18N
-                                .warn("com.arjuna.ats.arjuna.StateManager_6", new Object[] { action.get_uid() });
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_StateManager_6(action.get_uid());
                     }
                 }
                 else
@@ -614,8 +605,7 @@ public class StateManager
                 catch (Exception e)
                 {
                     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.arjLoggerI18N.warn(
-                                "com.arjuna.ats.arjuna.StateManager_7", e);
+                        tsLogger.i18NLogger.warn_StateManager_7(e);
 
                     result = false;
                 }
@@ -627,10 +617,8 @@ public class StateManager
              * Not a persistent object!
              */
 
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N
-                        .warn("com.arjuna.ats.arjuna.StateManager_8");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_StateManager_8();
             }
         }
 
@@ -795,14 +783,11 @@ public class StateManager
             }
             else
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N
-                            .warn("com.arjuna.ats.arjuna.StateManager_9");
+                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_StateManager_9();
                 }
 
-                throw new IOException(tsLogger.arjLoggerI18N
-                        .getString("com.arjuna.ats.arjuna.StateManager_15"));
+                throw new IOException(tsLogger.i18NLogger.get_StateManager_15());
             }
             
             long birthDate = os.unpackLong();
@@ -965,8 +950,7 @@ public class StateManager
         if (currentStatus == ObjectStatus.PASSIVE)
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                        .warn("com.arjuna.ats.arjuna.StateManager_10");
+                tsLogger.i18NLogger.warn_StateManager_10();
             
             activate();
         }
@@ -1101,13 +1085,8 @@ public class StateManager
                         {
                             OutputObjectState state = null;
 
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            {
-                                tsLogger.arjLoggerI18N
-                                        .warn(
-                                                "com.arjuna.ats.arjuna.StateManager_11",
-                                                new Object[]
-                                                { objectUid, type() });
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                                tsLogger.i18NLogger.warn_StateManager_11(objectUid, type());
                             }
 
                             /*
@@ -1122,8 +1101,7 @@ public class StateManager
                                 if (!save_state(state, myType))
                                 {
                                     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                        tsLogger.arjLoggerI18N
-                                                .warn("com.arjuna.ats.arjuna.StateManager_12");
+                                        tsLogger.i18NLogger.warn_StateManager_12();
                                     /* force action abort */
 
                                     action.preventCommit();
@@ -1159,10 +1137,8 @@ public class StateManager
                             }
                             else
                             {
-                                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                {
-                                    tsLogger.arjLoggerI18N
-                                            .warn("com.arjuna.ats.arjuna.StateManager_6", new Object[] { action.get_uid() });
+                                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                                    tsLogger.i18NLogger.warn_StateManager_6(action.get_uid());
                                 }
                                 
                                 record = null;
@@ -1289,8 +1265,7 @@ public class StateManager
             }
             catch (final Throwable ex)
             {
-                throw new FatalError(tsLogger.arjLoggerI18N
-                        .getString("com.arjuna.ats.arjuna.StateManager_16")
+                throw new FatalError(tsLogger.i18NLogger.get_StateManager_16()
                         + " " + objectStoreType);
             }
         }
@@ -1303,11 +1278,9 @@ public class StateManager
              */
 
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                        .warn("com.arjuna.ats.arjuna.StateManager_13");
+                tsLogger.i18NLogger.warn_StateManager_13();
 
-            throw new FatalError(tsLogger.arjLoggerI18N
-                    .getString("com.arjuna.ats.arjuna.StateManager_14"));
+            throw new FatalError(tsLogger.i18NLogger.get_StateManager_14());
 
             // objectStore = new
             // ObjectStore(ArjunaNames.Implementation_ObjectStore_VolatileStore

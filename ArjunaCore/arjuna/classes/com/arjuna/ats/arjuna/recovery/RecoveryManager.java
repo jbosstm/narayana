@@ -358,7 +358,7 @@ public class RecoveryManager
     {
         String host = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress();
 
-        return Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.RecoveryManager_2");
+        return Utility.hostNameToInetAddress(host);
     }
 
     public static int getRecoveryManagerPort()
@@ -378,8 +378,7 @@ public class RecoveryManager
 
         if (tsLogger.arjLoggerI18N.isInfoEnabled())
         {
-            tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.RecoveryManager_4",
-                    new Object[]{socket.getInetAddress().getHostAddress(), socket.getLocalPort()});
+            tsLogger.i18NLogger.info_recovery_RecoveryManager_4(socket.getInetAddress().getHostAddress(), Integer.toString(socket.getLocalPort()));
         }
 
         return socket;

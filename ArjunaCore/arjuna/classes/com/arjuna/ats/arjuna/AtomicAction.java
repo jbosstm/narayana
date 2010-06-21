@@ -333,11 +333,9 @@ public class AtomicAction extends TwoPhaseCoordinator
 				ThreadActionData.purgeActions();
 			else
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.atomicaction_1", new Object[]
-					{ curr.toString() });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_ats_atomicaction_1(curr.toString());
+                }
 
 				curr = null;
 			}

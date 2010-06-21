@@ -323,19 +323,15 @@ public class BasicAction extends StateManager
 
 				if (currentAct.isAncestor(get_uid()))
 				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_1", new Object[]
-						{ get_uid() });
-					}
+					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_1(get_uid());
+                    }
 
 					while ((currentAct != this) && (currentAct != null))
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_2", new Object[]
-							{ currentAct.get_uid() });
-						}
+						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_2(currentAct.get_uid());
+                        }
 
 						currentAct.Abort();
 
@@ -354,11 +350,9 @@ public class BasicAction extends StateManager
 				parentAct = parentAct.parent();
 			}
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_3", new Object[]
-				{ get_uid() });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_3(get_uid());
+            }
 
 			/* This will also kill any children */
 
@@ -663,11 +657,9 @@ public class BasicAction extends StateManager
 			}
 			else
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5", new Object[]
-					{ get_uid(), type() });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_5(get_uid(), type());
+                }
 
 				restored = false;
 			}
@@ -728,11 +720,9 @@ public class BasicAction extends StateManager
 			/** If we failed to deactivate then output warning * */
 			if (!deactivated)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_5a", new Object[]
-					{ get_uid(), type() });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_5a(get_uid(), type());
+                }
 			}
 		}
 		catch (ObjectStoreException e)
@@ -1289,11 +1279,9 @@ public class BasicAction extends StateManager
 
 			if (record == null)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_21", new Object[]
-					{ Integer.toString(record_type) });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_21(Integer.toString(record_type));
+                }
 
 				res = false;
 			}
@@ -1372,8 +1360,8 @@ public class BasicAction extends StateManager
 				}
 				catch (final NullPointerException ex)
 				{
-				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.norecordfound", new Object[] { record_type});
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_coordinator_norecordfound(Integer.toString(record_type));
 				    
 				    res = false;
 				}
@@ -1390,8 +1378,8 @@ public class BasicAction extends StateManager
 			}
 			catch (IOException e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_24");
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_24();
 
 				res = false;
 			}
@@ -1546,20 +1534,17 @@ public class BasicAction extends StateManager
 		    
 		    actionStatus = ActionStatus.ABORT_ONLY;
 		    
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.notrunning");
-                    }
+		    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_notrunning();
+            }
 		}
 		else
 		{   
 		    if (actionStatus != ActionStatus.CREATED)
 		    {
-		        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		        {
-		            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_29", new Object[]
-		                                                                                                       { get_uid(), ActionStatus.stringForm(actionStatus) });
-		        }
+		        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_29(get_uid(), ActionStatus.stringForm(actionStatus));
+                }
 		    }
 		    else
 		    {
@@ -1573,19 +1558,15 @@ public class BasicAction extends StateManager
 
 		            if (parentAct == null)
 		            {
-		                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		                {
-		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_30", new Object[]
-		                                                                                                               { get_uid() });
-		                }
+		                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_30(get_uid());
+                        }
 		            }
 		            else
 		            {
-		                if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		                {
-		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_31", new Object[]
-		                                                                                                               { get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()) });
-		                }
+		                if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_31(get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()));
+                        }
 		            }
 		        }
 
@@ -1638,21 +1619,17 @@ public class BasicAction extends StateManager
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
-				switch (actionStatus)
-				{
-				case ActionStatus.CREATED:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_33", new Object[]
-					{ get_uid() });
-					break;
-				case ActionStatus.COMMITTED:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_34", new Object[]
-					{ get_uid() });
-					break;
-				default:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_35", new Object[]
-					{ get_uid() });
-					break;
-				}
+				switch (actionStatus) {
+                    case ActionStatus.CREATED:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_33(get_uid());
+                        break;
+                    case ActionStatus.COMMITTED:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_34(get_uid());
+                        break;
+                    default:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_35(get_uid());
+                        break;
+                }
 			}
 
 			return actionStatus;
@@ -1686,23 +1663,19 @@ public class BasicAction extends StateManager
 			{			
 				if (prepare(reportHeuristics) == TwoPhaseOutcome.PREPARE_NOTOK)
 				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_36", new Object[]
-						{ get_uid() });
-					}
+					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_36(get_uid());
+                    }
 
 					if (heuristicDecision != TwoPhaseOutcome.PREPARE_OK)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_37", new Object[]
-							{ TwoPhaseOutcome.stringForm(heuristicDecision) });
-						}
+						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_37(TwoPhaseOutcome.stringForm(heuristicDecision));
+                        }
 					}
 
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_38");
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_38();
 
 					if (!reportHeuristics && TxControl.asyncCommit
 							&& (parentAction == null))
@@ -1811,21 +1784,17 @@ public class BasicAction extends StateManager
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
-				switch (actionStatus)
-				{
-				case ActionStatus.CREATED:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_39", new Object[]
-					{ get_uid() });
-					break;
-				case ActionStatus.ABORTED:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_40", new Object[]
-					{ get_uid() });
-					break;
-				default:
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_41", new Object[]
-					{ get_uid() });
-					break;
-				}
+				switch (actionStatus) {
+                    case ActionStatus.CREATED:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_39(get_uid());
+                        break;
+                    case ActionStatus.ABORTED:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_40(get_uid());
+                        break;
+                    default:
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_41(get_uid());
+                        break;
+                }
 			}
 
 			return actionStatus;
@@ -2019,11 +1988,9 @@ public class BasicAction extends StateManager
 		{
 			int size = ((pendingList == null) ? 0 : pendingList.size());
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_42", new Object[]
-				{ get_uid(), Integer.toString(size), pendingList });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_42(get_uid(), Integer.toString(size), pendingList.toString());
+            }
 
 			phase2Abort(reportHeuristics);
 		}
@@ -2203,11 +2170,9 @@ public class BasicAction extends StateManager
 
 		if (!commitAllowed)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_43", new Object[]
-				{ get_uid() });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
+            }
 
 			actionStatus = ActionStatus.PREPARED;
 
@@ -2372,8 +2337,8 @@ public class BasicAction extends StateManager
 					parentAction.preventCommit();
 				else
 				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_44");
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_44();
 				}
 			}
 
@@ -2470,11 +2435,9 @@ public class BasicAction extends StateManager
 
 			if (!save_state(state, ObjectType.ANDPERSISTENT))
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_45", new Object[]
-					{ get_uid() });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_45(get_uid());
+                }
 
 				criticalEnd();
 
@@ -2487,11 +2450,9 @@ public class BasicAction extends StateManager
 				{
 					if (!currentStore.write_committed(u, tn, state))
 					{                                               
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_46", new Object[]
-							{ get_uid() });
-						}
+						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_46(get_uid());
+                        }
 
 						criticalEnd();
 
@@ -2533,11 +2494,9 @@ public class BasicAction extends StateManager
 
 		if (actionStatus == ActionStatus.ABORT_ONLY)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_43", new Object[]
-				{ get_uid() });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_43(get_uid());
+            }
 
 			Abort();
 
@@ -2625,11 +2584,9 @@ public class BasicAction extends StateManager
         			 * Heuristic decision!!
         			 */
         
-        			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-        			{
-        			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_47", new Object[]
-        			                                                                                               { get_uid(), TwoPhaseOutcome.stringForm(p) });
-        			}
+        			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_47(get_uid(), TwoPhaseOutcome.stringForm(p));
+                    }
         
         			if (reportHeuristics)
         			{
@@ -2678,12 +2635,12 @@ public class BasicAction extends StateManager
 				{
 					if (tsLogger.arjLoggerI18N.isFatalEnabled())
 					{
-						tsLogger.arjLoggerI18N.fatal("com.arjuna.ats.arjuna.coordinator.BasicAction_48");
+						tsLogger.i18NLogger.fatal_coordinator_BasicAction_48();
 					}
 
 					throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-							tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.BasicAction_69")
-									+ get_uid());
+                            tsLogger.i18NLogger.get_coordinator_BasicAction_69()
+                                    + get_uid());
 				}
 
 				updateState();
@@ -2888,11 +2845,9 @@ public class BasicAction extends StateManager
 							if ((preparedList.size() > 0)
 									&& (p == TwoPhaseOutcome.ONE_PHASE_ERROR))
 							{
-								if (tsLogger.arjLoggerI18N.isWarnEnabled())
-								{
-									tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_49", new Object[]
-									{ get_uid() });
-								}
+								if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_49(get_uid());
+                                }
 
 								/*
 								 * Force parent to rollback. If this is not the
@@ -2944,11 +2899,9 @@ public class BasicAction extends StateManager
 						 * Only report if request to do so.
 						 */
 
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_50", new Object[]
-							{ get_uid(), TwoPhaseOutcome.stringForm(p) });
-						}
+						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_50(get_uid(), TwoPhaseOutcome.stringForm(p));
+                        }
 
 						if (reportHeuristics)
 							updateHeuristic(p, false);
@@ -3234,12 +3187,10 @@ public class BasicAction extends StateManager
 					{
 						if (tsLogger.arjLoggerI18N.isWarnEnabled())
 						{
-							if (actionType == ActionType.TOP_LEVEL)
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_52", new Object[]
-								{ get_uid(), TwoPhaseOutcome.stringForm(ok) });
-							else
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_53", new Object[]
-								{ get_uid(), TwoPhaseOutcome.stringForm(ok) });
+                            if (actionType == ActionType.TOP_LEVEL)
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_52(get_uid(), TwoPhaseOutcome.stringForm(ok));
+                            else
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_53(get_uid(), TwoPhaseOutcome.stringForm(ok));
 						}
 
 						updateHeuristic(ok, false);
@@ -3251,12 +3202,14 @@ public class BasicAction extends StateManager
 						{
 							if (tsLogger.arjLoggerI18N.isWarnEnabled())
 							{
-								if (actionType == ActionType.TOP_LEVEL)
-									tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_54", new Object[]
-									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs()) });
-								else
-									tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_55", new Object[]
-									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs()) });
+                                if (actionType == ActionType.TOP_LEVEL)
+                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_54(get_uid(),
+                                            TwoPhaseOutcome.stringForm(ok),
+                                            RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
+                                else
+                                    tsLogger.i18NLogger.warn_coordinator_BasicAction_55(get_uid(),
+                                            TwoPhaseOutcome.stringForm(ok),
+                                            RecordType.typeToClass(recordBeingHandled.typeIs()).getCanonicalName());
 							}
 						}
 					}
@@ -3449,21 +3402,19 @@ public class BasicAction extends StateManager
 				String tn = type();
 				OutputObjectState state = new OutputObjectState(u, tn);
 
-				if (!save_state(state, ObjectType.ANDPERSISTENT))
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_64");
+				if (!save_state(state, ObjectType.ANDPERSISTENT)) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_64();
 
-					// what else?
-				}
+                    // what else?
+                }
 
 				if (state.notempty())
 				{
 					try
 					{
-						if (!currentStore.write_committed(u, tn, state))
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_65");
-						}
+						if (!currentStore.write_committed(u, tn, state)) {
+                            tsLogger.i18NLogger.warn_coordinator_BasicAction_65();
+                        }
 					}
 					catch (ObjectStoreException e)
 					{
@@ -3483,11 +3434,9 @@ public class BasicAction extends StateManager
 						}
 					}
 				}
-				catch (ObjectStoreException e)
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_70", new Object[]
-					{ e });
-				}
+				catch (ObjectStoreException e) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_70(e);
+                }
 			}
 		}
 	}
@@ -3535,11 +3484,9 @@ public class BasicAction extends StateManager
 
 			if ((currentAct != null) && (currentAct != this))
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_56", new Object[]
-					{ currentAct.get_uid(), get_uid() });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_56(currentAct.get_uid(), get_uid());
+                }
 
 				isCurrent = false;
 
@@ -3586,16 +3533,12 @@ public class BasicAction extends StateManager
 
 				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
-					if (isCommit)
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_57", new Object[]
-						{ get_uid() });
-					}
-					else
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_58", new Object[]
-						{ get_uid() });
-					}
+					if (isCommit) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_57(get_uid());
+                    }
+					else {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_58(get_uid());
+                    }
 				}
 
 				if (_checkedAction != null)
@@ -3634,26 +3577,20 @@ public class BasicAction extends StateManager
 					{
 						if (tsLogger.arjLoggerI18N.isWarnEnabled())
 						{
-							if (isCommit)
-							{
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_59", new Object[]
-								{ get_uid() });
-							}
-							else
-							{
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_60", new Object[]
-								{ get_uid() });
-							}
+							if (isCommit) {
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_59(get_uid());
+                            }
+							else {
+                                tsLogger.i18NLogger.warn_coordinator_BasicAction_60(get_uid());
+                            }
 						}
 
 						printError = false;
 					}
 
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_61", new Object[]
-						{ child.get_uid() });
-					}
+					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_coordinator_BasicAction_61(child.get_uid());
+                    }
 
 					child.Abort();
 					child = null;
@@ -3664,11 +3601,9 @@ public class BasicAction extends StateManager
 
 			if (isCommit)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_62", new Object[]
-					{ ((child != null ? child.get_uid() : "null"))});
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_coordinator_BasicAction_62(((child != null ? child.get_uid().toString() : "null")));
+                }
 			}
 		}
 
@@ -3911,8 +3846,8 @@ public class BasicAction extends StateManager
 		{
 			A = null;
 
-			if (as == AddOutcome.AR_REJECTED)
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_68");
+            if (as == AddOutcome.AR_REJECTED)
+                tsLogger.i18NLogger.warn_coordinator_BasicAction_68();
 		}
 	}
 

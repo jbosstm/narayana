@@ -100,21 +100,12 @@ public class RecoveryManagerImple
             {
                 try
                 {
-                    tsLogger.arjLoggerI18N.fatal(
-                            "com.arjuna.ats.internal.arjuna.recovery.fail",
-                            new Object[] {
-                                    RecoveryManager.getRecoveryManagerHost(), RecoveryManager.getRecoveryManagerPort()
-                            }
-                    );
+                    tsLogger.i18NLogger.fatal_recovery_fail(RecoveryManager.getRecoveryManagerHost().getHostAddress(),
+                            Integer.toString(RecoveryManager.getRecoveryManagerPort()));
                 }
                 catch (Throwable t)
                 {
-                    tsLogger.arjLoggerI18N.fatal(
-                            "com.arjuna.ats.internal.arjuna.recovery.fail",
-                            new Object[] {
-                                    "unknown", "unknown"
-                            }
-                    );
+                    tsLogger.i18NLogger.fatal_recovery_fail("unknown", "unknown");
                 }
             }
 
@@ -142,25 +133,18 @@ public class RecoveryManagerImple
                         {
                                 if(useListener)
                 {
-                    tsLogger.arjLoggerI18N.info(
-                            "com.arjuna.ats.internal.arjuna.recovery.socketready",
-                            new Object[] { _periodicRecovery.getServerSocket().getLocalPort() });
+                    tsLogger.i18NLogger.info_recovery_socketready( Integer.toString(_periodicRecovery.getServerSocket().getLocalPort()));
                 }
                 else
                 {
-                    tsLogger.arjLoggerI18N.info(
-                            "com.arjuna.ats.internal.arjuna.recovery.localready");
+                    tsLogger.i18NLogger.info_recovery_localready();
                 }
             }
                 }
                 catch (IOException ex)
                 {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                                tsLogger.arjLoggerI18N
-                                                .warn(
-                                                                "com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2",
-                                                                new Object[] { ex });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
                         }
                 }
         }

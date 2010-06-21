@@ -196,13 +196,8 @@ public class LastResourceRecord extends AbstractRecord
                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
                 {
                     if (!_disableMLRWarning
-                            || (_disableMLRWarning && !_issuedWarning))
-                    {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.arjuna.lastResource.multipleWarning",
-                                        new Object[]
-                                        { a });
+                            || (_disableMLRWarning && !_issuedWarning)) {
+                        tsLogger.i18NLogger.warn_lastResource_multipleWarning(a.toString());
                         _issuedWarning = true;
                     }
                 }
@@ -211,12 +206,8 @@ public class LastResourceRecord extends AbstractRecord
             }
             else
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn(
-                            "com.arjuna.ats.arjuna.lastResource.disallow",
-                            new Object[]
-                            { a });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_lastResource_disallow(a.toString());
                 }
 
                 return false;
@@ -287,20 +278,16 @@ public class LastResourceRecord extends AbstractRecord
                 .getCoreEnvironmentBean().isAllowMultipleLastResources();
 
         if (ALLOW_MULTIPLE_LAST_RESOURCES
-                && tsLogger.arjLoggerI18N.isWarnEnabled())
-        {
-            tsLogger.arjLoggerI18N
-                    .warn("com.arjuna.ats.arjuna.lastResource.startupWarning");
+                && tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_lastResource_startupWarning();
         }
 
         _disableMLRWarning = arjPropertyManager.getCoreEnvironmentBean()
                 .isDisableMultipleLastResourcesWarning();
 
         if (arjPropertyManager.getCoreEnvironmentBean()
-                .isDisableMultipleLastResourcesWarning())
-        {
-            tsLogger.arjLoggerI18N
-                    .warn("com.arjuna.ats.arjuna.lastResource.disableWarning");
+                .isDisableMultipleLastResourcesWarning()) {
+            tsLogger.i18NLogger.warn_lastResource_disableWarning();
 
             _disableMLRWarning = true;
         }

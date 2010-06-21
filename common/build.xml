@@ -22,7 +22,7 @@
 
     <property name="modulename" value="common"/>
 
-    <property name="global.ext.libs" value="commons-logging.jar log4j.jar"/>
+    <property name="global.ext.libs" value="commons-logging.jar log4j.jar jboss-logging.jar"/>
 
     <import file="../sharedbuild.xml"/>
 
@@ -52,7 +52,10 @@
 
         <run.tests.macro>
             <tests>
-                <fileset dir="tests" includes="**/*.java" excludes="**/Dummy*.java"/>
+                <fileset dir="tests" includes="**/*.java">
+                    <exclude name="**/Dummy*.java"/>
+                    <exclude name="**/MyLogger.java"/>
+                </fileset>
             </tests>
         </run.tests.macro>
 

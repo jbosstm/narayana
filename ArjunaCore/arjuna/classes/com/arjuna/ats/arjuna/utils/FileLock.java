@@ -309,11 +309,8 @@ public class FileLock
         catch (IOException e)
         {
 
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N.warn(
-                        "com.arjuna.ats.arjuna.utils.FileLock_4", new Object[]
-                        { _lockFile });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_utils_FileLock_4(_lockFile.getName());
             }
 
             return false;

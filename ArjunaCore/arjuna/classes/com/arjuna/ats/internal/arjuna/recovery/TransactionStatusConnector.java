@@ -96,8 +96,8 @@ public class TransactionStatusConnector
       }
       else
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1");
+          if (tsLogger.arjLoggerI18N.isWarnEnabled())
+              tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_1();
       }
    }
    
@@ -157,19 +157,17 @@ public class TransactionStatusConnector
             }
             catch ( IOException ex )
             {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_2");
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_2();
+        }
 		
 		_tsmFound = false ;
             }
             catch ( Exception other )
             {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_3");
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_3();
+        }
 		
 		_tsmFound = false ;
             }
@@ -228,9 +226,7 @@ public class TransactionStatusConnector
 		  
 		  if (tsLogger.arjLoggerI18N.isInfoEnabled())
 		  {
-		      tsLogger.arjLoggerI18N.info
-			  ( "com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_4", 
-			    new Object[]{_pid, serverHost, Integer.toString(serverPort), _connector_socket});
+              tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_4(_pid, serverHost, Integer.toString(serverPort), _connector_socket.toString());
 		  }
                }
                else
@@ -256,7 +252,7 @@ public class TransactionStatusConnector
 	       
        	       if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	       {
-		   tsLogger.arjLoggerI18N.info( "com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_5", new Object[]{_pid});
+               tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_5(_pid);
 	       }
 	       
             }
@@ -265,8 +261,7 @@ public class TransactionStatusConnector
          {
 	     if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	     {
-		 tsLogger.arjLoggerI18N.info
-		     ("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_6");
+             tsLogger.i18NLogger.info_recovery_TransactionStatusConnector_6();
 	     }
          }
 

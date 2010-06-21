@@ -753,56 +753,32 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
             try
             {
-                switch (_work.typeOfWork)
-                {
-                case AsyncStore.COMMIT:
-                {
-                    if (!_work.store.commitState(_work.objUid, _work.tName))
-                    {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.arjuna.objectstore.CacheStore_1",
-                                        new Object[]
-                                        { _work.objUid, _work.tName });
+                switch (_work.typeOfWork) {
+                    case AsyncStore.COMMIT: {
+                        if (!_work.store.commitState(_work.objUid, _work.tName)) {
+                            tsLogger.i18NLogger.warn_objectstore_CacheStore_1(_work.objUid, _work.tName);
+                        }
                     }
-                }
                     break;
-                case AsyncStore.REMOVE:
-                {
-                    if (!_work.store.removeState(_work.objUid, _work.tName,
-                            _work.fileType))
-                    {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.arjuna.objectstore.CacheStore_2",
-                                        new Object[]
-                                        { _work.objUid, _work.tName,
-                                                new Integer(_work.fileType) });
+                    case AsyncStore.REMOVE: {
+                        if (!_work.store.removeState(_work.objUid, _work.tName,
+                                _work.fileType)) {
+                            tsLogger.i18NLogger.warn_objectstore_CacheStore_2(_work.objUid, _work.tName,
+                                    Integer.toString(_work.fileType));
+                        }
                     }
-                }
                     break;
-                case AsyncStore.WRITE:
-                {
-                    if (!_work.store.writeState(_work.objUid, _work.tName,
-                            _work.state, _work.fileType))
-                    {
-                        tsLogger.arjLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.arjuna.objectstore.CacheStore_3",
-                                        new Object[]
-                                        { _work.objUid, _work.tName,
-                                                _work.state,
-                                                new Integer(_work.fileType) });
+                    case AsyncStore.WRITE: {
+                        if (!_work.store.writeState(_work.objUid, _work.tName,
+                                _work.state, _work.fileType)) {
+                            tsLogger.i18NLogger.warn_objectstore_CacheStore_3(_work.objUid, _work.tName,
+                                    _work.state.toString(), Integer.toString(_work.fileType));
+                        }
                     }
-                }
                     break;
-                default:
-                    tsLogger.arjLoggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.arjuna.objectstore.CacheStore_3",
-                                    new Object[]
-                                    { new Integer(_work.typeOfWork) });
-                    break;
+                    default:
+                        tsLogger.i18NLogger.warn_objectstore_CacheStore_4(Integer.toString(_work.typeOfWork));
+                        break;
                 }
             }
             catch (ObjectStoreException ex)

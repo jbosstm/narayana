@@ -125,8 +125,7 @@ public class oracle_driver extends JDBCImple
                             else
                             {
                                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                                    tsLogger.arjLoggerI18N
-                                            .warn("com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1");
+                                    tsLogger.i18NLogger.warn_objectstore_jdbc_oracle_1();
                             }
 
                             return newImage;
@@ -274,13 +273,8 @@ public class oracle_driver extends JDBCImple
                     {
                         if (count == MAX_RETRIES - 1)
                         {
-                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                            {
-                                tsLogger.arjLoggerI18N
-                                        .warn(
-                                                "com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2",
-                                                new Object[]
-                                                { e });
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                                tsLogger.i18NLogger.warn_objectstore_jdbc_oracle_2(e);
                             }
                             return false;
                         }

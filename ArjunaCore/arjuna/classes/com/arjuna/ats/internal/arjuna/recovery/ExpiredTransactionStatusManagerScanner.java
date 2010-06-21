@@ -113,7 +113,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                      {
 			 if (tsLogger.arjLoggerI18N.isInfoEnabled())
 			 {
-			     tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3", new Object[]{newUid});
+                 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
 			 }
 			 
 			 _objectStore.remove_committed( newUid, _itemTypeName ) ;
@@ -136,7 +136,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                         {
 			    if (tsLogger.arjLoggerI18N.isInfoEnabled())
 			    {
-				tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3", new Object[]{newUid});
+                    tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
 			    }
 			    
                            tsc.delete() ;

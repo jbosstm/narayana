@@ -176,20 +176,18 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			if (!store.remove_uncommitted(uid, type))
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_19");
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_PersistenceRecord_19();
+                }
 
 				return TwoPhaseOutcome.FINISH_ERROR;
 			}
 		}
 		catch (ObjectStoreException e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_20", new Object[] { e }, e);
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_PersistenceRecord_20(e);
+            }
 
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
@@ -231,11 +229,9 @@ public class PersistenceRecord extends RecoveryRecord
 
 					if (!result)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_2", new Object[]
-							{ order() });
-						}
+						if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                            tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
+                        }
 					}
 				}
 				else
@@ -246,30 +242,29 @@ public class PersistenceRecord extends RecoveryRecord
 					}
 					else
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_3");
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_PersistenceRecord_3();
 					}
 				}
 			}
 			catch (ObjectStoreException e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_4", new Object[]
-					{ e });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_PersistenceRecord_4(e);
 
 				result = false;
 			}
 		}
 		else
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_5");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_5();
 		}
 
 		if (!result)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_6");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_6();
 		}
 
 		super.forgetAction(true);
@@ -335,10 +330,9 @@ public class PersistenceRecord extends RecoveryRecord
 						store.write_uncommitted(sm.get_uid(), sm.type(), dummy);
 						result = TwoPhaseOutcome.PREPARE_OK;
 					}
-					catch (ObjectStoreException e)
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_21", e);
-					}
+					catch (ObjectStoreException e) {
+                        tsLogger.i18NLogger.warn_PersistenceRecord_21(e);
+                    }
 
 					dummy = null;
 				}
@@ -361,15 +355,15 @@ public class PersistenceRecord extends RecoveryRecord
 				}
 				else
 				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_7");
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_PersistenceRecord_7();
 				}
 			}
 		}
 		else
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_8");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_8();
 		}
 
 		return result;
@@ -449,8 +443,8 @@ public class PersistenceRecord extends RecoveryRecord
 		}
 		catch (final Exception e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_10");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_10();
 		}
 
 		return res;
@@ -469,10 +463,9 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			if (!ObjectStoreType.valid(store.typeIs()))
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_11");
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_PersistenceRecord_11();
+                }
 
 				res = false;
 			}
@@ -508,8 +501,8 @@ public class PersistenceRecord extends RecoveryRecord
 							topLevelState.packInto(os);
 						else
 						{
-							if (tsLogger.arjLoggerI18N.isWarnEnabled())
-								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_14");
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                tsLogger.i18NLogger.warn_PersistenceRecord_14();
 						}
 					}
 				}
@@ -517,15 +510,15 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					res = false;
 
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_15");
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_PersistenceRecord_15();
 				}
 			}
 		}
 		else
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_16");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_PersistenceRecord_16();
 
 			try
 			{

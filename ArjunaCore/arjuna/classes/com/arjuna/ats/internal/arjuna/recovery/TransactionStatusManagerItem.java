@@ -178,11 +178,9 @@ public class TransactionStatusManagerItem
 	  }
       catch ( ObjectStoreException ex )
 	  {
-	      if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      {
-		  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_1",
-					      new Object[]{ex});
-	      }
+	      if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+              tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_1(ex);
+          }
 	  }
       
       return ret_status ;
@@ -218,11 +216,9 @@ public class TransactionStatusManagerItem
 	   {
 	       ret_status = false ;
 	       
-	       if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	       {
-		   tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2",
-					       new Object[]{ex});
-	       }
+	       if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+               tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+           }
 	   }
        
        return ret_status ;
@@ -251,11 +247,9 @@ public class TransactionStatusManagerItem
 	}
 	catch ( IOException ex )
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3",
-						new Object[]{ex});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_3(ex);
+        }
 	    }
 	
 	return ret_status ;
@@ -284,11 +278,9 @@ public class TransactionStatusManagerItem
 	    }
 	catch ( IOException ex )
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2",
-						new Object[]{ex});
-	  }
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+        }
 	    }
 	
 	return ret_status ;
@@ -315,11 +307,9 @@ public class TransactionStatusManagerItem
 	    }
 	catch ( ObjectStoreException ex )
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2",
-						new Object[]{ex});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_2(ex);
+        }
 	    }
 	
 	return ret_status ;
@@ -340,16 +330,14 @@ public class TransactionStatusManagerItem
          
 	    if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	    {
-            tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5", new Object[] {_host, _port});
+            tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
 	    }
 	}
 	catch ( UnknownHostException ex )
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4",
-					    new Object[]{ex});
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
+        }
 	}
     }
 
@@ -365,20 +353,18 @@ public class TransactionStatusManagerItem
         try
         {
             // make sure the passed in host is valid
-            Utility.hostNameToInetAddress(host, "com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4");
+            Utility.hostNameToInetAddress(host);
             _host = host;
 
             if (tsLogger.arjLoggerI18N.isInfoEnabled())
             {
-                tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5", new Object[] {_host, _port});
+                tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
             }
         }
         catch ( UnknownHostException ex )
         {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4",
-                        new Object[]{ex});
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
             }
         }
     }

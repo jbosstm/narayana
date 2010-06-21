@@ -46,8 +46,7 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
             {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa1", new Object[]
-                    { u, type() });
+                tsLogger.i18NLogger.warn_tools_log_eaa1(u, type());
             }
         }
     }
@@ -104,9 +103,8 @@ public class EditableAtomicAction extends AtomicAction implements EditableTransa
             }
             else
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.tools.log.eaa2");
+                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_tools_log_eaa2();
                 }
             }
         }

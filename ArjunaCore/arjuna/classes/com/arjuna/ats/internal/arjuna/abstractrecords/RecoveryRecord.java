@@ -93,8 +93,7 @@ public class RecoveryRecord extends AbstractRecord
         else
         {
             if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N
-                        .warn("com.arjuna.ats.arjuna.RecoveryRecord_1");
+                tsLogger.i18NLogger.warn_RecoveryRecord_1();
         }
     }
 
@@ -133,8 +132,7 @@ public class RecoveryRecord extends AbstractRecord
                 if (result == TwoPhaseOutcome.FINISH_ERROR)
                 {
                     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        tsLogger.arjLoggerI18N
-                                .warn("com.arjuna.ats.arjuna.RecoveryRecord_2");
+                        tsLogger.i18NLogger.warn_RecoveryRecord_2();
                 }
 
                 return result;

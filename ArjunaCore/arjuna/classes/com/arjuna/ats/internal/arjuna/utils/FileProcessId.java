@@ -92,7 +92,7 @@ public int getpid ()
 		    File tmpDir = new File(dir);
 
 		    if (tmpDir.isDirectory() == false && tmpDir.mkdirs() == false)
-			throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.FilePocessId_1"));
+			throw new FatalError(tsLogger.i18NLogger.get_utils_FileProcessId_1());
 
 		    for (int i = 0; i < retry; i++)
 		    {
@@ -117,7 +117,7 @@ public int getpid ()
 		    }
 
 		    if (processId == 0)
-			throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.FilePocessId_2"));
+			throw new FatalError(tsLogger.i18NLogger.get_utils_FileProcessId_2());
 		}
 	    }
 	}

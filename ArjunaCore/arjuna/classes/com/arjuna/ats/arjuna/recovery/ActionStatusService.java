@@ -155,22 +155,20 @@ public class ActionStatusService implements Service
 
 	       if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	       {
-		   tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.ActionStatusService_1",
-						new Object[]{transactionType, strUid, strStatus});
+               tsLogger.i18NLogger.info_recovery_ActionStatusService_1(transactionType, strUid, strStatus);
 	       }
 	    }
          }
       }
       catch ( IOException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_7");
+          if (tsLogger.arjLoggerI18N.isWarnEnabled())
+              tsLogger.i18NLogger.warn_recovery_ActionStatusService_7();
       }
       catch ( Exception ex )
       {
           if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
-              tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_2",
-                      new Object[]{ex}, ex);
+              tsLogger.i18NLogger.warn_recovery_ActionStatusService_2(ex);
           }
       }
    }
@@ -209,11 +207,9 @@ public class ActionStatusService implements Service
 	}
 	catch ( Exception ex )
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3",
-					    new Object[]{ex});
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_ActionStatusService_3(ex);
+        }
 	}
 
 	return action_status;
@@ -251,11 +247,9 @@ public class ActionStatusService implements Service
       }
       catch ( Exception ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3",
-					  new Object[]{ex});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_ActionStatusService_3(ex);
+      }
       }
 
       return action_status;
@@ -323,7 +317,7 @@ public class ActionStatusService implements Service
                                  matchingUidTypeVector.addElement( theTypeName );
                                  if (tsLogger.arjLoggerI18N.isInfoEnabled())
 				 {
-				     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.ActionStatusService_4",new Object[]{tranUid});
+				     tsLogger.i18NLogger.info_recovery_ActionStatusService_4(tranUid);
 				 }
 			      }
                            }
@@ -331,10 +325,9 @@ public class ActionStatusService implements Service
                      }
                      catch ( Exception ex )
                      {
-			 if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			 {
-			     tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_5", new Object[]{ex});
-			 }
+			 if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                 tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
+             }
                      }
                   }
                }
@@ -343,14 +336,14 @@ public class ActionStatusService implements Service
             {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_5", new Object[]{ex});
+		    tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
 		}
             }
             catch ( Exception ex )
             {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_5", new Object[]{ex});
+		    tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
 		}
             }
          }
@@ -359,7 +352,7 @@ public class ActionStatusService implements Service
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_5", new Object[]{ex});
+	      tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
 	  }
       }
 
@@ -430,10 +423,9 @@ public class ActionStatusService implements Service
       }
       catch ( Exception ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_6", new Object[]{ex});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_ActionStatusService_6(ex);
+      }
       }
 
       return action_status;

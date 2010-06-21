@@ -317,7 +317,7 @@ public class ActionHierarchy
 	}
 	catch (OutOfMemoryError ex)
 	{
-        IOException ioException = new IOException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1"));
+        IOException ioException = new IOException(tsLogger.i18NLogger.get_coordinator_ActionHierarchy_1());
         ioException.initCause(ex);
         throw ioException;
 	}

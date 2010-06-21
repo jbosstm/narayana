@@ -110,8 +110,8 @@ public class LogWriteStateManager extends StateManager
     
 	if (super.status() == ObjectStatus.PASSIVE)
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_10");
+        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            tsLogger.i18NLogger.warn_StateManager_10();
 
 	    activate();
 	}

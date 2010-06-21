@@ -144,17 +144,13 @@ public class PeriodicRecovery extends Thread
                 _listener.setDaemon(true);
 
                 if (tsLogger.arjLoggerI18N.isInfoEnabled())
-                    tsLogger.arjLoggerI18N.info(
-                            "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13",
-                            new Object[] {
-                                    _socket.getInetAddress().getHostAddress(), _socket.getLocalPort()
-                            });
+                    tsLogger.i18NLogger.info_recovery_PeriodicRecovery_13(_socket.getInetAddress().getHostAddress(),
+                            Integer.toString(_socket.getLocalPort()));
             }
             catch (Exception ex)
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9", new Object[]{ex});
+                if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_9(ex);
                 }
             }
         }
@@ -901,8 +897,8 @@ public class PeriodicRecovery extends Thread
 
       if (className == null)
       {
-  	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1");
+          if (tsLogger.arjLoggerI18N.isWarnEnabled())
+              tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_1();
 
          return;
       }
@@ -919,38 +915,30 @@ public class PeriodicRecovery extends Thread
             }
             catch (ClassCastException e)
             {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_2",
-						new Object[]{className});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_2(className);
+        }
             }
             catch (IllegalAccessException iae)
             {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_3",
-						new Object[]{iae});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_3(iae);
+        }
             }
             catch (InstantiationException ie)
             {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_4",
-						new Object[]{ie});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_4(ie);
+        }
             }
 
             c = null;
          }
          catch ( ClassNotFoundException cnfe )
          {
- 	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_5",
-					     new Object[]{className});
-	     }
+ 	     if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+              tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_5(className);
+          }
          }
       }
    }

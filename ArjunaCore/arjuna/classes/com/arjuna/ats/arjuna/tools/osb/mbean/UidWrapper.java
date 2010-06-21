@@ -123,7 +123,7 @@ public class UidWrapper {
 			mbean = constructor.newInstance(this);
 		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
 			if (tsLogger.arjLoggerI18N.isInfoEnabled())
-				tsLogger.arjLoggerI18N.info("Error constructing mbean: " + e);
+				tsLogger.i18NLogger.info_osb_MBeanCtorFail(e);
 			mbean = new OSEntryBean(this);
 		}
 

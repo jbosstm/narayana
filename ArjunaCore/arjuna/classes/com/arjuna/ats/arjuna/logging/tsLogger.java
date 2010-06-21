@@ -32,6 +32,7 @@
 package com.arjuna.ats.arjuna.logging;
 
 import com.arjuna.common.util.logging.*;
+import org.jboss.logging.Logger;
 
 public class tsLogger
 {
@@ -43,7 +44,7 @@ public class tsLogger
     {
         arjLogger = noi18n;
         arjLoggerI18N = i18n;
-        i18NLogger = new arjunaI18NLoggerImpl(i18n);
+        i18NLogger = new arjunaI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.arjuna"));
     }
 
     static

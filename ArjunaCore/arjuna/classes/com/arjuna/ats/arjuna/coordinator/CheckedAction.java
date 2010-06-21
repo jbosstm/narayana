@@ -71,15 +71,9 @@ public class CheckedAction
         if (tsLogger.arjLoggerI18N.isWarnEnabled())
         {
             if (isCommit)
-                tsLogger.arjLoggerI18N.warn(
-                        "com.arjuna.ats.arjuna.coordinator.CheckedAction_1",
-                        new Object[]
-                        { actUid, Integer.toString(list.size()) });
+                tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(list.size()));
             else
-                tsLogger.arjLoggerI18N.warn(
-                        "com.arjuna.ats.arjuna.coordinator.CheckedAction_2",
-                        new Object[]
-                        { actUid, Integer.toString(list.size()) });
+                tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(list.size()));
         }
     }
 

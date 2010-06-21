@@ -156,11 +156,9 @@ public class DisposeRecord extends CadaverRecord
 	    }
 	    catch (final Throwable e)
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.DisposeRecord_5", 
-						new Object[]{e});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_DisposeRecord_5(e);
+        }
 	    }
 	}
 	
@@ -207,8 +205,8 @@ public class DisposeRecord extends CadaverRecord
 	{
 	    if (!ObjectStoreType.valid(store.typeIs()))
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.DisposeRecord_1");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_DisposeRecord_1();
 			
 		res = false;
 	    }
@@ -224,16 +222,16 @@ public class DisposeRecord extends CadaverRecord
 		}
 		catch (IOException e)
 		{
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.DisposeRecord_2");
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_DisposeRecord_2();
 		    res = false;
 		}
 	    }
 	}
 	else
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.DisposeRecord_3");
+        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            tsLogger.i18NLogger.warn_DisposeRecord_3();
 		
 	    res = false;
 	}
@@ -262,11 +260,9 @@ public class DisposeRecord extends CadaverRecord
 	    }
 	    else
 	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.DisposeRecord_4", 
-						new Object[]{Integer.toString(objStoreType)});
-		}
+		if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_DisposeRecord_4(Integer.toString(objStoreType));
+        }
 
 		res = false;
 	    }

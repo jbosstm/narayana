@@ -99,16 +99,14 @@ public class TransactionStatusManager
 
 	 if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	 {
-	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1",
-					 new Object[]{service.getClass().getName(),
-							  Integer.toString(serverSocket.getLocalPort())});
+         tsLogger.i18NLogger.info_recovery_TransactionStatusManager_1(service.getClass().getName(),
+							  Integer.toString(serverSocket.getLocalPort()));
 	 }
 
          _listener.start() ;
       }
-      catch ( IOException ex )
-      {
-	  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2");
+      catch ( IOException ex ) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_2();
       }
    }
 
@@ -152,43 +150,35 @@ public class TransactionStatusManager
 
          if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	 {
-	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3",
-					  new Object[]{Integer.toString(socketServer.getLocalPort()), socketServer.getInetAddress().getHostAddress(), serviceName});
+         tsLogger.i18NLogger.info_recovery_TransactionStatusManager_3(Integer.toString(socketServer.getLocalPort()),
+                 socketServer.getInetAddress().getHostAddress(), serviceName);
 	 }
       }
       catch ( ClassNotFoundException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4",
-					  new Object[]{serviceName});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_4(serviceName);
+      }
       }
       catch ( InstantiationException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5",
-					  new Object[]{serviceName});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_5(serviceName);
+      }
       }
       catch ( IllegalAccessException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6",
-					  new Object[]{serviceName});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_6(serviceName);
+      }
       }
       catch ( IOException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-          tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14",
-					  new Object[]{getListenerHostName(), getListenerPort(-1)});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_14(getListenerHostName(), Integer.toString(getListenerPort(-1)));
+      }
 
-	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"), ex);
+	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.i18NLogger.get_recovery_TransactionStatusManager_9(), ex);
       }
    }
 
@@ -240,13 +230,13 @@ public class TransactionStatusManager
         if (_port == -1)
         {
             // a previous attempt to create the socket failed
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13"));
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.i18NLogger.get_recovery_TransactionStatusManager_13());
         }
 
         try
         {
             String host = hostNameOverride == null ? getListenerHostName() : hostNameOverride;
-            InetAddress bindAddress = Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10");
+            InetAddress bindAddress = Utility.hostNameToInetAddress(host);
 
             _port = portOverride == -1 ? getListenerPort(null) : portOverride;
             _socket = new ServerSocket(_port, Utility.BACKLOG, bindAddress);

@@ -60,9 +60,8 @@ public class ClassloadingUtility
             tsLogger.arjLogger.debug("Loading class " + className);
         }
 
-        if (className == null)
-        {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_1");
+        if (className == null) {
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_1();
             return null;
         }
 
@@ -72,7 +71,7 @@ public class ClassloadingUtility
         {
             clazz = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
         } catch(ClassNotFoundException e) {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_2",  new Object[]{className}, e);
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_2(className, e);
             return null;
         }
 
@@ -82,12 +81,12 @@ public class ClassloadingUtility
             Class<? extends T> clazz2 = clazz.asSubclass(iface);
             instance = (T)clazz2.newInstance();
         } catch (ClassCastException e) {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_3", new Object[]{className, iface.getName()}, e);
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
         }
         catch (InstantiationException e) {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_4", new Object[]{className}, e);
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch (IllegalAccessException e) {
-            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_5", new Object[]{className}, e);
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
         }
 
         return instance;
@@ -125,7 +124,7 @@ public class ClassloadingUtility
                     Method method = instance.getClass().getMethod("initialise", new Class[] {String.class}); // yup, UK English spelling
                     method.invoke(instance, theParameter);
                 } catch(Exception e) {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.common.ClassloadingUtility_6", new Object[]{theClassAndParameter}, e);
+                    tsLogger.i18NLogger.warn_common_ClassloadingUtility_6(theClassAndParameter, e);
                     continue;
                 }
             }

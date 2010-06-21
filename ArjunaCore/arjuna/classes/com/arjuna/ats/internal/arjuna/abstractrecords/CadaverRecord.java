@@ -139,11 +139,9 @@ public class CadaverRecord extends PersistenceRecord
 
 	if (oType == RecordType.RECOVERY)
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.CadaverRecord_1",
-					    new Object[]{ order(), getTypeOfObject() } );
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
+        }
 	}
 
 	/*
@@ -192,11 +190,9 @@ public class CadaverRecord extends PersistenceRecord
 
 	if (oType == RecordType.RECOVERY)
 	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.CadaverRecord_1",
-					    new Object[]{ order(), getTypeOfObject() } );
-	    }
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+            tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
+        }
 	}
 
 	// super.forgetAction(false);

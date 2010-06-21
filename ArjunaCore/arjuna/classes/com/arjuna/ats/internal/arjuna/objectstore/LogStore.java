@@ -812,13 +812,9 @@ public class LogStore extends FileSystemStore
 
 				if (fd == null)
 				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_18",
-								new Object[]
-								           { fname });
-					}
+					if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_objectstore_ShadowingStore_18(fname);
+                    }
 
 					return false;
 				}
@@ -906,14 +902,9 @@ public class LogStore extends FileSystemStore
 
 			if (!unlockAndClose(fd, ofile))
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_19",
-									new Object[]
-									{ fname });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_19(fname);
+                }
 			}
 
 			super.addToCache(fname);
@@ -922,9 +913,8 @@ public class LogStore extends FileSystemStore
 		}
 		else
 			throw new ObjectStoreException(
-					"ShadowStore::write_state - "
-							+ tsLogger.arjLoggerI18N
-									.getString("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid")
+                    "ShadowStore::write_state - "
+                            + tsLogger.i18NLogger.get_objectstore_notypenameuid()
 							+ objUid);
 	}
 

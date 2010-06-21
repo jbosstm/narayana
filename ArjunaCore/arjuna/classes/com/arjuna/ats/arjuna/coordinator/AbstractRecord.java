@@ -451,10 +451,9 @@ public abstract class AbstractRecord extends StateManager
 	    }
 	    catch (final NullPointerException ex)
 	    {
-	        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe", new Object[] {new Integer(type)});
-                }
+	        if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_coordinator_AbstractRecord_npe(Integer.toString(type));
+            }
 	        
 	        return null;
 	    }

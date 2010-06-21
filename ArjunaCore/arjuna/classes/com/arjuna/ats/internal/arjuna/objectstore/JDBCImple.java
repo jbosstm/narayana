@@ -195,12 +195,8 @@ public abstract class JDBCImple
 			}
 			catch (Exception e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_1",
-									new Object[]
-									{ e });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_1(e);
 
 				freePool(pool);
 				return false;
@@ -294,12 +290,8 @@ public abstract class JDBCImple
 			}
 			catch (Exception e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_2",
-									new Object[]
-									{ e });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_2(e);
 
 				freePool(pool);
 				return false;
@@ -464,16 +456,11 @@ public abstract class JDBCImple
 				}
 				else
 				{
-				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				    {
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3",
-									new Object[]
-									{ e });
-					
-					e.printStackTrace();
-				    }
+				    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
+
+                        e.printStackTrace();
+                    }
 
 					return StateStatus.OS_UNKNOWN;
 				}
@@ -542,23 +529,15 @@ public abstract class JDBCImple
 					}
 					catch (IOException ex)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_5",
-											new Object[]
-											{ ex });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_5(ex);
 
 						return false;
 					}
 					catch (Exception e)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4",
-											new Object[]
-											{ e });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 
 						finished = true;
 					}
@@ -566,12 +545,8 @@ public abstract class JDBCImple
 			}
 			catch (Exception e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4",
-									new Object[]
-									{ e });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 			}
 			finally
 			{
@@ -612,12 +587,8 @@ public abstract class JDBCImple
 		}
 		catch (Exception e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4",
-								new Object[]
-								{ e });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 		}
 		finally
 		{
@@ -668,23 +639,15 @@ public abstract class JDBCImple
 					}
 					catch (IOException ex)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_7",
-											new Object[]
-											{ ex });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_7(ex);
 
 						return false;
 					}
 					catch (Exception e)
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6",
-											new Object[]
-											{ e });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 
 						finished = true;
 					}
@@ -692,12 +655,8 @@ public abstract class JDBCImple
 			}
 			catch (Exception e)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6",
-									new Object[]
-									{ e });
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 			}
 			finally
 			{
@@ -727,7 +686,7 @@ public abstract class JDBCImple
 			}
 			catch (IOException e)
 			{
-				throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"), e);
+				throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_packProblem(), e);
 			}
 
 			foundTypes.setBuffer(store.buffer());
@@ -736,12 +695,8 @@ public abstract class JDBCImple
 		}
 		catch (Exception e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_6",
-								new Object[]
-								{ e });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 		}
 		finally
 		{
@@ -811,12 +766,8 @@ public abstract class JDBCImple
 					}
 					else
 					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_8",
-											new Object[]
-											{ e });
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
 
 						removeOk = false;
 					}
@@ -833,11 +784,7 @@ public abstract class JDBCImple
 				// can only remove (UN)COMMITTED objs
 				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_9",
-									new Object[]
-									{ new Integer(ft), objUid });
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_9(Integer.toString(ft), objUid);
 				}
 			}
 		}
@@ -845,14 +792,9 @@ public abstract class JDBCImple
 		{
 			removeOk = false;
 
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_10",
-								new Object[]
-								{ objUid });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_10(objUid);
+            }
 		}
 
 		return removeOk;
@@ -903,8 +845,8 @@ public abstract class JDBCImple
 						newImage = new InputObjectState(objUid, tName, buffer);
 					}
 					else {
-					    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed");
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                            tsLogger.i18NLogger.warn_objectstore_JDBCImple_readfailed();
 					}
 				}
 				catch (Throwable e)
@@ -1003,8 +945,8 @@ public abstract class JDBCImple
 				if(retryConnection(e, pool)) {
 					return write_state(objUid, tName, state, s, tableName);
 				} else {
-				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed", new Object[] {e});
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
 				}
 			}
 			finally
@@ -1040,13 +982,8 @@ public abstract class JDBCImple
         _poolSizeInit = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeInitial();
         if (_poolSizeInit < 1)
         {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11",
-                                new Object[]
-                                        { _poolSizeInit });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_11(Integer.toString(_poolSizeInit));
             }
             _poolSizeInit = 1;
         }
@@ -1054,13 +991,8 @@ public abstract class JDBCImple
         _poolSizeMax = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeMaximum();
         if (_poolSizeMax < _poolSizeInit)
         {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12",
-                                new Object[]
-                                        { _poolSizeMax });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_12(Integer.toString(_poolSizeMax));
             }
             _poolSizeMax = _poolSizeInit;
         }
@@ -1082,12 +1014,8 @@ public abstract class JDBCImple
 		}
 		catch (Exception e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_13",
-								new Object[]
-								{ e });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
 
 			_isValid = false;
 			return _isValid;
@@ -1149,12 +1077,8 @@ public abstract class JDBCImple
 		}
 		catch (Exception e)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_13",
-								new Object[]
-								{ e });
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
 
 			_isValid = false;
 		}
@@ -1218,14 +1142,9 @@ public abstract class JDBCImple
 		}
 		catch (Exception ex)
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_14",
-								new Object[]
-								{ ex });
-			}
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(ex);
+            }
 		}
 
 		return StateStatus.OS_UNKNOWN;
@@ -1257,14 +1176,9 @@ public abstract class JDBCImple
 		{
 			if ((stateCache.remove(state) == null) && warn)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15",
-									new Object[]
-									{ state });
-				}
+				if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_15(state);
+                }
 			}
 		}
 	}
@@ -1389,12 +1303,8 @@ public abstract class JDBCImple
 						}
 						catch (Exception e)
 						{
-							if (tsLogger.arjLoggerI18N.isWarnEnabled())
-								tsLogger.arjLoggerI18N
-										.warn(
-												"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16",
-												new Object[]
-												{ e });
+                            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                tsLogger.i18NLogger.warn_objectstore_JDBCImple_16(e);
 						}
 					}
 					else
@@ -1417,8 +1327,7 @@ public abstract class JDBCImple
 					{
 						if (tsLogger.arjLoggerI18N.isInfoEnabled())
 						{
-							tsLogger.arjLoggerI18N
-									.info("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_17");
+                            tsLogger.i18NLogger.info_objectstore_JDBCImple_17();
 						}
 					}
 				}
@@ -1445,9 +1354,8 @@ public abstract class JDBCImple
 		{
 			if (_inUse[pool] == false)
 			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N
-							.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18");
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_18();
 			}
 			_inUse[pool] = false;
 			_inUse.notifyAll();

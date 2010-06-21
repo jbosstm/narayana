@@ -156,7 +156,7 @@ public class HashedStore extends ShadowNoFileLockStore
                             }
                             catch (IOException e)
                             {
-                                throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
+                                throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_HashedStore_5(), e);
                             }
                         }
                     }
@@ -176,7 +176,7 @@ public class HashedStore extends ShadowNoFileLockStore
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
+            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_HashedStore_6(), e);
         }
 
         state.setBuffer(store.buffer());
@@ -357,10 +357,8 @@ public class HashedStore extends ShadowNoFileLockStore
 
         if (NUMBEROFDIRECTORIES <= 0)
         {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2",
-                        new Object[]{NUMBEROFDIRECTORIES});
+            if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+                tsLogger.i18NLogger.warn_objectstore_HashedStore_2(Integer.toString(NUMBEROFDIRECTORIES));
             }
 
             NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;

@@ -116,11 +116,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 							// log is present in this iteration, so move it
 							{
 								if (tsLogger.arjLoggerI18N.isInfoEnabled())
-									tsLogger.arjLoggerI18N
-											.info(
-													"com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_4",
-													new Object[]
-													{ newUid });
+                                    tsLogger.i18NLogger.info_recovery_ExpiredTransactionScanner_4(newUid);
 
 								try
 								{
@@ -128,11 +124,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 								}
 								catch (Exception ex)
 								{
-									tsLogger.arjLoggerI18N
-											.warn(
-													"com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner_2",
-													new Object[]
-													{ newUid, ex });
+                                    tsLogger.i18NLogger.warn_recovery_ExpiredTransactionScanner_2(newUid, ex);
 
 									_scanN.put(newUid, newUid);
 								}
@@ -169,13 +161,9 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 	    {
 	        boolean moved = _objectStore.write_committed(newUid, _movedTypeName, new OutputObjectState(state));
 
-	        if (!moved)
-	        {
-	            tsLogger.arjLoggerI18N.warn(
-	                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3",
-	                    new Object[]
-	                               { newUid });
-	        }
+	        if (!moved) {
+                tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
+            }
 	        else
 	            res = _objectStore.remove_committed(newUid, _typeName);
 	    }

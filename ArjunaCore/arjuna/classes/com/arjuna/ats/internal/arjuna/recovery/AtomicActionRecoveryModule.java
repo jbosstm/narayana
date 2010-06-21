@@ -96,11 +96,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
       }
       catch ( ObjectStoreException ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_1",
-					  new Object[]{ex});
-	  }
+	  if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+          tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_1(ex);
+      }
       }
 
       if ( AtomicActions )
@@ -164,8 +162,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
          {
 	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_2",
-					     new Object[]{recoverUid.toString(), ex});
+             tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_2(recoverUid, ex);
 	     }
          }
       }
@@ -269,8 +266,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
          {
 	     if (tsLogger.arjLogger.isWarnEnabled())
 	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule_3",
-					     new Object[]{currentUid.toString(), ex});
+             tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_3(currentUid, ex);
 	     }
          }
       }

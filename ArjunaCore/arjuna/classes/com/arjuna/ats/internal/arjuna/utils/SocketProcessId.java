@@ -82,7 +82,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
         _thePort = ((_theSocket == null) ? -1 : _theSocket.getLocalPort());
 
         if (_thePort == -1) {
-            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2"));
+            throw new FatalError(tsLogger.i18NLogger.get_utils_SocketProcessId_2());
         }
     }
 
