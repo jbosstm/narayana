@@ -135,7 +135,7 @@ public class TwoPCParticipantTestCase
     {
         final String messageId = "testSendError" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5");
-        W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
+        W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorFaultToEndpoint(instanceIdentifier.getInstanceIdentifier());
         final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId);
         final String reason = "testSendErrorReason" ;
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;

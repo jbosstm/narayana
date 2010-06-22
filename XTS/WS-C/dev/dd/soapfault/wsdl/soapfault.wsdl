@@ -14,7 +14,7 @@
     <types>
         <s:schema>
             <s:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
-                      schemaLocation="http://schemas.xmlsoap.org/soap/envelope"/>
+                      schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
         </s:schema>
     </types>
     <message name="SoapFault">

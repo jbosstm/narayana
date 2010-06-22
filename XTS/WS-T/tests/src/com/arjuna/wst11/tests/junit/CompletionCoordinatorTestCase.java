@@ -145,7 +145,7 @@ public class CompletionCoordinatorTestCase
         final String messageId = "123456" ;
         final String reason = "testSendErrorReason" ;
         final String instanceIdentifier = "testSendError" ;
-        final W3CEndpointReference completionInitiatorEndpoint = TestUtil.getCompletionInitiatorEndpoint(instanceIdentifier);
+        final W3CEndpointReference completionInitiatorEndpoint = TestUtil.getCompletionInitiatorFaultToEndpoint(instanceIdentifier);
         final MAP map = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
 
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
