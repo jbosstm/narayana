@@ -20,7 +20,11 @@
  */
 package com.arjuna.ats.jdbc.logging;
 
-import com.arjuna.common.util.logging.Logi18n;
+import org.jboss.logging.Logger;
+
+import java.text.MessageFormat;
+
+import static org.jboss.logging.Logger.Level.*;
 
 /**
  * i18n log messages for the jdbc module.
@@ -30,232 +34,125 @@ import com.arjuna.common.util.logging.Logi18n;
  */
 public class jdbcI18NLoggerImpl implements jdbcI18NLogger {
 
-	private final Logi18n logi18n;
+	private final Logger logger;
 
-	jdbcI18NLoggerImpl(Logi18n logi18n) {
-		this.logi18n = logi18n;
+	jdbcI18NLoggerImpl(Logger logger) {
+		this.logger = logger;
 	}
 
-	public void log_aborterror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.aborterror");
-		}
+	public String get_aborterror() {
+		return "ARJUNA-17001 Rollback not allowed by transaction service.";
 	}
 
-	public void log_alreadyassociated() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.alreadyassociated");
-		}
+	public String get_alreadyassociated() {
+		return "ARJUNA-17002 Connection is already associated with a different transaction! Obtain a new connection for this transaction.";
 	}
 
-	public void log_alreadyassociatedcheck() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.alreadyassociatedcheck");
-		}
+	public String get_alreadyassociatedcheck() {
+		return "ARJUNA-17003 Checking transaction and found that this connection is already associated with a different transaction! Obtain a new connection for this transaction.";
 	}
 
-	public void log_autocommit() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.autocommit");
-		}
+	public String get_autocommit() {
+		return "ARJUNA-17004 AutoCommit is not allowed by the transaction service.";
 	}
 
-	public void log_closeerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.closeerror");
-		}
+	public String get_closeerror() {
+		return "ARJUNA-17005 An error occurred during close:";
 	}
 
-	public void log_closeerrorinvalidtx(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.closeerrorinvalidtx", new Object[] {arg0});
-		}
+	public String get_closeerrorinvalidtx(String arg0) {
+		return MessageFormat.format("ARJUNA-17006 Invalid transaction during close {0}", arg0);
 	}
 
-	public void log_closingconnection(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.closingconnection", new Object[] {arg0});
-		}
+	public void warn_closingconnection(String arg0) {
+		logger.logv(WARN, "ARJUNA-17007 Connection will be closed now. Indications are that this db does not allow multiple connections in the same transaction {0}", arg0);
 	}
 
-	public void log_closingconnectionnull(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.closingconnectionnull", new Object[] {arg0});
-		}
+	public void info_closingconnectionnull(String arg0) {
+		logger.logv(INFO, "ARJUNA-17008 No modifier information found for db. Connection will be closed immediately {0}", arg0);
 	}
 
-	public void log_commiterror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.commiterror");
-		}
+	public String get_commiterror() {
+		return "ARJUNA-17009 Commit not allowed by transaction service.";
 	}
 
-	public void log_conniniterror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.conniniterror");
-		}
+	public String get_conniniterror() {
+		return "ARJUNA-17010 JDBC2 connection initialisation problem";
 	}
 
-	public void log_delisterror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.delisterror");
-		}
+	public String get_delisterror() {
+		return "ARJUNA-17011 Delist of resource failed.";
 	}
 
-	public void log_drcclose() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.drcclose");
-		}
+	public void warn_drcdest(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-17013 Caught exception", (Object)null);
 	}
 
-	public void log_drcdest() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.drcdest");
-		}
+	public String get_dynamicerror() {
+		return "ARJUNA-17016 No dynamic class specified!";
 	}
 
-	public void log_drivers_exception() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.drivers.exception");
-		}
+	public String get_enlistfailed() {
+		return "ARJUNA-17017 enlist of resource failed";
 	}
 
-	public void log_drivers_invaliddb() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.drivers.invaliddb");
-		}
+	public void warn_getmoderror(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-17018 Failed to get modifier for driver:", (Object)null);
 	}
 
-	public void log_dynamicerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.dynamicerror");
-		}
+	public String get_inactivetransaction() {
+		return "ARJUNA-17020 Transaction is not active on the thread!";
 	}
 
-	public void log_enlistfailed() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.enlistfailed");
-		}
+	public String get_infoerror() {
+		return "ARJUNA-17021 Could not get transaction information.";
 	}
 
-	public void log_getmoderror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.getmoderror");
-		}
+	public void warn_isolationlevelfailset(String arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-17024 {0} - failed to set isolation level", arg0);
 	}
 
-	public void log_idrcclose() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.idrcclose");
-		}
+	public String get_jndierror() {
+		return "ARJUNA-17025 Could not resolve JNDI XADataSource";
 	}
 
-	public void log_inactivetransaction() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.inactivetransaction");
-		}
+	public String get_nojdbcimple(String arg0) {
+		return MessageFormat.format("ARJUNA-17026 Can't load ConnectionImple class {0}", arg0);
 	}
 
-	public void log_infoerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.infoerror");
-		}
+	public void warn_recovery_basic_initexp(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-17027 An exception occurred during initialisation.", (Object)null);
 	}
 
-	public void log_ircdest() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.ircdest");
-		}
+	public void warn_recovery_basic_xarec(String arg0) {
+		logger.logv(WARN, "ARJUNA-17028 {0} could not find information for connection!", arg0);
 	}
 
-	public void log_isolationlevelfailget(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.isolationlevelfailget", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_xa_initexp(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-17029 An exception occurred during initialisation.", (Object)null);
 	}
 
-	public void log_isolationlevelfailset(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.isolationlevelfailset", new Object[] {arg0, arg1});
-		}
+	public String get_releasesavepointerror() {
+		return "ARJUNA-17031 rollback(Savepoint) not allowed inside distributed tx.";
 	}
 
-	public void log_jndierror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.jndierror");
-		}
+	public void warn_rollbackerror(String arg0) {
+		logger.logv(WARN, "ARJUNA-17032 {0} - could not mark transaction rollback", arg0);
 	}
 
-	public void log_nojdbcimple(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.nojdbcimple", new Object[] {arg0});
-		}
+	public String get_rollbacksavepointerror() {
+		return "ARJUNA-17033 rollback(Savepoint) not allowed inside distributed tx.";
 	}
 
-	public void log_recovery_basic_initexp() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.recovery.basic.initexp");
-		}
+	public String get_setreadonly() {
+		return "ARJUNA-17034 Cannot set readonly when within a transaction!";
 	}
 
-	public void log_recovery_basic_xarec(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.recovery.basic.xarec", new Object[] {arg0});
-		}
+	public String get_setsavepointerror() {
+		return "ARJUNA-17035 setSavepoint not allowed inside distributed tx.";
 	}
 
-	public void log_recovery_xa_initexp() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.recovery.xa.initexp");
-		}
+	public String get_xa_recjndierror() {
+		return "ARJUNA-17037 Could not resolve JNDI XADataSource";
 	}
-
-	public void log_recovery_xa_xarec(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.recovery.xa.xarec", new Object[] {arg0});
-		}
-	}
-
-	public void log_releasesavepointerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.releasesavepointerror");
-		}
-	}
-
-	public void log_rollbackerror(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.rollbackerror", new Object[] {arg0});
-		}
-	}
-
-	public void log_rollbacksavepointerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.rollbacksavepointerror");
-		}
-	}
-
-	public void log_setreadonly() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.setreadonly");
-		}
-	}
-
-	public void log_setsavepointerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.setsavepointerror");
-		}
-	}
-
-	public void log_stateerror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.stateerror");
-		}
-	}
-
-	public void log_xa_recjndierror() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.jdbc.xa.recjndierror");
-		}
-	}
-
 }

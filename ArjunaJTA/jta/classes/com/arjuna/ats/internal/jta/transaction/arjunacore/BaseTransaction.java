@@ -41,12 +41,6 @@ import javax.transaction.NotSupportedException;
 
 import java.lang.IllegalStateException;
 
-/**
- * @message com.arjuna.ats.internal.jta.transaction.arjunacore.notx
- *          [com.arjuna.ats.internal.jta.transaction.arjunacore.notx] no
- *          transaction!
- */
-
 public class BaseTransaction
 {
 
@@ -105,10 +99,6 @@ public class BaseTransaction
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1. The OTS interfaces do not allow
 	 * a differentiation.
-	 *
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.cmfailunknownstatus
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.cmfailunknownstatus]
-	 *          commit failed with status:
 	 */
 
 	public void commit() throws javax.transaction.RollbackException,
@@ -126,17 +116,10 @@ public class BaseTransaction
 		if (theTransaction == null)
 			throw new IllegalStateException(
 					"BaseTransaction.commit - "
-							+ jtaLogger.loggerI18N
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.notx"));
+							+ jtaLogger.i18NLogger.get_transaction_arjunacore_notx());
 
 		theTransaction.commitAndDisassociate();
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.abfailunknownstatus
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.abfailunknownstatus]
-	 *          rollback failed with status:
-	 */
 
 	public void rollback() throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
@@ -150,20 +133,10 @@ public class BaseTransaction
 		if (theTransaction == null)
 			throw new IllegalStateException(
 					"BaseTransaction.rollback - "
-							+ jtaLogger.loggerI18N
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.notx"));
+							+ jtaLogger.i18NLogger.get_transaction_arjunacore_notx());
 
 		theTransaction.rollbackAndDisassociate();
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.nosuchtx
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.nosuchtx] No
-	 *          such transaction!
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.rbofail
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.rbofail]
-	 *          Could not mark transaction as rollback only.
-	 */
 
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
@@ -176,8 +149,7 @@ public class BaseTransaction
 
 		if (theTransaction == null)
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N
-							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nosuchtx"));
+					jtaLogger.i18NLogger.get_transaction_arjunacore_nosuchtx());
 
 		theTransaction.setRollbackOnly();
 	}
@@ -270,10 +242,6 @@ public class BaseTransaction
 	/**
 	 * Called when we want to make sure this thread does not already have a
 	 * transaction associated with it.
-	 *
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated]
-	 *          thread is already associated with a transaction!
 	 */
 
 	final void checkTransactionState() throws IllegalStateException,
@@ -292,7 +260,7 @@ public class BaseTransaction
 			{
 				throw new IllegalStateException(
 						"BaseTransaction.checkTransactionState - "
-								+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated"));
+								+ jtaLogger.i18NLogger.get_transaction_arjunacore_alreadyassociated());
 			}
 		}
 	}

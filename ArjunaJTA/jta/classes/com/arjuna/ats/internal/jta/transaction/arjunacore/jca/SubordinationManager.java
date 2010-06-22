@@ -80,9 +80,6 @@ public class SubordinationManager
         SubordinationManager.txType = txType;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.importerfailure Failed to create instance of TransactionImporter
-     */
     private static void initTransactionImporter()
     {
         if(txType == null) {
@@ -105,14 +102,11 @@ public class SubordinationManager
             }
             catch(Exception e)
             {
-                jtaLogger.loggerI18N.error("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.importerfailure", e);
+                jtaLogger.i18NLogger.error_transaction_arjunacore_jca_SubordinationManager_importerfailure(e);
             }
         }
     }
     
-    /**
-     * @message com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.terminatorfailure Failed to create instance of XATerminator
-     */
     private static void initXATerminator()
     {
         if(txType == null) {
@@ -137,7 +131,7 @@ public class SubordinationManager
             }
             catch(Exception e)
             {
-                jtaLogger.loggerI18N.error("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.terminatorfailure", e);
+                jtaLogger.i18NLogger.error_transaction_arjunacore_jca_SubordinationManager_terminatorfailure(e);
             }
         }
     }

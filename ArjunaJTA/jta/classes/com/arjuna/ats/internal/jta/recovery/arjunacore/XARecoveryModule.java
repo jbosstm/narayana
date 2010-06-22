@@ -40,7 +40,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -100,28 +99,9 @@ public class XARecoveryModule implements RecoveryModule
     }
 
 
-
-    /**
-	 * @message com.arjuna.ats.internal.jta.recovery.xafirstpass {0} - first
-	 *          pass
-	 * @message com.arjuna.ats.internal.jta.recovery.alluids could not get all
-	 *          object Uids.
-	 * @message com.arjuna.ats.internal.jta.recovery.objstoreerror {0}
-	 * @message com.arjuna.ats.internal.jta.recovery.periodicfirstpass {0}
-	 *          exception
-	 * @message com.arjuna.ats.internal.jta.recovery.info.firstpass {0} - first
-	 *          pass
-	 */
-
 	public void periodicWorkFirstPass()
 	{
-		if (jtaLogger.loggerI18N.isInfoEnabled())
-		{
-			jtaLogger.loggerI18N.info(
-					"com.arjuna.ats.internal.jta.recovery.info.firstpass",
-					new Object[]
-					{ _logName });
-		}
+        jtaLogger.i18NLogger.info_recovery_firstpass(_logName);
 
 		_uids = new InputObjectState();
 
@@ -133,56 +113,24 @@ public class XARecoveryModule implements RecoveryModule
 		{
 			if (!_objStore.allObjUids(_recoveryManagerClass.type(), _uids))
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N
-							.warn("com.arjuna.ats.internal.jta.recovery.alluids");
-				}
+                jtaLogger.i18NLogger.warn_recovery_alluids();
 			}
 		}
 		catch (ObjectStoreException e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.recovery.objstoreerror",
-								e);
-			}
+            jtaLogger.i18NLogger.warn_recovery_objstoreerror(e);
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.recovery.periodicfirstpass",
-								new Object[]
-								{ _logName
-										+ ".periodicWorkFirstPass exception " },
-								e);
-			}
+            jtaLogger.i18NLogger.warn_recovery_periodicfirstpass(_logName+".periodicWorkFirstPass", e);
 		}
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.recovery.periodicsecondpass {0}
-	 *          exception
-	 * @message com.arjuna.ats.internal.jta.recovery.info.secondpass {0} -
-	 *          second pass
-	 */
 
 	public void periodicWorkSecondPass()
 	{
 		if (jtaLogger.logger.isInfoEnabled())
 		{
-			if (jtaLogger.loggerI18N.isInfoEnabled())
-			{
-				jtaLogger.loggerI18N.info(
-						"com.arjuna.ats.internal.jta.recovery.info.secondpass",
-						new Object[]
-						{ _logName });
-			}
+            jtaLogger.i18NLogger.info_recovery_secondpass(_logName);
 		}
 
 		try
@@ -210,16 +158,7 @@ public class XARecoveryModule implements RecoveryModule
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.recovery.periodicsecondpass",
-								new Object[]
-								{ _logName
-										+ ".periodicWorkSecondPass exception " },
-								e);
-			}
+            jtaLogger.i18NLogger.warn_recovery_periodicsecondpass(_logName+".periodicWorkSecondPass", e);
 		}
 
 		clearAllFailures();
@@ -261,16 +200,6 @@ public class XARecoveryModule implements RecoveryModule
 		return null;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.recovery.constfail {0}
-	 * @message com.arjuna.ats.internal.jta.recovery.classloadfail {0} - could
-	 *          not get class name for {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.general Caught exception:
-	 *          {0} for {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.info.loading {0} loading
-	 *          {1}
-	 */
-
 	protected XARecoveryModule(String recoveryClass, String logName)
     {
         _logName = logName;
@@ -284,32 +213,13 @@ public class XARecoveryModule implements RecoveryModule
         }
         catch (Exception ex)
         {
-            if (jtaLogger.loggerI18N.isWarnEnabled())
-            {
-                jtaLogger.loggerI18N.warn(
-                        "com.arjuna.ats.internal.jta.recovery.constfail", ex);
-            }
-
+            jtaLogger.i18NLogger.warn_recovery_constfail(ex);
             _recoveryManagerClass = null;
         }
 
         _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
         _xaResourceOrphanFilters = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters();
     }
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.recovery.recoveryfailed JTA failed
-	 *          to recovery {0}; got status {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.recoverydelayed JTA
-	 *          recovery delayed for {0}; got status {1} so waiting for
-	 *          coordinator driven recovery
-	 * @message com.arjuna.ats.internal.jta.recovery.recoveryerror Recovery
-	 *          threw:
-	 * @message com.arjuna.ats.internal.jta.recovery.cannotadd Cannot add
-	 *          resource to table: no XID value available.
-	 * @message com.arjuna.ats.internal.jta.recovery.unexpectedrecoveryerror
-	 *          Unexpceted recovery error:
-	 */ 
 
 	private final boolean transactionInitiatedRecovery()
 	{
@@ -359,33 +269,11 @@ public class XARecoveryModule implements RecoveryModule
 									    
 										problem = false;
 
-										if (jtaLogger.loggerI18N
-												.isInfoEnabled())
-										{
-											jtaLogger.loggerI18N
-													.info(
-															"com.arjuna.ats.internal.jta.recovery.recoverydelayed",
-															new Object[]
-															{
-																	theUid,
-																	new Integer(
-																			recoveryStatus) });
-										}
+                                        jtaLogger.i18NLogger.info_recovery_recoverydelayed(theUid, Integer.toString(recoveryStatus));
 									}
 									else
 									{
-										if (jtaLogger.loggerI18N
-												.isWarnEnabled())
-										{
-											jtaLogger.loggerI18N
-													.warn(
-															"com.arjuna.ats.internal.jta.recovery.recoveryfailed",
-															new Object[]
-															{
-																	theUid,
-																	new Integer(
-																			recoveryStatus) });
-										}
+                                        jtaLogger.i18NLogger.warn_recovery_recoveryfailed(theUid, Integer.toString(recoveryStatus));
 									}
 								}
 								else
@@ -422,13 +310,7 @@ public class XARecoveryModule implements RecoveryModule
 						{
 							problem = true;
 
-							if (jtaLogger.loggerI18N.isWarnEnabled())
-							{
-								jtaLogger.loggerI18N
-										.warn(
-												"com.arjuna.ats.internal.jta.recovery.recoveryerror",
-												e);
-							}
+                            jtaLogger.i18NLogger.warn_recovery_recoveryerror(e);
 						}
 
 						if (problem && (record != null))
@@ -444,11 +326,7 @@ public class XARecoveryModule implements RecoveryModule
 
 							if (record.getXid() == null)
 							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N
-											.warn("com.arjuna.ats.internal.jta.recovery.cannotadd");
-								}
+                                jtaLogger.i18NLogger.warn_recovery_cannotadd();
 							}
 							else
 							{
@@ -464,13 +342,7 @@ public class XARecoveryModule implements RecoveryModule
 			}
 			catch (Throwable e)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jta.recovery.unexpectedrecoveryerror",
-									e);
-				}
+                jtaLogger.i18NLogger.warn_recovery_unexpectedrecoveryerror(e);
 			}
 		}
 
@@ -498,8 +370,6 @@ public class XARecoveryModule implements RecoveryModule
 	 * Note we cannot use the method that works with Transactions and
 	 * TransactionalObjects, of checking with original process that created the
 	 * transaction, because we don't know which process it was.
-	 *
-	 * @message com.arjuna.ats.internal.jta.recovery.getxaresource Caught:
 	 */
 
 	private final boolean resourceInitiatedRecovery()
@@ -529,25 +399,13 @@ public class XARecoveryModule implements RecoveryModule
 						}
 						catch (Exception exp)
 						{
-							if (jtaLogger.loggerI18N.isWarnEnabled())
-							{
-								jtaLogger.loggerI18N
-										.warn(
-												"com.arjuna.ats.internal.jta.recovery.getxaresource",
-												exp);
-							}
+                            jtaLogger.i18NLogger.warn_recovery_getxaresource(exp);
 						}
 					}
 				}
 				catch (Exception ex)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
-					{
-						jtaLogger.loggerI18N
-								.warn(
-										"com.arjuna.ats.internal.jta.recovery.getxaresource",
-										ex);
-					}
+                    jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 				}
 			}
 		}
@@ -576,21 +434,14 @@ public class XARecoveryModule implements RecoveryModule
                             }
                             catch (Exception ex)
                             {
-                                if (jtaLogger.loggerI18N.isWarnEnabled())
-                                {
-                                    jtaLogger.loggerI18N
-                                            .warn("com.arjuna.ats.internal.jta.recovery.getxaresource", ex);
-                                }
+                                jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.recovery.getxaresource", ex);
-                    }
+                    jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
                 }
             }
         }
@@ -598,25 +449,6 @@ public class XARecoveryModule implements RecoveryModule
         return true;
     }
 
-
-    /**
-	 * @message com.arjuna.ats.internal.jta.recovery.xarecovery1 {0} got XA
-	 *          exception {1}, {2}
-	 * @message com.arjuna.ats.internal.jta.recovery.xarecovery2 {0} got
-	 *          exception {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.failedtorecover {0} -
-	 *          failed to recover XAResource.
-	 * @message com.arjuna.ats.internal.jta.recovery.forgetfailed {0} - forget
-	 *          threw: {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.generalrecoveryerror {0} -
-	 *          caught {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.info.rollingback Rolling
-	 *          back {0}
-	 * @message com.arjuna.ats.internal.jta.recovery.info.rollingbackignore Ignoring
-         *          Xid {0} and leaving for transaction recovery to drive.
-	 * @message com.arjuna.ats.internal.jta.recovery.info.notrollback Told not
-	 *          to rollback {0}
-	 */
 
 	private final boolean xaRecovery(XAResource xares)
 	{
@@ -640,14 +472,7 @@ public class XARecoveryModule implements RecoveryModule
 			}
 			catch (XAException e)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N.warn(
-							"com.arjuna.ats.internal.jta.recovery.xarecovery1",
-							new Object[]
-							{ _logName + ".xaRecovery ", e,
-									XAHelper.printXAErrorCode(e) });
-				}
+                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
 
 				try
 				{
@@ -761,18 +586,7 @@ public class XARecoveryModule implements RecoveryModule
 
 							if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
 							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N
-											.warn(
-													"com.arjuna.ats.internal.jta.recovery.failedtorecover",
-													new Object[]
-													{
-															_logName
-																	+ ".xaRecovery ",
-															new Integer(
-																	recoveryStatus) });
-								}
+                                jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName+".xaRecovery", Integer.toString(recoveryStatus));
 							}
 
 							removeFailure(record.getXid(), record.get_uid());
@@ -786,15 +600,7 @@ public class XARecoveryModule implements RecoveryModule
 							}
 							catch (Exception e)
 							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N
-											.warn(
-													"com.arjuna.ats.internal.jta.recovery.forgetfailed",
-													new Object[]
-													{ _logName + ".xaRecovery",
-															e });
-								}
+                                jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName+".xaRecovery", e);
 							}
 						}
 
@@ -804,14 +610,7 @@ public class XARecoveryModule implements RecoveryModule
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.recovery.generalrecoveryerror",
-								new Object[]
-								{ _logName + ".xaRecovery", e }, e);
-			}
+            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
 		}
 
 		try
@@ -821,14 +620,7 @@ public class XARecoveryModule implements RecoveryModule
 		}
 		catch (XAException e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N.warn(
-						"com.arjuna.ats.internal.jta.recovery.xarecovery1",
-						new Object[]
-						{ _logName + ".xaRecovery", e,
-								XAHelper.printXAErrorCode(e) });
-			}
+            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
 		}
 
 		return true;
@@ -868,12 +660,7 @@ public class XARecoveryModule implements RecoveryModule
         {
             if(votingOutcome == XAResourceOrphanFilter.Vote.ROLLBACK)
             {
-                if (jtaLogger.loggerI18N.isInfoEnabled())
-                {
-                    jtaLogger.loggerI18N
-                            .info("com.arjuna.ats.internal.jta.recovery.info.rollingback",
-                                    new Object[] { XAHelper.xidToString(xid) });
-                }
+                jtaLogger.i18NLogger.info_recovery_rollingback(XAHelper.xidToString(xid));
 
                 xares.rollback(xid);
             }
@@ -900,13 +687,7 @@ public class XARecoveryModule implements RecoveryModule
         }
         catch (Exception e2)
         {
-            if (jtaLogger.loggerI18N.isWarnEnabled())
-            {
-                jtaLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jta.recovery.xarecovery2",
-                                new Object[] { _logName + ".xaRecovery ", e2 });
-            }
+            jtaLogger.i18NLogger.warn_recovery_xarecovery2(_logName+".xaRecovery", e2);
         }
         return false;
     }
@@ -1003,11 +784,6 @@ public class XARecoveryModule implements RecoveryModule
 
 		failureItem.addElement(uid);
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.recovery.removefailed {0} - could
-	 *          not remove record for {1}
-	 */
 
 	/* remove record uid from failure list */
 	private void removeFailure(Xid xid, Uid uid)

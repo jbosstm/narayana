@@ -40,8 +40,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.*;
 import java.sql.*;
 import javax.sql.*;
@@ -110,10 +108,6 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	createDataSource();
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jdbc.ircdest Caught exception
-     */
-
     public void finalize ()
     {
 	try
@@ -126,11 +120,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	}
 	catch (SQLException e)
 	{
-	    if (jdbcLogger.loggerI18N.isWarnEnabled())
-	    {
-		jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.drcdest",
-					   new Object[] {e});
-	    }
+        jdbcLogger.i18NLogger.warn_drcdest(e);
 	}
     }
 
@@ -199,10 +189,6 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	    throw sqlException;
 	}
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jdbc.idrcclose Caught exception
-     */
 
     public final void close ()
     {
@@ -347,11 +333,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	if (_theModifier != null)
 	    _dbName = _theModifier.initialise(_dbName);
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jdbc.jndierror Could not resolve JNDI XADataSource
-     */
-
+    
     private final void createDataSource () throws SQLException
     {
 	try
@@ -364,7 +346,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 		}
 
 		if (_theDataSource == null) {
-		    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.jndierror"));
+		    throw new SQLException(jdbcLogger.i18NLogger.get_jndierror());
 	    }
 	}
 	catch (SQLException ex)

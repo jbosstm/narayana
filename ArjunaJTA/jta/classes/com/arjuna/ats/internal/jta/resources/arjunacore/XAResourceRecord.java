@@ -42,8 +42,6 @@ import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.resources.StartXAResource;
 import com.arjuna.ats.jta.resources.EndXAResource;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
@@ -73,19 +71,6 @@ import javax.transaction.xa.XAException;
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: XAResourceRecord.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.2.4.
- *
- * @message com.arjuna.ats.internal.jta.resources.arjunacore.noresource
- *          [com.arjuna.ats.internal.jta.resources.arjunacore.noresource]
- *          No XAResource to recover {0}
- * @message com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete
- *          [com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete]
- *          Being told to assume complete on Xid {0}
- * @message com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror
- *          [com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror]
- *          An error occurred during save_state for XAResource {0} and transaction {1}
- * @message com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror
- *          [com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror]
- *          An error occurred during restore_state for XAResource {0} and transaction {1}
  */
 
 public class XAResourceRecord extends AbstractRecord
@@ -168,22 +153,9 @@ public class XAResourceRecord extends AbstractRecord
 		return _theXAResource;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.setvalue
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.setvalue] {0}
-	 *          called illegally.
-	 */
-
 	public void setValue(Object o)
 	{
-		if (jtaLogger.loggerI18N.isWarnEnabled())
-		{
-			jtaLogger.loggerI18N
-					.warn(
-							"com.arjuna.ats.internal.jta.resources.arjunacore.setvalue",
-							new Object[]
-							{ "XAResourceRecord::set_value()" });
-		}
+        jtaLogger.i18NLogger.warn_resources_arjunacore_setvalue("XAResourceRecord::set_value()");
 	}
 
 	public int nestedAbort()
@@ -205,15 +177,6 @@ public class XAResourceRecord extends AbstractRecord
 		return TwoPhaseOutcome.PREPARE_OK; // do nothing
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx]
-	 *          {0} - null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed]
-	 *          prepare on {0} ({1}) failed with exception {2}
-	 */
-
 	public int topLevelPrepare()
 	{
 		if (jtaLogger.logger.isDebugEnabled()) {
@@ -222,14 +185,7 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
 		{
-		    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                            jtaLogger.loggerI18N
-                                            .warn(
-                                                            "com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx",
-                                                            new Object[]
-                                                            { "XAResourceRecord.prepare" });
-                    }
+            jtaLogger.i18NLogger.warn_resources_arjunacore_preparenulltx("XAResourceRecord.prepare");
 
                     removeConnection();
 
@@ -260,12 +216,8 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (XAException e1)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-                jtaLogger.loggerI18N.warn(
-                        "com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
-                        new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-			}
+            jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
+                    _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
@@ -297,12 +249,8 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e2)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-                jtaLogger.loggerI18N.warn(
-                        "com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
-                        new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-			}
+            jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
+                    _theXAResource.toString(), "-", e2);
 
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
@@ -310,15 +258,6 @@ public class XAResourceRecord extends AbstractRecord
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.rollbacknulltx
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.rollbacknulltx]
-	 *          {0} - null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror]
-	 *          attempted rollback of {0} ({1}) failed with exception {2}
-	 */
 
 	public int topLevelAbort()
 	{
@@ -341,14 +280,7 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (_tranID == null)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.rollbacknulltx",
-								new Object[]
-								{ "XAResourceRecord.rollback" });
-			}
+            jtaLogger.i18NLogger.warn_resources_arjunacore_rollbacknulltx("XAResourceRecord.rollback");
 
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
@@ -384,12 +316,8 @@ public class XAResourceRecord extends AbstractRecord
 				    }
 				    else
 				    {
-                        if (jtaLogger.loggerI18N.isWarnEnabled())
-                        {
-                            jtaLogger.loggerI18N.warn(
-                                    "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-                        }
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
     					removeConnection();
 
@@ -398,12 +326,7 @@ public class XAResourceRecord extends AbstractRecord
 				}
                 catch(RuntimeException e)
                 {
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-                                new Object[] { _tranID, _theXAResource, e.toString() }, e);
-                    }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID), _theXAResource.toString(), "-", e);
 
                     throw e;
                 }
@@ -420,12 +343,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-						    jtaLogger.loggerI18N.warn(
-						            "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-						            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-						}
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
 						switch (e1.errorCode)
 						{
@@ -458,12 +377,8 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-				    if (jtaLogger.loggerI18N.isWarnEnabled())
-				    {
-				        jtaLogger.loggerI18N.warn(
-				                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-				                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-				    }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+                            _theXAResource.toString(), "-", e2);
 
 					return TwoPhaseOutcome.FINISH_ERROR;
 				}
@@ -475,23 +390,12 @@ public class XAResourceRecord extends AbstractRecord
 			}
 			else
 			{
-			    if (jtaLogger.loggerI18N.isWarnEnabled())
-			    {
-				jtaLogger.loggerI18N
-				    .warn(
-					  "com.arjuna.ats.internal.jta.resources.arjunacore.noresource",
-					  new Object[] {_tranID});
-			    }
+                jtaLogger.i18NLogger.warn_resources_arjunacore_noresource(XAHelper.xidToString(_tranID));
 
 			    if (XAResourceRecord._assumedComplete)
 			    {
-				if (jtaLogger.loggerI18N.isInfoEnabled())
-				{
-				    jtaLogger.loggerI18N
-					.info(
-					      "com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete",
-					      new Object[] {_tranID});
-				}
+				jtaLogger.i18NLogger.info_resources_arjunacore_assumecomplete(XAHelper.xidToString(_tranID));
+                
 
 				return TwoPhaseOutcome.FINISH_OK;
 			    }
@@ -503,14 +407,6 @@ public class XAResourceRecord extends AbstractRecord
 		return TwoPhaseOutcome.FINISH_OK;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitnulltx
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitnulltx]
-	 *          {0} - null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror]
-	 *          commit on {0} ({1}) failed with exception {2}
-	 */
 	public int topLevelCommit()
 	{
 		if (jtaLogger.logger.isDebugEnabled()) {
@@ -522,14 +418,7 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (_tranID == null)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.commitnulltx",
-								new Object[]
-								{ "XAResourceRecord.commit" });
-			}
+            jtaLogger.i18NLogger.warn_resources_arjunacore_commitnulltx("XAResourceRecord.commit");
 
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
@@ -560,12 +449,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-						    jtaLogger.loggerI18N.warn(
-						            "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
-						            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-						}
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
 						/*
 						 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
@@ -618,12 +503,8 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-				    if (jtaLogger.loggerI18N.isWarnEnabled())
-				    {
-				        jtaLogger.loggerI18N.warn(
-				                "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
-				                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-				    }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), "-", e2);
 
 				    return TwoPhaseOutcome.FINISH_ERROR;
 				}
@@ -634,23 +515,11 @@ public class XAResourceRecord extends AbstractRecord
 			}
 			else
 			{
-			    if (jtaLogger.loggerI18N.isWarnEnabled())
-			    {
-				jtaLogger.loggerI18N
-				    .warn(
-					  "com.arjuna.ats.internal.jta.resources.arjunacore.noresource",
-					  new Object[] {_tranID});
-			    }
+                jtaLogger.i18NLogger.warn_resources_arjunacore_noresource(XAHelper.xidToString(_tranID));
 
 			    if (XAResourceRecord._assumedComplete)
 			    {
-				if (jtaLogger.loggerI18N.isInfoEnabled())
-				{
-				    jtaLogger.loggerI18N
-					.info(
-					      "com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete",
-					      new Object[] {_tranID});
-				}
+                    jtaLogger.i18NLogger.info_resources_arjunacore_assumecomplete(XAHelper.xidToString(_tranID));
 
 				return TwoPhaseOutcome.FINISH_OK;
 			    }
@@ -682,14 +551,6 @@ public class XAResourceRecord extends AbstractRecord
 	 * outcome is whatever we want. Therefore, we do not need to save any
 	 * additional recoverable state, such as a reference to the transaction
 	 * coordinator, since it will not have an intentions list anyway.
-	 *
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx] {0} -
-	 *          null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcerror]
-     *          onePhaseCommit on {0} ({1}) failed with exception {2}
-     *
 	 */
 
 	public int topLevelOnePhaseCommit()
@@ -702,14 +563,7 @@ public class XAResourceRecord extends AbstractRecord
 	    
 	    if (_tranID == null)
 	    {
-	        if (jtaLogger.loggerI18N.isWarnEnabled())
-	        {
-	            jtaLogger.loggerI18N
-	            .warn(
-	                    "com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx",
-	                    new Object[]
-	                               { "XAResourceRecord.1pc" });
-	        }
+            jtaLogger.i18NLogger.warn_resources_arjunacore_opcnulltx("XAResourceRecord.1pc");
 
 	        return TwoPhaseOutcome.ONE_PHASE_ERROR;  // rolled back!!
 	    }
@@ -773,12 +627,8 @@ public class XAResourceRecord extends AbstractRecord
                         case XAException.XAER_RMFAIL:
                         default:
 	                {
-	                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                            {
-                                jtaLogger.loggerI18N.warn(
-                                        "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-                                        new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-                            }
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 	                    
 	                    removeConnection();
 	                    
@@ -788,12 +638,8 @@ public class XAResourceRecord extends AbstractRecord
 	            }
 	            catch(RuntimeException e)
 	            {
-	                if (jtaLogger.loggerI18N.isWarnEnabled())
-	                {
-	                    jtaLogger.loggerI18N.warn(
-	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-	                            new Object[] { _tranID, _theXAResource, e.toString() }, e);
-	                }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), "-", e);
 
 	                throw e;
 	            }
@@ -815,12 +661,8 @@ public class XAResourceRecord extends AbstractRecord
 	            }
 	            catch (XAException e1)
 	            {
-	                if (jtaLogger.loggerI18N.isWarnEnabled())
-	                {
-	                    jtaLogger.loggerI18N.warn(
-	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-	                            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-	                }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
 	                /*
 	                 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
@@ -864,12 +706,8 @@ public class XAResourceRecord extends AbstractRecord
 	            }
 	            catch (Exception e2)
 	            {
-	                if (jtaLogger.loggerI18N.isWarnEnabled())
-	                {
-	                    jtaLogger.loggerI18N.warn(
-	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-	                            new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-	                }
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), "-", e2);
 
 	                return TwoPhaseOutcome.FINISH_ERROR;
 	            }
@@ -944,12 +782,6 @@ public class XAResourceRecord extends AbstractRecord
 		    return XARecoveryResource.WAITING_FOR_RECOVERY;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.savestate
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.savestate]
-	 *          Could not serialize a Serializable XAResource!
-	 */
-
 	public boolean save_state(OutputObjectState os, int t)
 	{
 		boolean res = false;
@@ -990,11 +822,7 @@ public class XAResourceRecord extends AbstractRecord
         				}
         				catch (NotSerializableException ex)
         				{
-        				    if (jtaLogger.loggerI18N.isWarnEnabled())
-        				    {
-        				        jtaLogger.loggerI18N
-        				            .warn("com.arjuna.ats.internal.jta.resources.arjunacore.savestate");
-        				    }
+                            jtaLogger.i18NLogger.warn_resources_arjunacore_savestate();
 
                                             return false;
         				}
@@ -1018,14 +846,7 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e)
 		{
-		    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                            jtaLogger.loggerI18N
-                                            .warn(
-                                                            "com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror",
-                                                            new Object[]
-                                                            { _theXAResource, _tranID }, e);
-                    }
+            jtaLogger.i18NLogger.warn_resources_arjunacore_savestateerror(_theXAResource.toString(), XAHelper.xidToString(_tranID), e);
 		    
 			res = false;
 		}
@@ -1035,16 +856,6 @@ public class XAResourceRecord extends AbstractRecord
 
 		return res;
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.restorestate
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.restorestate]
-	 *          Exception on attempting to restore XAResource
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.norecoveryxa
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.norecoveryxa]
-	 *          Could not find new XAResource to use for recovering
-	 *          non-serializable XAResource {0}
-	 */
 
 	public boolean restore_state(InputObjectState os, int t)
 	{
@@ -1084,13 +895,7 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						// not serializable in the first place!
 
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.arjunacore.restorestate",
-											ex);
-						}
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_restorestate(ex);
 
 						return false;
 					}
@@ -1105,11 +910,7 @@ public class XAResourceRecord extends AbstractRecord
 
 					if (_theXAResource == null)
 					{
-						jtaLogger.loggerI18N
-								.warn(
-										"com.arjuna.ats.internal.jta.resources.arjunacore.norecoveryxa",
-										new Object[]
-										{ _tranID });
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_norecoveryxa(XAHelper.xidToString(_tranID));
 
 						/*
 						 * Don't prevent tx from activating because there may be
@@ -1142,14 +943,7 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e)
 		{
-		    if (jtaLogger.loggerI18N.isWarnEnabled())
-		    {
-		        jtaLogger.loggerI18N
-		        .warn(
-		                "com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror",
-		                new Object[]
-		                           { _theXAResource, _tranID }, e);
-		    }
+            jtaLogger.i18NLogger.warn_resources_arjunacore_restorestateerror(_theXAResource.toString(), XAHelper.xidToString(_tranID), e);
 
 		    res = false;
 		}

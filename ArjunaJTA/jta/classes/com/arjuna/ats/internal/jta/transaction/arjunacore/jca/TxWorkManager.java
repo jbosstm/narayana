@@ -59,9 +59,6 @@ public class TxWorkManager
 	 * 
 	 * @throws WorkCompletedException thrown if there is already work
 	 * associated with the transaction.
-	 * 
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.jca.busy [message
-	 *          com.arjuna.ats.internal.jta.transaction.arjunacore.jca.busy] Work already active!
 	 */
 	
 	public static void addWork (Work work, Transaction tx) throws WorkCompletedException
@@ -86,7 +83,7 @@ public class TxWorkManager
 				_transactions.put(tx, workers);
 			}
 			else
-				throw new WorkCompletedException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
+				throw new WorkCompletedException(jtaLogger.i18NLogger.get_transaction_arjunacore_jca_busy(), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 		}
 		
 		synchronized (workers)

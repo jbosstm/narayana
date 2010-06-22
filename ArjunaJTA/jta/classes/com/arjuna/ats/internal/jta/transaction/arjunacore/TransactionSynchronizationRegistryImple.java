@@ -47,11 +47,6 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
     private static final long serialVersionUID = 1L;
 
     // Return an opaque object to represent the transaction bound to the current thread at the time this method is called.
-        /**
-         * @message com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception
-         * [com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception]
-         * The transaction implementation threw a SystemException
-         */
         public Object getTransactionKey()
         {
                 if (jtaLogger.logger.isDebugEnabled()) {
@@ -66,7 +61,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
 
                 if (transactionImple == null) {
@@ -109,11 +104,6 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         }
 
         // Register a Synchronization instance with special ordering semantics.
-        /**
-         * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception
-         * [com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception]
-         * The transaction implementation threw a RollbackException
-         */
         public void registerInterposedSynchronization(Synchronization synchronization)
         {
                 if (jtaLogger.logger.isDebugEnabled()) {
@@ -128,11 +118,11 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (RollbackException e)
                 {
-                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception"), e);
+                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaLogger.i18NLogger.get_transaction_arjunacore_syncrollbackexception(), e);
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
         }
 
@@ -150,7 +140,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch(SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
 
         }
@@ -176,7 +166,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
         }
 
@@ -199,7 +189,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
         }
 
@@ -213,7 +203,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.i18NLogger.get_transaction_arjunacore_systemexception(), e);
                 }
 
                 if(transactionImple == null)

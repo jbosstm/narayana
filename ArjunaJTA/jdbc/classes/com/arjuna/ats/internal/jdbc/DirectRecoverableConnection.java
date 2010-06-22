@@ -33,20 +33,12 @@ package com.arjuna.ats.internal.jdbc;
 
 import com.arjuna.ats.jdbc.logging.*;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-import com.arjuna.ats.jta.*;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.exceptions.NotImplementedException;
 
-import com.arjuna.common.util.logging.*;
-
-import java.util.*;
 import java.sql.*;
 import javax.sql.*;
 import javax.transaction.*;
@@ -105,10 +97,6 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	_theModifier = null;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jdbc.drcdest Caught exception
-     */
-
     public void finalize ()
     {
 	try
@@ -121,11 +109,7 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	}
 	catch (SQLException e)
 	{
-	    if (jdbcLogger.loggerI18N.isWarnEnabled())
-	    {
-		jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.drcdest",
-					   new Object[] {e});
-	    }
+        jdbcLogger.i18NLogger.warn_drcdest(e);
 	}
     }
 
@@ -226,10 +210,6 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
         throw sqlException;
 	}
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jdbc.drcclose Caught exception
-     */
 
     public final void close ()
     {
@@ -344,10 +324,6 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	    _dbName = _theModifier.initialise(_dbName);
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jdbc.dynamicerror No dynamic class specified!
-     */
-
     private final void createConnection () throws SQLException
     {
 	if (jdbcLogger.logger.isDebugEnabled()) {
@@ -356,7 +332,7 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
 	if ((_dynamic == null) || (_dynamic.equals("")))
 	{
-	    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.dynamicerror"));
+	    throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
 	}
 	else
 	{

@@ -32,18 +32,17 @@
 package com.arjuna.ats.jdbc.logging;
 
 import com.arjuna.common.util.logging.*;
+import org.jboss.logging.Logger;
 
 public class jdbcLogger
 {
     public static LogNoi18n logger;
-    public static Logi18n loggerI18N;
     public static jdbcI18NLogger i18NLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         logger = noi18n;
-        loggerI18N = i18n;
-        i18NLogger = new jdbcI18NLoggerImpl(i18n);
+        i18NLogger = new jdbcI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.jdbc"));
     }
 
     static

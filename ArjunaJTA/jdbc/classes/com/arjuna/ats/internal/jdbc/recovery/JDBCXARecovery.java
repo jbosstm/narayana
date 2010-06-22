@@ -37,7 +37,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.*;
 import javax.transaction.xa.*;
-import com.arjuna.common.util.logging.*;
+
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
@@ -80,9 +80,6 @@ public class JDBCXARecovery implements XAResourceRecovery
      * The recovery module will have chopped off this class name already. The
      * parameter should specify a property file from which the jndi name, user name,
      * password can be read.
-     *
-     * @message com.arjuna.ats.internal.jdbc.recovery.xa.initexp An exception
-     *          occurred during initialisation.
      */
 
     public boolean initialise(String parameter)
@@ -104,21 +101,13 @@ public class JDBCXARecovery implements XAResourceRecovery
         }
         catch (Exception e)
         {
-            if (jdbcLogger.loggerI18N.isWarnEnabled())
-            {
-                jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.recovery.xa.initexp", new Object[] { e }, e);
-            }
+            jdbcLogger.i18NLogger.warn_recovery_xa_initexp(e);
 
             return false;
         }
 
         return true;
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jdbc.recovery.xa.xarec {0} could not find
-     *          information for connection!
-     */
 
     public synchronized XAResource getXAResource()
         throws SQLException
@@ -153,9 +142,6 @@ public class JDBCXARecovery implements XAResourceRecovery
     /**
      * Lookup the XADataSource in JNDI. We got the relevant information from the
      * property file provided at input to this instance.
-     *
-     * @message com.arjuna.ats.internal.jdbc.xa.recjndierror Could not resolve JNDI
-     *          XADataSource
      */
 
     private final void createDataSource()
@@ -169,7 +155,7 @@ public class JDBCXARecovery implements XAResourceRecovery
                 _dataSource = (XADataSource) context.lookup(_dbName);
 
                 if (_dataSource == null)
-                    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.xa.recjndierror"));
+                    throw new SQLException(jdbcLogger.i18NLogger.get_xa_recjndierror());
             }
         }
         catch (SQLException ex)

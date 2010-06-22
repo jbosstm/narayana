@@ -41,8 +41,6 @@ import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jta.xa.XAModifier;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
-import com.arjuna.common.util.logging.*;
-
 import javax.transaction.*;
 import javax.transaction.xa.*;
 import javax.sql.*;
@@ -225,9 +223,6 @@ public abstract class ConnectionImple
 */
 	/**
 	 * Not allowed if within a transaction.
-	 *
-	 * @message com.arjuna.ats.internal.jdbc.autocommit AutoCommit is not
-	 *          allowed by the transaction service.
 	 */
 
 	public void setAutoCommit(boolean autoCommit) throws SQLException
@@ -235,8 +230,7 @@ public abstract class ConnectionImple
 		if (transactionRunning())
 		{
 			if (autoCommit)
-				throw new SQLException(jdbcLogger.loggerI18N
-						.getString("com.arjuna.ats.internal.jdbc.autocommit"));
+				throw new SQLException(jdbcLogger.i18NLogger.get_autocommit());
 		}
 		else
 		{
@@ -249,11 +243,6 @@ public abstract class ConnectionImple
 		return getConnection().getAutoCommit();
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.commiterror Commit not allowed by
-	 *          transaction service.
-	 */
-
 	public void commit() throws SQLException
 	{
 		/*
@@ -263,24 +252,17 @@ public abstract class ConnectionImple
 
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.loggerI18N
-					.getString("com.arjuna.ats.internal.jdbc.commiterror"));
+			throw new SQLException(jdbcLogger.i18NLogger.get_commiterror());
 		}
 		else
 			getConnection().commit();
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.aborterror Rollback not allowed by
-	 *          transaction service.
-	 */
-
 	public void rollback() throws SQLException
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.loggerI18N
-					.getString("com.arjuna.ats.internal.jdbc.aborterror"));
+			throw new SQLException(jdbcLogger.i18NLogger.get_aborterror());
 		}
 		else
 			getConnection().rollback();
@@ -289,20 +271,6 @@ public abstract class ConnectionImple
 	/*
 	 * This needs to be reworked in light of experience and requirements.
 	 */
-
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.delisterror Delist of resource
-	 *          failed.
-	 * @message com.arjuna.ats.internal.jdbc.closeerror An error occurred during
-	 *          close:
-	 * @message com.arjuna.ats.internal.jdbc.closingconnection Connection will be closed now.
-	 *          Indications are that this db does not allow multiple
-	 *          connections in the same transaction {0}
-	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull No modifier information found for db.
-	 *         Connection will be closed immediately {0}
-         * @message com.arjuna.ats.internal.jdbc.closeerrorinvalidtx Invalid transaction during close {0}
-	 */
-
 	public void close() throws SQLException
 	{
 	    try
@@ -342,21 +310,13 @@ public abstract class ConnectionImple
 
 	                if (!tx.delistResource(xares, XAResource.TMSUCCESS))
 	                    throw new SQLException(
-	                            jdbcLogger.loggerI18N
-	                            .getString("com.arjuna.ats.internal.jdbc.delisterror"));
-	                
+	                            jdbcLogger.i18NLogger.get_delisterror());
+
 	                getModifier();
 
 	                if (_theModifier == null)
 	                {
-	                    if (jdbcLogger.loggerI18N.isInfoEnabled())
-                            {
-                                    jdbcLogger.loggerI18N
-                                                    .info(
-                                                                    "com.arjuna.ats.internal.jdbc.closingconnectionnull",
-                                                                    new Object[]
-                                                                    { _theConnection });
-                            }
+                        jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
 
 	                    // no indication about connections, so assume close immediately
 	                    
@@ -375,16 +335,9 @@ public abstract class ConnectionImple
 	                         * We can't close the connection until the transaction has
 	                         * terminated, so register a Synchronization here.
 	                         */
-	                        
-	                        if (jdbcLogger.loggerI18N.isWarnEnabled())
-	                        {
-	                            jdbcLogger.loggerI18N
-	                            .warn(
-	                                    "com.arjuna.ats.internal.jdbc.closingconnection",
-	                                    new Object[]
-	                                               { _theConnection });
-	                        }
-	                        
+
+                            jdbcLogger.i18NLogger.warn_closingconnection(_theConnection.toString());
+
 	                        delayClose = true;
 	                    }
 	                }
@@ -397,7 +350,7 @@ public abstract class ConnectionImple
 	                }
 	            }
 	            else
-	                throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.closeerrorinvalidtx") + tx);
+	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
 	        }
 	        
 	        if (!delayClose)  // close now
@@ -421,9 +374,7 @@ public abstract class ConnectionImple
 	    }
 	    catch (Exception e1)
 	    {
-	        SQLException sqlException = new SQLException(jdbcLogger.loggerI18N
-	                .getString("com.arjuna.ats.internal.jdbc.closeerror")
-	                + e1);
+	        SQLException sqlException = new SQLException(jdbcLogger.i18NLogger.get_closeerror());
 	        sqlException.initCause(e1);
 	        throw sqlException;
 	    }
@@ -452,9 +403,6 @@ public abstract class ConnectionImple
 	/**
 	 * Can only set readonly before we use the connection in a given
 	 * transaction!
-	 *
-	 * @message com.arjuna.ats.internal.jdbc.setreadonly Cannot set readonly
-	 *          when within a transaction!
 	 */
 
 	public void setReadOnly(boolean ro) throws SQLException
@@ -464,8 +412,7 @@ public abstract class ConnectionImple
 			getConnection().setReadOnly(ro);
 		}
 		else
-			throw new SQLException(jdbcLogger.loggerI18N
-					.getString("com.arjuna.ats.internal.jdbc.setreadonly"));
+			throw new SQLException(jdbcLogger.i18NLogger.get_setreadonly());
 	}
 
 	public boolean isReadOnly() throws SQLException
@@ -490,10 +437,6 @@ public abstract class ConnectionImple
 
 		return getConnection().getCatalog();
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.stateerror State must be:
-	 */
 
 	public void setTransactionIsolation(int iso) throws SQLException
 	{
@@ -556,14 +499,11 @@ public abstract class ConnectionImple
         return getConnection().getHoldability();
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jdbc.setsavepointerror setSavepoint not allowed inside distributed tx.
-     */
     public Savepoint setSavepoint() throws SQLException
     {
         if (transactionRunning())
         {
-            throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+            throw new SQLException(jdbcLogger.i18NLogger.get_setsavepointerror());
         }
         else
         {
@@ -575,7 +515,7 @@ public abstract class ConnectionImple
     {
         if (transactionRunning())
         {
-            throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+            throw new SQLException(jdbcLogger.i18NLogger.get_setsavepointerror());
         }
         else
         {
@@ -587,14 +527,11 @@ public abstract class ConnectionImple
     // It does not explicitly disallow calling rollback(savepoint) or releaseSavepoint(savepoint)
     // but allowing them does not make a whole lot of sense, so we don't:
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.rollbacksavepointerror rollback(Savepoint) not allowed inside distributed tx.
-	 */
 	public void rollback(Savepoint savepoint) throws SQLException
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.rollbacksavepointerror"));
+			throw new SQLException(jdbcLogger.i18NLogger.get_rollbacksavepointerror());
 		}
 		else
 		{
@@ -602,14 +539,11 @@ public abstract class ConnectionImple
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.releasesavepointerror rollback(Savepoint) not allowed inside distributed tx.
-	 */
 	public void releaseSavepoint(Savepoint savepoint) throws SQLException
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.releasesavepointerror"));
+			throw new SQLException(jdbcLogger.i18NLogger.get_releasesavepointerror());
 		}
 		else
 		{
@@ -723,15 +657,6 @@ public abstract class ConnectionImple
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailget {0} - failed
-	 *          to set isolation level: {1}
-	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailset {0} - failed
-	 *          to set isolation level: {1}
-	 * @message com.arjuna.ats.internal.jdbc.conniniterror JDBC2 connection
-	 *          initialisation problem
-	 */
-
 	final java.sql.Connection getConnection() throws SQLException
 	{
 		if (_theConnection != null && !_theConnection.isClosed())
@@ -759,19 +684,9 @@ public abstract class ConnectionImple
 			}
 			catch (Exception e)
 			{
-				if (jdbcLogger.loggerI18N.isWarnEnabled())
-				{
-					jdbcLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jdbc.isolationlevelfailset",
-									new Object[]
-									{ "ConnectionImple.getConnection", e });
-				}
+                jdbcLogger.i18NLogger.warn_isolationlevelfailset("ConnectionImple.getConnection", e);
 
-                SQLException sqlException = new SQLException(
-						jdbcLogger.loggerI18N
-								.getString("com.arjuna.ats.internal.jdbc.conniniterror")
-								+ ":" + e);
+                SQLException sqlException = new SQLException(jdbcLogger.i18NLogger.get_conniniterror());
                 sqlException.initCause(e);
                 throw sqlException;
 			}
@@ -819,14 +734,6 @@ public abstract class ConnectionImple
 	 * and not do a registration at all. This would require the connection
 	 * object to be informed whenever a transaction completes so that it could
 	 * flush its cache of XAResources though.
-	 *
-	 * @message com.arjuna.ats.internal.jdbc.rollbackerror {0} - could not mark
-	 *          transaction rollback
-	 * @message com.arjuna.ats.internal.jdbc.enlistfailed enlist of resource
-	 *          failed
-	 * @message com.arjuna.ats.internal.jdbc.alreadyassociated Connection is
-	 *          already associated with a different transaction! Obtain a new
-	 *          connection for this transaction.
 	 */
 
 	protected final synchronized void registerDatabase() throws SQLException
@@ -855,9 +762,7 @@ public abstract class ConnectionImple
 				 */
 
 				if (!_recoveryConnection.setTransaction(tx))
-					throw new SQLException(
-							jdbcLogger.loggerI18N
-									.getString("com.arjuna.ats.internal.jdbc.alreadyassociated"));
+					throw new SQLException( jdbcLogger.i18NLogger.get_alreadyassociated() );
 
 				Object[] params;
 
@@ -890,14 +795,7 @@ public abstract class ConnectionImple
 					}
 					catch (Exception e)
 					{
-						if (jdbcLogger.loggerI18N.isWarnEnabled())
-						{
-							jdbcLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jdbc.rollbackerror",
-											new Object[]
-											{ "ConnectionImple.registerDatabase" });
-						}
+                        jdbcLogger.i18NLogger.warn_rollbackerror("ConnectionImple.registerDatabase");
 
                         SQLException sqlException = new SQLException(e.toString());
                         sqlException.initCause(e);
@@ -906,8 +804,7 @@ public abstract class ConnectionImple
 
 					throw new SQLException(
 							"ConnectionImple.registerDatabase - "
-									+ jdbcLogger.loggerI18N
-											.getString("com.arjuna.ats.internal.jdbc.enlistfailed"));
+									+ jdbcLogger.i18NLogger.get_enlistfailed());
 				}
 
 				params = null;
@@ -940,17 +837,6 @@ public abstract class ConnectionImple
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.alreadyassociatedcheck Checking
-	 *          transaction and found that this connection is already associated
-	 *          with a different transaction! Obtain a new connection for this
-	 *          transaction.
-	 * @message com.arjuna.ats.internal.jdbc.infoerror Could not get transaction
-	 *          information.
-	 * @message com.arjuna.ats.internal.jdbc.inactivetransaction Transaction is
-	 * not active on the thread!
-	 */
-
 	protected final void checkTransaction() throws SQLException
 	{
 		if (jdbcLogger.logger.isDebugEnabled()) {
@@ -967,8 +853,7 @@ public abstract class ConnectionImple
 				return;
 
 			if (tx.getStatus() != Status.STATUS_ACTIVE)
-				throw new SQLException(jdbcLogger.loggerI18N
-						.getString("com.arjuna.ats.internal.jdbc.inactivetransaction"));
+				throw new SQLException(jdbcLogger.i18NLogger.get_inactivetransaction());
 
 			/*
 			 * Now check that we are not already associated with a transaction.
@@ -976,8 +861,7 @@ public abstract class ConnectionImple
 
 			if (!_recoveryConnection.validTransaction(tx))
 				throw new SQLException(
-						jdbcLogger.loggerI18N
-								.getString("com.arjuna.ats.internal.jdbc.alreadyassociatedcheck"));
+						jdbcLogger.i18NLogger.get_alreadyassociatedcheck());
 		}
 		catch (SQLException ex)
 		{
@@ -985,17 +869,11 @@ public abstract class ConnectionImple
 		}
 		catch (Exception e3)
 		{
-            SQLException sqlException = new SQLException(jdbcLogger.loggerI18N
-					.getString("com.arjuna.ats.internal.jdbc.infoerror"));
+            SQLException sqlException = new SQLException(jdbcLogger.i18NLogger.get_infoerror());
             sqlException.initCause(e3);
             throw sqlException;
 		}
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.getmoderror Failed to get modifier
-	 *          for driver:
-	 */
 
 	private final void getModifier()
 	{
@@ -1016,11 +894,7 @@ public abstract class ConnectionImple
 			}
 			catch (Exception ex)
 			{
-				if (jdbcLogger.loggerI18N.isWarnEnabled())
-				{
-					jdbcLogger.loggerI18N.warn(
-							"com.arjuna.ats.internal.jdbc.getmoderror", ex);
-				}
+                jdbcLogger.i18NLogger.warn_getmoderror(ex);
 			}
 		}
 	}
@@ -1034,11 +908,6 @@ public abstract class ConnectionImple
 	private static final int defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
 	private static int _currentIsolationLevel = defaultIsolationLevel;
-
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.isolationerror Unknown isolation
-	 *          level {0}. Will use default of TRANSACTION_SERIALIZABLE.
-	 */
 
 	static
 	{

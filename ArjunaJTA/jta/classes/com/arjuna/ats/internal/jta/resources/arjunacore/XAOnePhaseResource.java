@@ -47,10 +47,9 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XidImple;
-
-
 
 /**
  * One Phase resource wrapper for XAResources.
@@ -179,9 +178,6 @@ public class XAOnePhaseResource implements OnePhaseResource
     /**
      * Commit the one phase resource.
      * @return TwoPhaseOutcome.FINISH_OK or TwoPhaseOutcome.FINISH_ERROR
-     *
-     * @message com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.rollbackexception
-     * XAOnePhaseResource.rollback for {0} failed with exception {1}
      */
     public int rollback()
     {
@@ -192,11 +188,7 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final XAException xae)
         {
-            if (jtaLogger.loggerI18N.isWarnEnabled())
-            {
-                jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.rollbackexception",
-                        new Object[] {xid, xae.getMessage()}, xae);
-            }
+            jtaLogger.i18NLogger.warn_resources_arjunacore_XAOnePhaseResource_rollbackexception(XAHelper.xidToString(xid), xae);
         }
         catch (final Throwable ex)
         {
@@ -211,9 +203,6 @@ public class XAOnePhaseResource implements OnePhaseResource
     /**
      * Pack the state of the resource.
      * @param os The object output state.
-     *
-     * @message com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.pack
-     * XAOnePhaseResource.pack failed to serialise resource {0}
      */
     public void pack(final OutputObjectState os)
         throws IOException
@@ -241,11 +230,7 @@ public class XAOnePhaseResource implements OnePhaseResource
             }
             catch (final IOException ioe)
             {
-                final String message = jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.pack", new Object[] {ioe}) ;
-                if (jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.pack", new Object[] {ioe});
-                }
+                final String message = jtaLogger.i18NLogger.get_resources_arjunacore_XAOnePhaseResource_pack();
                 IOException ioException = new IOException(message);
                 ioException.initCause(ioe);
                 throw ioException;
@@ -257,12 +242,6 @@ public class XAOnePhaseResource implements OnePhaseResource
     /**
      * Unpack the state of the resource.
      * @param is The object input state.
-     *
-     * @message com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpack
-     * failed to deserialise resource {0}
-     *
-     * @message com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpackType
-     * Unknown recovery type {0}
      */
     public void unpack(final InputObjectState is)
         throws IOException
@@ -329,14 +308,8 @@ public class XAOnePhaseResource implements OnePhaseResource
                 }
                 break ;
             default:
-                if (jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpackType",
-                    new Object[] {new Integer(recoveryType)});
-                }
-                final String message = jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpackType",
-                        new Object[] {new Integer(recoveryType)}) ;
-                throw new IOException(message) ;
+                final String message = jtaLogger.i18NLogger.get_resources_arjunacore_XAOnePhaseResource_unpackType(Integer.toString(recoveryType));
+                throw new IOException(message);
         }
     }
 
@@ -347,11 +320,7 @@ public class XAOnePhaseResource implements OnePhaseResource
      */
     private static IOException generateUnpackError(final Exception ex)
     {
-        if (jtaLogger.loggerI18N.isWarnEnabled())
-        {
-            jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpack", new Object[] {ex}, ex);
-        }
-        final String message = jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource.unpack", new Object[] {ex}) ;
-        return new IOException(message) ;
+        final String message = jtaLogger.i18NLogger.get_resources_arjunacore_XAOnePhaseResource_unpack();
+        return new IOException(message, ex) ;
     }
 }

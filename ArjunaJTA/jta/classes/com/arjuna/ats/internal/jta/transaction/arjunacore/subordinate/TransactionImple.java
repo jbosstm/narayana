@@ -34,8 +34,6 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
@@ -46,12 +44,6 @@ import java.lang.IllegalStateException;
 import javax.transaction.*;
 
 // https://jira.jboss.org/jira/browse/JBTM-384
-
-/**
- * @message com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate
- *          [com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate]
- *          Not allowed to terminate subordinate transaction directly.
- */
 
 public class TransactionImple extends
 		com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple
@@ -110,8 +102,7 @@ public class TransactionImple extends
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		throw new IllegalStateException(
-				jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
+		throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_subordinate_invalidstate() );
 	}
 
 	/**
@@ -122,8 +113,7 @@ public class TransactionImple extends
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		throw new InvalidTerminationStateException(
-				jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
+		throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_subordinate_invalidstate() );
 	}
 
 	// Should probably return XA status codes, c.f., XAResource.prepare
@@ -211,10 +201,7 @@ public class TransactionImple extends
 
 			if (!endSuspendedRMs())
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
-				}
+                jtaLogger.i18NLogger.warn_transaction_arjunacore_endsuspendfailed1();
 			}
 
 			int res = subAct.doRollback();

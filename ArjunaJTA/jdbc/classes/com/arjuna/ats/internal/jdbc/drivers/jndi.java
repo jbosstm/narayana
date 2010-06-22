@@ -31,13 +31,6 @@
 
 package com.arjuna.ats.internal.jdbc.drivers;
 
-import java.sql.SQLException;
-
-/**
- * @message com.arjuna.ats.internal.jdbc.drivers.invaliddb database not for
- * @message com.arjuna.ats.internal.jdbc.drivers.exception caught exception:
- */
-
 public class jndi
 {
 

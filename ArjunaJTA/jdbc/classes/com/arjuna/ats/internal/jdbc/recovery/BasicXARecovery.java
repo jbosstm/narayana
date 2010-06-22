@@ -105,9 +105,6 @@ public class BasicXARecovery implements XAResourceRecovery
 	 * The recovery module will have chopped off this class name already. The
 	 * parameter should specify a property file from which the url, user name,
 	 * password, etc. can be read.
-	 *
-	 * @message com.arjuna.ats.internal.jdbc.recovery.basic.initexp An exception
-	 *          occurred during initialisation.
 	 */
 
 	public boolean initialise (String parameter) throws SQLException
@@ -133,12 +130,7 @@ public class BasicXARecovery implements XAResourceRecovery
 			}
 			catch (NumberFormatException e)
 			{
-				if (jdbcLogger.loggerI18N.isWarnEnabled())
-				{
-					jdbcLogger.loggerI18N.warn(
-							"com.arjuna.ats.internal.jdbc.recovery.basic.initexp",
-							new Object[] { e });
-				}
+                jdbcLogger.i18NLogger.warn_recovery_basic_initexp(e);
 
 				return false;
 			}
@@ -150,12 +142,7 @@ public class BasicXARecovery implements XAResourceRecovery
 		}
 		catch (Exception e)
 		{
-			if (jdbcLogger.loggerI18N.isWarnEnabled())
-			{
-				jdbcLogger.loggerI18N.warn(
-						"com.arjuna.ats.internal.jdbc.recovery.basic.initexp",
-						new Object[] { e });
-			}
+            jdbcLogger.i18NLogger.warn_recovery_basic_initexp(e);
 
 			return false;
 		}
@@ -166,11 +153,6 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		return true;
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.recovery.basic.xarec {0} could not find
-	 *          information for connection!
-	 */
 
 	public synchronized XAResource getXAResource () throws SQLException
 	{
@@ -184,12 +166,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 			if (conn == null)
 			{
-				if (jdbcLogger.loggerI18N.isWarnEnabled())
-				{
-					jdbcLogger.loggerI18N.warn(
-							"com.arjuna.ats.internal.jdbc.recovery.basic.xarec",
-							new Object[] { "BasicXARecovery.getConnection -" });
-				}
+                jdbcLogger.i18NLogger.warn_recovery_basic_xarec("BasicXARecovery.getConnection -");
 			}
 		}
 

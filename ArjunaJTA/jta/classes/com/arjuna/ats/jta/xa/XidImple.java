@@ -319,10 +319,6 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		return result;
 	}
 
-	/**
-	 * @message com.arjuna.ats.jta.xid.packerror Could not pack XidImple.
-	 */
-
 	public static final void pack (OutputObjectState os, Xid xid)
 			throws IOException
 	{
@@ -333,8 +329,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 			os.packBoolean(true);
 
 			if (!x.packInto(os))
-				throw new IOException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.xid.packerror"));
+				throw new IOException( jtaLogger.i18NLogger.get_xid_packerror() );
 		}
 		else
 		{
@@ -382,16 +377,12 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.jta.xa.xidunset Xid unset
-	 */
-
 	public String toString ()
 	{
 		if (_theXid != null)
 			return _theXid.toString();
 		else
-			return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.xa.xidunset");
+			return jtaLogger.i18NLogger.get_xa_xidunset();
 	}
 
 	/**

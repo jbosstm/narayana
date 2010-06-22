@@ -40,152 +40,132 @@ public interface jdbcI18NLogger {
      */
 
     @Message(id = 17001, value = "Rollback not allowed by transaction service.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_aborterror();
+	public String get_aborterror();
 
 	@Message(id = 17002, value = "Connection is already associated with a different transaction! Obtain a new connection for this transaction.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_alreadyassociated();
+	public String get_alreadyassociated();
 
 	@Message(id = 17003, value = "Checking transaction and found that this connection is already associated with a different transaction! Obtain a new connection for this transaction.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_alreadyassociatedcheck();
+	public String get_alreadyassociatedcheck();
 
 	@Message(id = 17004, value = "AutoCommit is not allowed by the transaction service.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_autocommit();
+	public String get_autocommit();
 
 	@Message(id = 17005, value = "An error occurred during close:", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_closeerror();
+	public String get_closeerror();
 
 	@Message(id = 17006, value = "Invalid transaction during close {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_closeerrorinvalidtx(String arg0);
+	public String get_closeerrorinvalidtx(String arg0);
 
 	@Message(id = 17007, value = "Connection will be closed now. Indications are that this db does not allow multiple connections in the same transaction {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_closingconnection(String arg0);
+	public void warn_closingconnection(String arg0);
 
 	@Message(id = 17008, value = "No modifier information found for db. Connection will be closed immediately {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_closingconnectionnull(String arg0);
+	@LogMessage(level = INFO)
+	public void info_closingconnectionnull(String arg0);
 
 	@Message(id = 17009, value = "Commit not allowed by transaction service.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_commiterror();
+	public String get_commiterror();
 
 	@Message(id = 17010, value = "JDBC2 connection initialisation problem", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_conniniterror();
+	public String get_conniniterror();
 
 	@Message(id = 17011, value = "Delist of resource failed.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_delisterror();
+	public String get_delisterror();
 
-	@Message(id = 17012, value = "Caught exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_drcclose();
+//	@Message(id = 17012, value = "Caught exception", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_drcclose();
 
 	@Message(id = 17013, value = "Caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_drcdest();
+	public void warn_drcdest(Throwable arg0);
 
-	@Message(id = 17014, value = "caught exception:", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_drivers_exception();
+//	@Message(id = 17014, value = "caught exception:", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_drivers_exception();
 
-	@Message(id = 17015, value = "database not for", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_drivers_invaliddb();
+//	@Message(id = 17015, value = "database not for", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_drivers_invaliddb();
 
 	@Message(id = 17016, value = "No dynamic class specified!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_dynamicerror();
+	public String get_dynamicerror();
 
 	@Message(id = 17017, value = "enlist of resource failed", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_enlistfailed();
+	public String get_enlistfailed();
 
 	@Message(id = 17018, value = "Failed to get modifier for driver:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_getmoderror();
+	public void warn_getmoderror(Throwable arg0);
 
-	@Message(id = 17019, value = "Caught exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_idrcclose();
+//	@Message(id = 17019, value = "Caught exception", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_idrcclose();
 
 	@Message(id = 17020, value = "Transaction is not active on the thread!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_inactivetransaction();
+	public String get_inactivetransaction();
 
 	@Message(id = 17021, value = "Could not get transaction information.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_infoerror();
+	public String get_infoerror();
 
-	@Message(id = 17022, value = "Caught exception", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_ircdest();
+//	@Message(id = 17022, value = "Caught exception", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_ircdest();
 
-	@Message(id = 17023, value = "{0} - failed to set isolation level: {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_isolationlevelfailget(String arg0, String arg1);
+//	@Message(id = 17023, value = "{0} - failed to set isolation level: {1}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_isolationlevelfailget(String arg0, String arg1);
 
-	@Message(id = 17024, value = "{0} - failed to set isolation level: {1}", format = MESSAGE_FORMAT)
+	@Message(id = 17024, value = "{0} - failed to set isolation level", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_isolationlevelfailset(String arg0, String arg1);
+	public void warn_isolationlevelfailset(String arg0, Throwable arg1);
 
 	@Message(id = 17025, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_jndierror();
+	public String get_jndierror();
 
 	@Message(id = 17026, value = "Can't load ConnectionImple class {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_nojdbcimple(String arg0);
+	public String get_nojdbcimple(String arg0);
 
 	@Message(id = 17027, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_recovery_basic_initexp();
+	public void warn_recovery_basic_initexp(Throwable arg0);
 
 	@Message(id = 17028, value = "{0} could not find information for connection!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_recovery_basic_xarec(String arg0);
+	public void warn_recovery_basic_xarec(String arg0);
 
 	@Message(id = 17029, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_recovery_xa_initexp();
+	public void warn_recovery_xa_initexp(Throwable arg0);
 
-	@Message(id = 17030, value = "{0} could not find information for connection!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_recovery_xa_xarec(String arg0);
+//	@Message(id = 17030, value = "{0} could not find information for connection!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_xa_xarec(String arg0);
 
 	@Message(id = 17031, value = "rollback(Savepoint) not allowed inside distributed tx.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_releasesavepointerror();
+	public String get_releasesavepointerror();
 
 	@Message(id = 17032, value = "{0} - could not mark transaction rollback", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_rollbackerror(String arg0);
+	public void warn_rollbackerror(String arg0);
 
 	@Message(id = 17033, value = "rollback(Savepoint) not allowed inside distributed tx.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_rollbacksavepointerror();
+	public String get_rollbacksavepointerror();
 
 	@Message(id = 17034, value = "Cannot set readonly when within a transaction!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_setreadonly();
+	public String get_setreadonly();
 
 	@Message(id = 17035, value = "setSavepoint not allowed inside distributed tx.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_setsavepointerror();
+	public String get_setsavepointerror();
 
-	@Message(id = 17036, value = "State must be:", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_stateerror();
+//	@Message(id = 17036, value = "State must be:", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_stateerror();
 
 	@Message(id = 17037, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_xa_recjndierror();
+	public String get_xa_recjndierror();
 
     /*
         Allocate new messages directly above this notice.
@@ -195,5 +175,7 @@ public interface jdbcI18NLogger {
           - value: default (English) version of the log message.
           - level: according to severity semantics defined at http://docspace.corp.redhat.com/docs/DOC-30217
           Debug and trace don't get i18n. Everything else MUST be i18n.
-     */
+          By convention methods with String return type have prefix get_,
+            all others are log methods and have prefix <level>_
+    */
 }

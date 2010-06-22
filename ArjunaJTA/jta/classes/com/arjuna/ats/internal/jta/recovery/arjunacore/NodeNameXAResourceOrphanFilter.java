@@ -80,15 +80,7 @@ public class NodeNameXAResourceOrphanFilter implements XAResourceOrphanFilter
         }
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jta.recovery.noxanodes No XA recovery
-	 *          nodes specified. May not recover orphans.
-     */
     private void doWarning() {
-        if (jtaLogger.loggerI18N.isInfoEnabled())
-        {
-            jtaLogger.loggerI18N
-                    .info("com.arjuna.ats.internal.jta.recovery.noxanodes");
-        }
+        jtaLogger.i18NLogger.info_recovery_noxanodes();
     }
 }

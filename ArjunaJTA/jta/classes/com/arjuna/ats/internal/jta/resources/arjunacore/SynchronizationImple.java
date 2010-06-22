@@ -104,9 +104,6 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 	    return false;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple SynchronizationImple.afterCompletion - failed for {0} with exception {1}
-     */
     public boolean afterCompletion (int status)
     {
         if (jtaLogger.logger.isDebugEnabled()) {
@@ -125,8 +122,7 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
             }
             catch (Exception e)
             {
-                jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple",
-                        new Object[] { _theSynch, e }, e);
+                jtaLogger.i18NLogger.warn_resources_arjunacore_SynchronizationImple(_theSynch.toString(), e);
 
                 return false; // should not cause any affect!
             }

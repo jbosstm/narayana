@@ -45,16 +45,13 @@ public class XAHelper
 
 	/**
 	 * Print a human-readable version of the XAException.
-	 *
-	 * @message com.arjuna.ats.jta.utils.nullexception Null exception!
-	 * @message com.arjuna.ats.jta.utils.unknownerrorcode Unknown error code:
 	 */
 
 	public static String printXAErrorCode (XAException e)
 	{
 		if (e == null)
 		{
-			return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.nullexception");
+			return jtaLogger.i18NLogger.get_utils_nullexception();
 		}
 		else
 		{
@@ -107,7 +104,7 @@ public class XAHelper
 			case XAException.XAER_ASYNC:
 			    return "XAException.XAER_ASYNC";
 			default:
-				return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.unknownerrorcode")
+				return jtaLogger.i18NLogger.get_utils_unknownerrorcode()
 						+ e.errorCode;
 			}
 		}

@@ -43,9 +43,6 @@ public class JNDIManager
 {
 	/**
 	 * Bind the underlying JTA implementations to the appropriate JNDI contexts.
-	 * @message com.arjuna.ats.jta.utils.JNDIManager.jndibindfailure Failed to bind the JTA implementations with the appropriate JNDI contexts: {0}
-	 * @message com.arjuna.ats.jta.utils.JNDIManager.tmjndibindfailure Failed to bind the JTA transaction manager implementation with the approprite JNDI context: {0}
-	 * @message com.arjuna.ats.jta.utils.JNDIManager.utjndibindfailure Failed to bind the JTA user transaction implementation with the appropriate JNDI context: {0}
      * @throws javax.naming.NamingException
 	 */
 	public static void bindJTAImplementations(InitialContext ctx) throws javax.naming.NamingException
@@ -161,8 +158,6 @@ public class JNDIManager
      * JNDI context.
      * @param initialContext
      * @throws javax.naming.NamingException
-     *
-     * @message com.arjuna.ats.jta.utils.JNDIManager.tsr1 [message com.arjuna.ats.jta.utils.JNDIManager] Unable to instantiate TransactionSynchronizationRegistry implementation class!
      */
 	public static void bindJTATransactionSynchronizationRegistryImplementation(InitialContext initialContext) throws javax.naming.NamingException
 	{
@@ -172,7 +167,7 @@ public class JNDIManager
         try {
             tsr = Class.forName(tsrImplementation).newInstance();
         } catch(Exception e) {
-            NamingException namingException = new ConfigurationException(jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.JNDIManager.tsr1"));
+            NamingException namingException = new ConfigurationException(jtaLogger.i18NLogger.get_utils_JNDIManager_tsr1());
             namingException.setRootCause(e);
             throw namingException;
         }

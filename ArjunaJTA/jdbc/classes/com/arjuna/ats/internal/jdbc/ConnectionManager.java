@@ -53,10 +53,6 @@ public class ConnectionManager
     /*
      * Connections are pooled for the duration of a transaction.
      */
-
-    /**
-     * @message com.arjuna.ats.internal.jdbc.nojdbcimple Can't load ConnectionImple class {0}
-     */
     public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
     {
         String user = info.getProperty(TransactionalDriver.userName);
@@ -136,12 +132,7 @@ public class ConnectionManager
             }
             catch(Exception e)
             {
-                if (jdbcLogger.loggerI18N.isErrorEnabled())
-                {
-                    jdbcLogger.loggerI18N.error("com.arjuna.ats.internal.jdbc.nojdbcimple", new Object[] {connectionImpleClassName}, e);
-                }
-                SQLException sqlException = new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.nojdbcimple",
-                        new Object[] {connectionImpleClassName})+" "+e.toString());
+                SQLException sqlException = new SQLException(jdbcLogger.i18NLogger.get_nojdbcimple(connectionImpleClassName));
                 sqlException.initCause(e);
                 throw sqlException;
             }

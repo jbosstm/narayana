@@ -43,11 +43,6 @@ public class UserTransaction
 	 * Retrieve a reference to the user transaction.
 	 * 
 	 * @return The user transaction bound to the appropriate JNDI context
-	 * 
-	 * @message com.arjuna.ats.jta.UserTransaction.jndifailure Failed to lookup
-	 *          user transaction in JNDI context
-	 * @message com.arjuna.ats.jta.UserTransaction.generalfailure Failed to
-	 *          create instance of UserTransaction
 	 */
 
 	public static synchronized javax.transaction.UserTransaction userTransaction (InitialContext ctx)
@@ -60,10 +55,7 @@ public class UserTransaction
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.jta.UserTransaction.jndifailure", e);
-			}
+            jtaLogger.i18NLogger.warn_UserTransaction_jndifailure(e);
 		}
 
 		return userTransaction;

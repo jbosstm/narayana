@@ -43,9 +43,6 @@ public class TransactionManager
 	 * @param ctx The JNDI initial context to lookup the Transaction Manager reference from.
 	 * @return The transaction manager bound to the appropriate JNDI context.  Returns null
      * if the transaction manager cannot be found.
-	 *
-	 * @message com.arjuna.ats.jta.TransactionManager.jndifailure Failed to lookup transaction manager in JNDI context
-	 * @message com.arjuna.ats.jta.TransactionManager.generalfailure Failed to create instance of TransactionManager
 	 */
     public static javax.transaction.TransactionManager transactionManager (InitialContext ctx)
     {
@@ -57,10 +54,7 @@ public class TransactionManager
 		}
 		catch (Exception e)
 		{
-			if ( jtaLogger.loggerI18N.isWarnEnabled() )
-			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.jta.TransactionManager.jndifailure", e);
-			}
+            jtaLogger.i18NLogger.warn_TransactionManager_jndifailure(e);
 		}
 
 		return transactionManager;

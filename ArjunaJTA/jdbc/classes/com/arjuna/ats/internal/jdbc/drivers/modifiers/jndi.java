@@ -104,11 +104,7 @@ public class jndi implements XAModifier
 	    }
 	    catch (SQLException e)
 	    {
-		if (jdbcLogger.loggerI18N.isWarnEnabled())
-		{
-		    jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.isolationlevelfailset",
-					       new Object[] {"ConnectionImple.getConnection", e});
-		}
+            jdbcLogger.i18NLogger.warn_isolationlevelfailset("ConnectionImple.getConnection", e);
 
 		throw e;
 	    }

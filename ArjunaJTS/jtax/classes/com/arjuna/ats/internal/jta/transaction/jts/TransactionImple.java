@@ -435,13 +435,9 @@ public class TransactionImple implements javax.transaction.Transaction,
                         break;
 	            case Status.STATUS_PREPARING:
 	            case Status.STATUS_PREPARED:
-                        throw new InvalidTerminationStateException(
-                                jtaLogger.loggerI18N
-                                .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
+                        throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
                     default:
-                        throw new InactiveTransactionException(
-                                jtaLogger.loggerI18N
-                                .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+                        throw new InactiveTransactionException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
                     }
 	        }
 	        catch (org.omg.CORBA.SystemException e4)

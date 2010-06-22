@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
@@ -66,9 +67,6 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
 	 *
 	 * @return <code>boolean</code>true if there is a log file,
 	 *         <code>false</code> if there isn't.
-	 *
-	 * @message com.arjuna.ats.internal.jta.recovery.notaxid {0} not an Arjuna
-	 *          XID
 	 */
     private boolean transactionLog(Xid xid)
     {
@@ -114,13 +112,7 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
         }
         else
         {
-            if (jtaLogger.logger.isInfoEnabled())
-            {
-                jtaLogger.loggerI18N.info(
-                        "com.arjuna.ats.internal.jta.recovery.notaxid",
-                        new Object[]
-                                { xid });
-            }
+            jtaLogger.i18NLogger.info_recovery_notaxid(XAHelper.xidToString(xid));
         }
 
         return false;
