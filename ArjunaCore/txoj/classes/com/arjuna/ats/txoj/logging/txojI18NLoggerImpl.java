@@ -20,7 +20,11 @@
  */
 package com.arjuna.ats.txoj.logging;
 
-import com.arjuna.common.util.logging.Logi18n;
+import com.arjuna.ats.arjuna.common.Uid;
+import org.jboss.logging.Logger;
+
+import static org.jboss.logging.Logger.Level.INFO;
+import static org.jboss.logging.Logger.Level.WARN;
 
 /**
  * i18n log messages for the txoj module.
@@ -30,274 +34,141 @@ import com.arjuna.common.util.logging.Logi18n;
  */
 public class txojI18NLoggerImpl implements txojI18NLogger {
 
-	private final Logi18n logi18n;
+	private final Logger logger;
 
-	txojI18NLoggerImpl(Logi18n logi18n) {
-		this.logi18n = logi18n;
+	txojI18NLoggerImpl(Logger logger) {
+		this.logger = logger;
 	}
 
-	public void log_lmf1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.lmf1");
-		}
+	public void warn_lmf1(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-15001 LockManagerFriend.getLink", (Object)null);
 	}
 
-	public void log_lmf2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.lmf2");
-		}
+	public void warn_lmf2(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-15002 LockManagerFriend.setLink", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_1(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1", new Object[] {arg0});
-		}
+	public void warn_recovery_RecoveredTransactionalObject_10(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-15004 Object store exception on committing {0}", arg0);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_10(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10", new Object[] {arg0, arg1});
-		}
+	public void warn_recovery_RecoveredTransactionalObject_6(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-15009 RecoveredTransactionalObject tried to access object store", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2", new Object[] {arg0});
-		}
+	public void warn_recovery_RecoveredTransactionalObject_8(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-15011 RecoveredTransactionalObject::findHoldingTransaction - exception", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_3(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3", new Object[] {arg0});
-		}
+	public void warn_recovery_RecoveredTransactionalObject_9(Uid arg0, Throwable arg1) {
+		logger.logv(WARN, arg1, "ARJUNA-15012 Object store exception on removing uncommitted state: {0}", arg0);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_4(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[] {arg0, arg1});
-		}
+	public void info_recovery_TORecoveryModule_3() {
+		logger.logv(INFO, "ARJUNA-15015 TORecoveryModule - first pass", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
-		}
+	public void warn_recovery_TORecoveryModule_5(Throwable arg0) {
+		logger.logv(WARN, arg0, "ARJUNA-15017 TORecoveryModule: searching for TOs:", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_6(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6", new Object[] {arg0});
-		}
+	public void info_recovery_TORecoveryModule_6() {
+		logger.logv(INFO, "ARJUNA-15018 TORecoveryModule - second pass", (Object)null);
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_7(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7", new Object[] {arg0});
-		}
+	public String get_recovery_TORecoveryModule_osproblem() {
+		return "ARJUNA-15021 TORecoveryModule - could not create ObjectStore instance!";
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_8(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8", new Object[] {arg0});
-		}
+	public String get_CadaverLockRecord_1() {
+		return "ARJUNA-15022 CadaverLockRecord::nestedAbort - no Current!";
 	}
 
-	public void log_recovery_RecoveredTransactionalObject_9(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9", new Object[] {arg0, arg1});
-		}
+	public String get_CadaverLockRecord_2() {
+		return "ARJUNA-15023 CadaverLockRecord::nestedCommit - no Current!";
 	}
 
-	public void log_recovery_TORecoveryModule_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1");
-		}
+	public String get_CadaverLockRecord_3() {
+		return "ARJUNA-15024 CadaverLockRecord::topLevelAbort - no Current!";
 	}
 
-	public void log_recovery_TORecoveryModule_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_2", new Object[] {arg0});
-		}
+	public String get_CadaverLockRecord_4() {
+		return "ARJUNA-15025 CadaverLockRecord::topLevelCommit - no Current!";
 	}
 
-	public void log_recovery_TORecoveryModule_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_3");
-		}
+	public void warn_LockManager_1() {
+		logger.logv(WARN, "ARJUNA-15026 LockManager: lock propagation failed", (Object)null);
 	}
 
-	public void log_recovery_TORecoveryModule_4(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4", new Object[] {arg0, arg1});
-		}
+	public void warn_LockManager_10(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-15027 LockManager::unloadState() failed to remove empty lock state for object {0} of type {1}", arg0, arg1);
 	}
 
-	public void log_recovery_TORecoveryModule_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_5");
-		}
+	public void warn_LockManager_11(String arg0) {
+		logger.logv(WARN, "ARJUNA-15028 LockManager.unloadState - could not save lock state: {0}", arg0);
 	}
 
-	public void log_recovery_TORecoveryModule_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_6");
-		}
+	public void warn_LockManager_12(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-15029 LockManager::unloadState() failed to write new state for object {0} of type {1}", arg0, arg1);
 	}
 
-	public void log_recovery_TORecoveryModule_7(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7", new Object[] {arg0, arg1});
-		}
+	public void warn_LockManager_13(Uid arg0, String arg1) {
+		logger.logv(WARN, "ARJUNA-15030 LockManager::unloadState() failed to pack up new state for object {0} of type {1}", arg0, arg1);
 	}
 
-	public void log_recovery_TORecoveryModule_8(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8", new Object[] {arg0, arg1});
-		}
+	public void warn_LockManager_2() {
+		logger.logv(WARN, "ARJUNA-15031 LockManager::setlock() no lock!", (Object)null);
 	}
 
-	public void log_recovery_TORecoveryModule_osproblem() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem");
-		}
+	public void warn_LockManager_3() {
+		logger.logv(WARN, "ARJUNA-15032 LockManager::setlock() cannot find action hierarchy", (Object)null);
 	}
 
-	public void log_CadaverLockRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.CadaverLockRecord_1");
-		}
+	public void warn_LockManager_4() {
+		logger.logv(WARN, "ARJUNA-15033 LockManager::setlock() cannot load existing lock states", (Object)null);
 	}
 
-	public void log_CadaverLockRecord_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.CadaverLockRecord_2");
-		}
+	public void warn_LockManager_5() {
+		logger.logv(WARN, "ARJUNA-15034 LockManager::setlock() cannot activate object", (Object)null);
 	}
 
-	public void log_CadaverLockRecord_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.CadaverLockRecord_3");
-		}
+	public void warn_LockManager_6() {
+		logger.logv(WARN, "ARJUNA-15035 LockManager::setlock() cannot save new lock states", (Object)null);
 	}
 
-	public void log_CadaverLockRecord_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.CadaverLockRecord_4");
-		}
+	public void warn_LockManager_7() {
+		logger.logv(WARN, "ARJUNA-15036 Lockmanager::releaselock() could not load old lock states", (Object)null);
 	}
 
-	public void log_LockManager_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_1");
-		}
+	public void warn_LockManager_8() {
+		logger.logv(WARN, "ARJUNA-15037 Lockmanager::releaselock() could not unload new lock states", (Object)null);
 	}
 
-	public void log_LockManager_10(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_10", new Object[] {arg0, arg1});
-		}
+	public void warn_LockRecord_1() {
+		logger.logv(WARN, "ARJUNA-15038 LockRecord::set_value() called illegally", (Object)null);
 	}
 
-	public void log_LockManager_11(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_11", new Object[] {arg0});
-		}
+	public void warn_LockRecord_2(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-15039 LockRecord - release failed for action {0}", arg0);
 	}
 
-	public void log_LockManager_12(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_12", new Object[] {arg0, arg1});
-		}
+	public void warn_LockRecord_3() {
+		logger.logv(WARN, "ARJUNA-15040 LockRecord::nestedAbort - no current action", (Object)null);
 	}
 
-	public void log_LockManager_13(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_13", new Object[] {arg0, arg1});
-		}
+	public void warn_LockRecord_4() {
+		logger.logv(WARN, "ARJUNA-15041 LockRecord::nestedCommit - no current action", (Object)null);
 	}
 
-	public void log_LockManager_2() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_2");
-		}
+	public void warn_LockRecord_5(Uid arg0) {
+		logger.logv(WARN, "ARJUNA-15042 LockRecord - release failed for action {0}", arg0);
 	}
 
-	public void log_LockManager_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_3");
-		}
+	public void warn_LockRecord_6() {
+		logger.logv(WARN, "ARJUNA-15043 LockRecord::topLevelCommit - no current action", (Object)null);
 	}
 
-	public void log_LockManager_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_4");
-		}
+	public void warn_LockRecord_7(String arg0, Uid arg1) {
+		logger.logv(WARN, "ARJUNA-15044 Invocation of LockRecord::restore_state for {0} inappropriate - ignored for {1}", arg0, arg1);
 	}
-
-	public void log_LockManager_5() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_5");
-		}
-	}
-
-	public void log_LockManager_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_6");
-		}
-	}
-
-	public void log_LockManager_7() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_7");
-		}
-	}
-
-	public void log_LockManager_8() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockManager_8");
-		}
-	}
-
-	public void log_LockRecord_1() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_1");
-		}
-	}
-
-	public void log_LockRecord_2(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_2", new Object[] {arg0});
-		}
-	}
-
-	public void log_LockRecord_3() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_3");
-		}
-	}
-
-	public void log_LockRecord_4() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_4");
-		}
-	}
-
-	public void log_LockRecord_5(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_5", new Object[] {arg0});
-		}
-	}
-
-	public void log_LockRecord_6() {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_6");
-		}
-	}
-
-	public void log_LockRecord_7(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.txoj.LockRecord_7", new Object[] {arg0, arg1});
-		}
-	}
-
 }

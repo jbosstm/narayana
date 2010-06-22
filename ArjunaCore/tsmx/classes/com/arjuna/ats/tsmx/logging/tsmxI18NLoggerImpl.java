@@ -20,7 +20,10 @@
  */
 package com.arjuna.ats.tsmx.logging;
 
-import com.arjuna.common.util.logging.Logi18n;
+import org.jboss.logging.Logger;
+
+import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.WARN;
 
 /**
  * i18n log messages for the tsmx module.
@@ -30,28 +33,30 @@ import com.arjuna.common.util.logging.Logi18n;
  */
 public class tsmxI18NLoggerImpl implements tsmxI18NLogger {
 
-	private final Logi18n logi18n;
+	private final Logger logger;
 
-	tsmxI18NLoggerImpl(Logi18n logi18n) {
-		this.logi18n = logi18n;
+	tsmxI18NLoggerImpl(Logger logger) {
+		this.logger = logger;
 	}
 
-	public void log_TransactionServiceMX_failedtoregistermbean(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.tsmx.TransactionServiceMX.failedtoregistermbean", new Object[] {arg0, arg1});
-		}
+	public void error_TransactionServiceMX_failedtoregistermbean(String arg0, Throwable arg1) {
+		logger.logv(ERROR, arg1, "ARJUNA-30001 Failed to register MBean {0}", arg0);
 	}
 
-	public void log_TransactionServiceMX_failedtounregistermbean(String arg0, String arg1) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.tsmx.TransactionServiceMX.failedtounregistermbean", new Object[] {arg0, arg1});
-		}
+	public void error_TransactionServiceMX_failedtounregistermbean(String arg0, Throwable arg1) {
+		logger.logv(ERROR, arg1, "ARJUNA-30002 Failed to unregister MBean {0}", arg0);
 	}
 
-	public void log_TransactionServiceMX_mbeanalreadyregistered(String arg0) {
-		if(logi18n.isWarnEnabled()) {
-			logi18n.warn("com.arjuna.ats.tsmx.TransactionServiceMX.mbeanalreadyregistered", new Object[] {arg0});
-		}
+	public void warn_TransactionServiceMX_mbeanalreadyregistered(String arg0) {
+		logger.logv(WARN, "ARJUNA-30003 MBean {0} already registered", arg0);
+	}
+
+	public void error_toolsClassLoader_invalidjar(Throwable arg0) {
+		logger.logv(ERROR, arg0, "ARJUNA-30004 Error reading tool jar", (Object)null);
+	}
+
+	public void error_toolsClassLoader_invalidurl(String arg0, Throwable arg1) {
+		logger.logv(ERROR, arg1, "ARJUNA-30005 The URL is invalid {0}", arg0);
 	}
 
 }

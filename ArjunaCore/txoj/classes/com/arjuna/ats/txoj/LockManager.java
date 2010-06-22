@@ -64,41 +64,6 @@ import java.io.IOException;
  * @version $Id: LockManager.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  * @see com.arjuna.ats.arjuna.StateManager
- * @message com.arjuna.ats.txoj.LockManager_1 [com.arjuna.ats.txoj.LockManager_1]
- *          - LockManager: lock propagation failed
- * @message com.arjuna.ats.txoj.LockManager_2
- *          [com.arjuna.ats.txoj.LockManager_2] - LockManager::setlock() no
- *          lock!
- * @message com.arjuna.ats.txoj.LockManager_3
- *          [com.arjuna.ats.txoj.LockManager_3] - LockManager::setlock() cannot
- *          find action hierarchy
- * @message com.arjuna.ats.txoj.LockManager_4
- *          [com.arjuna.ats.txoj.LockManager_4] - LockManager::setlock() cannot
- *          load existing lock states
- * @message com.arjuna.ats.txoj.LockManager_5
- *          [com.arjuna.ats.txoj.LockManager_5] - LockManager::setlock() cannot
- *          activate object
- * @message com.arjuna.ats.txoj.LockManager_6
- *          [com.arjuna.ats.txoj.LockManager_6] - LockManager::setlock() cannot
- *          save new lock states
- * @message com.arjuna.ats.txoj.LockManager_7
- *          [com.arjuna.ats.txoj.LockManager_7] - Lockmanager::releaselock()
- *          could not load old lock states
- * @message com.arjuna.ats.txoj.LockManager_8
- *          [com.arjuna.ats.txoj.LockManager_8] - Lockmanager::releaselock()
- *          could not unload new lock states
- * @message com.arjuna.ats.txoj.LockManager_10
- *          [com.arjuna.ats.txoj.LockManager_10] - LockManager::unloadState()
- *          failed to remove empty lock state for object {0} of type {1}
- * @message com.arjuna.ats.txoj.LockManager_11
- *          [com.arjuna.ats.txoj.LockManager_11] - LockManager.unloadState -
- *          could not save lock state: {0}
- * @message com.arjuna.ats.txoj.LockManager_12
- *          [com.arjuna.ats.txoj.LockManager_12] - LockManager::unloadState()
- *          failed to write new state for object {0} of type {1}
- * @message com.arjuna.ats.txoj.LockManager_13
- *          [com.arjuna.ats.txoj.LockManager_13] - LockManager::unloadState()
- *          failed to pack up new state for object {0} of type {1}
  */
 
 public class LockManager extends StateManager
@@ -261,11 +226,7 @@ public class LockManager extends StateManager
 
         if (!result)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn("com.arjuna.ats.txoj.LockManager_1");
-            }
+            txojLogger.i18NLogger.warn_LockManager_1();
 
             synchronized (locksHeldLockObject)
             {
@@ -355,11 +316,7 @@ public class LockManager extends StateManager
 
         if (toSet == null)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn("com.arjuna.ats.txoj.LockManager_2");
-            }
+            txojLogger.i18NLogger.warn_LockManager_2();
 
             return LockResult.REFUSED;
         }
@@ -374,11 +331,7 @@ public class LockManager extends StateManager
                 toSet.changeHierarchy(ah);
             else
             {
-                if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                {
-                    txojLogger.aitLoggerI18N
-                            .warn("com.arjuna.ats.txoj.LockManager_3");
-                }
+                txojLogger.i18NLogger.warn_LockManager_3();
 
                 toSet = null;
 
@@ -406,11 +359,7 @@ public class LockManager extends StateManager
                     }
                     else
                     {
-                        if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                        {
-                            txojLogger.aitLoggerI18N
-                                    .warn("com.arjuna.ats.txoj.LockManager_4");
-                        }
+                        txojLogger.i18NLogger.warn_LockManager_4();
                     }
     
                     if (conflict != ConflictType.CONFLICT)
@@ -463,13 +412,8 @@ public class LockManager extends StateManager
                         else
                         {
                             /* activate failed - refuse request */
-    
-                            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                            {
-                                txojLogger.aitLoggerI18N
-                                        .warn("com.arjuna.ats.txoj.LockManager_5");
-                            }
-    
+                            txojLogger.i18NLogger.warn_LockManager_5();
+
                             returnStatus = LockResult.REFUSED;
                         }
                     }
@@ -486,12 +430,8 @@ public class LockManager extends StateManager
                     {
                         if (!unloadState())
                         {
-                            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                            {
-                                txojLogger.aitLoggerI18N
-                                        .warn("com.arjuna.ats.txoj.LockManager_6");
-                            }
-    
+                            txojLogger.i18NLogger.warn_LockManager_6();
+
                             returnStatus = LockResult.REFUSED;
                         }
                     }
@@ -862,9 +802,7 @@ public class LockManager extends StateManager
         // if (!stateLoaded)
         if (!loaded)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                txojLogger.aitLoggerI18N
-                        .warn("com.arjuna.ats.txoj.LockManager_7");
+            txojLogger.i18NLogger.warn_LockManager_7();
             /*
              * No need to freeState since we will have done that by now.
              */
@@ -886,9 +824,7 @@ public class LockManager extends StateManager
                 {
                     if (!unloadState())
                     {
-                        if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                            txojLogger.aitLoggerI18N
-                                    .warn("com.arjuna.ats.txoj.LockManager_8");
+                        txojLogger.i18NLogger.warn_LockManager_8();
                     }
                     else
                         releasedOK = true;
@@ -1247,13 +1183,7 @@ public class LockManager extends StateManager
                 }
                 else
                 {
-                    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                    {
-                        txojLogger.aitLoggerI18N.warn(
-                                "com.arjuna.ats.txoj.LockManager_10",
-                                new Object[]
-                                { u, otype });
-                    }
+                    txojLogger.i18NLogger.warn_LockManager_10(u, otype);
                 }
             }
             else
@@ -1272,13 +1202,7 @@ public class LockManager extends StateManager
 
                         if (!current.save_state(S, ObjectType.ANDPERSISTENT))
                         {
-                            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                            {
-                                txojLogger.aitLoggerI18N.warn(
-                                        "com.arjuna.ats.txoj.LockManager_11",
-                                        new Object[]
-                                        { current });
-                            }
+                            txojLogger.i18NLogger.warn_LockManager_11(current.toString());
                             unloadOk = false;
                         }
 
@@ -1297,13 +1221,7 @@ public class LockManager extends StateManager
                         }
                         else
                         {
-                            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                            {
-                                txojLogger.aitLoggerI18N.warn(
-                                        "com.arjuna.ats.txoj.LockManager_12",
-                                        new Object[]
-                                        { u, otype });
-                            }
+                            txojLogger.i18NLogger.warn_LockManager_12(u, otype);
                         }
                     }
                 }
@@ -1311,13 +1229,7 @@ public class LockManager extends StateManager
                 {
                     unloadOk = false;
 
-                    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                    {
-                        txojLogger.aitLoggerI18N.warn(
-                                "com.arjuna.ats.txoj.LockManager_13",
-                                new Object[]
-                                { u, otype });
-                    }
+                    txojLogger.i18NLogger.warn_LockManager_13(u, otype);
                 }
             }
 

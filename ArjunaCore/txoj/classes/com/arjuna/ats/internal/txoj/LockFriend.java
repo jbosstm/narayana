@@ -42,13 +42,6 @@ import com.arjuna.ats.txoj.logging.txojLogger;
  * @author marklittle
  */
 
-/**
- * @message com.arjuna.ats.internal.txoj.lmf1
- *          [com.arjuna.ats.internal.txoj.lmf1] - LockManagerFriend.getLink
- * @message com.arjuna.ats.internal.txoj.lmf2
- *          [com.arjuna.ats.internal.txoj.lmf2] - LockManagerFriend.setLink
- */
-
 public class LockFriend
 {
     public static final Lock getLink (Lock inst)
@@ -65,11 +58,7 @@ public class LockFriend
         }
         catch (final Throwable ex)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn("com.arjuna.ats.internal.txoj.lmf1", ex);
-            }
+            txojLogger.i18NLogger.warn_lmf1(ex);
             
             return null;
         }
@@ -87,11 +76,7 @@ public class LockFriend
         }
         catch (final Throwable ex)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn("com.arjuna.ats.internal.txoj.lmf2", ex);
-            }
+            txojLogger.i18NLogger.warn_lmf2(ex);
         }
     }
 }

@@ -39,17 +39,25 @@ public interface tsmxI18NLogger {
         Allocate new messages by following instructions at the bottom of the file.
      */
 
-	@Message(id = 30001, value = "Failed to register MBean {0} : {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_TransactionServiceMX_failedtoregistermbean(String arg0, String arg1);
+	@Message(id = 30001, value = "Failed to register MBean {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_TransactionServiceMX_failedtoregistermbean(String arg0, Throwable arg1);
 
-	@Message(id = 30002, value = "Failed to unregister MBean {0} : {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void log_TransactionServiceMX_failedtounregistermbean(String arg0, String arg1);
+	@Message(id = 30002, value = "Failed to unregister MBean {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_TransactionServiceMX_failedtounregistermbean(String arg0, Throwable arg1);
 
 	@Message(id = 30003, value = "MBean {0} already registered", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void log_TransactionServiceMX_mbeanalreadyregistered(String arg0);
+	public void warn_TransactionServiceMX_mbeanalreadyregistered(String arg0);
+
+    @Message(id = 30004, value = "Error reading tool jar", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_toolsClassLoader_invalidjar(Throwable arg0);
+
+    @Message(id = 30005, value = "The URL is invalid {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_toolsClassLoader_invalidurl(String arg0, Throwable arg1);
 
     /*
         Allocate new messages directly above this notice.

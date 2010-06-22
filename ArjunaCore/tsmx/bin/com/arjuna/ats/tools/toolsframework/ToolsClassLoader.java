@@ -142,7 +142,6 @@ public class ToolsClassLoader extends URLClassLoader implements FilenameFilter
     }
 
     /**
-	 * @message com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidjar Error reading tool jar: {0}
 	 * @param toolsDirectory
 	 */
     private void processDir(String toolsDirectory)
@@ -164,11 +163,7 @@ public class ToolsClassLoader extends URLClassLoader implements FilenameFilter
             }
             catch (IOException e)
             {
-                if ( tsmxLogger.loggerI18N.isErrorEnabled() )
-                    tsmxLogger.loggerI18N.error("com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidjar", new Object[] {e.getMessage()});
-
-                if ( tsmxLogger.loggerI18N.isDebugEnabled())
-                    tsmxLogger.loggerI18N.debug("com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidjar", e);
+                tsmxLogger.i18nLogger.error_toolsClassLoader_invalidjar(e);
             }
         }
 
@@ -187,7 +182,6 @@ public class ToolsClassLoader extends URLClassLoader implements FilenameFilter
     }
 
     /**
-	 * @message com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidurl The URL is invalid: {0}
 	 * @param toolsLibDirectory
 	 */
     private boolean setClassLoader(Collection<URL> urls, String toolsLibDirectory)
@@ -229,11 +223,7 @@ public class ToolsClassLoader extends URLClassLoader implements FilenameFilter
         }
         catch (MalformedURLException e)
         {
-            if ( tsmxLogger.loggerI18N.isErrorEnabled() )
-                tsmxLogger.loggerI18N.error("com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidurl", new Object[] { toolsLibDirectory } );
-
-            if ( tsmxLogger.loggerI18N.isDebugEnabled())
-                tsmxLogger.loggerI18N.debug("com.arjuna.ats.tools.toolsframework.ToolsClassLoader.invalidurl", e);
+            tsmxLogger.i18nLogger.error_toolsClassLoader_invalidurl(toolsLibDirectory, e);
 
             return false;
         }

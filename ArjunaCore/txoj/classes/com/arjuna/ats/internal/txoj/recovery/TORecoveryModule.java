@@ -36,11 +36,8 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
-import com.arjuna.common.util.logging.*;
 
 import java.util.*;
 
@@ -54,35 +51,6 @@ import java.io.IOException;
  * This class is a plug-in module for the recovery manager. This class is
  * responsible for the recovery of Transactional Objects (aka AIT objects),
  * i.e., objects that derive from LockManager and StateManager.
- * 
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1] -
- *          TORecoveryModule created
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_2
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_2] -
- *          TORecoveryModule created with {0}
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_3
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_3] -
- *          TORecoveryModule - first pass
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4] - TO
- *          currently uncommitted {0} is a {1}
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_5
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_5] -
- *          TORecoveryModule: searching for TOs:
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_6
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_6] -
- *          TORecoveryModule - second pass
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7] -
- *          TORecoveryModule.periodicWork(): Object ({0}, {1}) is no longer
- *          uncommitted.
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8] -
- *          TORecoveryModule.periodicWork(): Object ({0}, {1}) no longer exists.
- * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem
- *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem] -
- *          TORecoveryModule - could not create ObjectStore instance!
  */
 
 public class TORecoveryModule implements RecoveryModule
@@ -96,8 +64,8 @@ public class TORecoveryModule implements RecoveryModule
     @SuppressWarnings("unchecked")
     public TORecoveryModule()
     {
-        if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-            txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_1");
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("TORecoveryModule created");
         }
 
         /*
@@ -112,18 +80,13 @@ public class TORecoveryModule implements RecoveryModule
         }
         catch (final Throwable ex)
         {
-            throw new FatalError(txojLogger.aitLoggerI18N
-                    .getString("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem"), ex);
+            throw new FatalError(txojLogger.i18NLogger.get_recovery_TORecoveryModule_osproblem(), ex);
         }
     }
 
     public void periodicWorkFirstPass ()
     {
-        if (txojLogger.aitLoggerI18N.isInfoEnabled())
-        {
-            txojLogger.aitLoggerI18N
-                    .info("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_3");
-        }
+        txojLogger.i18NLogger.info_recovery_TORecoveryModule_3();
 
         // Build a hashtable of uncommitted transactional objects
         _uncommittedTOTable = new Hashtable();
@@ -178,11 +141,8 @@ public class TORecoveryModule implements RecoveryModule
                                             
                                             _uncommittedTOTable.put(newUid,newTypeString);
                                             
-                                            if (txojLogger.aitLoggerI18N
-                                                    .isDebugEnabled()) {
-                                                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_4", new Object[]
-                                                        {newUid,
-                                                                newTypeString});
+                                            if (txojLogger.aitLogger.isDebugEnabled()) {
+                                                txojLogger.aitLogger.debug("TO currently uncommitted "+newUid+" is a "+newTypeString);
                                             }
                                         }
                                     }
@@ -201,36 +161,20 @@ public class TORecoveryModule implements RecoveryModule
                 }
                 catch (Exception e)
                 {
-                    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-                    {
-                        txojLogger.aitLoggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_5",
-                                        e);
-                    }
+                    txojLogger.i18NLogger.warn_recovery_TORecoveryModule_5(e);
                 }
             }
         }
         catch (Exception e)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_5",
-                                e);
-            }
+            txojLogger.i18NLogger.warn_recovery_TORecoveryModule_5(e);
         }
 
     }
 
     public void periodicWorkSecondPass ()
     {
-        if (txojLogger.aitLoggerI18N.isInfoEnabled())
-        {
-            txojLogger.aitLoggerI18N
-                    .info("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_6");
-        }
+        txojLogger.i18NLogger.info_recovery_TORecoveryModule_6();
 
         Enumeration uncommittedObjects = _uncommittedTOTable.keys();
 
@@ -247,17 +191,15 @@ public class TORecoveryModule implements RecoveryModule
                 }
                 else
                 {
-                    if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_7", new Object[]
-                                {objUid, objType});
+                    if (txojLogger.aitLogger.isDebugEnabled()) {
+                        txojLogger.aitLogger.debug("Object ("+objUid+", "+objType+") is no longer uncommitted.");
                     }
                 }
             }
             catch (ObjectStoreException ose)
             {
-                if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                    txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8", new Object[]
-                            {objUid, objType});
+                if (txojLogger.aitLogger.isDebugEnabled()) {
+                    txojLogger.aitLogger.debug("Object ("+objUid+", "+objType+") no longer exists.");
                 }
             }
         }

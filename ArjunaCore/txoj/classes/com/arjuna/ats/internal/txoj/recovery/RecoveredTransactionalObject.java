@@ -66,46 +66,6 @@ import com.arjuna.ats.internal.arjuna.Header;
  * @author Peter Furniss (peter.furniss@arjuna.com), Mark Little
  *         (mark_little@hp.com)
  * @version $Id: RecoveredTransactionalObject.java 2342 2006-03-30 13:06:17Z $
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_1] - RecoveredTransactionalObject
- *          created for {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_2] - TO held by transaction {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_3] - transaction status {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_4] - transaction Status from original
- *          application {0} and inactive: {1}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_5] -
- *          RecoveredTransactionalObject.replayPhase2 - cannot find/no holding
- *          transaction
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_6] - RecoveredTransactionalObject tried
- *          to access object store {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_7] -
- *          RecoveredTransactionalObject::findHoldingTransaction - uid is {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_8] -
- *          RecoveredTransactionalObject::findHoldingTransaction - exception {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_9] - Object store exception on removing
- *          uncommitted state: {0} {1}
- * @message 
- *          com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10
- *          [com.arjuna.ats.internal.txoj.recovery.
- *          RecoveredTransactionalObject_10] - Object store exception on
- *          committing {0} {1}
  */
 
 /*
@@ -123,9 +83,8 @@ public class RecoveredTransactionalObject extends StateManager
         _objectStore = objectStore;
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
 
-        if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-            txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1", new Object[]
-                    {_ourUid});
+        if (txojLogger.aitLogger.isDebugEnabled()) {
+            txojLogger.aitLogger.debug("RecoveredTransactionalObject created for "+_ourUid);
         }
     }
 
@@ -139,17 +98,15 @@ public class RecoveredTransactionalObject extends StateManager
              * is, so leave that to the cache.
              */
 
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2", new Object[]
-                        {_owningTransactionUid});
+            if (txojLogger.aitLogger.isDebugEnabled()) {
+                txojLogger.aitLogger.debug("TO held by transaction "+_owningTransactionUid);
             }
 
             int tranStatus = _transactionStatusConnectionMgr
                     .getTransactionStatus(_owningTransactionUid);
 
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3", new Object[]
-                        {ActionStatus.stringForm(tranStatus)});
+            if (txojLogger.aitLogger.isDebugEnabled()) {
+                txojLogger.aitLogger.debug("RecoveredTransactionalObject - transaction status "+ActionStatus.stringForm(tranStatus));
             }
 
             boolean inactive = false;
@@ -157,14 +114,9 @@ public class RecoveredTransactionalObject extends StateManager
             if (tranStatus == ActionStatus.INVALID) // should be
                                                     // ActionStatus.NO_ACTION
             {
-                if (txojLogger.aitLoggerI18N.isDebugEnabled())
+                if (txojLogger.aitLogger.isDebugEnabled())
                 {
-                    if (inactive)
-                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]
-                                {Integer.toString(tranStatus), "true"});
-                    else
-                        txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]
-                                {Integer.toString(tranStatus), "false"});
+                    txojLogger.aitLogger.debug("transaction Status from original application "+Integer.toString(tranStatus)+" and inactive: "+inactive);                    
                 }
 
                 inactive = true;
@@ -186,8 +138,8 @@ public class RecoveredTransactionalObject extends StateManager
         }
         else
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
+            if (txojLogger.aitLogger.isDebugEnabled()) {
+                txojLogger.aitLogger.debug("RecoveredTransactionalObject.replayPhase2 - cannot find/no holding transaction");
             }
         }
     }
@@ -209,10 +161,7 @@ public class RecoveredTransactionalObject extends StateManager
         }
         catch (ObjectStoreException e)
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6", new Object[]
-                        {e});
-            }
+            txojLogger.i18NLogger.warn_recovery_RecoveredTransactionalObject_6(e);
 
             return false; // probably
         }
@@ -234,19 +183,15 @@ public class RecoveredTransactionalObject extends StateManager
             _originalProcessUid = hdr.getProcessId();
             _owningTransactionUid = hdr.getTxId();
             
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7", new Object[]
-                        {_owningTransactionUid});
+            if (txojLogger.aitLogger.isDebugEnabled()) {
+                txojLogger.aitLogger.debug("RecoveredTransactionalObject::findHoldingTransaction - uid is "+_owningTransactionUid);
             }
 
             return _owningTransactionUid.notEquals(Uid.nullUid());
         }
         catch (Exception e)
         {
-            if (txojLogger.aitLoggerI18N.isDebugEnabled()) {
-                txojLogger.aitLoggerI18N.debug("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8", new Object[]
-                        {e});
-            }
+            txojLogger.i18NLogger.warn_recovery_RecoveredTransactionalObject_8(e);
         }
 
         return false;
@@ -260,14 +205,7 @@ public class RecoveredTransactionalObject extends StateManager
         }
         catch (ObjectStoreException e)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9",
-                                new Object[]
-                                { _ourUid, e });
-            }
+            txojLogger.i18NLogger.warn_recovery_RecoveredTransactionalObject_9(_ourUid, e);
         }
     }
 
@@ -279,14 +217,7 @@ public class RecoveredTransactionalObject extends StateManager
         }
         catch (ObjectStoreException e)
         {
-            if (txojLogger.aitLoggerI18N.isWarnEnabled())
-            {
-                txojLogger.aitLoggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10",
-                                new Object[]
-                                { _ourUid, e });
-            }
+            txojLogger.i18NLogger.warn_recovery_RecoveredTransactionalObject_10(_ourUid, e);
         }
     }
 

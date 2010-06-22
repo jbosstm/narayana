@@ -32,18 +32,17 @@
 package com.arjuna.ats.tsmx.logging;
 
 import com.arjuna.common.util.logging.*;
+import org.jboss.logging.Logger;
 
 public class tsmxLogger
 {
 	public static LogNoi18n logger;
-	public static Logi18n loggerI18N;
     public static tsmxI18NLogger i18nLogger;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         logger = noi18n;
-        loggerI18N = i18n;
-        i18nLogger = new tsmxI18NLoggerImpl(i18n);
+        i18nLogger = new tsmxI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.tsmx"));
     }
 
     static

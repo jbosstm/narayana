@@ -34,7 +34,6 @@ import com.arjuna.ats.tsmx.agent.AgentInterface;
 import com.arjuna.ats.tsmx.agent.exceptions.AgentNotFoundException;
 import com.arjuna.ats.tsmx.logging.*;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.common.util.ConfigurationInfo;
 
 import javax.management.MBeanServer;
@@ -176,9 +175,6 @@ public class TransactionServiceMX
 	/**
 	 * Register all MBeans which are defined in the properties
 	 * which are prefixed with <code>MBEAN_PROPERTY_PREFIX</code>
-	 *
-	 * @message com.arjuna.ats.tsmx.TransactionServiceMX.mbeanalreadyregistered MBean {0} already registered
-	 * @message com.arjuna.ats.tsmx.TransactionServiceMX.failedtoregistermbean Failed to register MBean {0} : {1}
 	 */
 	private boolean registerMBeans()
 	{
@@ -218,25 +214,11 @@ public class TransactionServiceMX
 					}
 					catch (javax.management.InstanceAlreadyExistsException e)
 					{
-						if (tsmxLogger.logger.isWarnEnabled())
-						{
-							tsmxLogger.loggerI18N.warn("com.arjuna.ats.tsmx.TransactionServiceMX.mbeanalreadyregistered", new Object[] { mbeanObjectName } );
-						}
-					}
-					catch (javax.management.MBeanException e)
-					{
-						if (tsmxLogger.logger.isErrorEnabled())
-						{
-							tsmxLogger.loggerI18N.error("com.arjuna.ats.tsmx.TransactionServiceMX.failedtoregistermbean", new Object[] { mbeanObjectName, e.getTargetException().toString() } );
-						}
-						success = false;
+                        tsmxLogger.i18nLogger.warn_TransactionServiceMX_mbeanalreadyregistered(mbeanObjectName);
 					}
 					catch (Exception e)
 					{
-						if (tsmxLogger.logger.isErrorEnabled())
-						{
-							tsmxLogger.loggerI18N.error("com.arjuna.ats.tsmx.TransactionServiceMX.failedtoregistermbean", new Object[] { mbeanObjectName, e.toString() } );
-						}
+                        tsmxLogger.i18nLogger.error_TransactionServiceMX_failedtoregistermbean(mbeanObjectName, e);
 						success = false;
 					}
 
@@ -251,8 +233,6 @@ public class TransactionServiceMX
 	 * Thie method unregisters all the mbeans registered.
 	 *
 	 * @return True if all beans were unregistered successfully.
-	 *
-	 * @message com.arjuna.ats.tsmx.TransactionServiceMX.failedtounregistermbean Failed to unregister MBean {0} : {1}
 	 */
 	public boolean unregisterMBeans()
 	{
@@ -269,10 +249,7 @@ public class TransactionServiceMX
 			}
 			catch (Exception e)
 			{
-				if (tsmxLogger.logger.isErrorEnabled())
-				{
-					tsmxLogger.loggerI18N.error("com.arjuna.ats.tsmx.TransactionServiceMX.failedtounregistermbean", new Object[] { name, e.toString() } );
-				}
+                tsmxLogger.i18nLogger.error_TransactionServiceMX_failedtounregistermbean(name, e);
 				success = false;
 			}
 		}

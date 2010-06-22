@@ -44,13 +44,6 @@ import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
-/**
- * @message com.arjuna.ats.txoj.CadaverLockRecord_1 [com.arjuna.ats.txoj.CadaverLockRecord_1] - CadaverLockRecord::nestedAbort - no Current!
- * @message com.arjuna.ats.txoj.CadaverLockRecord_2 [com.arjuna.ats.txoj.CadaverLockRecord_2] - CadaverLockRecord::nestedCommit - no Current!
- * @message com.arjuna.ats.txoj.CadaverLockRecord_3 [com.arjuna.ats.txoj.CadaverLockRecord_3] - CadaverLockRecord::topLevelAbort - no Current!
- * @message com.arjuna.ats.txoj.CadaverLockRecord_4 [com.arjuna.ats.txoj.CadaverLockRecord_4] - CadaverLockRecord::topLevelCommit - no Current!
- */
-
 /*
  *
  * Cadaver Lock Record Class Implementation
@@ -116,13 +109,8 @@ public class CadaverLockRecord extends LockRecord
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);
 
 	    if (super.actionHandle == null)
-	    {
-		if (txojLogger.aitLoggerI18N.isFatalEnabled())
-		{
-		    txojLogger.aitLoggerI18N.fatal("CadaverLockRecord_1");
-		}
-		
-		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_1"));
+        {
+            throw new FatalError(txojLogger.i18NLogger.get_CadaverLockRecord_1());
 	    }
 	    
 	    return (manager.releaseAll(super.actionHandle.get_uid()) ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.FINISH_ERROR);
@@ -148,12 +136,7 @@ public class CadaverLockRecord extends LockRecord
     
 	    if (super.actionHandle == null)
 	    {
-		if (txojLogger.aitLoggerI18N.isFatalEnabled())
-		{
-		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_2");
-		}
-		
-		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_2"));
+		    throw new FatalError(txojLogger.i18NLogger.get_CadaverLockRecord_2());
 	    }
     
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);
@@ -175,12 +158,7 @@ public class CadaverLockRecord extends LockRecord
 	{
 	    if (super.actionHandle == null)
 	    {
-		if (txojLogger.aitLoggerI18N.isFatalEnabled())
-		{
-		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_3");
-		}
-		
-		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_3"));
+    		throw new FatalError(txojLogger.i18NLogger.get_CadaverLockRecord_3());
 	    }
 
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);
@@ -202,12 +180,7 @@ public class CadaverLockRecord extends LockRecord
 	{
 	    if (super.actionHandle == null)
 	    {
-		if (txojLogger.aitLoggerI18N.isFatalEnabled())
-		{
-		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_4");
-		}
-		
-		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_4"));
+    		throw new FatalError(txojLogger.i18NLogger.get_CadaverLockRecord_4());
 	    }
 
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);

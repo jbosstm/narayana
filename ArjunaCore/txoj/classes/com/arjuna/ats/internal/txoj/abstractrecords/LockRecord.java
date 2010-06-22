@@ -42,16 +42,6 @@ import com.arjuna.ats.txoj.logging.txojLogger;
 import com.arjuna.ats.arjuna.coordinator.*;
 import java.io.*;
 
-/**
- * @message com.arjuna.ats.txoj.LockRecord_1 [com.arjuna.ats.txoj.LockRecord_1] - LockRecord::set_value() called illegally
- * @message com.arjuna.ats.txoj.LockRecord_2 [com.arjuna.ats.txoj.LockRecord_2] - LockRecord - release failed for action {0}
- * @message com.arjuna.ats.txoj.LockRecord_3 [com.arjuna.ats.txoj.LockRecord_3] - LockRecord::nestedAbort - no current action
- * @message com.arjuna.ats.txoj.LockRecord_4 [com.arjuna.ats.txoj.LockRecord_4] - LockRecord::nestedCommit - no current action
- * @message com.arjuna.ats.txoj.LockRecord_5 [com.arjuna.ats.txoj.LockRecord_5] - LockRecord - release failed for action {0}
- * @message com.arjuna.ats.txoj.LockRecord_6 [com.arjuna.ats.txoj.LockRecord_6] - LockRecord::topLevelCommit - no current action
- * @message com.arjuna.ats.txoj.LockRecord_7 [com.arjuna.ats.txoj.LockRecord_7] - Invocation of LockRecord::restore_state for {0} inappropriate - ignored for {1}
- */
-
 public class LockRecord extends AbstractRecord
 {
 
@@ -89,8 +79,7 @@ public class LockRecord extends AbstractRecord
 
     public void setValue (Object o)
     {
-	if (txojLogger.aitLoggerI18N.isWarnEnabled())
-	    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_1");
+        txojLogger.i18NLogger.warn_LockRecord_1();
     }
 
     public int nestedAbort ()
@@ -113,18 +102,13 @@ public class LockRecord extends AbstractRecord
 	    
 	    if (!managerAddress.releaseAll(toRelease))
 	    {
-		if (txojLogger.aitLoggerI18N.isWarnEnabled())
-		{
-		    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_2",
-						new Object[]{toRelease});
-		}
+            txojLogger.i18NLogger.warn_LockRecord_2(toRelease);
 
-		return TwoPhaseOutcome.FINISH_ERROR;
+    		return TwoPhaseOutcome.FINISH_ERROR;
 	    }
 	}
 	else
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_3");
+        txojLogger.i18NLogger.warn_LockRecord_3();
 
 	return TwoPhaseOutcome.FINISH_OK;
     }
@@ -151,8 +135,7 @@ public class LockRecord extends AbstractRecord
 	}
 	else
 	{
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_4");
+        txojLogger.i18NLogger.warn_LockRecord_4();
 	}
 
 	return TwoPhaseOutcome.FINISH_ERROR;
@@ -194,19 +177,14 @@ public class LockRecord extends AbstractRecord
 	{
 	    if (!managerAddress.releaseAll(actionHandle.get_uid()))
 	    {
-		if (txojLogger.aitLoggerI18N.isWarnEnabled())
-		{
-		    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_5", 
-						new Object[]{actionHandle.get_uid()});
-		}
+            txojLogger.i18NLogger.warn_LockRecord_5(actionHandle.get_uid());
 
-		return TwoPhaseOutcome.FINISH_ERROR;
+    		return TwoPhaseOutcome.FINISH_ERROR;
 	    }
 	}
 	else
 	{
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_6");
+        txojLogger.i18NLogger.warn_LockRecord_6();
 
 	    return TwoPhaseOutcome.FINISH_ERROR;
 	}
@@ -254,13 +232,8 @@ public class LockRecord extends AbstractRecord
 
     public boolean restore_state (InputObjectState o, int t)
     {
-	if (txojLogger.aitLoggerI18N.isWarnEnabled())
-	{
-	    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockRecord_7",
-					new Object[]{type(), order()});
-	}
-
-	return false;
+        txojLogger.i18NLogger.warn_LockRecord_7(type(), order());
+    	return false;
     }
 
     public boolean save_state (OutputObjectState o, int t)
