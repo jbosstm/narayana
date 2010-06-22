@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.jta.exceptions;
 
-import javax.transaction.SystemException;
-
 /**
  * Exception may be thrown under certain circumstances. Typically
  * this is when we would like to throw IllegalStateException to indicate
@@ -45,7 +43,7 @@ import javax.transaction.SystemException;
  * @since JTS 1.2.4.
  */
 
-public class InactiveTransactionException extends SystemException
+public class InactiveTransactionException extends IllegalStateException
 {
     static final long serialVersionUID = -8288622240488128416L;
     
@@ -58,6 +56,5 @@ public class InactiveTransactionException extends SystemException
     {
 	super(s);
     }
-
 }
 
