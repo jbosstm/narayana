@@ -64,7 +64,6 @@ public class EventManager
 
     /**
      * The object has been connected to the ORB.
-     * @message com.arjuna.orbportability.event.EventManager.forhandlethrewexception {0} - for: {1} threw: {2}
      */
 
 public void connected (org.omg.CORBA.Object obj)
@@ -81,12 +80,8 @@ public void connected (org.omg.CORBA.Object obj)
 	    }
 	    catch (Throwable ex)
 	    {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.forhandlethrewexception",
-                                    new java.lang.Object[] { "com.arjuna.orbportability.event.EventManager.connected()",
-                                                   h.name(), ex } );
-                }
+            opLogger.i18NLogger.warn_event_EventManager_forhandlethrewexception(
+                    "com.arjuna.orbportability.event.EventManager.connected()", h.name(), ex);
 	    }
 	}
     }
@@ -109,12 +104,8 @@ public void disconnected (org.omg.CORBA.Object obj)
 	    }
 	    catch (Throwable ex)
 	    {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.forhandlethrewexception",
-                                    new java.lang.Object[] { "com.arjuna.orbportability.event.EventManager.disconnected(Object)",
-                                                             h.name(), ex } );
-                }
+            opLogger.i18NLogger.warn_event_EventManager_forhandlethrewexception(
+                     "com.arjuna.orbportability.event.EventManager.disconnected(Object)", h.name(), ex);
 	    }
 	}
     }
@@ -161,10 +152,6 @@ public static synchronized EventManager getManager ()
 	return _theManager;
     }
 
-    /**
-     * @message com.arjuna.orbportability.event.EventManager.caughtexceptionfor {0} - caught exception: {1} for {2}
-     * @message com.arjuna.orbportability.event.EventManager.novalue {0} - no value for: {1}
-     */
     protected EventManager ()
     {
         _handlers = new Hashtable();
@@ -181,11 +168,7 @@ public static synchronized EventManager getManager ()
             }
             catch (Exception ex)
             {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.caughtexceptionfor",
-                            new java.lang.Object[] { "EventManager", ex, handlerName } );
-                }
+                opLogger.i18NLogger.warn_event_EventManager_caughtexceptionfor("EventManager", handlerName, ex);
             }
         }
     }

@@ -60,12 +60,6 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin
-	 *          [com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin]
-	 *          Cannot call begin on imported AtomicTransaction instance.
-	 */
-
-	/**
 	 * Does not change thread-to-tx association as base class commit does.
 	 */
 

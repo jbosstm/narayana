@@ -107,10 +107,7 @@ public boolean objectIsReady (Servant obj, byte[] id) throws SystemException
         }
         catch (Exception e)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn("com.arjuna.orbportability.OA.exceptioncaughtforobj", new Object[] { "objectIsReady", obj, e.toString() });
-            }
+            opLogger.i18NLogger.warn_OA_exceptioncaughtforobj("objectIsReady", obj.toString(), e);
 
             return false;
         }
@@ -137,10 +134,7 @@ public boolean objectIsReady (Servant obj) throws SystemException
 
             if (invalidPOA)
             {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.OA.invalidpoa" , new Object[] { "objectIsReady", "rootPOA"});
-                }
+                opLogger.i18NLogger.warn_OA_invalidpoa("objectIsReady", "rootPOA");
 
                 result = false;
             }
@@ -149,10 +143,7 @@ public boolean objectIsReady (Servant obj) throws SystemException
         }
         catch (Exception e)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn ( "com.arjuna.orbportability.OA.exceptioncaughtforobj", new Object[] { "objectIsReady", obj, e.toString() });
-            }
+            opLogger.i18NLogger.warn_OA_exceptioncaughtforobj("objectIsReady", obj.toString(), e);
 
             result = false;
         }
@@ -180,20 +171,14 @@ public boolean shutdownObject (org.omg.CORBA.Object obj)
 
             if (invalidPOA)
             {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.OA.invalidpoa" , new Object[] { "objectIsReady", "childPOA" });
-                }
+                opLogger.i18NLogger.warn_OA_invalidpoa("objectIsReady", "childPOA");
 
                 result = false;
             }
         }
         catch (Exception e)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn( "com.arjuna.orbportability.OA.caughtexception" , new Object[] { "objectIsReady", e.toString() });
-            }
+            opLogger.i18NLogger.warn_OA_caughtexception("objectIsReady", e);
 
             result = false;
         }
@@ -219,10 +204,7 @@ public boolean shutdownObject (Servant obj)
 
             if (invalidPOA)
             {
-                if (opLogger.loggerI18N.isWarnEnabled())
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.OA.invalidpoa" , new Object[] { "shutdownObject", "childPOA" });
-                }
+                opLogger.i18NLogger.warn_OA_invalidpoa("shutdownObject", "childPOA");
 
                 result = false;
             }
@@ -236,10 +218,7 @@ public boolean shutdownObject (Servant obj)
 	}
         catch (Exception e)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn( "com.arjuna.orbportability.OA.caughtexception" , new Object[] { "shutdownObject", e.toString() });
-            }
+            opLogger.i18NLogger.warn_OA_caughtexception("shutdownObject", e);
 
             result = false;
         }

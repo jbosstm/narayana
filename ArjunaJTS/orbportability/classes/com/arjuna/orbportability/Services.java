@@ -116,13 +116,6 @@ public org.omg.CORBA.Object getService (String serviceName,
 	}
     }
 
-    /**
-     * @message com.arjuna.orbportability.Services.resolvereffailed Services.getService - resolve_initial_references on {0} failed: {1}
-     * @message com.arjuna.orbportability.Services.openfailure {0} - could not open config file: {1}
-     * @message com.arjuna.orbportability.Services.unexpectedexception {0} - caught unexpected exception: {1}
-     * @message com.arjuna.orbportability.Services.servicenotfound Services.getService - could not find service: {0} in configuration file: {1}
-     * @message com.arjuna.orbportability.Services.unsupportedoption Services.getService - {0} option not supported by ORB.
-     */
 public org.omg.CORBA.Object getService (String serviceName,
 					Object[] params,
 					int mechanism) throws org.omg.CORBA.ORBPackage.InvalidName, IOException, SystemException
@@ -147,10 +140,11 @@ public org.omg.CORBA.Object getService (String serviceName,
 		}
 		catch (Exception e)
 		{
-                    if (opLogger.loggerI18N.isDebugEnabled())
-                    {
-                        opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.resolvereffailed", new Object[] { serviceName, e } );
-                    }
+
+            if (opLogger.logger.isDebugEnabled())
+            {
+                opLogger.logger.debug("Services.getService - resolve_initial_references on "+serviceName+" failed: "+e.toString());
+            }
 
 		    throw new InvalidName();
 		}
@@ -196,10 +190,10 @@ public org.omg.CORBA.Object getService (String serviceName,
 		}
 		catch (FileNotFoundException e)
 		{
-                    if ( opLogger.loggerI18N.isDebugEnabled() )
-                    {
-                        opLogger.loggerI18N.debug( "com.arjuna.orbportability.Services.openfailure", new Object[] { "Services.getService", configFile } );
-                    }
+            if ( opLogger.logger.isDebugEnabled() )
+            {
+                opLogger.logger.debug("Services.getService could not open config file "+configFile);
+            }
 
 		    throw new InvalidName();
 		}
@@ -234,11 +228,7 @@ public org.omg.CORBA.Object getService (String serviceName,
 		}
 		catch (Exception e)
 		{
-                    if ( opLogger.loggerI18N.isWarnEnabled() )
-                    {
-                        opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.unexpectedexception",
-                                                    new Object[] { "Services.getService", e } );
-                    }
+            opLogger.i18NLogger.warn_Services_unexpectedexception("Services.getService", e);
 
 		    input.close();
 		    throw new UNKNOWN();
@@ -246,11 +236,7 @@ public org.omg.CORBA.Object getService (String serviceName,
 
 		if (ior == null)
 		{
-                    if ( opLogger.loggerI18N.isWarnEnabled() )
-                    {
-                        opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.servicenotfound",
-                                                    new Object[] { serviceName, configFile } );
-                    }
+            opLogger.i18NLogger.warn_Services_servicenotfound(serviceName, configFile);
 
 		    throw new InvalidName();
 		}
@@ -303,11 +289,7 @@ public org.omg.CORBA.Object getService (String serviceName,
 	break;
 	case NAMED_CONNECT:
 	    {
-                if ( opLogger.loggerI18N.isWarnEnabled() )
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.unsupportedoption",
-                                                new Object[] { "NAMED_CONNECT" } );
-                }
+            opLogger.i18NLogger.warn_Services_unsupportedoption("NAMED_CONNECT");
 
 		throw new BAD_PARAM();
 	    }
@@ -343,9 +325,6 @@ public void registerService (org.omg.CORBA.Object objRef,
 	}
     }
 
-    /**
-     * @message com.arjuna.orbportability.Services.optionnotsupported {0} - {1} option not supported by ORB.
-     */
 public void registerService (org.omg.CORBA.Object objRef,
 		             String serviceName, Object[] params,
 		             int mechanism) throws org.omg.CORBA.ORBPackage.InvalidName, IOException, SystemException
@@ -404,11 +383,10 @@ public void registerService (org.omg.CORBA.Object objRef,
 		}
 		catch (FileNotFoundException e)
 		{
-		    if ( opLogger.loggerI18N.isDebugEnabled() )
-                    {
-                        opLogger.loggerI18N.debug( "com.arjuna.orbportability.Services.openfailure",
-                                                new Object[] { "Services.registerService", configFile } );
-                    }
+            if ( opLogger.logger.isDebugEnabled() )
+            {
+                opLogger.logger.debug("Services.registerService could not open config file "+configFile);
+            }
 
 		    currFile = null;
 		    input = null;
@@ -507,11 +485,7 @@ public void registerService (org.omg.CORBA.Object objRef,
 	break;
 	case NAMED_CONNECT:
 	    {
-                if ( opLogger.loggerI18N.isWarnEnabled() )
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.optionnotsupported",
-                                                new Object[] { "Services.registerService", "NAMED_CONNECT" } );
-                }
+            opLogger.i18NLogger.warn_Services_optionnotsupported("Services.registerService", "NAMED_CONNECT");
 
 		throw new BAD_PARAM();
 	    }
@@ -528,8 +502,6 @@ public void registerService (org.omg.CORBA.Object objRef,
      *
      * getService/setService for INITIAL_REFERENCES could default to
      * config file if not supported. Transparently.
-     *
-     * @message com.arjuna.orbportability.Services.suspectentry {0} Suspect entry in configuration file: {1}
      */
 
 public final String[] listInitialServices () throws IOException, SystemException
@@ -580,11 +552,7 @@ public final String[] listInitialServices () throws IOException, SystemException
 		    }
 		    else
 		    {
-                        if ( opLogger.loggerI18N.isWarnEnabled() )
-                        {
-                            opLogger.loggerI18N.warn( "com.arjuna.orbportability.Services.suspectentry",
-                                                        new Object[] { "Services.listInitialServices", line } );
-                        }
+                opLogger.i18NLogger.warn_Services_suspectentry("Services.listInitialServices", line);
 		    }
 		}
 	    }
@@ -691,16 +659,12 @@ public final static int bindValue(String bindString)
 
     /**
      * @return the default bind mechanism. TODO
-     * @message com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind {0} - invalid bind mechanism in properties file
      */
     private static synchronized final int bindDefault ()
     {
         if (_bindMethod == -1)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn("com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind", new Object[] { "com.arjuna.orbportability.common.Configuration.bindDefault()" } );
-            }
+            opLogger.i18NLogger.warn_common_Configuration_bindDefault_invalidbind("com.arjuna.orbportability.common.Configuration.bindDefault()");
         }
 
         return _bindMethod;

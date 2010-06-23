@@ -71,12 +71,6 @@ public class AtomicTransaction extends
 		super(tx);
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin
-	 *          [com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin]
-	 *          Cannot call begin on imported AtomicTransaction instance.
-	 */
-
 	/*
 	 * public synchronized void begin () throws SubtransactionsUnavailable,
 	 * SystemException { if (jtaxLogger.loggerI18N.isWarnEnabled()) {

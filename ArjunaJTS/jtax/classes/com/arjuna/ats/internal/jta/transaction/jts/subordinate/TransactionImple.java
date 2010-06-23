@@ -50,12 +50,6 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.RollbackException;
 
-/**
- * @message com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate
- *          [com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate]
- *          Not allowed to terminate subordinate transaction directly.
- */
-
 public class TransactionImple extends
                 com.arjuna.ats.internal.jta.transaction.jts.TransactionImple
 {
@@ -255,10 +249,7 @@ public class TransactionImple extends
 
                         if (!endSuspendedRMs())
                         {
-                                if (jtaxLogger.loggerI18N.isWarnEnabled())
-                                {
-                                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
-                                }
+                            jtaxLogger.i18NLogger.warn_jtax_transaction_jts_endsuspendfailed1();
                         }
 
                         int res = subAct.doRollback();

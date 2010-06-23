@@ -40,8 +40,6 @@ import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
-import com.arjuna.common.util.logging.*;
-
 import javax.transaction.NotSupportedException;
 import java.lang.IllegalStateException;
 import java.lang.NullPointerException;
@@ -52,18 +50,6 @@ import java.lang.NullPointerException;
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: BaseTransaction.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.1.
- *
- * @message com.arjuna.ats.internal.jta.transaction.jts.notx
- *          [com.arjuna.ats.internal.jta.transaction.jts.notx] - no transaction!
- * @message com.arjuna.ats.internal.jta.transaction.jts.invalidtx
- *          [com.arjuna.ats.internal.jta.transaction.jts.invalidtx] - invalid
- *          transaction!
- * @message com.arjuna.ats.internal.jta.transaction.jts.notxe
- *          [com.arjuna.ats.internal.jta.transaction.jts.notxe] - no
- *          transaction! Caught:
- * @message com.arjuna.ats.internal.jta.transaction.jts.nosuchtx
- *          [com.arjuna.ats.internal.jta.transaction.jts.nosuchtx] No such
- *          transaction!
  */
 
 public class BaseTransaction
@@ -150,8 +136,8 @@ public class BaseTransaction
 			ex.printStackTrace();
 
 			throw new IllegalStateException(
-					"BaseTransaction.commit - "
-							+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notxe")
+                    "BaseTransaction.commit - "
+                            + jtaxLogger.i18NLogger.get_jtax_transaction_jts_notxe()
 							+ ex, ex);
 		}
 
@@ -195,7 +181,7 @@ public class BaseTransaction
 		catch (NullPointerException ex)
 		{
 			throw new IllegalStateException(
-					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nosuchtx"), ex);
+                    jtaxLogger.i18NLogger.get_jtax_transaction_jts_nosuchtx(), ex);
 		}
 	}
 
@@ -259,11 +245,6 @@ public class BaseTransaction
 	/**
 	 * Called when we want to make sure this thread does not already have a
 	 * transaction associated with it.
-	 *
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated
-	 *          [com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated]
-	 *          thread is already associated with a transaction and
-	 *          subtransaction support is not enabled!
 	 */
 
 	final void checkTransactionState () throws IllegalStateException,
@@ -287,8 +268,8 @@ public class BaseTransaction
 							&& (!jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions()))
 					{
 						throw new IllegalStateException(
-								"BaseTransaction.checkTransactionState - "
-										+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated"));
+                                "BaseTransaction.checkTransactionState - "
+                                        + jtaxLogger.i18NLogger.get_jtax_transaction_jts_alreadyassociated());
 					}
 				}
 

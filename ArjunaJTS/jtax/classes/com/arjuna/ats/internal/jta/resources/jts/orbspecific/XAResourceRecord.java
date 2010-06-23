@@ -37,7 +37,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.resources.StartXAResource;
 import com.arjuna.ats.jta.resources.EndXAResource;
 
@@ -56,7 +55,6 @@ import com.arjuna.ats.jts.utils.Utility;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 
 import org.omg.CosTransactions.*;
@@ -77,21 +75,6 @@ import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
-/**
- * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction
- *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction]
- *          {0} - null or invalid transaction!
- * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror
- *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror] {0}
- *          caused an XA error: {1} from resource {2} in transaction {3}
- * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread
- *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread]
- *          Reading state caught: {1}
- * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror
- *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror] {0}
- *          caused an error from resource {1} in transaction {2}
- */
-
 public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 {
 
@@ -107,10 +90,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 * then recovery is out of our control.
 	 *
 	 * Could also use it to pass other information, such as the readonly flag.
-	 *
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror]
-	 *          {0} caught exception during construction: {1}
 	 */
 
 	public XAResourceRecord(TransactionImple tx, XAResource res, Xid xid,
@@ -196,11 +175,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return _tranID;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed]
-	 *          XAResource prepare failed on resource {0} for transaction {1} with: {2}
-	 */
 
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
 			HeuristicHazard, org.omg.CORBA.SystemException
@@ -211,14 +185,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
 		{
-		    if (jtaxLogger.loggerI18N.isWarnEnabled())
-		    {
-		        jtaxLogger.loggerI18N
-		        .warn(
-		                "com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-		                new Object[]
-		                           { "XAResourceRecord.prepare" });
-		    }
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.prepare");
 
 		    removeConnection();
 
@@ -268,15 +235,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (XAException e1)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
-								new Object[]
-								{ _theXAResource, _tranID, XAHelper
-										.printXAErrorCode(e1) });
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_preparefailed(_theXAResource.toString(),
+                    XAHelper.xidToString(_tranID), XAHelper.printXAErrorCode(e1), e1);
 
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
@@ -308,14 +268,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e2)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
-								new Object[]
-								{ _theXAResource, _tranID, e2 });
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_preparefailed(_theXAResource.toString(),
+                    XAHelper.xidToString(_tranID), "-", e2);
 
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
@@ -343,14 +297,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (!_valid || (_tranID == null))
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-								new Object[]
-								{ "XAResourceRecord.rollback" });
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.rollback");
 		}
 		else
 		{
@@ -406,17 +353,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					}
 					else
 					{
-						if (jtaxLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaxLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
-											new Object[]
-											{
-													"XAResourceRecord.rollback",
-													XAHelper
-															.printXAErrorCode(e1), _theXAResource, _tranID });
-						}
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
+                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
 
 						switch (e1.errorCode)
 						{
@@ -458,17 +396,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				catch (Exception e2)
 				{
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.rollback",
+                            _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
 
-                                    if (jtaxLogger.loggerI18N.isWarnEnabled())
-                                    {
-                                            jtaxLogger.loggerI18N
-                                                            .warn(
-                                                                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
-                                                                            new Object[]
-                                                                            {
-                                                                                            "XAResourceRecord.rollback",
-                                                                                             _theXAResource, _tranID }, e2);
-                                    }
 					throw new UNKNOWN();
 				}
 				finally
@@ -491,14 +421,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (_tranID == null)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-								new Object[]
-								{ "XAResourceRecord.commit" });
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.commit");
 		}
 		else
 		{
@@ -543,17 +466,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						_committed = false;
 
-						if (jtaxLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaxLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
-											new Object[]
-											{
-													"XAResourceRecord.commit",
-													XAHelper
-															.printXAErrorCode(e1), _theXAResource, _tranID });
-						}
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.commit",
+                                XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
 
 						/*
 						 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
@@ -611,16 +525,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				{
 					_committed = false;
 
-					if (jtaxLogger.loggerI18N.isWarnEnabled())
-                                        {
-                                                jtaxLogger.loggerI18N
-                                                                .warn(
-                                                                                "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
-                                                                                new Object[]
-                                                                                {
-                                                                                                "XAResourceRecord.commit",
-                                                                                                 _theXAResource, _tranID }, e2);
-                                        }
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_generror("XAResourceRecord.commit",
+                            _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
 
 					throw new UNKNOWN();
 				}
@@ -721,11 +627,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 * outcome is whatever we want. Therefore, we do not need to save any
 	 * additional recoverable state, such as a reference to the transaction
 	 * coordinator, since it will not have an intentions list anyway.
-	 *
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror]
-	 *          Caught the following error while trying to single phase complete
-	 *          resource {0}
 	 */
 
 	public void commit_one_phase() throws HeuristicHazard,
@@ -737,14 +638,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	    if (_tranID == null)
 	    {
-	        if (jtaxLogger.loggerI18N.isWarnEnabled())
-	        {
-	            jtaxLogger.loggerI18N
-	            .warn(
-	                    "com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-	                    new Object[]
-	                               { "XAResourceRecord.commit_one_phase" });
-	        }
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_nulltransaction("XAResourceRecord.commit_one_phase");
 
 	        throw new TRANSACTION_ROLLEDBACK();
 	    }
@@ -888,13 +782,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	            }
 	            catch (Exception e2)
 	            {
-	                if (jtaxLogger.loggerI18N.isWarnEnabled())
-	                {
-	                    jtaxLogger.loggerI18N
-	                    .warn(
-	                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
-	                            new Object[] {e2}, e2);
-	                }
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_coperror(e2);
 
 	                throw new UNKNOWN();
 	            }
@@ -937,12 +825,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 	}
 
-	/**
-	 * 	  @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState]
-	 *          Could not serialize a serializable XAResource!
-	 */
-
 	public boolean saveState(OutputObjectState os)
 	{
 		boolean res = false;
@@ -983,10 +865,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
         				}
         				catch (NotSerializableException ex)
         				{
-        				    if (jtaxLogger.loggerI18N.isWarnEnabled())
-        				    {
-        				        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
-        				    }
+                            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_saveState();
 
         				    return false;
         				}
@@ -1032,19 +911,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return res;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1]
-	 *          Exception on attempting to resource XAResource: {0}
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2]
-	 *          Unexpected exception on attempting to resource XAResource: {0}
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa]
-	 *          Could not find new XAResource to use for recovering
-	 *          non-serializable XAResource {0}
-	 */
-
 	public boolean restoreState(InputObjectState os)
 	{
 		boolean res = false;
@@ -1083,14 +949,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						// not serializable in the first place!
 
-						if (jtaxLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaxLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1",
-											new Object[]
-											{ ex });
-						}
+                        jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_restoreerror1(ex);
 
 						return false;
 					}
@@ -1109,11 +968,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 				if (_theXAResource == null)
 				{
-					jtaxLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa",
-									new Object[]
-									{ _tranID });
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_norecoveryxa(XAHelper.xidToString(_tranID));
 				}
 
 				if (jtaxLogger.logger.isDebugEnabled()) {
@@ -1146,14 +1001,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2",
-								new Object[]
-								{ e }, e);
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_restoreerror2(e);
 
 			res = false;
 		}
@@ -1213,15 +1061,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_theXAResource = res;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared]
-	 *          {0} caught NotPrepared exception during recovery phase!
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected]
-	 *          {0} caught unexpected exception: {1} during recovery phase!
-	 */
-
 	protected int recover()
 	{
 		if (jtaxLogger.logger.isDebugEnabled()) {
@@ -1249,14 +1088,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (NotPrepared ex1)
 			{
-				if (jtaxLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaxLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared",
-									new Object[]
-									{ "XAResourceRecord" });
-				}
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_notprepared("XAResourceRecord");
 
 				return XARecoveryResource.TRANSACTION_NOT_PREPARED;
 			}
@@ -1272,14 +1104,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				 * Unknown error, so better to do nothing at this stage.
 				 */
 
-				if (jtaxLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaxLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected",
-									new Object[]
-									{ "XAResourceRecord", e }, e);
-				}
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_unexpected("XAResourceRecord", e);
 
 				return XARecoveryResource.FAILED_TO_RECOVER;
 			}
@@ -1334,12 +1159,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		    _objStore = TxControl.getStore();
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate]
-	 *          Committing of resource state failed.
-	 */
-
 	private final boolean createState()
 	{
 		setObjectStore();
@@ -1358,11 +1177,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				catch (Exception e)
 				{
-					if (jtaxLogger.loggerI18N.isWarnEnabled())
-					{
-						jtaxLogger.loggerI18N
-								.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate");
-					}
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_createstate();
 
 					_valid = false;
 				}
@@ -1375,12 +1190,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		return _valid;
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate]
-	 *          Updating of resource state failed.
-	 */
 
 	private final boolean updateState(int h)
 	{
@@ -1405,11 +1214,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			else
 			{
-				if (jtaxLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaxLogger.loggerI18N
-							.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate");
-				}
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_updatestate();
 
 				_valid = false;
 			}
@@ -1430,13 +1235,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread",
-								e);
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_loadstateread(e);
 
 			os = null;
 		}
@@ -1477,12 +1276,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return _valid;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn]
-	 *          Attempted shutdown of resource failed with:
-	 */
-
 	private final void removeConnection()
 	{
 		/*
@@ -1510,25 +1303,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaxLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaxLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn",
-								e);
-			}
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_remconn(e);
 		}
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed
-	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed]
-	 *          Recovery of resource failed when trying to call {0} got: {1}
-	 * @message com.arjuna.ats.internal.jta.recovery.jts.orbspecific.commit XA
-	 *          recovery committing {0}
-	 * @message com.arjuna.ats.internal.jta.recovery.jts.orbspecific.rollback XA
-	 *          recovery rolling back {0}
-	 */
 
 	private final int doRecovery(boolean commit)
 	{
@@ -1542,41 +1319,20 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		{
 			try
 			{
-				if (jtaxLogger.logger.isInfoEnabled())
-				{
-					if (commit)
-						jtaxLogger.loggerI18N
-								.info(
-										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.commit",
-										new Object[]
-										{ _tranID });
-					else
-						jtaxLogger.loggerI18N
-								.info(
-										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.rollback",
-										new Object[]
-										{ _tranID });
-				}
-
-				if (commit)
+				if (commit) {
+                    jtaxLogger.i18NLogger.info_jtax_recovery_jts_orbspecific_commit(XAHelper.xidToString(_tranID));
 					commit();
-				else
+                } else {
+                    jtaxLogger.i18NLogger.info_jtax_recovery_jts_orbspecific_rollback(XAHelper.xidToString(_tranID));
 					rollback();
-
+                }
 				// if those succeed, they will have removed any persistent state
 
 				result = XARecoveryResource.RECOVERED_OK;
 			}
 			catch (Exception e2)
 			{
-				if (jtaxLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaxLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed",
-									new Object[]
-									{ ((commit) ? "commit" : "rollback"), e2 }, e2);
-				}
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_recfailed(((commit) ? "commit" : "rollback"), e2);
 			}
 		}
 

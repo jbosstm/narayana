@@ -172,13 +172,6 @@ public abstract class OA
         postInit = null;
     }
 
-    /**
-     * @message com.arjuna.orbportability.OA.caughtexception {0} caught: {1} whilst initialising Object Adapter.
-     * @message com.arjuna.orbportability.OA.uninitialsedorb OA.initPOA called
-     *          without initialised ORB.
-     * @message com.arjuna.orbportability.OA.initialize {0} caught org.omg.CORBA.INITIALIZE whilst initialising Object Adapter. Check another ORB/service is not active on same port.
-     */
-
     public synchronized void initPOA (String[] args) throws InvalidName,
             SystemException
     {
@@ -200,24 +193,14 @@ public abstract class OA
                 }
                 catch (final org.omg.CORBA.INITIALIZE ex)
                 {
-                    if (opLogger.loggerI18N.isWarnEnabled())
-                    {
-                        opLogger.loggerI18N.warn(
-                                "com.arjuna.orbportability.OA.initialize");
-                    }
+                    opLogger.i18NLogger.warn_OA_initialize();
                     
                     throw ex;
                 }
                 catch (final Exception e)
                 {
-                    if (opLogger.loggerI18N.isWarnEnabled())
-                    {
-                        opLogger.loggerI18N.warn(
-                                "com.arjuna.orbportability.OA.caughtexception",
-                                new Object[]
-                                { "OA.initPOA", e.toString() });
-                    }
-                    
+                    opLogger.i18NLogger.warn_OA_caughtexception("OA.initPOA", e);
+
                    throw new FatalError("OA.initPOA: "+e.toString());
                 }
 
@@ -227,23 +210,10 @@ public abstract class OA
             }
             else
             {
-                if (opLogger.loggerI18N.isFatalEnabled())
-                {
-                    opLogger.loggerI18N
-                            .fatal("com.arjuna.orbportability.OA.uninitialsedorb");
-                }
-
-                throw new FatalError(
-                        opLogger.loggerI18N
-                                .getString("com.arjuna.orbportability.OA.uninitialsedorb"));
+                throw new FatalError( opLogger.i18NLogger.get_OA_uninitialsedorb() );
             }
         }
     }
-
-    /**
-     * @message com.arjuna.orbportability.OA.oanotinitialised OA.createPOA -
-     *          createPOA called without OA being initialised
-     */
 
     public synchronized ChildOA createPOA (String adapterName, Policy[] policies)
             throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive
@@ -255,11 +225,7 @@ public abstract class OA
 
         if (!_oa.initialised())
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N
-                        .warn("com.arjuna.orbportability.OA.oanotinitialised");
-            }
+            opLogger.i18NLogger.warn_OA_oanotinitialised();
 
             throw new AdapterInactive();
         }
@@ -379,16 +345,10 @@ public abstract class OA
 
     /**
      * Register the object with the ORB.
-     * 
-     * @message com.arjuna.orbportability.OA.exceptioncaughtforobj {0}:
-     *          exception caught for {1} : {2}
      */
     public abstract boolean objectIsReady (Servant obj, byte[] id)
             throws SystemException;
 
-    /**
-     * @message com.arjuna.orbportability.OA.invalidpoa {0} - invalid POA: {1}
-     */
     public abstract boolean objectIsReady (Servant obj) throws SystemException;
 
     /**

@@ -55,8 +55,6 @@ import org.omg.CORBA.SystemException;
  * @author Mark Little (mark@arjuna.com), Richard Begg (richard.begg@arjuna.com)
  * @version $Id: ORB.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- * @message com.arjuna.orbportability.ORB.caughtexception {0} caught exception: {1}
  */
 
 public class ORB
@@ -157,9 +155,6 @@ public synchronized void initORB (Applet a, Properties p) throws SystemException
 
     /**
      * Initialise the ORB.
-     *
-     * @message com.arjuna.orbportability.ORB.invalidorbconfig The ORB configuration specified in {0} is invalid: {1}
-     * @message com.arjuna.orbportability.ORB.cannotfinddefaultorbconfig Cannot find default ORB configuration file {0} in the classpath
      */
 
 public synchronized void initORB (String[] s, Properties p) throws SystemException

@@ -41,7 +41,6 @@ import javax.resource.spi.work.WorkException;
 import javax.transaction.Transaction;
 
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.ats.jta.logging.*;
 
 public class TxWorkManager
 {
@@ -61,9 +60,6 @@ public class TxWorkManager
 	 *
 	 * @throws WorkCompletedException thrown if there is already work
 	 * associated with the transaction.
-	 *
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.jca.busy [message
-	 *          com.arjuna.ats.internal.jta.transaction.jts.jca.busy] Work already active!
 	 */
 
 	public static void addWork (Work work, Transaction tx) throws WorkCompletedException
@@ -81,7 +77,7 @@ public class TxWorkManager
 				_transactions.put(tx, workers);
 			}
 			else
-				throw new WorkCompletedException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
+				throw new WorkCompletedException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_jca_busy(), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 		}
 
 		synchronized (workers)

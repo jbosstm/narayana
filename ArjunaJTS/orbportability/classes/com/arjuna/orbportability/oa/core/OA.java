@@ -125,12 +125,6 @@ public class OA
         _theOA.run(_theORB);
     }
 
-    /**
-     * @message com.arjuna.orbportability.oa.core.OA.nosupportedorb OA ORB
-     *          specific class creation failed - unable to find supported ORB
-     * @message com.arjuna.orbportability.oa.core.OA.caughtexception OA ORB
-     *          specific class creation failed with: {0}
-     */
     @SuppressWarnings("unchecked")
     private final void initialise ()
     {
@@ -158,16 +152,7 @@ public class OA
                 }
                 catch (ClassNotFoundException je)
                 {
-                    if (opLogger.loggerI18N.isFatalEnabled())
-                    {
-                        opLogger.loggerI18N
-                                .fatal(
-                                        "com.arjuna.orbportability.oa.core.OA.nosupportedorb",
-                                        je);
-                    }
-                    throw new ExceptionInInitializerError(
-                            opLogger.loggerI18N
-                                    .getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb"));
+                    throw new ExceptionInInitializerError(je);
                 }
             }
         }
@@ -185,17 +170,7 @@ public class OA
         }
         catch (Exception e)
         {
-            if (opLogger.loggerI18N.isFatalEnabled())
-            {
-                opLogger.loggerI18N.fatal(
-                        "com.arjuna.orbportability.oa.core.OA.caughtexception",
-                        new Object[]
-                        { e }, e);
-            }
-
-            throw new ExceptionInInitializerError(
-                    opLogger.loggerI18N
-                            .getString("com.arjuna.orbportability.oa.core.OA.caughtexception"));
+            throw new ExceptionInInitializerError( e );
         }
     }
 

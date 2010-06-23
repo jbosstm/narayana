@@ -156,10 +156,6 @@ public class ORBInfo
     private static ORBData          _theData = null;
     private static SimpleXMLParser  _xml = null;
 
-    /**
-     * @message com.arjuna.orbportability.ORBInfo.unsupportedorb ORBInfo ORB specific class creation failed - unable to find supported ORB
-     * @message com.arjuna.orbportability.ORBInfo.creationfailed ORBInfo ORB specific class creation failed with {0}
-     */
     private static final String _versionPackage = "com.arjuna.orbportability.internal.orbspecific.versions";
 
     static
@@ -182,12 +178,9 @@ public class ORBInfo
             }
             catch (ClassNotFoundException joe)
             {
-                if (opLogger.loggerI18N.isFatalEnabled())
-                {
-                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.unsupportedorb", joe);
-                }
+                opLogger.i18NLogger.fatal_ORBInfo_unsupportedorb(joe);
 
-                throw new ExceptionInInitializerError( opLogger.loggerI18N.getString("com.arjuna.orbportability.ORBInfo.unsupportedorb"));
+                throw new ExceptionInInitializerError( joe );
             }
         }
 
@@ -202,15 +195,9 @@ public class ORBInfo
         catch (Exception e)
         {
 
-            if (opLogger.loggerI18N.isFatalEnabled())
-            {
-                opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.creationfailed",
-                        new Object[] { e } );
-            }
+            opLogger.i18NLogger.fatal_ORBInfo_creationfailed(e);
 
-            throw new ExceptionInInitializerError(
-                    MessageFormat.format(opLogger.loggerI18N.getString("com.arjuna.orbportability.ORBInfo.creationfailed"),
-                            new Object[] { e } ));
+            throw new ExceptionInInitializerError( e );
         }
     }
 

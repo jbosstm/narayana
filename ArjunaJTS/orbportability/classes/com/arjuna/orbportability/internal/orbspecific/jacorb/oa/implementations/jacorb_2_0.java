@@ -41,26 +41,13 @@ import org.omg.PortableServer.POA;
 
 public class jacorb_2_0 extends POABase
 {
-
-    /**
-     * @message 
-     *          com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations
-     *          .jacorb_2_0.norootoa {0} called without root POA.
-     */
     public void createPOA (String adapterName, Policy[] policies)
             throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive,
             SystemException
     {
         if (_poa == null)
         {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0.norootoa",
-                                new Object[]
-                                { "jacorb_2_0.createPOA" });
-            }
+            opLogger.i18NLogger.warn_internal_orbspecific_oa_implementations("jacorb_2_0.createPOA");
 
             throw new AdapterInactive();
         }

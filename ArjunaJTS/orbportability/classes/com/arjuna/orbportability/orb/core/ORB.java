@@ -98,10 +98,6 @@ public void orb (org.omg.CORBA.ORB o) throws SystemException
 	_theORB.orb(o);
     }
 
-    /**
-     * @message com.arjuna.orbportability.orb.core.ORB.unsupportedorb ORB specific class creation failed - unable to find supported ORB
-     * @message com.arjuna.orbportability.orb.core.ORB.caughtexception ORB specific class creation failed with: {0}
-     */
 private final void initialise ()
     {
 	/*
@@ -130,14 +126,7 @@ private final void initialise ()
                 }
                 catch (ClassNotFoundException je)
                 {
-                    //			    je.printStackTrace();
-
-                    if (opLogger.loggerI18N.isFatalEnabled())
-                    {
-                        opLogger.loggerI18N.fatal( "com.arjuna.orbportability.orb.core.ORB.unsupportedorb", je );
-                    }
-
-                    throw new ExceptionInInitializerError(opLogger.loggerI18N.getString("com.arjuna.orbportability.orb.core.ORB.unsupportedorb"));
+                    throw new ExceptionInInitializerError(je);
                 }
             }
         }
@@ -154,13 +143,7 @@ private final void initialise ()
 	}
 	catch (Exception e)
 	{
-            if (opLogger.loggerI18N.isFatalEnabled())
-            {
-                opLogger.loggerI18N.fatal( "com.arjuna.orbportability.orb.core.ORB.caughtexception",
-                                new Object[] { e }, e );
-            }
-
-	    throw new ExceptionInInitializerError( opLogger.loggerI18N.getString("com.arjuna.orbportability.orb.core.ORB.caughtexception") );
+	    throw new ExceptionInInitializerError( e );
 	}
     }
 

@@ -130,51 +130,23 @@ public class LastResourceRecord extends XAResourceRecord
 		return false;
 	}
     
-    /**
-    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning
-    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning]
-    *          Multiple last resources have been added to the current transaction.
-    *          This is transactionally unsafe and should not be relied upon.
-    *          Current resource is {0}
-    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow
-    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow]
-    *          Adding multiple last resources is disallowed. Current resource is
-    *          {0}
-    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning
-    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning]
-    *          You have chosen to enable multiple last resources in the transaction
-    *          manager. This is transactionally unsafe and should not be relied
-    *          upon.
-    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning
-    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning]
-    *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
-    */
     public boolean shouldAdd(OTSAbstractRecord record) throws SystemException
     {
         if( record.type_id() == type_id() )
         {
             if(ALLOW_MULTIPLE_LAST_RESOURCES)
             {
-                if (jtaxLogger.loggerI18N.isWarnEnabled())
+                if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
                 {
-                    if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
-                    {
-                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning",
-                                new Object[] { record });
-                        _issuedWarning = true;
-                    }
+                    jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_lastResource_multipleWarning(record.toString());
+                    _issuedWarning = true;
                 }
 
                 return true;
             }
             else
             {
-                if (jtaxLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaxLogger.loggerI18N.warn(
-                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow",
-                            new Object[] { record });
-                }
+                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_lastResource_disallow(record.toString());
 
                 return false;
             }
@@ -194,15 +166,14 @@ public class LastResourceRecord extends XAResourceRecord
     {
         ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources();
 
-        if (ALLOW_MULTIPLE_LAST_RESOURCES
-                && jtaxLogger.loggerI18N.isWarnEnabled())
+        if (ALLOW_MULTIPLE_LAST_RESOURCES)
         {
-            jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning");
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_lastResource_startupWarning();
         }
 
         if (arjPropertyManager.getCoreEnvironmentBean().isDisableMultipleLastResourcesWarning())
         {
-            jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning");
+            jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_lastResource_disableWarning();
 
             _disableMLRWarning = true;
         }

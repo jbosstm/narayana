@@ -49,11 +49,7 @@ public class javaidl_1_4 extends POABase
     {
 	if (_poa == null)
 	{
-	    if (opLogger.loggerI18N.isWarnEnabled())
-	    {
-		opLogger.loggerI18N.warn("com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4.norootoa",
-			new Object[]{"javaidl_1_4.createPOA"});
-	    }
+        opLogger.i18NLogger.warn_internal_orbspecific_oa_implementations("javaidl_1_4.createPOA");
 
 	    throw new AdapterInactive();
 	}

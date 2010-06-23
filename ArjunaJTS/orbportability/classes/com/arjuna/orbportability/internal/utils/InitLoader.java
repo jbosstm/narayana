@@ -71,21 +71,11 @@ protected InitLoader (String name, String attrName, Object obj)
         }
     }
 
-    /**
-     * @message com.arjuna.orbportability.internal.utils.InitLoader.initfailed {0} - attempt to initialise {1} with null class name!
-     * @message com.arjuna.orbportability.internal.utils.InitLoader.couldnotfindclass {0} - could not find class {1}
-     * @message com.arjuna.orbportability.internal.utils.InitLoader.loading Loading {0} class - {1}
-     * @message com.arjuna.orbportability.internal.utils.InitLoader.exception Exception {0} whilst loading {1}
-     */
 private void createInstance (String attrName, String className)
     {
 	if (className == null)
 	{
-            if ( opLogger.loggerI18N.isWarnEnabled() )
-            {
-                opLogger.loggerI18N.warn( "com.arjuna.orbportability.internal.utils.InitLoader.initfailed",
-                                            new Object[] { initName, attrName } );
-            }
+        opLogger.i18NLogger.warn_internal_utils_InitLoader_initfailed(initName, attrName);
 
 	    return;
 	}
@@ -93,11 +83,7 @@ private void createInstance (String attrName, String className)
 	{
 	    try
 	    {
-		if ( opLogger.loggerI18N.isInfoEnabled() )
-		{
-		    opLogger.loggerI18N.info( "com.arjuna.orbportability.internal.utils.InitLoader.loading",
-									    new Object[] { initName, className } );
-		}
+            opLogger.i18NLogger.warn_internal_utils_InitLoader_loading(initName, className);
 
 		Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
 
@@ -114,28 +100,18 @@ private void createInstance (String attrName, String className)
 		}
 		catch (IllegalAccessException e1)
 		{
-                    if ( opLogger.loggerI18N.isWarnEnabled() )
-                    {
-                        opLogger.loggerI18N.warn("com.arjuna.orbportability.internal.utils.InitLoader.exception", new Object[] {e1.toString(), initName}, e1);
-                    }
+            opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e1);
 		}
 		catch (InstantiationException e2)
 		{
-                    if ( opLogger.loggerI18N.isWarnEnabled() )
-                    {
-                        opLogger.loggerI18N.warn("com.arjuna.orbportability.internal.utils.InitLoader.exception", new Object[] {e2.toString(), initName}, e2);
-                    }
+            opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e2);
 		}
 
 		c = null;
 	    }
 	    catch (ClassNotFoundException e)
 	    {
-                if ( opLogger.loggerI18N.isWarnEnabled() )
-                {
-                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.internal.utils.InitLoader.couldnotfindclass",
-                                                new Object[] { initName, className } );
-                }
+            opLogger.i18NLogger.warn_internal_utils_InitLoader_couldnotfindclass(initName, className);
 	    }
 	}
     }

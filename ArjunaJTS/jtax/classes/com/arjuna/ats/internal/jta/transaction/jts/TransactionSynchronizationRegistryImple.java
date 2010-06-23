@@ -49,11 +49,6 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
 
     private static final long serialVersionUID = 1L;
 
-    /**
-         * @message com.arjuna.ats.internal.jta.transaction.jts.systemexception
-         * [com.arjuna.ats.internal.jta.transaction.jts.systemexception]
-         * The transaction implementation threw a SystemException
-         */
         public Object getTransactionKey()
         {
                 if (jtaxLogger.logger.isDebugEnabled()) {
@@ -68,7 +63,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
 
                 if (transactionImple == null) {
@@ -111,11 +106,6 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         }
 
         // Register a Synchronization instance with special ordering semantics.
-        /**
-         * @message com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception
-         * [ccom.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception]
-         * The transaction implementation threw a RollbackException
-         */
         public void registerInterposedSynchronization(Synchronization synchronization)
         {
                 if (jtaxLogger.logger.isDebugEnabled()) {
@@ -130,11 +120,11 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (RollbackException e)
                 {
-                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception"), e);
+                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_syncrollbackexception(), e);
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
         }
 
@@ -152,7 +142,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch(SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
 
         }
@@ -178,7 +168,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
         }
 
@@ -201,7 +191,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
         }
 
@@ -215,7 +205,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                        throw new RuntimeException(jtaxLogger.i18NLogger.get_jtax_transaction_jts_systemexception(), e);
                 }
 
                 if(transactionImple == null)
