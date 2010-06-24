@@ -194,7 +194,7 @@
         </jar>
     </target>
 
-    <target name="jar" depends ="compile, jar-generic, jar10, jar11"/>
+    <target name="jar" depends ="compile, resourcebundle, jar-generic, jar10, jar11"/>
 
     <target name="htdocs11" if="nobuild10">
         <echo message="Building htdocs "/>
@@ -272,7 +272,7 @@
         <war warfile="${build.webapps.dir}/${modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
     </target>
 
-    <target name="war" depends="jar, htdocs, resourcebundle, war10, war11"/>
+    <target name="war" depends="jar, htdocs, war10, war11"/>
 
 	<!-- test targets -->
 	<target name="tests.init">

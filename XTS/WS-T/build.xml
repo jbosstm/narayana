@@ -216,7 +216,7 @@
 
     <target name="compile" depends="init, compile-generic, compile10, compile11"/>
 
-    <target name="resourcebundle-both" if="build">
+    <target name="resourcebundle-both" if="build10">
         <echo message="Generating WS-T Bundle"/>
         <resourcebundle.macro resourcebundle="${wst.resourcebundle}">
             <packagesets>
