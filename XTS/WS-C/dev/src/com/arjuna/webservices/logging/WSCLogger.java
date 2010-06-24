@@ -44,6 +44,8 @@ public class WSCLogger
      * The non I18N logger.
      */
     public static LogNoi18n      arjLogger;
+
+    public static wscI18NLogger i18NLogger;
     /**
      * The I18N logger.
      */
