@@ -41,10 +41,7 @@ import com.arjuna.ats.internal.jts.utils.Helper;
 import com.arjuna.ats.internal.jts.utils.TxStoreLog;
 
 import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -86,11 +83,6 @@ import java.lang.OutOfMemoryError;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: TransactionFactoryImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- * 
- * @message com.arjuna.ats.internal.jts.orbspecific.tficaught {0} for {1} caught
- *          exception: {2}
- * @message com.arjuna.ats.internal.jts.orbspecific.otiderror is not a valid
- *          unique identifier!
  */
 
 public class TransactionFactoryImple extends
@@ -392,8 +384,8 @@ public class TransactionFactoryImple extends
 
 		if (u == null)
 			throw new BAD_PARAM(
-					"otid_t "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+                    "otid_t "
+                            + jtsLogger.i18NLogger.get_orbspecific_otiderror());
 		else
 		{
 			BasicAction act = ActionManager.manager().get(u);
@@ -438,8 +430,8 @@ public class TransactionFactoryImple extends
 
 		if (u == null)
 			throw new BAD_PARAM(
-					"otid_t "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+                    "otid_t "
+                            + jtsLogger.i18NLogger.get_orbspecific_otiderror());
 		else
 			return getCurrentStatus(u);
 	}
@@ -490,16 +482,11 @@ public class TransactionFactoryImple extends
 						return s;
 				}
 			}
-			catch (Exception e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.tficaught", new Object[]
-					{ "TransactionFactoryImple.getCurrentStatus", u, e });
-				}
+			catch (Exception e) {
+                jtsLogger.i18NLogger.warn_orbspecific_tficaught("TransactionFactoryImple.getCurrentStatus", u, e);
 
-				return org.omg.CosTransactions.Status.StatusUnknown;
-			}
+                return Status.StatusUnknown;
+            }
 		}
 	}
 
@@ -517,8 +504,8 @@ public class TransactionFactoryImple extends
 
 		if (u == null)
 			throw new BAD_PARAM(
-					"otid_t "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+                    "otid_t "
+                            + jtsLogger.i18NLogger.get_orbspecific_otiderror());
 		else
 			return getStatus(u);
 	}
@@ -543,16 +530,11 @@ public class TransactionFactoryImple extends
 		{
 			throw e2;
 		}
-		catch (Exception e3)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.tficaught", new Object[]
-				{ "TransactionFactoryImple.getStatus", u, e3 });
-			}
+		catch (Exception e3) {
+            jtsLogger.i18NLogger.warn_orbspecific_tficaught("TransactionFactoryImple.getStatus", u, e3);
 
-			return org.omg.CosTransactions.Status.StatusUnknown;
-		}
+            return Status.StatusUnknown;
+        }
 
 		/*
 		 * If status is unknown, then transaction is cannot be active (even if
@@ -613,16 +595,11 @@ public class TransactionFactoryImple extends
 					return ServerFactory.getStatus(u);
 				}
 			}
-			catch (Exception e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.tficaught", new Object[]
-					{ "TransactionFactoryImple.getStatus", u, e });
-				}
+			catch (Exception e) {
+                jtsLogger.i18NLogger.warn_orbspecific_tficaught("TransactionFactoryImple.getStatus", u, e);
 
-				return org.omg.CosTransactions.Status.StatusUnknown;
-			}
+                return Status.StatusUnknown;
+            }
 		}
 	}
 
@@ -671,8 +648,8 @@ public class TransactionFactoryImple extends
 
 		if (u == null)
 			throw new BAD_PARAM(
-					"otid_t "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+                    "otid_t "
+                            + jtsLogger.i18NLogger.get_orbspecific_otiderror());
 		else
 			return getTransactionInfo(u);
 	}
@@ -680,16 +657,13 @@ public class TransactionFactoryImple extends
 	/**
 	 * @return information on a specific transaction.
 	 * @since JTS 2.1.2.
-	 * @message com.arjuna.ats.internal.jts.orbspecific.invaliduid Invalid Uid:
 	 */
 
 	public TransactionInfo getTransactionInfo (Uid u)
 			throws org.omg.CosTransactions.NoTransaction, SystemException
 	{
 		if (!u.valid())
-			throw new BAD_PARAM(
-					jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.invaliduid"
-							+ " " + u));
+			throw new BAD_PARAM( jtsLogger.i18NLogger.get_orbspecific_invaliduid()+ " " + u);
 		else
 		{
 			try
@@ -741,8 +715,8 @@ public class TransactionFactoryImple extends
 
 		if (u == null)
 			throw new BAD_PARAM(
-					"otid_t "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+                    "otid_t "
+                            + jtsLogger.i18NLogger.get_orbspecific_otiderror());
 		else
 			return getTransaction(u);
 	}
@@ -884,9 +858,4 @@ public class TransactionFactoryImple extends
 	private TransactionFactory _factoryRef;
 
 	private static FactoryList creators = new FactoryList();
-
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.tfitimeout {0} - invalid
-	 *          default transaction timeout {1}. Caught exception: {2}
-	 */
 }

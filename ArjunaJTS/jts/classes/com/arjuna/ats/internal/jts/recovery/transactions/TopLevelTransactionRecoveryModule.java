@@ -46,11 +46,6 @@ import com.arjuna.common.util.logging.*;
  * This class is a plug-in module for the recovery manager.
  * It is responsible for the recovery of server transactions
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_1 [com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_1] - TopLevelTransactionRecoveryModule created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_2 [com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_2] - TopLevelTransactionRecoveryModule destoryed
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_3 [com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_3] - TopLevelTransactionRecoveryModule First Pass
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_4 [com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_4] - TopLevelTransactionRecoveryModule Second Pass
- *
  */
 
 public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
@@ -58,8 +53,8 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
 {
     public TopLevelTransactionRecoveryModule ()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_1");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransactionRecoveryModule created");
     }
 
 	// Set the transaction type that this module wants to recover
@@ -70,8 +65,8 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
     public void finalize () throws Throwable
     {
 	super.finalize();
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_2");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TopLevelTransactionRecoveryModule destoryed");
     }
     }
 
@@ -80,19 +75,13 @@ public class TopLevelTransactionRecoveryModule extends TransactionRecoveryModule
      */
     public void periodicWorkFirstPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	    {
-		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_3");
-	    }
+        jtsLogger.i18NLogger.info_recovery_transactions_TopLevelTransactionRecoveryModule_3();
 	super.periodicWorkFirstPass();
     }
 
     public void periodicWorkSecondPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	    {
-		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule_4");
-	    }
+        jtsLogger.i18NLogger.info_recovery_transactions_TopLevelTransactionRecoveryModule_4();
 	super.periodicWorkSecondPass();
     }
 

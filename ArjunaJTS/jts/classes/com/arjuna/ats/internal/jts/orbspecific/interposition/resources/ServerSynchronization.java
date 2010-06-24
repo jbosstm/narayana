@@ -37,6 +37,7 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 
+import com.arjuna.ats.jts.utils.Utility;
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 
@@ -61,11 +62,6 @@ public class ServerSynchronization extends
 		return _theSynchronization;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.destroyfailed
-	 *          Failed to destroy server-side synchronization object!
-	 */
-
 	public void destroy()
 	{
 		try
@@ -74,11 +70,9 @@ public class ServerSynchronization extends
 		}
 		catch (Exception e)
 		{
-			if (jtsLogger.logger.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N
-						.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.destroyfailed");
-			}
+			if (jtsLogger.logger.isWarnEnabled()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_destroyfailed();
+            }
 		}
 	}
 
@@ -92,12 +86,6 @@ public class ServerSynchronization extends
 			_theTransaction.doBeforeCompletion();
 		}
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.stateerror
-	 *          {0} status of transaction is different from our status: <{1},
-	 *          {2}>
-	 */
 
 	public void after_completion(org.omg.CosTransactions.Status status)
 			throws SystemException
@@ -127,52 +115,40 @@ public class ServerSynchronization extends
 				myStatus = org.omg.CosTransactions.Status.StatusUnknown;
 			}
 
-			if (myStatus != status)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N
-							.warn(
-									"com.arjuna.ats.internal.jts.orbspecific.interposition.resources.stateerror",
-									new Object[]
-									{ "ServerSynchronization.after_completion",
-											com.arjuna.ats.jts.utils.Utility.stringStatus(myStatus), com.arjuna.ats.jts.utils.Utility.stringStatus(status) });
-				}
+			if (myStatus != status) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_stateerror(
+                        "ServerSynchronization.after_completion",
+                        Utility.stringStatus(myStatus), Utility.stringStatus(status));
 
-				/*
-				 * There's nothing much we can do, since the transaction should
-				 * have completed. The best we can hope for it to try to
-				 * rollback our portion of the transaction, but this may result
-				 * in heuristics (which may not be reported to the coordinator,
-				 * since exceptions from after_completion can be ignored in the
-				 * spec.)
-				 */
+                /*
+                     * There's nothing much we can do, since the transaction should
+                     * have completed. The best we can hope for it to try to
+                     * rollback our portion of the transaction, but this may result
+                     * in heuristics (which may not be reported to the coordinator,
+                     * since exceptions from after_completion can be ignored in the
+                     * spec.)
+                     */
 
-				if (myStatus == org.omg.CosTransactions.Status.StatusActive)
-				{
-					try
-					{
-						_theTransaction.rollback();
-					}
-					catch (Exception e)
-					{
-					}
+                if (myStatus == Status.StatusActive) {
+                    try {
+                        _theTransaction.rollback();
+                    }
+                    catch (Exception e) {
+                    }
 
-					/*
-					 * Get the local status to pass to our local
-					 * synchronizations.
-					 */
+                    /*
+                          * Get the local status to pass to our local
+                          * synchronizations.
+                          */
 
-					try
-					{
-						status = _theTransaction.get_status();
-					}
-					catch (Exception e)
-					{
-						status = org.omg.CosTransactions.Status.StatusUnknown;
-					}
-				}
-			}
+                    try {
+                        status = _theTransaction.get_status();
+                    }
+                    catch (Exception e) {
+                        status = Status.StatusUnknown;
+                    }
+                }
+            }
 
 			_theTransaction.doAfterCompletion(status);
 		}

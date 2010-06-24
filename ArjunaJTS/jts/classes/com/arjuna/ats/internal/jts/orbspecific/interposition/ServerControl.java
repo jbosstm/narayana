@@ -172,11 +172,6 @@ public class ServerControl extends ControlImple
 		return _realTerminator;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.interposition.destfailed
-	 *          {0} could not destroy object: {1}
-	 */
-
 	public synchronized void destroy () throws ActiveTransaction,
 			ActiveThreads, BadControl, Destroyed, SystemException
 	{
@@ -206,14 +201,9 @@ public class ServerControl extends ControlImple
 		{
 			// already destroyed
 		}
-		catch (Exception e)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.destfailed", new Object[]
-				{ "ServerControl", e });
-			}
-		}
+		catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_destfailed("ServerControl", e);
+        }
 	}
 
 	public ServerControl (ServerTransaction stx)

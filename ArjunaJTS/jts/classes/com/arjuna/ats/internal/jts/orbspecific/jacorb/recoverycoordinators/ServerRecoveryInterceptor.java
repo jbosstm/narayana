@@ -46,7 +46,6 @@ import com.arjuna.ats.jts.logging.jtsLogger;
  *
  * @author Malik Saheb
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerRecoveryInterceptor_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerRecoveryInterceptor_1] -  Failed to obtain the service context - 
  */
 
 public class ServerRecoveryInterceptor
@@ -80,9 +79,8 @@ public class ServerRecoveryInterceptor
 	    String objectIdString = new String(context.context_data);
 	    JacOrbRCDefaultServant.RCObjectId = context.context_data;
         }
-        catch (Exception ex)
-        {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerInitialize_1", ex);
+        catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(ex);
         }
     }
 

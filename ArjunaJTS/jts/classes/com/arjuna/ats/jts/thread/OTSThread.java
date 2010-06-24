@@ -82,11 +82,6 @@ public class OTSThread extends Thread
 	}
     }
 
-    /**
-     * @message com.arjuna.ats.jts.thread.resumefailed {0} - could not resume transaction: {1}
-     * @message com.arjuna.ats.jts.thread.resumefailederror - could not resume transaction:
-     */
-
     public void run ()
     {
 	if (_currentControl != null)
@@ -103,13 +98,9 @@ public class OTSThread extends Thread
 	    }
 	    catch (Exception e)
 	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.thread.resumefailed",
-					      new Object[] { "OTSThread.run", e} );
-		}
+            jtsLogger.i18NLogger.warn_thread_resumefailed( "OTSThread.run", e);
 
-		throw new FatalError("OTSThread.run - "+jtsLogger.loggerI18N.getString("com.arjuna.ats.jts.thread.resumefailederror"+e), e);
+		throw new FatalError("OTSThread.run - "+jtsLogger.i18NLogger.get_thread_resumefailederror(), e);
 	    }
 
 	    _currentControl = null;

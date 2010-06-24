@@ -480,10 +480,6 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
 	return control;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipfail {0} - could not find {1} to remove.
-     */
-
     protected final synchronized boolean removeHierarchy (Uid theUid)
     {
         ServerTopLevelAction action = present(theUid);
@@ -495,25 +491,13 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
         }
         else
         {
-            if (jtsLogger.logger.isDebugEnabled())
-            {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipfail",
-                            new Object[] {"Interposition.removeHeirarchy", theUid} );
-                }
+            if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.i18NLogger.warn_interposition_resources_arjuna_ipfail("Interposition.removeHeirarchy", theUid);
             }
         }
 
         return false;
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.iptl TopLevel transactions not identical: {0} {1}
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnt Nested transactions not identical.
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnull Interposed hierarchy is null!
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy hierarchy: {0}
-     */
 
 protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelAction action)
     {
@@ -532,16 +516,11 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
 
 	if (action != null)
 	{
-	    if (action.get_uid().notEquals(ctxHierarchy[depth]))
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.iptl",
-					      new Object[] {action.get_uid(), ctxHierarchy[depth-1]} );
-		}
+	    if (action.get_uid().notEquals(ctxHierarchy[depth])) {
+            jtsLogger.i18NLogger.warn_interposition_resources_arjuna_iptl(action.get_uid(), ctxHierarchy[depth - 1]);
 
-		printHierarchies = true;
-	    }
+            printHierarchies = true;
+        }
 	    else
 	    {
 		if (depth > 0)
@@ -570,26 +549,18 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
 			problem = true;
 		}
 
-		if (problem)
-		{
-		    if (jtsLogger.loggerI18N.isWarnEnabled())
-		    {
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnt");
-		    }
+		if (problem) {
+            jtsLogger.i18NLogger.warn_interposition_resources_arjuna_ipnt();
 
-		    printHierarchies = true;
-		}
+            printHierarchies = true;
+        }
 	    }
 	}
-	else
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnull");
-	    }
+	else {
+        jtsLogger.i18NLogger.warn_interposition_resources_arjuna_ipnull();
 
-	    printHierarchies = true;
-	}
+        printHierarchies = true;
+    }
 
 	if (!printHierarchies)
 	    printHierarchies = jtsLogger.logger.isDebugEnabled();
@@ -607,13 +578,8 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
             }
             else
             {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy",
-                            new Object[] {Utility.getHierarchy(ctx)});
-                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy",
-                            new Object[] {hierarchytoString(action)});
-                }
+                jtsLogger.i18NLogger.warn_interposition_resources_arjuna_problemhierarchy(Utility.getHierarchy(ctx));
+                jtsLogger.i18NLogger.warn_interposition_resources_arjuna_problemhierarchy(hierarchytoString(action));
             }
         }
 	}

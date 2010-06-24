@@ -58,8 +58,6 @@ import org.omg.PortableInterceptor.ServerRequestInterceptor;
 /**
  * PortableInterceptor::ServerRequestInterceptor implementation which checks 
  * that a transaction context was received.
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie {0} caught an unexpected exception: {1}
  */
 
 /*
@@ -240,23 +238,16 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	{
 	    suspendContext(request_info);
 	}
-	catch (SystemException ex)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-					  new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_reply", ex} );
-	    }
-	    
-	    throw ex;
-	}
-	catch (Exception e)
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-				      new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_reply", e} );
+	catch (SystemException ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", ex);
 
-	    throw new BAD_OPERATION(e.toString());
-	}
+        throw ex;
+    }
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_reply", e);
+
+        throw new BAD_OPERATION(e.toString());
+    }
     }
 
 public void send_exception (ServerRequestInfo request_info) throws SystemException
@@ -270,26 +261,16 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 	{
 	    suspendContext(request_info);
 	}
-	catch (SystemException e1)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-					  new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_exception", e1} );
-	    }
+	catch (SystemException e1) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e1);
 
-	    throw e1;
-	}
-	catch (Exception e2)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-					  new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_exception", e2} );
-	    }
+        throw e1;
+    }
+	catch (Exception e2) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_exception", e2);
 
-	    throw new BAD_OPERATION(e2.toString());
-	}
+        throw new BAD_OPERATION(e2.toString());
+    }
     }
 
 public void send_other (ServerRequestInfo request_info) throws SystemException
@@ -303,26 +284,16 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 	{
 	    suspendContext(request_info);
 	}
-	catch (SystemException ex)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-					  new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_other", ex} );
-	    }
+	catch (SystemException ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", ex);
 
-	    throw ex;
-	}
-	catch (Exception e)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-					  new java.lang.Object[] {"ContextServerRequestInterceptorImpl::send_other", e} );
-	    }
+        throw ex;
+    }
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl::send_other", e);
 
-	    throw new BAD_OPERATION(e.toString());
-	}
+        throw new BAD_OPERATION(e.toString());
+    }
     }
 
     /*
@@ -362,16 +333,11 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 			    OTSManager.destroyControl(ctx.getControl());
 			    ctx = null;
 			}
-			catch (Exception e)
-			{
-			    if (jtsLogger.loggerI18N.isWarnEnabled())
-			    {
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.srie",
-							  new java.lang.Object[] {"ContextServerRequestInterceptorImpl.suspendContext", e} );
-			    }
-			    
-			    throw new UNKNOWN(e.toString());
-			}
+			catch (Exception e) {
+                jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_srie("ContextServerRequestInterceptorImpl.suspendContext", e);
+
+                throw new UNKNOWN(e.toString());
+            }
 		    }
 		}
 	    }

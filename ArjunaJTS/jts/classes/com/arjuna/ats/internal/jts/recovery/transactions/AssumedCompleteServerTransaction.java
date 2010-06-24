@@ -56,7 +56,6 @@ import com.arjuna.common.util.logging.*;
  * @author Peter Furniss (peter.furniss@arjuna.com)
  * @version $Id: AssumedCompleteServerTransaction.java 2342 2006-03-30 13:06:17Z  $ 
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction_1] - AssumedCompleteServerTransaction {0} created
  */
 
 public class AssumedCompleteServerTransaction extends RecoveredServerTransaction
@@ -64,8 +63,8 @@ public class AssumedCompleteServerTransaction extends RecoveredServerTransaction
     public AssumedCompleteServerTransaction ( Uid actionUid )
     {
 	super(actionUid,ourTypeName);
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction_1", new Object[]{get_uid()});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("AssumedCompleteServerTransaction "+get_uid()+" created");
     }
     }
 

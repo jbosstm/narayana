@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
@@ -176,13 +177,6 @@ public class OTSImpleManager
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.otsserverfailed Resolution of OTS
-	 *          server failed - invalid name: {0}
-	 * @message com.arjuna.ats.internal.jts.otsservererror Resolution of OTS
-	 *          server failed: {0}
-	 */
-
 	private static final synchronized void init ()
 	{
 		if (_current == null)
@@ -235,61 +229,36 @@ public class OTSImpleManager
 						if (OTSImpleManager._theFactoryRef == null)
 							throw new BAD_PARAM();
 					}
-					catch (InvalidName e1)
-					{
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.otsserverfailed", new Object[]
-							{ e1 });
-						}
+					catch (InvalidName e1) {
+                        jtsLogger.i18NLogger.warn_otsserverfailed(e1);
 
-						throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-								e1.toString(), e1);
-					}
-					catch (BAD_PARAM ex1)
-					{
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.otsserverfailed", new Object[]
-							{ ex1 });
-						}
+                        throw new FatalError(
+                                e1.toString(), e1);
+                    }
+					catch (BAD_PARAM ex1) {
+                        jtsLogger.i18NLogger.warn_otsserverfailed(ex1);
 
-						throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-								ex1.toString(), ex1);
-					}
-					catch (IOException e2)
-					{
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.otsservererror", new Object[]
-							{ e2 });
-						}
+                        throw new FatalError(
+                                ex1.toString(), ex1);
+                    }
+					catch (IOException e2) {
+                        jtsLogger.i18NLogger.warn_otsservererror(e2);
 
-						throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-								e2.toString(), e2);
-					}
-					catch (SystemException e3)
-					{
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.otsservererror", new Object[]
-							{ e3 });
-						}
+                        throw new FatalError(
+                                e2.toString(), e2);
+                    }
+					catch (SystemException e3) {
+                        jtsLogger.i18NLogger.warn_otsservererror(e3);
 
-						throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-								e3.toString(), e3);
-					}
-					catch (UserException e4)
-					{
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.otsservererror", new Object[]
-							{ e4 });
-						}
+                        throw new FatalError(
+                                e3.toString(), e3);
+                    }
+					catch (UserException e4) {
+                        jtsLogger.i18NLogger.warn_otsservererror(e4);
 
-						throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-								e4.toString(), e4);
-					}
+                        throw new FatalError(
+                                e4.toString(), e4);
+                    }
 				}
 				else
 				{

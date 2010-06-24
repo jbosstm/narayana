@@ -56,12 +56,7 @@ import com.arjuna.common.util.logging.*;
  * <P>
  * @author Dave Ingham(dave.ingham@arjuna.com), Peter Furniss, Mark Little (mark.little@arjuna.com) Malik SAHEB (malik.saheb@arjuna.com
  * @version $Id: GenericRecoveryCoordinator.java 2342 2006-03-30 13:06:17Z  $ 
- *
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1] - GenericRecoveryCoordinator {0} constructed
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2] - GenericRecoveryCoordinator() constructing
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4] - GenericRecoveryCoordinator - swapping Resource for RC {0}
  */
-
 public class GenericRecoveryCoordinator extends org.omg.CosTransactions.RecoveryCoordinatorPOA
 {
 
@@ -79,8 +74,8 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
     {
 	_id = new RecoveryCoordinatorId(RCUid, actionUid, processUid, isServerTransaction);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1", new Object[]{_id});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("GenericRecoveryCoordinator "+_id+" constructed");
     }
     }
     
@@ -92,8 +87,8 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
      */
     protected GenericRecoveryCoordinator()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("GenericRecoveryCoordinator() constructing");
     }
 	_id = null;
     }
@@ -224,8 +219,8 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 	    if ( (replayer.getRecoveryStatus() != com.arjuna.ats.internal.jts.recovery.transactions.RecoveryStatus.ACTIVATE_FAILED) &&
 		 (res != null) )
 	    {
-		if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4", new Object[]{id._RCUid});
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("GenericRecoveryCoordinator - swapping Resource for RC "+id._RCUid);
         }
 
 		replayer.swapResource(id._RCUid, res);

@@ -58,14 +58,6 @@ import org.omg.CORBA.SystemException;
  * @see CachedRecoveredTransaction
  * @see RecoveredTransaction
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_1 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_1] - asking the tran for original status
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_2 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_2] - no transaction in cache so not asking for original status
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_3 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_3] - Transaction {0} assumed complete - changing type.
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_4 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_4] - Transaction {0} assumed complete - will not poll any more 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_5 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_5] - Transaction {0} recovery completed
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_6 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_6] - TransactionCache.remove {0}: transaction not in cache
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_7 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_7] - TransactionCache.remove {0}: removed transaction from cache
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_8 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_8] - Non-integer value for property {0}
  */
 
 public class TransactionCache
@@ -130,13 +122,13 @@ public class TransactionCache
 		RecoveringTransaction theTransaction = cacheItem.freshTransaction();
 		if (theTransaction != null)
 		{
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_1");
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("asking the tran for original status");
             }
 		    theStatus = theTransaction.getOriginalStatus();
 		} else {
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_2");
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("no transaction in cache so not asking for original status");
             }
 		}
 	    }
@@ -233,8 +225,8 @@ public class TransactionCache
 			    int previousAttempts = cacheItem.countAttempts();
 			    if (previousAttempts >= attemptsBeforeConversion) {
 				converting = theTransaction.assumeComplete();
-				if (converting && (jtsLogger.loggerI18N.isDebugEnabled())) {
-                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_3", new Object[]{actionUid});
+				if (converting && (jtsLogger.logger.isDebugEnabled())) {
+                    jtsLogger.logger.debug(" Transaction "+actionUid+" assumed complete - changing type.");
                 }
 			    }
 			}
@@ -252,10 +244,7 @@ public class TransactionCache
 			fullyCompleted = theTransaction.allCompleted(); // only remove if committed?
 
 			if (converting && !fullyCompleted) {
-			    if (jtsLogger.loggerI18N.isInfoEnabled())
-				{
-				    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_4", new Object[]{actionUid});
-				}
+                jtsLogger.i18NLogger.info_recovery_transactions_TransactionCache_4(actionUid);
 			    theTransaction.removeOldStoreEntry();
 			    cacheItem.updateType();
 			}
@@ -269,10 +258,7 @@ public class TransactionCache
 		 */
 
 		if (fullyCompleted) {
-		    if (jtsLogger.loggerI18N.isInfoEnabled())
-			{
-			    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_5", new Object[]{actionUid});
-			}
+            jtsLogger.i18NLogger.info_recovery_transactions_TransactionCache_5(actionUid);
 
 		    remove(actionUid);
 
@@ -312,8 +298,8 @@ public class TransactionCache
 
 	if (cacheItem == null)
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_6", new Object[]{theUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("TransactionCache.remove "+theUid+": transaction not in cache");
         }
 	}
 	else
@@ -323,8 +309,8 @@ public class TransactionCache
 		_theCache.remove(theUid);
 	    }
 	    
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_7", new Object[]{theUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("TransactionCache.remove "+theUid+": removed transaction from cache");
         }
 	}
     }

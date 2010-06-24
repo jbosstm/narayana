@@ -47,7 +47,6 @@ import com.arjuna.common.util.logging.*;
  * All orbs are likely to be the same, constructing a GenericRecoveryCreator,
  * but with an orb-specific manager
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit_1] - JacOrb RecoveryCoordinator creator setup
  */
 
 public class JacOrbRecoveryInit
@@ -61,11 +60,11 @@ public class JacOrbRecoveryInit
 	// and it's registration with CosTransactions)
 	GenericRecoveryCreator.register(theManager);
  
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit_1");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("JacOrb RecoveryCoordinator creator setup");
     }
     }
     
-};
+}
 
 

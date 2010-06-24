@@ -51,11 +51,6 @@ import java.util.List;
  *
  * @author Malik SAHEB
  *
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_1 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_1] - added ORBAttribute for recoveryCoordinatorInitialiser
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_2] - Full crash recovery is not supported with this orb
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - added event handler  {1}
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_5 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
  */
 
 public class RecoveryInit
@@ -67,8 +62,6 @@ public class RecoveryInit
     /**
      * Constructor does the work as a result of being registered as an ORBPreInit
      * class
-     *
-     * @message com.arjuna.ats.internal.jts.recovery.recoveryinit_1 Failure recovery not supported for this ORB.
      */
     public RecoveryInit ()
     {
@@ -104,13 +97,9 @@ public class RecoveryInit
 			    recoveryCoordinatorInitialiser = Thread.currentThread().getContextClassLoader().loadClass(InitClassName).newInstance();
 			}
 			break;
-		    default:
-			{
-			    if (jtsLogger.loggerI18N.isWarnEnabled())
-			    {
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.recoveryinit_1");
-			    }
-			}
+		    default: {
+                jtsLogger.i18NLogger.warn_recovery_recoveryinit_1();
+            }
 			break;
 		    }
 
@@ -125,15 +114,14 @@ public class RecoveryInit
 		}
 		catch (Exception e)
 		{
-		    jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.recovery.RecoveryInit_4", new Object[] {e});
+            jtsLogger.i18NLogger.fatal_recovery_RecoveryInit_4();
 
 		    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
-		if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.RecoveryInit_1");
-
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.RecoveryInit_3", new Object[]{eventHandlerClassName});
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("added ORBAttribute for recoveryCoordinatorInitialiser");
+            jtsLogger.logger.debug("added event handler "+eventHandlerClassName);
         }
 	    }
 	}

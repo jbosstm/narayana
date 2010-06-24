@@ -49,10 +49,6 @@ import com.arjuna.orbportability.event.*;
  * deregisters itself
  * (and thus relies on the fact (true for 2.1) that any ArjunaFactory can be used to 
  * find the status of any transaction.
- *
- * @message com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1 [com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1] - RecoveryContactWriter() created
- * @message com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2 [com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2] - RecoveryContactWriter.connected( " {0} ")
- * @message com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_3 [com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_3] - RecoveryContactWriter.connected - found ArjunaFactory
  */
 
 public class RecoveryContactWriter implements com.arjuna.orbportability.event.EventHandler
@@ -61,8 +57,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
     public RecoveryContactWriter()
     {
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveryContactWriter() created");
         }
 
         _noted = false;
@@ -70,8 +66,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
     public void connected (org.omg.CORBA.Object obj)
     {    
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_2", new Object[]{obj});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveryContactWriter.connected("+obj+")");
         }
 
         // only do this once - but shouldn't need this, since de-register on writing
@@ -84,8 +80,8 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
 
             if (theFactory != null) {
                 // if that didn't blow, we have a hit
-                if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter_1");
+                if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("RecoveryContactWriter.connected - found ArjunaFactory");
                 }
 
                 FactoryContactItem.createAndSave(theFactory);

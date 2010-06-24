@@ -54,8 +54,6 @@ public class ORBSetup implements InitClassInterface
 {
     /**
      * This method is invoked when the ORB is initialised
-     *
-     * @message com.arjuna.ats.jts.utils.ORBSetup.orbalreadyset The ORBManager is already associated with an ORB/OA.
      */
     public void invoke(Object obj)
     {
@@ -107,10 +105,7 @@ public class ORBSetup implements InitClassInterface
         }
         else
         {
-            if ( jtsLogger.loggerI18N.isDebugEnabled() )
-            {
-                jtsLogger.loggerI18N.warn( "com.arjuna.ats.jts.utils.ORBSetup.orbalreadyset" );
-            }
+            jtsLogger.i18NLogger.warn_utils_ORBSetup_orbalreadyset();
         }
     }
 }

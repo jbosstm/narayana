@@ -64,9 +64,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ServerTransaction.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- * 
- * @message com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.generror
- *          {0} caught exception: {1}
  */
 
 /*
@@ -135,11 +132,6 @@ public class ServerTransaction extends ArjunaTransactionImple
 		return _savingUid;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.syncerror
-	 *          {0} - synchronizations have not been called!
-	 */
-
 	public final int doPrepare ()
 	{
 		if (jtsLogger.logger.isDebugEnabled()) {
@@ -184,24 +176,19 @@ public class ServerTransaction extends ArjunaTransactionImple
 		    }
 		}
 
-		if (!_beforeCompleted && (_sync != null))
-		{
-		    /*
-		     * Synchronizations should have been called by now if we have them!
-		     */
+		if (!_beforeCompleted && (_sync != null)) {
+            /*
+                * Synchronizations should have been called by now if we have them!
+                */
 
-		    if (jtsLogger.loggerI18N.isWarnEnabled())
-		    {
-		        jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.sycerror", new Object[]
-		                                                                                                                           { "ServerTransaction.doPrepare" });
-		    }
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_syncerror("ServerTransaction.doPrepare");
 
-		    /*
-		     * Prevent commit!
-		     */
+            /*
+                * Prevent commit!
+                */
 
-		    super.preventCommit();
-		}
+            super.preventCommit();
+        }
 	              
 		int res = super.prepare(true);
 
@@ -226,11 +213,6 @@ public class ServerTransaction extends ArjunaTransactionImple
 		super.destroyAction();
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.txnotprepared
-	 *          {0} - transaction not in prepared state: {1}
-	 */
-
 	public final int doPhase2Commit ()
 	{
 		if (jtsLogger.logger.isDebugEnabled()) {
@@ -244,16 +226,11 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 		org.omg.CosTransactions.Status s = get_status();
 
-		if (s != org.omg.CosTransactions.Status.StatusPrepared)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.txnotprepared", new Object[]
-				{ "ServerTransaction.doPhase2Commit", Utility.stringStatus(s) });
-			}
+		if (s != org.omg.CosTransactions.Status.StatusPrepared) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_txnotprepared("ServerTransaction.doPhase2Commit", Utility.stringStatus(s));
 
-			return finalStatus();
-		}
+            return finalStatus();
+        }
 
 		super.phase2Commit(true);
 
@@ -580,11 +557,9 @@ public class ServerTransaction extends ArjunaTransactionImple
 		}
 		catch (IOException e)
 		{
-			if (jtsLogger.logger.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.generror", new Object[]
-				{ "ServerTransaction.save_state", e });
-			}
+			if (jtsLogger.logger.isWarnEnabled()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.save_state", e);
+            }
 		}
 
 		return false;
@@ -606,11 +581,9 @@ public class ServerTransaction extends ArjunaTransactionImple
 				}
 				catch (Exception e)
 				{
-					if (jtsLogger.logger.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.generror", new Object[]
-						{ "ServerTransaction.restore_state", e });
-					}
+					if (jtsLogger.logger.isWarnEnabled()) {
+                        jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", e);
+                    }
 
 					return false;
 				}
@@ -622,11 +595,9 @@ public class ServerTransaction extends ArjunaTransactionImple
 		}
 		catch (IOException ex)
 		{
-			if (jtsLogger.logger.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.generror", new Object[]
-				{ "ServerTransaction.restore_state", ex });
-			}
+			if (jtsLogger.logger.isWarnEnabled()) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", ex);
+            }
 		}
 
 		return false;

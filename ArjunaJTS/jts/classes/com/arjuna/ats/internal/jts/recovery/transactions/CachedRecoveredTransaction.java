@@ -60,8 +60,6 @@ import org.omg.CORBA.SystemException;
  * @version $Id: CachedRecoveredTransaction.java 2342 2006-03-30 13:06:17Z  $
  * @see TransactionCache
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_1] - CachedRecoveredTransaction created [{0}, {1}]
- * @message com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_2] - CachedRecoveredTransaction.originalBusy - told status is {0}
  */
 public class CachedRecoveredTransaction
 {
@@ -70,8 +68,8 @@ public class CachedRecoveredTransaction
 	_theTransactionUid = new Uid (actionUid);
 	_theTransactionType = theType;
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_1", new Object[]{_theTransactionUid, _theTransactionType});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction created ["+_theTransactionUid+", "+_theTransactionType+"]");
     }
     }
     
@@ -105,8 +103,8 @@ public class CachedRecoveredTransaction
     {
 	Status originalStatus = getOriginalStatus();
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.CachedRecoveredTransaction_2", new Object[]{Utility.stringStatus(originalStatus)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("CachedRecoveredTransaction.originalBusy - told status is "+Utility.stringStatus(originalStatus));
     }
 
 	switch (originalStatus.value()) {

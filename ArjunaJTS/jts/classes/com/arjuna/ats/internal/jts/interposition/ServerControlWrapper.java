@@ -100,11 +100,6 @@ public class ServerControlWrapper extends ControlWrapper
 	 * Override some Reapable methods.
 	 */
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.interposition.cwabort Failed to
-	 *          cancel transaction:
-	 */
-
 	public int cancel ()
 	{
 		try
@@ -123,15 +118,11 @@ public class ServerControlWrapper extends ControlWrapper
 		{
 			return ActionStatus.NO_ACTION;
 		}
-		catch (Exception ex)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.cwabort", ex);
-			}
+		catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_interposition_cwabort(ex);
 
-			return ActionStatus.INVALID;
-		}
+            return ActionStatus.INVALID;
+        }
 	}
 
 	public ControlWrapper create_subtransaction () throws Unavailable,

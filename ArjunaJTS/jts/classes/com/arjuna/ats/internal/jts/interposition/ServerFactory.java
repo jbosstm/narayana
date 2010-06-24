@@ -55,9 +55,6 @@ import org.omg.CORBA.BAD_PARAM;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ServerFactory.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.2.4.
- * 
- * @message com.arjuna.ats.internal.jts.interposition.sfcaught {0} for
- *          transaction {1} caught {2}
  */
 
 public class ServerFactory
@@ -122,16 +119,11 @@ public class ServerFactory
 			{
 				return org.omg.CosTransactions.Status.StatusNoTransaction;
 			}
-			catch (Exception e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.sfcaught", new Object[]
-					{ "ServerFactory.getCurrentStatus", uid, e });
-				}
+			catch (Exception e) {
+                jtsLogger.i18NLogger.warn_interposition_sfcaught("ServerFactory.getCurrentStatus", uid, e);
 
-				return org.omg.CosTransactions.Status.StatusUnknown;
-			}
+                return Status.StatusUnknown;
+            }
 		}
 	}
 
@@ -154,16 +146,11 @@ public class ServerFactory
 		{
 			throw e2;
 		}
-		catch (Exception e3)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.sfcaught", new Object[]
-				{ "ServerFactory.getStatus", u, e3 });
-			}
+		catch (Exception e3) {
+            jtsLogger.i18NLogger.warn_interposition_sfcaught("ServerFactory.getStatus", u, e3);
 
-			return org.omg.CosTransactions.Status.StatusUnknown;
-		}
+            return Status.StatusUnknown;
+        }
 
 		if ((s == org.omg.CosTransactions.Status.StatusUnknown)
 				|| (s == org.omg.CosTransactions.Status.StatusNoTransaction))
@@ -219,16 +206,11 @@ public class ServerFactory
 					return org.omg.CosTransactions.Status.StatusUnknown;
 				}
 			}
-			catch (Exception e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.sfcaught", new Object[]
-					{ "ServerFactory.getStatus", u, e });
-				}
+			catch (Exception e) {
+                jtsLogger.i18NLogger.warn_interposition_sfcaught("ServerFactory.getStatus", u, e);
 
-				return org.omg.CosTransactions.Status.StatusUnknown;
-			}
+                return Status.StatusUnknown;
+            }
 		}
 	}
 
@@ -254,23 +236,13 @@ public class ServerFactory
 		return tranControl;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.interposition.sfnoparent {0} - no
-	 *          parent transaction given!
-	 */
-
 	public static ServerControl create_subtransaction (Uid actUid, Coordinator realCoord, Terminator realTerm, ServerControl parent)
 	{
-		if (parent == null)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.sfnoparent", new Object[]
-				{ "ServerFactory.create_subtransaction" });
-			}
+		if (parent == null) {
+            jtsLogger.i18NLogger.warn_interposition_sfnoparent("ServerFactory.create_subtransaction");
 
-			return null;
-		}
+            return null;
+        }
 
 		ServerControl toReturn = null;
 

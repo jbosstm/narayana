@@ -82,10 +82,6 @@ public class ServerStrictNestedAction extends ServerNestedAction
         }
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ipfailed {0} - could not register interposed hierarchy!
-     */
-
     public boolean interposeResource ()
     {
         if (!_registered)
@@ -96,16 +92,8 @@ public class ServerStrictNestedAction extends ServerNestedAction
             {
                 Coordinator realCoordinator = _theControl.originalCoordinator();
 
-                if (!(_valid = registerSubTran(realCoordinator)))
-                {
-                    if (jtsLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtsLogger.loggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ipfailed",
-                                        new Object[]
-                                        { "ServerStrictNestedAction" });
-                    }
+                if (!(_valid = registerSubTran(realCoordinator))) {
+                    jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_strict_ipfailed("ServerStrictNestedAction");
 
                     /*
                      * Failed to register. Valid is set, and the interposition

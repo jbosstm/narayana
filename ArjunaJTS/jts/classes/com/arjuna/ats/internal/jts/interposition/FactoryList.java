@@ -186,9 +186,6 @@ public class FactoryList
 
 	/**
 	 * Only allow a default to be added once!
-	 * 
-	 * @message com.arjuna.ats.internal.jts.interposition.fldefault {0} -
-	 *          default already set!
 	 */
 
 	public static boolean addDefault (FactoryCreator create, int formatID)
@@ -202,14 +199,9 @@ public class FactoryList
 			FactoryList._default = new FactoryElement(create, formatID);
 			res = true;
 		}
-		else
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.fldefault", new Object[]
-				{ "FactoryList.addDefault" });
-			}
-		}
+		else {
+            jtsLogger.i18NLogger.warn_interposition_fldefault("FactoryList.addDefault");
+        }
 
 		_lock.unlock();
 

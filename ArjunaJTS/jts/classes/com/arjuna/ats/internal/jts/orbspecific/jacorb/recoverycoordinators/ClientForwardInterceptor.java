@@ -53,14 +53,6 @@ import com.arjuna.ats.jts.logging.jtsLogger;
  *
  * @author Malik Saheb
  */
-
-/**
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_1] -  Client Interceptor for RecoveryCoordinators created
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_2] -  Failed to retreive the Object reference of the default RecoverCoordinator Object.
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_3] -  Failed to obtain the ObjectId string of the RecveryCoordinator target. 
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_4 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_4] -  Failed to build service context with the ObjectId 
- */
-
 public class ClientForwardInterceptor
     extends org.omg.CORBA.LocalObject 
     implements ClientRequestInterceptor
@@ -70,8 +62,8 @@ public class ClientForwardInterceptor
 				    int _IndicatorSlotId)
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_1");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("Client Interceptor for RecoveryCoordinators created");
     }
 
 	piCurrent = _piCurrent;
@@ -113,10 +105,9 @@ public class ClientForwardInterceptor
 			}
 		}
 	}
-	catch(Exception ex)
-	  {
-	      jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_4", ex);
-	  }
+	catch(Exception ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_4(ex);
+    }
 
 
 	if (!in_loop)
@@ -201,10 +192,9 @@ public class ClientForwardInterceptor
 			org.omg.CORBA.Object obj = _ourOrb.string_to_object(RCDefaultObjectReference) ;
 			reco = RecoveryCoordinatorHelper.narrow(obj);
 		    }
-		catch (Exception e)
-		    {
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientForwardInterceptor_2", e);
-		    }
+		catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_2(e);
+        }
 		
 	    }
 	    

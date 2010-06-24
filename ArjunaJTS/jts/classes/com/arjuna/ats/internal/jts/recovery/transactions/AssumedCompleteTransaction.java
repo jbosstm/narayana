@@ -57,7 +57,6 @@ import java.util.Date;
  * @author Peter Furniss (peter.furniss@arjuna.com)
  * @version $Id: AssumedCompleteTransaction.java 2342 2006-03-30 13:06:17Z  $ 
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction_1] - AssumedCompleteTransaction {0} created
  */
 
 public class AssumedCompleteTransaction extends RecoveredTransaction
@@ -66,8 +65,8 @@ public class AssumedCompleteTransaction extends RecoveredTransaction
     {
 	super(actionUid,ourTypeName);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction_1", new Object[]{get_uid()});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("AssumedCompleteTransaction "+get_uid()+" created");
     }
     }
 

@@ -116,11 +116,6 @@ public String name ()
 	return "OTS_Context";
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.error Context interceptor caught an unexpected exception:
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.invalidparam Invalid portable interceptor transaction parameter!
-     */
-
 public void send_request (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
@@ -181,7 +176,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		if ( (localData != null) && (localData.type().kind().value() != TCKind._tk_null) )
 		{
 		    if ( (threadId = localData.extract_string()) == null )
-			throw new UNKNOWN(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.invalidparam"));
+			throw new UNKNOWN(jtsLogger.i18NLogger.get_orbspecific_jacorb_interceptors_context_invalidparam());
 		}
 		else
 		    threadId = ThreadUtil.getThreadId() ;
@@ -247,15 +242,11 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 	    {
 		throw e;
 	    }
-	    catch (Exception ex)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.error", ex);
-		}
+	    catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_context_error(ex);
 
-		throw new UNKNOWN(ex.toString());
-	    }
+            throw new UNKNOWN(ex.toString());
+        }
             finally
             {
                 /** If we are set to always propagate then ensure we clear the inuse flag **/

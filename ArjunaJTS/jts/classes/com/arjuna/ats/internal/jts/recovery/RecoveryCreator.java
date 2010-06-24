@@ -80,20 +80,12 @@ public static final RecoveryCreator getCreator ()
 	return _theCreator;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.recovery.rcnull {0} - being passed a null reference. Will ignore!
-     */
 
 public static final void setCreator (RecoveryCreator c)
     {
-	if (c == null)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.rcnull",
-					  new Object[] { "RecoveryCreator.setCreator"} );
-	    }
-	}
+	if (c == null) {
+        jtsLogger.i18NLogger.warn_recovery_rcnull("RecoveryCreator.setCreator");
+    }
 	else
 	    _theCreator = c;
 	

@@ -31,33 +31,18 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.arjuna.ats.jts.*;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context.ContextThreadSetup;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context.ContextClientRequestInterceptorImpl;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context.ContextServerRequestInterceptorImpl;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.common.util.logging.*;
-
-import org.omg.CosTransactions.*;
 import org.omg.CORBA.*;
 import org.omg.PortableInterceptor.*;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
 import org.omg.IOP.*;
 import org.omg.IOP.CodecFactoryPackage.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CosTransactions.Unavailable;
 
 public class ContextORBInitializerImpl extends LocalObject implements ORBInitializer
 {
@@ -76,13 +61,6 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	ThreadActionData.addSetup(new ContextThreadSetup());
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codecerror {0} - a failure occured when getting {1} codec - unknown encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.duplicatename {0} - duplicate interceptor name for {1} when registering
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codeccreate Cannot create a codec of the required encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.sie A server-side request interceptor already exists with that name.
-     */
 
     public void pre_init (ORBInitInfo init_info)
     {
@@ -121,13 +99,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (UnknownEncoding ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codecerror",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_codecerror(
+                "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codeccreate"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_codeccreate(), ex);
 	}
 
 	/*
@@ -147,13 +122,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ClientRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
+                "ContextORBInitializerImpl", "ClientRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.cie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_cie(), ex);
 	}
 
 	/*
@@ -173,13 +145,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ServerRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_context_duplicatename(
+                 "ContextORBInitializerImpl", "ServerRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.sie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_context_sie(), ex);
 	}
     }
 

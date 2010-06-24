@@ -157,11 +157,6 @@ public class ControlWrapper implements Reapable
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.cwcommit Failed to mark transaction
-	 *          as rollback only:
-	 */
-
 	public boolean preventCommit ()
 	{
 		try
@@ -170,21 +165,12 @@ public class ControlWrapper implements Reapable
 
 			return true;
 		}
-		catch (Exception ex)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.cwcommit", ex);
-			}
+		catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_cwcommit(ex);
 
-			return false;
-		}
+            return false;
+        }
 	}
-
-	/**
-	 * @message com.arjuna.ats.internal.jts.cwabort Failed to cancel
-	 *          transaction:
-	 */
 
 	public int cancel ()
 	{
@@ -202,15 +188,11 @@ public class ControlWrapper implements Reapable
 		{
 			return ActionStatus.NO_ACTION;
 		}
-		catch (Exception ex)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.cwabort", ex);
-			}
+		catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_cwabort(ex);
 
-			return ActionStatus.INVALID;
-		}
+            return ActionStatus.INVALID;
+        }
 	}
 
 	public Uid get_uid ()

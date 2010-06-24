@@ -60,40 +60,6 @@ import org.omg.CORBA.SystemException;
  * 
  * @author Dave Ingham (dave@arjuna.com)
  * @version $Id: RecoveredTransaction.java 2342 2006-03-30 13:06:17Z $
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_1] - RecoveredTransaction {0} created
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_2] - RecoveredTransaction activate of {0}
- *          failed
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_3] - RecoveredTransaction activate of {0}
- *          failed - {1}
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_5] - RecoveredTransaction.replayPhase2 ({0}) -
- *          status = {1}
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_6] - RecoveredTransaction.replayPhase2 for {0}
- *          failed
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_7] - RecoveredTransaction.replayPhase2 ({0})
- *          finished
- * @message 
- *          com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8
- *          [com.arjuna.ats.internal.jts.recovery.transactions.
- *          RecoveredTransaction_8] - RecoveredTransaction.removeOldStoreEntry -
- *          problem
  */
 
 public class RecoveredTransaction extends ArjunaTransactionImple implements
@@ -108,9 +74,8 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
     {
         super(actionUid);
 
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1", new Object[]
-                    {get_uid()});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveredTransaction "+get_uid()+" created");
         }
 
         // Don't bother trying to activate a transaction that isn't in
@@ -137,23 +102,14 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
             {
                 if (activate())
                     _recoveryStatus = RecoveryStatus.ACTIVATED;
-                else
-                {
-                    jtsLogger.loggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2",
-                                    new Object[]
-                                    { actionUid });
+                else {
+                    jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredTransaction_2(actionUid);
                 }
             }
         }
         catch (Exception e)
         {
-            jtsLogger.loggerI18N
-                    .warn(
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3",
-                            new Object[]
-                            { actionUid, e }, e);
+            jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredTransaction_3(actionUid, e);
         }
 
         _txStatus = Status.StatusUnknown;
@@ -229,9 +185,8 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
 
         Status theStatus = get_status();
 
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]
-                    {get_uid(), Utility.stringStatus(theStatus)});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveredTransaction.replayPhase2 ("+get_uid()+") - status = "+Utility.stringStatus(theStatus));
         }
 
         if ((theStatus == Status.StatusPrepared)
@@ -254,19 +209,13 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
 
             _txStatus = Status.StatusRolledBack;
         }
-        else
-        {
-            jtsLogger.loggerI18N
-                    .warn(
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6",
-                            new Object[]
-                            { Utility.stringStatus(theStatus) });
+        else {
+            jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredTransaction_6(Utility.stringStatus(theStatus));
             _recoveryStatus = RecoveryStatus.REPLAY_FAILED;
         }
 
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]
-                    {get_uid()});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveredTransaction.replayPhase2 ("+get_uid()+") - status = "+Utility.stringStatus(theStatus));
         }
     }
 
@@ -326,12 +275,8 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
         {
             store().remove_committed(get_uid(), super.type());
         }
-        catch (ObjectStoreException ex)
-        {
-            jtsLogger.loggerI18N
-                    .warn(
-                            "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8",
-                            ex);
+        catch (ObjectStoreException ex) {
+            jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredTransaction_8(ex);
         }
     }
 

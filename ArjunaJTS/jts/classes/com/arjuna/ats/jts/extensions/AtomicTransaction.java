@@ -94,17 +94,6 @@ public class AtomicTransaction
 		_timeout = get_timeout();
 	}
 
-	/**
-	 * @message com.arjuna.ats.jts.extensions.atscope {0} - running atomic
-	 *          transaction going out of scope. Will roll back. {1}
-	 * @message com.arjuna.ats.jts.extensions.namefail Cannot determine
-	 *          transaction name!
-	 * @message com.arjuna.ats.jts.extensions.abortfailnoexist Could not
-	 *          rollback transaction {0} as it does not exist!
-	 * @message com.arjuna.ats.jts.extensions.abortfail Could not rollback
-	 *          transaction {0}
-	 */
-
 	public void finalize ()
 	{
 		if (jtsLogger.logger.isDebugEnabled()) {
@@ -113,57 +102,33 @@ public class AtomicTransaction
 
 		if (_theAction != null)
 		{
-			if (getStatus() == Status.StatusActive)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atscope", new Object[]
-					{ "AtomicTransaction.finalize", get_uid().toString() });
-				}
+			if (getStatus() == Status.StatusActive) {
+                jtsLogger.i18NLogger.warn_extensions_atscope("AtomicTransaction.finalize", get_uid());
 
-				String name = null;
+                String name = null;
 
-				try
-				{
-					name = get_transaction_name();
-				}
-				catch (SystemException ex)
-				{
-					if (jtsLogger.loggerI18N.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.namefail");
-					}
-				}
+                try {
+                    name = get_transaction_name();
+                }
+                catch (SystemException ex) {
+                    jtsLogger.i18NLogger.warn_extensions_namefail(ex);
+                }
 
-				try
-				{
-					rollback(); // tidies up for us.
-				}
-				catch (NoTransaction e)
-				{
-					if (jtsLogger.loggerI18N.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.abortfailnoexist", new Object[]
-						{ name });
-					}
-				}
-				catch (Exception e)
-				{
-					if (jtsLogger.loggerI18N.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.abortfail", new Object[]
-						{ name });
-					}
-				}
-			}
+                try {
+                    rollback(); // tidies up for us.
+                }
+                catch (NoTransaction e) {
+                    jtsLogger.i18NLogger.warn_extensions_abortfailnoexist(name);
+                }
+                catch (Exception e) {
+                    jtsLogger.i18NLogger.warn_extensions_abortfail(name);
+                }
+            }
 		}
 	}
 
 	/**
 	 * @return the transaction name. Should only be used for debugging purposes.
-	 * 
-	 * @message com.arjuna.ats.jts.extensions.atunavailable {0} - transaction
-	 *          unavailable.
 	 */
 
 	public String get_transaction_name () throws SystemException
@@ -180,11 +145,7 @@ public class AtomicTransaction
 			}
 			catch (SystemException e)
 			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atunavailable", new Object[]
-					{ "AtomicTransaction.get_transaction_name" });
-				}
+                jtsLogger.i18NLogger.warn_extensions_atunavailable("AtomicTransaction.get_transaction_name");
 
 				throw e;
 			}
@@ -789,18 +750,6 @@ public class AtomicTransaction
 	 * a transaction!
 	 * 
 	 * If not valid then abort this transaction here. Leave current alone.
-	 * 
-	 * @message com.arjuna.ats.jts.extensions.atnovalidtx {0} - no transaction!
-	 * @message com.arjuna.ats.jts.extensions.atcurrenttxnull {0} - current
-	 *          transaction is null!
-	 * @message com.arjuna.ats.jts.extensions.atoutofseq {0} - terminated out of
-	 *          sequence {1}
-	 * @message com.arjuna.ats.jts.extensions.atwillabort Will roll back.
-	 *          Current transaction is {0}
-	 * @message com.arjuna.ats.jts.extensions.atcannotabort {0} - cannot
-	 *          rollback {1}
-	 * @message com.arjuna.ats.jts.extensions.atgenerror {0} caught unexpected
-	 *          exception {1}
 	 */
 
 	protected final boolean validTransaction ()
@@ -823,11 +772,7 @@ public class AtomicTransaction
 
 			if (currentTransaction == null)
 			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atnovalidtx", new Object[]
-					{ "AtomicTransaction.validTransaction" });
-				}
+                jtsLogger.i18NLogger.warn_extensions_atnovalidtx("AtomicTransaction.validTransaction");
 
 				return false;
 			}
@@ -839,14 +784,8 @@ public class AtomicTransaction
 				String transactionName = get_transaction_name();
 				String currentTransactionName = currentTransaction.get_transaction_name();
 
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atoutofseq", new Object[]
-					{ "AtomicTransaction", transactionName });
-
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atwillabort", new Object[]
-					{ currentTransactionName });
-				}
+                jtsLogger.i18NLogger.warn_extensions_atoutofseq("AtomicTransaction", transactionName);
+                jtsLogger.i18NLogger.warn_extensions_atwillabort(currentTransactionName);
 
 				try
 				{
@@ -854,21 +793,13 @@ public class AtomicTransaction
 				}
 				catch (Exception ex)
 				{
-					if (jtsLogger.loggerI18N.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atcannotabort", new Object[]
-						{ "AtomicTransaction", transactionName });
-					}
+                    jtsLogger.i18NLogger.warn_extensions_atcannotabort("AtomicTransaction", transactionName);
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.atgenerror", new Object[]
-				{ "AtomicTransaction", e });
-			}
+            jtsLogger.i18NLogger.warn_extensions_atgenerror("AtomicTransaction", e );
 		}
 
 		return valid;

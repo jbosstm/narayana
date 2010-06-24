@@ -39,8 +39,6 @@ import com.arjuna.ats.jts.logging.*;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.arjuna.common.util.logging.*;
-
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
@@ -67,15 +65,6 @@ import java.util.Properties;
  * All orbs are likely to be the same, constructing a GenericRecoveryCreator,
  * but with an orb-specific manager
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_1] - Failed to create poa for recoverycoordinators
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2] - JacOrbRCServiceInit - set default servant and activated
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3] - JacOrbRCServiceInit - Failed to start RC service
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_4 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_4] - Unable to create file ObjectId
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5] - Unable to create file ObjectId - security problems
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6] - Starting RecoveryServer ORB on port {0} and address {1}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a] - Sharing RecoveryServer ORB on port {0}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7] - Failed to create orb and poa for transactional objects {1}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8] - RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.
  */
 
 public class JacOrbRCServiceInit implements RecoveryServiceInit
@@ -121,11 +110,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 if (recoveryManagerAddr == null)
                     recoveryManagerAddr = "";
 
-                if (jtsLogger.loggerI18N.isInfoEnabled())
-                {
-                    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6",
-                            new java.lang.Object[]{recoveryManagerPort, recoveryManagerAddr});
-                }
+                jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(recoveryManagerPort, recoveryManagerAddr);
 
                 final Properties p = new Properties();
                 // Try to preload jacorb.properties
@@ -172,10 +157,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 
                 oaInit = false;
 
-                if (jtsLogger.loggerI18N.isInfoEnabled())
-                {
-                    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a", new java.lang.Object[]{oldPort});
-                }
+                jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a(oldPort);
             }
 
             try
@@ -196,19 +178,17 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                         ORBManager.setORB(_orb);
                         ORBManager.setPOA(_oa);
                     }
-                    catch (Exception ex)
-                    {
-                        jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7", ex);
+                    catch (Exception ex) {
+                        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(ex);
                     }
                 }
 
                 org.omg.CORBA.ORB theORB = _orb.orb();
                 org.omg.PortableServer.POA rootPOA = _oa.rootPoa();
 
-                if (rootPOA == null)
-                {
-                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8");
-                    
+                if (rootPOA == null) {
+                    jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_8();
+
                     return null;
                 }
                     
@@ -227,9 +207,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
                 _poa = rootPOA.create_POA(poaName, rootPOA.the_POAManager(), policies);
             }
-            catch (Exception ex)
-            {
-                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_1",ex);
+            catch (Exception ex) {
+                jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(ex);
             }
         }
 
@@ -278,12 +257,12 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                         currentStore.write_committed( new Uid(uid4Recovery), type(), oState);
                     }
                 catch ( java.lang.SecurityException sex )
-                    {
-                        jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5");
-          }
+                {
+                    jtsLogger.i18NLogger.fatal_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_5();
+                }
 
-                if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                    jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2");
+                if (jtsLogger.logger.isDebugEnabled()) {
+                    jtsLogger.logger.debug("JacOrbRCServiceInit - set default servant and activated");
                 }
 
                 // activate the poa
@@ -295,9 +274,9 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
                 return true;
             } catch (Exception ex) {
-                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3", ex);
-                return false;
-            }
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_3(ex);
+            return false;
+        }
 
     }
 

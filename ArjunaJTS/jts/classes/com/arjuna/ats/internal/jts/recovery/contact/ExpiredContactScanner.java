@@ -43,26 +43,18 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 
 /**
  * This class is a plug-in module for the recovery manager.  This
  * class is responsible for the removing contact items that are too old
- *
- * @message com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_1 [com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_1] ExpiredContactScanner created, with expiry time of {0} seconds
- * @message com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_2 [com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_2] ExpiredContactScanner - scanning to remove items from before {0}
- * @message com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_3 [com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_3] Removing old contact item {0}
- * @message com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_4 [com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_4] Expiry scan interval set to {0} seconds
- * @message com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_5 [com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_5] {0} has inappropriate value {1}
  */
 public class ExpiredContactScanner implements ExpiryScanner
 {
     public ExpiredContactScanner ()
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_1", new Object[]{Integer.toString(_expiryTime)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ExpiredContactScanner created, with expiry time of "+_expiryTime+" seconds");
     }
 	_objectStore  = FactoryContactItem.getStore();
 	_itemTypeName = FactoryContactItem.getTypeName();
@@ -78,8 +70,8 @@ public class ExpiredContactScanner implements ExpiryScanner
 	// calculate the time before which items will be removed
 	Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000);
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ExpiredContactScanner - scanning to remove items from before "+_timeFormat.format(oldestSurviving));
     }
 	try
 	{
@@ -110,7 +102,7 @@ public class ExpiredContactScanner implements ExpiryScanner
 			    Date timeOfDeath = anItem.getDeadTime();
 			    if (timeOfDeath != null && timeOfDeath.before(oldestSurviving)) 
 			    {
-				jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_3", new Object[]{newUid});
+                    jtsLogger.i18NLogger.info_recovery_ExpiredContactScanner_3(newUid);
 				_objectStore.remove_committed(newUid, _itemTypeName);
 			    }
 			}
@@ -138,8 +130,8 @@ public class ExpiredContactScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.ExpiredContactScanner_4", new Object[]{Integer.toString(_expiryTime)});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Expiry scan interval set to "+_expiryTime+" seconds");
         }
     }
 

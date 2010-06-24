@@ -63,9 +63,6 @@ import org.omg.CORBA.UNKNOWN;
  * @author Peter Furniss (peter.furniss@arjuna.com)
  * @version $Id: RecoveryCoordinatorId.java 2342 2006-03-30 13:06:17Z  $ 
  *
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_1 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_1] - RecoveryCoordinatorId: created RCkey {0}
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_2 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_2] - System exception when creating RecoveryCoordinator object key
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_3 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_3] - RecoveryCoordinatorId could not decode data {0}
  */
 
 public class RecoveryCoordinatorId
@@ -118,14 +115,13 @@ public class RecoveryCoordinatorId
 	    stringBuf.append(_isServerTransaction);
 	    rcObjectKey = stringBuf.toString();
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_1", new Object[]{rcObjectKey});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("RecoveryCoordinatorId: created RCkey "+rcObjectKey);
         }
 	}
-	catch (Exception e)
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_2", e);
-	}
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_recovery_recoverycoordinators_RecoveryCoordinatorId_2(e);
+    }
 	return rcObjectKey;
     }
 
@@ -198,9 +194,9 @@ public class RecoveryCoordinatorId
 	    return new RecoveryCoordinatorId (RCUid, actionUid,
 				 originalProcessUid, isServerTransaction);
 	} else {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryCoordinatorId_3", new Object[]{encodedRCData});
-	    return null;
-	}
+        jtsLogger.i18NLogger.warn_recovery_recoverycoordinators_RecoveryCoordinatorId_3(encodedRCData);
+        return null;
+    }
     }
 
     /**

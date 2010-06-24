@@ -45,8 +45,6 @@ import com.arjuna.ats.arjuna.exceptions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 /**
  * This class is a plug-in module for the recovery manager.  This is a
  * generic class from which TopLevel and Server transaction recovery
@@ -55,25 +53,13 @@ import com.arjuna.common.util.logging.*;
  * This class does not implement {@link com.arjuna.CosRecovery.RecoveryModule}
  * (the plug-in definition) itself - this is left to the subclass.
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_1 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_1] - TransactionRecoveryModule created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_2 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_2] - TransactionRecoveryModule: transaction type not set
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_3 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_3] - TransactionRecoveryModule: scanning for {0}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_4 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_4] - TransactionRecoveryModule: Object store exception: 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_5 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_5] - found transaction  {0}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_6 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_6] - Transaction {0} still in ActionStore
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_7 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_7] - Transaction {0} in state unknown (?).
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8] - Transaction {0} is not in object store - assumed completed
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9] - Activated transaction {0} status = {1}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10] - Transaction {0} still busy
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11] - TransactionRecoveryModule.periodicWorkFirstPass()
- * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12] - TransactionRecoveryModule.periodicWorkSecondPass()
  */
 public abstract class TransactionRecoveryModule
 {
     public TransactionRecoveryModule ()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_1");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("TransactionRecoveryModule created");
     }
 
 	if (_transactionStore == null)
@@ -87,16 +73,12 @@ public abstract class TransactionRecoveryModule
      */
     protected void periodicWorkFirstPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	    {
-		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11");
-	    }
+        jtsLogger.i18NLogger.info_recovery_transactions_TransactionRecoveryModule_11();
 	// Sanity check - make sure we know what type of transaction we're looking for
-	if (_transactionType == null)
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_2");
-	    return;
-	}
+	if (_transactionType == null) {
+        jtsLogger.i18NLogger.warn_recovery_transactions_TransactionRecoveryModule_2();
+        return;
+    }
 
 	// Build a Vector of transaction Uids found in the ObjectStore
 	_transactionUidVector = new Vector();
@@ -106,15 +88,15 @@ public abstract class TransactionRecoveryModule
 
 	try
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_3", new Object[]{_transactionType});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("TransactionRecoveryModule: scanning for "+_transactionType);
         }
 
 	    anyTransactions = _transactionStore.allObjUids(_transactionType, uids);
 	}
 	catch (ObjectStoreException e1)
 	{
-	    jtsLogger.loggerI18N.warn("om.hp.mwlabs.ts.jts.recovery.transactions.TransactionRecoveryModule_4", e1);
+        jtsLogger.i18NLogger.warn_recovery_transactions_TransactionRecoveryModule_4(e1);
 	}
 
 	if (anyTransactions)
@@ -137,8 +119,8 @@ public abstract class TransactionRecoveryModule
 		    {
 			Uid newUid = new Uid (theUid);
 
-			if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_5", new Object[]{newUid});
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("found transaction "+newUid);
             }
 			_transactionUidVector.addElement(newUid);
 		    }
@@ -160,10 +142,7 @@ public abstract class TransactionRecoveryModule
 
     protected void periodicWorkSecondPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	    {
-		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12");
-	    }
+        jtsLogger.i18NLogger.info_recovery_transactions_TransactionRecoveryModule_12();
 
 	// Process the Vector of transaction Uids
 	Enumeration transactionUidEnum = _transactionUidVector.elements();
@@ -176,16 +155,13 @@ public abstract class TransactionRecoveryModule
 		// Is the intentions list still there? Is this the best way to check?
 		if (_transactionStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
 		{
-		    if (jtsLogger.loggerI18N.isInfoEnabled())
-		    {
-			jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_6", new Object[]{currentUid});
-		    }
+            jtsLogger.i18NLogger.info_recovery_transactions_TransactionRecoveryModule_6(currentUid);
 
 		    recoverTransaction(currentUid);
 		} else {
 		    // Transaction has gone away - probably completed normally
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_7", new Object[]{currentUid});
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("Transaction "+currentUid+" in state unknown (?)");
             }
 		}
 	    }
@@ -193,8 +169,8 @@ public abstract class TransactionRecoveryModule
 	    {
 		// Transaction has gone away - probably completed normally
 	
-		if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8", new Object[]{currentUid});
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Transaction "+currentUid+" is not in object store - assumed completed");
         }
 	    }
 	}
@@ -224,15 +200,15 @@ public abstract class TransactionRecoveryModule
 
 	currentStatus = cachedRecoveredTransaction.get_status();
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9", new Object[]{tranUid, Utility.stringStatus(currentStatus)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("Activated transaction "+tranUid+" status = "+Utility.stringStatus(currentStatus));
     }
 
 	// but first check that the original transaction isn't in mid-flight
 	if ( cachedRecoveredTransaction.originalBusy() ) 
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10", new Object[]{tranUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Transaction "+tranUid+" still busy");
         }
 	    return;
 	}

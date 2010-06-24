@@ -65,7 +65,6 @@ import java.lang.ClassCastException;
  * will be recreated in the RecoveryManager if called there (possibly following
  * a crash of this process).
  * 
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator_1 [com.arjuna.ats.internal.jts.recovery.RecoveryCoordinator.GenericRecoveryCreator_1] - GenericRecoveryCreator: Missing params to create
  */
 
 public class GenericRecoveryCreator extends RecoveryCreator
@@ -144,12 +143,11 @@ public static void register(RcvCoManager theManager)
 	    // Pass the RecoveryCoordinator Uid back
 	    params[0] = RCUid;
 	}
-	else
-	{
+	else {
 
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator_1");
-	    
-	}
+        jtsLogger.i18NLogger.warn_recovery_recoverycoordinators_GenericRecoveryCreator_1();
+
+    }
 	return recoveryCoordinator;
     }
 

@@ -57,8 +57,6 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
  * This looks like an atomic action, but is not actually derived from
  * BasicAction or OTS_Transaction. This is because of the way in which the OTS
  * creates and manipulates transactions. This is a nested action proxy.
- * 
- * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2 {0} caught exception: {1}
  */
 
 public class ServerNestedAction extends ServerResource implements
@@ -67,8 +65,6 @@ public class ServerNestedAction extends ServerResource implements
 
     /**
      * Create local transactions with same ids as remote.
-     * 
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ipfailed_2 {0} - could not register interposed hierarchy!
      */
 
     public ServerNestedAction(ServerControl myControl)
@@ -102,16 +98,8 @@ public class ServerNestedAction extends ServerResource implements
 
             Coordinator realCoordinator = _theControl.originalCoordinator();
 
-            if (!(_valid = registerSubTran(realCoordinator)))
-            {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ipfailed_2",
-                                    new Object[]
-                                    { "ServerNestedAction" });
-                }
+            if (!(_valid = registerSubTran(realCoordinator))) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_ipfailed_2("ServerNestedAction");
 
                 /*
                  * Failed to register. Valid is set, and the interposition
@@ -123,10 +111,6 @@ public class ServerNestedAction extends ServerResource implements
         }
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcontrol_1 {0} - attempt to commit with null control!
-     */
-
     public void commit_subtransaction (Coordinator parent)
             throws SystemException
     {
@@ -134,16 +118,9 @@ public class ServerNestedAction extends ServerResource implements
             jtsLogger.logger.debug("ServerNestedAction::commit_subtransaction : " + _theUid);
         }
 
-        if (_theControl == null)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcontrol_1",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction" });
-            }
+        if (_theControl == null) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_1(
+                    "ServerNestedAction.commit_subtransaction");
 
             throw new INVALID_TRANSACTION(ExceptionCodes.SERVERAA_NO_CONTROL,
                     CompletionStatus.COMPLETED_NO);
@@ -173,45 +150,21 @@ public class ServerNestedAction extends ServerResource implements
         {
             theTransaction.commit(false);
         }
-        catch (TRANSACTION_ROLLEDBACK e1)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e1 });
-            }
+        catch (TRANSACTION_ROLLEDBACK e1) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e1);
 
             throw e1;
         }
-        catch (INVALID_TRANSACTION e5)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e5 });
-            }
+        catch (INVALID_TRANSACTION e5) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e5);
 
             throw e5;
         }
-        catch (HeuristicMixed e2)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e2 });
-            }
+        catch (HeuristicMixed e2) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e2);
 
             /*
              * Can't rethrow heuristic exceptions for subtransactions!
@@ -220,46 +173,22 @@ public class ServerNestedAction extends ServerResource implements
             throw new BAD_OPERATION(ExceptionCodes.HEURISTIC_COMMIT,
                     CompletionStatus.COMPLETED_MAYBE);
         }
-        catch (HeuristicHazard e3)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e3 });
-            }
+        catch (HeuristicHazard e3) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e3);
 
             throw new BAD_OPERATION(ExceptionCodes.HEURISTIC_COMMIT,
                     CompletionStatus.COMPLETED_MAYBE);
         }
-        catch (SystemException e4)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e4 });
-            }
+        catch (SystemException e4) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e4);
 
             throw e4;
         }
-        catch (Exception e5)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                new Object[]
-                                { "ServerNestedAction.commit_subtransaction",
-                                        e5 });
-            }
+        catch (Exception e5) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                    "ServerNestedAction.commit_subtransaction", e5);
 
             throw new UNKNOWN(e5.toString());
         }
@@ -270,26 +199,15 @@ public class ServerNestedAction extends ServerResource implements
         }
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcontrol_2 {0} - attempt to rollback transaction will null control!
-     */
-
     public void rollback_subtransaction () throws SystemException
     {
         if (jtsLogger.logger.isDebugEnabled()) {
             jtsLogger.logger.debug("ServerNestedAction::rollback_subtransaction : " + _theUid);
         }
 
-        if (_theControl == null)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcontrol_2",
-                                new Object[]
-                                { "ServerNestedAction.rollback_subtransaction" });
-            }
+        if (_theControl == null) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcontrol_2(
+                    "ServerNestedAction.rollback_subtransaction");
 
             throw new INVALID_TRANSACTION(ExceptionCodes.SERVERAA_NO_CONTROL,
                     CompletionStatus.COMPLETED_NO);
@@ -372,10 +290,6 @@ public class ServerNestedAction extends ServerResource implements
         _resourceRef = null;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.childerror Could not remove child {0} from {1}
-     */
-
     protected final synchronized void destroyResource ()
     {
         if (!_destroyed)
@@ -390,16 +304,9 @@ public class ServerNestedAction extends ServerResource implements
                  * again.
                  */
 
-                if (!_parent.removeChild(this))
-                {
-                    if (jtsLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtsLogger.loggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.childerror",
-                                        new Object[]
-                                        { get_uid(), _parent.get_uid() });
-                    }
+                if (!_parent.removeChild(this)) {
+                    jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_childerror(
+                            get_uid(), _parent.get_uid());
                 }
             }
 
@@ -413,10 +320,6 @@ public class ServerNestedAction extends ServerResource implements
         tidyup();
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcoord {0} - could not register as no Coordinator has been given!
-     */
-
     protected boolean registerSubTran (Coordinator theCoordinator)
     {
         boolean result = false;
@@ -428,50 +331,22 @@ public class ServerNestedAction extends ServerResource implements
                 theCoordinator.register_subtran_aware(_resourceRef);
                 result = true;
             }
-            catch (Inactive e)
-            {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                    new Object[]
-                                    { "ServerNestedAction.registerSubTran", e });
-                }
+            catch (Inactive e) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.registerSubTran", e);
             }
-            catch (NotSubtransaction e)
-            {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                    new Object[]
-                                    { "ServerNestedAction.registerSubTran", e });
-                }
+            catch (NotSubtransaction e) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.registerSubTran", e);
             }
-            catch (SystemException e)
-            {
-                if (jtsLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtsLogger.loggerI18N
-                            .warn(
-                                    "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror_2",
-                                    new Object[]
-                                    { "ServerNestedAction.registerSubTran", e });
-                }
+            catch (SystemException e) {
+                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror_2(
+                        "ServerNestedAction.registerSubTran", e);
             }
         }
-        else
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N
-                        .warn(
-                                "com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcoord",
-                                new Object[]
-                                { "ServerNestedAction.registerSubTran" });
-            }
+        else {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nullcoord(
+                    "ServerNestedAction.registerSubTran");
         }
 
         return result;

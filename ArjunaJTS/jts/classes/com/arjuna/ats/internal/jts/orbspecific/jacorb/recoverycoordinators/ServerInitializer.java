@@ -52,7 +52,6 @@ import org.jacorb.orb.ORB;
  *
  * @author Malik Saheb
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerInitializer_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerInitializer_1] -  Failed in ServerInitializer::post_init - 
  */
 
 public class ServerInitializer 
@@ -78,9 +77,8 @@ public class ServerInitializer
 	    
 	    info.add_server_request_interceptor (new ServerRecoveryInterceptor(theORB));
         }
-        catch (Exception e)
-        {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ServerInitializer_1", e);
+        catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(e);
         }
     }
 

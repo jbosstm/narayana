@@ -72,22 +72,6 @@ import org.omg.CosTransactions.Inactive;
  * find the status of any transaction.
  *
  * Singleton class
- *
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_1 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_1] - StatusChecker.getStatus( {0} ) - current status = {1}
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_2 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_2] - StatusChecker.getStatus( {0} ) - stored status = {1}
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_3 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_3] - StatusChecked.getStatus - found intentions list for apparently unknown transaction: {0}
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_4 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_4] - StatusChecker.getStatus( {0} ) - Status = {1}
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_5 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_5] - StatusChecker.getStatus({0}) - NO_IMPLEMENT = dead
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_6 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_6] - StatusChecker.getStatus({0}) - TRANSIENT = dead
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_7 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_7] - StatusChecker.getStatus({0}) - COMM_FAILURE = live
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_8 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_8] - StatusChecker.getStatus({0}) - OBJECT_NOT_EXIST = dead
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_9 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_9] - BAD_PARAM exception on trying to contact original process
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_10 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_10] - NoTransaction exception on trying to contact original process
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_11 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_11] - CORBA exception on trying to contact original process "
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_12 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_12] - Exception on trying to contact original process
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_13 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_13] - StatusChecker.getStatus({0}) -  no factory, process previously dead
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_14 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_14] - no known contactitem for {0}
- *  @message com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_15 [com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_15] - surprise item in StatusChecker list for {0}, {1}
  */
 
 public class StatusChecker
@@ -207,8 +191,8 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 
 	    otsStatus = factory.getCurrentStatus(otid);
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_1", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - current status = "+Utility.stringStatus(otsStatus));
         }
 
 	    /*
@@ -223,8 +207,8 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    {
 		otsStatus = factory.getStatus(otid);
 
-		if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_2", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - stored status = "+Utility.stringStatus(otsStatus));
         }
 
 		switch (otsStatus.value())
@@ -239,33 +223,32 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 		    return otsStatus;
 		case Status._StatusUnknown:
 		    return otsStatus;
-		default:
-		    {
-			/*
-			 * We got an answer! This probably means that the
-			 * factory has just finished with the transaction, but
-			 * the state hasn't been removed by the file system yet
-			 * - we don't sync the removal to improve performance.
-			 */
+		default: {
+            /*
+                * We got an answer! This probably means that the
+                * factory has just finished with the transaction, but
+                * the state hasn't been removed by the file system yet
+                * - we don't sync the removal to improve performance.
+                */
 
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_3", new Object[] {transactionUid});
+            jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_3(transactionUid);
 
-			otsStatus = Status.StatusUnknown;
-		    }
+            otsStatus = Status.StatusUnknown;
+        }
 		    break;
 		}
 	    }
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_4", new Object[]{transactionUid, Utility.stringStatus(otsStatus)});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - Status = "+Utility.stringStatus(otsStatus));
         }
 
 	    item.markAsAlive();
 	} catch ( NO_IMPLEMENT ex_noimp) {
 	    // the original application has died
 
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_5", new Object[]{transactionUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - NO_IMPLEMENT = dead");
         }
 
 	    originalDead = true;
@@ -277,8 +260,8 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    if (ORBInfo.getOrbEnumValue() == ORBType.JACORB)
 	    {
 		    // the original application has (probably) died
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_6", new Object[]{transactionUid});
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - TRANSIENT = dead");
             }
 		    originalDead = true;
 	    }
@@ -288,8 +271,8 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	     * Probably the original application has died, but only just - do
 	     * not mark either way.
 	     */
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_7", new Object[]{transactionUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - COMM_FAILURE = live");
         }
 
 	} catch ( OBJECT_NOT_EXIST ex_noobj) {
@@ -297,23 +280,23 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    // come up in the same place
 	    // (or, just possibly, the original closed the ots)
 	    originalDead = true;
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_8", new Object[]{transactionUid});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - OBJECT_NOT_EXIST = dead");
         }
 
 	} catch ( BAD_PARAM ex_badparam) {
-	    jtsLogger.loggerI18N.warn(" com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_9");
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_9();
 	    // the transactionUid is invalid !
 	} catch ( NoTransaction ex_notran) {
-	    jtsLogger.loggerI18N.warn(" com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_10");
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_10();
 	    // the transactionUid is invalid !
 	    // no transaction
 	} catch ( SystemException ex_corba ) {
 	    // why did this happen ?
-	    jtsLogger.loggerI18N.warn(" com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_11", ex_corba);
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_11(ex_corba);
 	} catch ( Exception ex_other) {
 	    // this really shouldn't happen
-	    jtsLogger.loggerI18N.warn(" com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_12", ex_other);
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_12(ex_other);
 	}
 
 	if (originalDead)
@@ -333,8 +316,8 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
     else
     {
 	// factory in item is null - process already dead
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_13", new Object[]{transactionUid});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") -  no factory, process previously dead");
     }
 
 	/*
@@ -400,14 +383,14 @@ private FactoryContactItem getItem (Uid uid)
 
 	if (theItem == null) {
 
-	    // if it's still null, either something has gone wrong
-	    // - how did it get in the recoverycoordkey when the
-	    //   factory was unknown
-	    // or it's very old and been fully deleted
+        // if it's still null, either something has gone wrong
+        // - how did it get in the recoverycoordkey when the
+        //   factory was unknown
+        // or it's very old and been fully deleted
 
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_14", new Object[]{uid});
-	    // treat as long-dead process - return null
-	}
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_14(uid);
+        // treat as long-dead process - return null
+    }
     }
 
     return theItem;
@@ -421,8 +404,8 @@ private FactoryContactItem getKnownItem(Uid uid)
 	theItem = (FactoryContactItem) _itemFromUid.get(uid);
 	return theItem;
     } catch (ClassCastException ex) {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.StatusChecker_15", new Object[]{uid, ex});
-	return null;
+        jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_15(uid, ex);
+        return null;
     }
 }
 

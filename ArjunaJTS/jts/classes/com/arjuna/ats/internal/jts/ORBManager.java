@@ -44,10 +44,6 @@ import com.arjuna.ats.jts.logging.*;
 
 public class ORBManager
 {
-
-    /**
-     * @message com.arjuna.ats.internal.jts.ORBManager The ORB has not been initialized yet
-     */
     public static final com.arjuna.orbportability.ORB getORB ()
     {
 	if (isInitialised() )
@@ -56,7 +52,7 @@ public class ORBManager
 	    }
 	else
 	    {
-		jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.ORBManager");
+            jtsLogger.i18NLogger.fatal_ORBManager();
 		throw new com.arjuna.ats.arjuna.exceptions.FatalError();
 	    }
     }
@@ -90,7 +86,7 @@ public class ORBManager
 	    }
 	else
 	    {
-		jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.ORBManager");
+            jtsLogger.i18NLogger.fatal_ORBManager();
 		throw new com.arjuna.ats.arjuna.exceptions.FatalError();
 	    }
     }

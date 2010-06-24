@@ -47,7 +47,6 @@ import com.arjuna.common.util.logging.*;
  * subordinate coordinators) may use the replay_completion response to
  * trigger their own rollback.
  * 
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor_1 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor_1] - ResourceCompletor.rollback() - rollback failed: {0}
  */
 
 public class ResourceCompletor extends Thread
@@ -79,8 +78,8 @@ public class ResourceCompletor extends Thread
 	}
 	catch (Exception e)
 	{
-	    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor_1", new Object[]{e});
+	    if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("ResourceCompletor.rollback() - rollback failed: "+e);
         }
 	}
     }

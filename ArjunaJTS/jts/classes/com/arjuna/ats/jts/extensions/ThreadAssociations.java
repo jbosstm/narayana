@@ -53,7 +53,6 @@ import org.omg.CORBA.SystemException;
  * @version $Id: ThreadAssociations.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.0.
  *
- * @message com.arjuna.ats.jts.extensions.threadasserror {0} caught exception {1}
  */
 
 public class ThreadAssociations
@@ -176,11 +175,7 @@ public class ThreadAssociations
 			    }
 			    catch (SystemException e)
 			    {
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-				    jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.threadasserror",
-							      new Object[] {"ThreadAssociations.updateAssociations", e} );
-				}
+                    jtsLogger.i18NLogger.warn_extensions_threadasserror("ThreadAssociations.updateAssociations", e);
 			    }
 			}
 		    }
@@ -203,11 +198,7 @@ public class ThreadAssociations
 			}
 			catch (SystemException e)
 			{
-			    if (jtsLogger.loggerI18N.isWarnEnabled())
-			    {
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.threadasserror",
-							  new Object[] {"ThreadAssociations.updateAssociations", e} );
-			    }
+                jtsLogger.i18NLogger.warn_extensions_threadasserror("ThreadAssociations.updateAssociations", e);
 			}
 		    }
 		}

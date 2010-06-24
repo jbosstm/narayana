@@ -118,10 +118,6 @@ public String name ()
 	return "OTS_Interposition";
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.invalidparam Invalid portable interceptor transaction parameter!
-     */
-
 public void send_request (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled())
@@ -181,7 +177,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		if ( localData != null && (localData.type().kind().value() != TCKind._tk_null) )
 		{
 		    if ( (threadId = localData.extract_string()) == null )
-			throw new UNKNOWN(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.invalidparam"));
+			throw new UNKNOWN(jtsLogger.i18NLogger.get_orbspecific_jacorb_interceptors_interposition_invalidparam());
 		}
 		else
 		    threadId = ThreadUtil.getThreadId() ;

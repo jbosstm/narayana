@@ -59,12 +59,6 @@ import java.lang.Object;
  * JacOrb .  The RCs are created locally but also will be
  * recreated in the RecoveryManager if necessary following a crash
  * of this process.
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1] - JacOrbRCManager: Created reference for tran {0} = {1}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2] - RCManager.makeRC did not make rcvco reference
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3] - RCManager could not find file in object store.
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4] - RCManager could not find file in object store during setup.
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_5 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_5] - Unexpected exception during IOR setup {0}
  */
 
 public class JacOrbRCManager implements RcvCoManager
@@ -116,27 +110,25 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
 
 		rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
 
-		if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1", new Object[]{tranUid, rc});
+		if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("JacOrbRCManager: Created reference for tran "+tranUid+" = "+rc);
         }
 	    }
 	    else
 	    {
 		if (JacOrbRCManager._runWithoutDaemon)
 		    throw new NO_IMPLEMENT();
-		else
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3");
+		else {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_3();
 
-		    rc = null;
-		}
+            rc = null;
+        }
 	    }
 	}
 
-	catch (Exception ex)
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2", ex);
-	}
+	catch (Exception ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_2(ex);
+    }
 
 	return rc;
     }
@@ -169,19 +161,17 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
 
 		    InputObjectState iState = currentStore.read_committed(new Uid( JacOrbRCServiceInit.uid4Recovery), JacOrbRCServiceInit.type());
 
-		    if (iState != null)
-			ref_ReCoo = iState.unpackString();
-		    else
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4");
+            if (iState != null)
+                ref_ReCoo = iState.unpackString();
+            else
+                jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_4();
 		}
-		catch (java.io.FileNotFoundException ex)
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4");
-		}
-		catch (Exception ex)
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_5", new java.lang.Object[]{ex});
-		}
+		catch (java.io.FileNotFoundException ex) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_4();
+        }
+		catch (Exception ex) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_5(ex);
+        }
 	    }
 	}
     }

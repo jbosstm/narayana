@@ -38,8 +38,6 @@ import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.utils.Helper;
@@ -84,11 +82,6 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ArjunaTransactionImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.generror {0}
- *          caught exception: {1}
- * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rbofail {0}
- *          attempt to mark transaction {1} as rollback only threw: {2}
  */
 
 public class ArjunaTransactionImple extends
@@ -258,11 +251,6 @@ public class ArjunaTransactionImple extends
 	 * the Control referencing the transaction and vice versa.
 	 */
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.zsync {0} -
-	 *          none zero Synchronization list!
-	 */
-
 	public void finalize ()
 	{
 		if (jtsLogger.logger.isDebugEnabled()) {
@@ -270,20 +258,15 @@ public class ArjunaTransactionImple extends
                     + get_uid() + " >");
         }
 
-		if (_synchs != null)
-		{
-			// should not happen if the transaction has terminated
+		if (_synchs != null) {
+            // should not happen if the transaction has terminated
 
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.szync", new Object[]
-				{ "ArjunaTransactionImple.finalize()" });
-			}
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_zsync("ArjunaTransactionImple.finalize()");
 
-			// "delete" list anyway, but don't do anything with list elements
+            // "delete" list anyway, but don't do anything with list elements
 
-			_synchs = null;
-		}
+            _synchs = null;
+        }
 
 		controlHandle = null;
 
@@ -781,11 +764,6 @@ public class ArjunaTransactionImple extends
 	 * Resources are only registered with the current transaction, whereas
 	 * subtransaction aware resources are registered with their parents when the
 	 * current transaction ends.
-	 *
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rccreate
-	 *          Creation of RecoveryCoordinator for {0} threw: {1}
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rcnotcreated
-	 *          not created!
 	 */
 
 	public RecoveryCoordinator register_resource (Resource r)
@@ -854,8 +832,8 @@ public class ArjunaTransactionImple extends
 
 			if (recoveryCoordinator == null)
 				throw new BAD_OPERATION(
-						"RecoveryCoordinator "
-								+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.coordinator.rcnotcreated"));
+                        "RecoveryCoordinator "
+                                + jtsLogger.i18NLogger.get_orbspecific_coordinator_rcnotcreated());
 		}
 		catch (NO_IMPLEMENT ex)
 		{
@@ -866,38 +844,26 @@ public class ArjunaTransactionImple extends
 
 			recoveryCoordinator = null;
 		}
-		catch (SystemException e)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.rccreate", new Object[]
-				{ get_uid(), e });
-			}
+		catch (SystemException e) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_rccreate(get_uid(), e);
 
-			/*
-			 * Set transaction to rollback only and re-throw exception.
-			 */
+            /*
+                * Set transaction to rollback only and re-throw exception.
+                */
 
-			try
-			{
-				rollback_only();
-			}
-			catch (Inactive ex1)
-			{
-			}
-			catch (SystemException ex2)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.rbofail", new Object[]
-					{ "ArjunaTransactionImple.register_resource", get_uid(), ex2 });
-				}
+            try {
+                rollback_only();
+            }
+            catch (Inactive ex1) {
+            }
+            catch (SystemException ex2) {
+                jtsLogger.i18NLogger.warn_orbspecific_coordinator_rbofail("ArjunaTransactionImple.register_resource", get_uid(), ex2);
 
-				throw ex2;
-			}
+                throw ex2;
+            }
 
-			throw e;
-		}
+            throw e;
+        }
 
 		if (recoveryCoordinator != null)
 		{
@@ -1487,44 +1453,33 @@ public class ArjunaTransactionImple extends
 					c.before_completion();
 				}
 			}
-			catch (SystemException e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-					{ "ArjunaTransactionImple.doBeforeCompletion", e });
-				}
+			catch (SystemException e) {
+                jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.doBeforeCompletion", e);
 
-				if (!problem)
-				{
-					exp = e;
+                if (!problem) {
+                    exp = e;
 
-					problem = true;
+                    problem = true;
 
-					/*
-					 * Mark as rollback_only, so when we try to commit it will
-					 * fail.
-					 */
+                    /*
+                          * Mark as rollback_only, so when we try to commit it will
+                          * fail.
+                          */
 
-					try
-					{
-						rollback_only();
-					}
-					catch (Inactive ex)
-					{
-						/*
-						 * This should not happen. If it does, continue with
-						 * commit to tidy-up.
-						 */
+                    try {
+                        rollback_only();
+                    }
+                    catch (Inactive ex) {
+                        /*
+                               * This should not happen. If it does, continue with
+                               * commit to tidy-up.
+                               */
 
-						if (jtsLogger.loggerI18N.isWarnEnabled())
-						{
-							jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.rbofail", new Object[]
-							{ "ArjunaTransactionImple.doBeforeCompletion", get_uid(), ex });
-						}
-					}
-				}
-			}
+                        jtsLogger.i18NLogger.warn_orbspecific_coordinator_rbofail(
+                                "ArjunaTransactionImple.doBeforeCompletion", get_uid(), ex);
+                    }
+                }
+            }
 			finally
 			{
 				if (doSuspend)
@@ -1557,11 +1512,6 @@ public class ArjunaTransactionImple extends
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.txrun {0}
-	 *          called on still running transaction!
-	 */
-
 	protected void doAfterCompletion (org.omg.CosTransactions.Status myStatus)
 			throws SystemException
 	{
@@ -1570,16 +1520,11 @@ public class ArjunaTransactionImple extends
                     + get_uid());
         }
 
-		if (myStatus == Status.StatusActive)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.txrun", new Object[]
-				{ "ArjunaTransactionImple.doAfterCompletion" });
-			}
+		if (myStatus == Status.StatusActive) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_txrun("ArjunaTransactionImple.doAfterCompletion");
 
-			return;
-		}
+            return;
+        }
 
 		boolean problem = false;
 		SystemException exp = null;
@@ -1824,11 +1769,6 @@ public class ArjunaTransactionImple extends
 		return theStatus;
 	}
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.uidfail {0} -
-	 *          could not get unique identifier of object.
-	 */
-
 	protected final AbstractRecord createOTSRecord (boolean propagate, Resource resource, Coordinator coord)
 	{
 		return createOTSRecord(propagate, resource, coord, null);
@@ -1904,14 +1844,9 @@ public class ArjunaTransactionImple extends
 					u = null;
 				}
 
-				if (u == null)
-				{
-					if (jtsLogger.loggerI18N.isWarnEnabled())
-					{
-						jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.uidfail", new Object[]
-						{ "ArjunaTransactionImple.createOTSRecord" });
-					}
-				}
+				if (u == null) {
+                    jtsLogger.i18NLogger.warn_orbspecific_coordinator_uidfail("ArjunaTransactionImple.createOTSRecord");
+                }
 			}
 
 			if (u == null)
@@ -2135,16 +2070,11 @@ public class ArjunaTransactionImple extends
 		{
 			context.parents = resizeHierarchy(context.parents, index);
 		}
-		catch (Exception e)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.resizeHierarchy", e });
-			}
+		catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.resizeHierarchy", e);
 
-			context = null;
-		}
+            context = null;
+        }
 
 		return context;
 	}
@@ -2228,61 +2158,31 @@ public class ArjunaTransactionImple extends
 				controlHandle = null;
 			}
 		}
-		catch (ActiveThreads ex1)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex1 });
-			}
-		}
-		catch (BadControl ex2)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex2 });
-			}
-		}
-		catch (ActiveTransaction ex3)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex3 });
-			}
-		}
-		catch (Destroyed ex4)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex4 });
-			}
-		}
-		catch (OutOfMemoryError ex5)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex5 });
-			}
+		catch (ActiveThreads ex1) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex1);
+        }
+		catch (BadControl ex2) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex2);
+        }
+		catch (ActiveTransaction ex3) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex3);
+        }
+		catch (Destroyed ex4) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex4);
+        }
+		catch (OutOfMemoryError ex5) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex5);
 
-			/*
-			 * Rather than try again after running gc simply return and let the
-			 * user deal with it. May help with memory!
-			 */
+            /*
+                * Rather than try again after running gc simply return and let the
+                * user deal with it. May help with memory!
+                */
 
-			System.gc();
-		}
-		catch (Exception ex6)
-		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.generror", new Object[]
-				{ "ArjunaTransactionImple.destroyAction", ex6 });
-			}
-		}
+            System.gc();
+        }
+		catch (Exception ex6) {
+            jtsLogger.i18NLogger.warn_orbspecific_coordinator_generror("ArjunaTransactionImple.destroyAction", ex6);
+        }
 	}
 
 	protected ArjunaTransactionImple parentTransaction; // rather than rely on
@@ -2317,11 +2217,6 @@ public class ArjunaTransactionImple extends
 
 	static boolean _propagateRemainingTimeout = true;  // OTS 1.2 onwards supported this.
 
-	/**
-	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.ipunknown
-	 *          {0} - unknown interposition type: {1}
-	 */
-
 	static
 	{
 		String interpositionType = jtsPropertyManager.getJTSEnvironmentBean().getInterposition();
@@ -2332,14 +2227,9 @@ public class ArjunaTransactionImple extends
 
 			if (ipType != -1)
 				ArjunaTransactionImple._ipType = ipType;
-			else
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.coordinator.ipunknown", new Object[]
-					{ "ArjunaTransactionImple.init", interpositionType });
-				}
-			}
+			else {
+                jtsLogger.i18NLogger.warn_orbspecific_coordinator_ipunknown("ArjunaTransactionImple.init", interpositionType);
+            }
 		}
 
 		_subtran = jtsPropertyManager.getJTSEnvironmentBean().isSupportSubtransactions();

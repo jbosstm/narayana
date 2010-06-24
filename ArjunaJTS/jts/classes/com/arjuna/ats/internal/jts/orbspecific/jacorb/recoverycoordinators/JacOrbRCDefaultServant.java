@@ -47,11 +47,6 @@ import com.arjuna.common.util.logging.*;
 
 import java.lang.Object;
 
-/**
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbDefaultServant_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_1] - JacOrbDefaultServant replay_completion for recoverId {0}
-* @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbDefaultServant_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_2] - JacOrbDefaultServant replay_completion for ObjectId {0}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_3] - JacOrbServant.replay_completion got {0}
- */
 
 public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 {
@@ -93,10 +88,8 @@ public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 	     // convert that to the structured id
 	     RecoveryCoordinatorId  recovCoId = RecoveryCoordinatorId.reconstruct(objectIdString);
 	     
-	     if (jtsLogger.loggerI18N.isDebugEnabled()) {
-             jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_1", new Object[]{recovCoId});
-
-             jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_2", new Object[]{objectIdString});
+	     if (jtsLogger.logger.isDebugEnabled()) {
+             jtsLogger.logger.debug("JacOrbDefaultServant replay_completion for Id "+recovCoId);
          }
 	     
 	     // and do the real replay
@@ -108,11 +101,10 @@ public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 	    throw exp;
 	}
 	/**/
-	catch (Exception ex)
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCDefaultServant_3", ex);
+	catch (Exception ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCDefaultServant_3(ex);
 
-	    return Status.StatusUnknown;
-	}
+        return Status.StatusUnknown;
+    }
     }
 }

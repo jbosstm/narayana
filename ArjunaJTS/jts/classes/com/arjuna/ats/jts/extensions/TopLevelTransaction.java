@@ -71,10 +71,6 @@ public class TopLevelTransaction extends AtomicTransaction
 	_originalTransaction = null;
     }
 
-    /**
-     * @message com.arjuna.ats.jts.extensions.tltnestedscope Top-level transaction going out of scope with nested transaction {0} still set.
-     */
-
     public void finalize ()
     {
 	if (jtsLogger.logger.isDebugEnabled()) {
@@ -101,11 +97,7 @@ public class TopLevelTransaction extends AtomicTransaction
 
 	    coord = null;
 
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.extensions.tltnestedscope",
-					  new Object[] {((name != null) ? name : "UNKNOWN") } );
-	    }
+        jtsLogger.i18NLogger.warn_extensions_tltnestedscope(((name != null) ? name : "UNKNOWN"));
 
 	    name = null;
 	    _originalTransaction = null;

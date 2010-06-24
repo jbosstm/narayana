@@ -74,8 +74,6 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
  * would not have to call resume at all.
  *
  * This is a top-level action proxy.
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror {0} caught exception: {1}
  */
 
 /*
@@ -91,10 +89,6 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 public class ServerTopLevelAction extends ServerResource implements org.omg.CosTransactions.ResourceOperations
 {
-
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ipfailed {0} - could not register interposed hierarchy!
-     */
 
 public ServerTopLevelAction (ServerControl control)
     {
@@ -125,19 +119,14 @@ public ServerTopLevelAction (ServerControl control)
 
 	    Coordinator realCoordinator = _theControl.originalCoordinator();
 
-	    if (!(_valid = registerResource(realCoordinator)))
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ipfailed",
-					      new Object[] {"ServerTopLevelAction"});
-		}
+	    if (!(_valid = registerResource(realCoordinator))) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_ipfailed("ServerTopLevelAction");
 
-		/*
-		 * Failed to register. Valid is set, and the interposition
-		 * controller will now deal with this.
-		 */
-	    }
+            /*
+            * Failed to register. Valid is set, and the interposition
+            * controller will now deal with this.
+            */
+        }
 
 	    realCoordinator = null;
 	}
@@ -473,10 +462,6 @@ public void forget () throws SystemException
 	    throw new BAD_OPERATION();
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.notx {0} - no transaction!
-     */
-
 public void commit_one_phase () throws HeuristicHazard, SystemException
     {
 	if (jtsLogger.logger.isDebugEnabled()) {
@@ -496,16 +481,11 @@ public void commit_one_phase () throws HeuristicHazard, SystemException
 
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
 
-	if (theTransaction == null)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.notx",
-					  new Object[] {"ServerTopLevelAction.commit_one_phase"});
-	    }
+	if (theTransaction == null) {
+        jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_notx("ServerTopLevelAction.commit_one_phase");
 
-	    throw new INVALID_TRANSACTION(ExceptionCodes.NO_TRANSACTION, CompletionStatus.COMPLETED_NO);
-	}
+        throw new INVALID_TRANSACTION(ExceptionCodes.NO_TRANSACTION, CompletionStatus.COMPLETED_NO);
+    }
 
 	//	ThreadActionData.pushAction(theTransaction);
 
@@ -587,14 +567,9 @@ protected synchronized void destroyResource ()
 		if (Interposition.destroy(get_uid()))
 		    _destroyed = true;
 	    }
-	    catch (Exception e)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.destroyResource", e});
-		}
-	    }
+	    catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.destroyResource", e);
+        }
 
 	    try
 	    {
@@ -604,22 +579,13 @@ protected synchronized void destroyResource ()
 		    _theResource = null;
 		}
 	    }
-	    catch (Exception e)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.destroyResource", e});
-		}
-	    }
+	    catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.destroyResource", e);
+        }
 	}
 
 	tidyup();
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nocoord {0} - no coordinator to use!
-     */
 
 protected boolean registerResource (Coordinator theCoordinator)
     {
@@ -652,55 +618,25 @@ protected boolean registerResource (Coordinator theCoordinator)
 		else
 		    result = true;
 	    }
-	    catch (ClassCastException classCastException)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", classCastException});
-		}
-	    }
-	    catch (Inactive ine)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", ine});
-		}
-	    }
-	    catch (TRANSACTION_ROLLEDBACK ex1)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", ex1});
-		}
-	    }
-	    catch (INVALID_TRANSACTION ex2)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", ex2});
-		}
-	    }
-	    catch (Exception e)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", e}, e);
-		}
-	    }
+	    catch (ClassCastException classCastException) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.registerResource", classCastException);
+        }
+	    catch (Inactive ine) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.registerResource", ine);
+        }
+	    catch (TRANSACTION_ROLLEDBACK ex1) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.registerResource", ex1);
+        }
+	    catch (INVALID_TRANSACTION ex2) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.registerResource", ex2);
+        }
+	    catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_generror("ServerTopLevelAction.registerResource", e);
+        }
 	}
-	else
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nocoord",
-					  new Object[] {"ServerTopLevelAction.registerResource"});
-	    }
-	}
+	else {
+        jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_arjuna_nocoord("ServerTopLevelAction.registerResource");
+    }
 
 	return result;
     }

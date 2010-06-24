@@ -39,8 +39,6 @@ import com.arjuna.ats.internal.jts.*;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;
@@ -240,9 +238,6 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 	 * Since we assume that a factory will either be remote or local, we can
 	 * destroy this object and rely upon the ORB to return an exception to
 	 * subsequent clients which indicates they no longer have a valid reference.
-	 * 
-	 * @message com.arjuna.ats.internal.jts.orbspecific.destroyfailed could not
-	 *          destroy object:
 	 */
 
 	public synchronized void destroy () throws ActiveTransaction,
@@ -287,11 +282,9 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-
 			throw new BAD_OPERATION(
-					"ControlImple "
-							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.destroyfailed")
+                    "ControlImple "
+                            + jtsLogger.i18NLogger.get_orbspecific_destroyfailed()
 							+ e);
 		}
 	}
@@ -596,9 +589,6 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 	 * No need to protect with mutex since only called from destroy (and
 	 * destructor), which is protected with a mutex. Do not call directly
 	 * without synchronizing.
-	 * 
-	 * @message com.arjuna.ats.internal.jts.orbspecific.tidyfail {0} attempt to
-	 *          clean up failed with: {1}
 	 */
 
 	protected final void tidyup ()
@@ -625,11 +615,7 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 		}
 		catch (Exception e)
 		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.threaderror", new Object[]
-				{ "ControlImple.tidyup", e });
-			}
+            jtsLogger.i18NLogger.warn_orbspecific_tidyfail("ControlImple.tidyup", e);
 		}
 	}
 	

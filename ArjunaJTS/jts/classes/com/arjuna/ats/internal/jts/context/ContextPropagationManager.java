@@ -47,11 +47,6 @@ import com.arjuna.orbportability.ORBInfo;
 
 public class ContextPropagationManager
 {
-
-    /**
-     * @message com.arjuna.ats.internal.jts.context.orbnotsupported {0} does not support ORB: {1}
-     */
-
     public ContextPropagationManager ()
     {
 	String contextMode = jtsPropertyManager.getJTSEnvironmentBean().getContextPropMode();
@@ -90,11 +85,7 @@ public class ContextPropagationManager
 	    break;
 	default:
 	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.orbnotsupported",
-					      new Object[] {"ContextPropagationManager", ORBInfo.getInfo()} );
-		}
+            jtsLogger.i18NLogger.warn_context_orbnotsupported("ContextPropagationManager", ORBInfo.getInfo());
 	    }
 	    break;
 	}

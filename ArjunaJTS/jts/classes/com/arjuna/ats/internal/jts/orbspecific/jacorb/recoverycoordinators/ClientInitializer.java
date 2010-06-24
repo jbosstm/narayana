@@ -51,8 +51,6 @@ import org.jacorb.orb.ORB;
  * with the ORB.
  *
  * @author Malik Saheb
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientInitializer_ [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientInitializer_1] -  Failed in ClientInitializer::post_init - 
  */
 
 public class ClientInitializer 
@@ -90,9 +88,8 @@ public class ClientInitializer
             info.add_client_request_interceptor 
 		(new ClientForwardInterceptor(theORB, piCurrent, outSlotId));
         }
-        catch (Exception e)
-        {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.ClientInitialize_1", e);
+        catch (Exception e) {
+            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ClientInitializer_1(e);
         }
     }
 

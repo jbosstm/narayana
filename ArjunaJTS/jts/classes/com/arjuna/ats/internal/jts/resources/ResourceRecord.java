@@ -113,8 +113,6 @@ import java.io.IOException;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ResourceRecord.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- * @message com.arjuna.ats.internal.jts.resources.rrcaught {0} caught exception: {1}
  */
 
 public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRecord
@@ -224,17 +222,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	return _resourceHandle;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.resources.rrillegalvalue {0} called illegally.
-     */
-
     public void setValue (Object o)
     {
-	if (jtsLogger.loggerI18N.isWarnEnabled())
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.rrillegalvalue",
-				      new Object[] {"ResourceRecord.set_value"} );
-	}
+        jtsLogger.i18NLogger.warn_resources_rrillegalvalue("ResourceRecord.set_value");
     }
 
     /**
@@ -437,16 +427,11 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	    else
 		return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	}
-	catch (SystemException ex3)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.rrcaught",
-					  new Object[] {"ResourceRecord.topLevelAbort", ex3} );
-	    }
-	    
-	    return TwoPhaseOutcome.FINISH_ERROR;
-	}
+	catch (SystemException ex3) {
+        jtsLogger.i18NLogger.warn_resources_rrcaught("ResourceRecord.topLevelAbort", ex3);
+
+        return TwoPhaseOutcome.FINISH_ERROR;
+    }
     
 	return TwoPhaseOutcome.FINISH_OK;
     }
@@ -483,16 +468,11 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	{
 	    return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	}
-	catch (SystemException ex5)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.rrcaught",
-					  new Object[] {"ResourceRecord commit -", ex5} );
-	    }
+	catch (SystemException ex5) {
+        jtsLogger.i18NLogger.warn_resources_rrcaught("ResourceRecord commit -", ex5);
 
-	    return TwoPhaseOutcome.FINISH_ERROR;
-	}
+        return TwoPhaseOutcome.FINISH_ERROR;
+    }
 
 	return TwoPhaseOutcome.FINISH_OK;
     }
@@ -585,10 +565,6 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	return TwoPhaseOutcome.FINISH_OK;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.resources.rrinvalid {0} called without a resource!
-     */
-
     public boolean forgetHeuristic ()
     {
 	try
@@ -599,23 +575,13 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
 		return true;
 	    }
-	    else
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.rrinvalid",
-					      new Object[] {"ResourceRecord.forgetHeuristic"} );
-		}
-	    }
+	    else {
+            jtsLogger.i18NLogger.warn_resources_rrinvalid("ResourceRecord.forgetHeuristic");
+        }
 	}
-	catch (SystemException e)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.resources.rrcaught",
-					  new Object[] {"ResourceRecord.forgetHeuristic", e} );
-	    }
-	}
+	catch (SystemException e) {
+        jtsLogger.i18NLogger.warn_resources_rrcaught("ResourceRecord.forgetHeuristic", e);
+    }
 
 	return false;
     }

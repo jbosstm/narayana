@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restrict
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.exceptions.TxError;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.jts.interposition.*;
@@ -90,25 +91,17 @@ public final synchronized ServerControl deepestControl ()
 	    return control();
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3 {0} - found concurrent ({1}) transactions!
-     * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4 {0} Concurrent children found for restricted interposition!
-     */
     public final synchronized ServerRestrictedNestedAction child ()
     {
         ServerRestrictedNestedAction toReturn = null;
         List<ServerNestedAction> children = getChildren();
 
         // There should be only one child!
-        if (children.size() > 1)
-        {
-            if (jtsLogger.loggerI18N.isWarnEnabled())
-            {
-                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3",
-                        new Object[] {"ServerRestrictedTopLevelAction.child", children.size()});
-            }
+        if (children.size() > 1) {
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_restricted_contxfound_3(
+                    "ServerRestrictedTopLevelAction.child", Integer.toString(children.size()));
 
-            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4"));
+            throw new TxError(jtsLogger.i18NLogger.get_orbspecific_interposition_resources_restricted_contx_4(Integer.toString(children.size())));
         }
         else
         {

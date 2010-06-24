@@ -57,8 +57,6 @@ import org.omg.PortableInterceptor.ServerRequestInterceptor;
 /**
  * PortableInterceptor::ServerRequestInterceptor implementation which checks
  * that a transaction context was received.
- *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie {0} caught an unexpected exception: {1}
  */
 
 /*
@@ -222,24 +220,16 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	}
 	catch (SystemException ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_reply", ex}, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie(
+                "InterpositionServerRequestInterceptorImpl::send_reply", ex);
 	    
 	    throw ex;
 	}
-	catch (Exception e)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_reply", e} );
-	    }
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_reply", e);
 
-	    throw new BAD_OPERATION();
-	}
+        throw new BAD_OPERATION();
+    }
     }
 
 public void send_exception (ServerRequestInfo request_info) throws SystemException
@@ -253,26 +243,16 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 	{
 	    suspendContext(request_info);
 	}
-	catch (SystemException ex)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_exception", ex} );
-	    }
+	catch (SystemException ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", ex);
 
-	    throw ex;
-	}
-	catch (Exception e)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_exception", e} );
-	    }
+        throw ex;
+    }
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_exception", e);
 
-	    throw new BAD_OPERATION();
-	}
+        throw new BAD_OPERATION();
+    }
     }
 
 public void send_other (ServerRequestInfo request_info) throws SystemException
@@ -286,26 +266,16 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 	{
 	    suspendContext(request_info);
 	}
-	catch (SystemException ex)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_other", ex} );
-	    }
+	catch (SystemException ex) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", ex);
 
-	    throw ex;
-	}
-	catch (Exception e)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_other", e} );
-	    }
+        throw ex;
+    }
+	catch (Exception e) {
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_interposition_srie("InterpositionServerRequestInterceptorImpl::send_other", e);
 
-	    throw new BAD_OPERATION();
-	}
+        throw new BAD_OPERATION();
+    }
     }
 
     /*

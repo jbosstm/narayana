@@ -54,14 +54,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
  * find the status of any transaction.
  *
  * Identifying uid is the processUid
- *
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_1 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_1] - Problem with storing process/factory link {0} 
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_2 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_2] - Attempted to read FactoryContactItem of different version
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_3 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_3] - Stored IOR is not an ArjunaFactory
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_4 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_4] - Problem with restoring process/factory link {0} 
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_5 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_5] - Problem with restoring process/factory link 
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_6 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_6] - Problem with storing process/factory link 
- *  @message com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_7 [com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_7] - Problem with removing contact item {0}
  */
 
 public class FactoryContactItem 
@@ -249,13 +241,11 @@ private boolean save_state (OutputObjectState objstate)
 	}
 	return true;
     }
-    catch (java.io.IOException ex)
-    {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_1", new Object[] {ex});
+    catch (java.io.IOException ex) {
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_1(ex);
     }
-    catch (Exception exp)
-    {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_1", new Object[] {exp});
+    catch (Exception exp) {
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_1(exp);
     }
 
     return false;
@@ -271,8 +261,8 @@ private boolean restore_state (InputObjectState objstate)
     try {
 	int oldversion = objstate.unpackInt();
 	if (oldversion != version) {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_2");
-	}
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_2();
+    }
 	long oldtime = objstate.unpackLong();
 	_creationTime = new Date(oldtime);
 	String iorAsString = objstate.unpackString();
@@ -288,10 +278,9 @@ private boolean restore_state (InputObjectState objstate)
 	    ***/
 
 	    _factory = ArjunaFactoryHelper.narrow(corbject);
-	    if (_factory == null)
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_3");
-	    }
+	    if (_factory == null) {
+            jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_3();
+        }
 	    _deadTime = null;
 	} else {
 	    _factory = null;
@@ -301,13 +290,11 @@ private boolean restore_state (InputObjectState objstate)
 	_aliveTime = null;
 	return true;
     }
-    catch (java.io.IOException ex)
-    {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_4", new Object[] {ex});
+    catch (java.io.IOException ex) {
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_4(ex);
     }
-    catch (Exception exp)
-    {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_4", new Object[] {exp});
+    catch (Exception exp) {
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_4(exp);
     }
     
     return false;
@@ -324,28 +311,27 @@ private boolean saveMe ()
 	    return true;
 	}
     } catch (ObjectStoreException exo) {
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_1", new Object[] {exo});
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_1(exo);
     }
     return false;
 }
 
 private boolean restoreMe()
 {
-    try
-    {
-	InputObjectState objstate = getStore().read_committed(_uid, _pseudoTypeName);
+    try {
+        InputObjectState objstate = getStore().read_committed(_uid, _pseudoTypeName);
 
-	if (objstate == null)  // not in object store any more
-	    return false;
-	
-	if ( restore_state(objstate)) {
-	    return true;
-	}
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_5");
+        if (objstate == null)  // not in object store any more
+            return false;
+
+        if (restore_state(objstate)) {
+            return true;
+        }
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_5();
     } catch (ObjectStoreException exo) {
-	// this shouldn't happen, because we shouldn't be looking for a factory
-	// that was never recorded
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_6");
+        // this shouldn't happen, because we shouldn't be looking for a factory
+        // that was never recorded
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_6();
     }
     return false;
 }
@@ -355,9 +341,9 @@ private static boolean removeMe(Uid uid)
     try {
 	return getStore().remove_committed(uid, _pseudoTypeName);
     } catch (ObjectStoreException exo) {
-	// this shouldn't happen, because we shouldn't be looking for a factory
-	// that was never recorded
-	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.contact.FactoryContactItem_7", new Object[] {exo});
+        // this shouldn't happen, because we shouldn't be looking for a factory
+        // that was never recorded
+        jtsLogger.i18NLogger.warn_recovery_contact_FactoryContactItem_7(exo);
     }
     return false;
 }

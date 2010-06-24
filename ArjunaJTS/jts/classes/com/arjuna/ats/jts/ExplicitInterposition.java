@@ -58,8 +58,6 @@ import org.omg.CORBA.SystemException;
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: ExplicitInterposition.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- * 
- * @message com.arjuna.ats.jts.excalledagain {0} called multiple times.
  */
 
 public class ExplicitInterposition
@@ -138,11 +136,6 @@ public class ExplicitInterposition
 		registerTransaction(ctx);
 	}
 
-	/**
-	 * @message com.arjuna.ats.jts.exunregfail {0} - could not unregister from
-	 *          transaction!
-	 */
-
 	public void finalize ()
 	{
 		if (jtsLogger.logger.isDebugEnabled()) {
@@ -157,11 +150,7 @@ public class ExplicitInterposition
 			}
 			catch (Exception e)
 			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.exunregfail", new Object[]
-					{ "ExplicitInterposition.finalize" });
-				}
+                jtsLogger.i18NLogger.warn_exunregfail("ExplicitInterposition.finalize");
 			}
 		}
 	}
@@ -179,11 +168,7 @@ public class ExplicitInterposition
 
 		if (_inUse)
 		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.excalledagain", new Object[]
-				{ "ExplicitInterposition.unregisterTransaction" });
-			}
+            jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.unregisterTransaction");
 
 			throw new InterpositionFailed();
 		}
@@ -309,11 +294,6 @@ public class ExplicitInterposition
 		}
 	}
 
-	/**
-	 * @message com.arjuna.ats.jts.eicaughtexception {0} caught unexpected
-	 *          exception: {1}
-	 */
-
 	private final synchronized void registerTransaction (PropagationContext ctx)
 			throws InterpositionFailed, SystemException
 	{
@@ -323,11 +303,7 @@ public class ExplicitInterposition
 
 		if (_inUse)
 		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.excalledagain", new Object[]
-				{ "ExplicitInterposition.registerTransaction" });
-			}
+            jtsLogger.i18NLogger.warn_excalledagain("ExplicitInterposition.registerTransaction");
 
 			throw new InterpositionFailed();
 		}
@@ -375,11 +351,7 @@ public class ExplicitInterposition
 		}
 		catch (Exception e)
 		{
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.jts.eicaughtexception", new Object[]
-				{ "ExplicitInterposition.registerTransaction(PropagationContext)", e });
-			}
+            jtsLogger.i18NLogger.warn_eicaughtexception("ExplicitInterposition.registerTransaction(PropagationContext)", e);
 
 			throw new InterpositionFailed();
 		}

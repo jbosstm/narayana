@@ -49,8 +49,6 @@ import com.arjuna.common.util.logging.*;
  * method of TransactionCache.
  * (handles the creation of different kinds of transaction).
  *
- *  @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_1 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_1] - Transaction {0} previously assumed complete
- *  @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_2 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_2] - TransactionCacheItem.loadTransaction - unknown type: {0}
  */
 class TransactionCacheItem
 {
@@ -85,8 +83,8 @@ class TransactionCacheItem
 		//  perhaps it was previously assumed complete
 		RecoveringTransaction assumed = new AssumedCompleteTransaction(_uid);
 		if ( assumed.getRecoveryStatus() != RecoveryStatus.ACTIVATE_FAILED ) {
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_1, new Object[]{_uid}");
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("Transaction "+_uid+" previously assumed complete");
             }
 		    _transaction = assumed;
 		    _type = _transaction.type();
@@ -101,8 +99,8 @@ class TransactionCacheItem
 		//  perhaps it was previously assumed complete
 		RecoveringTransaction assumed = new AssumedCompleteServerTransaction(_uid);
 		if ( assumed.getRecoveryStatus() != RecoveryStatus.ACTIVATE_FAILED ) {
-		    if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_1, new Object[]{_uid}");
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("Transaction "+_uid+" previously assumed complete");
             }
 		    _transaction = assumed;
 		    _type = _transaction.type();
@@ -117,12 +115,11 @@ class TransactionCacheItem
 	{
 	    _transaction = new AssumedCompleteServerTransaction(_uid);
 	}
-	else
-	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCacheItem_2", new Object[]{_type});
-	    _transaction = null;
-	    return false;
-	}
+	else {
+        jtsLogger.i18NLogger.warn_recovery_transactions_TransactionCacheItem_2(_type);
+        _transaction = null;
+        return false;
+    }
 	return true;
     }
 

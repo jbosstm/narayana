@@ -141,11 +141,6 @@ public final ServerControl control ()
         return _children;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.notchild {0} - not my child!
-     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.nochild {0} - error, no child found!
-     */
-
 public final boolean abortChild (ServerNestedAction toAbort)
     {
 	if (toAbort != null)
@@ -179,23 +174,13 @@ public final boolean abortChild (ServerNestedAction toAbort)
 
 		return true;
 	    }
-	    else
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.notchild",
-					      new Object[] {"ServerResource.abortChild"});
-		}
-	    }
+	    else {
+            jtsLogger.i18NLogger.warn_interposition_resources_arjuna_notchild("ServerResource.abortChild");
+        }
 	}
-	else
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.nochild",
-					  new Object[] {"ServerResource.abortChild"});
-	    }
-	}
+	else {
+        jtsLogger.i18NLogger.warn_interposition_resources_arjuna_nochild("ServerResource.abortChild");
+    }
 
 	return false;
     }

@@ -55,16 +55,7 @@ import java.io.IOException;
 /**
  * This class is a plug-in module for the recovery manager.
  * It is responsible for the recovery of server transactions
- * 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_1 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_1] - ServerTransactionRecoveryModule created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_3 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_3] - ServerTransactionRecoveryModule - First Pass
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_4 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_4] - ServerTransactionRecoveryModule - Second Pass
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_5 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_5] - ServerTransactionRecoveryModule - Transaction {0} still in ActionStore
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_6 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_6] - ServerTransactionRecoveryModule - Transaction {0} still in state unknown (?). 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_7 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_7] - ServerTransactionRecoveryModule - Transaction {0} is not in object store - assumed completed
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_8 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_8] - Activated transaction {0} status = {1}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_9 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_9] - Transaction {0} still busy
-
+ *
  */
 
 public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
@@ -72,8 +63,8 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
 {
     public ServerTransactionRecoveryModule ()
     {
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_1");
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ServerTransactionRecoveryModule created");
     }
 	
 	if (_transactionType == null)
@@ -85,19 +76,13 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
      */
     public void periodicWorkFirstPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	  {
-	      jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_3");
-	  }
+        jtsLogger.i18NLogger.info_recovery_transactions_ServerTransactionRecoveryModule_3();
 	super.periodicWorkFirstPass();
     }
 
     public void periodicWorkSecondPass ()
     {
-	if (jtsLogger.loggerI18N.isInfoEnabled())
-	  {
-	      jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_4");
-	  }
+        jtsLogger.i18NLogger.info_recovery_transactions_ServerTransactionRecoveryModule_4();
 	//super.periodicWorkSecondPass();
 
 
@@ -114,21 +99,18 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
 		     // Is the intentions list still there? Is this the best way to check?
 		     if (_transactionStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
 		       {
-			   if (jtsLogger.loggerI18N.isInfoEnabled())
-			       {
-				   jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_5", new Object[]{currentUid});
-			       }
-			   recoverTransaction(currentUid);
+                   jtsLogger.i18NLogger.info_recovery_transactions_ServerTransactionRecoveryModule_5(currentUid);
+    			   recoverTransaction(currentUid);
 		       } else {
-			   if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                   jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_6", new Object[]{currentUid});
+			   if (jtsLogger.logger.isDebugEnabled()) {
+                   jtsLogger.logger.debug("ServerTransactionRecoveryModule - Transaction "+currentUid+" still in state unknown (?).");
                }
 		       }
 		    }
 		catch (ObjectStoreException e4)
 		    {
-			if (jtsLogger.loggerI18N.isDebugEnabled()) {
-                jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_7", new Object[]{currentUid});
+			if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("ServerTransactionRecoveryModule - Transaction "+currentUid+" is not in object store - assumed completed");
             }
 		    }
 	    }
@@ -159,14 +141,14 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
        
        currentStatus = cachedRecoveredTransaction.get_status();
       
-       if (jtsLogger.loggerI18N.isDebugEnabled()) {
-           jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_8", new Object[]{tranUid, Utility.stringStatus(currentStatus)});
+       if (jtsLogger.logger.isDebugEnabled()) {
+           jtsLogger.logger.debug("Activated transaction "+tranUid+" status = "+Utility.stringStatus(currentStatus));
        }
        // but first check that the original transaction isn't in mid-flight
        if ( cachedRecoveredTransaction.originalBusy() && (currentStatus != Status.StatusPrepared) ) 
 	   {
-	       if (jtsLogger.loggerI18N.isDebugEnabled()) {
-               jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_9", new Object[]{tranUid});
+	       if (jtsLogger.logger.isDebugEnabled()) {
+               jtsLogger.logger.debug("Transaction "+tranUid+" still busy");
            }
 	       return;
 	   }

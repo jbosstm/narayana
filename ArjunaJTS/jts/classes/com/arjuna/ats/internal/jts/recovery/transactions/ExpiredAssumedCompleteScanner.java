@@ -53,11 +53,6 @@ import com.arjuna.common.util.logging.*;
  * particular object type to be scanned for.
  * <p>Expiry time is determined by property ASSUMED_COMPLETE_EXPIRY_TIME.
  *
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_1 [com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_1] - ExpiredAssumedCompleteScanner created, with expiry time of {0}  seconds
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_2 [com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_2] - ExpiredAssumedCompleteScanner - scanning to remove items from before {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_3] - Removing old assumed complete transaction {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4 [com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4] - Expiry scan interval set to {0} seconds
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_5] - {0}  has inappropriate value ({1})
  */
 
 public class ExpiredAssumedCompleteScanner implements ExpiryScanner
@@ -70,8 +65,8 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     protected ExpiredAssumedCompleteScanner (String typeName, ObjectStore objectStore)
     {
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_1", new Object[]{Integer.toString(_expiryTime)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ExpiredAssumedCompleteScanner created, with expiry time of "+_expiryTime+" seconds");
     }
 	
 	_objectStore  = objectStore;
@@ -86,8 +81,8 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 	Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000);
 
 
-	if (jtsLogger.loggerI18N.isDebugEnabled()) {
-        jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_2", new Object[]{_timeFormat.format(oldestSurviving)});
+	if (jtsLogger.logger.isDebugEnabled()) {
+        jtsLogger.logger.debug("ExpiredAssumedCompleteScanner - scanning to remove items from before "+_timeFormat.format(oldestSurviving));
     }
 
 	try
@@ -124,11 +119,8 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 			    Date timeLastActive = aTransaction.getLastActiveTime();
 			    if (timeLastActive != null && timeLastActive.before(oldestSurviving)) 
 			    {
-			
-				if (jtsLogger.loggerI18N.isInfoEnabled())
-				    {
-					jtsLogger.loggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3", new Object[]{newUid});
-				    }
+
+                    jtsLogger.i18NLogger.info_arjuna_recovery_ExpiredAssumedCompleteScanner_3(newUid);
 				
 				_objectStore.remove_committed(newUid, _typeName);
 			    }
@@ -159,8 +151,8 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (jtsLogger.loggerI18N.isDebugEnabled()) {
-            jtsLogger.loggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4", new Object[]{Integer.toString(_expiryTime)});
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("Expiry scan interval set to "+_expiryTime+" seconds");
         }
     }
 }

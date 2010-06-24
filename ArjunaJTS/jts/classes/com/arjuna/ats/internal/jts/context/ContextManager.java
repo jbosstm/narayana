@@ -72,17 +72,10 @@ import org.omg.CORBA.ORBPackage.InvalidName;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ContextManager.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- *
- * @message com.arjuna.ats.internal.jts.context.genfail {0} caught exception: {1}
  */
 
 public class ContextManager
 {
-
-    /**
-     * @message com.arjuna.ats.internal.jts.context.picreffail Failed when getting a reference to PICurrent.
-     */
-
     public ContextManager ()
     {
 	if (jtsLogger.logger.isDebugEnabled()) {
@@ -95,25 +88,11 @@ public class ContextManager
 	}
 	catch (InvalidName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.picreffail");
-	    }
-
-	    ex.printStackTrace();
-
-	    throw new FatalError("ContextManager "+jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
+	    throw new FatalError("ContextManager "+jtsLogger.i18NLogger.get_context_picreffail()+" "+ex, ex);
 	}
 	catch (Exception ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.picreffail");
-	    }
-
-	    ex.printStackTrace();
-
-	    throw new FatalError("ContextManager "+jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
+	    throw new FatalError("ContextManager "+jtsLogger.i18NLogger.get_context_picreffail()+" "+ex, ex);
 	}
     }
 
@@ -200,11 +179,7 @@ public class ContextManager
 	    }
 	    catch (Throwable ex)
 	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					      new Object[] { "ContextManager.current", ex}, ex );
-		}
+            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.current", ex);
 
 		throw new BAD_OPERATION();
 	    }
@@ -472,11 +447,7 @@ public class ContextManager
 	}
 	catch (Exception e)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager.addActionControlHierarchy", e}, e);
-	    }
+        jtsLogger.i18NLogger.warn_context_genfail("ContextManager.addActionControlHierarchy", e);
 
 	    isError = true;
 	}
@@ -528,11 +499,7 @@ public class ContextManager
 	}
 	catch (Exception e)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager.addActionControlImple", e}, e);
-	    }
+        jtsLogger.i18NLogger.warn_context_genfail("ContextManager.addActionControlImple", e);
 
 	    isError = true;
 	}
@@ -672,10 +639,6 @@ public class ContextManager
 	    return null;
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.context.coorref {0} expected a Coordinator reference and did not get one: {1}
-     */
-
     public final ControlWrapper createProxy (org.omg.CORBA.Any ctx) throws SystemException
     {
 	String stringRef = null;
@@ -715,22 +678,13 @@ public class ContextManager
 	}
 	catch (BAD_PARAM e1)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager", stringRef}, e1 );
-	    }
+        jtsLogger.i18NLogger.warn_context_genfail("ContextManager "+stringRef, e1);
 	}
-	catch (Exception e2)
-	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager", e2} );
-	    }
+	catch (Exception e2) {
+        jtsLogger.i18NLogger.warn_context_genfail("ContextManager", e2);
 
-	    throw new UNKNOWN(e2.toString());
-	}
+        throw new UNKNOWN(e2.toString());
+    }
 
 	return null;
     }
@@ -758,24 +712,15 @@ public class ContextManager
 	    }
 	    catch (SystemException ex)
 	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					      new Object[] { "ContextManager.createHierarchy", ex} );
-		}
+            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", ex);
 
 		throw ex;
 	    }
-	    catch (Exception e)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					      new Object[] { "ContextManager.createHierarchy", e}, e );
-		}
+	    catch (Exception e) {
+            jtsLogger.i18NLogger.warn_context_genfail("ContextManager.createHierarchy", e);
 
-		throw new UNKNOWN();
-	    }
+            throw new UNKNOWN();
+        }
 	}
 	else
 	    return null;

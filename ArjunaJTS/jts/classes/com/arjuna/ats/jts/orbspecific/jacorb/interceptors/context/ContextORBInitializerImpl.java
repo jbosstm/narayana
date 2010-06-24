@@ -37,8 +37,6 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CORBA.*;
 import org.omg.PortableInterceptor.*;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
@@ -62,13 +60,6 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	ThreadActionData.addSetup(new ContextThreadSetup());
     }
-
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.codecerror {0} - a failure occured when getting {1} codec - unknown encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.duplicatename {0} - duplicate interceptor name for {1} when registering
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.codeccreate Cannot create a codec of the required encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.sie A server-side request interceptor already exists with that name.
-     */
 
     public void pre_init (ORBInitInfo init_info)
     {
@@ -107,13 +98,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (UnknownEncoding ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.codecerror",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_context_codecerror(
+                "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.codeccreate"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_jacorb_interceptors_context_codeccreate(), ex);
 	}
 
 	/*
@@ -133,13 +121,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ClientRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_context_duplicatename(
+                "ContextORBInitializerImpl", "ClientRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.cie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_jacorb_interceptors_context_cie(), ex);
 	}
 
 	/*
@@ -159,13 +144,10 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ServerRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_jacorb_interceptors_context_duplicatename(
+                "ContextORBInitializerImpl", "ServerRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.context.sie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_jacorb_interceptors_context_sie(), ex);
 	}
     }
 

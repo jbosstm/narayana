@@ -60,12 +60,6 @@ import java.net.*;
  * @version $Id: RecoveryEnablement.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.1.
  *
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1] - Could not locate supported ORB for RecoveryCoordinator initialisation.
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_2 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_2] - Full crash recovery is not supported with this orb
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_3 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_3] - Set property {0}  =  {1}
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_4 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_4] - RecoveryCoordinator service can only be provided in RecoveryManager
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_5 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_5] - ORB/OA initialisation failed: {0}
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_6 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_5] - The Recovery Service Initialisation failed: {0}
  */
 
 public class RecoveryEnablement implements RecoveryActivator
@@ -129,19 +123,15 @@ public class RecoveryEnablement implements RecoveryActivator
 		    result = true;
 		}
 		break;
-	    default:
-		{
-		    if (jtsLogger.loggerI18N.isWarnEnabled())
-		    {
-			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1");
-		    }
-		}
+	    default: {
+            jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_1();
+        }
 		break;
 	    }
 	}
 	catch (Exception e)
 	{
-	    jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_6", new Object[] {e}, e);
+        jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_6(e);
 	}
 
 	return result;

@@ -31,33 +31,18 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition;
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.arjuna.ats.jts.*;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition.InterpositionThreadSetup;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition.InterpositionClientRequestInterceptorImpl;
-import com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition.InterpositionServerRequestInterceptorImpl;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.common.util.logging.*;
-
-import org.omg.CosTransactions.*;
 import org.omg.CORBA.*;
 import org.omg.PortableInterceptor.*;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
 import org.omg.IOP.*;
 import org.omg.IOP.CodecFactoryPackage.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CosTransactions.Unavailable;
 
 public class InterpositionORBInitializerImpl extends LocalObject implements ORBInitializer
 {
@@ -77,12 +62,6 @@ public InterpositionORBInitializerImpl ()
 	ThreadActionData.addSetup(new InterpositionThreadSetup());
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.codecerror {0} - a failure occured when getting {1} codec - unknown encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.duplicatename {0} - duplicate interceptor name for {1} when registering
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.codeccreate Cannot create a codec of the required encoding.
-     * @message com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.sie A server-side request interceptor already exists with that name.
-     */
 
 public void pre_init (ORBInitInfo init_info)
     {
@@ -121,13 +100,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (UnknownEncoding ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.codecerror",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_codecerror(
+                "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.codeccreate"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_codeccreate(), ex);
 	}
 
 	/*
@@ -147,13 +123,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.duplicatename",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ClientRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
+                 "InterpositionORBInitializerImpl", "ClientRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.cie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_cie(), ex);
 	}
 
 	/*
@@ -173,13 +146,10 @@ public void pre_init (ORBInitInfo init_info)
 	}
 	catch (DuplicateName ex)
 	{
-	    if (jtsLogger.loggerI18N.isWarnEnabled())
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.duplicatename",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ServerRequestInterceptor" }, ex);
-	    }
+        jtsLogger.i18NLogger.warn_orbspecific_javaidl_interceptors_interposition_duplicatename(
+                "InterpositionORBInitializerImpl", "ServerRequestInterceptor", ex);
 
-	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.sie"), ex);
+	    throw new FatalError(jtsLogger.i18NLogger.get_orbspecific_javaidl_interceptors_interposition_sie(), ex);
 	}
     }
 
