@@ -70,7 +70,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
      */
     @WebMethod(operationName = "CommitOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit")
     @Oneway
-    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committ")
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit")
     public void commitOperation(
         @WebParam(name = "Commit", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters)
