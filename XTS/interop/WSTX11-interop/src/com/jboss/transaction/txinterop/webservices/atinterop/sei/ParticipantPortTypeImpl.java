@@ -343,7 +343,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "PreparedAfterTimeout", action = "http://fabrikam123.com/PreparedAfterTimeout")
     @Oneway
-    @Action(input="http://fabrikam123.com/PrepareAfterTimeout")
+    @Action(input="http://fabrikam123.com/PreparedAfterTimeout")
     @RequestWrapper(localName = "PreparedAfterTimeout", targetNamespace = "http://fabrikam123.com", className = "com.jboss.transaction.txinterop.webservices.atinterop.generated.TestMessageType")
     public void preparedAfterTimeout()
     {

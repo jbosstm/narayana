@@ -296,7 +296,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "MixedOutcome", action = "http://fabrikam123.com/wsba/MixedOutcome")
     @Oneway
-    @Action(input="http://fabrikam123.com/wsba/MixedOoutcome")
+    @Action(input="http://fabrikam123.com/wsba/MixedOutcome")
     @RequestWrapper(localName = "MixedOutcome", targetNamespace = "http://fabrikam123.com/wsba", className = "com.jboss.transaction.txinterop.webservices.bainterop.generated.TestMessageType")
     public void mixedOutcome()
     {

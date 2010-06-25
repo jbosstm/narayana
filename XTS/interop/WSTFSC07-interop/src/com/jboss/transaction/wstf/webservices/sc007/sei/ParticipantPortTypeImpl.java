@@ -90,7 +90,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "CompletionRollback", action = "http://www.wstf.org/docs/scenarios/sc007/CompletionRollback")
     @Oneway
-    @Action(input="http://www.wstf.org/docs/scenarios/sc007/CmopletionRollback")
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/CompletionRollback")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void completionRollback(
         @WebParam(name = "CompletionRollback", targetNamespace = "http://www.wstf.org/sc007", partName = "parameters")
@@ -217,7 +217,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPo
      */
     @WebMethod(operationName = "EarlyReadonly", action = "http://www.wstf.org/docs/scenarios/sc007/EarlyReadonly")
     @Oneway
-    @Action(input="http://www.wstf.org/docs/scenarios/sc007/EarlyReadOnly")
+    @Action(input="http://www.wstf.org/docs/scenarios/sc007/EarlyReadonly")
     @RequestWrapper(localName = "EarlyReadonly", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
     public void earlyReadonly()
     {
