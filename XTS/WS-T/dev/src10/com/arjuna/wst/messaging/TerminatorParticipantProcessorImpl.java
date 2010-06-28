@@ -47,19 +47,19 @@ import com.arjuna.wst.UnknownTransactionException;
  * 
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_1 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_1] - Unknown transaction
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_2 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_2] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_3 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_3] - Unexpected exception thrown from cancel:
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_4 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_4] - Cancel called on unknown participant: {0}
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_3 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_3] - Unexpected exception thrown from cancel:
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_4 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_4] - Cancel called on unknown participant: {0}
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_5 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_5] - Unknown participant
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_6 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_6] - Unknown transaction
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_7 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_7] - Transaction rolled back
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_8 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_8] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_9 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_9] - Unexpected exception thrown from close:
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_10 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_10] - Close called on unknown participant: {0}
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_9 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_9] - Unexpected exception thrown from close:
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_10 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_10] - Close called on unknown participant: {0}
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_11 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_11] - Unknown participant
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_12 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_12] - Unknown transaction
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_13 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_13] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_14 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_14] - Unexpected exception thrown from complete:
- * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_15 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_15] - Complete called on unknown participant: {0}
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_14 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_14] - Unexpected exception thrown from complete:
+ * @message_ com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_15 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_15] - Complete called on unknown participant: {0}
  * @message com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_16 [com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_16] - Unknown participant
  */
 public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorProcessor
@@ -145,9 +145,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSTLogger.logger.isDebugEnabled())
                     {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_3", th) ;
+                        WSTLogger.logger.debugv("Unexpected exception thrown from cancel:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -160,9 +160,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_4", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.debugv("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
@@ -224,9 +224,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSTLogger.logger.isDebugEnabled())
                     {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_9", th) ;
+                        WSTLogger.logger.debugv("Unexpected exception thrown from close:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -239,9 +239,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_10", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.debugv("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
@@ -301,9 +301,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSTLogger.logger.isDebugEnabled())
                     {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_14", th) ;
+                        WSTLogger.logger.debugv("Unexpected exception thrown from complete:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -316,9 +316,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.TerminatorParticipantProcessorImpl_15", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.debugv("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,

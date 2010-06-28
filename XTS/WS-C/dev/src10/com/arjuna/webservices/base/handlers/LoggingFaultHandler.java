@@ -77,7 +77,7 @@ public class LoggingFaultHandler implements BodyHandler
             faultDetails = soapFaultType + ":" + subcode ;
         }
         
-        if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+        if (WSCLogger.logger.isDebugEnabled())
         {
             WSCLogger.arjLoggerI18N.warn("com.arjuna.webservices.base.handlers.LoggingFaultHandler_1",
                 new Object[] {serviceName, faultDetails}) ;

@@ -53,15 +53,15 @@ import com.arjuna.wsc.messaging.MessageId;
  * The interceptor handler responsible for handling faults.
  * @author kevin
  * 
- * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1] -
+ * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1] -
  *     Ignoring invalid WS-Addressing replyTo endpoint reference.
- * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2] -
+ * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2] -
  *     Ignoring invalid WS-Addressing faultTo endpoint reference.
  * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3] -
  *     Unhandled SOAP fault during asynchronous execution of service.
- * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4] -
+ * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4] -
  *     Ignoring invalid WS-Addressing replyTo endpoint reference.
- * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5] -
+ * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5] -
  *     Ignoring invalid WS-Addressing faultTo endpoint reference.
  */
 public class AddressingInterceptorHandler implements InterceptorHandler
@@ -90,9 +90,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
         {
             if (!replyTo.isValid())
             {
-                if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSCLogger.logger.isDebugEnabled())
                 {
-                    WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1") ;
+                    WSCLogger.logger.debugv("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
                 }
             }
             else if (!AddressingConstants.WSA_ADDRESS_ANONYMOUS.equals(replyTo.getAddress().getValue()))
@@ -102,9 +102,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                 {
                     if (!faultTo.isValid())
                     {
-                        if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                        if (WSCLogger.logger.isDebugEnabled())
                         {
-                            WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2") ;
+                            WSCLogger.logger.debugv("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
                         }
                     }
                     else if (AddressingConstants.WSA_ADDRESS_ANONYMOUS.equals(faultTo.getAddress().getValue()))
@@ -168,9 +168,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                 {
                     if (!to.isValid())
                     {
-                        if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                        if (WSCLogger.logger.isDebugEnabled())
                         {
-                            WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4") ;
+                            WSCLogger.logger.debugv("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
                         }
                     }
                     else
@@ -220,9 +220,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
             {
                 if (!to.isValid())
                 {
-                    if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSCLogger.logger.isDebugEnabled())
                     {
-                        WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5") ;
+                        WSCLogger.logger.debugv("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
                     }
                 }
                 else

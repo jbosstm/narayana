@@ -237,16 +237,16 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1] - Unexpected SOAP fault for coordinator {0}: {1} {2}
+     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1] - Unexpected SOAP fault for coordinator {0}: {1} {2}
      */
     public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
-        if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        if (WSTLogger.logger.isDebugEnabled())
         {
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
             final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
             final QName subCode = soapFault.getSubcode() ;
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
+            WSTLogger.logger.debugv("Unexpected SOAP fault for coordinator {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
         }
     }
 
@@ -565,7 +565,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the prepare message.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1] - Unexpecting exception while sending Prepare
+     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1] - Unexpecting exception while sending Prepare
      */
     private void sendPrepare()
     {
@@ -593,9 +593,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1", th) ;
+                WSTLogger.logger.debugv("Unexpecting exception while sending Prepare", th) ;
             }
         }
 
@@ -617,7 +617,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the commit message.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1] - Unexpecting exception while sending Commit
+     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1] - Unexpecting exception while sending Commit
      */
     private void sendCommit()
     {
@@ -645,9 +645,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1", th) ;
+                WSTLogger.logger.debugv("Unexpecting exception while sending Commit", th) ;
             }
         }
 
@@ -669,7 +669,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the rollback message.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1] - Unexpecting exception while sending Rollback
+     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1] - Unexpecting exception while sending Rollback
      */
     private void sendRollback()
     {
@@ -679,9 +679,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1", th) ;
+                WSTLogger.logger.debugv("Unexpecting exception while sending Rollback", th) ;
             }
         }
     }

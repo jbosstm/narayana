@@ -341,18 +341,18 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_2 [com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_2] - Unrecoverable error for participant {0} : {1} {2}
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_3 [com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_3] - Unable to delete recovery record at commit for participant {0}
      */
     public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
-        if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        if (WSTLogger.logger.isDebugEnabled())
         {
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
             final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
             final QName subCode = soapFault.getSubcode() ;
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
+            WSTLogger.logger.debugv("Unexpected SOAP fault for participant {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
         }
         
         if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME.equals(soapFault.getSubcode()))
@@ -590,7 +590,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the commit transition.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1] - Unexpected exception from participant commit
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1] - Unexpected exception from participant commit
      */
     private void executeCommit()
     {
@@ -608,9 +608,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
             	    state = State.STATE_PREPARED_SUCCESS ;
                 }
             }
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant commit", th) ;
             }
         }
     }
@@ -618,7 +618,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the rollback transition.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1] - Unexpected exception from participant rollback
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1] - Unexpected exception from participant rollback
      */
     private boolean executeRollback()
     {
@@ -632,9 +632,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant rollback", th) ;
             }
         }
         return true ;
@@ -643,7 +643,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the prepare transition.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1] - Unexpected exception from participant prepare
+     * @message__ com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1] - Unexpected exception from participant prepare
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2 [com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2] - Unexpected result from participant prepare: {0}
      */
     private void executePrepare()
@@ -655,17 +655,17 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final SystemException se)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1", se) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant prepare", se) ;
             }
             return ;
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant prepare", th) ;
             }
             rollbackDecision() ;
             return ;
@@ -685,7 +685,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2", new Object[] {(vote == null ? "null" : vote.getClass().getName())}) ;
             }
@@ -708,7 +708,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the committed message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1] - Unexpected exception while sending Committed
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1] - Unexpected exception while sending Committed
      */
     private void sendCommitted()
     {
@@ -720,9 +720,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Committed", th) ;
             }
         }
     }
@@ -739,7 +739,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Send the prepared message.
      *
      * @param timedOut true if this is in response to a comms timeout
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
      */
     private void sendPrepared(boolean timedOut)
     {
@@ -751,9 +751,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Prepared", th) ;
             }
         }
 
@@ -786,7 +786,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the aborted message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1] - Unexpected exception while sending Aborted
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1] - Unexpected exception while sending Aborted
      */
     private void sendAborted()
     {
@@ -798,9 +798,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Aborted", th) ;
             }
         }
     }
@@ -808,7 +808,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the read only message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1] - Unexpected exception while sending ReadOnly
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1] - Unexpected exception while sending ReadOnly
      */
     private void sendReadOnly()
     {
@@ -820,9 +820,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending ReadOnly", th) ;
             }
         }
     }
@@ -830,7 +830,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the replay message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1] - Unexpected exception while sending Replay
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1] - Unexpected exception while sending Replay
      */
     private void sendReplay()
     {
@@ -842,9 +842,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Replay", th) ;
             }
         }
     }

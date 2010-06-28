@@ -11,9 +11,9 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering failed WSAT ACCoordinator transactions.
  *
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1] - RecoveryATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
+ * @message_ org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1] - RecoveryATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
  * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2] - RecoveryATCoordinator.replayPhase2: Unexpected status: {0}
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3] - RecoveryATCoordinator.replayPhase2( {0} )  finished
+ * @message_ org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3] - RecoveryATCoordinator.replayPhase2( {0} )  finished
  * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4] - RecoveryATCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
 */
 public class RecoveryATCoordinator extends ATCoordinator {
@@ -35,8 +35,8 @@ public class RecoveryATCoordinator extends ATCoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
-           XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1", new Object[]{get_uid(), ActionStatus.stringForm(status)});
+       if (XTSLogger.logger.isDebugEnabled()) {
+           XTSLogger.logger.debugv("RecoveryATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}", new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
        if ( _activated )
@@ -73,8 +73,8 @@ public class RecoveryATCoordinator extends ATCoordinator {
            super.phase2Abort( _reportHeuristics ) ;
        }
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
-           XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3", new Object[]{get_uid()});
+       if (XTSLogger.logger.isDebugEnabled()) {
+           XTSLogger.logger.debugv("RecoveryATCoordinator.replayPhase2( {0} )  finished", new Object[]{get_uid()});
        }
        }
        else

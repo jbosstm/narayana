@@ -740,7 +740,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the exit message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1] - Unexpected exception while sending Exit
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1] - Unexpected exception while sending Exit
      */
     private void sendExit()
     {
@@ -751,9 +751,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Exit", th) ;
             }
         }
     }
@@ -771,7 +771,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the completed message.
      *
      * @param timedOut true if this is in response to a comms timeout
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1] - Unexpected exception while sending Completed
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1] - Unexpected exception while sending Completed
      */
     private void sendCompleted(boolean timedOut)
     {
@@ -787,9 +787,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Completed", th) ;
             }
         }
 
@@ -833,7 +833,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the fail message.
      * @param message The fail message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1] - Unexpected exception while sending Fault
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1] - Unexpected exception while sending Fault
      */
     private void sendFail(final QName message)
     {
@@ -844,9 +844,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Fault", th) ;
             }
         }
     }
@@ -854,7 +854,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the cancelled message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1] - Unexpected exception while sending Cancelled
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1] - Unexpected exception while sending Cancelled
      */
     private void sendCancelled()
     {
@@ -865,9 +865,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Cancelled", th) ;
             }
         }
     }
@@ -875,7 +875,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the closed message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1] - Unexpected exception while sending Closed
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1] - Unexpected exception while sending Closed
      */
     private void sendClosed()
     {
@@ -886,9 +886,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Closed", th) ;
             }
         }
     }
@@ -896,7 +896,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the compensated message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1] - Unexpected exception while sending Compensated
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1] - Unexpected exception while sending Compensated
      */
     private void sendCompensated()
     {
@@ -907,9 +907,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Compensated", th) ;
             }
         }
     }
@@ -918,7 +918,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the status message.
      * @param state The state.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1] - Unexpected exception while sending Status
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1] - Unexpected exception while sending Status
      */
     private void sendStatus(final State state)
     {
@@ -929,9 +929,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Status", th) ;
             }
         }
     }
@@ -939,7 +939,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the cannot complete message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1] - Unexpected exception while sending Status
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1] - Unexpected exception while sending Status
      */
     private void sendCannotComplete()
     {
@@ -950,9 +950,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Status", th) ;
             }
         }
     }
@@ -1037,8 +1037,8 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the cancel transition.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1] - Faulted exception from participant cancel for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2] - Unexpected exception from participant cancel for WS-BA participant {0}
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1] - Faulted exception from participant cancel for WS-BA participant {0}
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2] - Unexpected exception from participant cancel for WS-BA participant {0}
      */
     private void executeCancel()
     {
@@ -1048,9 +1048,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final FaultedException fe)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1", new Object[] { id}, fe) ;
+                WSTLogger.logger.debugv("Faulted exception from participant cancel for WS-BA participant {0}", new Object[] { id}, fe) ;
             }
             // fail here because the participant doesn't want to retry the cancel
             fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
@@ -1058,9 +1058,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2", new Object[] { id}, th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant cancel for WS-BA participant {0}", new Object[] { id}, th) ;
             }
             /*
              * we only get here in from state ACTIVE so if we are stll in state CANCELING then roll back the
@@ -1080,7 +1080,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the close transition.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1] - Unexpected exception from participant close for WS-BA participant {0}
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1] - Unexpected exception from participant close for WS-BA participant {0}
      * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_2] - Unable to delete recovery record during close for WS-BA participant {0}
      */
     private void executeClose()
@@ -1091,9 +1091,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant close for WS-BA participant {0}", th) ;
             }
             // restore previous state so we can retry the close otherwise we get stuck in state closing forever
             changeState(State.STATE_COMPLETED);
@@ -1127,8 +1127,8 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the compensate transition.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1] - Faulted exception from participant compensate for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2] - Unexpected exception from participant compensate for WS-BA participant {0}
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1] - Faulted exception from participant compensate for WS-BA participant {0}
+     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2] - Unexpected exception from participant compensate for WS-BA participant {0}
      * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_3 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_3] - Unable to delete recovery record during compensate for WS-BA participant {0}
      */
     private void executeCompensate()
@@ -1139,9 +1139,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final FaultedException fe)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1", new Object[] { id}, fe) ;
+                WSTLogger.logger.debugv("Faulted exception from participant compensate for WS-BA participant {0}", new Object[] { id}, fe) ;
             }
             // fail here because the participant doesn't want to retry the compensate
             fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
@@ -1163,9 +1163,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 initiateTimer() ;
             }
 
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2", new Object[] { id }, th) ;
+                WSTLogger.logger.debugv("Unexpected exception from participant compensate for WS-BA participant {0}", new Object[] { id }, th) ;
             }
             return ;
         }

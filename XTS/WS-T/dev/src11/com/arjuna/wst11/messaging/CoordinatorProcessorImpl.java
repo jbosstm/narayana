@@ -278,7 +278,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1] - Unknown Transaction.
-     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2] - Unexpecting exception while sending InvalidState
+     * @message_ com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2] - Unexpecting exception while sending InvalidState
      */
     private void sendUnknownTransaction(final MAP map, final ArjunaContext arjunaContext)
     {
@@ -291,9 +291,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
         } catch (final Throwable th) {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2", th) ;
+                WSTLogger.logger.debugv("Unexpecting exception while sending InvalidState", th) ;
             }
         }
     }
@@ -304,7 +304,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
+     * @message_ com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
      */
     private void sendRollback(final MAP map, final ArjunaContext arjunaContext)
     {
@@ -318,9 +318,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Rollback", th) ;
             }
         }
     }

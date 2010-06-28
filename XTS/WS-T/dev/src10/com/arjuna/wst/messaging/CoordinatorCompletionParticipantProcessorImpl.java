@@ -95,8 +95,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1] - Unexpected exception thrown from cancel:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2] - Cancel called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1] - Unexpected exception thrown from cancel:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2] - Cancel called on unknown participant: {0}
      */
     public void cancel(final NotificationType cancel, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -111,17 +111,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from cancel:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.debugv("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendCancelled(addressingContext, arjunaContext) ;
         }
@@ -133,8 +133,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1] - Unexpected exception thrown from close:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2] - Close called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1] - Unexpected exception thrown from close:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2] - Close called on unknown participant: {0}
      */
     public void close(final NotificationType close, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -149,17 +149,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from close:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.debugv("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendClosed(addressingContext, arjunaContext) ;
         }
@@ -171,8 +171,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1] - Unexpected exception thrown from compensate:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2] - Compensate called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1] - Unexpected exception thrown from compensate:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2] - Compensate called on unknown participant: {0}
      */
     public void compensate(final NotificationType compensate, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -187,17 +187,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from compensate:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.debugv("Compensate called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendCompensated(addressingContext, arjunaContext) ;
         }
@@ -209,8 +209,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1] - Unexpected exception thrown from complete:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2] - Complete called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1] - Unexpected exception thrown from complete:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2] - Complete called on unknown participant: {0}
      * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3] - Complete called on unknown participant
      */
     public void complete(final NotificationType complete, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
@@ -226,17 +226,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from complete:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.debugv("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendFault(addressingContext, arjunaContext, WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3")) ;
         }
@@ -248,8 +248,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1] - Unexpected exception thrown from exited:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2] - Exited called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1] - Unexpected exception thrown from exited:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2] - Exited called on unknown participant: {0}
      */
     public void exited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -264,15 +264,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from exited:", th) ;
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else if (WSTLogger.logger.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.debugv("Exited called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -282,8 +282,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1] - Unexpected exception thrown from faulted:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2] - Faulted called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1] - Unexpected exception thrown from faulted:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2] - Faulted called on unknown participant: {0}
      */
     public void faulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -298,15 +298,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from faulted:", th) ;
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else if (WSTLogger.logger.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.debugv("Faulted called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -316,8 +316,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2] - GetStatus called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2] - GetStatus called on unknown participant: {0}
      * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_3 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to coordinator for participant {0}
      * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4] - GetStatus requested for unknown coordinator completion participant
      */
@@ -334,17 +334,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from getStatus:", th) ;
                 }
             }
         }
         else
         {
-        if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        if (WSTLogger.logger.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.debugv("GetStatus called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
             // send an invalid state fault
 
@@ -380,8 +380,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1] - Unexpected exception thrown from status:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2] - Status called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1] - Unexpected exception thrown from status:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2] - Status called on unknown participant: {0}
      */
     public void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -396,15 +396,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from status:", th) ;
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else if (WSTLogger.logger.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.debugv("Status called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -414,8 +414,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
      */
     public void soapFault(final SoapFault fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -431,15 +431,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSTLogger.logger.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1", th) ;
+                    WSTLogger.logger.debugv("Unexpected exception thrown from soapFault:", th) ;
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else if (WSTLogger.logger.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.debugv("SoapFault called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -449,7 +449,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCancelled_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCancelled_1] - Unexpected exception while sending Cancelled
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCancelled_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCancelled_1] - Unexpected exception while sending Cancelled
      */
     private void sendCancelled(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -462,9 +462,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCancelled_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Cancelled", th) ;
             }
         }
     }
@@ -475,7 +475,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendClosed_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendClosed_1] - Unexpected exception while sending Closed
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendClosed_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendClosed_1] - Unexpected exception while sending Closed
      */
     private void sendClosed(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -488,9 +488,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendClosed_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Closed", th) ;
             }
         }
     }
@@ -501,7 +501,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCompensated_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCompensated_1] - Unexpected exception while sending Compensated
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCompensated_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCompensated_1] - Unexpected exception while sending Compensated
      */
     private void sendCompensated(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -514,9 +514,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendCompensated_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Compensated", th) ;
             }
         }
     }
@@ -528,7 +528,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param arjunaContext The arjuna context.
      * @param exceptionIdentifier The exception identifier.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1] - Unexpected exception while sending Fail
+     * @message_ com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1] - Unexpected exception while sending Fail
      */
     private void sendFault(final AddressingContext addressingContext, final ArjunaContext arjunaContext, final String exceptionIdentifier)
     {
@@ -541,9 +541,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Fail", th) ;
             }
         }
     }

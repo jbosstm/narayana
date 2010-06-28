@@ -346,7 +346,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1] - Unknown Transaction.
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2] - Unexpecting exception while sending InvalidState
+     * @message_ com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2] - Unexpecting exception while sending InvalidState
      */
     private void sendInvalidState(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -369,9 +369,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2", th) ;
+                WSTLogger.logger.debugv("Unexpecting exception while sending InvalidState", th) ;
             }
         }
     }
@@ -382,7 +382,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
+     * @message_ com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
      */
     private void sendRollback(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -396,9 +396,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Rollback", th) ;
             }
         }
     }

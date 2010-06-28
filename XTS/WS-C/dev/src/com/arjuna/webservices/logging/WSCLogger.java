@@ -34,6 +34,8 @@ package com.arjuna.webservices.logging;
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.util.logging.LogNoi18n;
 import com.arjuna.common.util.logging.Logi18n;
+import org.jboss.logging.BasicLogger;
+import org.jboss.logging.Logger;
 
 /**
  * WS-C logger instances.
@@ -45,6 +47,7 @@ public class WSCLogger
      */
     public static LogNoi18n      arjLogger;
 
+    public static BasicLogger logger;
     public static wscI18NLogger i18NLogger;
     /**
      * The I18N logger.
@@ -55,6 +58,7 @@ public class WSCLogger
     {
         arjLogger = noi18n;
         arjLoggerI18N = i18n;
+        logger = Logger.getLogger("com.arjuna.wsc");
     }
 
     static

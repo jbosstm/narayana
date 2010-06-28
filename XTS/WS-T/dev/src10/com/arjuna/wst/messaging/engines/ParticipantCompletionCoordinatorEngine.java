@@ -516,7 +516,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the close message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1] - Unexpected exception while sending Close
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1] - Unexpected exception while sending Close
      */
     private void sendClose()
     {
@@ -527,9 +527,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Close", th) ;
             }
         }
     }
@@ -537,7 +537,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the compensate message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1] - Unexpected exception while sending Compensate
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1] - Unexpected exception while sending Compensate
      */
     private void sendCompensate()
     {
@@ -548,9 +548,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Compensate", th) ;
             }
         }
     }
@@ -558,7 +558,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the cancel message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1] - Unexpected exception while sending Cancel
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1] - Unexpected exception while sending Cancel
      */
     private void sendCancel()
     {
@@ -569,9 +569,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Cancel", th) ;
             }
         }
     }
@@ -579,7 +579,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the exited message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1] - Unexpected exception while sending Exited
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1] - Unexpected exception while sending Exited
      */
     private void sendExited()
     {
@@ -590,9 +590,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Exited", th) ;
             }
         }
     }
@@ -600,7 +600,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the faulted message.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFaulted_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFaulted_1] - Unexpected exception while sending Faulted
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFaulted_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFaulted_1] - Unexpected exception while sending Faulted
      */
     private void sendFaulted()
     {
@@ -611,9 +611,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFaulted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Faulted", th) ;
             }
         }
     }
@@ -622,7 +622,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Send the status message.
      * @param state The state.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1] - Unexpected exception while sending Status
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1] - Unexpected exception while sending Status
      */
     private void sendStatus(final State state)
     {
@@ -633,9 +633,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Status", th) ;
             }
         }
     }
@@ -711,7 +711,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Execute the completed transition.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1] - Unexpected exception from coordinator completed
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1] - Unexpected exception from coordinator completed
      */
     private void executeCompleted()
     {
@@ -721,9 +721,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from coordinator completed", th) ;
             }
         }
     }
@@ -731,7 +731,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Execute the exit transition.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1] - Unexpected exception from coordinator exit
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1] - Unexpected exception from coordinator exit
      */
     private void executeExit()
     {
@@ -741,9 +741,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from coordinator exit", th) ;
             }
             return ;
         }
@@ -757,7 +757,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * @throws SoapFault for SOAP errors.
      * @throws IOException for transport errors.
      * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1] - Unexpected exception from coordinator fault
+     * @message_ com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1] - Unexpected exception from coordinator fault
      */
     private void executeFault()
     {
@@ -767,9 +767,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception from coordinator fault", th) ;
             }
             return ;
         }

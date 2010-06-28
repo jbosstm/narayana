@@ -47,8 +47,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
      * @param createCoordinationContext The create coordination context request.
      * @param map The addressing context.
      * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1] - Invalid create coordination context parameters
-     * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create:
-     * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
+     * @message_ com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create:
+     * @message_ com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
      */
     public CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
@@ -83,9 +83,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSCLogger.logger.isDebugEnabled())
                     {
-                        WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2", th) ;
+                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME) ;
@@ -95,9 +95,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
             }
             else
             {
-                if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSCLogger.logger.isDebugEnabled())
                 {
-                    WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3", new Object[] {coordinationType}) ;
+                    WSCLogger.logger.debugv("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
                 }
 
                 SOAPFactory factory = SOAPFactory.newInstance();

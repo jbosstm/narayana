@@ -47,8 +47,8 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
  * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2] - Invalid protocol identifier
  * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3] - Invalid coordination context state
  * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4] - Unknown activity identifier
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5] - Unexpected exception thrown from create:
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6] - Register called for unknown protocol identifier: {0}
+ * @message_ com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5] - Unexpected exception thrown from create:
+ * @message_ com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6] - Register called for unknown protocol identifier: {0}
  */
 public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinatorProcessor
 {
@@ -110,9 +110,9 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSCLogger.logger.isDebugEnabled())
                     {
-                        WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5", th) ;
+                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME);
@@ -122,9 +122,9 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
             }
             else
             {
-                if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSCLogger.logger.isDebugEnabled())
                 {
-                    WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6", new Object[] {protocolIdentifier}) ;
+                    WSCLogger.logger.debugv("Register called for unknown protocol identifier: {0}", new Object[] {protocolIdentifier}) ;
                 }
                 SOAPFactory factory = SOAPFactory.newInstance();
                 SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME);

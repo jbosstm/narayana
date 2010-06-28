@@ -66,8 +66,8 @@ public abstract class BaseProcessor
      * @param executor The callback executor.
      * @param ids The message ids.
      * 
-     * @message com.arjuna.webservices.base.processors.BaseProcessor_1 [com.arjuna.webservices.base.processors.BaseProcessor_1] - Unexpected throwable while executing callback: 
-     * @message com.arjuna.webservices.base.processors.BaseProcessor_2 [com.arjuna.webservices.base.processors.BaseProcessor_2] - Received a response for non existent message IDs {0}
+     * @message_ com.arjuna.webservices.base.processors.BaseProcessor_1 [com.arjuna.webservices.base.processors.BaseProcessor_1] - Unexpected throwable while executing callback: 
+     * @message_ com.arjuna.webservices.base.processors.BaseProcessor_2 [com.arjuna.webservices.base.processors.BaseProcessor_2] - Received a response for non existent message IDs {0}
      */
     protected void handleCallbacks(final CallbackExecutor executor, final String[] ids)
     {
@@ -89,15 +89,15 @@ public abstract class BaseProcessor
                     }
                     catch (final Throwable th)
                     {
-                        if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                        if (WSCLogger.logger.isDebugEnabled())
                         {
-                            WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.base.processors.BaseProcessor_1", th) ;
+                            WSCLogger.logger.debugv("Unexpected throwable while executing callback:", th) ;
                         }
                         callback.setFailed() ;
                     }
                 }
             }
-            if (!executed && WSCLogger.arjLoggerI18N.isDebugEnabled())
+            if (!executed && WSCLogger.logger.isDebugEnabled())
             {
                 executor.executeUnknownIds(ids) ;
             }
@@ -158,7 +158,7 @@ public abstract class BaseProcessor
          */
         public void executeUnknownIds(final String[] ids)
         {
-            WSCLogger.arjLoggerI18N.debug("com.arjuna.webservices.base.processors.BaseProcessor_2", new Object[] {toString(ids)}) ;
+            WSCLogger.logger.debugv("Received a response for non existent message IDs {0}", new Object[] {toString(ids)}) ;
         }
         
         /**

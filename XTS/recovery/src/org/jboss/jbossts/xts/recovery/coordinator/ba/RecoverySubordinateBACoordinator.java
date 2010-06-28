@@ -14,7 +14,7 @@ import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACo
  *
  * @message org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverySubordinateBACoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_1] - RecoverBASubordinateCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
  * @message org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_2] - RecoverBASubordinateCoordinator.replayPhase2: Unexpected status: {0}
- * @message org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3] - RecoverBASubordinateCoordinator.replayPhase2( {0} )  finished
+ * @message_ org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3] - RecoverBASubordinateCoordinator.replayPhase2( {0} )  finished
  * @message org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_4] - RecoverBASubordinateCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
 */
 public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
@@ -66,7 +66,7 @@ public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
+       if (XTSLogger.logger.isDebugEnabled()) {
            XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_1", new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
@@ -98,8 +98,8 @@ public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
            SubordinateBACoordinator.removeRecoveredCoordinator(this);
        }
 
-       if (XTSLogger.arjLoggerI18N.isDebugEnabled()) {
-           XTSLogger.arjLoggerI18N.debug("org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverBASubordinateCoordinator_3", new Object[]{get_uid()});
+       if (XTSLogger.logger.isDebugEnabled()) {
+           XTSLogger.logger.debugv("RecoverBASubordinateCoordinator.replayPhase2( {0} )  finished", new Object[]{get_uid()});
        }
        }
        else

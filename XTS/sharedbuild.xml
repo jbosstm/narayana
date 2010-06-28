@@ -58,7 +58,7 @@
     <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
 
         <!-- external jars also used by JBossTS -->
-    <property name="jbossts.build.extlib.jars" value="commons-logging-1.1.jar jboss-logging.jar"/>
+    <property name="jbossts.build.extlib.jars" value="commons-logging-1.1.jar"/>
 
         <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
     <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
@@ -87,7 +87,7 @@
         <!-- external jars used by XTS for all builds -->
     <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar
             jbossws-client.jar stax-api.jar
-            jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar
+            jbossws-native-core.jar jbossws-common.jar  jboss-logging.jar 
             jboss-transaction-api_1.1_spec.jar jboss-servlet-api_3.0_spec.jar dom4j.jar ${cxf.build.extlib.jars}"/>
 
         <!-- paths internal to build -->

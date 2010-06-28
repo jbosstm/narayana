@@ -312,7 +312,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1] - Unexpected exception while sending Committed
+     * @message_ com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1] - Unexpected exception while sending Committed
      */
     private void sendCommitted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -326,9 +326,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Committed", th) ;
             }
         }
     }
@@ -339,7 +339,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1] - Unexpected exception while sending Aborted
+     * @message_ com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1] - Unexpected exception while sending Aborted
      */
     private void sendAborted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -353,9 +353,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1", th) ;
+                WSTLogger.logger.debugv("Unexpected exception while sending Aborted", th) ;
             }
         }
     }

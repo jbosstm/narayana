@@ -47,8 +47,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
      * @param createCoordinationContext The create coordination context request.
      * @param addressingContext The addressing context.
      * @message com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1 [com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_1] - Invalid create coordination context parameters
-     * @message com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create: 
-     * @message com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
+     * @message_ com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create: 
+     * @message_ com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
      */
     public void createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
         final AddressingContext addressingContext)
@@ -81,9 +81,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                    if (WSCLogger.logger.isDebugEnabled())
                     {
-                        WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_2", th) ;
+                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -94,9 +94,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
             }
             else
             {
-                if (WSCLogger.arjLoggerI18N.isDebugEnabled())
+                if (WSCLogger.logger.isDebugEnabled())
                 {
-                    WSCLogger.arjLoggerI18N.debug("com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl_3", new Object[] {coordinationType}) ;
+                    WSCLogger.logger.debugv("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME,
