@@ -71,10 +71,6 @@ public class HLSManager
     }
     }
 
-    /**
-     * @message com.arjuna.mwlabs.wsas.activity.HLSManager_1 [com.arjuna.mwlabs.wsas.activity.HLSManager_1] - HLS not found!
-     */
-
     public static final void removeHLS (HLS service) throws InvalidHLSException, SystemException
     {
 	if (service == null)
@@ -93,7 +89,7 @@ public class HLSManager
                 }
             }
             if (!found) {
-                throw new InvalidHLSException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.HLSManager_1"));
+                throw new InvalidHLSException(wsasLogger.i18NLogger.get_activity_HLSManager_1());
             } else {
                 _hls.remove(elem);
             }

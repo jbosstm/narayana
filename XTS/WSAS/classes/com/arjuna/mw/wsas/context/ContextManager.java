@@ -52,11 +52,6 @@ public class ContextManager
 	_manager = ActivityManagerFactory.activityManager();
     }
 
-    /**
-     * @message com.arjuna.mw.wsas.context.ContextManager_1 [com.arjuna.mw.wsas.context.ContextManager_1] - allHighLevelServices threw: 
-     * @message com.arjuna.mw.wsas.context.ContextManager_2 [com.arjuna.mw.wsas.context.ContextManager_2] - assembling contexts and received: 
-     */
-
     public final Context[] contexts ()
     {
 	Context[] ctxs = null;
@@ -68,8 +63,7 @@ public class ContextManager
 	}
 	catch (Exception ex)
 	{
-	    wsasLogger.arjLoggerI18N.warn("com.arjuna.mw.wsas.context.ContextManager_1",
-					  new Object[]{ex});
+        wsasLogger.i18NLogger.warn_context_ContextManager_1(ex);
 	}
 	
 	if (services != null)
@@ -94,8 +88,7 @@ public class ContextManager
 	    }
 	    catch (Exception ex)
 	    {
-		wsasLogger.arjLoggerI18N.warn("com.arjuna.mw.wsas.context.ContextManager_2",
-					      new Object[]{ex});
+            wsasLogger.i18NLogger.warn_context_ContextManager_2(ex);
 		
 		ctxs = null;
 	    }

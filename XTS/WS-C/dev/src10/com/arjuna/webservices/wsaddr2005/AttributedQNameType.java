@@ -111,7 +111,7 @@ public class AttributedQNameType extends AnyAttributeSupport
     {
         if (value == null)
         {
-            throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.AttributedQNameType_1")) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr2005_AttributedQNameType_1()) ;
         }
         
         StreamHelper.writeQualifiedName(out, value) ;

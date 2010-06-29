@@ -76,7 +76,7 @@ public class HttpClient extends TransportSoapClient
         final SoapMessage response = invokeRequest(request, url) ;
         if (response == null)
         {
-            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.transport.http.HttpClient_1")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.i18NLogger.get_webservices_transport_http_HttpClient_1()) ;
         }
         return response ;
     }
@@ -115,7 +115,7 @@ public class HttpClient extends TransportSoapClient
         }
         catch (final MalformedURLException murle)
         {
-            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.transport.http.HttpClient_2")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.i18NLogger.get_webservices_transport_http_HttpClient_2()) ;
         }
         
         final boolean threadLogEnabled = SoapMessageLogging.isThreadLogEnabled() ;
@@ -137,7 +137,7 @@ public class HttpClient extends TransportSoapClient
         }
         catch (final ClassCastException cce)
         {
-            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.transport.http.HttpClient_3")) ;
+            throw new SoapFault10(SoapFaultType.FAULT_SENDER, WSCLogger.i18NLogger.get_webservices_transport_http_HttpClient_3()) ;
         }
         
         httpURLConnection.setDoOutput(true) ;
@@ -198,8 +198,7 @@ public class HttpClient extends TransportSoapClient
             (responseCode != HttpURLConnection.HTTP_ACCEPTED) &&
             (responseCode != HttpURLConnection.HTTP_INTERNAL_ERROR))
         {
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.transport.http.HttpClient_4") ;
-            final String message = MessageFormat.format(pattern, new Object[] {new Integer(responseCode)}) ;
+            final String message = WSCLogger.i18NLogger.get_webservices_transport_http_HttpClient_4(Integer.toString(responseCode));
             throw new SoapFault10(SoapFaultType.FAULT_SENDER, message) ;
         }
         

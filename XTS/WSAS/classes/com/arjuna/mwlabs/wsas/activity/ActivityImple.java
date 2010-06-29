@@ -143,9 +143,6 @@ public class ActivityImple
 	 * @exception SystemException
 	 *                Thrown in any other situation.
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_1
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_1] - State
-	 *          incompatible to start activity:
 	 */
 
 	public void start (int timeout) throws WrongStateException,
@@ -184,8 +181,8 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_1")
-								+ " " + this + " " + _status);
+                        wsasLogger.i18NLogger.get_activity_ActivityImple_1()
+                                + " " + this + " " + _status);
 		}
 	}
 
@@ -246,12 +243,6 @@ public class ActivityImple
 	 *
 	 * @see com.arjuna.mw.wsas.Outcome
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_2
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_2] - Activity
-	 *          cannot complete as it has active children:
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_3
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_3] - Cannot
-	 *          complete activity in status:
 	 */
 
 	// ActivityFailedException rather than an Outcome status?
@@ -278,8 +269,8 @@ public class ActivityImple
 					 */
 
 					throw new InvalidActivityException(
-							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_2")
-									+ " " + this);
+                            wsasLogger.i18NLogger.get_activity_ActivityImple_2()
+                                    + " " + this);
 				}
 
 				Outcome current = null;
@@ -357,8 +348,8 @@ public class ActivityImple
 					// we can't have terminated yet!
 
 					throw new WrongStateException(
-							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_3")
-									+ " " + _status);
+                            wsasLogger.i18NLogger.get_activity_ActivityImple_3()
+                                    + " " + _status);
 				}
 			}
 		}
@@ -382,9 +373,6 @@ public class ActivityImple
 	 * @exception SystemException
 	 *                Thrown if any other error occurs.
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_4
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_4] - Cannot set
-	 *          completion status on activity as the status is incompatible:
 	 */
 
 	public void setCompletionStatus (CompletionStatus endStatus)
@@ -400,8 +388,8 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_4")
-								+ " " + this + " " + _status);
+                        wsasLogger.i18NLogger.get_activity_ActivityImple_4()
+                                + " " + this + " " + _status);
 		}
 	}
 
@@ -558,9 +546,6 @@ public class ActivityImple
 	 *                Thrown if the specified status is incompatible with that
 	 *                currently possessed by this activity.
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_5
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_5] - Cannot
-	 *          change completion status, value is incompatible:
 	 */
 
 	public final void completionValid (CompletionStatus cs)
@@ -570,8 +555,8 @@ public class ActivityImple
 		{
 			if (_completionStatus.equals(FailureOnly.instance()))
 				throw new WrongStateException(
-						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_5")
-								+ " " + _completionStatus + " " + cs);
+                        wsasLogger.i18NLogger.get_activity_ActivityImple_5()
+                                + " " + _completionStatus + " " + cs);
 		}
 	}
 
@@ -594,12 +579,6 @@ public class ActivityImple
 	 * @exception SystemException
 	 *                Thrown if some other error occurs.
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_6
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_6] - Cannot
-	 *          enlist null child!
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_7
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_7] - Cannot
-	 *          enlist child activity with parent as parent's status is:
 	 */
 
 	final void addChild (ActivityImple child) throws WrongStateException,
@@ -607,7 +586,7 @@ public class ActivityImple
 	{
 		if (child == null)
 			throw new InvalidActivityException(
-					wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_6"));
+                    wsasLogger.i18NLogger.get_activity_ActivityImple_6());
 
 		synchronized (this)
 		{
@@ -617,8 +596,8 @@ public class ActivityImple
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_7")
-								+ " " + _status);
+                        wsasLogger.i18NLogger.get_activity_ActivityImple_7()
+                                + " " + _status);
 		}
 	}
 
@@ -636,15 +615,6 @@ public class ActivityImple
 	 * @exception SystemException
 	 *                Thrown if some other error occurs.
 	 *
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_8
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_8] - Cannot
-	 *          remove null child!
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_9
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_9] - The
-	 *          following child activity is unknown to the parent:
-	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_10
-	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_10] - Cannot
-	 *          remove child activity from parent as parent's status is:
 	 */
 
 	final void removeChild (ActivityImple child) throws WrongStateException,
@@ -652,7 +622,7 @@ public class ActivityImple
 	{
 		if (child == null)
 			throw new InvalidActivityException(
-					wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_8"));
+                    wsasLogger.i18NLogger.get_activity_ActivityImple_8());
 
 		synchronized (this)
 		{
@@ -660,13 +630,13 @@ public class ActivityImple
 			{
 				if (_children.get(child.getGlobalId()) == null)
 					throw new InvalidActivityException(
-							wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_9")
-									+ child);
+                            wsasLogger.i18NLogger.get_activity_ActivityImple_9()
+                                    + child);
 			}
 			else
 				throw new WrongStateException(
-						wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.activity.ActivityImple_10")
-								+ _status);
+                        wsasLogger.i18NLogger.get_activity_ActivityImple_10()
+                                + _status);
 		}
 	}
 

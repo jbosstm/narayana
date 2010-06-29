@@ -78,7 +78,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 {
 	                SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME);
-                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1"));
+                    soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.i18NLogger.get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1());
 	                throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -102,7 +102,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
 
                 SOAPFactory factory = SOAPFactory.newInstance();
                 SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME) ;
-                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1"));
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.i18NLogger.get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1());
                 throw new SOAPFaultException(soapFault);
             }
         }

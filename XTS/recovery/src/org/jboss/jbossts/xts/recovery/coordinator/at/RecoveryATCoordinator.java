@@ -11,11 +11,7 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering failed WSAT ACCoordinator transactions.
  *
- * @message_ org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1] - RecoveryATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2] - RecoveryATCoordinator.replayPhase2: Unexpected status: {0}
- * @message_ org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3] - RecoveryATCoordinator.replayPhase2( {0} )  finished
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4] - RecoveryATCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
-*/
+ */
 public class RecoveryATCoordinator extends ATCoordinator {
 
    /**
@@ -79,7 +75,7 @@ public class RecoveryATCoordinator extends ATCoordinator {
        }
        else
        {
-	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4", new Object[]{get_uid()});
+           XTSLogger.i18NLogger.warn_coordinator_at_RecoveryATCoordinator_4(get_uid());
        }
    }
 

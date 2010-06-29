@@ -297,10 +297,8 @@ public class Soap11Details implements SoapDetails
                 return soapFault ;
             }
         }
-        
-        final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap11Details_1") ;
-        final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-        throw new XMLStreamException(message) ;
+
+        throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap11Details_1(streamReader.getName())) ;
     }
 
     /**

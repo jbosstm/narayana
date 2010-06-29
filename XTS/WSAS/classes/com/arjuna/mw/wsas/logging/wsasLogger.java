@@ -32,18 +32,20 @@
 package com.arjuna.mw.wsas.logging;
 
 import com.arjuna.common.util.logging.*;
+import org.jboss.logging.Logger;
 
 public class wsasLogger
 {
 
     public static LogNoi18n      arjLogger;
     public static wsasI18NLogger i18NLogger;
-    public static Logi18n        arjLoggerI18N;
+    //public static Logi18n        arjLoggerI18N;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         arjLogger = noi18n;
-        arjLoggerI18N = i18n;
+        //arjLoggerI18N = i18n;
+        i18NLogger = new wsasI18NLoggerImpl(Logger.getLogger("com.arjuna.mw.wsas"));
     }
 
     static

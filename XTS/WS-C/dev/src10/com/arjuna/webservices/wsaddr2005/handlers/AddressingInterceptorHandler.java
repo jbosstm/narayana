@@ -121,7 +121,7 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                         }
                         catch (final SoapFault soapFault)
                         {
-                            WSCLogger.arjLoggerI18N.error("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3", soapFault) ;
+                            WSCLogger.i18NLogger.error_webservices_wsaddr2005_handlers_AddressingInterceptorHandler_3(soapFault.toString());
                         }
                     }
                 }) ;

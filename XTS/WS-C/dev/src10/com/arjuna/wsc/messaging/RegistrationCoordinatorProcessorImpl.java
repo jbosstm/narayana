@@ -38,7 +38,6 @@ import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
 import com.arjuna.wsc.Registrar;
 import com.arjuna.wsc.RegistrarMapper;
-import com.arjuna.wsc.messaging.MessageId;
 
 
 /**
@@ -84,7 +83,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME,
-                        WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl_1")) ;
+                            WSCLogger.i18NLogger.get_messaging_RegistrationCoordinatorProcessorImpl_1()) ;
                     RegistrationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
                     return ;
                 }
@@ -92,7 +91,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME,
-                        WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl_2")) ;
+                            WSCLogger.i18NLogger.get_messaging_RegistrationCoordinatorProcessorImpl_2()) ;
                     RegistrationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
                     return ;
                 }
@@ -100,7 +99,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
-                        WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl_3")) ;
+                            WSCLogger.i18NLogger.get_messaging_RegistrationCoordinatorProcessorImpl_3()) ;
                     RegistrationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
                     return ;
                 }
@@ -108,7 +107,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME,
-                        WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl_4")) ;
+                            WSCLogger.i18NLogger.get_messaging_RegistrationCoordinatorProcessorImpl_4()) ;
                     RegistrationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
                     return ;
                 }
@@ -133,7 +132,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME,
-                    WSCLogger.arjLoggerI18N.getString("com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl_2")) ;
+                        WSCLogger.i18NLogger.get_messaging_RegistrationCoordinatorProcessorImpl_2()) ;
                 RegistrationRequesterClient.getClient().sendSoapFault(faultAddressingContext, soapFault) ;
             }
         }

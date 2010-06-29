@@ -20,7 +20,6 @@
  */
 package com.arjuna.webservices.wsaddr;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -235,7 +234,7 @@ public class AddressingContext extends AnyContentSupport
     {
        if (!isValid())
        {
-           throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr.AddressingContext_1")) ;
+           throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr_AddressingContext_1()) ;
        }
        
        StreamHelper.writeElement(out, AddressingConstants.WSA_ELEMENT_TO_QNAME, to) ;
@@ -312,16 +311,12 @@ public class AddressingContext extends AnyContentSupport
             }
             else
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr.AddressingContext_2") ;
-                final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr_AddressingContext_2(elementName)) ;
             }
         }
         else
         {
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr.AddressingContext_2") ;
-            final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-            throw new XMLStreamException(message) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr_AddressingContext_2(elementName)) ;
         }
     }
     

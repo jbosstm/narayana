@@ -80,7 +80,7 @@ public class SoapNotUnderstoodType extends ElementContent
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.SoapNotUnderstoodType_1")) ;
+        throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_SoapNotUnderstoodType_1()) ;
     }
     
     /**

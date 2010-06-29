@@ -20,8 +20,6 @@
  */
 package com.arjuna.webservices.wscoor;
 
-import java.text.MessageFormat;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -98,7 +96,7 @@ public class CreateCoordinationContextResponseType extends AnyContentAnyAttribut
     {
        if (!isValid())
        {
-           throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_1")) ;
+           throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wscoor_CreateCoordinationContextResponseType_1()) ;
        }
        
        StreamHelper.writeElement(out, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT_QNAME, coordinationContext) ;
@@ -125,9 +123,7 @@ public class CreateCoordinationContextResponseType extends AnyContentAnyAttribut
             }
             else
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wscoor.CreateCoordinationContextResponseType_2") ;
-                final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wscoor_CreateCoordinationContextResponseType_2(elementName)) ;
             }
         }
         else

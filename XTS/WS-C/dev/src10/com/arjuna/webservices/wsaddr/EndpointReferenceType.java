@@ -256,9 +256,7 @@ public class EndpointReferenceType extends AnyContentAnyAttributeSupport
             }
             else
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr.EndpointReferenceType_1") ;
-                final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr_EndpointReferenceType_1(elementName)) ;
             }
         }
         else

@@ -339,16 +339,12 @@ public class AddressingContext extends AnyContentSupport
             }
             else
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.AddressingContext_2") ;
-                final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr2005_AddressingContext_2(elementName)) ;
             }
         }
         else
         {
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsaddr2005.AddressingContext_2") ;
-            final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-            throw new XMLStreamException(message) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsaddr2005_AddressingContext_2(elementName)) ;
         }
     }
     

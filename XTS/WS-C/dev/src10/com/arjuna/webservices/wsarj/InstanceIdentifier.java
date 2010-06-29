@@ -78,7 +78,7 @@ public class InstanceIdentifier extends ElementContent
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsarj.InstanceIdentifier_1")) ;
+        throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_wsarj_InstanceIdentifier_1()) ;
     }
     
     /**

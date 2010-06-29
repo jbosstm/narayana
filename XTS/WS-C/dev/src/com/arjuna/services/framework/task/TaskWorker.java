@@ -66,7 +66,7 @@ public class TaskWorker implements Runnable
             }
             catch (final Throwable th)
             {
-                WSCLogger.arjLoggerI18N.error("com.arjuna.services.framework.task.TaskWorker.run_1", th) ;
+                WSCLogger.i18NLogger.error_services_framework_task_TaskWorker_run_1(th);
             }
         }
     }

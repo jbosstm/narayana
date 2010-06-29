@@ -13,13 +13,14 @@ public class XTSLogger
     public static BasicLogger logger;
     public static xtsrecoveryI18NLogger i18NLogger;
 
-    public static Logi18n arjLoggerI18N;
+    //public static Logi18n arjLoggerI18N;
 
     public static void initialize(LogNoi18n noi18n, Logi18n i18n)
     {
         arjLogger = noi18n;
-        arjLoggerI18N = i18n;
+        //arjLoggerI18N = i18n;
         logger = Logger.getLogger("com.arjuna.wsrecovery");
+        i18NLogger = new xtsrecoveryI18NLoggerImpl(Logger.getLogger("com.arjuna.wsrecovery"));
     }
 
     static

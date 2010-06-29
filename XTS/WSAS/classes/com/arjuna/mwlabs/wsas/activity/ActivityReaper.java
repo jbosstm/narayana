@@ -85,7 +85,6 @@ public class ActivityReaper
      *
      * Timeout is given in millisecon>ds.
      *
-     * @message com.arjuna.mwlabs.wsas.activity.ActivityReaper_1 [com.arjuna.mwlabs.wsas.activity.ActivityReaper_1] - ActivityReaper: could not terminate.
      */
 
     public final boolean check (long timeout)
@@ -164,7 +163,7 @@ public class ActivityReaper
 
 		    if (error)
 		    {
-			wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.activity.ActivityReaper_1");
+                wsasLogger.i18NLogger.warn_activity_ActivityReaper_1();
 		    }
 		}
 	    }

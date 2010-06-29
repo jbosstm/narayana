@@ -36,8 +36,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.io.IOException;
 
-import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryRecord;
-
 /**
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering XTS AT participants.
@@ -45,13 +43,6 @@ import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryRecord
  *
  * $Id$
  *
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_3 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_3] - failed to access transaction store {0}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_4 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_4] - unable to load recovery record implementation class {0} for WS-AT participant recovery record {1}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_5 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_5] - unable to instantiate recovery record implementation class {0} for WS-AT participant recovery record {1}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_6 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_6] - unable to unpack recovery record data for WS-AT participant recovery record {0}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_7 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_7] - missing recovery record data for WS-AT participant recovery record {0}
- * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_8 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_8] - unable to read recovery record data for WS-AT participant recovery record {0}
  */
 
 public class ATParticipantRecoveryModule implements RecoveryModule
@@ -121,11 +112,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
         }
         catch ( ObjectStoreException ex )
         {
-            if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_1",
-                        ex);
-            }
+            XTSLogger.i18NLogger.warn_participant_at_ATParticipantRecoveryModule_1(ex);
         }
 
         if ( ATParticipants )
@@ -180,50 +167,26 @@ public class ATParticipantRecoveryModule implements RecoveryModule
                             // oh boy, not supposed to happen -- n.b. either the user deployed 1.0
                             // last time and 1.1 this time or vice versa or something is rotten in
                             // the state of Danmark
-                            if (XTSLogger.arjLoggerI18N.isErrorEnabled())
-                            {
-                                XTSLogger.arjLoggerI18N.error("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_4",
-                                        new Object[]{participantRecordClazzName, recoverUid.toString()}, cnfe);
-                            }
+                            XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_4(participantRecordClazzName, recoverUid, cnfe);
                         } catch (InstantiationException ie) {
                             // this is also worrying, log an error
-                            if (XTSLogger.arjLoggerI18N.isErrorEnabled())
-                            {
-                                XTSLogger.arjLoggerI18N.error("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_5",
-                                        new Object[]{participantRecordClazzName, recoverUid.toString()}, ie);
-                            }
+                            XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, ie);
                         } catch (IllegalAccessException iae) {
                             // this is another configuration problem, log an error
-                            if (XTSLogger.arjLoggerI18N.isErrorEnabled())
-                            {
-                                XTSLogger.arjLoggerI18N.error("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_5",
-                                        new Object[]{participantRecordClazzName, recoverUid.toString()}, iae);
-                            }
+                            XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, iae);
                         }
                     } catch (IOException ioe) {
                         // hmm, record corrupted? log this as a warning
-                        if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                            XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_6",
-                                    new Object[]{recoverUid.toString()}, ioe);
-                        }
+                        XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_6(recoverUid, ioe);
                     }
                 } else {
                     // hmm, it ought not to be able to disappear unless the recovery manager knows about it
                     // this is an error!
-                    if (XTSLogger.arjLoggerI18N.isErrorEnabled())
-                    {
-                        XTSLogger.arjLoggerI18N.error("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_7",
-                                new Object[]{recoverUid.toString()});
-                    }
+                    XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_7(recoverUid);
                 }
             } catch (ObjectStoreException ose) {
                 // if the object store is not working this is serious
-                if (XTSLogger.arjLoggerI18N.isErrorEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.error("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_8",
-                            new Object[]{recoverUid.toString()}, ose);
-                }
+                XTSLogger.i18NLogger.error_participant_at_ATParticipantRecoveryModule_8(recoverUid, ose);
             }
         }
     }
@@ -285,11 +248,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
             }
             catch ( ObjectStoreException ex )
             {
-                if (XTSLogger.arjLogger.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryModule_3",
-                            new Object[]{currentUid.toString()}, ex);
-                }
+                XTSLogger.i18NLogger.warn_participant_at_ATParticipantRecoveryModule_3(currentUid, ex);
             }
         }
         }

@@ -48,10 +48,6 @@ public class Configuration
     public static final String PROPERTIES = "properties";
     public static final String PROPERTY = "property";
 
-    /**
-     * @message com.arjuna.mw.wsas.utils.Configuration_1 [com.arjuna.mw.wsas.utils.Configuration_1] -  not found.
-     */
-
     public static final void initialise (String fileName) throws Exception
     {
 	/*
@@ -70,10 +66,6 @@ public class Configuration
 	    initialise(url);
     }
 
-    /**
-     * @message com.arjuna.mw.wsas.utils.Configuration_2 [com.arjuna.mw.wsas.utils.Configuration_2] -  Failed to create doc 
-     */
-
     public static final void initialise (URL url) throws Exception
     {
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -82,7 +74,7 @@ public class Configuration
 	    
 	if (doc == null)
 	{
-	    throw new FileNotFoundException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mw.wsas.utils.Configuration_2")+" "+url);
+	    throw new FileNotFoundException(wsasLogger.i18NLogger.get_utils_Configuration_2() + " "+url);
 	}
 	
 	org.w3c.dom.NodeList children = getProperties(doc.getDocumentElement());

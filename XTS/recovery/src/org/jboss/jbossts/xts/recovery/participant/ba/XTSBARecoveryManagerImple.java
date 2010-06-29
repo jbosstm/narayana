@@ -14,11 +14,6 @@ import java.io.IOException;
 /**
  * A class which manages the table of recovered participant records.
  *
- * @message org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_1 [org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_1] exception writing recovery record for WS-BA participant {0}
- * @message org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_2 [org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_2] exception removing recovery record {0} for WS-BA participant {1}
- * @message org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_3 [org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_3] exception reactivating recovered WS-BA participant {0}
- * @message org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_4 [org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_4] no XTS application recovery module found to help reactivate recovered WS-BA participant {0}
- * @message org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_5 [org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_5] Compensating orphaned subordinate WS-BA transcation {0}
  */
 public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
     /**
@@ -75,11 +70,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         try {
             oos.packString(participantRecoveryRecord.getClass().getCanonicalName());
         } catch (IOException ioe) {
-            if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_1",
-                        new Object[] {participantRecoveryRecord.getId()}, ioe);
-            }
+            XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ioe);
             return false;
         }
 
@@ -92,11 +83,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                 uidMap.put(participantRecoveryRecord.getId(), uid);
                 return true;
             } catch (ObjectStoreException ose) {
-                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_1",
-                            new Object[] {participantRecoveryRecord.getId()}, ose);
-                }
+                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ose);
             }
         }
 
@@ -118,12 +105,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                 uidMap.remove(id);
                 return true;
             } catch (ObjectStoreException ose) {
-                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_2",
-                            new Object[] {uid, id},
-                            ose);
-                }
+                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_2(uid, id, ose);
             }
         }
 
@@ -234,23 +216,14 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                         // but leave the participant in the table for next time in case the helper has merely
                         // suffered a transient failure
                         found = true;
-                        if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                            XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_3",
-                                    new Object[] {participantRecoveryRecord.getId()},
-                                    e);
-                        }
+                        XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_3(participantRecoveryRecord.getId(), e);
                     }
                 }
 
                 if (!found) {
                     // we failed to find a helper to convert a participant record so log a warning
                     // but leave it in the table for next time
-                    if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_4",
-                                new Object[] {participantRecoveryRecord.getId()});
-                    }
+                    XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_4(participantRecoveryRecord.getId());
                 }
             }
         }
@@ -275,11 +248,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         SubordinateBACoordinator[] coordinators = SubordinateBACoordinator.listRecoveredCoordinators();
         for (SubordinateBACoordinator coordinator : coordinators) {
             if (coordinator.isOrphaned()) {
-                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.ba.XTSBARecoveryModule_5",
-                            new Object[] {coordinator.get_uid().stringForm()});
-                }
+                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_5(coordinator.get_uid());
                 coordinator.cancel();
             }
         }

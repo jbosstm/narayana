@@ -114,7 +114,6 @@ public class UserActivityImple implements UserActivity
      * invalid within the current working environment.
      * @exception SystemException Thrown in any other situation.
      *
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_1 [com.arjuna.mwlabs.wsas.UserActivityImple_1] - Activity.start caught: 
      */
 
     public void start (int timeout) throws WrongStateException, InvalidTimeoutException, SystemException
@@ -151,8 +150,7 @@ public class UserActivityImple implements UserActivity
 		    }
 		    catch (Exception e)
 		    {
-			wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_1",
-						      new Object[]{e});
+                wsasLogger.i18NLogger.warn_UserActivityImple_1(ex);
 		    }
 
 		    throw ex;
@@ -183,8 +181,6 @@ public class UserActivityImple implements UserActivity
      *
      * @see com.arjuna.mw.wsas.Outcome
      *
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_2 [com.arjuna.mwlabs.wsas.UserActivityImple_2] - currentActivity.end threw: 
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_3 [com.arjuna.mwlabs.wsas.UserActivityImple_3] - Activity.completed caught: 
      */
 
     public Outcome end () throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, NoActivityException, SystemException, NoPermissionException, ActiveChildException
@@ -207,8 +203,7 @@ public class UserActivityImple implements UserActivity
 	}
 	catch (Exception ex)
 	{
-	    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_1",
-					  new Object[]{ex});
+        wsasLogger.i18NLogger.warn_UserActivityImple_1(ex);
 	}
 
 	HLS[] hls = HLSManager.allHighLevelServices();
@@ -223,8 +218,7 @@ public class UserActivityImple implements UserActivity
 		}
 		catch (SystemException ex)
 		{
-		    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_3",
-						  new Object[]{ex});
+            wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
 		}
 	    }
 	}
@@ -280,8 +274,7 @@ public class UserActivityImple implements UserActivity
 	}
 	catch (Exception ex)
 	{
-	    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_2",
-					  new Object[]{ex});
+        wsasLogger.i18NLogger.warn_UserActivityImple_2(ex);
 	}
 
 	HLS[] hls = HLSManager.allHighLevelServices();
@@ -296,8 +289,7 @@ public class UserActivityImple implements UserActivity
 		}
 		catch (SystemException ex)
 		{
-		    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_3",
-						  new Object[]{ex});
+            wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
 		}
 	    }
 	}
@@ -456,7 +448,6 @@ public class UserActivityImple implements UserActivity
      * @return the token representing the current context, if any, or null
      * otherwise.
      *
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_4 [com.arjuna.mwlabs.wsas.UserActivityImple_4] - Activity.suspended caught: 
      */
 
     public ActivityHierarchy suspend () throws SystemException
@@ -473,8 +464,7 @@ public class UserActivityImple implements UserActivity
 		}
 		catch (SystemException ex)
 		{
-		    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_4",
-						  new Object[]{ex});
+            wsasLogger.i18NLogger.warn_UserActivityImple_4(ex);
 		}
 	    }
 	}
@@ -501,8 +491,6 @@ public class UserActivityImple implements UserActivity
      * is invalid in this context.
      * @exception SystemException Thrown if any other error occurs.
      *
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_5 [com.arjuna.mwlabs.wsas.UserActivityImple_5] - Activity.resumed caught: 
-     * @message com.arjuna.mwlabs.wsas.UserActivityImple_51 [com.arjuna.mwlabs.wsas.UserActivityImple_51] - Unknown activity implementation!
      */
 
     public void resume (ActivityHierarchy tx) throws InvalidActivityException, SystemException
@@ -532,7 +520,7 @@ public class UserActivityImple implements UserActivity
 		}
 	    }
 	    else
-		throw new InvalidActivityException(wsasLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wsas.UserActivityImple_51"));
+		throw new InvalidActivityException(wsasLogger.i18NLogger.get_UserActivityImple_51());
 	}
 
 	HLS[] hls = HLSManager.allHighLevelServices();
@@ -547,8 +535,7 @@ public class UserActivityImple implements UserActivity
 		}
 		catch (SystemException ex)
 		{
-		    wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.UserActivityImple_5",
-						  new Object[]{ex});
+            wsasLogger.i18NLogger.warn_UserActivityImple_5(ex);
 		}
 	    }
 	}

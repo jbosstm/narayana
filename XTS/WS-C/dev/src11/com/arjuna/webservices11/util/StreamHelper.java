@@ -287,14 +287,12 @@ public class StreamHelper
             streamReader.nextTag() ;
             if (streamReader.isEndElement())
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.util.StreamHelper_1") ;
-                final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_util_StreamHelper_1(streamReader.getName())) ;
             }
         }
         else
         {
-            throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.util.StreamHelper_2")) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_util_StreamHelper_2()) ;
         }
     }
 
@@ -314,7 +312,7 @@ public class StreamHelper
             }
             else
             {
-                throw new XMLStreamException(WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.util.StreamHelper_2")) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_util_StreamHelper_2()) ;
             }
         }
     }
@@ -344,9 +342,7 @@ public class StreamHelper
         final QName elementName = streamReader.getName() ;
         if (!expected.equals(elementName))
         {
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.util.StreamHelper_3") ;
-            final String message = MessageFormat.format(pattern, new Object[] {elementName}) ;
-            throw new XMLStreamException(message) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_util_StreamHelper_3(elementName)) ;
         }
     }
 

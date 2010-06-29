@@ -46,9 +46,6 @@ import java.util.Enumeration;
  *
  * $Id$
  *
- * @message org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
- * @message org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
  */
 public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 {
@@ -105,11 +102,7 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
         }
         catch ( ObjectStoreException ex )
         {
-            if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_1",
-                        new Object[]{ex});
-            }
+            XTSLogger.i18NLogger.warn_coordinator_ba_SubordinateCoordinatorRecoveryModule_1(ex);
         }
 
         if ( SubordinateCoordinators )
@@ -188,11 +181,7 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
             }
             catch ( Exception ex )
             {
-                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_2",
-                            new Object[]{recoverUid.toString(), ex});
-                }
+                XTSLogger.i18NLogger.warn_coordinator_ba_SubordinateBACoordinatorRecoveryModule_2(recoverUid, ex);
             }
         }
     }
@@ -287,11 +276,7 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
             }
             catch ( ObjectStoreException ex )
             {
-                if (XTSLogger.arjLogger.isWarnEnabled())
-                {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule_3",
-                            new Object[]{currentUid.toString(), ex});
-                }
+                XTSLogger.i18NLogger.warn_coordinator_ba_SubordinateBACoordinatorRecoveryModule_3(currentUid, ex);
             }
         }
 

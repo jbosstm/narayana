@@ -321,23 +321,17 @@ public class Soap12Details implements SoapDetails
                         new AnyElement(streamReader) ;
                         if (!StreamHelper.checkParentFinished(streamReader))
                         {
-                            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap12Details_1") ;
-                            final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-                            throw new XMLStreamException(message) ;
+                            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap12Details_1(streamReader.getName())) ;
                         }
                     }
                     if (!StreamHelper.checkParentFinished(streamReader))
                     {
-                        final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap12Details_1") ;
-                        final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-                        throw new XMLStreamException(message) ;
+                        throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap12Details_1(streamReader.getName())) ;
                     }
                 }
                 if (!StreamHelper.checkParentFinished(streamReader))
                 {
-                    final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap12Details_1") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-                    throw new XMLStreamException(message) ;
+                    throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap12Details_1(streamReader.getName())) ;
                 }
             }
             
@@ -348,9 +342,7 @@ public class Soap12Details implements SoapDetails
             soapFault.setReason(reasonElement.getText()) ;
             if (!StreamHelper.checkParentFinished(streamReader))
             {
-                final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap12Details_1") ;
-                final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-                throw new XMLStreamException(message) ;
+                throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap12Details_1(streamReader.getName())) ;
             }
             if (StreamHelper.checkParentFinished(streamReader))
             {
@@ -387,9 +379,7 @@ public class Soap12Details implements SoapDetails
                     return soapFault ;
                 }
             }
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.soap.Soap12Details_1") ;
-            final String message = MessageFormat.format(pattern, new Object[] {streamReader.getName()}) ;
-            throw new XMLStreamException(message) ;
+            throw new XMLStreamException(WSCLogger.i18NLogger.get_webservices_soap_Soap12Details_1(streamReader.getName())) ;
     }
 
     /**

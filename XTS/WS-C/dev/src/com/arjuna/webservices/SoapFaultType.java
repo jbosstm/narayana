@@ -110,9 +110,7 @@ public class SoapFaultType extends Enumerated
         final Object state = ENUM_MAP.get(value) ;
         if (state == null)
         {
-            final String pattern = WSCLogger.arjLoggerI18N.getString("com.arjuna.webservices.SoapFaultType_1") ;
-            final String message = MessageFormat.format(pattern, new Object[] {value}) ;
-            throw new InvalidEnumerationException(message) ;
+            throw new InvalidEnumerationException(WSCLogger.i18NLogger.get_webservices_SoapFaultType_1(value)) ;
         }
         return (SoapFaultType)state ;
     }
