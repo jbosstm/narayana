@@ -85,7 +85,7 @@ public class TestUtil
     public static W3CEndpointReference getParticipantEndpoint(String id)
     {
         return getEndpoint(AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME,
-                AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME,
+                AtomicTransactionConstants.PARTICIPANT_PORT_QNAME,
                 participantServiceURI,
                 id);
     }
