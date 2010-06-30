@@ -42,8 +42,6 @@ import com.arjuna.ats.internal.jts.utils.*;
 import com.arjuna.ats.internal.jts.orbspecific.*;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ArjunaOTS.*;
 
 import org.omg.CosTransactions.*;

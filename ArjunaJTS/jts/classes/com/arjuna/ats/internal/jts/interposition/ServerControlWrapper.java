@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jts.interposition;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 

@@ -37,8 +37,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.jta.recovery.*;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 import javax.transaction.xa.*;

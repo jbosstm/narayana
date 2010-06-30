@@ -35,8 +35,6 @@ import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.arjuna.common.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.Synchronization;
 
 /**

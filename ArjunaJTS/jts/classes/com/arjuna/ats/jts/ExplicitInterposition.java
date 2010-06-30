@@ -40,8 +40,6 @@ import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 

@@ -48,8 +48,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import java.io.IOException;
 
 /**

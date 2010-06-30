@@ -42,8 +42,6 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
 import com.arjuna.ats.arjuna.common.*;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.Hashtable;
 import java.util.Comparator;
 

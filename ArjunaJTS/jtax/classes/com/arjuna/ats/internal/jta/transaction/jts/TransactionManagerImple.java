@@ -41,8 +41,6 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 
 import javax.transaction.*;
 
-import com.arjuna.common.util.logging.*;
-
 import javax.naming.*;
 import java.lang.NullPointerException;
 import java.util.Hashtable;

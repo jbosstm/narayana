@@ -33,8 +33,6 @@ package com.arjuna.ats.internal.jts.recovery;
 
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.NO_IMPLEMENT;

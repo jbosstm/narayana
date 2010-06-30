@@ -43,8 +43,6 @@ import org.omg.PortableServer.CurrentHelper;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import java.lang.Object;
 
 

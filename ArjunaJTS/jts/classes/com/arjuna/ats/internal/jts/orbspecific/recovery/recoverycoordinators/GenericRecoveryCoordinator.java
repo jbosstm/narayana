@@ -46,8 +46,6 @@ import org.omg.CORBA.SystemException;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 
 /**
  * This provides the ORB-independent recovery coordinator

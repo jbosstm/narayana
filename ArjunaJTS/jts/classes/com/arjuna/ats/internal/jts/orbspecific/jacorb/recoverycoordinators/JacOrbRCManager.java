@@ -42,7 +42,6 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;

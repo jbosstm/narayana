@@ -40,8 +40,6 @@ import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CORBA.SystemException;
 
 /**

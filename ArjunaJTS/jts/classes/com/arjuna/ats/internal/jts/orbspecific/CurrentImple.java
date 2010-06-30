@@ -50,8 +50,6 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CORBA.*;
 
 import org.omg.CosTransactions.SubtransactionsUnavailable;

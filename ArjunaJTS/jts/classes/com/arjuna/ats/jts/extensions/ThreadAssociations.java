@@ -39,8 +39,6 @@ import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import com.arjuna.ats.internal.jts.ControlWrapper;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.*;
 
 import org.omg.CORBA.SystemException;

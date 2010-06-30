@@ -51,8 +51,6 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;

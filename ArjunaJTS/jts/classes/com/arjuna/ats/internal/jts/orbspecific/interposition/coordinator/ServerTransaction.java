@@ -41,8 +41,6 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.utils.Utility;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;

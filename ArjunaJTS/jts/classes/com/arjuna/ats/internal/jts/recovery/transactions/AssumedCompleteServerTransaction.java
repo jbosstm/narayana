@@ -40,8 +40,6 @@ import java.util.Date;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 /**
  * Transaction relic of a committed transaction that did not get committed responses from
  * all resources/subordinates.

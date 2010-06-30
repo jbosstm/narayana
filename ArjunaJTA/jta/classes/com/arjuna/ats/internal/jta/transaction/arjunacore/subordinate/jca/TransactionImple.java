@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;

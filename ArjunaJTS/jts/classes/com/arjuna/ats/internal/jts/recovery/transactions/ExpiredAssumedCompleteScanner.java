@@ -45,8 +45,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState ;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 /**
  * Implementation of {@link com.arjuna.CosRecovery.ExpiryScanner} for removing
  * relics of transactions that have been assumed complete. Instances identify the

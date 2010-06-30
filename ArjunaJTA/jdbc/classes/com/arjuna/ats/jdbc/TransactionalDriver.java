@@ -37,8 +37,6 @@ import com.arjuna.ats.internal.jdbc.ConnectionManager;
 
 import com.arjuna.ats.arjuna.common.*;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.*;
 import java.sql.*;
 

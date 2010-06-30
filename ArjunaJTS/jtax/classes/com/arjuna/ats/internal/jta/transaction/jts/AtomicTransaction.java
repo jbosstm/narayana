@@ -38,8 +38,6 @@ import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.SystemException;

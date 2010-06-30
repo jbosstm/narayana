@@ -36,8 +36,6 @@ import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ArjunaOTS.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.orbportability.event.*;
 
 

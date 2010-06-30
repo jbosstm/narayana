@@ -14,17 +14,6 @@
          jonathan.halliday@redhat.com, 2009-09
     -->
 
-    <bean name="LoggingEnvironmentBean" class="com.arjuna.common.internal.util.logging.LoggingEnvironmentBean">
-
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=LoggingEnvironmentBean", exposedInterface=com.arjuna.common.internal.util.logging.LoggingEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
-
-        <constructor factoryClass="com.arjuna.common.internal.util.logging.commonPropertyManager" factoryMethod="getLoggingEnvironmentBean"/>
-
-        <property name="loggingFactory">com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger</property>
-        <!--<property name="loggingFactory">com.arjuna.ats.internal.jbossatx.logging.JBossLogFactory</property>-->
-
-    </bean>
-
     <bean name="RecoveryEnvironmentBean" class="com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean">
 
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=RecoveryEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.RecoveryEnvironmentBeanMBean.class, registerDirectly=true)</annotation>

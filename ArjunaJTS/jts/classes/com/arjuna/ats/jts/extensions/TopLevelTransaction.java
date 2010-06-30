@@ -38,8 +38,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import org.omg.CosTransactions.NoTransaction;

@@ -51,8 +51,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 

@@ -43,8 +43,6 @@ import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi.*;
 import com.arjuna.ats.internal.jts.interposition.*;
 import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 

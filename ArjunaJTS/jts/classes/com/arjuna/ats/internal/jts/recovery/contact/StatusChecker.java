@@ -34,8 +34,6 @@ package com.arjuna.ats.internal.jts.recovery.contact;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.common.*;

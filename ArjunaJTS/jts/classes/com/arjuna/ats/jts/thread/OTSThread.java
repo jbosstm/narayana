@@ -38,8 +38,6 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import java.lang.Thread;

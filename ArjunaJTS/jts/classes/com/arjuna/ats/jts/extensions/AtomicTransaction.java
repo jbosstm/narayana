@@ -44,8 +44,6 @@ import com.arjuna.ats.internal.jts.ControlWrapper;
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.Unavailable;
 import org.omg.CosTransactions.InvalidControl;

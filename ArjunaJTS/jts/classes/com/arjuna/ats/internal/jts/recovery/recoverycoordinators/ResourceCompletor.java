@@ -36,8 +36,6 @@ import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 /**
  * Threaded object used to terminate a prepared Resource after a
  * failure.  Normally failed resources are terminated by replaying the

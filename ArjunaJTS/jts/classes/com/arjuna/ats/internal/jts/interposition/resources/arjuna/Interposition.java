@@ -42,8 +42,6 @@ import com.arjuna.ats.internal.jts.interposition.ServerFactory;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 

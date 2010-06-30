@@ -38,8 +38,6 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 
-import com.arjuna.common.util.logging.*;
-
 import javax.transaction.xa.*;
 
 

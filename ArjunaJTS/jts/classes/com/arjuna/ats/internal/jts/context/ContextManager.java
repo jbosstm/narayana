@@ -47,8 +47,6 @@ import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
-import com.arjuna.common.util.logging.*;
-
 import java.util.*;
 import java.lang.Object;
 import org.omg.CORBA.*;

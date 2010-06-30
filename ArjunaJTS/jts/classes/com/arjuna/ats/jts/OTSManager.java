@@ -33,8 +33,6 @@ package com.arjuna.ats.jts;
 
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;

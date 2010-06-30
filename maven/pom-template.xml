@@ -179,13 +179,6 @@
 
         <!-- combined deps for the entire JBossTS. At some point we need to modularize this for different builds -->
 
-        <!-- 'common' module builds against commons-logging and at runtime uses commons-logging+log4j as
-            the default log config. Neither are required at runtime if using certain non-default logger settings -->
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
         <!-- XTS also requires commons-codec and commons-httpclient to compile the localjunit module -->
         <dependency>
           <groupId>commons-codec</groupId>

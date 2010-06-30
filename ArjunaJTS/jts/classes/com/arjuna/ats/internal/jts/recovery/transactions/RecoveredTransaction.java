@@ -44,8 +44,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import java.io.IOException;
 import java.util.Date;

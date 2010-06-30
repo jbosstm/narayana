@@ -37,8 +37,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.SystemException;

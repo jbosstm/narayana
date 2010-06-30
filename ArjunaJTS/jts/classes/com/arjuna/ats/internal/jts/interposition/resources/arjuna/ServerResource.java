@@ -41,8 +41,6 @@ import com.arjuna.ats.internal.jts.interposition.ServerFactory;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 
-import com.arjuna.common.util.logging.*;
-
 import org.omg.CosTransactions.*;
 import java.io.PrintWriter;
 import java.util.*;

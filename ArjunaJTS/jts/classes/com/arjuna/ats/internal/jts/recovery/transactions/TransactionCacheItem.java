@@ -41,9 +41,6 @@ import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 
-import com.arjuna.common.util.logging.*;
-
-
 /**
  * Would be an inner class of TransactionCache, except it is used by a static
  * method of TransactionCache.

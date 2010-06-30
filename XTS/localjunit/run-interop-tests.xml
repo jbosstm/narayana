@@ -42,7 +42,6 @@
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
         <pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>
-		<pathelement location="${jbossts.build.extlib.dir}/commons-logging.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-codec.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/junit.jar"/>
     </path>

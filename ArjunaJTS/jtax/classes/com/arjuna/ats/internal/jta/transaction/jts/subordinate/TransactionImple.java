@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;

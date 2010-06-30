@@ -47,7 +47,6 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.ArjunaOTS.JTAInterposedSynchronizationHelper;
 
 import org.omg.CosTransactions.*;

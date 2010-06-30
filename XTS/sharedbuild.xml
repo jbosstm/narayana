@@ -58,7 +58,7 @@
     <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
 
         <!-- external jars also used by JBossTS -->
-    <property name="jbossts.build.extlib.jars" value="commons-logging-1.1.jar"/>
+    <property name="jbossts.build.extlib.jars" value="fakeplaceholder.jar"/>
 
         <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
     <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>

@@ -35,8 +35,6 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.logging.*;
 
-import com.arjuna.common.util.logging.*;
-
 import javax.transaction.NotSupportedException;
 
 import java.lang.IllegalStateException;

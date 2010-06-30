@@ -473,7 +473,7 @@
                 <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
-                <fileset dir="${global.ext.lib.dir}" includes="commons-logging.jar,jboss-logging.jar,log4j.jar"/>
+                <fileset dir="${global.ext.lib.dir}" includes="jboss-logging.jar,log4j.jar"/>
                 <additional.classpath.aux/>
                 <path refid="emma.lib" />
             </classpath>

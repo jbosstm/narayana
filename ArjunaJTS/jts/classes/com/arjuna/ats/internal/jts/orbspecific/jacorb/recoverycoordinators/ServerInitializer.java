@@ -37,8 +37,6 @@ import org.omg.CORBA.Any;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jts.logging.*;
-import com.arjuna.common.util.logging.*;
-
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.arjuna.common.*;

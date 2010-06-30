@@ -36,7 +36,6 @@ import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 import java.sql.*;
