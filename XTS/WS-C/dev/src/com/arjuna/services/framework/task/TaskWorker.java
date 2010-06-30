@@ -46,8 +46,6 @@ public class TaskWorker implements Runnable
 
     /**
      * Execute the tasks.
-     * @message com.arjuna.services.framework.task.TaskWorker.run_1 [com.arjuna.services.framework.task.TaskWorker.run_1] -
-     *      Unhandled error executing task
      */
     public void run()
     {

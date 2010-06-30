@@ -70,13 +70,12 @@ public class ReplayResponseType extends ElementContent
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsat.ReplayResponseType_1 [com.arjuna.webservices.wsat.ReplayResponseType_1] - ReplayResponse elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.ReplayResponseType_1")) ;
+        throw new XMLStreamException(WSTLogger.i18NLogger.get_webservices_wsat_ReplayResponseType_1()) ;
     }
     
     /**

@@ -143,7 +143,6 @@ public class ProblemActionType extends AnyAttributeSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsaddr2005.ProblemActionType_1 [com.arjuna.webservices.wsaddr2005.ProblemActionType_1] - Unexpected element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

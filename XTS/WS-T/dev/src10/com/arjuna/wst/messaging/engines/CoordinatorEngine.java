@@ -290,7 +290,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.engines.CoordinatorEngine.soapFault_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.soapFault_1] - Unexpected SOAP fault for coordinator {0}: {1} {2}
      */
     public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -589,7 +588,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the prepare message.
      * 
-     * @message_ com.arjuna.wst.messaging.engines.CoordinatorEngine.sendPrepare_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendPrepare_1] - Unexpecting exception while sending Prepare
      */
     private void sendPrepare()
     {
@@ -641,7 +639,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the commit message.
      * 
-     * @message_ com.arjuna.wst.messaging.engines.CoordinatorEngine.sendCommit_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendCommit_1] - Unexpecting exception while sending Commit
      */
     private void sendCommit()
     {
@@ -693,7 +690,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the rollback message.
      * 
-     * @message_ com.arjuna.wst.messaging.engines.CoordinatorEngine.sendRollback_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendRollback_1] - Unexpecting exception while sending Rollback
      */
     private void sendRollback()
     {
@@ -713,8 +709,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the InvalidState message.
      * 
-     * @message com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1] - Inconsistent internal state.
-     * @message_ com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_2 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_2] - Unexpecting exception while sending InvalidState
      */
     private void sendInvalidState(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -727,8 +721,8 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             {
                 responseContext.addRelatesTo(new RelationshipType(messageId.getValue())) ;
             }
-            
-            final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
+
+            final String message = WSTLogger.i18NLogger.get_messaging_engines_CoordinatorEngine_sendInvalidState_1();
             final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(responseContext, soapFault, instanceIdentifier) ;
         }

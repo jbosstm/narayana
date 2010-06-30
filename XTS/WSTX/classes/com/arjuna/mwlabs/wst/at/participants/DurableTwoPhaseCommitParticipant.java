@@ -71,7 +71,6 @@ public class DurableTwoPhaseCommitParticipant implements Participant
      *
      * @return the participant's vote or a cancel vote the aprticipant is null
      *
-     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1] comms timeout attempting to prepare WS-AT participant {0}
      */
     public Vote prepare () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
@@ -121,9 +120,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
             if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
                 // log an error here or else the participant may be left hanging
                 // waiting for a prepare
-                if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
-                    wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1", new Object[] { _id });
-                }
+                wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(_id);
                 throw new SystemCommunicationException(ex.toString());
             } else {
 			throw new SystemException(ex.toString());
@@ -134,7 +131,6 @@ public class DurableTwoPhaseCommitParticipant implements Participant
     /**
      * attempt to commit the participant
      *
-     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1] comms timeout attempting to commit WS-AT participant {0}
      */
     public void confirm () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
@@ -167,9 +163,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			{
 				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
                     // log an error here -- we will end up writing a heuristic transaction record too
-                    if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
-                        wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1", new Object[] { _id });
-                    }
+                    wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(_id);
                     throw new SystemCommunicationException(ex.toString());
                 } else {
                     throw new SystemException(ex.toString());
@@ -183,7 +177,6 @@ public class DurableTwoPhaseCommitParticipant implements Participant
     /**
      * attempt to cancel the participant
      *
-     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1] comms timeout attempting to cancel WS-AT participant {0}
      */
 	public void cancel () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
@@ -214,9 +207,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			{
                 if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
                     // log an error here -- if the participant is dead it will retry anyway
-                    if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
-                        wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1", new Object[] { _id });
-                    }
+                    wstxLogger.i18NLogger.error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(_id);
                     throw new SystemCommunicationException(ex.toString());
                 } else {
                     throw new SystemException(ex.toString());

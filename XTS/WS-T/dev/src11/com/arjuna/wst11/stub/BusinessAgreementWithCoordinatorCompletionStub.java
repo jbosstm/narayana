@@ -216,9 +216,6 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements BusinessA
         participant.cancel() ;
     }
 
-    /**
-     * @message com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_2 [com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_2] - Error persisting participant state
-     */
     public boolean saveState(final OutputObjectState oos)
     {
         try
@@ -249,14 +246,11 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements BusinessA
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_2", th) ;
+            WSTLogger.i18NLogger.error_wst11_stub_BusinessAgreementWithCoordinatorCompletionStub_2(th);
             return false ;
         }
     }
 
-    /**
-     * @message com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_3 [com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_3] - Error restoring participant state
-     */
     public boolean restoreState(final InputObjectState ios)
     {
         try
@@ -296,7 +290,7 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements BusinessA
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub_3", th) ;
+            WSTLogger.i18NLogger.error_wst11_stub_BusinessAgreementWithCoordinatorCompletionStub_3(th);
             return false ;
         }
     }

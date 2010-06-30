@@ -53,16 +53,6 @@ import com.arjuna.wsc.messaging.MessageId;
  * The interceptor handler responsible for handling faults.
  * @author kevin
  * 
- * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_1] -
- *     Ignoring invalid WS-Addressing replyTo endpoint reference.
- * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_2] -
- *     Ignoring invalid WS-Addressing faultTo endpoint reference.
- * @message com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3] -
- *     Unhandled SOAP fault during asynchronous execution of service.
- * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_4] -
- *     Ignoring invalid WS-Addressing replyTo endpoint reference.
- * @message_ com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5 [com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_5] -
- *     Ignoring invalid WS-Addressing faultTo endpoint reference.
  */
 public class AddressingInterceptorHandler implements InterceptorHandler
 {

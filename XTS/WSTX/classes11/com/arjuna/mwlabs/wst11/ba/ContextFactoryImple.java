@@ -37,8 +37,6 @@ import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mwlabs.wst11.ba.context.ArjunaContextImple;
-import com.arjuna.mwlabs.wst11.ba.RegistrarImple;
-import com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple;
 import com.arjuna.mwlabs.wst11.ba.participants.CleanupSynchronization;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple;
@@ -59,7 +57,6 @@ import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine;
 import com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub;
 import com.arjuna.wst11.stub.BACoordinatorCompletionParticipantManagerStub;
-import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
@@ -116,8 +113,6 @@ public class ContextFactoryImple implements ContextFactory
      * @throws com.arjuna.wsc.InvalidCreateParametersException if a parameter passed is invalid
      *         this activity identifier.
      *
-     * @message com.arjuna.mwlabs.wst.ba.Context11FactoryImple_1 [com.arjuna.mwlabs.wst.ba.Context11FactoryImple_1] - Invalid type URI: < {0} , {1} >
-     * @message com.arjuna.mwlabs.wst.ba.Context11FactoryImple_3 [com.arjuna.mwlabs.wst.ba.Context11FactoryImple_3] - Invalid type URI:
      */
 
     public CoordinationContext create (final String coordinationTypeURI,
@@ -249,13 +244,11 @@ public class ContextFactoryImple implements ContextFactory
 		ex.printStackTrace();
 	    }
 	}
-	else
-	{
-	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.Context11FactoryImple_1",
-					  new Object[]{BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI});
+	else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_ba_Context11FactoryImple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI);
 
-	    throw new InvalidCreateParametersException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.ba.Context11FactoryImple_3")+" < "+ BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME+", "+coordinationTypeURI+" >");
-	}
+            throw new InvalidCreateParametersException(wstxLogger.i18NLogger.get_mwlabs_wst_ba_Context11FactoryImple_3() + " < " + BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME + ", " + coordinationTypeURI + " >");
+        }
 
 	return null;
     }

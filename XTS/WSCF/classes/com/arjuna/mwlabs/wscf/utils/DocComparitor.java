@@ -59,23 +59,15 @@ public class DocComparitor
 	 * unique, so can check for equality simply on that. If we want to check
 	 * individual elements and attributes then we could.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_1
-	 *          [com.arjuna.mwlabs.wscf.utils.DocComparitor_1] - First parameter
-	 *          is null!
-	 * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_2
-	 *          [com.arjuna.mwlabs.wscf.utils.DocComparitor_2] - Second
-	 *          parameter is null!
 	 */
 
 	public boolean equals (org.w3c.dom.Document doc1, org.w3c.dom.Document doc2)
 	{
 		if (doc1 == null)
-			throw new IllegalArgumentException(wscfLogger.arjLoggerI18N
-					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_1"));
+			throw new IllegalArgumentException(wscfLogger.i18NLogger.get_utils_DocComparitor_1());
 
 		if (doc2 == null)
-			throw new IllegalArgumentException(wscfLogger.arjLoggerI18N
-					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_2"));
+			throw new IllegalArgumentException(wscfLogger.i18NLogger.get_utils_DocComparitor_2());
 
 		CoordinationXML protocol1 = new CoordinationXML(doc1);
 		CoordinationXML protocol2 = new CoordinationXML(doc2);

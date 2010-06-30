@@ -107,14 +107,6 @@ public class TaskManager
      * @param task The task to be executed.
      * @return true if the task was queued, false otherwise.
      * 
-     * @message_ com.arjuna.services.framework.task.TaskManager.queueTask_1 [com.arjuna.services.framework.task.TaskManager.queueTask_1] -
-     *      Shutdown in progress, ignoring task
-     * @message_ com.arjuna.services.framework.task.TaskManager.queueTask_2 [com.arjuna.services.framework.task.TaskManager.queueTask_2] -
-     *      queueTask: notifying waiting workers ({0})
-     * @message_ com.arjuna.services.framework.task.TaskManager.queueTask_3 [com.arjuna.services.framework.task.TaskManager.queueTask_3] -
-     *      queueTask: creating worker
-     * @message_ com.arjuna.services.framework.task.TaskManager.queueTask_4 [com.arjuna.services.framework.task.TaskManager.queueTask_4] -
-     *      queueTask: queueing task for execution
      */
     public boolean queueTask(final Task task)
     {
@@ -175,10 +167,6 @@ public class TaskManager
      * 
      * @param minimumWorkerCount The minimum worker count.
      *
-     * @message_ com.arjuna.services.framework.task.TaskManager.setMinimumWorkerCount_1 [com.arjuna.services.framework.task.TaskManager.setMinimumWorkerCount_1] -
-     *      shutdown in progress, ignoring set minimum worker count
-     * @message_ com.arjuna.services.framework.task.TaskManager.setMinimumWorkerCount_2 [com.arjuna.services.framework.task.TaskManager.setMinimumWorkerCount_2] -
-     *      setMinimumWorkerCount: {0}
      */
     public void setMinimumWorkerCount(final int minimumWorkerCount)
     {
@@ -242,12 +230,6 @@ public class TaskManager
      * Set the maximum worker count for the pool.
      * 
      * @param maximumWorkerCount The maximum worker count.
-     * @message_ com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_1 [com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_1] -
-     *      shutdown in progress, ignoring set maximum worker count
-     * @message_ com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_2 [com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_2] -
-     *      setMaximumWorkerCount: {0}
-     * @message_ com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_3 [com.arjuna.services.framework.task.TaskManager.setMaximumWorkerCount_3] -
-     *      setMaximumWorkerCount: reducing pool size from {0} to {1}
      */
     public void setMaximumWorkerCount(final int maximumWorkerCount)
     {
@@ -320,8 +302,6 @@ public class TaskManager
     /**
      * Close all threads and reset the task list. This method waits until all
      * threads have finished before returning.
-     * @message_ com.arjuna.services.framework.task.TaskManager.shutdown_1 [com.arjuna.services.framework.task.TaskManager.shutdown_1] -
-     *      Shutdown already in progress
      */
     public void shutdown()
     {
@@ -390,16 +370,6 @@ public class TaskManager
      * 
      * @return The next task from the pool or null if finished.
      * 
-     * @message_ com.arjuna.services.framework.task.TaskManager.getTask_1 [com.arjuna.services.framework.task.TaskManager.getTask_1] -
-     *      getTask: releasing thread
-     * @message_ com.arjuna.services.framework.task.TaskManager.getTask_2 [com.arjuna.services.framework.task.TaskManager.getTask_2] -
-     *      getTask: notifying waiting thread about excess count {0}
-     * @message_ com.arjuna.services.framework.task.TaskManager.getTask_3 [com.arjuna.services.framework.task.TaskManager.getTask_3] -
-     *      getTask: returning task
-     * @message_ com.arjuna.services.framework.task.TaskManager.getTask_4 [com.arjuna.services.framework.task.TaskManager.getTask_4] -
-     *      getTask: waiting for task
-     * @message_ com.arjuna.services.framework.task.TaskManager.getTask_5 [com.arjuna.services.framework.task.TaskManager.getTask_5] -
-     *      getTask: interrupted
      */
     Task getTask()
     {

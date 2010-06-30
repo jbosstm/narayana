@@ -33,7 +33,6 @@ import com.arjuna.webservices.logging.WSCLogger;
 /**
  * XMLStreamWriter for writing to a SAAJ tree.
  * @author kevin
- * @message com.arjuna.webservices.adapters.SAAJXMLStreamWriter_1 [com.arjuna.webservices.adapters.SAAJXMLStreamWriter_1] - CData sections not currently supported.
  */
 public class SAAJXMLStreamWriter extends BaseXMLStreamWriter
 {

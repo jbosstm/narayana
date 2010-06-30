@@ -102,7 +102,6 @@ public class AttributedAnyType extends AnyAttributeSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsaddr2005.AttributedAnyType_1 [com.arjuna.webservices.wsaddr2005.AttributedAnyType_1] - Unexpected second element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

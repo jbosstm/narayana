@@ -200,15 +200,12 @@ public class BusinessActivityTerminatorStub implements com.arjuna.wst.BusinessAc
         error() ;
     }
 
-    /**
-     * @message com.arjuna.wst.stub.BusinessActivityTerminatorStub_1 [com.arjuna.wst.stub.BusinessActivityTerminatorStub_1] - Unknown error
-     */
     public void error ()
         throws SystemException
     {
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_terminationParticipant, MessageId.getMessageId()) ;
         final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
-                WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.stub.BusinessActivityTerminatorStub_1")) ;
+                WSTLogger.i18NLogger.get_stub_BusinessActivityTerminatorStub_1()) ;
         try
         {
             TerminationCoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier(_id)) ;

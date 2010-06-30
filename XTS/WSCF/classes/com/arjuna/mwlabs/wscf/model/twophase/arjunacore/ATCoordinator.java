@@ -61,15 +61,6 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @version $Id: ACCoordinator.java,v 1.7 2005/06/09 09:41:27 nmcl Exp $
  * @since 1.0.
  * 
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1] -
- *          ArjunaCore does not support removal of participants
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2] -
- *          Null is an invalid parameter!
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3] -
- *          Wrong state for operation!
  */
 
 public class ATCoordinator extends TwoPhaseCoordinator
@@ -173,7 +164,7 @@ public class ATCoordinator extends TwoPhaseCoordinator
 			throw new InvalidParticipantException();
 		else
 			throw new WrongStateException(
-					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1"));
+                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_1());
 	}
 
 	/**
@@ -230,7 +221,7 @@ public class ATCoordinator extends TwoPhaseCoordinator
 			throw new InvalidSynchronizationException();
 		else
 			throw new WrongStateException(
-					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1"));
+                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_1());
 	}
 
 	/**
@@ -264,7 +255,7 @@ public class ATCoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
 
 		if (status() == ActionStatus.RUNNING)
 			changeParticipantStatus(participantId, ROLLEDBACK);
@@ -277,7 +268,7 @@ public class ATCoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_2());
 
 		if (status() == ActionStatus.RUNNING)
 		{
@@ -285,7 +276,7 @@ public class ATCoordinator extends TwoPhaseCoordinator
 		}
 		else
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3"));
+                    wscfLogger.i18NLogger.get_model_twophase_arjunacore_ATCoordinator_3());
 	}
 
     @Override

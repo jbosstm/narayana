@@ -42,13 +42,6 @@ import com.arjuna.webservices.logging.WSCLogger;
  * XMLStreamReader for reading from a DOM tree.
  * @author kevin
  * 
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_1 [com.arjuna.webservices.adapters.DOMXMLStreamReader_1] - End of stream
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_2 [com.arjuna.webservices.adapters.DOMXMLStreamReader_2] - Unexpected child node: {0}
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_3 [com.arjuna.webservices.adapters.DOMXMLStreamReader_3] - Unexpected type: [0}
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_4 [com.arjuna.webservices.adapters.DOMXMLStreamReader_4] - Unexpected type: {0}
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_5 [com.arjuna.webservices.adapters.DOMXMLStreamReader_5] - Unexpected event type
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_6 [com.arjuna.webservices.adapters.DOMXMLStreamReader_6] - Unsupported operation
- * @message com.arjuna.webservices.adapters.DOMXMLStreamReader_7 [com.arjuna.webservices.adapters.DOMXMLStreamReader_7] - Unsupported operation
  */
 public class DOMXMLStreamReader implements XMLStreamReader
 {

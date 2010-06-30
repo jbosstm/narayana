@@ -67,9 +67,6 @@ public class ParticipantRecord extends
 	 * @param theResource
 	 *            is the proxy that allows us to call out to the object.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_1
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_1] -
-	 *          ParticipantRecord {0} - null participant provided!
 	 */
 
 	public ParticipantRecord (Participant theResource, Uid id)
@@ -80,11 +77,8 @@ public class ParticipantRecord extends
 		_timeout = 0;
 		_coordId = new CoordinatorIdImple(id);
 
-		if (theResource == null)
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_1",
-							new Object[] { order() });
+        if (theResource == null)
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_1(order());
 	}
 
 	/**
@@ -119,23 +113,16 @@ public class ParticipantRecord extends
 	/**
 	 * Set the internal value. Not allowed for this class.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_2
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_2] -
-	 *          ParticipantRecord.setValue() called illegally.
 	 */
 
 	public void setValue (Object o)
 	{
-		wscfLogger.arjLoggerI18N
-				.warn("com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_2");
+		wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_2();
 	}
 
 	/**
 	 * The record is being driven through nested rollback.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_3
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_3] -
-	 *          ParticipantRecord.nestedAbort {0} caught: {1}
 	 */
 
 	// TODO
@@ -150,25 +137,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_3",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_3(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record is being driven through nested commit.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_4
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_4] -
-	 *          ParticipantRecord.nestedCommit {0} caught: {1}
 	 */
 
 	public int nestedCommit ()
@@ -182,25 +162,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_4",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_4(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record is being driven through nested prepare.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_5
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_5] -
-	 *          ParticipantRecord.nestedPrepare {0} caught: {1}
 	 */
 
 	public int nestedPrepare ()
@@ -214,25 +187,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
-		catch (Exception e6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_5",
-							new Object[] { order(), e6 });
+		catch (Exception e6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_5(order(), e6);
 
-			e6.printStackTrace();
+            e6.printStackTrace();
 
-			return TwoPhaseOutcome.HEURISTIC_HAZARD;
-		}
+            return TwoPhaseOutcome.HEURISTIC_HAZARD;
+        }
 	}
 
 	/**
 	 * The record is being driven through top-level rollback.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_6
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_6] -
-	 *          ParticipantRecord.topLevelAbort {0} caught: {1}
 	 */
 
 	public int topLevelAbort ()
@@ -292,25 +258,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_6",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_6(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record is being driven through top-level commit.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_7
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_7] -
-	 *          ParticipantRecord.topLevelCommit {0} caught: {1}
 	 */
 
 	public int topLevelCommit ()
@@ -351,25 +310,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_7",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_7(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record is being driven through top-level prepare.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_8
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_8] -
-	 *          ParticipantRecord.topLevelPrepare {0} caught: {1}
 	 */
 
 	public int topLevelPrepare ()
@@ -393,26 +345,19 @@ public class ParticipantRecord extends
                 return (_completed ? TwoPhaseOutcome.PREPARE_OK: TwoPhaseOutcome.PREPARE_NOTOK);
             }
         }
-		catch (Exception e6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_8",
-							new Object[] { order(), e6 });
+		catch (Exception e6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_8(order(), e6);
 
-			e6.printStackTrace();
+            e6.printStackTrace();
 
-			return TwoPhaseOutcome.PREPARE_OK;
-		}
+            return TwoPhaseOutcome.PREPARE_OK;
+        }
 	}
 
 	/**
 	 * The record is being driven through nested commit and is the only
 	 * resource.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_9
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_9] -
-	 *          ParticipantRecord.nestedOnePhaseCommit {0} caught: {1}
 	 */
 
 	public int nestedOnePhaseCommit ()
@@ -426,26 +371,19 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_9",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_9(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record is being driven through top-level commit and is the only
 	 * resource.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_10
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_10] -
-	 *          ParticipantRecord.topLevelOnePhaseCommit {0} caught: {1}
 	 */
 
 	public int topLevelOnePhaseCommit ()
@@ -491,29 +429,18 @@ public class ParticipantRecord extends
 			else
 				return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_10",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_10(order(), ex6);
 
-			ex6.printStackTrace();
+            ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 	}
 
 	/**
 	 * The record generated a heuristic and can now forget about it.
 	 * 
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_11
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_11] -
-	 *          ParticipantRecord.forgetHeuristic for {0} called without a
-	 *          resource!
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_12
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_12] -
-	 *          ParticipantRecord.forgetHeuristic {0} caught exception: {1}
 	 */
 
 	public boolean forgetHeuristic ()
@@ -541,32 +468,19 @@ public class ParticipantRecord extends
 
 				return true;
 			}
-			else
-			{
-				wscfLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_11",
-								new Object[] { order() });
-			}
+			else {
+                wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_11(order());
+            }
 		}
-		catch (Exception e)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_12",
-							new Object[] { order(), e });
+		catch (Exception e) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_12(order(), e);
 
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
 		return false;
 	}
 
-    /**
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_13
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_13] -
-	 *          ParticipantRecord.complete {0} caught: {1}
-	 */
 
 	public boolean complete ()
 	{
@@ -607,15 +521,11 @@ public class ParticipantRecord extends
 				}
 			}
 		}
-		catch (Exception ex6)
-		{
-			wscfLogger.arjLoggerI18N
-					.warn(
-							"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_13",
-							new Object[] { order(), ex6 });
+		catch (Exception ex6) {
+            wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_13(order(), ex6);
 
-			ex6.printStackTrace();
-		}
+            ex6.printStackTrace();
+        }
 
 		return result;
 	}
@@ -638,11 +548,6 @@ public class ParticipantRecord extends
 		strm.print(_resourceHandle);
 	}
 
-	/**
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_14
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_14] -
-	 *          ParticipantRecord.restore_state: {1}
-	 */
 
 	public boolean restore_state (InputObjectState os, int t)
 	{
@@ -667,25 +572,16 @@ public class ParticipantRecord extends
                     }
                 }
 			}
-			catch (Exception ex)
-			{
-				wscfLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_14",
-								new Object[] { ex });
+			catch (Exception ex) {
+                wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_14(ex);
 
-				result = false;
-			}
+                result = false;
+            }
 		}
 
 		return result;
 	}
 
-	/**
-	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_15
-	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_15] -
-	 *          ParticipantRecord.save_state: {1}
-	 */
 
 	public boolean save_state (OutputObjectState os, int t)
 	{
@@ -710,15 +606,11 @@ public class ParticipantRecord extends
 				 * TODO: pack qualifiers and coord id.
 				 */
 			}
-			catch (Exception ex)
-			{
-				wscfLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_15",
-								new Object[] { ex });
+			catch (Exception ex) {
+                wscfLogger.i18NLogger.warn_model_sagas_coordinator_arjunacore_ParticipantRecord_15(ex);
 
-				result = false;
-			}
+                result = false;
+            }
 		}
 
 		return result;

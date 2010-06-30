@@ -47,7 +47,6 @@ public abstract class ParsingSupport
     /**
      * Parse the contents of this element from the input stream.
      * @param in The input stream.
-     * @message com.arjuna.webservices.stax.ParsingSupport_1 [com.arjuna.webservices.stax.ParsingSupport_1] - Encountered unexpected event type: {0}
      */
     protected final void parse(final XMLStreamReader in)
         throws XMLStreamException

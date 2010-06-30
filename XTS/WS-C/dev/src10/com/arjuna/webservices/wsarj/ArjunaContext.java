@@ -87,7 +87,6 @@ public class ArjunaContext extends AnyContentSupport
     /**
      * Write the content of the context to the stream.
      * @param out The current output stream.
-     * @message com.arjuna.webservices.wsarj.ArjunaContext_1 [com.arjuna.webservices.wsarj.ArjunaContext_1] - Arjuna context is not valid
      */
     public void writeChildContent(final XMLStreamWriter out)
         throws XMLStreamException
@@ -106,7 +105,6 @@ public class ArjunaContext extends AnyContentSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsarj.ArjunaContext_2 [com.arjuna.webservices.wsarj.ArjunaContext_2] - Unexpected element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

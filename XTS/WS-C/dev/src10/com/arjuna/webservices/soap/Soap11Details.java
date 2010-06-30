@@ -247,7 +247,6 @@ public class Soap11Details implements SoapDetails
      * @return The soap fault.
      * @throws XMLStreamException For errors during reading.
      * 
-     * @message com.arjuna.webservices.soap.Soap11Details_1 [com.arjuna.webservices.soap.Soap11Details_1] - Unexpected start element: {0}
      */
     public SoapFault parseSoapFault(final XMLStreamReader streamReader)
         throws XMLStreamException

@@ -171,9 +171,6 @@ public class ProtocolManager
 	 * 
 	 * @return The class that implements the specified coordination protocol.
 	 * 
-	 * @message com.arjuna.mw.wscf.protocols.ProtocolManager_1
-	 *          [com.arjuna.mw.wscf.protocols.ProtocolManager_1] - Could not
-	 *          find protocol:
 	 */
 
 	public Object getProtocolImplementation (org.w3c.dom.Document protocol)
@@ -201,8 +198,8 @@ public class ProtocolManager
 		}
 
 		throw new ProtocolNotRegisteredException(
-				wscfLogger.arjLoggerI18N.getString("com.arjuna.mw.wscf.protocols.ProtocolManager_1")
-						+ protocolDef.protocolType());
+                wscfLogger.i18NLogger.get_protocols_ProtocolManager_1()
+                        + protocolDef.protocolType());
 	}
 
 	/**
@@ -385,12 +382,6 @@ public class ProtocolManager
 		return false;
 	}
 
-	/**
-	 * @message com.arjuna.mw.wscf.protocols.ProtocolManager_2
-	 *          [com.arjuna.mw.wscf.protocols.ProtocolManager_2] - Failed to
-	 *          find document:
-	 */
-
 	private synchronized final void initialise ()
 	{
 		if (_initialised)
@@ -431,8 +422,8 @@ public class ProtocolManager
 						// TODO
 
 						throw new ExceptionInInitializerError(
-								wscfLogger.arjLoggerI18N.getString("com.arjuna.mw.wscf.protocols.ProtocolManager_2")
-										+ className);
+                                wscfLogger.i18NLogger.get_protocols_ProtocolManager_2()
+                                        + className);
 					}
 					else
 					{

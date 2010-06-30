@@ -64,8 +64,6 @@ public class SoapParser
      * @throws XMLStreamException For XML parsing errors.
      * @throws SoapFault For SOAP processing errors.
      * 
-     * @message com.arjuna.webservices.soap.SoapParser_1 [com.arjuna.webservices.soap.SoapParser_1] - Unexpected element: {0}
-     * @message com.arjuna.webservices.soap.SoapParser_2 [com.arjuna.webservices.soap.SoapParser_2] - Unexpected body element: {0}
      */
     public static SoapBody parse(final MessageContext messageContext, final MessageContext messageResponseContext,
         final String action, final XMLStreamReader streamReader, final SoapService soapService,
@@ -250,7 +248,6 @@ public class SoapParser
      * @throws XMLStreamException
      * @throws SoapFault
      * 
-     * @message com.arjuna.webservices.soap.SoapParser_3 [com.arjuna.webservices.soap.SoapParser_3] - Did not understand header: {0}
      */
     private static void checkMustUnderstand(final XMLStreamReader streamReader, final SoapDetails soapDetails)
         throws XMLStreamException, SoapFault

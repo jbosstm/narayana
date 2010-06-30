@@ -66,8 +66,6 @@ public abstract class BaseProcessor
      * @param executor The callback executor.
      * @param ids The message ids.
      * 
-     * @message_ com.arjuna.webservices.base.processors.BaseProcessor_1 [com.arjuna.webservices.base.processors.BaseProcessor_1] - Unexpected throwable while executing callback: 
-     * @message_ com.arjuna.webservices.base.processors.BaseProcessor_2 [com.arjuna.webservices.base.processors.BaseProcessor_2] - Received a response for non existent message IDs {0}
      */
     protected void handleCallbacks(final CallbackExecutor executor, final String[] ids)
     {

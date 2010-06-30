@@ -92,16 +92,10 @@ public class TransactionManagerImple extends TransactionManager
 	 *
 	 */
 
-	/**
-	 * @message com.arjuna.mwlabs.wst.at.remote.Transaction11ManagerImple_1
-	 *          [com.arjuna.mwlabs.wst.at.remote.Transaction11ManagerImple_1] -
-	 *          Not implemented!
-	 */
-
 	public int replay () throws SystemException
 	{
 		throw new SystemException(
-				wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.remote.Transaction11ManagerImple_1"));
+                wstxLogger.i18NLogger.get_mwlabs_wst_at_remote_Transaction11ManagerImple_1());
 	}
 
 	public TxContext suspend () throws SystemException

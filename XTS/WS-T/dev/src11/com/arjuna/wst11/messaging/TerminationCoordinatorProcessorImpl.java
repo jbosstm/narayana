@@ -41,28 +41,11 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst11.BusinessActivityTerminator;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.text.MessageFormat;
 
 /**
  * The Terminator Participant processor.
  * @author kevin
  *
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_1 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_1] - Unknown transaction
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_2 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_2] - Unknown error: {0}
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_3 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_3] - Unexpected exception thrown from cancel:
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_4 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_4] - Cancel called on unknown participant: {0}
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_5 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_5] - Unknown participant
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_6 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_6] - Unknown transaction
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_7 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_7] - Transaction rolled back
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_8 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_8] - Unknown error: {0}
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_9 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_9] - Unexpected exception thrown from close:
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_10 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_10] - Close called on unknown participant: {0}
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_11 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_11] - Unknown participant
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_12 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_12] - Unknown transaction
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_13 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_13] - Unknown error: {0}
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_14 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_14] - Unexpected exception thrown from complete:
- * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_15 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_15] - Complete called on unknown participant: {0}
- * @message com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_16 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_16] - Unknown participant
  */
 public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorProcessor
 {
@@ -133,15 +116,14 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_1")) ;
+                            WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_1()) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_2") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(se);
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
@@ -169,7 +151,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 final MAP faultMAP =
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_5")) ;
+                        WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_5()) ;
                  TerminationParticipantClient.getClient().sendSoapFault(soapFault, faultMAP, instanceIdentifier) ;
             }
         }
@@ -206,7 +188,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_6")) ;
+                            WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_6()) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
                 }
@@ -214,15 +196,14 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.TRANSACTIONROLLEDBACK_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_7")) ;
+                            WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_7()) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_8") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(se);
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
@@ -250,7 +231,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 final MAP faultMAP =
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_11")) ;
+                        WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_11()) ;
                 TerminationParticipantClient.getClient().sendSoapFault(soapFault, faultMAP, instanceIdentifier) ;
             }
         }
@@ -292,15 +273,14 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_12")) ;
+                            WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_12()) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_13") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(se);
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
@@ -329,7 +309,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                 final SoapFault soapFault =
                         new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                                WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_16")) ;
+                                WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_16()) ;
                 TerminationParticipantClient.getClient().sendSoapFault(soapFault, faultMAP, instanceIdentifier) ;
             }
         }
@@ -347,7 +327,6 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
      * @param soapFault The soap fault
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
-     * @message_ com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_17 [com.arjuna.wst11.messaging.TerminationCoordinatorProcessorImpl_17] - Service {0} received unexpected fault: {1}
      */
     public void soapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext)

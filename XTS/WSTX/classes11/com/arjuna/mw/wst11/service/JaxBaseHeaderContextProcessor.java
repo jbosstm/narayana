@@ -39,9 +39,6 @@ import java.util.Iterator;
  * Common base class for classes used to perform
  * WS-Transaction context manipulation on SOAP messages.
  *
- * @message com.arjuna.mw.wst11.service.JaxHC11P_1 [com.arjuna.mw.wst11.service.JaxHC11P_1] - Error in:
- * @message com.arjuna.mw.wst11.service.JaxHC11P_2 [com.arjuna.mw.wst11.service.JaxHC11P_2] - Stack trace:
- * @message com.arjuna.mw.wst11.service.JaxHC11P_3 [com.arjuna.mw.wst11.service.JaxHC11P_3] - Unknown context type:
  */
 class JaxBaseHeaderContextProcessor
 {
@@ -94,23 +91,13 @@ class JaxBaseHeaderContextProcessor
                         }
                         BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;
                     }
-                    else
-                    {
-                        wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_1",
-                                new Object[]{"com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.handleRequest(MessageContext context)"});
-
-                        wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_3",
-                                new Object[]{coordinationType});
+                    else {
+                        wstxLogger.i18NLogger.warn_mw_wst11_service_JaxHC11P_2("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.handleRequest(MessageContext context)", coordinationType);
                     }
                 }
             }
-            catch (final Throwable th)
-            {
-                wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_1",
-                        new Object[]{"com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.handleRequest(MessageContext context)"});
-
-                wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_2",
-                        new Object[]{th});
+            catch (final Throwable th) {
+                wstxLogger.i18NLogger.warn_mw_wst11_service_JaxHC11P_1("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.handleRequest(MessageContext context)", th);
             }
         }
         return true ;
@@ -140,15 +127,8 @@ class JaxBaseHeaderContextProcessor
                 businessActivityManager.suspend() ;
             }
         }
-        catch (final Throwable th)
-        {
-            wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_1",
-                    new Object[]{"com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.suspendTransaction()"});
-
-            wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.service.JaxHC11P_2",
-                    new Object[]{th});
-
-            th.printStackTrace(System.err) ;
+        catch (final Throwable th) {
+            wstxLogger.i18NLogger.warn_mw_wst11_service_JaxHC11P_1("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor.suspendTransaction()", th);
         }
     }
 

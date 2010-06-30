@@ -74,7 +74,6 @@ public class SoapNotUnderstoodType extends ElementContent
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.soap.SoapNotUnderstoodType_1 [com.arjuna.webservices.soap.SoapNotUnderstoodType_1] - NotUnderstood elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

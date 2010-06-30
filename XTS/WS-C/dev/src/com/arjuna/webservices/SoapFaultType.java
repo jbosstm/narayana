@@ -102,7 +102,6 @@ public class SoapFaultType extends Enumerated
      * @param value The value.
      * @return The enumeration.
      * @throws InvalidEnumerationException if the value is not valid.
-     * @message com.arjuna.webservices.SoapFaultType_1 [com.arjuna.webservices.SoapFaultType_1] - Invalid fault type enumeration: {0}
      */
     public static SoapFaultType toState(final String value)
         throws InvalidEnumerationException

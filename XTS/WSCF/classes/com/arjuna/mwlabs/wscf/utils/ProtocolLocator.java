@@ -62,10 +62,6 @@ public class ProtocolLocator
 	_xmlName = _className+".xml";
     }
 
-    /**
-     * @message com.arjuna.mwlabs.wscf.utils.ProtocolLocator_1 [com.arjuna.mwlabs.wscf.utils.ProtocolLocator_1] - not found
-     * @message com.arjuna.mwlabs.wscf.utils.ProtocolLocator_2 [com.arjuna.mwlabs.wscf.utils.ProtocolLocator_2] - Failed to create: 
-     */
      
     public final org.w3c.dom.Document getProtocol () throws FileNotFoundException, ProtocolLocationException
     {
@@ -75,7 +71,7 @@ public class ProtocolLocator
 
 	    if (url == null)
 	    {
-		throw new FileNotFoundException(_xmlName+" "+wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_1"));
+		throw new FileNotFoundException(_xmlName + " " + wscfLogger.i18NLogger.get_utils_ProtocolLocator_1());
 	    }
 	    else
 	    {
@@ -84,7 +80,7 @@ public class ProtocolLocator
 	    
 		if (doc == null)
 		{
-		    throw new FileNotFoundException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.utils.ProtocolLocator_2")+" "+_xmlName);
+		    throw new FileNotFoundException(wscfLogger.i18NLogger.get_utils_ProtocolLocator_2() + " "+_xmlName);
 		}
 		else
 		    return doc;

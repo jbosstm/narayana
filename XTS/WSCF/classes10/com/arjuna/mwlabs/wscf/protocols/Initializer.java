@@ -66,9 +66,6 @@ public class Initializer
 	}
     }
     
-    /**
-     * @message com.arjuna.mwlabs.wscf.protocols.Initializer_1 [com.arjuna.mwlabs.wscf.protocols.Initializer_1] - Failed to create: 
-     */
 
     private final void addProtocol (String impl) throws SystemException
     {
@@ -82,7 +79,7 @@ public class Initializer
 	    
 	    if (doc == null)
 	    {
-		throw new SystemException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.protocols.Initializer_1")+impl);
+		throw new SystemException(wscfLogger.i18NLogger.get_protocols_Initializer_1() + impl);
 	    }
 	    else
 	    {

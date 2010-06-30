@@ -58,7 +58,6 @@ public class LoggingFaultHandler implements BodyHandler
      * @throws XMLStreamException for parsing errors.
      * @throws SoapFault for processing errors.
      * @return The response elements or null if one way.
-     * @message com.arjuna.webservices.base.handlers.LoggingFaultHandler_1 [com.arjuna.webservices.base.handlers.LoggingFaultHandler_1] - Service {0} received unexpected fault: {1}
      */
     public SoapBody invoke(final SoapDetails soapDetails, final MessageContext context,
         final MessageContext responseContext, final String action, final XMLStreamReader in)

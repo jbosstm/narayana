@@ -72,7 +72,6 @@ import com.arjuna.mw.wsas.exceptions.*;
  * @version $Id: CoordinatorServiceImple.java,v 1.5 2005/05/19 12:13:37 nmcl Exp $
  * @since 1.0.
  *
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordiantorServiceImple_1 [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1] - Unknown response!
  */
 
 public class CoordinatorServiceImple implements UserCoordinator, CoordinatorManager
@@ -186,7 +185,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 		    }
 		}
 		else
-		    throw new ProtocolViolationException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
+		    throw new ProtocolViolationException(wscfLogger.i18NLogger.get_model_sagas_arjunacore_CoordinatorServiceImple_1());
 	    }
 	}
 	catch (NoActivityException ex)
@@ -248,7 +247,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 		    }
 		}
 		else
-		    throw new ProtocolViolationException(wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple_1"));
+		    throw new ProtocolViolationException(wscfLogger.i18NLogger.get_model_sagas_arjunacore_CoordinatorServiceImple_1());
 	    }
 	}
 	catch (NoActivityException ex)

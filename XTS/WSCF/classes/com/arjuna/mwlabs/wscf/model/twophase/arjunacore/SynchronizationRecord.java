@@ -57,7 +57,6 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
      * @param theResource is the proxy that allows us to call out to the
      * object.
      *
-     * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.SynchronizationRecord_1 [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.SynchronizationRecord_1] - SynchronizationRecord {0} - null participant provided!
      */
 
     public SynchronizationRecord (Synchronization theResource, Uid id)
@@ -65,9 +64,8 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	_resourceHandle = theResource;
 	_id = new CoordinatorIdImple(id);
 
-	if (_resourceHandle == null)
-	    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.SynchronizationRecord_1",
-					  new Object[]{_id});
+        if (_resourceHandle == null)
+            wscfLogger.i18NLogger.warn_model_twophase_arjunacore_SynchronizationRecord_1(_id);
     }
 
     public boolean beforeCompletion ()

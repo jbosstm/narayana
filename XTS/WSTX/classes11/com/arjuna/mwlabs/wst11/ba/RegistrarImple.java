@@ -116,8 +116,6 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 	 * @throws com.arjuna.wsc.NoActivityException
 	 *             if the activity does not exist.
 	 *
-	 * @message com.arjuna.mwlabs.wst.ba.Registrar11Imple_1
-	 *          [com.arjuna.mwlabs.wst.ba.Registrar11Imple_1] - Invalid type URI: < {0} , {1} >
 	 */
 
 	public W3CEndpointReference register (
@@ -230,15 +228,11 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 						throw new InvalidStateException();
 					}
 				}
-				else
-				{
-					wstxLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.mwlabs.wst.ba.Registrar11Imple_1",
-									new Object[] { BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier });
+				else {
+                    wstxLogger.i18NLogger.warn_mwlabs_wst_ba_Registrar11Imple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier);
 
-					throw new InvalidProtocolException();
-				}
+                    throw new InvalidProtocolException();
+                }
 	}
 
 	/**
@@ -343,8 +337,7 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
             throw new InvalidStateException();
         } else {
-            wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.Registrar11Imple_1", new Object[]
-            { BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier });
+            wstxLogger.i18NLogger.warn_mwlabs_wst_ba_Registrar11Imple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier);
 
             throw new InvalidProtocolException();
         }

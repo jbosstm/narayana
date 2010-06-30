@@ -57,8 +57,6 @@ public class RegistrationCoordinator
      * @throws NoActivityException If there is to activity context active.
      * @throws SoapFault for errors during processing.
      * 
-     * @message com.arjuna.wsc.RegistrationCoordinator_1 [com.arjuna.wsc.RegistrationCoordinator_1] - Callback execution failed
-     * @message com.arjuna.wsc.RegistrationCoordinator_2 [com.arjuna.wsc.RegistrationCoordinator_2] - Callback wasn't triggered
      */
     public static EndpointReferenceType register(final CoordinationContextType coordinationContext,
         final String messageID, final EndpointReferenceType participantProtocolService,

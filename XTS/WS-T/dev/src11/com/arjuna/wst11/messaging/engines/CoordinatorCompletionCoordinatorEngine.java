@@ -729,7 +729,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the close message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendClose_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendClose_1] - Unexpected exception while sending Close
      */
     private void sendClose()
     {
@@ -750,7 +749,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the compensate message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendCompensate_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendCompensate_1] - Unexpected exception while sending Compensate
      */
     private void sendCompensate()
     {
@@ -771,7 +769,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the complete message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendComplete_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendComplete_1] - Unexpected exception while sending Complete
      */
     private void sendComplete()
     {
@@ -792,7 +789,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the cancel message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendCancel_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendCancel_1] - Unexpected exception while sending Cancel
      */
     private void sendCancel()
     {
@@ -813,7 +809,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the exited message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendExited_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendExited_1] - Unexpected exception while sending Exited
      */
     private void sendExited()
     {
@@ -834,7 +829,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the failed message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendFailed_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendFailed_1] - Unexpected exception while sending Faulted
      */
     private void sendFailed()
     {
@@ -855,7 +849,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the not completed message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendNotCompleted_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendNotCompleted_1] - Unexpected exception while sending NotCompleted
      */
     private void sendNotCompleted()
     {
@@ -876,7 +869,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * Send the status message.
      * @param state The state.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendStatus_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendStatus_1] - Unexpected exception while sending Status
      */
     private void sendStatus(final State state)
     {
@@ -897,8 +889,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Send the invalid state fault message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_1] - Unexpected exception while sending InvalidStateFault
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2] - Invalid coordinator completion coordinator state
      */
     private void sendInvalidStateFault()
     {
@@ -906,7 +896,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         try
         {
             final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
-                    WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2")) ;
+                    WSTLogger.i18NLogger.get_wst11_messaging_engines_CoordinatorCompletionCoordinatorEngine_sendInvalidStateFault_2()) ;
             AddressingHelper.installNoneReplyTo(map);
             SoapFaultClient.sendSoapFault(soapFault, participant, map, getFaultAction()) ;
         }
@@ -999,7 +989,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Execute the completed transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeCompleted_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeCompleted_1] - Unexpected exception from coordinator completed
      */
     private void executeCompleted()
     {
@@ -1019,7 +1008,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     /**
      * Execute the exit transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeExit_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeExit_1] - Unexpected exception from coordinator exit
      */
     private void executeExit()
     {
@@ -1045,7 +1033,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @throws com.arjuna.webservices.SoapFault for SOAP errors.
      * @throws java.io.IOException for transport errors.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeFail_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeFail_1] - Unexpected exception from coordinator fail
      */
     private void executeFail(final QName exceptionIdentifier)
     {
@@ -1071,7 +1058,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @throws com.arjuna.webservices.SoapFault for SOAP errors.
      * @throws java.io.IOException for transport errors.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeCannotComplete_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.executeCannotComplete_1] - Unexpected exception from coordinator cannotComplete
      */
     private void executeCannotComplete()
     {

@@ -127,9 +127,6 @@ public class RegistrarImple implements Registrar
 	 * @throws NoActivityException
 	 *             if the activity does not exist.
 	 * 
-	 * @message com.arjuna.mwlabs.wst.at.RegistrarImple_1
-	 *          [com.arjuna.mwlabs.wst.at.Registrar_1] - Invalid type URI: < {0} ,
-	 *          {1} >
 	 */
 
 	/*
@@ -226,13 +223,11 @@ public class RegistrarImple implements Registrar
 				throw new InvalidStateException(ex.toString());
 			}
 		}
-		else
-		{
-			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.RegistrarImple_1", new Object[]
-			{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
+		else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_at_RegistrarImple_1(AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier);
 
-			throw new InvalidProtocolException();
-		}
+            throw new InvalidProtocolException();
+        }
 	}
 
     /**
@@ -317,13 +312,11 @@ public class RegistrarImple implements Registrar
 			
 			throw new InvalidStateException();
 		}
-		else
-		{
-			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.RegistrarImple_1", new Object[]
-			{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
+		else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_at_RegistrarImple_1(AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier);
 
-			throw new InvalidProtocolException();
-		}
+            throw new InvalidProtocolException();
+        }
 	}
 
     private EndpointReferenceType getCompletionCoordinator(final InstanceIdentifier instanceIdentifier)

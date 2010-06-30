@@ -66,13 +66,12 @@ class StateType extends ElementContent
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsba.StateType_1 [com.arjuna.webservices.wsba.StateType_1] - State elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsba.StateType_1")) ;
+        throw new XMLStreamException(WSTLogger.i18NLogger.get_webservices_wsba_StateType_1()) ;
     }
     
     /**

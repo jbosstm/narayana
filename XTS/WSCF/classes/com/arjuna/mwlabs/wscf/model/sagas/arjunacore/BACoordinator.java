@@ -70,18 +70,6 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @version $Id: ACCoordinator.java,v 1.5 2005/05/19 12:13:37 nmcl Exp $
  * @since 1.0.
  * 
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1] -
- *          Participant failed to complete in activity {1}
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2] -
- *          Null is an invalid parameter.
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3] -
- *          Wrong state for operation!
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4] -
- *          Removal of business activity synchronization is not allowed {1}
  */
 
 public class BACoordinator extends TwoPhaseCoordinator
@@ -168,7 +156,7 @@ public class BACoordinator extends TwoPhaseCoordinator
 
                             preventCommit();
 
-                            wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1", new Object[] { get_uid() });
+                            wscfLogger.i18NLogger.warn_model_sagas_arjunacore_BACoordinator_1(get_uid());
 
                             throw new SystemException("Participant failed to complete");
                         }
@@ -267,8 +255,7 @@ public class BACoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
 
         int status = status();
         // exit is only legitimate when the TX is in these states
@@ -279,8 +266,7 @@ public class BACoordinator extends TwoPhaseCoordinator
                 break;
             default:
                 throw new WrongStateException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
+                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
         }
     }
 
@@ -290,8 +276,7 @@ public class BACoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
 
         int status = status();
         // completed is only legitimate when the TX is in these states
@@ -302,8 +287,7 @@ public class BACoordinator extends TwoPhaseCoordinator
                 break;
             default:
                 throw new WrongStateException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
+                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
         }
 	}
 
@@ -312,8 +296,7 @@ public class BACoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
 
         int status = status();
         // faulted is only legitimate when the TX is in these states
@@ -330,8 +313,7 @@ public class BACoordinator extends TwoPhaseCoordinator
                 break;
             default:
                 throw new SystemException(
-					wscfLogger.arjLoggerI18N
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
+                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
         }
     }
 
@@ -342,8 +324,7 @@ public class BACoordinator extends TwoPhaseCoordinator
     {
         if (participantId == null)
             throw new SystemException(
-                    wscfLogger.arjLoggerI18N
-                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
+                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_2());
 
         int status = status();
         // cannot complete is only legitimate when the TX is in these states
@@ -357,8 +338,7 @@ public class BACoordinator extends TwoPhaseCoordinator
                 break;
             default:
                 throw new WrongStateException(
-                    wscfLogger.arjLoggerI18N
-                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
+                        wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_3());
         }
     }
 
@@ -416,7 +396,7 @@ public class BACoordinator extends TwoPhaseCoordinator
             throw new InvalidSynchronizationException();
         else
             throw new WrongStateException(
-                    wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4"));
+                    wscfLogger.i18NLogger.get_model_sagas_arjunacore_BACoordinator_4());
     }
 
 	/**

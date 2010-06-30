@@ -37,7 +37,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 
 /**
  * Initialise WSTX.
@@ -54,7 +53,6 @@ public class WSTXInitialisation implements ServletContextListener
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      *
-     * @message com.arjuna.mw.wst11.deploy.WSTXI_1 [com.arjuna.mw.wst11.deploy.WSTXI_1] - WSTX11 Initialisation: init failed:
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
@@ -72,13 +70,12 @@ public class WSTXInitialisation implements ServletContextListener
                    // Start recovery
 //            RecoveryManager.manager() ;
                }
-               catch (Exception exception)
-               {
-                   wstxLogger.arjLoggerI18N.error("com.arjuna.mw.wst11.deploy.WSTXI_1", exception);
+               catch (Exception exception) {
+                   wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(exception);
                }
                catch (Error error)
                {
-                   wstxLogger.arjLoggerI18N.error("com.arjuna.mw.wst11.deploy.WSTXI_21", error);
+                   wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(error);
                }
            }
         };
@@ -89,9 +86,6 @@ public class WSTXInitialisation implements ServletContextListener
     /**
      * Configure WS-T.
      *
-     * @message com.arjuna.mw.wst11.deploy.WSTXI_21 [com.arjuna.mw.wst11.deploy.WSTXI_21] - {0} not found.
-     * @message com.arjuna.mw.wst11.deploy.WSTXI_22 [com.arjuna.mw.wst11.deploy.WSTXI_22] - Failed to create document: {0}
-     * @message com.arjuna.mw.wst11.deploy.WSTXI_23 [com.arjuna.mw.wst11.deploy.WSTXI_23] - Missing WSTX Initialisation
      */
     private void configure()
         throws Exception
@@ -101,8 +95,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if (is == null)
         {
-            final String pattern = wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_21") ;
-            throw new FileNotFoundException(MessageFormat.format(pattern, new Object[] {WS_T11_CONFIG}));
+            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst11_deploy_WSTXI_21(WS_T11_CONFIG));
         }
 
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance() ;
@@ -111,8 +104,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if (doc == null)
         {
-            final String pattern = wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_22") ;
-            throw new FileNotFoundException(MessageFormat.format(pattern, new Object[] {WS_T11_CONFIG}));
+            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst11_deploy_WSTXI_22(WS_T11_CONFIG));
         }
 
         final Element docElem = doc.getDocumentElement() ;
@@ -123,7 +115,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
-            throw new FileNotFoundException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mw.wst11.deploy.WSTXI_23"));
+            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst11_deploy_WSTXI_23());
         }
         UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
         TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;

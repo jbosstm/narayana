@@ -101,7 +101,6 @@ public class Vote extends Enumerated
      * @param value The value.
      * @return The enumeration.
      * @throws InvalidEnumerationException if the value is not valid.
-     * @message com.arjuna.webservices.wsat.Vote_1 [com.arjuna.webservices.wsat.Vote_1] - Invalid vote enumeration: {0}
      */
     public static Vote toVote(final String value)
         throws InvalidEnumerationException
@@ -109,9 +108,7 @@ public class Vote extends Enumerated
         final Object vote = ENUM_MAP.get(value) ;
         if (vote == null)
         {
-            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.Vote_1") ;
-            final String message = MessageFormat.format(pattern, new Object[] {value}) ;
-            throw new InvalidEnumerationException(message) ;
+            throw new InvalidEnumerationException(WSTLogger.i18NLogger.get_webservices_wsat_Vote_1(value)) ;
         }
         return (Vote)vote ;
     }

@@ -52,8 +52,6 @@ public class ActivationCoordinator
      * @throws InvalidCreateParametersException if the create parameters are invalid.
      * @throws SoapFault for errors during processing.
      * 
-     * @message com.arjuna.wsc.ActivationCoordinator_1 [com.arjuna.wsc.ActivationCoordinator_1] - Callback execution failed
-     * @message com.arjuna.wsc.ActivationCoordinator_2 [com.arjuna.wsc.ActivationCoordinator_2] - Callback wasn't triggered
      */
     public static CoordinationContextType createCoordinationContext(final String activationCoordinatorURI,
         final String messageID, final String coordinationTypeURI, final Long expires,

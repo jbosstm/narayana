@@ -137,7 +137,6 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
      *
      * @param parameters
      *
-     * @message com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl_1 [com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl_1] - Invalid soap fault type
      */
     @WebMethod(operationName = "FaultOperation", action = "http://schemas.arjuna.com/ws/2005/10/wsarjtx/Fault")
     @Oneway
@@ -156,7 +155,7 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
             SoapFaultType soapFaultType = SoapFaultType.toState(soapFaultTypeName);
             soapFault = new SoapFault11(soapFaultType, subcode, reason);
         } catch (Exception e) {
-            String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl_1");
+            String message = WSTLogger.i18NLogger.get_webservices11_wsarjtx_sei_TerminationParticipantPortTypeImpl_1();
             throw new WebServiceException(message, e);
         }
 

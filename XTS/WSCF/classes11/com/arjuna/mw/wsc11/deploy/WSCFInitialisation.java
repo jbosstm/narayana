@@ -39,7 +39,6 @@ public class WSCFInitialisation implements ServletContextListener
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      *
-     * @message com.arjuna.mw.wsc11.deploy.WSCFI_1 [com.arjuna.mw.wsc11.deploy.WSCFI_1] - WSCF11 Initialisation: init failed:
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
@@ -53,13 +52,12 @@ public class WSCFInitialisation implements ServletContextListener
 
                    WSCFImpl.setSubordinateContextFactoryMapper(new ContextFactoryMapperImple());
                }
-               catch (Exception exception)
-               {
-                   wscfLogger.arjLoggerI18N.error("com.arjuna.mw.wsc11.deploy.WSCFI_1", exception);
+               catch (Exception exception) {
+                   wscfLogger.i18NLogger.error_mw_wsc11_deploy_WSCFI_1(exception);
                }
                catch (Error error)
                {
-                   wscfLogger.arjLoggerI18N.error("com.arjuna.mw.wsc11.deploy.WSCFI_1", error);
+                   wscfLogger.i18NLogger.error_mw_wsc11_deploy_WSCFI_1(error);
                }
            }
         };

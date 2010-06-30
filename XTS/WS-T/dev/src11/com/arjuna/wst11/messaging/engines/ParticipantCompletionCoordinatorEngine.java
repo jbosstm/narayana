@@ -637,7 +637,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the close message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendClose_1] - Unexpected exception while sending Close
      */
     private void sendClose()
     {
@@ -658,7 +657,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the compensate message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCompensate_1] - Unexpected exception while sending Compensate
      */
     private void sendCompensate()
     {
@@ -679,7 +677,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the cancel message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendCancel_1] - Unexpected exception while sending Cancel
      */
     private void sendCancel()
     {
@@ -700,7 +697,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the exited message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendExited_1] - Unexpected exception while sending Exited
      */
     private void sendExited()
     {
@@ -721,7 +717,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the faulted message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFailed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendFailed_1] - Unexpected exception while sending Faulted
      */
     private void sendFailed()
     {
@@ -742,7 +737,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Send the not completed message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendNotCompleted_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendNotCompleted_1] - Unexpected exception while sending NotCompleted
      */
     private void sendNotCompleted()
     {
@@ -764,7 +758,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Send the status message.
      * @param state The state.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.sendStatus_1] - Unexpected exception while sending Status
      */
     private void sendStatus(final State state)
     {
@@ -862,7 +855,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Execute the completed transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCompleted_1] - Unexpected exception from coordinator completed
      */
     private void executeCompleted()
     {
@@ -882,7 +874,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Execute the exit transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeExit_1] - Unexpected exception from coordinator exit
      */
     private void executeExit()
     {
@@ -908,7 +899,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * @throws com.arjuna.webservices.SoapFault for SOAP errors.
      * @throws java.io.IOException for transport errors.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeFault_1] - Unexpected exception from coordinator fault
      */
     private void executeFail(QName fail)
     {
@@ -933,7 +923,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      *
      * @throws SoapFault for SOAP errors.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCannotComplete_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine.executeCannotComplete_1] - Unexpected exception from coordinator error
      */
     private void executeCannotComplete()
     {

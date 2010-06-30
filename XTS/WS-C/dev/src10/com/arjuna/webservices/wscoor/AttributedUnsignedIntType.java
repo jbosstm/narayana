@@ -85,7 +85,6 @@ public class AttributedUnsignedIntType extends AnyAttributeSupport
      * Set the text value of this element.
      * @param in The current input stream.
      * @param value The text value.
-     * @message com.arjuna.webservices.wscoor.AttributedUnsignedIntType_1 [com.arjuna.webservices.wscoor.AttributedUnsignedIntType_1] - non numerical value: {0}
      */
     protected void putValue(final XMLStreamReader in, final String value)
         throws XMLStreamException

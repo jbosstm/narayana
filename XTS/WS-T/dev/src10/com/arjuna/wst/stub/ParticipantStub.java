@@ -186,9 +186,6 @@ public class ParticipantStub implements Participant, PersistableParticipant
         catch (final WrongStateException wse) {} // ignore
     }
 
-    /**
-     * @message com.arjuna.wst.stub.ParticipantStub_1 [com.arjuna.wst.stub.ParticipantStub_1] - Error persisting participant state
-     */
     public boolean saveState(final OutputObjectState oos)
     {
         try
@@ -212,14 +209,11 @@ public class ParticipantStub implements Participant, PersistableParticipant
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.ParticipantStub_1", th) ;
+            WSTLogger.i18NLogger.warn_stub_ParticipantStub_1(th);
             return false ;
         }
     }
 
-    /**
-     * @message com.arjuna.wst.stub.ParticipantStub_2 [com.arjuna.wst.stub.ParticipantStub_2] - Error restoring participant state
-     */
     public boolean restoreState(final InputObjectState ios)
     {
         try
@@ -242,7 +236,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.ParticipantStub_2", th) ;
+            WSTLogger.i18NLogger.warn_stub_ParticipantStub_2(th);
             return false ;
         }
     }

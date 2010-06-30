@@ -227,7 +227,6 @@ public class AddressingContext extends AnyContentSupport
     /**
      * Write the content of the context to the stream.
      * @param out The current output stream.
-     * @message com.arjuna.webservices.wsaddr.AddressingContext_1 [com.arjuna.webservices.wsaddr.AddressingContext_1] - Addressing context is not valid
      */
     public void writeChildContent(final XMLStreamWriter out)
         throws XMLStreamException
@@ -272,7 +271,6 @@ public class AddressingContext extends AnyContentSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsaddr.AddressingContext_2 [com.arjuna.webservices.wsaddr.AddressingContext_2] - Unexpected element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

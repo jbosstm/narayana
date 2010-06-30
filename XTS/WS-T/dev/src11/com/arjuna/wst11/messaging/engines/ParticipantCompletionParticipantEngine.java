@@ -350,7 +350,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * NotCompleting -> NotCompleting (invalid state)
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.failed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.failed_1] - Unable to delete recovery record during failed for WS-BA participant {0}
      */
     public void failed(final NotificationType failed,  final MAP map, final ArjunaContext arjunaContext)
     {
@@ -370,10 +369,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         if (deleteRequired) {
             if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                 // hmm, could not delete entry -- nothing more we can do than log a message
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.failed_1", new Object[] {id}) ;
-                }
+                WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_failed_1(id);
             } 
         }
         // now the log record has been deleted we can safely end this participant
@@ -421,7 +417,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.getStatus_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.getStatus_1] - Unknown error: {0}
      */
     public void getStatus(final NotificationType getStatus, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -482,9 +477,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param soapFault The soap fault.
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1] - Unable to delete recovery record during soapFault processing for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_2] - Cancelling participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_3 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_3] - Notifying unexpected error for participant {0}
      */
     public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -503,18 +495,12 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             boolean isInvalidState = soapFault.getSubcode().equals(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME);
             if (checkingStatus && isInvalidState) {
                 // coordinator must have died before reaching close so just cancel
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_2", new Object[] {id}) ;
-                }
+                WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_soapFault_2(id);
                 participant.compensate();
             } else {
                 // hmm, something went wrong -- notify the participant of the error
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_3", new Object[] {id}) ;
-                }
-                participant.error() ;
+                WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_soapFault_3(id);
+                participant.error();
             }
         }
         catch (final Throwable th) {} // ignore
@@ -522,10 +508,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         if (deleteRequired) {
             if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                 // hmm, could not delete entry -- nothing more we can do than log a message
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1", new Object[] {id}) ;
-                }
+                WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_soapFault_1(id);
             }
         }
     }
@@ -544,8 +527,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * NotCompleting -> NotCompleting (invalid state)
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended (invalid state)
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_1] - Unable to write recovery record during completed for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_2] - Unable to delete recovery record during completed for WS-BA participant {0}
      */
     public State completed()
     {
@@ -567,10 +548,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                     persisted = true;
                 } else {
                     // hmm, could not write entry log warning
-                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.completed_1", new Object[] {id}) ;
-                    }
+                    WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_completed_1(id);
                     // we need to fail this transaction
                     failRequired = true;
                 }
@@ -740,7 +718,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the exit message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1] - Unexpected exception while sending Exit
      */
     private void sendExit()
     {
@@ -771,7 +748,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the completed message.
      *
      * @param timedOut true if this is in response to a comms timeout
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1] - Unexpected exception while sending Completed
      */
     private void sendCompleted(boolean timedOut)
     {
@@ -833,7 +809,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the fail message.
      * @param message The fail message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendFail_1] - Unexpected exception while sending Fault
      */
     private void sendFail(final QName message)
     {
@@ -854,7 +829,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the cancelled message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCancelled_1] - Unexpected exception while sending Cancelled
      */
     private void sendCancelled()
     {
@@ -875,7 +849,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the closed message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendClosed_1] - Unexpected exception while sending Closed
      */
     private void sendClosed()
     {
@@ -896,7 +869,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the compensated message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1] - Unexpected exception while sending Compensated
      */
     private void sendCompensated()
     {
@@ -918,7 +890,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * Send the status message.
      * @param state The state.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1] - Unexpected exception while sending Status
      */
     private void sendStatus(final State state)
     {
@@ -939,7 +910,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Send the cannot complete message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.sendCannotComplete_1] - Unexpected exception while sending Status
      */
     private void sendCannotComplete()
     {
@@ -1037,8 +1007,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the cancel transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_1] - Faulted exception from participant cancel for WS-BA participant {0}
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCancel_2] - Unexpected exception from participant cancel for WS-BA participant {0}
      */
     private void executeCancel()
     {
@@ -1080,8 +1048,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the close transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1] - Unexpected exception from participant close for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_2] - Unable to delete recovery record during close for WS-BA participant {0}
      */
     private void executeClose()
     {
@@ -1107,10 +1073,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             // here in the hope that we have better luck next time..
             if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                 // hmm, could not delete entry -- leave it so we can maybe retry later
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_2", new Object[] {id}) ;
-                }
+                WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_executeClose_2(id);
                 // restore previous state so we can retry the close otherwise we get stuck in state closing forever
 
                 changeState(State.STATE_COMPLETED);
@@ -1127,9 +1090,6 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Execute the compensate transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_1] - Faulted exception from participant compensate for WS-BA participant {0}
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_2] - Unexpected exception from participant compensate for WS-BA participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_3 [com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_3] - Unable to delete recovery record during compensate for WS-BA participant {0}
      */
     private void executeCompensate()
     {
@@ -1182,10 +1142,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 if (persisted) {
                     if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                         // we have to fail since we don't want to run the compensate method again
-                        if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine.executeCompensate_3", new Object[] {id}) ;
-                        }
+                        WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_3(id);
                         failRequired = true;
                         changeState(State.STATE_FAILING_COMPENSATING);
                     }

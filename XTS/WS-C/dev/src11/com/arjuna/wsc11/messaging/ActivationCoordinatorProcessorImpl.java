@@ -46,9 +46,6 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
      * Create the coordination context.
      * @param createCoordinationContext The create coordination context request.
      * @param map The addressing context.
-     * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1] - Invalid create coordination context parameters
-     * @message_ com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create:
-     * @message_ com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
      */
     public CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,

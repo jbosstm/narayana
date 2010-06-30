@@ -43,7 +43,6 @@ import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorPr
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.wst.*;
 import com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine;
-import com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl;
 
 public class BusinessAgreementWithParticipantCompletionStub implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {
@@ -168,9 +167,6 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         participant.cancel() ;
     }
     
-    /**
-     * @message com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_2 [com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_2] - Error persisting participant state
-     */
     public boolean saveState(final OutputObjectState oos)
     {
         try
@@ -199,14 +195,11 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_2", th) ;
+            WSTLogger.i18NLogger.warn_stub_BusinessAgreementWithParticipantCompletionStub_2(th);
             return false ;
         }
     }
     
-    /**
-     * @message com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_3 [com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_3] - Error restoring participant state
-     */
     public boolean restoreState(final InputObjectState ios)
     {
         try
@@ -243,7 +236,7 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         }
         catch (final Throwable th)
         {
-            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_3", th) ;
+            WSTLogger.i18NLogger.error_stub_BusinessAgreementWithParticipantCompletionStub_3(th);
             return false ;
         }
     }

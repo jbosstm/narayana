@@ -43,12 +43,6 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 /**
  * The Registration Coordinator processor.
  * @author kevin
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_1 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_1] - Participant already registered
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_2] - Invalid protocol identifier
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_3] - Invalid coordination context state
- * @message com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_4] - Unknown activity identifier
- * @message_ com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_5] - Unexpected exception thrown from create:
- * @message_ com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6 [com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl_6] - Register called for unknown protocol identifier: {0}
  */
 public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinatorProcessor
 {

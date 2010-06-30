@@ -215,9 +215,6 @@ public class ArjunaContextImple implements SOAPContext
         return DomUtil.nodeAsString(_context);
     }
     
-    /**
-     * @message com.arjuna.mwlabs.wst.ba.context.ArjunaContextImple_1 [com.arjuna.mwlabs.wst.ba.context.ArjunaContextImple_1] - ignoring context: 
-     */
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
@@ -231,10 +228,8 @@ public class ArjunaContextImple implements SOAPContext
                 {
                     return (ArjunaContextImple)contexts[i] ;
                 }
-                else
-                {
-                    wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.context.ArjunaContextImple_1",
-                            new Object[]{contexts[i]});
+                else {
+                    wstxLogger.i18NLogger.warn_mwlabs_wst_ba_context_ArjunaContextImple_1(contexts[i].toString());
                 }
                 break;
             }

@@ -7,7 +7,6 @@ import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.at.ContextImple;
-import com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mwlabs.wst.at.remote.ContextManager;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
@@ -31,11 +30,6 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.util.Hashtable;
 
-/**
- * @message com.arjuna.mwlabs.wst.at.remote.UserTransaction11Imple__2
- *          [com.arjuna.mwlabs.wst.at.remote.UserTransaction11Imple__2] - Received
- *          context is null!
- */
 public class UserTransactionImple extends UserTransaction
 {
 
@@ -272,7 +266,7 @@ public class UserTransactionImple extends UserTransaction
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.remote.UserTransaction11Imple__2"));
+                        wstxLogger.i18NLogger.get_mwlabs_wst_at_remote_UserTransaction11Imple__2());
             }
             return new ContextImple(coordinationContext) ;
 		}

@@ -30,17 +30,6 @@ import com.arjuna.webservices.logging.WSCLogger;
  * The base XMLStreamWriter.
  * @author kevin
  * 
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_1 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_1] - setNamespaceContext unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_2 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_2] - writeComment unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_3 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_3] - writeProcessingInstruction unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_4 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_4] - writeProcessingInstruction unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_5 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_5] - writeEntityRef unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_6 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_6] - writeDTD unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_7 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_7] - writeStartDocument unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_8 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_8] - writeStartDocument unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_9 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_9] - writeStartDocument unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_10 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_10] - writeEndDocument unsupported
- * @message com.arjuna.webservices.adapters.BaseXMLStreamWriter_11 [com.arjuna.webservices.adapters.BaseXMLStreamWriter_11] - close unsupported
  */
 public abstract class BaseXMLStreamWriter implements XMLStreamWriter
 {

@@ -44,8 +44,6 @@ public class PersistableParticipantHelper
      * @param os The output object stream.
      * @param resource The resource to persist.
      * @return true if successful, false otherwise.
-     * @message com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_1 [com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_1] - Participant not persistable.
-     * @message com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_2 [com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_2] - Error persisting participant.
      */
     public static boolean save_state(final OutputObjectState os, final Object resource)
     {
@@ -71,15 +69,14 @@ public class PersistableParticipantHelper
                 }
                 else
                 {
-                    wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_1") ;
+                    wstxLogger.i18NLogger.error_mwlabs_wst_util_PersistableParticipantHelper_1();
                     return false ;
                 }
                 return true ;
             }
-            catch(final Throwable th)
-            {
-                wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_2", th) ;
-                return false ;
+            catch(final Throwable th) {
+                wstxLogger.i18NLogger.error_mwlabs_wst_util_PersistableParticipantHelper_2(th);
+                return false;
             }
         }
         else
@@ -90,7 +87,6 @@ public class PersistableParticipantHelper
      * Restore the resource state.
      * @param is The input object stream.
      * @return The resource if successful, null otherwise.
-     * @message com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_3 [com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_3] - Error restoring participant.
      */
     public static Object restore_state(final InputObjectState ios)
     {
@@ -112,10 +108,9 @@ public class PersistableParticipantHelper
                 return resource ;
             }
         }
-        catch (final Throwable th)
-        {
-            wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.util.PersistableParticipantHelper_3", th) ;
-            return null ;
+        catch (final Throwable th) {
+            wstxLogger.i18NLogger.error_mwlabs_wst_util_PersistableParticipantHelper_3(th);
+            return null;
         }
     }
 

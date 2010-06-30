@@ -66,9 +66,6 @@ import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
  * The messaging layer converts the Commit, Rollback and Notify messages into
  * calls on this.
  *
- * @message com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_1 [com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_1] - Invalid address.
- * @message com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_2 [com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_2] - Received context is null!
- * @message com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_3 [com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_3] - No termination context!
  */
 
 public class UserBusinessActivityImple extends UserBusinessActivity
@@ -359,7 +356,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_2"));
+                        wstxLogger.i18NLogger.get_mwlabs_wst11_ba_remote_UserBusinessActivityImple_2());
             }
             return new ContextImple(coordinationContext) ;
         }
@@ -389,7 +386,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         }
         catch (final Throwable th)
         {
-            throw new SystemException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple_3"));
+            throw new SystemException(wstxLogger.i18NLogger.get_mwlabs_wst11_ba_remote_UserBusinessActivityImple_3());
         }
     }
 

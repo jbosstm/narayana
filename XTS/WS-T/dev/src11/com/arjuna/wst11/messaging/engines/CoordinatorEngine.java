@@ -237,7 +237,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1] - Unexpected SOAP fault for coordinator {0}: {1} {2}
      */
     public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -565,7 +564,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the prepare message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendPrepare_1] - Unexpecting exception while sending Prepare
      */
     private void sendPrepare()
     {
@@ -617,7 +615,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the commit message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendCommit_1] - Unexpecting exception while sending Commit
      */
     private void sendCommit()
     {
@@ -669,7 +666,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the rollback message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendRollback_1] - Unexpecting exception while sending Rollback
      */
     private void sendRollback()
     {
@@ -689,8 +685,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Send the UnknownTransaction message.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1] - Unknown transaction
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2] - Unexpected exception while sending UnknownTransaction for participant {0}
      */
     private void sendUnknownTransaction(final MAP map, final ArjunaContext arjunaContext)
     {
@@ -699,16 +693,13 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             final MAP faultMAP = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
-            final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1") ;
+            final String message = WSTLogger.i18NLogger.get_wst11_messaging_engines_CoordinatorEngine_sendUnknownTransaction_1();
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultMAP, soapFault, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2", new Object[] { id }, th) ;
-            }
+            WSTLogger.i18NLogger.warn_wst11_messaging_engines_CoordinatorEngine_sendUnknownTransaction_2(id, th);
         }
     }
 

@@ -169,7 +169,6 @@ public class State extends Enumerated
      * @param qName The qName value.
      * @return The enumeration.
      * @throws InvalidEnumerationException if the value is not valid.
-     * @message com.arjuna.webservices.wsba.State_1 [com.arjuna.webservices.wsba.State_1] - Invalid state enumeration: {0}
      */
     public static State toState(final QName qName)
         throws InvalidEnumerationException
@@ -177,9 +176,7 @@ public class State extends Enumerated
         final Object state = ENUM_MAP.get(qName) ;
         if (state == null)
         {
-            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsba.State_1") ;
-            final String message = MessageFormat.format(pattern, new Object[] {qName}) ;
-            throw new InvalidEnumerationException(message) ;
+            throw new InvalidEnumerationException(WSTLogger.i18NLogger.get_webservices_wsba_State_1(qName)) ;
         }
         return (State)state ;
     }

@@ -207,7 +207,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Committing -> Committing (ignore)
      * Aborting -> Aborting (send aborted and forget)
      *
-     *  @message com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1] could not delete recovery record for participant {0}
      */
     public void rollback(final Notification rollback, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -249,10 +248,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 // here in the hope that we have better luck next time..
                 if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                     // hmm, could not delete entry -- leave it so we can maybe retry later
-                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1", new Object[] {id}) ;
-                    }
+                    WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantEngine_rollback_1(id);
 
                     return;
                 }
@@ -327,9 +323,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2] - Unrecoverable error for participant {0} : {1} {2}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3] - Unable to delete recovery record at commit for participant {0}
      */
     public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -347,12 +340,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 AtomicTransactionConstants.WSAT_ERROR_CODE_INCONSISTENT_INTERNAL_STATE_QNAME.equals(subcode) ||
                 AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME.equals(subcode))
         {
-            if (WSTLogger.arjLoggerI18N.isErrorEnabled())
-            {
-                final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
-                final QName subCode = soapFault.getSubcode() ;
-                WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2", new Object[] {id, soapFaultType, subCode}) ;
-            }
+            final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
+            final QName subCode = soapFault.getSubcode() ;
+            WSTLogger.i18NLogger.error_wst11_messaging_engines_ParticipantEngine_soapFault_2(id, soapFaultType.toString(), subCode);
 
             // unrecoverable error -- forget this participant and delete any persistent
             //  record of it
@@ -377,10 +367,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 // if we cannot delete the participant we record an error here
                 if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                     // hmm, could not delete entry -- log an error
-                    if (WSTLogger.arjLoggerI18N.isErrorEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3", new Object[] {id}) ;
-                    }
+                    WSTLogger.i18NLogger.error_wst11_messaging_engines_ParticipantEngine_soapFault_3(id);
                 }
             }
 
@@ -393,10 +380,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
      *
      * Preparing -> PreparedSuccess (send Prepared)
      * Committing -> Committing (send committed and forget)
-
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_1] - Exception rolling back participant
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2] - Unable to delete recovery record during prepare for participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3] - Unable to delete recovery record at commit for participant {0}
      */
     private void commitDecision()
     {
@@ -466,10 +449,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
 
                 if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                     // hmm, could not delete entry log warning
-                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2", new Object[] {id}) ;
-                    }
+                    WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantEngine_commitDecision_2(id);
                 }
             } else {
                 // whew got through -- send a prepared
@@ -486,13 +466,10 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 // here in the hope that we have better luck next time.
                 if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                     // hmm, could not delete entry -- log a warning
-                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3", new Object[] {id}) ;
-                    }
+                    WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantEngine_commitDecision_3(id);
                     // now revert back to PREPARED_SUCCESS and drop message awaiting a retry
 
-                    synchronized (this) {
+                    synchronized(this) {
                         state = State.STATE_PREPARED_SUCCESS;
                     }
 
@@ -592,7 +569,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the commit transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.executeCommit_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.executeCommit_1] - Unexpected exception from participant commit
      */
     private void executeCommit()
     {
@@ -620,7 +596,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the rollback transition.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.executeRollback_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.executeRollback_1] - Unexpected exception from participant rollback
      */
     private boolean executeRollback()
     {
@@ -645,8 +620,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Execute the prepare transition.
      *
-     * @message__ com.arjuna.wst11.messaging.engines.ParticipantEngine.executePrepare_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.executePrepare_1] - Unexpected exception from participant prepare
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.executePrepare_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.executePrepare_2] - Unexpected result from participant prepare: {0}
      */
     private void executePrepare()
     {
@@ -689,7 +662,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
         {
             if (WSTLogger.logger.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.ParticipantEngine.executePrepare_2", new Object[] {(vote == null ? "null" : vote.getClass().getName())}) ;
+                WSTLogger.logger.debugv("Unexpected result from participant prepare: {0}", new Object[] {(vote == null ? "null" : vote.getClass().getName())});
             }
             rollbackDecision() ;
         }
@@ -710,7 +683,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the committed message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.sendCommitted_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendCommitted_1] - Unexpected exception while sending Committed
      */
     private void sendCommitted()
     {
@@ -742,7 +714,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Send the prepared message.
      *
      * @param timedOut true if this is in response to a comms timeout
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
      */
     private void sendPrepared(boolean timedOut)
     {
@@ -789,7 +760,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the aborted message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.sendAborted_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendAborted_1] - Unexpected exception while sending Aborted
      */
     private void sendAborted()
     {
@@ -811,7 +781,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the read only message.
      *
-     * @message_ com.arjuna.wst11.messaging.engines.ParticipantEngine.sendReadOnly_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendReadOnly_1] - Unexpected exception while sending ReadOnly
      */
     private void sendReadOnly()
     {

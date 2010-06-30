@@ -171,7 +171,6 @@ public class CoordinationContextType extends AnyContentAnyAttributeSupport
     /**
      * Write the content of the context to the stream.
      * @param out The current output stream.
-     * @message com.arjuna.webservices.wscoor.CoordinationContextType_1 [com.arjuna.webservices.wscoor.CoordinationContextType_1] - Coordination Context is not valid
      */
     public void writeChildContent(final XMLStreamWriter out)
         throws XMLStreamException
@@ -196,7 +195,6 @@ public class CoordinationContextType extends AnyContentAnyAttributeSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wscoor.CoordinationContextType_2 [com.arjuna.webservices.wscoor.CoordinationContextType_2] - Unexpected element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

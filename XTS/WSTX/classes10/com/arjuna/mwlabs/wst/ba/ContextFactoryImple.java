@@ -96,8 +96,6 @@ public class ContextFactoryImple implements ContextFactory
      * @throws InvalidCreateParametersException if a parameter passed is invalid
      *         this activity identifier.
      *
-     * @message com.arjuna.mwlabs.wst.ba.ContextFactoryImple_1 [com.arjuna.mwlabs.wst.ba.ContextFactoryImple_1] - Invalid type URI: < {0} , {1} >
-     * @message com.arjuna.mwlabs.wst.ba.ContextFactoryImple_3 [com.arjuna.mwlabs.wst.ba.ContextFactoryImple_3] - Invalid type URI: 
      */
 
     public CoordinationContextType create (final String coordinationTypeURI,
@@ -172,13 +170,11 @@ public class ContextFactoryImple implements ContextFactory
 		ex.printStackTrace();
 	    }
 	}
-	else
-	{
-	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.ContextFactoryImple_1",
-					  new Object[]{BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI});
+	else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_ba_ContextFactoryImple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI);
 
-	    throw new InvalidCreateParametersException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.ba.ContextFactoryImple_3")+" < "+BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME+", "+coordinationTypeURI+" >");
-	}
+            throw new InvalidCreateParametersException(wstxLogger.i18NLogger.get_mwlabs_wst_ba_ContextFactoryImple_3() + " < " + BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME + ", " + coordinationTypeURI + " >");
+        }
 
 	return null;
     }

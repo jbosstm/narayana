@@ -91,12 +91,6 @@ public class LocalContextFactoryImple implements ContextFactory
 	 * @throws InvalidCreateParametersException
 	 *             if a parameter passed is invalid this activity identifier.
 	 * 
-	 * @message com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_1
-	 *          [com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_1] -
-	 *          Invalid type URI: < {0} , {1} >
-	 * @message com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11
-	 *          [com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11] -
-	 *          Invalid type URI:
 	 */
 
 	public CoordinationContextType create (final String coordinationTypeURI,
@@ -149,18 +143,16 @@ public class LocalContextFactoryImple implements ContextFactory
 				ex.printStackTrace();
 			}
 		}
-		else
-		{
-			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_1", new Object[]
-			{ AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI });
+		else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_at_local_LocalContextFactoryImple_1(AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI);
 
-			throw new InvalidCreateParametersException(
-					wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11"
-							+ " <"
-							+ AtomicTransactionConstants.WSAT_PROTOCOL
-							+ ", "
-							+ coordinationTypeURI + " >"));
-		}
+            throw new InvalidCreateParametersException(
+                    wstxLogger.i18NLogger.get_mwlabs_wst_at_local_LocalContextFactoryImple_11()
+                            + " <"
+                            + AtomicTransactionConstants.WSAT_PROTOCOL
+                            + ", "
+                            + coordinationTypeURI + " >");
+        }
 
 		return null;
 	}

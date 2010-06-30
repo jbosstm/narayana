@@ -70,13 +70,12 @@ public class PrepareResponseType extends ElementContent
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsat.PrepareResponseType_1 [com.arjuna.webservices.wsat.PrepareResponseType_1] - PrepareResponse elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)
         throws XMLStreamException
     {
-        throw new XMLStreamException(WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.PrepareResponseType_1")) ;
+        throw new XMLStreamException(WSTLogger.i18NLogger.get_webservices_wsat_PrepareResponseType_1()) ;
     }
     
     /**

@@ -111,9 +111,6 @@ public class RegistrarImple implements Registrar
 	 * @throws NoActivityException
 	 *             if the activity does not exist.
 	 * 
-	 * @message com.arjuna.mwlabs.wst.ba.RegistrarImple_1
-	 *          [com.arjuna.mwlabs.wst.ba.RegistrarImple_1] - Invalid type URI: <
-	 *          {0} , {1} >
 	 */
 
 	public EndpointReferenceType register (
@@ -208,15 +205,11 @@ public class RegistrarImple implements Registrar
 						throw new InvalidStateException();
 					}
 				}
-				else
-				{
-					wstxLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.mwlabs.wst.ba.RegistrarImple_1",
-									new Object[] { BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier });
+				else {
+                    wstxLogger.i18NLogger.warn_mwlabs_wst_ba_RegistrarImple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier);
 
-					throw new InvalidProtocolException();
-				}
+                    throw new InvalidProtocolException();
+                }
 	}
 
 	/**

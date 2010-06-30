@@ -91,11 +91,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1] - Unexpected exception thrown from commit:
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_2] - Commit called on unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3] - Commit request dropped pending WS-AT participant recovery manager initialization for participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4] - Commit request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5] - Commit request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
     public void commit(final NotificationType commit, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -109,10 +104,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
 
         if (recoveryManager == null) {
             // log warning and drop this message -- it will be resent
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_commit_3(instanceIdentifier.toString());
 
             return;
         }
@@ -127,32 +119,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1", th) ; 
-                }
+                 WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_commit_1(th);
             }
         }
         else if (!recoveryManager.isParticipantRecoveryStarted())
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_commit_4(instanceIdentifier.toString());
         }
         else if (recoveryManager.findParticipantRecoveryRecord(instanceIdentifier.getInstanceIdentifier()) != null)
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_commit_5(instanceIdentifier.toString());
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_2", new Object[] {instanceIdentifier}) ; 
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_commit_2(instanceIdentifier.toString());
             sendCommitted(addressingContext, arjunaContext) ;
         }
     }
@@ -163,9 +143,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_1] - Unexpected exception thrown from prepare: 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_2] - Prepare called on unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_3] - Prepare request dropped pending WS-AT participant recovery manager initialization for participant: {0}
      */
     public void prepare(final NotificationType prepare, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -181,18 +158,12 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_1", th) ; 
-                }
+                WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_prepare_1(th);
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_2", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_prepare_2(instanceIdentifier.toString());
             sendAborted(addressingContext, arjunaContext) ;
         }
     }
@@ -203,11 +174,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1] - Unexpected exception thrown from rollback: 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_2] - Rollback called on unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3] - Rollback request dropped pending WS-AT participant recovery manager initialization for participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4] - Rollback request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5] - Rollback request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
     public void rollback(final NotificationType rollback, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -221,11 +187,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
 
         if (recoveryManager == null) {
             // log warning and drop this message -- it will be resent
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3", new Object[] {instanceIdentifier}) ;
-            }
-
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_rollback_3(instanceIdentifier.toString());
         }
 
         final ParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
@@ -238,32 +200,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1", th) ;
-                }
+                WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_rollback_1(th);
             }
         }
         else if (!recoveryManager.isParticipantRecoveryStarted())
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_rollback_4(instanceIdentifier.toString());
         }
         else if (recoveryManager.findParticipantRecoveryRecord(instanceIdentifier.getInstanceIdentifier()) != null)
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_rollback_5(instanceIdentifier.toString());
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_2", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_rollback_2(instanceIdentifier.toString());
             sendAborted(addressingContext, arjunaContext) ;
         }
     }
@@ -274,8 +224,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault: 
-     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
      */
     public void soapFault(final SoapFault fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -291,18 +239,12 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_1", th) ;
-                }
+                WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_soapFault_1(th);
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
-            }
+             WSTLogger.i18NLogger.warn_messaging_ParticipantProcessorImpl_soapFault_2(instanceIdentifier.toString());
         }
     }
     
@@ -312,7 +254,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendCommitted_1] - Unexpected exception while sending Committed
      */
     private void sendCommitted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -339,7 +280,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.sendAborted_1] - Unexpected exception while sending Aborted
      */
     private void sendAborted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {

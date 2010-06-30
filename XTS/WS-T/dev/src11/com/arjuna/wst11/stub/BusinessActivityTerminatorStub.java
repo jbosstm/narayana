@@ -209,9 +209,6 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
         error() ;
     }
 
-    /**
-     * @message com.arjuna.wst11.stub.BusinessActivityTerminatorStub_1 [com.arjuna.wst11.stub.BusinessActivityTerminatorStub_1] - Unknown error
-     */
     /*
      * this never gets called
      */
@@ -220,7 +217,7 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     {
         final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
         final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
-                WSTLogger.arjLoggerI18N.getString("com.arjuna.wst11.stub.BusinessActivityTerminatorStub_1")) ;
+                WSTLogger.i18NLogger.get_wst11_stub_BusinessActivityTerminatorStub_1()) ;
         try
         {
             TerminationCoordinatorClient.getClient().sendSoapFault(_terminationCoordinator, map, soapFault, new InstanceIdentifier(_id)) ;

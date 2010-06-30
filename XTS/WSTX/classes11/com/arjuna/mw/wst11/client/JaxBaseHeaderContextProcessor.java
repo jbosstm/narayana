@@ -41,8 +41,6 @@ import java.util.Iterator;
  * Common base class for classes used to perform
  * WS-Transaction context manipulation on SOAP messages.
  *
- * @message com.arjuna.mw.wst11.client.JaxHC11P_1 [com.arjuna.mw.wst11.client.JaxHC11P_1] - Error in:
- * @message com.arjuna.mw.wst11.client.JaxHC11P_2 [com.arjuna.mw.wst11.client.JacHCP_2] - Stack trace:
  */
 class JaxBaseHeaderContextProcessor
 {
@@ -120,15 +118,8 @@ class JaxBaseHeaderContextProcessor
                 CoordinationContextHelper.serialise(coordinationContext, headerElement) ;
             }
         }
-        catch (final Throwable th)
-        {
-	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_1",
-					  new Object[]{"com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.handleRequest()"});
-
-	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_2",
-					  new Object[]{th});
-
-            th.printStackTrace(System.err) ;
+        catch (final Throwable th) {
+            wstxLogger.i18NLogger.warn_mw_wst11_client_JaxHC11P_1("com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.handleRequest()", th);
         }
 
         return true ;
@@ -137,7 +128,6 @@ class JaxBaseHeaderContextProcessor
     /**
      * Resume the current transaction.
      *
-     * @message com.arjuna.mw.wst11.client.JaxHC11P_3 [com.arjuna.mw.wst11.client.JaxHC11P_3] - Unknown context type:
      */
 
     protected void resumeTransaction(final SOAPMessage soapMessage)
@@ -165,24 +155,14 @@ class JaxBaseHeaderContextProcessor
                             final TxContext txContext = new com.arjuna.mwlabs.wst11.ba.context.TxContextImple(cc);
                             BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;
                         }
-                        else
-                        {
-            			    wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_1",
-    			                new Object[]{"com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.resumeTransaction()"});
-
-            			    wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_3",
-                                new Object[]{coordinationType});
+                        else {
+                            wstxLogger.i18NLogger.warn_mw_wst11_client_JaxHC11P_2("com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.resumeTransaction()", coordinationType);
                         }
                     }
                 }
             }
-            catch (final Throwable th)
-            {
-        		wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_1",
-                    new Object[]{"com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.resumeTransaction()"});
-
-        		wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst11.client.JaxHC11P_2",
-                    new Object[]{th});
+            catch (final Throwable th) {
+                wstxLogger.i18NLogger.warn_mw_wst11_client_JaxHC11P_1("com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor.resumeTransaction()", th);
             }
         }
     }

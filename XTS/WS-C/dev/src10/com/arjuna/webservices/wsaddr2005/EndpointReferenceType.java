@@ -173,7 +173,6 @@ public class EndpointReferenceType extends AnyContentAnyAttributeSupport
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsaddr2005.EndpointReferenceType_1 [com.arjuna.webservices.wsaddr2005.EndpointReferenceType_1] - Unexpected element name: {0}
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

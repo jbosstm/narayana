@@ -95,8 +95,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_1] - Unexpected exception thrown from cancel:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_2] - Cancel called on unknown participant: {0}
      */
     public void cancel(final NotificationType cancel, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -133,8 +131,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_1] - Unexpected exception thrown from close:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_2] - Close called on unknown participant: {0}
      */
     public void close(final NotificationType close, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -171,8 +167,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_1] - Unexpected exception thrown from compensate:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_2] - Compensate called on unknown participant: {0}
      */
     public void compensate(final NotificationType compensate, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -209,8 +203,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.exited_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.exited_1] - Unexpected exception thrown from exited:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.exited_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.exited_2] - Exited called on unknown participant: {0}
      */
     public void exited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -243,8 +235,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.faulted_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.faulted_1] - Unexpected exception thrown from faulted:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.faulted_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.faulted_2] - Faulted called on unknown participant: {0}
      */
     public void faulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -277,10 +267,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2] - Complete called on unknown participant: {0}
-     * @message com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_3 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to coordinator for participant {0}
-     * @message com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_4 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_4] - GetStatus requested for unknown coordinator completion participant
      */
     public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -321,16 +307,12 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
             final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
             try
             {
-                final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_4") ;
+                final String message = WSTLogger.i18NLogger.get_messaging_ParticipantCompletionParticipantProcessorImpl_getStatus_4();
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
                 ParticipantCompletionCoordinatorClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
             }
-            catch (final Throwable th)
-            {
-                if (WSTLogger.arjLoggerI18N.isInfoEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.info("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_3", new Object[] {instanceIdentifier},  th) ;
-                }
+            catch (final Throwable th) {
+                WSTLogger.i18NLogger.info_messaging_ParticipantCompletionParticipantProcessorImpl_getStatus_3(instanceIdentifier.toString(), th);
             }
         }
     }
@@ -341,8 +323,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.status_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.status_1] - Unexpected exception thrown from status:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.status_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.status_2] - Status called on unknown participant: {0}
      */
     public void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -375,8 +355,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
      */
     public void soapFault(final SoapFault fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -410,7 +388,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCancelled_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCancelled_1] - Unexpected exception while sending Cancelled
      */
     private void sendCancelled(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -436,7 +413,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendClosed_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendClosed_1] - Unexpected exception while sending Closed
      */
     private void sendClosed(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -462,7 +438,6 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCompensated_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCompensated_1] - Unexpected exception while sending Compensated
      */
     private void sendCompensated(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {

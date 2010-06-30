@@ -71,7 +71,6 @@ public class CoordinatorManagerFactory
      * coordination protocol is used (two-phase commit) with its
      * associated implementation.
      *
-     * @message com.arjuna.mw.wscf.model.sagas.CMF_1 [com.arjuna.mw.wscf.model.sagas.CMF_1] - Failed to create 
      */
 
     public static CoordinatorManager coordinatorManager () throws ProtocolNotRegisteredException, SystemException
@@ -81,11 +80,9 @@ public class CoordinatorManagerFactory
 	    ProtocolLocator pl = new ProtocolLocator(SagasHLSImple.class);
 	    org.w3c.dom.Document doc = pl.getProtocol();
 	    
-	    if (doc == null)
-	    {
-		wscfLogger.arjLoggerI18N.warn("com.arjuna.mw.wscf.model.sagas.CMF_1",
-					      new Object[]{SagasHLSImple.className()});	
-    }
+	    if (doc == null) {
+            wscfLogger.i18NLogger.warn_model_sagas_CMF_1(SagasHLSImple.className());
+        }
 	    else
 		return coordinatorManager(doc);
 	}

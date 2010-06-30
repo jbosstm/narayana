@@ -58,7 +58,6 @@ import com.arjuna.wst.Durable2PCParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.wst11.stub.SubordinateVolatile2PCStub;
 import com.arjuna.wst11.stub.SubordinateDurable2PCStub;
-import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
@@ -111,12 +110,6 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 	 * @throws com.arjuna.wsc.InvalidCreateParametersException
 	 *             if a parameter passed is invalid this activity identifier.
 	 *
-	 * @message com.arjuna.mwlabs.wst.at.Context11FactoryImple_1
-	 *          [com.arjuna.mwlabs.wst.at.Context11FactoryImple_1] - Invalid type
-	 *          URI: < {0} , {1} >
-	 * @message com.arjuna.mwlabs.wst.at.Context11FactoryImple_3
-	 *          [com.arjuna.mwlabs.wst.at.Context11FactoryImple_3] - Invalid type
-	 *          URI:
 	 */
 
 	public CoordinationContext create (final String coordinationTypeURI, final Long expires,
@@ -253,18 +246,16 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 				ex.printStackTrace();
 			}
 		}
-		else
-		{
-			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.Context11FactoryImple_1", new Object[]
-			{ AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI });
+		else {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_at_Context11FactoryImple_1(AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI);
 
-			throw new InvalidCreateParametersException(
-					wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.Context11FactoryImple_3")
-							+ " < "
-							+ AtomicTransactionConstants.WSAT_PROTOCOL
-							+ ", "
-							+ coordinationTypeURI + " >");
-		}
+            throw new InvalidCreateParametersException(
+                    wstxLogger.i18NLogger.get_mwlabs_wst_at_Context11FactoryImple_3()
+                            + " < "
+                            + AtomicTransactionConstants.WSAT_PROTOCOL
+                            + ", "
+                            + coordinationTypeURI + " >");
+        }
 
 		return null;
 	}

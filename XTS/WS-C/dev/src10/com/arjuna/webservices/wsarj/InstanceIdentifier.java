@@ -72,7 +72,6 @@ public class InstanceIdentifier extends ElementContent
      * Add the element.
      * @param in The current input stream.
      * @param elementName The qualified element name.
-     * @message com.arjuna.webservices.wsarj.InstanceIdentifier_1 [com.arjuna.webservices.wsarj.InstanceIdentifier_1] - InstanceIdentifier elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

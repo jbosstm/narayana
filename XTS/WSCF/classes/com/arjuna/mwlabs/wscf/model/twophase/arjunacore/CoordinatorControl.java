@@ -76,9 +76,6 @@ import java.util.Hashtable;
  * @version $Id: CoordinatorControl.java,v 1.9 2005/06/09 09:41:27 nmcl Exp $
  * @since 1.0.
  * 
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1] -
- *          CoordinatorControl.begin:
  */
 
 public class CoordinatorControl
@@ -101,8 +98,8 @@ public class CoordinatorControl
 
 			if (status != ActionStatus.RUNNING)
 				throw new BegunFailedException(
-						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
-								+ ActionStatus.stringForm(status));
+                        wscfLogger.i18NLogger.get_model_twophase_arjunacore_CoordinatorControl_1()
+                                + ActionStatus.stringForm(status));
 			else
 			{
 				_coordinators.put(currentActivity(), coord);
@@ -447,8 +444,8 @@ public class CoordinatorControl
 			if (status != ActionStatus.RUNNING)
 			{
 				throw new BegunFailedException(
-						wscfLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl_1")
-								+ ActionStatus.stringForm(status));
+                        wscfLogger.i18NLogger.get_model_twophase_arjunacore_CoordinatorControl_1()
+                                + ActionStatus.stringForm(status));
 			}
 			else
 			{

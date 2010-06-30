@@ -68,7 +68,6 @@ public class HttpClient extends TransportSoapClient
      * @throws SoapFault For errors processing the request.
      * @throws IOException for processing errors.
      * 
-     * @message com.arjuna.webservices.transport.http.HttpClient_1 [com.arjuna.webservices.transport.http.HttpClient_1] - No response from RPC request
      */
     public SoapMessage invoke(final SoapMessage request, final String url)
         throws SoapFault, IOException
@@ -101,9 +100,6 @@ public class HttpClient extends TransportSoapClient
      * @return The response object.
      * @throws SoapFault For errors processing the request.
      * 
-     * @message com.arjuna.webservices.transport.http.HttpClient_2 [com.arjuna.webservices.transport.http.HttpClient_2] - Invalid destination URL
-     * @message com.arjuna.webservices.transport.http.HttpClient_3 [com.arjuna.webservices.transport.http.HttpClient_3] - Unsupported URL type, not HTTP or HTTPS
-     * @message com.arjuna.webservices.transport.http.HttpClient_4 [com.arjuna.webservices.transport.http.HttpClient_4] - Invalid response code returned: {0}
      */
     private SoapMessage invokeRequest(final SoapMessage request, final String url)
         throws SoapFault, IOException

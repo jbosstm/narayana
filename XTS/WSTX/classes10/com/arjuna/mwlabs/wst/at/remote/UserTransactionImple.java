@@ -32,7 +32,6 @@
 package com.arjuna.mwlabs.wst.at.remote;
 
 import java.util.Hashtable;
-import java.io.InputStream;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.TransactionManager;
@@ -59,11 +58,6 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.stub.CompletionStub;
 
-/**
- * @message com.arjuna.mwlabs.wst.at.remote.UserTransactionImple_2
- *          [com.arjuna.mwlabs.wst.at.remote.UserTransactionImple_2] - Received
- *          context is null!
- */
 public class UserTransactionImple extends UserTransaction
 {
 
@@ -287,7 +281,7 @@ public class UserTransactionImple extends UserTransaction
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.remote.UserTransactionImple_2"));
+                        wstxLogger.i18NLogger.get_mwlabs_wst_at_remote_UserTransactionImple_2());
             }
             return new ContextImple(coordinationContext) ;
 		}

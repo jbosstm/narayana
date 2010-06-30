@@ -89,9 +89,6 @@ public class LocalRegistrarImple
 	 * @throws NoActivityException
 	 *             if the activity does not exist.
 	 * 
-	 * @message com.arjuna.mwlabs.wst.at.local.LocalRegistrarImple_1
-	 *          [com.arjuna.mwlabs.wst.at.local.LocalRegistrarImple_1] - Invalid
-	 *          type URI: < {0} , {1} >
 	 */
 
 	public void register (Object participant, String protocolIdentifier)
@@ -129,13 +126,11 @@ public class LocalRegistrarImple
 					throw new InvalidStateException();
 				}
 			}
-			else
-			{
-				wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.local.LocalRegistrarImple_1", new Object[]
-				{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
+			else {
+                wstxLogger.i18NLogger.warn_mwlabs_wst_at_local_LocalRegistrarImple_1(AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier);
 
-				throw new InvalidProtocolException();
-			}
+                throw new InvalidProtocolException();
+            }
 		}
 	}
 

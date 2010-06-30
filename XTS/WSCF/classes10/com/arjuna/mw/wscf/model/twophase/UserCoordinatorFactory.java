@@ -70,7 +70,6 @@ public class UserCoordinatorFactory
      * coordination protocol is used (two-phase commit) with its
      * associated implementation.
      *
-     * @message com.arjuna.mw.wscf.model.twophase.UCF_1 [com.arjuna.mw.wscf.model.twophase.UCF_1] - Failed to create 
      */
 
     public static UserCoordinator userCoordinator () throws ProtocolNotRegisteredException, SystemException
@@ -80,11 +79,9 @@ public class UserCoordinatorFactory
 	    ProtocolLocator pl = new ProtocolLocator(TwoPhaseHLSImple.class);
 	    org.w3c.dom.Document doc = pl.getProtocol();
 	    
-	    if (doc == null)
-	    {
-		wscfLogger.arjLoggerI18N.warn("com.arjuna.mw.wscf.model.twophase.UCF_1",
-					      new Object[]{TwoPhaseHLSImple.className()});
-	    }
+	    if (doc == null) {
+            wscfLogger.i18NLogger.warn_model_twophase_UCF_1(TwoPhaseHLSImple.className());
+        }
 	    else
 		return userCoordinator(doc);
 	}

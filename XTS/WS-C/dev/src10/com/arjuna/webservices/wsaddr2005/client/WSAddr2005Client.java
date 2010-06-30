@@ -42,11 +42,6 @@ import com.arjuna.webservices.wsaddr2005.EndpointReferenceType;
  * Base WS-Addressing 2005 client.
  * @author kevin
  * 
- * @message com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_1 [com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_1] - Addressing context does not specify destination.
- * @message com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_2 [com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_2] - Invalid destination specified in addressing context.
- * @message com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_3 [com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_3] - No SOAP client registered for scheme: {0}.
- * @message com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_4 [com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_4] - Invalid replyTo specified in addressing context.
- * @message com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_5 [com.arjuna.webservices.wsaddr2005.client.WSAddr2005Client_5] - Unexpected SOAP message type returned.
  */
 public class WSAddr2005Client
 {

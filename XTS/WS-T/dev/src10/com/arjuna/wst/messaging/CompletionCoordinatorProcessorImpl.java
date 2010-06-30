@@ -20,8 +20,6 @@
  */
 package com.arjuna.wst.messaging;
 
-import java.text.MessageFormat;
-
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFault10;
 import com.arjuna.webservices.SoapFaultType;
@@ -43,16 +41,6 @@ import com.arjuna.wst.UnknownTransactionException;
 /**
  * The Completion Coordinator processor.
  * @author kevin
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_1 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_1] - Unknown transaction
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_2 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_2] - Unknown error: {0}
- * @message_ com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_3 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_3] - Unexpected exception thrown from commit: 
- * @message_ com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_4 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_4] - Commit called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_5 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_5] - Unknown participant
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_6 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_6] - Unknown transaction
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_7 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_7] - Unknown error: {0}
- * @message_ com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_8 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_8] - Unexpected exception thrown from rollback: 
- * @message_ com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_9 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_9] - Rollback called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_10 [com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_10] - Unknown participant
  */
 public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorProcessor
 {
@@ -123,15 +111,14 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_1")) ;
+                            WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_1()) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_2") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
+                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_2(se);
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
@@ -159,7 +146,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_5")) ;
+                        WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_5()) ;
                 CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
@@ -194,15 +181,14 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                        WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_6")) ;
+                            WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_6()) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
                 }
                 catch (SystemException systemException)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_7") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {systemException}) ;
+                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_7(systemException);
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
@@ -230,7 +216,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl_10")) ;
+                        WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_10()) ;
                 CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }

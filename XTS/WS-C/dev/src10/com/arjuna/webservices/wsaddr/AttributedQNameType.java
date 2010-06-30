@@ -102,7 +102,6 @@ public class AttributedQNameType extends AnyAttributeSupport
     /**
      * Write the child content of the element.
      * @param out The output stream.
-     * @message com.arjuna.webservices.wsaddr.AttributedQNameType_1 [com.arjuna.webservices.wsaddr.AttributedQNameType_1] - Invalid QName value for attributed QName
      */
     protected void writeChildContent(final XMLStreamWriter out)
         throws XMLStreamException

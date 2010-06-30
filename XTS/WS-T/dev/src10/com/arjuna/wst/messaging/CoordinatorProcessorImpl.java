@@ -94,8 +94,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_1] - Unexpected exception thrown from aborted:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_2] - Aborted called on unknown coordinator: {0}
      */
     public void aborted(final NotificationType aborted, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -111,15 +109,12 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_1", th) ; 
-                }
+                WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_aborted_1(th);
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.aborted_2", new Object[] {instanceIdentifier}) ; 
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_aborted_2(instanceIdentifier.toString());
         }
     }
     
@@ -129,8 +124,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1] - Unexpected exception thrown from committed:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2] - Committed called on unknown coordinator: {0}
      */
     public void committed(final NotificationType committed, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -146,15 +139,11 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1", th) ; 
-                }
+                 WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_committed_1(th);
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-        {
-            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2", new Object[] {instanceIdentifier}) ;
+        else {
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_committed_2(instanceIdentifier.toString());
         }
     }
     
@@ -164,9 +153,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1] - Unexpected exception thrown from prepared:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2] - Prepared called on unknown coordinator: {0}
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3] - Ignoring prepared called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void prepared(final NotificationType prepared, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -182,18 +168,12 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1", th) ; 
-                }
+                WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_prepared_1(th);
             }
         }
         else if (areRecoveryLogEntriesAccountedFor())
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_prepared_2(instanceIdentifier.toString());
 
             final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
             if ((identifierValue != null) && (identifierValue.length() > 0) && (identifierValue.charAt(0) == 'D'))
@@ -210,10 +190,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             // there may be a participant stub waiting to be recovered from the log so drop the
             // message, forcing the caller to retry
 
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_prepared_3(instanceIdentifier.toString());
         }
     }
     
@@ -223,8 +200,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_1] - Unexpected exception thrown from readOnly:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2] - ReadOnly called on unknown coordinator: {0}
      */
     public void readOnly(final NotificationType readOnly, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -240,15 +215,11 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_1", th) ; 
-                }
+                WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_readOnly_1(th);
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-        {
-            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2", new Object[] {instanceIdentifier}) ; 
+        else {
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_readOnly_2(instanceIdentifier.toString());
         }
     }
     
@@ -258,8 +229,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_1] - Unexpected exception thrown from replay:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2] - Replay called on unknown coordinator: {0}
      */
     public void replay(final NotificationType replay, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -275,18 +244,12 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_1", th) ; 
-                }
+                WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_replay_1(th);
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2", new Object[] {instanceIdentifier}) ; 
-            }
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_replay_2(instanceIdentifier.toString());
 
             
             final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
@@ -307,8 +270,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault: 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_2] - SoapFault called on unknown coordinator: {0}
      */
     public void soapFault(final SoapFault fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -324,18 +285,12 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_1", th) ;
-                }
+                WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_soapFault_1(th);
             }
         }
         else
         {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.i18NLogger.warn_messaging_CoordinatorProcessorImpl_soapFault_2(instanceIdentifier.toString());
         }
     }
     
@@ -345,8 +300,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1] - Unknown Transaction.
-     * @message_ com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2] - Unexpecting exception while sending InvalidState
      */
     private void sendInvalidState(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -363,7 +316,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         
         try
         {
-            final String message = WSTLogger.arjLoggerI18N.getString("com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1") ;
+            final String message = WSTLogger.i18NLogger.get_messaging_CoordinatorProcessorImpl_sendInvalidState_1();
             final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
         }
@@ -382,7 +335,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 
-     * @message_ com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
      */
     private void sendRollback(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {

@@ -38,9 +38,6 @@ import com.arjuna.webservices.stax.ElementContent;
  * Helper class for Stream operations.
  * @author kevin
  * 
- * @message com.arjuna.webservices.util.StreamHelper_1 [com.arjuna.webservices.util.StreamHelper_1] - Unexpected end element: {0}
- * @message com.arjuna.webservices.util.StreamHelper_2 [com.arjuna.webservices.util.StreamHelper_2] - Unexpected end of document reached
- * @message com.arjuna.webservices.util.StreamHelper_3 [com.arjuna.webservices.util.StreamHelper_3] - Unexpected start element: {0}
  */
 public class StreamHelper
 {

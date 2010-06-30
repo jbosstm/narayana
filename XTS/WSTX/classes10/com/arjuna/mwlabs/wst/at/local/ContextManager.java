@@ -41,9 +41,6 @@ import com.arjuna.mw.wst.TxContext;
 
 import java.util.*;
 
-/**
- * @message com.arjuna.mwlabs.wst.at.local.ContextManager_1 [com.arjuna.mwlabs.wst.at.local.ContextManager_1] - One context was null!
- */
 
 public class ContextManager
 {
@@ -89,7 +86,7 @@ public class ContextManager
 		return null;
 	    else
 	    {
-		throw new SystemException(wstxLogger.arjLoggerI18N.getString("com.arjuna.mwlabs.wst.at.local.ContextManager_1"));
+		throw new SystemException(wstxLogger.i18NLogger.get_mwlabs_wst_at_local_ContextManager_1());
 	    }
 	}
     }

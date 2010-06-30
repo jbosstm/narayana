@@ -35,9 +35,6 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * @param oos The output output stream.
      * @return true if persisted, false otherwise.
      *
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1] Could not save recovery state for non-serializable durable WS-AT participant {0}
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_2 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_2] XML stream exception saving recovery state for participant {0}
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_3 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_3] I/O exception saving recovery state for participant {0}
      */
     public final boolean saveState(OutputObjectState oos) {
         if (participant == null) {
@@ -49,10 +46,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
             recoveryState = ATParticipantHelper.getRecoveryState(useSerialization, participant);
             recoveryStateValid = true;
         } catch (Exception exception) {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1", new Object[] {id}) ;
-            }
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_1(id);
             // if we continue here then we cannot recover this transaction if we crash during
             // commit processing. we should strictly fail here to play safe but . . .
 
@@ -73,16 +67,10 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
                 }
             }
         } catch (XMLStreamException xmle) {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_2", new Object[] {id}, xmle) ;
-            }
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_2(id, xmle);
             return false;
         } catch (IOException ioe) {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_3", new Object[] {id}, ioe) ;
-            }
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_3(id, ioe);
             return false;
         }
 
@@ -95,8 +83,6 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * @param ios The Input object stream.
      * @return true if restored, false otherwise.
      *
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_1] XML stream exception restoring recovery state for participant {0}
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_2 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_2] I/O exception saving restoring state for participant {0}
      */
     public boolean restoreState(InputObjectState ios) {
         try {
@@ -112,16 +98,10 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
                 }
             }
         } catch (XMLStreamException xmle) {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_1", new Object[] {id}, xmle) ;
-            }
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_restoreState_1(id, xmle);
             return false;
         } catch (IOException ioe) {
-            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreState_2", new Object[] {id}, ioe) ;
-            }
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_restoreState_2(id, ioe);
             return false;
         }
         
@@ -133,7 +113,6 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * specific recovery state back into a participant
      * @param module the XTS recovery module to be used to attempt the conversion
      * @return
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1] participant {0} has no saved recovery state to recover   
      */
 
     public boolean restoreParticipant(XTSATRecoveryModule module) throws Exception
@@ -160,7 +139,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
             // the original participant did not provide a way to save its state so
             // throw an exception to notify this
 
-            String mesg = WSTLogger.arjLoggerI18N.getString("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1", new Object[] {id});
+            String mesg = WSTLogger.i18NLogger.get_recovery_participant_at_ATParticipantRecoveryRecord_restoreParticipant_1(id);
 
             throw new Exception(mesg);
         }

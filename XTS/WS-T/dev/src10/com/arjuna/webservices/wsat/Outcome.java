@@ -97,7 +97,6 @@ public class Outcome extends Enumerated
      * @return The enumeration.
      * @throws InvalidEnumerationException if the value is not valid.
      * 
-     * @message com.arjuna.webservices.wsat.Outcome_1 [com.arjuna.webservices.wsat.Outcome_1] - Invalid outcome enumeration: {0}
      */
     public static Outcome toOutcome(final String value)
         throws InvalidEnumerationException
@@ -105,9 +104,7 @@ public class Outcome extends Enumerated
         final Object outcome = ENUM_MAP.get(value) ;
         if (outcome == null)
         {
-            final String pattern = WSTLogger.arjLoggerI18N.getString("com.arjuna.webservices.wsat.Outcome_1") ;
-            final String message = MessageFormat.format(pattern, new Object[] {value}) ;
-            throw new InvalidEnumerationException(message) ;
+            throw new InvalidEnumerationException(WSTLogger.i18NLogger.get_webservices_wsat_Outcome_1(value)) ;
         }
         return (Outcome)outcome ;
     }

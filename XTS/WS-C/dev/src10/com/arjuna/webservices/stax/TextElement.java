@@ -83,7 +83,6 @@ public class TextElement extends ElementContent
      * @param in The current input stream.
      * @param elementName The qualified element name.
      * 
-     * @message com.arjuna.webservices.stax.TextElement_1 [com.arjuna.webservices.stax.TextElement_1] - Text elements cannot have embedded elements.
      */
     protected void putElement(final XMLStreamReader in,
         final QName elementName)

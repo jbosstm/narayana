@@ -44,7 +44,6 @@ import com.arjuna.webservices.util.StreamHelper;
  * The class implementing SOAP 1.2 specific processing.
  * @author kevin
  * 
- * @message com.arjuna.webservices.soap.Soap12Details_1 [com.arjuna.webservices.soap.Soap12Details_1] - Unexpected start element: {0}
  */
 public class Soap12Details implements SoapDetails
 {
