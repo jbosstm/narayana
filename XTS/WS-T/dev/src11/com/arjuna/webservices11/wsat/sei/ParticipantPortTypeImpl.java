@@ -28,14 +28,14 @@ import com.arjuna.webservices.SoapFault;
  *
  */
 @WebService(name = "ParticipantPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsat-participant-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsat-participant-binding.wsdl",
         serviceName = "ParticipantService",
         portName = "ParticipantPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class ParticipantPortTypeImpl implements ParticipantPortType
+public class ParticipantPortTypeImpl // implements ParticipantPortType
 {
 
     @Resource
@@ -110,7 +110,7 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
         }) ;
     }
 
-    @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
+    @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
     @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     public void fault(

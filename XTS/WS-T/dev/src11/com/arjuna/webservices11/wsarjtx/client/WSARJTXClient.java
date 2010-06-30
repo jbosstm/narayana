@@ -10,6 +10,7 @@ import org.jboss.wsf.common.addressing.MAPBuilder;
 import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -48,7 +49,7 @@ public class WSARJTXClient
     private static synchronized TerminationCoordinatorService getTerminationCoordinatorService()
     {
         if (terminationCoordinatorService.get() == null) {
-            terminationCoordinatorService.set(new TerminationCoordinatorService());
+            terminationCoordinatorService.set(new TerminationCoordinatorService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationCoordinatorService")));
         }
         return terminationCoordinatorService.get();
     }
@@ -60,7 +61,7 @@ public class WSARJTXClient
     private static synchronized TerminationParticipantService getTerminationParticipantService()
     {
         if (terminationParticipantService.get() == null) {
-            terminationParticipantService.set(new TerminationParticipantService());
+            terminationParticipantService.set(new TerminationParticipantService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationParticipantService")));
         }
         return terminationParticipantService.get();
     }

@@ -28,14 +28,14 @@ import com.arjuna.webservices.SoapFault;
  *
  */
 @WebService(name = "CoordinatorPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsat-coordinator-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsat-coordinator-binding.wsdl",
         serviceName = "CoordinatorService",
         portName = "CoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class CoordinatorPortTypeImpl implements CoordinatorPortType
+public class CoordinatorPortTypeImpl // implements CoordinatorPortType
 {
 
     @Resource
@@ -133,7 +133,7 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
         }) ;
     }
 
-    @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
+    @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
     @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     public void fault(

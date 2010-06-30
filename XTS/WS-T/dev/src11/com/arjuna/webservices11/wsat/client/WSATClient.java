@@ -6,6 +6,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.*;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
@@ -53,7 +54,7 @@ public class WSATClient
     private static synchronized CoordinatorService getCoordinatorService()
     {
         if (coordinatorService.get() == null) {
-            coordinatorService.set(new CoordinatorService());
+            coordinatorService.set(new CoordinatorService(null, new QName("http://docs.oasis-open.org/ws-tx/wsat/2006/06", "CoordinatorService")));
         }
         return coordinatorService.get();
     }
@@ -65,7 +66,7 @@ public class WSATClient
     private static synchronized ParticipantService getParticipantService()
     {
         if (participantService.get() == null) {
-            participantService.set(new ParticipantService());
+            participantService.set(new ParticipantService(null, new QName("http://docs.oasis-open.org/ws-tx/wsat/2006/06", "ParticipantService")));
         }
         return participantService.get();
     }
@@ -77,7 +78,7 @@ public class WSATClient
     private static synchronized CompletionCoordinatorService getCompletionCoordinatorService()
     {
         if (completionCoordinatorService.get() == null) {
-            completionCoordinatorService.set(new CompletionCoordinatorService());
+            completionCoordinatorService.set(new CompletionCoordinatorService(null, new QName("http://docs.oasis-open.org/ws-tx/wsat/2006/06", "CompletionCoordinatorService")));
         }
         return completionCoordinatorService.get();
     }
@@ -89,7 +90,7 @@ public class WSATClient
     private static synchronized CompletionInitiatorService getCompletionInitiatorService()
     {
         if (completionInitiatorService.get() == null) {
-            completionInitiatorService.set(new CompletionInitiatorService());
+            completionInitiatorService.set(new CompletionInitiatorService(null, new QName("http://docs.oasis-open.org/ws-tx/wsat/2006/06", "CompletionInitiatorService")));
         }
         return completionInitiatorService.get();
     }

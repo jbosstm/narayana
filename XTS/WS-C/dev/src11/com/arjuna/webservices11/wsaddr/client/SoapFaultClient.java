@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wsaddr.client;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -95,7 +96,11 @@ public class SoapFaultClient
     private static synchronized SoapFaultService getSoapFaultService()
     {
         if (soapFaultService.get() == null) {
-            soapFaultService.set(new SoapFaultService());
+            // we don't supply wsdl on the client side -- we want this client to address the various
+            // different versions of the service which bind the fault WebMethod using different
+            // soap actions. the annotations on the service and port supply all the info needed
+            // to create the service and port on the client side.
+            soapFaultService.set(new SoapFaultService(null, new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultService")));
         }
         return soapFaultService.get();
     }

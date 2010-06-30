@@ -6,6 +6,7 @@ import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.*;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -53,7 +54,7 @@ public class WSBAClient
     private static synchronized BusinessAgreementWithParticipantCompletionCoordinatorService getParticipantCompletionCoordinatorService()
     {
         if (participantCompletionCoordinatorService.get() == null) {
-            participantCompletionCoordinatorService.set(new BusinessAgreementWithParticipantCompletionCoordinatorService());
+            participantCompletionCoordinatorService.set(new BusinessAgreementWithParticipantCompletionCoordinatorService(null, new QName("http://docs.oasis-open.org/ws-tx/wsba/2006/06", "BusinessAgreementWithParticipantCompletionCoordinatorService")));
         }
         return participantCompletionCoordinatorService.get();
     }
@@ -65,7 +66,7 @@ public class WSBAClient
     private static synchronized BusinessAgreementWithParticipantCompletionParticipantService getParticipantCompletionParticipantService()
     {
         if (participantCompletionParticipantService.get() == null) {
-            participantCompletionParticipantService.set(new BusinessAgreementWithParticipantCompletionParticipantService());
+            participantCompletionParticipantService.set(new BusinessAgreementWithParticipantCompletionParticipantService(null, new QName("http://docs.oasis-open.org/ws-tx/wsba/2006/06", "BusinessAgreementWithParticipantCompletionParticipantService")));
         }
         return participantCompletionParticipantService.get();
     }
@@ -77,7 +78,7 @@ public class WSBAClient
     private static synchronized BusinessAgreementWithCoordinatorCompletionCoordinatorService getCoordinatorCompletionCoordinatorService()
     {
         if (coordinatorCompletionCoordinatorService.get() == null) {
-            coordinatorCompletionCoordinatorService.set(new BusinessAgreementWithCoordinatorCompletionCoordinatorService());
+            coordinatorCompletionCoordinatorService.set(new BusinessAgreementWithCoordinatorCompletionCoordinatorService(null, new QName("http://docs.oasis-open.org/ws-tx/wsba/2006/06", "BusinessAgreementWithCoordinatorCompletionCoordinatorService")));
         }
         return coordinatorCompletionCoordinatorService.get();
     }
@@ -89,7 +90,7 @@ public class WSBAClient
     private static synchronized BusinessAgreementWithCoordinatorCompletionParticipantService getCoordinatorCompletionParticipantService()
     {
         if (coordinatorCompletionParticipantService.get() == null) {
-            coordinatorCompletionParticipantService.set(new BusinessAgreementWithCoordinatorCompletionParticipantService());
+            coordinatorCompletionParticipantService.set(new BusinessAgreementWithCoordinatorCompletionParticipantService(null, new QName("http://docs.oasis-open.org/ws-tx/wsba/2006/06", "BusinessAgreementWithCoordinatorCompletionParticipantService")));
         }
         return coordinatorCompletionParticipantService.get();
     }

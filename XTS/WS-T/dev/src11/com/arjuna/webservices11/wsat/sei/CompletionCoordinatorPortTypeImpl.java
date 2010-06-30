@@ -25,14 +25,14 @@ import com.arjuna.services.framework.task.Task;
  *
  */
 @WebService(name = "CompletionCoordinatorPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsat-completion-coordinator-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsat-completion-coordinator-binding.wsdl",
         serviceName = "CompletionCoordinatorService",
         portName = "CompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorPortType
+public class CompletionCoordinatorPortTypeImpl // implements CompletionCoordinatorPortType
 {
     @Resource
     private WebServiceContext webServiceCtx;

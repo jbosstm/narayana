@@ -30,14 +30,14 @@ import javax.xml.ws.soap.Addressing;
  *
  */
 @WebService(name = "BusinessAgreementWithParticipantCompletionCoordinatorPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsba-participant-completion-coordinator-binding.wsdl",
+        //wsdlLocation = "/WEB-INF/wsdl/wsba-participant-completion-coordinator-binding.wsdl",
         serviceName = "BusinessAgreementWithParticipantCompletionCoordinatorService",
         portName = "BusinessAgreementWithParticipantCompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl implements BusinessAgreementWithParticipantCompletionCoordinatorPortType
+public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl // implements BusinessAgreementWithParticipantCompletionCoordinatorPortType
 {
     @Resource
     private WebServiceContext webServiceCtx;

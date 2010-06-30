@@ -27,7 +27,7 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
  */
 
 @WebService(targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", name = "RegistrationPortType",
-        wsdlLocation = "/WEB-INF/wsdl/wscoor-registration-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wscoor-registration-binding.wsdl",
         serviceName = "RegistrationService",
         portName = "RegistrationPortType"
         // endpointInterface = "org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType",
@@ -36,7 +36,7 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class RegistrationPortTypeImpl implements RegistrationPortType
+public class RegistrationPortTypeImpl // implements RegistrationPortType
 {
     @Resource private WebServiceContext webServiceCtx;
 
@@ -50,7 +50,7 @@ public class RegistrationPortTypeImpl implements RegistrationPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
-        boolean isSecure = request.getScheme().equals("https");
+        boolean isSecure = "https".equals(request.getScheme());
         MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx) ;
 

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  * To change this template use File | Settings | File Templates.
  */
 @WebService(targetNamespace = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06", name = "ActivationPortType",
-        wsdlLocation = "/WEB-INF/wsdl/wscoor-activation-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wscoor-activation-binding.wsdl",
         serviceName = "ActivationService",
         portName = "ActivationPortType"
         // endpointInterface = "org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationPortType",
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class ActivationPortTypeImpl implements ActivationPortType
+public class ActivationPortTypeImpl // implements ActivationPortType
 {
     @Resource private WebServiceContext webServiceCtx;
 
@@ -46,7 +46,7 @@ public class ActivationPortTypeImpl implements ActivationPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
-        boolean isSecure = request.getScheme().equals("https");
+        boolean isSecure = "https".equals(request.getScheme());
         MAP inboundMAP = AddressingHelper.inboundMap(ctx);
         return ActivationCoordinatorProcessor.getCoordinator().createCoordinationContext(parameters, inboundMAP, isSecure);
    }

@@ -28,14 +28,14 @@ import com.arjuna.webservices.SoapFault;
  *
  */
 @WebService(name = "CompletionInitiatorPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsat-completion-initiator-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsat-completion-initiator-binding.wsdl",
         serviceName = "CompletionInitiatorService",
         portName = "CompletionInitiatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortType
+public class CompletionInitiatorPortTypeImpl // implements CompletionInitiatorPortType
 {
 
     @Resource
@@ -87,7 +87,7 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
         }) ;
     }
 
-    @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
+    @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
     @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     public void fault(

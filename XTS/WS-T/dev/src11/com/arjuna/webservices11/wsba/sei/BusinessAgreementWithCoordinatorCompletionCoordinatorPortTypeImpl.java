@@ -31,14 +31,14 @@ import javax.xml.ws.handler.MessageContext;
  *
  */
 @WebService(name = "BusinessAgreementWithCoordinatorCompletionCoordinatorPortType", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06",
-        wsdlLocation = "/WEB-INF/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl",
+        //wsdlLocation = "/WEB-INF/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl",
         serviceName = "BusinessAgreementWithCoordinatorCompletionCoordinatorService",
         portName = "BusinessAgreementWithCoordinatorCompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 @HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
-public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl implements BusinessAgreementWithCoordinatorCompletionCoordinatorPortType
+public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl // implements BusinessAgreementWithCoordinatorCompletionCoordinatorPortType
 {
     @Resource
     private WebServiceContext webServiceCtx;
