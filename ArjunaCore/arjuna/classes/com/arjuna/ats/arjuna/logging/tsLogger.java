@@ -31,22 +31,10 @@
 
 package com.arjuna.ats.arjuna.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class tsLogger
 {
-	public static LogNoi18n arjLogger;
-    public static arjunaI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        arjLogger = noi18n;
-        i18NLogger = new arjunaI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.arjuna"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(tsLogger.class, "com.arjuna.ats.arjuna");
-    }
+	public static final Logger logger = Logger.getLogger("com.arjuna.ats.arjuna");
+    public static final arjunaI18NLogger i18NLogger = new arjunaI18NLoggerImpl(logger);
 }

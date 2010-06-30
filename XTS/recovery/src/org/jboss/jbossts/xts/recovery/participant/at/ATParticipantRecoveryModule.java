@@ -49,8 +49,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 {
     public ATParticipantRecoveryModule()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("ATParticipantRecoveryModule created - default");
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("ATParticipantRecoveryModule created - default");
         }
 
         if (_objectStore == null)
@@ -103,8 +103,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.arjLogger.isDebugEnabled()) {
-                XTSLogger.arjLogger.debug("ATParticipantRecoveryModule: first pass");
+            if (XTSLogger.logger.isDebugEnabled()) {
+                XTSLogger.logger.debug("ATParticipantRecoveryModule: first pass");
             }
 
             ATParticipants = _objectStore.allObjUids(_participantType, acc_uids );
@@ -123,8 +123,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("ATParticipantRecoveryModule: Second pass");
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("ATParticipantRecoveryModule: Second pass");
         }
 
         processParticipantsStatus() ;
@@ -134,8 +134,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
     {
         // Retrieve the participant from its original process.
 
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("participant type is " + _participantType + " uid is " +
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("participant type is " + _participantType + " uid is " +
                     recoverUid.toString());
         }
 
@@ -195,8 +195,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("processing " + _participantType
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("processing " + _participantType
                     + " WS-AT participants");
         }
 
@@ -219,8 +219,8 @@ public class ATParticipantRecoveryModule implements RecoveryModule
                 break;
             }
 
-            if (XTSLogger.arjLogger.isDebugEnabled()) {
-                XTSLogger.arjLogger.debug("found WS-AT participant " + theUid);
+            if (XTSLogger.logger.isDebugEnabled()) {
+                XTSLogger.logger.debug("found WS-AT participant " + theUid);
             }
 
             uidVector.addElement( theUid ) ;

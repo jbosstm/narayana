@@ -130,8 +130,8 @@ public class Listener extends Thread
 
             Connection new_conn = new Connection( conn, _listener_service, callback );
 
-     	    if (tsLogger.arjLogger.isDebugEnabled()) {
-                 tsLogger.arjLogger.debug("Connected to " + conn.getInetAddress().getHostAddress() +
+     	    if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Connected to " + conn.getInetAddress().getHostAddress() +
                          " on port " + conn.getPort() + " on listener port " +
                          conn.getLocalPort() + " for service " +
                          _listener_service.getClass().getName());
@@ -147,15 +147,15 @@ public class Listener extends Thread
          catch (final SocketException ex)
          {
              // we get this if the socket is closed under a call to shutdown
-             if (tsLogger.arjLogger.isDebugEnabled()) {
-                 tsLogger.arjLogger.debug("Recovery listener existing " +
+             if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Recovery listener existing " +
                          _listener_service.getClass().getName());
              }
          }
          catch ( final IOException ex )
          {
-	     if (tsLogger.arjLogger.isDebugEnabled())
-		 tsLogger.arjLogger.debug("Listener - IOException"+" "+ex);
+	     if (tsLogger.logger.isDebugEnabled())
+		 tsLogger.logger.debug("Listener - IOException"+" "+ex);
          }
          catch (final Exception ex)
          {

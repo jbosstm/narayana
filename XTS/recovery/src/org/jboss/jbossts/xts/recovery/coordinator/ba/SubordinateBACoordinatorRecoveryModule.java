@@ -51,8 +51,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 {
     public SubordinateBACoordinatorRecoveryModule()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule created - default");
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("SubordinateBACoordinatorRecoveryModule created - default");
         }
 
         if (_transactionStore == null)
@@ -93,8 +93,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.arjLogger.isDebugEnabled()) {
-                XTSLogger.arjLogger.debug("StatusModule: first pass ");
+            if (XTSLogger.logger.isDebugEnabled()) {
+                XTSLogger.logger.debug("StatusModule: first pass ");
             }
 
             SubordinateCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -113,8 +113,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule: Second pass ");
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("SubordinateBACoordinatorRecoveryModule: Second pass ");
         }
 
         if (_transactionUidVector != null) {
@@ -127,8 +127,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
     protected SubordinateBACoordinatorRecoveryModule(String type)
     {
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("SubordinateBACoordinatorRecoveryModule created " + type);
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("SubordinateBACoordinatorRecoveryModule created " + type);
         }
 
         if (_transactionStore == null)
@@ -165,8 +165,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
 
         String Status = ActionStatus.stringForm( theStatus ) ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("transaction type is " + _transactionType + " uid is " +
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
                     recoverUid.toString() + "\n ActionStatus is " + Status +
                     " in flight is " + inFlight);
         }
@@ -174,7 +174,7 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
         if ( ! inFlight )
         {
             try {
-                XTSLogger.arjLogger.debug("jjh doing revovery here for " + recoverUid);
+                XTSLogger.logger.debug("jjh doing revovery here for " + recoverUid);
                 RecoverySubordinateBACoordinator rcvSubordinateCoordinator =
                         new RecoverySubordinateBACoordinator(recoverUid);
                 rcvSubordinateCoordinator.replayPhase2();
@@ -226,8 +226,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.arjLogger.isDebugEnabled()) {
-            XTSLogger.arjLogger.debug("processing " + _transactionType
+        if (XTSLogger.logger.isDebugEnabled()) {
+            XTSLogger.logger.debug("processing " + _transactionType
                     + " transactions");
         }
 
@@ -248,8 +248,8 @@ public class SubordinateBACoordinatorRecoveryModule implements RecoveryModule
             {
                 break;
             }
-            if (XTSLogger.arjLogger.isDebugEnabled()) {
-                XTSLogger.arjLogger.debug("found transaction " + theUid);
+            if (XTSLogger.logger.isDebugEnabled()) {
+                XTSLogger.logger.debug("found transaction " + theUid);
             }
 
             uidVector.addElement( theUid ) ;

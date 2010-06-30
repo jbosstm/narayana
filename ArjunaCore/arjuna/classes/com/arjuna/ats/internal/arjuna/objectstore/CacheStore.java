@@ -170,8 +170,8 @@ public class CacheStore extends HashedStore
     {
         super(locationOfStore, shareStatus);
 
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("CacheStore.CacheStore(" + locationOfStore + ")");
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("CacheStore.CacheStore(" + locationOfStore + ")");
       }
 
         /*
@@ -191,8 +191,8 @@ public class CacheStore extends HashedStore
    {
       super(shareStatus);
 
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("CacheStore.CacheStore( " + shareStatus + " )");
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("CacheStore.CacheStore( " + shareStatus + " )");
       }
 
       this.syncWrites = false;
@@ -283,8 +283,8 @@ class ShutdownThread extends Thread // used to flush on exit
              * that the thread isn't actively doing work.
              */
 
-          if (tsLogger.arjLogger.isDebugEnabled()) {
-              tsLogger.arjLogger.debug("ShutdownThread.run () - terminating");
+          if (tsLogger.logger.isDebugEnabled()) {
+              tsLogger.logger.debug("ShutdownThread.run () - terminating");
           }
       }
    }

@@ -31,28 +31,10 @@
 
 package com.arjuna.webservices.logging;
 
-import com.arjuna.common.util.logging.LogFactory;
-import com.arjuna.common.util.logging.LogNoi18n;
-import org.jboss.logging.BasicLogger;
 import org.jboss.logging.Logger;
 
 public class WSTLogger
 {
-    public static LogNoi18n      arjLogger;
-
-    public static BasicLogger logger;
-    public static wstI18NLogger i18NLogger;
-
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        arjLogger = noi18n;
-        //arjLoggerI18N = i18n        logger = Logger.getLogger("com.arjuna.wst");
-        i18NLogger = new wstI18NLoggerImpl((Logger)logger);
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(WSTLogger.class, "com.arjuna.wst");
-    }
+    public static final Logger logger = Logger.getLogger("com.arjuna.wst");
+    public static final wstI18NLogger i18NLogger = new wstI18NLoggerImpl(logger);
 }

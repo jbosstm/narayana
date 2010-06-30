@@ -81,8 +81,8 @@ public class FileLock
 
     public FileLock(File name, long timeout, long retry)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock ( " + name
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock ( " + name
                     + ", " + timeout + ", " + retry + " )");
         }
 
@@ -107,8 +107,8 @@ public class FileLock
 
     public synchronized boolean lock (int lmode, boolean create)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock.lock called for "+_lockFile);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock.lock called for "+_lockFile);
         }
 
         boolean created = false;
@@ -203,8 +203,8 @@ public class FileLock
 
     public synchronized boolean unlock ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock.unlock called "+_lockFile);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock.unlock called "+_lockFile);
         }
 
         if (!_lockFile.exists())
@@ -286,8 +286,8 @@ public class FileLock
 
     private final boolean createFile ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock.createFile "+_lockFile);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock.createFile "+_lockFile);
         }
 
         byte b[] = new byte[1];
@@ -313,8 +313,8 @@ public class FileLock
 
     private final boolean lockFile ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock.lockFile called "+_lockFile);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock.lockFile called "+_lockFile);
         }
         
         for (int i = 0; i < _retry; i++)
@@ -347,8 +347,8 @@ public class FileLock
 
     private final boolean unlockFile ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLock.unlockFile called for "+_lockFile);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLock.unlockFile called for "+_lockFile);
         }
         return _lockFileLock.delete();
     }

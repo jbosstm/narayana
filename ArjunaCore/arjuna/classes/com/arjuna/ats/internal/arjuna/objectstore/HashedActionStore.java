@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 
@@ -76,8 +75,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.HashedActionStore( " + shareStatus + " )");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.HashedActionStore( " + shareStatus + " )");
         }
         
         try
@@ -95,8 +94,8 @@ public class HashedActionStore extends HashedStore
     {
         this(locationOfStore, StateType.OS_SHARED);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try
@@ -105,7 +104,7 @@ public class HashedActionStore extends HashedStore
         }
         catch (ObjectStoreException e)
         {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
         }
@@ -115,8 +114,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try
@@ -125,7 +124,7 @@ public class HashedActionStore extends HashedStore
         }
         catch (ObjectStoreException e)
         {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
                     e);

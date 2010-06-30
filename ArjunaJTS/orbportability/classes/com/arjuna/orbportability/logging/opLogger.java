@@ -21,22 +21,10 @@
 
 package com.arjuna.orbportability.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class opLogger
 {
-	public static LogNoi18n logger;
-    public static orbportabilityI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        logger = noi18n;
-        i18NLogger =new orbportabilityI18NLoggerImpl(Logger.getLogger("com.arjuna.orbportability"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(opLogger.class, "com.arjuna.orbportability");
-    }
+	public static final Logger logger = Logger.getLogger("com.arjuna.orbportability");
+    public static final orbportabilityI18NLogger i18NLogger = new orbportabilityI18NLoggerImpl(logger);
 }

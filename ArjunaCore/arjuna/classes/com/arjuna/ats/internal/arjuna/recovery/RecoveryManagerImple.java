@@ -112,7 +112,7 @@ public class RecoveryManagerImple
 
                 try
                 {
-                        if (tsLogger.arjLogger.isInfoEnabled())
+                        if (tsLogger.logger.isInfoEnabled())
                         {
                                 if(useListener)
                 {

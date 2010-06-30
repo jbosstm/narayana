@@ -91,8 +91,8 @@ public class VolatileStore extends ObjectStore
 
     public int currentState(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("VolatileStore.currentState(Uid=" + u + ", typeName=" + tn + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("VolatileStore.currentState(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return getState(u);
@@ -160,8 +160,8 @@ public class VolatileStore extends ObjectStore
 
     public InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("VolatileStore.read_committed(Uid=" + u + ", typeName=" + tn + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("VolatileStore.read_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return read(u, tn, StateStatus.OS_COMMITTED);
@@ -191,8 +191,8 @@ public class VolatileStore extends ObjectStore
 
     public boolean remove_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("VolatileStore.remove_committed(Uid=" + u + ", typeName=" + tn + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("VolatileStore.remove_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return remove(u, tn, StateStatus.OS_COMMITTED);
@@ -224,8 +224,8 @@ public class VolatileStore extends ObjectStore
 
     public boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("VolatileStore.write_committed(Uid=" + u + ", typeName=" + tn + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("VolatileStore.write_committed(Uid=" + u + ", typeName=" + tn + ")");
         }
 
         return write(u, tn, buff, StateStatus.OS_COMMITTED);

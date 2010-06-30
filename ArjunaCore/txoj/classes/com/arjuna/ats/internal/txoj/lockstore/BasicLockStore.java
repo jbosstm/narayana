@@ -58,16 +58,16 @@ public class BasicLockStore extends LockStore
 
     public BasicLockStore(String key)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("BasicLockStore.BasicLockStore(" + key + ")");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("BasicLockStore.BasicLockStore(" + key + ")");
         }
     }
 
     public InputObjectState read_state (Uid u, String tName)
             throws LockStoreException
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("BasicLockStore.read_state(" + u + ", " + tName + ")");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("BasicLockStore.read_state(" + u + ", " + tName + ")");
         }
 
         return segmentStore.read_state(u, tName);
@@ -75,8 +75,8 @@ public class BasicLockStore extends LockStore
 
     public boolean remove_state (Uid u, String tName)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("BasicLockStore.remove_state(" + u + ", " + tName + ")");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("BasicLockStore.remove_state(" + u + ", " + tName + ")");
         }
 
         return segmentStore.remove_state(u, tName);
@@ -84,8 +84,8 @@ public class BasicLockStore extends LockStore
 
     public boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("BasicLockStore.write_committed(" + u + ", " + tName + ", "
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("BasicLockStore.write_committed(" + u + ", " + tName + ", "
                     + state + ")");
         }
 

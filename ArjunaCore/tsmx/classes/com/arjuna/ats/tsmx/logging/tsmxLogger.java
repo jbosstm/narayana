@@ -31,22 +31,10 @@
 
 package com.arjuna.ats.tsmx.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class tsmxLogger
 {
-	public static LogNoi18n logger;
-    public static tsmxI18NLogger i18nLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        logger = noi18n;
-        i18nLogger = new tsmxI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.tsmx"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(tsmxLogger.class, "com.arjuna.ats.tsmx");
-    }
+	public static final Logger logger = Logger.getLogger("com.arjuna.ats.tsmx");
+    public static final tsmxI18NLogger i18nLogger = new tsmxI18NLoggerImpl(logger);
 }

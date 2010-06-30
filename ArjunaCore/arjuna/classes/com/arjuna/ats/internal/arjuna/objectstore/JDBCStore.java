@@ -78,8 +78,8 @@ public class JDBCStore extends ObjectStore
         public boolean commit_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
                 }
 
                 /* Bail out if the object store is not set up */
@@ -93,8 +93,8 @@ public class JDBCStore extends ObjectStore
         public boolean hide_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
                 }
 
                 /* Bail out if the object store is not set up */
@@ -108,8 +108,8 @@ public class JDBCStore extends ObjectStore
         public boolean reveal_state(Uid objUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("ShadowingStore.reveal_state(" + objUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("ShadowingStore.reveal_state(" + objUid + ", " + tName
                             + ")");
                 }
 
@@ -141,8 +141,8 @@ public class JDBCStore extends ObjectStore
         public InputObjectState read_committed(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.read_committed(" + storeUid + ", "
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.read_committed(" + storeUid + ", "
                             + tName + ")");
                 }
 
@@ -152,8 +152,8 @@ public class JDBCStore extends ObjectStore
         public InputObjectState read_uncommitted(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.read_uncommitted(" + storeUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.read_uncommitted(" + storeUid + ", " + tName
                             + ")");
                 }
 
@@ -163,8 +163,8 @@ public class JDBCStore extends ObjectStore
         public boolean remove_committed(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.remove_committed(" + storeUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.remove_committed(" + storeUid + ", " + tName
                             + ")");
                 }
 
@@ -174,8 +174,8 @@ public class JDBCStore extends ObjectStore
         public boolean remove_uncommitted(Uid storeUid, String tName)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
                             + ")");
                 }
 
@@ -185,8 +185,8 @@ public class JDBCStore extends ObjectStore
         public boolean write_committed(Uid storeUid, String tName,
                         OutputObjectState state) throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.write_committed(" + storeUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.write_committed(" + storeUid + ", " + tName
                             + ")");
                 }
 
@@ -196,8 +196,8 @@ public class JDBCStore extends ObjectStore
         public boolean write_uncommitted(Uid storeUid, String tName,
                         OutputObjectState state) throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.write_uncommitted(" + storeUid + ", " + tName
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.write_uncommitted(" + storeUid + ", " + tName
                             + ", " + state + ")");
                 }
 
@@ -217,8 +217,8 @@ public class JDBCStore extends ObjectStore
         public boolean allObjUids(String tName, InputObjectState state, int match)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.allObjUids(" + tName + ", " + state + ", "
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.allObjUids(" + tName + ", " + state + ", "
                             + match + ")");
                 }
 
@@ -231,8 +231,8 @@ public class JDBCStore extends ObjectStore
         public boolean allTypes(InputObjectState foundTypes)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.allTypes(" + foundTypes + ")");
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.allTypes(" + foundTypes + ")");
                 }
 
                 if (storeValid())
@@ -269,8 +269,8 @@ public class JDBCStore extends ObjectStore
         protected boolean remove_state(Uid objUid, String name, int ft)
                         throws ObjectStoreException
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug("JDBCStore.remove_state("
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("JDBCStore.remove_state("
                             + objUid + ", " + name + ", "
                             + StateType.stateTypeString(ft) + ")");
                 }
@@ -293,8 +293,8 @@ public class JDBCStore extends ObjectStore
         
         protected JDBCStore()
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug(getClass().getName() + "()");
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug(getClass().getName() + "()");
                 }
 
                 try
@@ -309,8 +309,8 @@ public class JDBCStore extends ObjectStore
 
         protected JDBCStore(String tableName)
         {
-                if (tsLogger.arjLogger.isDebugEnabled()) {
-                    tsLogger.arjLogger.debug(getClass().getName() + "(" + tableName + ")");
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug(getClass().getName() + "(" + tableName + ")");
                 }
 
                 try
@@ -558,7 +558,7 @@ public class JDBCStore extends ObjectStore
                                 }
                                 catch (Exception e)
                                 {
-                                        tsLogger.arjLogger.warn(e);
+                                        tsLogger.logger.warn(e);
                                         throw e;
                                 }
                         }

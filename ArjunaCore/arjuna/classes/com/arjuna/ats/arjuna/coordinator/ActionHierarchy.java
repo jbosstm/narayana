@@ -61,8 +61,8 @@ public class ActionHierarchy
 
     public ActionHierarchy (int depth)
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("ActionHierarchy::ActionHierarchy(" + depth + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("ActionHierarchy::ActionHierarchy(" + depth + ")");
     }
 
 	hierarchy = null;
@@ -206,8 +206,8 @@ public class ActionHierarchy
 
     public final boolean add (Uid actionId, int at)
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("ActionHierarchy::add(" + actionId + ", " + at + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("ActionHierarchy::add(" + actionId + ", " + at + ")");
     }
 
 	boolean result = true;
@@ -362,8 +362,8 @@ public class ActionHierarchy
 
     public final int findCommonPrefix (ActionHierarchy oldHierarchy)
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("ActionHierarchy::findCommonPrefix()");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("ActionHierarchy::findCommonPrefix()");
     }
 
 	int common = 0;
@@ -375,8 +375,8 @@ public class ActionHierarchy
 	    common++;
 	}
 
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("ActionHierarchy::::findCommonPrefix(): prefix is " + common);
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("ActionHierarchy::::findCommonPrefix(): prefix is " + common);
     }
 
 	return common;

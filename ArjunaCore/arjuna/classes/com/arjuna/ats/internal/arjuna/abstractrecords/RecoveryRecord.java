@@ -51,8 +51,8 @@ public class RecoveryRecord extends AbstractRecord
     {
         super(sm.get_uid(), sm.type(), ObjectType.ANDPERSISTENT);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::RecoveryRecord(" + os + ", "
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::RecoveryRecord(" + os + ", "
                     + sm.get_uid() + ")");
         }
 
@@ -63,8 +63,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public void finalize () throws Throwable
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord.finalize() for " + order() + " type "
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord.finalize() for " + order() + " type "
                     + type());
         }
         super.finalize();
@@ -96,8 +96,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::nestedAbort() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::nestedAbort() for " + order());
         }
 
         /*
@@ -137,8 +137,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::nestedCommit() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::nestedCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -146,8 +146,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::nestedPrepare() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::nestedPrepare() for " + order());
         }
 
         forgetAction(true);
@@ -162,8 +162,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::topLevelAbort() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::topLevelAbort() for " + order());
         }
 
         return nestedAbort(); /* i.e., same as nested case */
@@ -177,8 +177,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::topLevelCommit() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::topLevelCommit() for " + order());
         }
 
         forgetAction(true);
@@ -193,8 +193,8 @@ public class RecoveryRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::topLevelPrepare() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::topLevelPrepare() for " + order());
         }
 
         return TwoPhaseOutcome.PREPARE_READONLY;
@@ -281,8 +281,8 @@ public class RecoveryRecord extends AbstractRecord
     {
         super();
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RecoveryRecord::RecoveryRecord()"
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RecoveryRecord::RecoveryRecord()"
                     + " - crash recovery constructor");
         }
 

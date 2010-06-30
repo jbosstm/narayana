@@ -38,8 +38,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
 
-import com.arjuna.common.util.logging.*;
-
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 
@@ -83,8 +81,8 @@ public class RecoveredTransactionalObject extends StateManager
         _objectStore = objectStore;
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
 
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("RecoveredTransactionalObject created for "+_ourUid);
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("RecoveredTransactionalObject created for "+_ourUid);
         }
     }
 
@@ -98,15 +96,15 @@ public class RecoveredTransactionalObject extends StateManager
              * is, so leave that to the cache.
              */
 
-            if (txojLogger.aitLogger.isDebugEnabled()) {
-                txojLogger.aitLogger.debug("TO held by transaction "+_owningTransactionUid);
+            if (txojLogger.logger.isDebugEnabled()) {
+                txojLogger.logger.debug("TO held by transaction "+_owningTransactionUid);
             }
 
             int tranStatus = _transactionStatusConnectionMgr
                     .getTransactionStatus(_owningTransactionUid);
 
-            if (txojLogger.aitLogger.isDebugEnabled()) {
-                txojLogger.aitLogger.debug("RecoveredTransactionalObject - transaction status "+ActionStatus.stringForm(tranStatus));
+            if (txojLogger.logger.isDebugEnabled()) {
+                txojLogger.logger.debug("RecoveredTransactionalObject - transaction status "+ActionStatus.stringForm(tranStatus));
             }
 
             boolean inactive = false;
@@ -114,9 +112,9 @@ public class RecoveredTransactionalObject extends StateManager
             if (tranStatus == ActionStatus.INVALID) // should be
                                                     // ActionStatus.NO_ACTION
             {
-                if (txojLogger.aitLogger.isDebugEnabled())
+                if (txojLogger.logger.isDebugEnabled())
                 {
-                    txojLogger.aitLogger.debug("transaction Status from original application "+Integer.toString(tranStatus)+" and inactive: "+inactive);                    
+                    txojLogger.logger.debug("transaction Status from original application "+Integer.toString(tranStatus)+" and inactive: "+inactive);
                 }
 
                 inactive = true;
@@ -138,8 +136,8 @@ public class RecoveredTransactionalObject extends StateManager
         }
         else
         {
-            if (txojLogger.aitLogger.isDebugEnabled()) {
-                txojLogger.aitLogger.debug("RecoveredTransactionalObject.replayPhase2 - cannot find/no holding transaction");
+            if (txojLogger.logger.isDebugEnabled()) {
+                txojLogger.logger.debug("RecoveredTransactionalObject.replayPhase2 - cannot find/no holding transaction");
             }
         }
     }
@@ -183,8 +181,8 @@ public class RecoveredTransactionalObject extends StateManager
             _originalProcessUid = hdr.getProcessId();
             _owningTransactionUid = hdr.getTxId();
             
-            if (txojLogger.aitLogger.isDebugEnabled()) {
-                txojLogger.aitLogger.debug("RecoveredTransactionalObject::findHoldingTransaction - uid is "+_owningTransactionUid);
+            if (txojLogger.logger.isDebugEnabled()) {
+                txojLogger.logger.debug("RecoveredTransactionalObject::findHoldingTransaction - uid is "+_owningTransactionUid);
             }
 
             return _owningTransactionUid.notEquals(Uid.nullUid());

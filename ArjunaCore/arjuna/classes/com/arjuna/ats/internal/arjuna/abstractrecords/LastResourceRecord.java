@@ -64,8 +64,8 @@ public class LastResourceRecord extends AbstractRecord
     {
         super(ONE_PHASE_RESOURCE_UID);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord()");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord()");
         }
 
         _lro = opr;
@@ -83,8 +83,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::nestedAbort() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::nestedAbort() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -92,8 +92,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::nestedCommit() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::nestedCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_ERROR;
@@ -105,8 +105,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::nestedPrepare() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::nestedPrepare() for " + order());
         }
 
         return TwoPhaseOutcome.PREPARE_NOTOK;
@@ -114,8 +114,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::topLevelAbort() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::topLevelAbort() for " + order());
         }
 
         if (_lro != null)
@@ -130,8 +130,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::topLevelCommit() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::topLevelCommit() for " + order());
         }
 
         return TwoPhaseOutcome.FINISH_OK;
@@ -139,8 +139,8 @@ public class LastResourceRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LastResourceRecord::topLevelPrepare() for " + order());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LastResourceRecord::topLevelPrepare() for " + order());
         }
 
         if (_lro == null)

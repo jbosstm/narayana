@@ -71,8 +71,8 @@ public class DisposeRecord extends CadaverRecord
 	    typeName = null;
 	}
 
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::DisposeRecord(" + objStore + ", " + objectUid + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::DisposeRecord(" + objStore + ", " + objectUid + ")");
     }
     }
 
@@ -88,8 +88,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::nestedAbort() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::nestedAbort() for " + order());
     }
 	
 	return TwoPhaseOutcome.FINISH_OK;
@@ -97,8 +97,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::nestedCommit() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::nestedCommit() for " + order());
     }
 	
 	return TwoPhaseOutcome.FINISH_OK;
@@ -106,8 +106,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::nestedPrepare() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::nestedPrepare() for " + order());
     }
 	
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
@@ -118,8 +118,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::topLevelAbort() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::topLevelAbort() for " + order());
     }
 	
 	return TwoPhaseOutcome.FINISH_OK;
@@ -131,8 +131,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::topLevelCommit() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::topLevelCommit() for " + order());
     }
 
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
@@ -162,8 +162,8 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("DisposeRecord::topLevelPrepare() for " + order());
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("DisposeRecord::topLevelPrepare() for " + order());
     }
 	
 	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))

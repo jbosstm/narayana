@@ -31,22 +31,10 @@
 
 package com.arjuna.mw.wscf.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class wscfLogger
 {
-    public static LogNoi18n      arjLogger;
-    public static wscfI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        arjLogger = noi18n;
-        i18NLogger = new wscfI18NLoggerImpl(Logger.getLogger("com.arjuna.ws.wscf"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(wscfLogger.class, "com.arjuna.mw.wscf");
-    }
+    public static final Logger logger = Logger.getLogger("com.arjuna.ws.wscf");
+    public static final wscfI18NLogger i18NLogger = new wscfI18NLoggerImpl(logger);
 }

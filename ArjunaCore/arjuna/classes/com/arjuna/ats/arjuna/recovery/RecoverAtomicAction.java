@@ -56,8 +56,8 @@ public class RecoverAtomicAction extends AtomicAction
     */
    public void replayPhase2()
    {
-       if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
+       if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("RecoverAtomicAction.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
        }
 
        if ( _activated )
@@ -82,8 +82,8 @@ public class RecoverAtomicAction extends AtomicAction
            tsLogger.i18NLogger.warn_recovery_RecoverAtomicAction_2(ActionStatus.stringForm(_theStatus));
        }
 
-	   if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("RecoverAtomicAction.replayPhase2( "+get_uid()+" )  finished");
+	   if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("RecoverAtomicAction.replayPhase2( "+get_uid()+" )  finished");
        }
        }
        else {

@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
@@ -83,8 +82,8 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
         }
 
         /*
@@ -194,8 +193,8 @@ public class HashedStore extends ShadowNoFileLockStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.HashedStore( " + shareStatus + " )");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.HashedStore( " + shareStatus + " )");
         }
         
         try
@@ -204,7 +203,7 @@ public class HashedStore extends ShadowNoFileLockStore
         }
         catch (ObjectStoreException e)
         {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
         }
@@ -219,8 +218,8 @@ public class HashedStore extends ShadowNoFileLockStore
     {
         super(shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.HashedStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.HashedStore(" + locationOfStore + ")");
         }
 
         try
@@ -229,7 +228,7 @@ public class HashedStore extends ShadowNoFileLockStore
         }
         catch (ObjectStoreException e)
         {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
         }
@@ -274,8 +273,8 @@ public class HashedStore extends ShadowNoFileLockStore
 
     protected String genPathName (Uid objUid, String tName, int otype) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("HashedStore.genPathName(" + objUid + ", " + tName + ", " + StateType.stateTypeString(otype) + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("HashedStore.genPathName(" + objUid + ", " + tName + ", " + StateType.stateTypeString(otype) + ")");
         }
 
         String storeName = locateStore(getStoreName());

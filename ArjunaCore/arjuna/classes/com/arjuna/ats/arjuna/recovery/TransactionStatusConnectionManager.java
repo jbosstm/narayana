@@ -210,8 +210,8 @@ public class TransactionStatusConnectionManager
 		    {
 			Uid newUid = new Uid (theUid) ;
 
-			if (tsLogger.arjLogger.isDebugEnabled()) {
-                tsLogger.arjLogger.debug("found process uid "+newUid);
+			if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debug("found process uid "+newUid);
             }
 			tsmiVector.addElement(newUid) ;
 		    }
@@ -247,8 +247,8 @@ public class TransactionStatusConnectionManager
 		    _tscTable.put ( process_id, tsc ) ;
 		}
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("added TransactionStatusConnector to table for process uid "+process_id);
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("added TransactionStatusConnector to table for process uid "+process_id);
         }
 	    }
 	}

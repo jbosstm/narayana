@@ -65,8 +65,8 @@ public abstract class FileLockingStore extends FileSystemStore
     {
         super(locationOfStore, ss);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLockingStore.FileLockingStore(" + locationOfStore
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLockingStore.FileLockingStore(" + locationOfStore
                     + ")");
         }
     }
@@ -77,8 +77,8 @@ public abstract class FileLockingStore extends FileSystemStore
 
     protected synchronized boolean lock (File fd, int lmode, boolean create)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLockingStore.lock(" + fd + ", " + FileLock.modeString(lmode) + ", " + create + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLockingStore.lock(" + fd + ", " + FileLock.modeString(lmode) + ", " + create + ")");
         }
 
         FileLock fileLock = new FileLock(fd);
@@ -88,8 +88,8 @@ public abstract class FileLockingStore extends FileSystemStore
 
     protected synchronized boolean unlock (File fd)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileLockingStore.unlock(" + fd + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileLockingStore.unlock(" + fd + ")");
         }
 
         FileLock fileLock = new FileLock(fd);

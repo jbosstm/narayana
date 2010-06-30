@@ -47,8 +47,8 @@ public class ReaperElement implements Comparable<ReaperElement>
 
 	public ReaperElement(Reapable control, int timeout)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("ReaperElement::ReaperElement ( " + control + ", "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("ReaperElement::ReaperElement ( " + control + ", "
                     + timeout + " )");
         }
 

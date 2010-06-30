@@ -58,8 +58,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 {
    public AtomicActionRecoveryModule()
    {
-       if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("AtomicActionRecoveryModule created");
+       if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("AtomicActionRecoveryModule created");
        }
 
       if (_transactionStore == null)
@@ -83,8 +83,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       try
       {
-	  if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("AtomicActionRecoveryModule first pass");
+	  if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("AtomicActionRecoveryModule first pass");
       }
 
 	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
@@ -102,8 +102,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
    public void periodicWorkSecondPass()
    {
-       if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("AtomicActionRecoveryModule second pass");
+       if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("AtomicActionRecoveryModule second pass");
        }
 
        processTransactionsStatus() ;
@@ -111,8 +111,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
     protected AtomicActionRecoveryModule (String type)
     {
-       if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("AtomicActionRecoveryModule created");
+       if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("AtomicActionRecoveryModule created");
        }
 
       if (_transactionStore == null)
@@ -136,8 +136,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       String Status = ActionStatus.stringForm( theStatus ) ;
 
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("transaction type is " + _transactionType + " uid is " +
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
                   recoverUid.toString() + "\n ActionStatus is " + Status +
                   " in flight is " + inFlight);
       }
@@ -197,8 +197,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    {
       Vector uidVector = new Vector() ;
 
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("processing " + _transactionType
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("processing " + _transactionType
                   + " transactions");
       }
 
@@ -220,8 +220,8 @@ public class AtomicActionRecoveryModule implements RecoveryModule
             {
                Uid newUid = new Uid( theUid ) ;
 
-	       if (tsLogger.arjLogger.isDebugEnabled()) {
-               tsLogger.arjLogger.debug("found transaction " + newUid);
+	       if (tsLogger.logger.isDebugEnabled()) {
+               tsLogger.logger.debug("found transaction " + newUid);
            }
 
                uidVector.addElement( newUid ) ;
@@ -253,10 +253,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
          }
          catch ( ObjectStoreException ex )
          {
-	     if (tsLogger.arjLogger.isWarnEnabled())
-	     {
-             tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_3(currentUid, ex);
-	     }
+	        tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_3(currentUid, ex);
          }
       }
    }

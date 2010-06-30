@@ -73,18 +73,6 @@ public class LogFactory {
      */
     private static boolean m_isInitialized = false;
 
-    public static void initializeModuleLogger(Class moduleLogger, String name) {
-
-        LogNoi18n logger = getLogNoi18n(name);
-
-        try {
-            Method initializer = moduleLogger.getMethod("initialize", new Class[] {LogNoi18n.class});
-            initializer.invoke(null, new Object[] {logger});
-        } catch(Exception e) {
-            throw new RuntimeException("An unexpected exception occurred while initializing the logger: " + e.getMessage(), e);
-        }
-    }
-
 
     /**
      * Convenience method to return a named logger, without the application

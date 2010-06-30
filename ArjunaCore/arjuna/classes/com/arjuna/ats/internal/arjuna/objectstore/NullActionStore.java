@@ -139,7 +139,7 @@ public class NullActionStore extends ShadowNoFileLockStore
             setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
         }
         catch (ObjectStoreException e) {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             super.makeInvalid();
 
@@ -157,7 +157,7 @@ public class NullActionStore extends ShadowNoFileLockStore
             setupStore(locationOfStore);
         }
         catch (ObjectStoreException e) {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             super.makeInvalid();
 
@@ -184,7 +184,7 @@ public class NullActionStore extends ShadowNoFileLockStore
             super.setupStore(location);
         }
         catch (ObjectStoreException e) {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             super.makeInvalid();
 

@@ -82,8 +82,8 @@ public class Lock extends StateManager
     {
         super(ObjectType.NEITHER);
 
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::Lock(" + lm
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::Lock(" + lm
                     + ")");
         }
 
@@ -133,8 +133,8 @@ public class Lock extends StateManager
     {
         super(storeUid, ObjectType.NEITHER);
 
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::Lock("
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::Lock("
                     + storeUid + ")");
         }
 
@@ -150,8 +150,8 @@ public class Lock extends StateManager
 
     public void finalize () throws Throwable
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock.finalize()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock.finalize()");
         }
 
         super.terminate();
@@ -173,8 +173,8 @@ public class Lock extends StateManager
 
     public final int getLockMode ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::getLockMode()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::getLockMode()");
         }
 
         return lMode;
@@ -186,8 +186,8 @@ public class Lock extends StateManager
 
     public final Uid getCurrentOwner ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::getCurrentOwner()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::getCurrentOwner()");
         }
 
         return owners.getDeepestActionUid();
@@ -199,8 +199,8 @@ public class Lock extends StateManager
 
     public final ActionHierarchy getAllOwners ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::getAllOwners()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::getAllOwners()");
         }
 
         return owners;
@@ -212,8 +212,8 @@ public class Lock extends StateManager
 
     public final int getCurrentStatus ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::getCurrentStatus()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::getCurrentStatus()");
         }
 
         return currentStatus;
@@ -226,8 +226,8 @@ public class Lock extends StateManager
 
     public final void changeHierarchy (ActionHierarchy newOwner)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::getCurrentOwner()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::getCurrentOwner()");
         }
 
         owners.copy(newOwner);
@@ -242,8 +242,8 @@ public class Lock extends StateManager
 
     public final void propagate ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::propagate()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::propagate()");
         }
 
         owners.forgetDeepest();
@@ -262,8 +262,8 @@ public class Lock extends StateManager
 
     public boolean modifiesObject ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::modifiesObject()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::modifiesObject()");
         }
 
         return ((lMode == LockMode.WRITE) ? true : false);
@@ -280,8 +280,8 @@ public class Lock extends StateManager
 
     public boolean conflictsWith (Lock otherLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::conflictsWith(" + otherLock + ")\n" + "\tLock 1:\n"
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::conflictsWith(" + otherLock + ")\n" + "\tLock 1:\n"
                     + this + "\n" + "\tLock 2:\n" + otherLock);
         }
 
@@ -322,8 +322,8 @@ public class Lock extends StateManager
 
     public boolean equals (Lock otherLock)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::equals("
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::equals("
                     + otherLock + ")\n" + "\tLock 1:\n" + this + "\n"
                     + "\tLock 2:\n" + otherLock);
         }
@@ -379,8 +379,8 @@ public class Lock extends StateManager
 
     public boolean restore_state (InputObjectState os, int ot)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::restore_state(" + os + ", " + ot + ")");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::restore_state(" + os + ", " + ot + ")");
         }
 
         ActionHierarchy ah = new ActionHierarchy(0);
@@ -408,8 +408,8 @@ public class Lock extends StateManager
 
     public boolean save_state (OutputObjectState os, int ot)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("Lock::save_state("
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("Lock::save_state("
                     + os + ", " + ot + ")");
         }
 

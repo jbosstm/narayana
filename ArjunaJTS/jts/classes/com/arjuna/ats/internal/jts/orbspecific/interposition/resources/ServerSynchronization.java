@@ -70,9 +70,7 @@ public class ServerSynchronization extends
 		}
 		catch (Exception e)
 		{
-			if (jtsLogger.logger.isWarnEnabled()) {
-                jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_destroyfailed();
-            }
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_destroyfailed();
 		}
 	}
 

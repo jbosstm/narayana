@@ -53,8 +53,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
 {
    public ExpiredTransactionStatusManagerScanner()
    {
-       if (tsLogger.arjLogger.isDebugEnabled()) {
-           tsLogger.arjLogger.debug("ExpiredTransactionStatusManagerScanner created, with expiry time of "+Integer.toString(_expiryTime)+"  seconds");
+       if (tsLogger.logger.isDebugEnabled()) {
+           tsLogger.logger.debug("ExpiredTransactionStatusManagerScanner created, with expiry time of "+Integer.toString(_expiryTime)+"  seconds");
        }
 
       _objectStore  = TransactionStatusManagerItem.getStore() ;
@@ -69,8 +69,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
       // calculate the time before which items will be removed
       Date oldestSurviving = new Date( new Date().getTime() - _expiryTime * 1000 ) ;
 
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("ExpiredTransactionStatusManagerScanner - scanning to remove items from before "+_timeFormat.format(oldestSurviving));
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("ExpiredTransactionStatusManagerScanner - scanning to remove items from before "+_timeFormat.format(oldestSurviving));
       }
 
       try
@@ -158,8 +158,8 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     {
         _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("Expiry scan interval set to  "+Integer.toString(_expiryTime)+"  seconds");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("Expiry scan interval set to  "+Integer.toString(_expiryTime)+"  seconds");
         }
     }
 

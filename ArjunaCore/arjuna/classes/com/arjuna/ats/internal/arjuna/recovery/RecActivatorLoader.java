@@ -83,8 +83,8 @@ public class RecActivatorLoader
 
   private static void loadActivator (String className)
   {
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("Loading recovery activator " +
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("Loading recovery activator " +
                   className);
       }
 

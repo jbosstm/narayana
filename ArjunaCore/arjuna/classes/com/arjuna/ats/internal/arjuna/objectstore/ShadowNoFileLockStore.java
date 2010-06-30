@@ -65,8 +65,8 @@ public class ShadowNoFileLockStore extends ShadowingStore
     {
         super(locationOfStore, shareStatus);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore("
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore("
                     + locationOfStore + ")");
         }
     }
@@ -78,8 +78,8 @@ public class ShadowNoFileLockStore extends ShadowingStore
 
     public ShadowNoFileLockStore(int shareStatus)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore(" + shareStatus + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("ShadowNoFileLockStore.ShadowNoFileLockStore(" + shareStatus + ")");
         }
     }
 

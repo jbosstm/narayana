@@ -77,8 +77,8 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // no scanning wanted
 	      
-	  if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("Expiry scan zero - not scanning");
+	  if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("Expiry scan zero - not scanning");
       }
 	  
 	  return false;
@@ -88,8 +88,8 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // nothing to do
 	  
-	  if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("No Expiry scanners loaded - not scanning");
+	  if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("No Expiry scanners loaded - not scanning");
       }
 	  
 	  return false;
@@ -125,8 +125,8 @@ public class ExpiredEntryMonitor extends Thread
 
   private ExpiredEntryMonitor(boolean skipFirst)
   {
-    if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("ExpiredEntryMonitor - constructed");
+    if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("ExpiredEntryMonitor - constructed");
     }
     _skipNext = skipFirst;
     _stop = false;
@@ -170,8 +170,8 @@ public class ExpiredEntryMonitor extends Thread
 
 		m.scan();
 			
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("  ");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("  ");
             // bit of space if detailing
         }
         }
@@ -215,8 +215,8 @@ public class ExpiredEntryMonitor extends Thread
 
         _scanIntervalSeconds = recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanInterval() * 60 * 60;
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("Expiry scan interval set to "+Integer.toString(_scanIntervalSeconds)+" seconds");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("Expiry scan interval set to "+Integer.toString(_scanIntervalSeconds)+" seconds");
         }
 
         if (_scanIntervalSeconds != 0)
@@ -246,8 +246,8 @@ public class ExpiredEntryMonitor extends Thread
     
   private static void loadScanner( String className )
   {
-      if (tsLogger.arjLogger.isDebugEnabled()) {
-          tsLogger.arjLogger.debug("Loading expiry scanner "+className);
+      if (tsLogger.logger.isDebugEnabled()) {
+          tsLogger.logger.debug("Loading expiry scanner "+className);
       }
       
       if (className == null) {
@@ -271,8 +271,8 @@ public class ExpiredEntryMonitor extends Thread
 		   }
 		   else
 		   {
-		       if (tsLogger.arjLogger.isDebugEnabled()) {
-                   tsLogger.arjLogger.debug("Loading expiry scanner "+className);
+		       if (tsLogger.logger.isDebugEnabled()) {
+                   tsLogger.logger.debug("Loading expiry scanner "+className);
                }
 		   }
 		}

@@ -56,8 +56,8 @@ public class OutputObjectState extends OutputBuffer
 
 public OutputObjectState ()
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("OutputObjectState::OutputObjectState()");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("OutputObjectState::OutputObjectState()");
     }
 	
 	bufferUid = new Uid();
@@ -75,8 +75,8 @@ public OutputObjectState (OutputObjectState copyFrom)
 	
 	super(copyFrom);
 
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("OutputObjectState::OutputObjectState(" + copyFrom + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("OutputObjectState::OutputObjectState(" + copyFrom + ")");
     }
 
 	try
@@ -96,8 +96,8 @@ public OutputObjectState (InputObjectState copyFrom)
     {
 	super(copyFrom.buffer());
 
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("OutputObjectState::OutputObjectState(" + copyFrom + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("OutputObjectState::OutputObjectState(" + copyFrom + ")");
     }
 
 	try
@@ -115,8 +115,8 @@ public OutputObjectState (InputObjectState copyFrom)
     
 public OutputObjectState (Uid newUid, String tName)
     {
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("OutputObjectState::OutputObjectState(" + newUid + ", " + tName + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("OutputObjectState::OutputObjectState(" + newUid + ", " + tName + ")");
     }
 
 	bufferUid = new Uid(newUid);
@@ -129,8 +129,8 @@ public OutputObjectState (Uid newUid, String tName, byte[] buffer)
     {
 	super(buffer);
 
-	if (tsLogger.arjLogger.isDebugEnabled()) {
-        tsLogger.arjLogger.debug("OutputObjectState::OutputObjectState(" + newUid + ", " + tName + ")");
+	if (tsLogger.logger.isDebugEnabled()) {
+        tsLogger.logger.debug("OutputObjectState::OutputObjectState(" + newUid + ", " + tName + ")");
     }
 
 	bufferUid = new Uid(newUid);
@@ -191,8 +191,8 @@ public void print (PrintWriter strm)
 
 public synchronized void copy (OutputObjectState objstate)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
-            tsLogger.arjLogger.debug("OutputObjectState::copy for " + bufferUid);
+        if (tsLogger.logger.isDebugEnabled())
+            tsLogger.logger.debug("OutputObjectState::copy for " + bufferUid);
 	
 	super.copy(objstate);
 

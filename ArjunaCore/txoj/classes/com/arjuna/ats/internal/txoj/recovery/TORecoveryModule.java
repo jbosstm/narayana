@@ -64,8 +64,8 @@ public class TORecoveryModule implements RecoveryModule
     @SuppressWarnings("unchecked")
     public TORecoveryModule()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("TORecoveryModule created");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("TORecoveryModule created");
         }
 
         /*
@@ -141,8 +141,8 @@ public class TORecoveryModule implements RecoveryModule
                                             
                                             _uncommittedTOTable.put(newUid,newTypeString);
                                             
-                                            if (txojLogger.aitLogger.isDebugEnabled()) {
-                                                txojLogger.aitLogger.debug("TO currently uncommitted "+newUid+" is a "+newTypeString);
+                                            if (txojLogger.logger.isDebugEnabled()) {
+                                                txojLogger.logger.debug("TO currently uncommitted "+newUid+" is a "+newTypeString);
                                             }
                                         }
                                     }
@@ -191,15 +191,15 @@ public class TORecoveryModule implements RecoveryModule
                 }
                 else
                 {
-                    if (txojLogger.aitLogger.isDebugEnabled()) {
-                        txojLogger.aitLogger.debug("Object ("+objUid+", "+objType+") is no longer uncommitted.");
+                    if (txojLogger.logger.isDebugEnabled()) {
+                        txojLogger.logger.debug("Object ("+objUid+", "+objType+") is no longer uncommitted.");
                     }
                 }
             }
             catch (ObjectStoreException ose)
             {
-                if (txojLogger.aitLogger.isDebugEnabled()) {
-                    txojLogger.aitLogger.debug("Object ("+objUid+", "+objType+") no longer exists.");
+                if (txojLogger.logger.isDebugEnabled()) {
+                    txojLogger.logger.debug("Object ("+objUid+", "+objType+") no longer exists.");
                 }
             }
         }
@@ -211,15 +211,15 @@ public class TORecoveryModule implements RecoveryModule
 
     protected void initialise ()
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("TORecoveryModule.initialise()");
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("TORecoveryModule.initialise()");
         }
     }
 
     private final void recoverObject (Uid objUid, String objType)
     {
-        if (txojLogger.aitLogger.isDebugEnabled()) {
-            txojLogger.aitLogger.debug("TORecoveryModule.recoverObject(" + objUid + ", "
+        if (txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("TORecoveryModule.recoverObject(" + objUid + ", "
                     + objType + ")");
         }
 

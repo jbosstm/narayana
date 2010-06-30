@@ -44,8 +44,8 @@ public class ReaperWorkerThread extends Thread
 
 public void run ()
     {
-         if (tsLogger.arjLogger.isDebugEnabled()) {
-             tsLogger.arjLogger.debug("ReaperWorkerThread.run ()");
+         if (tsLogger.logger.isDebugEnabled()) {
+             tsLogger.logger.debug("ReaperWorkerThread.run ()");
          }
 
         for (;;)
@@ -53,8 +53,8 @@ public void run ()
              // wait for the reaper thread to queue some TXs for
              // this thread to cancel
 
-             if (tsLogger.arjLogger.isDebugEnabled()) {
-                 tsLogger.arjLogger.debug("Thread "+Thread.currentThread()+" waiting for cancelled TXs");
+             if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Thread "+Thread.currentThread()+" waiting for cancelled TXs");
              }
 
              _theReaper.waitForCancellations();
@@ -66,8 +66,8 @@ public void run ()
 
              // get the reaper to cancel any TXs queued for cancellation.
 
-             if (tsLogger.arjLogger.isDebugEnabled()) {
-                 tsLogger.arjLogger.debug("Thread "+Thread.currentThread()+" performing cancellations");
+             if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Thread "+Thread.currentThread()+" performing cancellations");
              }
 
              _theReaper.doCancellations();

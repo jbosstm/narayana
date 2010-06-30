@@ -21,22 +21,10 @@
 
 package com.arjuna.ats.txoj.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class txojLogger
 {
-	public static LogNoi18n aitLogger;
-    public static txojI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        aitLogger = noi18n;
-        i18NLogger = new txojI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.txoj"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(txojLogger.class, "com.arjuna.ats.txoj");
-    }
+	public static final Logger logger = Logger.getLogger("com.arjuna.ats.txoj");
+    public static final txojI18NLogger i18NLogger = new txojI18NLoggerImpl(logger);
 }

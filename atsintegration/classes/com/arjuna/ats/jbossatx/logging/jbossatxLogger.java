@@ -31,23 +31,10 @@
 
 package com.arjuna.ats.jbossatx.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 public class jbossatxLogger
 {
-    public static LogNoi18n      logger;
-
-    public static jbossatxI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        logger = noi18n;
-        i18NLogger = new jbossatxI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.jbossatx"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(jbossatxLogger.class, "com.arjuna.ats.jbossatx");
-    }
+    public static final Logger logger = Logger.getLogger("com.arjuna.ats.jbossatx");
+    public static final jbossatxI18NLogger i18NLogger = new jbossatxI18NLoggerImpl(logger);
 }

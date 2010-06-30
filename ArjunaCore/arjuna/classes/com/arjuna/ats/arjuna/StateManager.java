@@ -138,8 +138,8 @@ public class StateManager
 
     public void finalize () throws Throwable
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager.finalize() for object-id " + get_uid()
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager.finalize() for object-id " + get_uid()
                     + " type " + type());
         }
 
@@ -194,8 +194,8 @@ public class StateManager
 
     public synchronized boolean activate (String rootName)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::activate( "
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::activate( "
                     + ((rootName != null) ? rootName : "null")
                     + ") for object-id " + objectUid);
         }
@@ -408,8 +408,8 @@ public class StateManager
 
     public synchronized boolean deactivate (String rootName, boolean commit)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::deactivate("
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::deactivate("
                     + ((rootName != null) ? rootName : "null") + ", "
                     + commit + ") for object-id " + objectUid);
         }
@@ -511,8 +511,8 @@ public class StateManager
 
     public synchronized boolean destroy ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::destroy for object-id "+objectUid);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::destroy for object-id "+objectUid);
         }
 
         boolean result = false;
@@ -605,8 +605,8 @@ public class StateManager
 
     public final String getStoreRoot ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::getStoreRoot ()");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::getStoreRoot ()");
         }
 
         return storeRoot;
@@ -619,8 +619,8 @@ public class StateManager
 
     public ObjectStore getStore ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::getStore ()");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::getStore ()");
         }
 
         if (objectStore == null)
@@ -668,8 +668,8 @@ public class StateManager
             
             long birthDate = System.currentTimeMillis();
             
-            if (tsLogger.arjLogger.isDebugEnabled()) {
-                tsLogger.arjLogger.debug("StateManager.packHeader for object-id " + get_uid()
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debug("StateManager.packHeader for object-id " + get_uid()
                         + " birth-date " + birthDate);
             }
             
@@ -728,8 +728,8 @@ public class StateManager
             
             long birthDate = os.unpackLong();
             
-            if (tsLogger.arjLogger.isDebugEnabled()) {
-                tsLogger.arjLogger.debug("StateManager.unpackHeader for object-id " + get_uid()
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debug("StateManager.unpackHeader for object-id " + get_uid()
                         + " birth-date " + birthDate);
             }
             
@@ -755,8 +755,8 @@ public class StateManager
 
     protected void terminate ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::terminate() for object-id " + get_uid());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::terminate() for object-id " + get_uid());
         }
 
         cleanup(true);
@@ -808,8 +808,8 @@ public class StateManager
 
         objectUid = objUid;
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::StateManager( " + get_uid() + " )");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::StateManager( " + get_uid() + " )");
         }
     }
 
@@ -849,8 +849,8 @@ public class StateManager
 
         objectUid = new Uid();
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::StateManager( " + ot + ", " + om + " )");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::StateManager( " + ot + ", " + om + " )");
         }
     }
 
@@ -867,8 +867,8 @@ public class StateManager
 
     protected synchronized boolean modified ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::modified() for object-id " + get_uid());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::modified() for object-id " + get_uid());
         }
 
         BasicAction action = BasicAction.Current();
@@ -961,8 +961,8 @@ public class StateManager
 
     protected final synchronized void persist ()
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::persist() for object-id " + get_uid());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::persist() for object-id " + get_uid());
         }
 
         if (currentStatus == ObjectStatus.ACTIVE)
@@ -984,8 +984,8 @@ public class StateManager
 
     protected final synchronized void cleanup (boolean fromTerminate)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::cleanup() for object-id " + get_uid());
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::cleanup() for object-id " + get_uid());
         }
 
         if (myType == ObjectType.NEITHER)
@@ -1124,8 +1124,8 @@ public class StateManager
     protected synchronized void setupStore (String rootName,
             String objectStoreType)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::setupStore ( "
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::setupStore ( "
                     + ((rootName != null) ? rootName : "null") + " )");
         }
 
@@ -1260,8 +1260,8 @@ public class StateManager
     protected final synchronized boolean forgetAction (BasicAction action,
             boolean committed, int recordType)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::forgetAction("
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::forgetAction("
                     + ((action != null) ? action.get_uid() : Uid
                     .nullUid()) + ")" + " for object-id "
                     + objectUid);
@@ -1311,8 +1311,8 @@ public class StateManager
     protected final synchronized boolean rememberAction (BasicAction action,
             int recordType, int state)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("StateManager::rememberAction("
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("StateManager::rememberAction("
                     + ((action != null) ? action.get_uid() : Uid
                     .nullUid()) + ")" + " for object-id "
                     + objectUid);

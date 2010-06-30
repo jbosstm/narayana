@@ -500,8 +500,8 @@ public class LogStore extends FileSystemStore
 
 	public boolean hide_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.hide_state(" + u + ", " + tn + ")");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.hide_state(" + u + ", " + tn + ")");
         }
 
 		return false;
@@ -509,8 +509,8 @@ public class LogStore extends FileSystemStore
 
 	public boolean reveal_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.reveal_state(" + u + ", " + tn + ")");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.reveal_state(" + u + ", " + tn + ")");
         }
 
 		return false;
@@ -519,8 +519,8 @@ public class LogStore extends FileSystemStore
 	public InputObjectState read_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.read_uncommitted(" + u + ", " + tn + ")");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.read_uncommitted(" + u + ", " + tn + ")");
         }
 
 		return null;
@@ -529,8 +529,8 @@ public class LogStore extends FileSystemStore
 	public boolean remove_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.remove_uncommitted(" + u + ", " + tn + ")");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.remove_uncommitted(" + u + ", " + tn + ")");
         }
 
 		return false;
@@ -539,8 +539,8 @@ public class LogStore extends FileSystemStore
 	public boolean write_committed(Uid storeUid, String tName,
 			OutputObjectState state) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.write_committed(" + storeUid + ", "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.write_committed(" + storeUid + ", "
                     + tName + ")");
         }
 
@@ -559,8 +559,8 @@ public class LogStore extends FileSystemStore
 	public boolean write_uncommitted(Uid u, String tn, OutputObjectState s)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("LogStore.write_uncommitted(" + u + ", " + tn + ", " + s
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("LogStore.write_uncommitted(" + u + ", " + tn + ", " + s
                     + ")");
         }
 
@@ -680,7 +680,7 @@ public class LogStore extends FileSystemStore
 			setupStore(locationOfStore);
 		}
 		catch (ObjectStoreException e) {
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             super.makeInvalid();
 
@@ -702,7 +702,7 @@ public class LogStore extends FileSystemStore
                         setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
                 }
                 catch (ObjectStoreException e) {
-                    tsLogger.arjLogger.warn(e);
+                    tsLogger.logger.warn(e);
 
                     super.makeInvalid();
 
@@ -746,8 +746,8 @@ public class LogStore extends FileSystemStore
 
 	protected boolean unlockAndClose(File fd, RandomAccessFile rf)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("RandomAccessFile.unlockAndClose(" + fd + ", " + rf + ")");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("RandomAccessFile.unlockAndClose(" + fd + ", " + rf + ")");
         }
 
 		boolean closedOk = unlock(fd);
@@ -777,8 +777,8 @@ public class LogStore extends FileSystemStore
 	protected boolean write_state(Uid objUid, String tName,
 			OutputObjectState state, int ft) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("ShadowingStore.write_state(" + objUid + ", " + tName
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("ShadowingStore.write_state(" + objUid + ", " + tName
                     + ", " + StateType.stateTypeString(ft) + ")");
         }
 

@@ -49,8 +49,8 @@ public class ClassloadingUtility
      */
     public static <T> T loadAndInstantiateClass(Class<T> iface, String className)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("Loading class " + className);
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("Loading class " + className);
         }
 
         if (className == null) {

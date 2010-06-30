@@ -83,8 +83,8 @@ public abstract class FileSystemStore extends ObjectStore
     {
         super(ss);
 
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.FileSystemStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.FileSystemStore(" + locationOfStore + ")");
         }
 
         fullStoreName = null;
@@ -99,7 +99,7 @@ public abstract class FileSystemStore extends ObjectStore
         {
             isValid = false;
 
-            tsLogger.arjLogger.warn(e);
+            tsLogger.logger.warn(e);
 
             throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
         }
@@ -117,8 +117,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.read_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.read_committed(" + storeUid + ", " + tName + ")");
         }
 
         return read_state(storeUid, tName, StateType.OS_ORIGINAL);
@@ -126,8 +126,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public InputObjectState read_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.read_uncommitted(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.read_uncommitted(" + storeUid + ", " + tName + ")");
         }
 
         return read_state(storeUid, tName, StateType.OS_SHADOW);
@@ -135,8 +135,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.remove_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.remove_committed(" + storeUid + ", " + tName + ")");
         }
 
         return remove_state(storeUid, tName, StateType.OS_ORIGINAL);
@@ -144,8 +144,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean remove_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.remove_uncommitted(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.remove_uncommitted(" + storeUid + ", " + tName + ")");
         }
 
         return remove_state(storeUid, tName, StateType.OS_SHADOW);
@@ -153,8 +153,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.write_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.write_committed(" + storeUid + ", " + tName + ")");
         }
 
         return write_state(storeUid, tName, state, StateType.OS_ORIGINAL);
@@ -162,8 +162,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean write_uncommitted (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.write_uncommitted(" + storeUid + ", " + tName + ", " + state + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.write_uncommitted(" + storeUid + ", " + tName + ", " + state + ")");
         }
 
         return write_state(storeUid, tName, state, StateType.OS_SHADOW);
@@ -191,8 +191,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
         }
 
         String directory = null;
@@ -273,8 +273,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     public boolean allTypes (InputObjectState foundTypes) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.allTypes(" + foundTypes + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.allTypes(" + foundTypes + ")");
         }
 
         boolean result = true;
@@ -408,8 +408,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected boolean closeAndUnlock (File fd, FileInputStream ifile, FileOutputStream ofile)
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.closeAndUnlock(" + fd + ", " + ifile + ", " + ofile + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.closeAndUnlock(" + fd + ", " + ifile + ", " + ofile + ")");
         }
 
         boolean closedOk = unlock(fd);
@@ -431,8 +431,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected File openAndLock (String fname, int lmode, boolean create) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.openAndLock(" + fname + ", " + FileLock.modeString(lmode) + ", " + create + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.openAndLock(" + fname + ", " + FileLock.modeString(lmode) + ", " + create + ")");
         }
 
         //      File fd = (File) FdCache(fname);
@@ -567,8 +567,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected boolean allTypes (OutputObjectState foundTypes, String root) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.allTypes(" + foundTypes + ", " + root + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.allTypes(" + foundTypes + ", " + root + ")");
         }
 
         boolean result = true;
@@ -622,8 +622,8 @@ public abstract class FileSystemStore extends ObjectStore
     protected String genPathName (Uid objUid,
                                   String tName, int ostype) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.genPathName(" + objUid + ", " + tName + ", " + ostype + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.genPathName(" + objUid + ", " + tName + ", " + ostype + ")");
         }
 
         String storeName = locateStore(getStoreName());
@@ -672,8 +672,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected synchronized boolean setupStore (String localOSRoot) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.setupStore(" + localOSRoot + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.setupStore(" + localOSRoot + ")");
         }
 
         isValid = true;
@@ -726,8 +726,8 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected synchronized final boolean createHierarchy (String path) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("FileSystemStore.createHierarchy(" + path + ")");
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("FileSystemStore.createHierarchy(" + path + ")");
         }
 
         if ((path != null) && (path.length() > 0))

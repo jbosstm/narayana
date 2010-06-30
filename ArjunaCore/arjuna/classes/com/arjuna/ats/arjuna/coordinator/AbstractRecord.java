@@ -586,8 +586,8 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = objType;
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord ("
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("AbstractRecord::AbstractRecord ("
                     + storeUid + ", " + otype + ")");
         }
 	}
@@ -607,8 +607,8 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = null;
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord ("
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("AbstractRecord::AbstractRecord ("
                     + storeUid + ")");
         }
 	}
@@ -627,8 +627,8 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = new Uid(Uid.nullUid());
 		typeOfObject = null;
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("AbstractRecord::AbstractRecord () - crash recovery constructor");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("AbstractRecord::AbstractRecord () - crash recovery constructor");
         }
 	}
 

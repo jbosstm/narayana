@@ -31,24 +31,11 @@
 
 package com.arjuna.mw.wstx.logging;
 
-import com.arjuna.common.util.logging.*;
 import org.jboss.logging.Logger;
 
 
 public class wstxLogger
 {
-
-    public static LogNoi18n      arjLogger;
-    public static wstxI18NLogger i18NLogger;
-
-    public static void initialize(LogNoi18n noi18n)
-    {
-        arjLogger = noi18n;
-        i18NLogger = new wstxI18NLoggerImpl(Logger.getLogger("com.arjuna.mw.wstx"));
-    }
-
-    static
-    {
-        LogFactory.initializeModuleLogger(wstxLogger.class, "com.arjuna.mw.wstx");
-    }
+    public static final Logger logger = Logger.getLogger("com.arjuna.mw.wstx");
+    public static final wstxI18NLogger i18NLogger = new wstxI18NLoggerImpl(logger);
 }

@@ -68,8 +68,8 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super(os, sm);
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::PersistenceRecord("
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::PersistenceRecord("
                     + os + ", " + sm.get_uid() + ")");
         }
 
@@ -95,8 +95,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelAbort ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::topLevelAbort() for "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::topLevelAbort() for "
                     + order());
         }
 
@@ -144,19 +144,19 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCommit ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCommit() : About to commit state, "+
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::topLevelCommit() : About to commit state, "+
                     "uid = "+order()+", ObjType = "+getTypeOfObject());
         }
 
-		if (tsLogger.arjLogger.isDebugEnabled())
+		if (tsLogger.logger.isDebugEnabled())
 		{
 			if (store != null) {
-                tsLogger.arjLogger.debug(", store = "
+                tsLogger.logger.debug(", store = "
                         + store + "(" + store.typeIs() + ")");
             }
 			else {
-                tsLogger.arjLogger.debug("");
+                tsLogger.logger.debug("");
             }
 		}
 
@@ -219,8 +219,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelPrepare ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::topLevelPrepare() for "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::topLevelPrepare() for "
                     + order());
         }
 
@@ -305,8 +305,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCleanup ()
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::topLevelCleanup() for "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::topLevelCleanup() for "
                     + order());
         }
 
@@ -324,8 +324,8 @@ public class PersistenceRecord extends RecoveryRecord
 
     public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::restore_state() for "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::restore_state() for "
                     + order());
         }
 
@@ -338,8 +338,8 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			objStoreType = os.unpackInt();
 
-			if (tsLogger.arjLogger.isDebugEnabled()) {
-                tsLogger.arjLogger.debug(" PersistenceRecord::restore_state: Just unpacked object store type = "+Integer.toString(objStoreType));
+			if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debug(" PersistenceRecord::restore_state: Just unpacked object store type = "+Integer.toString(objStoreType));
             }
 
 			if (ObjectStoreType.valid(objStoreType))
@@ -378,8 +378,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public boolean save_state (OutputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::save_state() for "
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::save_state() for "
                     + order());
         }
 
@@ -398,14 +398,14 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					os.packInt(store.typeIs());
 
-					if (tsLogger.arjLogger.isDebugEnabled()) {
-                        tsLogger.arjLogger.debug("PersistenceRecord::save_state: Packed object store type = "+Integer.toString(store.typeIs()));
+					if (tsLogger.logger.isDebugEnabled()) {
+                        tsLogger.logger.debug("PersistenceRecord::save_state: Packed object store type = "+Integer.toString(store.typeIs()));
                     }
 
 					store.pack(os);
 
-					if (tsLogger.arjLogger.isDebugEnabled()) {
-                        tsLogger.arjLogger.debug("PersistenceRecord::save_state: Packed object store root");
+					if (tsLogger.logger.isDebugEnabled()) {
+                        tsLogger.logger.debug("PersistenceRecord::save_state: Packed object store root");
                     }
 
 					os.packBoolean(shadowMade);
@@ -469,8 +469,8 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super();
 
-		if (tsLogger.arjLogger.isDebugEnabled()) {
-            tsLogger.arjLogger.debug("PersistenceRecord::PersistenceRecord() - crash recovery constructor");
+		if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("PersistenceRecord::PersistenceRecord() - crash recovery constructor");
         }
 
 		shadowMade = false;

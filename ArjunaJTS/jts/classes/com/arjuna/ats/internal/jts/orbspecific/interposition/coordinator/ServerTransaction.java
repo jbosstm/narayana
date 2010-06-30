@@ -557,9 +557,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 		}
 		catch (IOException e)
 		{
-			if (jtsLogger.logger.isWarnEnabled()) {
-                jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.save_state", e);
-            }
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.save_state", e);
 		}
 
 		return false;
@@ -581,9 +579,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 				}
 				catch (Exception e)
 				{
-					if (jtsLogger.logger.isWarnEnabled()) {
-                        jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", e);
-                    }
+                    jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", e);
 
 					return false;
 				}
@@ -595,9 +591,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 		}
 		catch (IOException ex)
 		{
-			if (jtsLogger.logger.isWarnEnabled()) {
-                jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", ex);
-            }
+            jtsLogger.i18NLogger.warn_orbspecific_interposition_coordinator_generror("ServerTransaction.restore_state", ex);
 		}
 
 		return false;
