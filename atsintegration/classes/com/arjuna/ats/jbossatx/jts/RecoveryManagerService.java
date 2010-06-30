@@ -33,13 +33,9 @@ import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
  */
 public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.RecoveryManagerService
 {
-    /**
-     * @message com.arjuna.ats.jbossatx.jts.RecoveryManagerService.init
-     * [com.arjuna.ats.jbossatx.jts.RecoveryManagerService.init] <init> JTS transaction recovery manager
-     */
     public RecoveryManagerService(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
-        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jts.RecoveryManagerService.init");
+        jbossatxLogger.i18NLogger.info_jts_RecoveryManagerService_init();
 
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
         ORB orb = ORB.getInstance("jboss-atx");

@@ -57,27 +57,19 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public TransactionManagerService() {}
 
-    /**
-     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.create
-     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.create] JBossTS Transaction Service ({0} version - tag: {1}) - JBoss Inc.
-     */
     public void create() throws Exception
     {
         String tag = ConfigurationInfo.getSourceId();
 
-        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.create", new Object[] {mode, tag});
+        jbossatxLogger.i18NLogger.info_jta_TransactionManagerService_create(mode, tag);
 
         // Associate transaction reaper with our context classloader.
         TransactionReaper.transactionReaper();
 	}
 
-    /**
-     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy
-     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy] Destroying TransactionManagerService
-     */
     public void destroy()
     {
-        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy");
+        jbossatxLogger.i18NLogger.info_jta_TransactionManagerService_destroy();
     }
 
     public void start()
@@ -148,13 +140,10 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     /**
      * This method has been put in here so that it is compatible with the JBoss standard Transaction Manager.
      * As we do not support exception formatters just display a warning for the moment.
-     *
-     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.noformatter
-     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.noformatter] XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored
      */
     public void registerXAExceptionFormatter(Class c, XAExceptionFormatter f)
     {
-        jbossatxLogger.loggerI18N.warn("XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored");
+        jbossatxLogger.i18NLogger.warn_jta_TransactionManagerService_noformatter();
     }
 
     /**

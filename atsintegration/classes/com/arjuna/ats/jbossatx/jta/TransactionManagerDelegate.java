@@ -30,12 +30,8 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 public class TransactionManagerDelegate extends BaseTransactionManagerDelegate implements ObjectFactory
 {
@@ -72,11 +68,6 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      * if there is no transaction
      * @throws RollbackException if the transaction is marked for rollback and
      * errorRollback is true
-     *
-     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1
-     * 		[com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1] - Transaction has or will rollback.
-     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2
-     * 		[com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2] - Unexpected error retrieving transaction status
      */
     public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback)
         throws RollbackException
@@ -91,7 +82,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
                 case Status.STATUS_ROLLEDBACK:
                 case Status.STATUS_ROLLING_BACK:
                     if(errorRollback) {
-                        throw new RollbackException(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1"));
+                        throw new RollbackException(jbossatxLogger.i18NLogger.get_jta_TransactionManagerDelegate_getTimeLeftBeforeTransactionTimeout_1());
                     }
                     break;
                 case Status.STATUS_COMMITTED:
@@ -117,7 +108,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     	catch (final SystemException se)
     	{
             RollbackException rollbackException = new RollbackException(
-                    jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
+                    jbossatxLogger.i18NLogger.get_jta_TransactionManagerDelegate_getTimeLeftBeforeTransactionTimeout_2()) ;
             rollbackException.initCause(se);
             throw rollbackException;
     	}

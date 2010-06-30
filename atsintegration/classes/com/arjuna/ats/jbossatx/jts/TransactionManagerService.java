@@ -58,15 +58,9 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         throw new IllegalArgumentException("JTS mode startup requires an ORB to be provided");
     }
 
-    /**
-     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerService.start
-     * [com.arjuna.ats.jbossatx.jts.TransactionManagerService.start] registering transaction manager
-     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed
-     * [com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed] Problem encountered while trying to register transaction manager with ORB!
-     */
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
-        jbossatxLogger.loggerI18N.info("registering transaction manager");
+        jbossatxLogger.i18NLogger.info_jts_TransactionManagerService_start();
 
         // Create an ORB portability wrapper around the CORBA ORB services orb
         ORB orb = ORB.getInstance("jboss-atx");
@@ -90,9 +84,7 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
         catch (final Exception ex)
         {
-            jbossatxLogger.loggerI18N.fatal("com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed", ex);
-
-            throw new Exception(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed"), ex);
+            throw new Exception(jbossatxLogger.i18NLogger.get_jts_TransactionManagerService_failed(), ex);
         }
     }
 

@@ -164,15 +164,6 @@ public class PropagationContextManager implements
      * transaction propagation context in the local VM. Returns
      * <code>null</code> if the transaction propagation context is
      * <code>null</code>, or if it represents a <code>null</code> transaction.
-     * 
-     * @message 
-     *          com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception
-     *          [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.
-     *          exception] Unexpected exception occurred
-     * @message com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.
-     *          unknownctx
-     *          [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager
-     *          .unknownctx] jboss-atx: unknown Tx PropagationContext
      */
 
     public Transaction importTransactionPropagationContext (Object tpc)
@@ -206,18 +197,14 @@ public class PropagationContextManager implements
             }
             catch (Exception e)
             {
-                jbossatxLogger.loggerI18N
-                        .error(
-                                "com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception",
-                                e);
+                jbossatxLogger.i18NLogger.error_jts_PropagationContextManager_exception(e);
 
                 return null;
             }
         }
         else
         {
-            jbossatxLogger.loggerI18N
-                    .error("com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.unknownctx");
+            jbossatxLogger.i18NLogger.error_jts_PropagationContextManager_unknownctx();
 
             return null;
         }

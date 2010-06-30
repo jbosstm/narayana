@@ -171,14 +171,6 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
 
     /**
      * Lookup the XADataSource in JNDI.
-     *
-     * @message com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createproblem
-     * [com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createproblem] createDataSource got exception {0} during getXADataSource call
-     * @message com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.notfound
-     * [com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.notfound] InstanceNotFound. Datasource {0} not deployed, or wrong name?"
-     * @message com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.problem
-     * [com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.problem] createDataSource {0} got exception {1}
-     *
      */
     private final void createDataSource()
         throws SQLException
@@ -277,7 +269,7 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                     _supportsIsValidMethod = true; // assume it does; we'll lazily check the first time we try to connect
                 } catch(Exception e) {
                     _dataSource = null;
-                    jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createproblem", new Object[] {e.toString()}, e);
+                    jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_createproblem(e);
                     SQLException sqlException = new SQLException(e.toString());
                     sqlException.initCause(e);
                     throw sqlException;
@@ -288,13 +280,13 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         {
             if (mbe.getTargetException() instanceof InstanceNotFoundException)
             {
-                jbossatxLogger.loggerI18N.warn("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.notfound", new Object[] {_dataSourceId});
+                jbossatxLogger.i18NLogger.warn_jta_AppServerJDBCXARecovery_notfound(_dataSourceId);
 
                 // this is an expected condition when the data source is not yet deployed
                 // just ignore this for now, the next time around, we try again to see if its deployed yet
                 return;
             } else {
-                jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.problem", new Object[] {_dataSourceId, mbe.toString()}, mbe);
+                jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_problem(_dataSourceId, mbe);
             }
 
             SQLException sqlException = new SQLException(mbe.toString());
@@ -303,13 +295,12 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         }
         catch (SQLException ex)
         {
-            jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.problem", new Object[] {_dataSourceId, ex.toString()}, ex);
-
+            jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_problem(_dataSourceId, ex);
             throw ex;
         }
         catch (Exception e)
         {
-            jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.problem", new Object[] {_dataSourceId, e.toString()}, e);
+            jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_problem(_dataSourceId, e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -319,9 +310,6 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
 
     /**
      * Create the XAConnection from the XADataSource.
-     *
-     * @message com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createconnectionproblem
-     * [com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createconnectionproblem] createConnection got exception {0}
      */
 
     private final void createConnection()
@@ -387,13 +375,12 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         }
         catch (SQLException ex)
         {
-            jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createconnectionproblem", new Object[] {ex.toString()}, ex);
-
+            jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_createconnectionproblem(ex);
             throw ex;
         }
         catch (Exception e)
         {
-           jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery.createconnectionproblem", new Object[] {e.toString()}, e);
+            jbossatxLogger.i18NLogger.error_jta_AppServerJDBCXARecovery_createconnectionproblem(e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
