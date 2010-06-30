@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06" xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+<wsdl:definitions
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:wsa="http://www.w3.org/2005/08/addressing"
+        xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+        targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+        xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
 
   <wsdl:import
       namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
