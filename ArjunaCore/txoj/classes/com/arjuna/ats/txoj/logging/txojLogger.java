@@ -29,7 +29,7 @@ public class txojLogger
 	public static LogNoi18n aitLogger;
     public static txojI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         aitLogger = noi18n;
         i18NLogger = new txojI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.txoj"));
@@ -37,6 +37,6 @@ public class txojLogger
 
     static
     {
-        LogFactory.initializeModuleLogger(txojLogger.class, "txoj_msg", "com.arjuna.ats.txoj");
+        LogFactory.initializeModuleLogger(txojLogger.class, "com.arjuna.ats.txoj");
     }
 }

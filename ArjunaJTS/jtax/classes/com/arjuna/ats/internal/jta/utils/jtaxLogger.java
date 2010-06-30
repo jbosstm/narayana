@@ -22,7 +22,6 @@ package com.arjuna.ats.internal.jta.utils;
 
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.util.logging.LogNoi18n;
-import com.arjuna.common.util.logging.Logi18n;
 import org.jboss.logging.Logger;
 
 /**
@@ -33,7 +32,7 @@ public class jtaxLogger
     public static LogNoi18n logger;
     public static jtaxI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         logger = noi18n;
         i18NLogger = new jtaxI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.jtax"));
@@ -41,6 +40,6 @@ public class jtaxLogger
 
     static
     {
-        LogFactory.initializeModuleLogger(jtaxLogger.class, "jtax_msg", "com.arjuna.ats.jtax");
+        LogFactory.initializeModuleLogger(jtaxLogger.class, "com.arjuna.ats.jtax");
     }
 }

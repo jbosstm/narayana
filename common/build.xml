@@ -28,23 +28,6 @@
 
     <target name="run.tests">
 
-        <javadoc sourcepath="${tests.dir}"
-                 packagenames="com.arjuna.common.tests.logging"
-                 failonerror="yes"
-                 private="yes"
-                 defaultexcludes="yes">
-
-            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path>
-                    <pathelement location="${sharedbuild.base.dir}/antbuildsystem/build/lib/buildsystem.jar"/>
-                </path>
-                <!-- force absolute path for -basedir or bad things happen -->
-                <param name="-basedir" value="${basedir}/${build.dir}/tests"/>
-                <param name="-resourcebundle" value="TestLevels_en_US.properties"/>
-            </doclet>
-
-        </javadoc>
-
         <copy todir="${build.dir}/tests" flatten="true">
             <fileset dir="${tests.dir}" includes="**/logging_msg*"/>
             <fileset dir="${tests.dir}" includes="**/test-product.xml"/>

@@ -78,10 +78,6 @@
 
     <property name="javac.debug" value="on"/>
 
-    <!-- name of the resource bundle -->
-    <property name="xts.resourcebundle"
-          value="xts_msg_en_US.properties"/>
-
     <property name="bridge.api.class.files" value="org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class"/>
 
     <!-- by default we build 1.0 and 1.1 for ease of testing,
@@ -127,18 +123,6 @@
                 <fileset dir="${lib.dir}" includes="*.jar"/>
             </additional.classpath>
         </compile.macro>
-    </target>
-
-    <!-- build the messages resource bundle for use by the XTS logger -->
-    <target name="resourcebundle">
-        <echo message="Generating XTS Bundle"/>
-        <resourcebundle.macro packagenames="org.jboss.jbossts.*" resourcebundle="${xts.resourcebundle}">
-            <packagesets>
-                <packageset dir="src" defaultexcludes="yes">
-                  <include name="org/jboss/jbossts/**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
     </target>
 
     <!-- build the full api jar -->
@@ -267,7 +251,7 @@
         </jar>
     </target>
 
-    <target name="sar" depends="compile.bridge, resourcebundle, api-jar, sar-both, sar-11"/>
+    <target name="sar" depends="compile.bridge, api-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>

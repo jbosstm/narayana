@@ -32,28 +32,22 @@
 package com.arjuna.ats.jbossatx.logging;
 
 import com.arjuna.common.util.logging.*;
-import com.arjuna.common.internal.util.logging.commonPropertyManager;
 import org.jboss.logging.Logger;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 public class jbossatxLogger
 {
     public static LogNoi18n      logger;
-    //public static Logi18n        loggerI18N;
 
     public static jbossatxI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         logger = noi18n;
-        //loggerI18N = i18n;
         i18NLogger = new jbossatxI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.jbossatx"));
     }
 
     static
     {
-        LogFactory.initializeModuleLogger(jbossatxLogger.class, "jbossatx_msg", "com.arjuna.ats.jbossatx");
+        LogFactory.initializeModuleLogger(jbossatxLogger.class, "com.arjuna.ats.jbossatx");
     }
 }

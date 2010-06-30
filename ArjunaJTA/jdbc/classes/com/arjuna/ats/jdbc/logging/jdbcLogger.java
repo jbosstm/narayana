@@ -39,7 +39,7 @@ public class jdbcLogger
     public static LogNoi18n logger;
     public static jdbcI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         logger = noi18n;
         i18NLogger = new jdbcI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.jdbc"));
@@ -47,6 +47,6 @@ public class jdbcLogger
 
     static
     {
-        LogFactory.initializeModuleLogger(jdbcLogger.class, "jdbc_msg", "com.arjuna.ats.jdbc");
+        LogFactory.initializeModuleLogger(jdbcLogger.class, "com.arjuna.ats.jdbc");
     }
 }

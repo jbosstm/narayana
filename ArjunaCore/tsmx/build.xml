@@ -33,14 +33,6 @@
 
     </target>
 
-    <target name="generateresourcebundle">
-        <generateresourcebundle.macro>
-            <args>
-                <param name="-appendkey" value="[]"/>
-            </args>
-        </generateresourcebundle.macro>
-    </target>
-
     <target name="tools" depends="compile">
 
         <property name="install.dir" value="${build.dir}/tools"/>

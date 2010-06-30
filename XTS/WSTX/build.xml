@@ -103,8 +103,6 @@
     <property name="wstx11.libs" value="${modulename}11.jar"/>
     <property name="wstx.all.libs" value="${wstx.libs} ${wstx10.libs} ${wstx11.libs}"/>
 
-    <property name="wstx.resourcebundle" value="wstx_msg_en_US.properties"/>
-
 	<!--Set external directories -->
 
 	<property name="wsas.build.lib.dir" value="${wsas.dir}/build/lib"/>
@@ -252,39 +250,6 @@
     </target>
 
     <target name="htdocs" depends="htdocs-both, htdocs11"/>
-    
-    <target name="resourcebundle-both" if="build10">
-        <echo message="Generating WSTX Bundle"/>
-        <resourcebundle.macro resourcebundle="${wstx.resourcebundle}">
-            <packagesets>
-                <packageset dir="${src.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-                <packageset dir="${src10.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-                <packageset dir="${src11.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
-    </target>
-
-    <target name="resourcebundle11" if="nobuild10">
-        <echo message="Generating WSTX Bundle"/>
-        <resourcebundle.macro resourcebundle="${wstx.resourcebundle}">
-            <packagesets>
-                <packageset dir="${src.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-                <packageset dir="${src11.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
-    </target>
-
-    <target name="resourcebundle" depends="resourcebundle-both, resourcebundle11"/>
 
     <!-- Jar targets -->
     <target name="jar-generic">
@@ -328,7 +293,7 @@
         </jar>
     </target>
 
-    <target name="jar" depends="compile, htdocs, resourcebundle, jar-generic, jar10, jar11"/>
+    <target name="jar" depends="compile, htdocs, jar-generic, jar10, jar11"/>
 
     <target name="war10" if="build10">
         <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wstx_web-app.xml"/>

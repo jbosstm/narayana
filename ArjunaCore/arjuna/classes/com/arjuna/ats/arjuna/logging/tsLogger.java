@@ -39,7 +39,7 @@ public class tsLogger
 	public static LogNoi18n arjLogger;
     public static arjunaI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         arjLogger = noi18n;
         i18NLogger = new arjunaI18NLoggerImpl(Logger.getLogger("com.arjuna.ats.arjuna"));
@@ -47,6 +47,6 @@ public class tsLogger
 
     static
     {
-        LogFactory.initializeModuleLogger(tsLogger.class, "arjuna_msg", "com.arjuna.ats.arjuna");
+        LogFactory.initializeModuleLogger(tsLogger.class, "com.arjuna.ats.arjuna");
     }
 }

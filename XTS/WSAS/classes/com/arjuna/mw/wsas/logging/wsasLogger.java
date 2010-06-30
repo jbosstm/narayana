@@ -39,17 +39,15 @@ public class wsasLogger
 
     public static LogNoi18n      arjLogger;
     public static wsasI18NLogger i18NLogger;
-    //public static Logi18n        arjLoggerI18N;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         arjLogger = noi18n;
-        //arjLoggerI18N = i18n;
         i18NLogger = new wsasI18NLoggerImpl(Logger.getLogger("com.arjuna.mw.wsas"));
     }
 
     static
     {
-        LogFactory.initializeModuleLogger(wsasLogger.class, "wsas_msg", "com.arjuna.mw.wsas");
+        LogFactory.initializeModuleLogger(wsasLogger.class, "com.arjuna.mw.wsas");
     }
 }

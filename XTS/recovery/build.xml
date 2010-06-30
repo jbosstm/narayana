@@ -54,9 +54,6 @@
     <property name="recovery-api.libs" value="${modulename}-api.jar"/>
     <property name="recovery.all.libs" value="${recovery.libs}"/>
 
-    <property name="recovery.resourcebundle"
-	      value="recovery_msg_en_US.properties"/>
-
 	<!--Set external directories -->
 
 	<property name="wsas.jar.dest" value="../WSAS/build/lib"/>
@@ -88,7 +85,7 @@
 
 	<target name="recovery.compile"
 	depends="recovery.compile-generic,
-		recovery.htdocs, recovery.generateresourcebundle"/>
+		recovery.htdocs"/>
 
     <target name="recovery.compile-generic" depends="recovery.init">
         <echo message="Compiling module generic code"/>
@@ -133,29 +130,6 @@
             </classpath>
         </javadoc>
 	</target>
-
-    <target name="recovery.generateresourcebundle">
-
-        <echo message="Generating recovery Bundle"/>
-
-        <javadoc    packagenames="com.arjuna.*"
-                    failonerror="yes"
-                    private="yes"
-                    defaultexcludes="yes"
-                    classpathref="build.classpath">
-
-            <packageset dir="${recovery.src}" defaultexcludes="yes">
-              <include name="org/jboss/jbossts/**"/>
-            </packageset>
-
-             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path refid="doclet.classpath"/>
-                <param name="-basedir" value="${basedir}/${recovery.dest}"/>
-                <param name="-resourcebundle" value="${recovery.resourcebundle}"/>
-             </doclet>
-        </javadoc>
-
-    </target>
 
 	<!-- Clean targets -->
 	<target name="recovery.clean">

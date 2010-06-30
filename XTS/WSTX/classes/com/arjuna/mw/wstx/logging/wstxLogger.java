@@ -40,17 +40,15 @@ public class wstxLogger
 
     public static LogNoi18n      arjLogger;
     public static wstxI18NLogger i18NLogger;
-    //public static Logi18n        arjLoggerI18N;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         arjLogger = noi18n;
-        //arjLoggerI18N = i18n;
         i18NLogger = new wstxI18NLoggerImpl(Logger.getLogger("com.arjuna.mw.wstx"));
     }
 
     static
     {
-        LogFactory.initializeModuleLogger(wstxLogger.class, "wstx_msg", "com.arjuna.mw.wstx");
+        LogFactory.initializeModuleLogger(wstxLogger.class, "com.arjuna.mw.wstx");
     }
 }

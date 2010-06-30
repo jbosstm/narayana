@@ -29,7 +29,7 @@ public class opLogger
 	public static LogNoi18n logger;
     public static orbportabilityI18NLogger i18NLogger;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         logger = noi18n;
         i18NLogger =new orbportabilityI18NLoggerImpl(Logger.getLogger("com.arjuna.orbportability"));
@@ -37,6 +37,6 @@ public class opLogger
 
     static
     {
-        LogFactory.initializeModuleLogger(opLogger.class, "orbportability_msg", "com.arjuna.orbportability");
+        LogFactory.initializeModuleLogger(opLogger.class, "com.arjuna.orbportability");
     }
 }

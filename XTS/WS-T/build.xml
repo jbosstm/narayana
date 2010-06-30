@@ -139,10 +139,6 @@
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
 
-	<!-- name of the resource bundle -->
-    <property name="wst.resourcebundle"
-	      value="wst_msg_en_US.properties"/>
-
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${tests.build.dir}"/>
@@ -215,44 +211,6 @@
     </target>
 
     <target name="compile" depends="init, compile-generic, compile10, compile11"/>
-
-    <target name="resourcebundle-both" if="build10">
-        <echo message="Generating WS-T Bundle"/>
-        <resourcebundle.macro resourcebundle="${wst.resourcebundle}">
-            <packagesets>
-                <packageset dir="${src.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                    <include name="org/jboss/jbossts/xts/**"/>
-                </packageset>
-                <packageset dir="${src10.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                    <include name="org/jboss/jbossts/xts/**"/>
-                </packageset>
-                <packageset dir="${src11.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                    <include name="org/jboss/jbossts/xts/**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
-    </target>
-
-    <target name="resourcebundle11" if="nobuild10">
-        <echo message="Generating WS-T Bundle"/>
-        <resourcebundle.macro resourcebundle="${wst.resourcebundle}">
-            <packagesets>
-                <packageset dir="${src.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                    <include name="org/jboss/jbossts/xts/**"/>
-                </packageset>
-                <packageset dir="${src11.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                    <include name="org/jboss/jbossts/xts//**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
-    </target>
-
-    <target name="resourcebundle" depends="resourcebundle-both, resourcebundle11"/>
 
     <target name="wsdl11">
         <!-- wsdl files for services -->
@@ -332,7 +290,7 @@
         </jar>
     </target>
 
-    <target name="jars" depends="compile, resourcebundle, wsdl11, jars-generic, jars10, jars11"/>
+    <target name="jars" depends="compile, wsdl11, jars-generic, jars10, jars11"/>
 
     <target name="webapps10" if="build10">
         <copy file="${dd.dir}/ws-t_web-app.xml" tofile="${build.dd.dir}/web-app.xml"/>

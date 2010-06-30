@@ -33,7 +33,6 @@ package com.arjuna.webservices.logging;
 
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.util.logging.LogNoi18n;
-import com.arjuna.common.util.logging.Logi18n;
 import org.jboss.logging.BasicLogger;
 import org.jboss.logging.Logger;
 
@@ -42,28 +41,21 @@ import org.jboss.logging.Logger;
  */
 public class WSCLogger
 {
-    /**
-     * The non I18N logger.
-     */
+
     public static LogNoi18n      arjLogger;
 
     public static BasicLogger logger;
     public static wscI18NLogger i18NLogger;
-    /**
-     * The I18N logger.
-     */
-    //public static Logi18n        arjLoggerI18N;
 
-    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    public static void initialize(LogNoi18n noi18n)
     {
         arjLogger = noi18n;
-        //arjLoggerI18N = i18n;
         logger = Logger.getLogger("com.arjuna.wsc");
         i18NLogger = new wscI18NLoggerImpl(Logger.getLogger("com.arjuna.wsc"));
     }
 
     static
     {
-        LogFactory.initializeModuleLogger(WSCLogger.class, "wsc_msg", "com.arjuna.wsc");
+        LogFactory.initializeModuleLogger(WSCLogger.class, "com.arjuna.wsc");
     }
 }

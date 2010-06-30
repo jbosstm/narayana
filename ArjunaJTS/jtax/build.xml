@@ -50,14 +50,6 @@
                       parameters="include='idl/omg/;idl/arjuna;${jacorb.home}/idl/omg',classpath='${jacorb.classpath}'"/>
     </target>
 
-    <target name="generateresourcebundle">
-        <generateresourcebundle.macro>
-            <args>
-                <param name="-appendkey" value="[]"/>
-            </args>
-        </generateresourcebundle.macro>
-    </target>
-
     <target name="run.tests">
         <run.tests.macro>
             <additional.classpath>

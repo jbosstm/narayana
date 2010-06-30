@@ -34,14 +34,6 @@
 
     </target>
 
-    <target name="generateresourcebundle">
-        <generateresourcebundle.macro>
-            <args>
-                <param name="-appendkey" value="[]"/>
-            </args>
-        </generateresourcebundle.macro>
-    </target>
-
     <target name="run.tests">
         <!-- we need to run the CrashRecovery test using a byteman script -->
         <run.tests.macro script="recovery.txt">

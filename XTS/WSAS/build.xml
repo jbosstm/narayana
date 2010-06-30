@@ -38,8 +38,6 @@
 
 	<!-- internal paths and jars -->
 
-    <property name="wsas.resourcebundle" value="wsas_msg_en_US.properties"/>
-
 	<!-- Set internal property defaults -->
 	<!-- Path names -->
 	<property name="src.dir" value="classes"/>
@@ -101,7 +99,7 @@
 	<property name="htdocs.list" value="*"/>
 
 	<!-- Jar targets -->
-	<target name="jar" depends="compile, htdocs, generateresourcebundle">
+	<target name="jar" depends="compile, htdocs">
 		<echo message="Building jar file"/>
 		<mkdir dir="${build.lib.dir}"/>
         <jar jarfile="${build.lib.dir}/${modulename}.jar" basedir="${build.classes.dir}" excludes="com/arjuna/qa/junit/*.class"/>
@@ -123,17 +121,6 @@
 			</classpath>
 		</javadoc>
 	</target>
-
-    <target name="generateresourcebundle">
-        <echo message="Generating WSAS Bundle"/>
-        <resourcebundle.macro resourcebundle="${wsas.resourcebundle}">
-            <packagesets>
-                <packageset dir="${src.dir}" defaultexcludes="yes">
-                    <include name="com/arjuna/**"/>
-                </packageset>
-            </packagesets>
-        </resourcebundle.macro>
-    </target>
 
 	<!-- test targets -->
 	<target name="tests.init">

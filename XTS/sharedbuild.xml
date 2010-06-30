@@ -173,24 +173,5 @@
         </sequential>
    </macrodef>
 
-    <macrodef name="resourcebundle.macro">
-        <attribute name="resourcebundle"/>
-        <attribute name="packagenames" default="com.arjuna.*"/>
-        <attribute name="classpathref" default="build.classpath"/>
-        <element name="packagesets" optional="true"/>
-        <sequential>
-            <javadoc packagenames="@{packagenames}"
-                           failonerror="yes"
-                           private="yes"
-                           defaultexcludes="yes"
-                           classpathref="@{classpathref}">
-                <packagesets/>
-                <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                   <path refid="doclet.classpath"/>
-                   <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
-                   <param name="-resourcebundle" value="@{resourcebundle}"/>
-                </doclet>
-        </javadoc>
-        </sequential>
-    </macrodef>
+
 </project>

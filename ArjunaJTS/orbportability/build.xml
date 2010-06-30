@@ -66,14 +66,6 @@
 
     </target>
 
-    <target name="generateresourcebundle">
-        <generateresourcebundle.macro>
-            <args>
-                <param name="-appendkey" value="[]"/>
-            </args>
-        </generateresourcebundle.macro>
-    </target>
-
     <target name="run.tests">
         <run.tests.macro>
             <additional.classpath>

@@ -33,11 +33,9 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
- * Factory for {@link Logi18n} and {@link LogNoi18n} objects.
+ * Factory for {@link LogNoi18n} objects.
  *
  * LogFactory instantiates and returns different implementations of Logi18n and LogNoi18n according to
  * which logging subsystem is configured.
@@ -75,26 +73,13 @@ public class LogFactory {
      */
     private static boolean m_isInitialized = false;
 
-    public static void initializeModuleLogger(Class moduleLogger, String bundleName, String name) {
+    public static void initializeModuleLogger(Class moduleLogger, String name) {
 
         LogNoi18n logger = getLogNoi18n(name);
 
-		String _language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-		String _country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-        Logi18n loggerI18N;
-        try
-        {
-            loggerI18N = getLogi18n(name, bundleName+"_"+_language+"_"+_country);
-        }
-        catch (Throwable ex)
-        {
-            loggerI18N = getLogi18n(name, bundleName+"_en_US");
-        }
-
         try {
-            Method initializer = moduleLogger.getMethod("initialize", new Class[] {LogNoi18n.class, Logi18n.class});
-            initializer.invoke(null, new Object[] {logger, loggerI18N});
+            Method initializer = moduleLogger.getMethod("initialize", new Class[] {LogNoi18n.class});
+            initializer.invoke(null, new Object[] {logger});
         } catch(Exception e) {
             throw new RuntimeException("An unexpected exception occurred while initializing the logger: " + e.getMessage(), e);
         }
@@ -115,31 +100,6 @@ public class LogFactory {
         setupLogSystem();
         LogInterface logInterface = m_logFactory.getLog(name);
         LogNoi18n log = new LogNoi18nImpl(logInterface);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
-     * @param name Logical name of the <code>Log</code> instance to be
-     *  returned (the meaning of this name is only known to the underlying
-     *  logging implementation that is being wrapped)
-     * @param resBundle resource bundle associated with the returned logger.
-     * @return a Logi18n instance
-     */
-    public static Logi18n getLogi18n(String name, String resBundle) {
-        setupLogSystem();
-        Logi18n log;
-        if(m_logFactory.isInternationalizationSupported()) {
-            // TODO can all logging frameworks cope with having the same name used twice,
-            // once with and once without a resBundle?
-            Logi18nInterface logi18nInterface = m_logFactory.getLog(name, resBundle);
-            log = new Logi18nDelegatingImpl(logi18nInterface, resBundle);
-        } else {
-            LogInterface logInterface = m_logFactory.getLog(name);
-            log = new Logi18nImpl(logInterface, resBundle);
-        }
         return log;
     }
 

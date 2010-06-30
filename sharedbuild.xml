@@ -204,38 +204,8 @@
             basedir="${build.dir}/htdocs"/>
     </target>
 
-    <macrodef name="generateresourcebundle.macro">
-
-        <element name="args" optional="true"/>
-        <sequential>
-        <javadoc sourcepath="${src.dir}"
-                 packagenames="*"
-                 failonerror="yes"
-                 private="yes"
-                 defaultexcludes="yes">
-
-            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path>
-                    <pathelement location="${sharedbuild.base.dir}/antbuildsystem/build/lib/buildsystem.jar"/>
-                </path>
-                <!-- force absolute path for -basedir or bad things happen -->
-                <param name="-basedir" value="${basedir}/${build.dir}/classes"/>
-                <param name="-resourcebundle" value="${modulename}_msg_en_US.properties"/>
-                <args/>
-            </doclet>
-
-        </javadoc>
-
-        <jar jarfile="${build.dir}/lib/${modulename}.jar" update="true">
-            <fileset dir="${build.dir}/classes/" includes="${modulename}_msg_en_US.properties"/>
-        </jar>
-
-        </sequential>
-
-    </macrodef>
-
     <target name="generateresourcebundle" depends="init">
-        <generateresourcebundle.macro/>
+        <!-- placeholder, does nothing for now -->
     </target>
 
     <target name="install.ext.libs">

@@ -21,7 +21,7 @@
 package com.arjuna.common.tests.logging;
 
 import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
-import com.arjuna.common.util.logging.Logi18n;
+import com.arjuna.common.util.logging.LogNoi18n;
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
@@ -92,28 +92,16 @@ public class TestLevels
 
 	private static void writeLogMessages() {
 		// Don't init the log in a member variable - it must be done AFTER System.out is changed.
-		Logi18n log = LogFactory.getLogi18n(CLASS, "TestLevels");
-		log.debug("testMessage", new Object[] {"1st", "debug"});
-		log.info("testMessage", new Object[] {"1st", "info"});
-		log.warn("testMessage", new Object[] {"1st", "warn"});
-		log.error("testMessage", new Object[] {"1st", "error"});
-		log.fatal("testMessage", new Object[] {"1st", "fatal"});
+		LogNoi18n log = LogFactory.getLogNoi18n(CLASS);
+		log.debug("testMessage");
 	}
 
 	private static void verifyResult(String result, boolean expectReleveling) {
         String[] lines = result.split("\r?\n");
 		assertNotNull(lines);
-		assertEquals(5, lines.length);
-		assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*DEBUG \\[main\\] \\(TestLevels.java.*"));
+		assertEquals(1, lines.length);
+		assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*DEBUG \\[main\\] \\(JakartaRelevelingLogger.java.*"));
 
-		if(expectReleveling) {
-			assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*DEBUG \\[main\\] \\(TestLevels.java.*"));
-		} else {
-			assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*INFO \\[main\\] \\(TestLevels.java.*"));
-		}
-		assertTrue("Got actual value: "+lines[2], lines[2].matches("\\s*WARN \\[main\\] \\(TestLevels.java.*"));
-		assertTrue("Got actual value: "+lines[3], lines[3].matches("\\s*ERROR \\[main\\] \\(TestLevels.java.*"));
-		assertTrue("Got actual value: "+lines[4], lines[4].matches("\\s*FATAL \\[main\\] \\(TestLevels.java.*"));
 	}
 }
 
