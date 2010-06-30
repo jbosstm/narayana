@@ -91,8 +91,15 @@ public class CoordinationContextHelper
             // copy the children
             NodeList children = element.getChildNodes();
             l = children.getLength();
+            Node[] copy = new Node[l];
+            // sigh. native creates a copy list while CXF gives us the actual child list so there is no simple way
+            // to index into it from 0 to l which will work with both stacks. instead we copy the entries to an array
+            // and use it to locate the element we want to delete and the append to the parent.
             for (int i = 0; i < l; i++) {
-                Node child = children.item(i);
+                copy[i] = children.item(i);
+            }
+            for (int i = 0; i < l; i++) {
+                Node child = copy[i];
                 element.removeChild(child);
                 headerElement.appendChild(child);
             }
