@@ -152,6 +152,11 @@ public interface jbossatxI18NLogger {
 	@Message(id = 32032, value = "Work not registered!", format = MESSAGE_FORMAT)
 	public String get_jts_jca_unknownwork();
 
+
+    @Message(id = 32033, value = "AppServerJDBCXARecovery should no longer be used. See jira.jboss.org/browse/JBTM-756", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_AppServerJDBCXARecovery_deprecation();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

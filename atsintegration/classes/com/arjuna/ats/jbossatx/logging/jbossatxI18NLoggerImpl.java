@@ -166,4 +166,8 @@ public class jbossatxI18NLoggerImpl implements jbossatxI18NLogger {
 	public String get_jts_jca_unknownwork() {
 		return "ARJUNA-32032 Work not registered!";
 	}
+
+    public void warn_AppServerJDBCXARecovery_deprecation() {
+        logger.logv(WARN, "ARJUNA-32033 AppServerJDBCXARecovery is no longer required. See jira.jboss.org/browse/JBTM-756", (Object)null);
+    }
 }
