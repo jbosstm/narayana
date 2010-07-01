@@ -100,7 +100,8 @@ public class SoapFaultClient
             // different versions of the service which bind the fault WebMethod using different
             // soap actions. the annotations on the service and port supply all the info needed
             // to create the service and port on the client side.
-            soapFaultService.set(new SoapFaultService(null, new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultService")));
+            // soapFaultService.set(new SoapFaultService(null, new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultService")));
+            soapFaultService.set(new SoapFaultService());
         }
         return soapFaultService.get();
     }

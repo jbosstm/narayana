@@ -13,8 +13,15 @@
     xmlns="http://schemas.xmlsoap.org/wsdl/">
     <types>
         <s:schema>
+<!--
             <s:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
-                      schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+                      schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"
+            />
+-->
+            <s:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                      schemaLocation="envelope.xsd"
+            />
+
         </s:schema>
     </types>
     <message name="SoapFault">

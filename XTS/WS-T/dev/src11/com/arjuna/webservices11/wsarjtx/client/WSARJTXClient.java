@@ -49,7 +49,8 @@ public class WSARJTXClient
     private static synchronized TerminationCoordinatorService getTerminationCoordinatorService()
     {
         if (terminationCoordinatorService.get() == null) {
-            terminationCoordinatorService.set(new TerminationCoordinatorService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationCoordinatorService")));
+            //terminationCoordinatorService.set(new TerminationCoordinatorService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationCoordinatorService")));
+            terminationCoordinatorService.set(new TerminationCoordinatorService());
         }
         return terminationCoordinatorService.get();
     }
@@ -61,7 +62,8 @@ public class WSARJTXClient
     private static synchronized TerminationParticipantService getTerminationParticipantService()
     {
         if (terminationParticipantService.get() == null) {
-            terminationParticipantService.set(new TerminationParticipantService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationParticipantService")));
+            //terminationParticipantService.set(new TerminationParticipantService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationParticipantService")));
+            terminationParticipantService.set(new TerminationParticipantService());
         }
         return terminationParticipantService.get();
     }

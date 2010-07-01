@@ -40,7 +40,8 @@ public class WSCOORClient
     private static synchronized ActivationService getActivationService()
     {
         if (activationService.get() == null) {
-            activationService.set(new ActivationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "ActivationService")));
+            // activationService.set(new ActivationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "ActivationService")));
+            activationService.set(new ActivationService());
         }
         return activationService.get();
     }
@@ -52,7 +53,8 @@ public class WSCOORClient
     private static synchronized RegistrationService getRegistrationService()
     {
         if (registrationService.get() == null) {
-            registrationService.set(new RegistrationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "RegistrationService")));
+            // registrationService.set(new RegistrationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "RegistrationService")));
+            registrationService.set(new RegistrationService());
         }
         return registrationService.get();
     }
