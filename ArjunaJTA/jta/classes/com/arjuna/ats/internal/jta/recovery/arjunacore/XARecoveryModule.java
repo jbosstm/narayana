@@ -101,7 +101,9 @@ public class XARecoveryModule implements RecoveryModule
 
 	public void periodicWorkFirstPass()
 	{
-        jtaLogger.i18NLogger.info_recovery_firstpass(_logName);
+        if(jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debugv("{0} - first pass", _logName);
+        }
 
 		_uids = new InputObjectState();
 
@@ -128,9 +130,9 @@ public class XARecoveryModule implements RecoveryModule
 
 	public void periodicWorkSecondPass()
 	{
-		if (jtaLogger.logger.isInfoEnabled())
+		if (jtaLogger.logger.isDebugEnabled())
 		{
-            jtaLogger.i18NLogger.info_recovery_secondpass(_logName);
+            jtaLogger.logger.debugv("{0} - second pass", _logName);
 		}
 
 		try

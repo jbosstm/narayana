@@ -96,9 +96,9 @@ public interface txojI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_TORecoveryModule_2(String arg0);
 
-	@Message(id = 15015, value = "TORecoveryModule - first pass", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_TORecoveryModule_3();
+//	@Message(id = 15015, value = "TORecoveryModule - first pass", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_TORecoveryModule_3();
 
 //	@Message(id = 15016, value = "TO currently uncommitted {0} is a {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -108,9 +108,9 @@ public interface txojI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_TORecoveryModule_5(Throwable arg0);
 
-	@Message(id = 15018, value = "TORecoveryModule - second pass", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_TORecoveryModule_6();
+//	@Message(id = 15018, value = "TORecoveryModule - second pass", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_TORecoveryModule_6();
 
 //	@Message(id = 15019, value = "TORecoveryModule.periodicWork(): Object ({0}, {1}) is no longer uncommitted.", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

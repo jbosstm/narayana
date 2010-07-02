@@ -76,9 +76,9 @@ public interface jtaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_getxaresource(Throwable arg0);
 
-	@Message(id = 16010, value = "{0} - first pass", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_firstpass(String arg0);
+//	@Message(id = 16010, value = "{0} - first pass", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_firstpass(String arg0);
 
 //	@Message(id = 16011, value = "{0} loading {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -96,9 +96,9 @@ public interface jtaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_info_rollingbackignore(String arg0);
 
-	@Message(id = 16015, value = "{0} - second pass", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_secondpass(String arg0);
+//	@Message(id = 16015, value = "{0} - second pass", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_secondpass(String arg0);
 
 	@Message(id = 16016, value = "{0} not an Arjuna XID", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)

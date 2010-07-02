@@ -86,7 +86,9 @@ public class TORecoveryModule implements RecoveryModule
 
     public void periodicWorkFirstPass ()
     {
-        txojLogger.i18NLogger.info_recovery_TORecoveryModule_3();
+        if(txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("TORecoveryModule - first pass");
+        }
 
         // Build a hashtable of uncommitted transactional objects
         _uncommittedTOTable = new Hashtable();
@@ -174,7 +176,9 @@ public class TORecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass ()
     {
-        txojLogger.i18NLogger.info_recovery_TORecoveryModule_6();
+        if(txojLogger.logger.isDebugEnabled()) {
+            txojLogger.logger.debug("TORecoveryModule - second pass");
+        }
 
         Enumeration uncommittedObjects = _uncommittedTOTable.keys();
 
