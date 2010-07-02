@@ -300,17 +300,17 @@ public class CoordinatorCompletionParticipantClient
     /**
      * send a soap fault
      * @param soapFault the fault to be sent
-     * @param participant the endpoint to send the fault to
+     * @param endpoint the endpoint to send the fault to
      * @param map addressing context to be used to send the fault
      * @param faultAction the action to associate with the message
      */
-    public void sendSoapFault(SoapFault11 soapFault, W3CEndpointReference participant, MAP map, String faultAction)
+    public void sendSoapFault(SoapFault11 soapFault, W3CEndpointReference endpoint, MAP map, String faultAction)
             throws SoapFault, IOException
     {
         AddressingHelper.installNoneReplyTo(map);
         map.setAction(faultAction);
         BusinessAgreementWithCoordinatorCompletionParticipantPortType port;
-        port = getPort(participant, map, faultAction);
+        port = getPort(endpoint, map, faultAction);
         Fault fault = ((SoapFault11)soapFault).toFault();
         port.soapFault(fault);
     }

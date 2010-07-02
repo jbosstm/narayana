@@ -38,7 +38,6 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
@@ -165,8 +164,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault11 soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
 
-        AddressingHelper.installNoneReplyTo(map);
-        SoapFaultClient.sendSoapFault(soapFault, map, TestUtil.getBusinessActivityFaultAction()) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendSoapFault(soapFault, null, map, TestUtil.getBusinessActivityFaultAction()) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 

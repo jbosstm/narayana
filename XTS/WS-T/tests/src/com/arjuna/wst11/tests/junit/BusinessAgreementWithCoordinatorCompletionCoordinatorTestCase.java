@@ -39,7 +39,6 @@ import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.State;
@@ -220,8 +219,7 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase
         final SoapFault11 soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
 
         // this would be a better test if we could set the identifier as a reference parameter here
-        AddressingHelper.installNoneReplyTo(map);
-        SoapFaultClient.sendSoapFault(soapFault, map, TestUtil.getBusinessActivityFaultAction()) ;
+        CoordinatorCompletionParticipantClient.getClient().sendSoapFault(soapFault, null, map, TestUtil.getBusinessActivityFaultAction()) ;
 
         final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
 

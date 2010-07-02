@@ -20,6 +20,7 @@
  */
 package com.arjuna.webservices11.wsba.client;
 
+import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsba.client.WSBAClient;
@@ -28,6 +29,7 @@ import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
+import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.wsf.common.addressing.MAPEndpoint;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithCoordinatorCompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
@@ -298,6 +300,23 @@ public class CoordinatorCompletionCoordinatorClient
         port.statusOperation(status);
     }
 
+    /**
+     * send a soap fault
+     * @param soapFault the fault to be sent
+     * @param endpoint the endpoint to send the fault to
+     * @param map addressing context to be used to send the fault
+     * @param faultAction the action to associate with the message
+     */
+    public void sendSoapFault(SoapFault11 soapFault, W3CEndpointReference endpoint, MAP map, String faultAction)
+            throws SoapFault, IOException
+    {
+        AddressingHelper.installNoneReplyTo(map);
+        map.setAction(faultAction);
+        BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
+        port = getPort(endpoint, map, faultAction);
+        Fault fault = ((SoapFault11)soapFault).toFault();
+        port.soapFault(fault);
+    }
     /**
      * return a participant endpoint appropriate to the type of coordinator
      * @param endpoint
