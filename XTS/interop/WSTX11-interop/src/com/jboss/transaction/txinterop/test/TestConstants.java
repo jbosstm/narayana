@@ -344,7 +344,8 @@ public class TestConstants
         descriptions.put(NAME_TEST_BA_1_4, DESCRIPTION_TEST_BA_1_4) ;
         descriptions.put(NAME_TEST_BA_1_5, DESCRIPTION_TEST_BA_1_5) ;
         descriptions.put(NAME_TEST_BA_1_6, DESCRIPTION_TEST_BA_1_6) ;
-        descriptions.put(NAME_TEST_BA_1_7, DESCRIPTION_TEST_BA_1_7) ;
+        // decommissioned
+        // descriptions.put(NAME_TEST_BA_1_7, DESCRIPTION_TEST_BA_1_7) ;
         descriptions.put(NAME_TEST_BA_1_8, DESCRIPTION_TEST_BA_1_8) ;
         descriptions.put(NAME_TEST_BA_1_9, DESCRIPTION_TEST_BA_1_9) ;
         descriptions.put(NAME_TEST_BA_1_10, DESCRIPTION_TEST_BA_1_10) ;

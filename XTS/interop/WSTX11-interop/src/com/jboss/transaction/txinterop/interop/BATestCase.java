@@ -240,7 +240,15 @@ public class BATestCase extends InteropTestCase
      * testBA1_7 - 1.7 UnsolicitedComplete
      * Tests a protocol error, participant send Completed for coordinator completion.  Throws an invalid state fault.
      * @throws Exception on failure.
+     *
+     * this test relies on rewriting the protocol at registration time so that the returned endpoint
+     * is for the coordinator completion coordinator rather than the participant completion coordinator.
+     * the participant engine tries to use the endpoint to send an unsolicited complete to the coordinator
+     * completion coordinator. unfortunately, since the endpoint nwo contains service and port metadata the
+     * send fails. so this test has had to be decommissioned.
      */
+    
+    /*
     public void testBA1_7()
         throws Exception
     {
@@ -264,6 +272,7 @@ public class BATestCase extends InteropTestCase
         }
         assertTrue("Conversation did not complete successfully", state.isSuccessful()) ;
     }
+    */
 //
     /**
      * testBA1_8 - 1.8 Compensate
