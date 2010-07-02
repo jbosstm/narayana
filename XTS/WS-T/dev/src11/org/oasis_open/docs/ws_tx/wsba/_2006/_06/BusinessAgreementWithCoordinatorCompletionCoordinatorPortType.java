@@ -1,6 +1,8 @@
 
 package org.oasis_open.docs.ws_tx.wsba._2006._06;
 
+import org.jboss.jbossts.xts.soapfault.Fault;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -113,4 +115,13 @@ public interface BusinessAgreementWithCoordinatorCompletionCoordinatorPortType {
         @WebParam(name = "Status", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         StatusType parameters);
 
+    /**
+     *
+     * @param fault
+     */
+    @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault")
+    @Oneway
+    public void soapFault(
+        @WebParam(name = "SoapFault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
+        Fault fault);
 }

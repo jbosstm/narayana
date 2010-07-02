@@ -43,7 +43,7 @@ import java.util.List;
  */
 @WebService(targetNamespace = "http://jbossts.jboss.org/xts/servicetests/generated",
         wsdlLocation = "WEB-INF/wsdl/xtsservicetests.wsdl",
-        serviceName = "XTSServiceTest",
+        serviceName = "XTSServiceTestService",
         portName = "XTSServiceTestPortType",
         name = "XTSServiceTestPortType"
         )

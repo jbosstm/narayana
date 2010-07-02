@@ -98,26 +98,10 @@ public class TestUtil
                 id);
     }
 
-    public static W3CEndpointReference getCoordinatorFaultToEndpoint(String id)
-    {
-        return getEndpoint(SoapFaultConstants.SOAPFAULT_SERVICE_QNAME,
-                SoapFaultConstants.SOAPFAULT_PORT_QNAME,
-                coordinatorServiceURI,
-                id);
-    }
-
     public static W3CEndpointReference getCompletionInitiatorEndpoint(String id)
     {
         return getEndpoint(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME,
                 AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME,
-                completionInitiatorServiceURI,
-                id);
-    }
-
-    public static W3CEndpointReference getCompletionInitiatorFaultToEndpoint(String id)
-    {
-        return getEndpoint(SoapFaultConstants.SOAPFAULT_SERVICE_QNAME,
-                SoapFaultConstants.SOAPFAULT_PORT_QNAME,
                 completionInitiatorServiceURI,
                 id);
     }

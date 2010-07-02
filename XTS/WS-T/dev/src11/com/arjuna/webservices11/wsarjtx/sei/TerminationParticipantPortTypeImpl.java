@@ -32,7 +32,7 @@ import javax.xml.ws.soap.Addressing;
  *
  */
 @WebService(name = "TerminationParticipantPortType", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx",
-        wsdlLocation = "/WEB-INF/wsdl/wsarjtx-termination-participant-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsarjtx-termination-participant-binding.wsdl",
         serviceName = "TerminationParticipantService",
         portName = "TerminationParticipantPortType"
 )

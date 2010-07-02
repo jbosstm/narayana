@@ -5,10 +5,10 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
+import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.wsf.common.addressing.MAPEndpoint;
 import org.jboss.wsf.common.addressing.MAPBuilder;
 import org.jboss.wsf.common.addressing.MAP;
@@ -138,9 +138,11 @@ public class ParticipantClient
     public void sendSoapFault(final MAP map, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installNoneReplyTo(map);
-        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, map, faultAction);
+        ParticipantPortType port = getPort(null, map, faultAction);
+        // convert fault to the wire format and dispatch it to the initiator
+        soapFault.setAction(faultAction) ;
+        Fault fault = ((SoapFault11)soapFault).toFault();
+        port.soapFault(fault);
     }
 
     /**

@@ -215,6 +215,9 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     public void error ()
         throws SystemException
     {
+/*
+ * Since it is never used this has been decommissioned due to problems with using the soap fault service to
+  * send a fault via a W3C endpoint. the latter is broken now that CXF helpfully puts metadata into the endpoint.
         final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
         final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
                 WSTLogger.i18NLogger.get_wst11_stub_BusinessActivityTerminatorStub_1()) ;
@@ -226,6 +229,7 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
         {
             throw new SystemException() ;
         }
+*/
     }
 
     private static class RequestCallback extends TerminationParticipantCallback

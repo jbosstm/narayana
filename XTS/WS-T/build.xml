@@ -214,26 +214,26 @@
 
     <target name="wsdl11">
         <!-- wsdl files for services -->
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.dd.dir}/wsdl/wsat.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.dd.dir}/wsdl/wsat.xsd"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dd.dir}/wsdl/ws-addr.xsd"/>
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.dd.dir}/wsdl/wsat.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.dd.dir}/wsdl/wsat.xsd"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dd.dir}/wsdl/ws-addr.xsd"/>-->
 
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-participant-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-coordinator-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-completion-initiator-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-participant-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-coordinator-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-completion-initiator-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsat-completion-coordinator-binding.wsdl"/>-->
 
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.dd.dir}/wsdl/wsba.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.dd.dir}/wsdl/wsba.xsd"/>
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.dd.dir}/wsdl/wsba.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.dd.dir}/wsdl/wsba.xsd"/>-->
 
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-participant-completion-coordinator-binding.wsdl"/>
-        <copy file="${dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-participant-completion-participant-binding.wsdl"/>
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-participant-completion-coordinator-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsba-participant-completion-participant-binding.wsdl"/>-->
 
-        <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx.wsdl"/>
-        <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
-        <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
+        <!--<copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>-->
+        <!--<copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dd.dir}/wsdl/wsarjtx-termination-participant-binding.wsdl"/>-->
 
         <!-- wsdl files for clients  -->
         <mkdir dir="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl"/>
@@ -242,6 +242,7 @@
 
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat.xsd"/>
+        <copy file="${dd.dir}/wscoor1.1/wsdl/envelope.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/envelope.xsd"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/ws-addr.xsd"/>
 
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-participant-binding.wsdl"/>
@@ -251,6 +252,7 @@
 
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.xsd"/>
+        <copy file="${dd.dir}/wscoor1.1/wsdl/envelope.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/envelope.xsd"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/ws-addr.xsd"/>
 
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>

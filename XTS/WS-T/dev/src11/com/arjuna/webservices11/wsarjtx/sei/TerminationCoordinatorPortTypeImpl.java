@@ -30,7 +30,7 @@ import org.jboss.jbossts.xts.soapfault.Fault;
  *
  */
 @WebService(name = "TerminationCoordinatorPortType", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx",
-        wsdlLocation = "/WEB-INF/wsdl/wsarjtx-termination-coordinator-binding.wsdl",
+        // wsdlLocation = "/WEB-INF/wsdl/wsarjtx-termination-coordinator-binding.wsdl",
         serviceName = "TerminationCoordinatorService",
         portName = "TerminationCoordinatorPortType"
 )

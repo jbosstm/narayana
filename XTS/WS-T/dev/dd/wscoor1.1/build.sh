@@ -18,33 +18,45 @@ fi
 
 rm -rf tmp/classes/* tmp/src/*
 
-# $JBOSS_HOME/bin/wsconsume.sh -v -k -w /wsdl/wsat.wsdl -o tmp/classes -s tmp/src -k wsdl/wsat-binding.wsdl
-
-# $JBOSS_HOME/bin/wsconsume.sh -v -k -w /wsdl/wsba.wsdl -o tmp/classes -s tmp/src -k wsdl/wsba-binding.wsdl
-
-# $JBOSS_HOME/bin/wsconsume.sh -v -k -w /home/adinn/tmp/wsdl/wsat.wsdl -o tmp/classes -s tmp/src -k wsdl/wsat-binding.wsdl
-
-# $JBOSS_HOME/bin/wsconsume.sh -v -k -w /home/adinn/tmp/wsdl/wsba.wsdl -o tmp/classes -s tmp/src -k wsdl/wsba-binding.wsdl
-
 # first the at services
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-coordinator-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-initiator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-initiator-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-initiator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-initiator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-coordinator-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-participant-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-participant-binding.wsdl
 
 # now the ba services
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-coordinator-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-participant-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-participant-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-coordinator-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-participant-binding.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-participant-binding.wsdl
+
+# first the at services
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-completion-coordinator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-completion-coordinator-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-completion-initiator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-completion-initiator-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-coordinator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-coordinator-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-participant-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-participant-binding.wsdl
+
+# now the ba services
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsba-coordinator-completion-coordinator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsba-coordinator-completion-coordinator-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsba-coordinator-completion-participant-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsba-coordinator-completion-participant-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsba-participant-completion-coordinator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsba-participant-completion-coordinator-binding.wsdl
+
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsba-participant-completion-participant-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsba-participant-completion-participant-binding.wsdl
 
 # we need to patch the resource lookup used to provide a jar base URL
 # for the wsdl location supplied above wsimport generates

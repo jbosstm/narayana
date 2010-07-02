@@ -12,6 +12,7 @@ This document and the information contained herein is provided on an "AS IS" bas
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
         xmlns:wsa="http://www.w3.org/2005/08/addressing"
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
         targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
         >
     <wsdl:types>
@@ -22,6 +23,8 @@ This document and the information contained herein is provided on an "AS IS" bas
             <xs:import
                 namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
                 schemaLocation="wsat.xsd" />
+            <xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                      schemaLocation="envelope.xsd"/>
         </xs:schema>
     </wsdl:types>
     <!-- Messages -->
@@ -46,6 +49,9 @@ This document and the information contained herein is provided on an "AS IS" bas
     <wsdl:message name="Committed">
         <wsdl:part name="parameters" element="wsat:Committed"/>
     </wsdl:message>
+    <wsdl:message name="SoapFault">
+        <wsdl:part name="parameters" element="soapenv:Fault"/>
+    </wsdl:message>
     <!-- Port Types -->
     <wsdl:portType name="CompletionCoordinatorPortType">
         <wsdl:operation name="CommitOperation">
@@ -62,6 +68,9 @@ This document and the information contained herein is provided on an "AS IS" bas
         <wsdl:operation name="AbortedOperation">
             <wsdl:input message="wsat:Aborted"/>
         </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:SoapFault"/>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:portType name="CoordinatorPortType">
         <wsdl:operation name="PreparedOperation">
@@ -76,6 +85,9 @@ This document and the information contained herein is provided on an "AS IS" bas
         <wsdl:operation name="CommittedOperation">
             <wsdl:input message="wsat:Committed"/>
         </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:SoapFault"/>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:portType name="ParticipantPortType">
         <wsdl:operation name="PrepareOperation">
@@ -86,6 +98,9 @@ This document and the information contained herein is provided on an "AS IS" bas
         </wsdl:operation>
         <wsdl:operation name="RollbackOperation">
             <wsdl:input message="wsat:Rollback"/>
+        </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:SoapFault"/>
         </wsdl:operation>
     </wsdl:portType>
 </wsdl:definitions>

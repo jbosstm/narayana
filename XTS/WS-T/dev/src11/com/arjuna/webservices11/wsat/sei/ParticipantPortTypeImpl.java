@@ -113,7 +113,7 @@ public class ParticipantPortTypeImpl // implements ParticipantPortType
     @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
     @Oneway
     @Action(input="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
-    public void fault(
+    public void soapFault(
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)
     {

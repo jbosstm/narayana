@@ -154,25 +154,6 @@ public class TerminationCoordinatorClient
     }
 
     /**
-     * Send a fault.
-     * @param map addressing context initialised with to and message ID.
-     * @param soapFault The SOAP fault.
-     * @param identifier The arjuna instance identifier.
-     * @throws SoapFault For any errors.
-     * @throws IOException for any transport errors.
-     */
-    public void sendSoapFault(final W3CEndpointReference endpoint,
-                              final MAP map,
-                              final SoapFault soapFault,
-                              final InstanceIdentifier identifier)
-        throws SoapFault, IOException
-    {
-        AddressingHelper.installNoneReplyTo(map);
-        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, map, faultAction);
-    }
-
-    /**
      * return a participant endpoint appropriate to the type of coordinator
      * @param coordinator
      * @return either the secure terminaton coordinator endpoint or the non-secure endpoint

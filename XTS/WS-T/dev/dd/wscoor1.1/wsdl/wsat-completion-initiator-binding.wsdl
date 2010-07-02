@@ -27,6 +27,13 @@
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
+
+      <wsdl:operation name="SoapFault">
+        <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault"/>
+        <wsdl:input message="wsat:SoapFault">
+          <soap:body use="literal"/>
+        </wsdl:input>
+      </wsdl:operation>
   </wsdl:binding>
 
   <wsdl:service name="CompletionInitiatorService">

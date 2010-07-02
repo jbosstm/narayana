@@ -25,8 +25,8 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionCoordinatorInboundEvents;
@@ -897,8 +897,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         {
             final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
                     WSTLogger.i18NLogger.get_wst11_messaging_engines_CoordinatorCompletionCoordinatorEngine_sendInvalidStateFault_2()) ;
-            AddressingHelper.installNoneReplyTo(map);
-            SoapFaultClient.sendSoapFault(soapFault, participant, map, getFaultAction()) ;
+            CoordinatorCompletionParticipantClient.getClient().sendSoapFault(soapFault, participant, map, getFaultAction()) ;
         }
         catch (final Throwable th)
         {

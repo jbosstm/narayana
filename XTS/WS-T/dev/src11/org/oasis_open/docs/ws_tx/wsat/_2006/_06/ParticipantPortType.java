@@ -1,6 +1,8 @@
 
 package org.oasis_open.docs.ws_tx.wsat._2006._06;
 
+import org.jboss.jbossts.xts.soapfault.Fault;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -44,7 +46,7 @@ public interface ParticipantPortType {
         Notification parameters);
 
     /**
-     * 
+     *
      * @param parameters
      */
     @WebMethod(operationName = "RollbackOperation", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback")
@@ -53,4 +55,13 @@ public interface ParticipantPortType {
         @WebParam(name = "Rollback", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsat/2006/06", partName = "parameters")
         Notification parameters);
 
+    /**
+     *
+     * @param parameters
+     */
+    @WebMethod(operationName = "SoapFault", action = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault")
+    @Oneway
+    public void soapFault(
+        @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
+        Fault parameters);
 }

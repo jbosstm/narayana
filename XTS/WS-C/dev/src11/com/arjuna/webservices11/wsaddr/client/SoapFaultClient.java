@@ -65,31 +65,6 @@ public class SoapFaultClient
     }
 
     /**
-     * Send a fault to a specific endpoint.
-     * @param soapFault The SOAP fault.
-     * @param endpoint an endpoint ot dispatch the fault to.
-     * @param map addressing context initialised with to and message ID.
-     * @param action The action URI for the request.
-     * @throws com.arjuna.webservices.SoapFault For any errors.
-     * @throws java.io.IOException for any transport errors.
-     */
-    public static void sendSoapFault(final SoapFault11 soapFault,
-                                     W3CEndpointReference endpoint,
-                                     final MAP map,
-                                     final String action)
-        throws SoapFault11, IOException
-    {
-        if (action != null)
-        {
-            soapFault.setAction(action) ;
-        }
-
-        final SoapFaultPortType faultPort = getSoapFaultPort(endpoint, map, action);
-        Fault fault = soapFault.toFault();
-        faultPort.soapFault(fault);
-    }
-
-    /**
      * fetch a coordinator activation service unique to the current thread
      * @return
      */
