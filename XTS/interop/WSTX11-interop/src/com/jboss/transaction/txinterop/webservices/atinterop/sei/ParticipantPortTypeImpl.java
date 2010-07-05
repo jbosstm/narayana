@@ -22,12 +22,9 @@ package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATParticipantProcessor;
 import com.jboss.transaction.txinterop.webservices.atinterop.client.InitiatorClient;
-import com.jboss.transaction.txinterop.webservices.atinterop.generated.ParticipantPortType;
 import com.jboss.transaction.txinterop.webservices.CoordinationContextManager;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
-import org.jboss.jbossts.xts.soapfault.Fault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
@@ -42,6 +39,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -49,11 +47,12 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 @WebService(name = "ParticipantPortType",
         targetNamespace = "http://fabrikam123.com",
         portName="ParticipantPortType",
-        wsdlLocation="/WEB-INF/wsdl/interopat-participant-binding.wsdl",
+        // wsdlLocation="/WEB-INF/wsdl/interopat-participant-binding.wsdl",
         serviceName="ParticipantService")
 @Addressing(required=true)
 @HandlerChain(file="participanthandlers.xml")
-public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPortType {
+public class ParticipantPortTypeImpl // implements ParticipantPortType, SoapFaultPortType
+{
 
     /**
      * injected resource providing access to WSA addressing properties

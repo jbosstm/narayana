@@ -106,12 +106,18 @@
             <fileset dir="${dd.dir}/sc007/"
                     includes="wsdl/sc007.wsdl"/>
         </copy>
+        <copy toDir="${build.classes.dir}/org/jboss/jbossts/xts/soapfault"
+	      overwrite="yes">
+            <fileset dir="${dd.dir}/soapfault/"
+                    includes="wsdl/*"/>
+        </copy>
             <war destfile="${build.war.file}" webxml="${build.webxml.file}">
     			<classes dir="${build.classes.dir}"/>
     			<classes dir="${src.dir}" excludes="**/*.java"/>
                 <!-- need to stop using this at some point soon -->
                 <lib dir="${jbossts.build.extlib.dir}" includes = "${xts.ext.libs}"/>
                 <webinf dir="${dd.dir}/sc007" includes="wsdl/sc007.wsdl"/>
+                <webinf dir="${dd.dir}/soapfault" includes="wsdl/*.wsdl wsdl/*.xsd"/>
 		<fileset dir="${web.dir}"/>
     		</war>
     </target>

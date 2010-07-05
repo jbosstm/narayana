@@ -21,10 +21,10 @@
 package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATInitiatorProcessor;
-import com.jboss.transaction.txinterop.webservices.atinterop.generated.InitiatorPortType;
 import com.arjuna.webservices11.SoapFault11;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
@@ -41,8 +41,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
-import org.jboss.jbossts.xts.soapfault.Fault;
-import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -50,10 +48,11 @@ import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 @WebService(name = "InitiatorPortType",
         targetNamespace = "http://fabrikam123.com",
         portName = "InitiatorPortType",
-        wsdlLocation="/WEB-INF/wsdl/interopat-initiator-binding.wsdl",
+        // wsdlLocation="/WEB-INF/wsdl/interopat-initiator-binding.wsdl",
         serviceName="InitiatorService")
 @Addressing(required=true)
-public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortType {
+public class InitiatorPortTypeImpl // implements InitiatorPortType, SoapFaultPortType
+{
 
     /**
      * injected resource providing access to WSA addressing properties

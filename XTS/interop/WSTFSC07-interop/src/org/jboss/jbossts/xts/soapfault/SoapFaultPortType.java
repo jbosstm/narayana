@@ -1,6 +1,8 @@
 
 package org.jboss.jbossts.xts.soapfault;
 
+import org.xmlsoap.schemas.soap.envelope.Fault;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -17,9 +19,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  */
 @WebService(name = "SoapFaultPortType", targetNamespace = "http://jbossts.jboss.org/xts/soapfault")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@XmlSeeAlso({
-    ObjectFactory.class
-})
 public interface SoapFaultPortType {
 
 

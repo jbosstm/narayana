@@ -8,13 +8,13 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.wsf.common.addressing.MAPEndpoint;
 import org.jboss.wsf.common.addressing.MAPBuilder;
 import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;

@@ -1,7 +1,7 @@
 
 package org.oasis_open.docs.ws_tx.wsat._2006._06;
 
-import org.jboss.jbossts.xts.soapfault.Fault;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;

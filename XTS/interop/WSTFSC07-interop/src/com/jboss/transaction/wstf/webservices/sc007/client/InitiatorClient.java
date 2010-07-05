@@ -25,7 +25,7 @@ import java.io.IOException;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.jboss.transaction.wstf.webservices.soapfault.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.wsc11.messaging.MessageId;

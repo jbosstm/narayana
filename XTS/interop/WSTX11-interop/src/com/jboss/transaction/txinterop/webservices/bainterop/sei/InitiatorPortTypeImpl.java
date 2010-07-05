@@ -21,12 +21,10 @@
 package com.jboss.transaction.txinterop.webservices.bainterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
-import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.SoapFault11;
 import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
-import org.jboss.jbossts.xts.soapfault.Fault;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
@@ -49,10 +47,11 @@ import javax.xml.ws.soap.Addressing;
 @WebService(name = "InitiatorPortType",
         targetNamespace = "http://fabrikam123.com/wsba",
         portName = "InitiatorPortType",
-        wsdlLocation="/WEB-INF/wsdl/interopba-initiator-binding.wsdl",
+        // wsdlLocation="/WEB-INF/wsdl/interopba-initiator-binding.wsdl",
         serviceName="InitiatorService")
 @Addressing(required=true)
-public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortType {
+public class InitiatorPortTypeImpl // implements InitiatorPortType, SoapFaultPortType
+{
 
     /**
      * injected resource providing access to WSA addressing properties

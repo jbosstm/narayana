@@ -30,7 +30,7 @@
 
     <portType name="SoapFaultPortType">
         <operation name="SoapFault">
-            <input name="SoapFault" message="tns:SoapFault" />
+            <input message="tns:SoapFault" />
         </operation>
     </portType>
 

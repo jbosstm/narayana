@@ -18,22 +18,19 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.webservices11.wsaddr.client;
-
-import java.io.IOException;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+package com.jboss.transaction.wstf.webservices.soapfault.client;
 
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
-import org.jboss.jbossts.xts.soapfault.Fault;
-import org.jboss.jbossts.xts.soapfault.SoapFaultService;
+import org.jboss.wsf.common.addressing.MAP;
+import org.xmlsoap.schemas.soap.envelope.Fault;
+
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Base client.
@@ -68,7 +65,7 @@ public class SoapFaultClient
      * fetch a coordinator activation service unique to the current thread
      * @return
      */
-    private static synchronized SoapFaultService getSoapFaultService()
+    private static synchronized org.jboss.jbossts.xts.soapfault.SoapFaultService getSoapFaultService()
     {
         if (soapFaultService.get() == null) {
             // we don't supply wsdl on the client side -- we want this client to address the various
@@ -76,16 +73,16 @@ public class SoapFaultClient
             // soap actions. the annotations on the service and port supply all the info needed
             // to create the service and port on the client side.
             // soapFaultService.set(new SoapFaultService(null, new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultService")));
-            soapFaultService.set(new SoapFaultService());
+            soapFaultService.set(new org.jboss.jbossts.xts.soapfault.SoapFaultService());
         }
         return soapFaultService.get();
     }
 
-    private static SoapFaultPortType getSoapFaultPort(final MAP map,
+    private static org.jboss.jbossts.xts.soapfault.SoapFaultPortType getSoapFaultPort(final MAP map,
                                                       final String action)
     {
-        SoapFaultService service = getSoapFaultService();
-        SoapFaultPortType port = service.getPort(SoapFaultPortType.class, new AddressingFeature(true, true));
+        org.jboss.jbossts.xts.soapfault.SoapFaultService service = getSoapFaultService();
+        org.jboss.jbossts.xts.soapfault.SoapFaultPortType port = service.getPort(org.jboss.jbossts.xts.soapfault.SoapFaultPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         String to = map.getTo();
         /*
@@ -104,12 +101,12 @@ public class SoapFaultClient
         return port;
     }
 
-    private static SoapFaultPortType getSoapFaultPort(final W3CEndpointReference endpoint,
+    private static org.jboss.jbossts.xts.soapfault.SoapFaultPortType getSoapFaultPort(final W3CEndpointReference endpoint,
                                                       final MAP map,
                                                       final String action)
     {
-        SoapFaultService service = getSoapFaultService();
-        SoapFaultPortType port = service.getPort(endpoint, SoapFaultPortType.class, new AddressingFeature(true, true));
+        org.jboss.jbossts.xts.soapfault.SoapFaultService service = getSoapFaultService();
+        org.jboss.jbossts.xts.soapfault.SoapFaultPortType port = service.getPort(endpoint, org.jboss.jbossts.xts.soapfault.SoapFaultPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
         MAP requestMap = AddressingHelper.outboundMap(requestContext);
@@ -129,5 +126,5 @@ public class SoapFaultClient
         return port;
     }
 
-    private static final ThreadLocal<SoapFaultService> soapFaultService = new ThreadLocal<SoapFaultService>();
+    private static final ThreadLocal<org.jboss.jbossts.xts.soapfault.SoapFaultService> soapFaultService = new ThreadLocal<org.jboss.jbossts.xts.soapfault.SoapFaultService>();
 }

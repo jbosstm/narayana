@@ -23,7 +23,7 @@ package com.jboss.transaction.txinterop.webservices.bainterop.client;
 import java.io.IOException;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.jboss.transaction.txinterop.webservices.soapfault.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.SoapFault11;

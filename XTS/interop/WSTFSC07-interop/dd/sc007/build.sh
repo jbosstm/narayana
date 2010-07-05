@@ -35,4 +35,5 @@ fi
 
 rm -rf tmp/classes/* tmp/src/*
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/sc007.wsdl -d tmp/classes -s tmp/src -target 2.0 -p com.jboss.transaction.wstf.webservices.sc007.generated wsdl/sc007.wsdl
+#$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/sc007.wsdl -d tmp/classes -s tmp/src -target 2.0 -p com.jboss.transaction.wstf.webservices.sc007.generated wsdl/sc007.wsdl
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/sc007.wsdl -o tmp/classes -s tmp/src -p com.jboss.transaction.wstf.webservices.sc007.generated wsdl/sc007.wsdl

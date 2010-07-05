@@ -1,6 +1,8 @@
 
 package org.jboss.jbossts.xts.soapfault;
 
+import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -65,7 +67,7 @@ public class SoapFaultService
      */
     @WebEndpoint(name = "SoapFaultPortType")
     public SoapFaultPortType getSoapFaultPortType(WebServiceFeature... features) {
-        return super.getPort(new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultPortType"), SoapFaultPortType.class, features);
+        return super.getPort(new QName("http://jbossts.jboss.org/xts/soapfault", "SoapFaultPortType"), org.jboss.jbossts.xts.soapfault.SoapFaultPortType.class, features);
     }
 
 }

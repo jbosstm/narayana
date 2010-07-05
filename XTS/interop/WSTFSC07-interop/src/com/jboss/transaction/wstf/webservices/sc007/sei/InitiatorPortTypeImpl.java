@@ -21,10 +21,10 @@
 package com.jboss.transaction.wstf.webservices.sc007.sei;
 
 import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcessor;
-import com.jboss.transaction.wstf.webservices.sc007.generated.InitiatorPortType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.wsf.common.addressing.MAP;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
@@ -42,19 +42,17 @@ import javax.jws.WebService;
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
 
-import org.jboss.jbossts.xts.soapfault.Fault;
-import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
-
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
  */
 @WebService(name = "InitiatorPortType",
         targetNamespace = "http://www.wstf.org/sc007",
-        wsdlLocation="/WEB-INF/wsdl/sc007.wsdl",
+        // wsdlLocation="/WEB-INF/wsdl/sc007.wsdl",
         portName = "sc007InitiatorPort",
         serviceName="sc007Service")
 @Addressing(required=true)
-public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortType {
+public class InitiatorPortTypeImpl // implements InitiatorPortType, SoapFaultPortType
+{
 
     /**
      * injected resource providing access to WSA addressing properties
@@ -68,7 +66,7 @@ public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortTy
     @WebMethod(operationName = "Response", action = "http://www.wstf.org/docs/scenarios/sc007/Response")
     @Oneway
     @Action(input="http://www.wstf.org/docs/scenarios/sc007/Response")
-    @RequestWrapper(localName = "Response", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
+    @RequestWrapper(localName = "Response", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.wstf.webservices.sc007.generated.TestMessageType")
     public void response()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();

@@ -9,10 +9,9 @@ import com.arjuna.webservices11.SoapFault11;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices.SoapFault;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithParticipantCompletionParticipantPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
-import org.jboss.jbossts.xts.soapfault.Fault;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.annotation.Resource;
 import javax.jws.*;

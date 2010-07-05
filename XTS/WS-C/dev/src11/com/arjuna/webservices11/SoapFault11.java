@@ -3,7 +3,8 @@ package com.arjuna.webservices11;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import org.w3c.dom.Element;
-import org.jboss.jbossts.xts.soapfault.Fault;
+import org.xmlsoap.schemas.soap.envelope.Fault;
+import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 
 import javax.xml.namespace.QName;
 
@@ -128,11 +129,16 @@ public class SoapFault11 extends SoapFault {
          this.headerElements = headerElements ;
      }
 
+    /**
+     * factory to use for creating faults
+     */
+    private static ObjectFactory factory = new ObjectFactory();
+
     // convert to/from fault we can send via the SoapFaultService
 
     public Fault toFault()
     {
-        Fault fault = new Fault();
+        Fault fault = factory.createFault();
         QName faultcode = subcode;
         String faultstring = getReason();
         fault.setFaultcode(faultcode);
