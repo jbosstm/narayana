@@ -531,7 +531,7 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 		logger.logv(WARN, "ARJUNA-12132 Supplied name of node contains reserved character '-'. Using {0}", arg0);
 	}
 
-	public String get_coordinator_invalidos() {
+	public String get_StoreManager_invalidtype() {
 		return "ARJUNA-12135 Could not create ObjectStore type:";
 	}
 
@@ -1120,7 +1120,6 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 	}
 
 	public void info_recovery_PeriodicRecovery_13(String arg0, String arg1) {
-        System.out.println("jjh1");
 		logger.logv(INFO, "ARJUNA-12310 Recovery manager listening on endpoint {0}:{1}", arg0, arg1);
 	}
 
@@ -1308,5 +1307,8 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 		logger.logv(INFO, arg0, "ARJUNA-12362 Failed to create StateManagerWrapper", (Object)null);
 	}
 
+    public String get_StoreManager_invalidroot(String arg0, String arg1) {
+        return MessageFormat.format("Invalid rootName. Expected {0} but was {1}", arg0, arg1);
+    }
 
 }

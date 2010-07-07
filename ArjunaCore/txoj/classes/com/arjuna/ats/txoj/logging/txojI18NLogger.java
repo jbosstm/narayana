@@ -120,8 +120,8 @@ public interface txojI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_TORecoveryModule_8(String arg0, String arg1);
 
-	@Message(id = 15021, value = "TORecoveryModule - could not create ObjectStore instance!", format = MESSAGE_FORMAT)
-	public String get_recovery_TORecoveryModule_osproblem();
+//	@Message(id = 15021, value = "TORecoveryModule - could not create ObjectStore instance!", format = MESSAGE_FORMAT)
+//	public String get_recovery_TORecoveryModule_osproblem();
 
 	@Message(id = 15022, value = "CadaverLockRecord::nestedAbort - no Current!", format = MESSAGE_FORMAT)
 	public String get_CadaverLockRecord_1();

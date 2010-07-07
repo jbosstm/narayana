@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
@@ -60,7 +60,8 @@ public class LogStoreRecoveryTest extends TestBase
     @Test
     public void test()
     {
-        ObjectStore objStore = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+
         final int numberOfTransactions = 1000;
         final Uid[] ids = new Uid[numberOfTransactions];
         final int fakeData = 0xdeedbaaf;
@@ -72,7 +73,7 @@ public class LogStoreRecoveryTest extends TestBase
             try {
                 dummyState.packInt(fakeData);
                 ids[i] = new Uid();
-                objStore.write_committed(ids[i], type, dummyState);
+                recoveryStore.write_committed(ids[i], type, dummyState);
             }
             catch (final Exception ex) {
                 ex.printStackTrace();
@@ -90,7 +91,7 @@ public class LogStoreRecoveryTest extends TestBase
 
         for (int i = 0; i < numberOfTransactions / 2; i++) {
             try {
-                objStore.remove_committed(ids[i], type);
+                recoveryStore.remove_committed(ids[i], type);
             }
             catch (final Exception ex) {
                 ex.printStackTrace();
@@ -119,7 +120,7 @@ public class LogStoreRecoveryTest extends TestBase
         boolean passed = true;
 
         try {
-            if (objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
+            if (recoveryStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
                 Uid id = new Uid(Uid.nullUid());
                 int numberOfEntries = 0;
 

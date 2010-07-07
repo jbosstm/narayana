@@ -31,14 +31,13 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import org.omg.CosTransactions.*;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 
 import java.util.*;
 import java.text.*;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
@@ -60,14 +59,14 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 	// unused
     }
 
-    protected ExpiredAssumedCompleteScanner (String typeName, ObjectStore objectStore)
+    protected ExpiredAssumedCompleteScanner (String typeName, RecoveryStore recoveryStore)
     {
 
 	if (jtsLogger.logger.isDebugEnabled()) {
         jtsLogger.logger.debug("ExpiredAssumedCompleteScanner created, with expiry time of "+_expiryTime+" seconds");
     }
 	
-	_objectStore  = objectStore;
+	_recoveryStore = recoveryStore;
 	_typeName = typeName;
 	
     }
@@ -89,7 +88,7 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 	    InputObjectState uids = new InputObjectState();
 	    
 	    // find the uids of all the contact items
-	    if (_objectStore.allObjUids(_typeName, uids))
+	    if (_recoveryStore.allObjUids(_typeName, uids))
 	    {
 		Uid theUid = null;
 
@@ -120,7 +119,7 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 
                     jtsLogger.i18NLogger.info_arjuna_recovery_ExpiredAssumedCompleteScanner_3(newUid);
 				
-				_objectStore.remove_committed(newUid, _typeName);
+				_recoveryStore.remove_committed(newUid, _typeName);
 			    }
 			}
 		    }
@@ -141,7 +140,7 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     }
 
     private String	 _typeName;
-    private ObjectStore _objectStore;
+    private RecoveryStore _recoveryStore;
     private static int _expiryTime = 240 *60*60; // default is 240 hours
     private static SimpleDateFormat    _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 

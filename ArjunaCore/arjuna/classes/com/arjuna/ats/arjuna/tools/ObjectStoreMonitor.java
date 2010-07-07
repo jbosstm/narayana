@@ -32,8 +32,9 @@
 package com.arjuna.ats.arjuna.tools;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -43,7 +44,6 @@ public class ObjectStoreMonitor
     @SuppressWarnings("unchecked")
     public static void main (String[] args)
     {
-        String storeImple = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
         String root = null;
 
         for (int i = 0; i < args.length; i++)
@@ -55,40 +55,31 @@ public class ObjectStoreMonitor
             }
             else
             {
-                if (args[i].compareTo("-store") == 0)
+                if (args[i].compareTo("-root") == 0)
                 {
-                    storeImple = args[i + 1];
+                    root = args[i + 1];
                     i++;
+
+                    arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(root);
                 }
                 else
                 {
-                    if (args[i].compareTo("-root") == 0)
-                    {
-                        root = args[i + 1];
-                        i++;
-                        
-                        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(root);
-                    }
-                    else
-                    {
-                        System.out.println("Unknown option " + args[i]);
-                        usage();
+                    System.out.println("Unknown option " + args[i]);
+                    usage();
 
-                        System.exit(0);
-                    }
+                    System.exit(0);
                 }
             }
         }
 
         try
         {
-            Class osImple = Class.forName(storeImple);
-            ObjectStore imple = (ObjectStore) osImple.newInstance();
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
 
             InputObjectState types = new InputObjectState();
 
-            if (imple.allTypes(types))
+            if (recoveryStore.allTypes(types))
             {
                 String theName = null;
                 int count = 0;
@@ -111,7 +102,7 @@ public class ObjectStoreMonitor
 
                             InputObjectState uids = new InputObjectState();
 
-                            if (imple.allObjUids(theName, uids))
+                            if (recoveryStore.allObjUids(theName, uids))
                             {
                                 Uid theUid = new Uid(Uid.nullUid());
 
@@ -130,7 +121,7 @@ public class ObjectStoreMonitor
                                             System.out.print("\t" + theUid
                                                     + " state is ");
                                             System.out.print(StateStatus
-                                                    .stateStatusString(imple
+                                                    .stateStatusString(recoveryStore
                                                             .currentState(
                                                                     theUid,
                                                                     theName)));

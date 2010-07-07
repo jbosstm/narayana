@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
@@ -54,7 +54,7 @@ public class LogStoreTest2
         // the byteman script will manage this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
-        ObjectStore objStore = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         final int numberOfTransactions = 1000;
         final Uid[] ids = new Uid[numberOfTransactions];
         final int fakeData = 0xdeedbaaf;
@@ -66,7 +66,7 @@ public class LogStoreTest2
             try {
                 dummyState.packInt(fakeData);
                 ids[i] = new Uid();
-                objStore.write_committed(ids[i], type, dummyState);
+                recoveryStore.write_committed(ids[i], type, dummyState);
             }
             catch (final Exception ex) {
                 ex.printStackTrace();
@@ -74,7 +74,7 @@ public class LogStoreTest2
         }
 
         try {
-            objStore.remove_committed(ids[0], type);
+            recoveryStore.remove_committed(ids[0], type);
         }
         catch (final Exception ex) {
             ex.printStackTrace();
@@ -98,7 +98,7 @@ public class LogStoreTest2
         boolean passed = false;
 
         try {
-            if (objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
+            if (recoveryStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
                 Uid id = new Uid(Uid.nullUid());
                 int numberOfEntries = 0;
 
@@ -132,10 +132,10 @@ public class LogStoreTest2
                 while (id.notEquals(Uid.nullUid()));
 
                 if ((numberOfEntries == ids.length - 1) && passed) {
-                    if (objStore.currentState(ids[0], type) != StateStatus.OS_UNKNOWN)
+                    if (recoveryStore.currentState(ids[0], type) != StateStatus.OS_UNKNOWN)
                         passed = false;
                     else {
-                        if (objStore.currentState(ids[1], type) != StateStatus.OS_COMMITTED)
+                        if (recoveryStore.currentState(ids[1], type) != StateStatus.OS_COMMITTED)
                             passed = false;
                     }
                 } else {

@@ -20,16 +20,14 @@
  */
 package com.hp.mwtests.ts.arjuna.abstractrecords;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord;
@@ -43,7 +41,9 @@ public class DisposeRecordUnitTest
     @Test
     public void test ()
     {
-        DisposeRecord cr = new DisposeRecord(TxControl.getStore(), new ExtendedObject());
+        ParticipantStore store = StoreManager.setupStore(null, StateType.OS_UNSHARED);
+        
+        DisposeRecord cr = new DisposeRecord(store, new ExtendedObject());
         
         assertFalse(cr.propagateOnAbort());
         assertTrue(cr.propagateOnCommit());
@@ -55,20 +55,20 @@ public class DisposeRecordUnitTest
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.nestedAbort(), TwoPhaseOutcome.FINISH_OK);
 
-        cr = new DisposeRecord(TxControl.getStore(), new ExtendedObject());
+        cr = new DisposeRecord(store, new ExtendedObject());
         
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.nestedCommit(), TwoPhaseOutcome.FINISH_OK);
         
-        cr = new DisposeRecord(TxControl.getStore(), new ExtendedObject());
+        cr = new DisposeRecord(store, new ExtendedObject());
         
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.topLevelAbort(), TwoPhaseOutcome.FINISH_OK);
  
-        cr = new DisposeRecord(TxControl.getStore(), new ExtendedObject());
+        cr = new DisposeRecord(store, new ExtendedObject());
         
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
-        assertEquals(cr.topLevelCommit(), TwoPhaseOutcome.FINISH_ERROR);
+        assertEquals(cr.topLevelCommit(), TwoPhaseOutcome.FINISH_OK);
         
         cr = new DisposeRecord();
         

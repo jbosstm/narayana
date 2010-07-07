@@ -33,8 +33,9 @@ package com.arjuna.ats.arjuna.tools;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -76,12 +77,11 @@ public static void main (String[] args)
                 baType = baType.substring(1);
         try
         {
-            TxControl txc = new TxControl();
-            ObjectStore imple = txc.getStore();
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
             InputObjectState types = new InputObjectState();
 
-            if (imple.allTypes(types))
+            if (recoveryStore.allTypes(types))
             {
                 String theName = null;
                 int count = 0;
@@ -104,7 +104,7 @@ public static void main (String[] args)
 
                             InputObjectState uids = new InputObjectState();
 
-                            if (imple.allObjUids(theName, uids))
+                            if (recoveryStore.allObjUids(theName, uids))
                             {
                                 Uid theUid = new Uid(Uid.nullUid());
 
@@ -121,7 +121,7 @@ public static void main (String[] args)
                                         else
                                         {
                                             System.out.print("\t"+theUid+" state is ");
-                                            System.out.print(StateStatus.stateStatusString(imple.currentState(theUid, theName)));
+                                            System.out.print(StateStatus.stateStatusString(recoveryStore.currentState(theUid, theName)));
                                             System.out.println();
                                         }
                                     }

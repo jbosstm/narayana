@@ -39,8 +39,8 @@ import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
@@ -251,12 +251,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
         try
         {
-            ObjectStore objStore = TxControl.getStore();
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
             InputObjectState states = new InputObjectState();
 
             // only look in the JCA section of the object store
 
-            if (objStore.allObjUids(ServerTransaction.getType(), states)
+            if (recoveryStore.allObjUids(ServerTransaction.getType(), states)
                     && (states.notempty()))
             {
                 Stack values = new Stack();

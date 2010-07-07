@@ -41,10 +41,9 @@ import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.PrintWriter;
@@ -54,11 +53,11 @@ import java.io.IOException;
 public class DisposeRecord extends CadaverRecord
 {
 
-    public DisposeRecord (ObjectStore objStore, StateManager sm)
+    public DisposeRecord (ParticipantStore participantStore, StateManager sm)
     {
-	super(null, objStore, sm);
+	super(null, participantStore, sm);
 	
-	store = objStore;
+	this.targetParticipantStore = participantStore;
 	
 	if (sm != null)
 	{
@@ -72,7 +71,7 @@ public class DisposeRecord extends CadaverRecord
 	}
 
 	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("DisposeRecord::DisposeRecord(" + objStore + ", " + objectUid + ")");
+        tsLogger.logger.debug("DisposeRecord::DisposeRecord(" + participantStore + ", " + objectUid + ")");
     }
     }
 
@@ -110,7 +109,7 @@ public class DisposeRecord extends CadaverRecord
         tsLogger.logger.debug("DisposeRecord::nestedPrepare() for " + order());
     }
 	
-	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
+	if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
 	    return TwoPhaseOutcome.PREPARE_OK;
 	else
 	    return TwoPhaseOutcome.PREPARE_NOTOK;
@@ -126,7 +125,7 @@ public class DisposeRecord extends CadaverRecord
     }
     
     /**
-     * At topLevelCommit we remove the state from the object store.
+     * At topLevelCommit we remove the state from the object participantStore.
      */
     
     public int topLevelCommit ()
@@ -135,11 +134,11 @@ public class DisposeRecord extends CadaverRecord
         tsLogger.logger.debug("DisposeRecord::topLevelCommit() for " + order());
     }
 
-	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
+	if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
 	{
 	    try
 	    {
-		if (store.remove_committed(objectUid, typeName))
+		if (targetParticipantStore.remove_committed(objectUid, typeName))
 		{
 		    // only valid if not doing recovery
 
@@ -159,19 +158,21 @@ public class DisposeRecord extends CadaverRecord
 	
 	return TwoPhaseOutcome.FINISH_ERROR;
     }
-    
+
     public int topLevelPrepare ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("DisposeRecord::topLevelPrepare() for " + order());
-    }
-	
-	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
-	{
-	    return TwoPhaseOutcome.PREPARE_OK;
-	}
-	else
-	    return TwoPhaseOutcome.PREPARE_NOTOK;
+        if (tsLogger.logger.isDebugEnabled()) {
+            tsLogger.logger.debug("DisposeRecord::topLevelPrepare() for " + order());
+        }
+
+        if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+        {
+            // force PersistenceRecord.save_state to ignore topLevelState:
+            shadowForced();
+            return TwoPhaseOutcome.PREPARE_OK;
+        }
+        else
+            return TwoPhaseOutcome.PREPARE_NOTOK;
     }
     
     public void print (PrintWriter strm)
@@ -187,71 +188,49 @@ public class DisposeRecord extends CadaverRecord
 
     public boolean save_state (OutputObjectState os, int ot)
     {
-	boolean res = true;
-	
-	if ((store != null) && (objectUid.notEquals(Uid.nullUid())))
-	{
-	    if (!ObjectStoreType.valid(store.typeIs())) {
-            tsLogger.i18NLogger.warn_DisposeRecord_1();
+        boolean res = true;
+
+        if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+        {
+            try
+            {
+                UidHelper.packInto(objectUid, os);
+                os.packString(typeName);
+
+                res = (res && super.save_state(os, ot));
+            }
+            catch (IOException e) {
+                tsLogger.i18NLogger.warn_DisposeRecord_2();
+                res = false;
+            }
+        }
+        else {
+            tsLogger.i18NLogger.warn_DisposeRecord_3();
 
             res = false;
         }
-	    else
-	    {
-		try
-		{
-		    os.packInt(store.typeIs());
-		    store.pack(os);
-				
-		    UidHelper.packInto(objectUid, os);
-		    os.packString(typeName);
-		}
-		catch (IOException e) {
-            tsLogger.i18NLogger.warn_DisposeRecord_2();
-            res = false;
-        }
-	    }
-	}
-	else {
-        tsLogger.i18NLogger.warn_DisposeRecord_3();
 
-        res = false;
+        return res;
     }
-	
-	return res;
-    }
-    
+
     public boolean restore_state (InputObjectState os, int ot)
     {
-	boolean res = true;
-	int objStoreType = 0;
-	
-	try
-	{
-	    objStoreType = os.unpackInt();
-		
-	    if (ObjectStoreType.valid(objStoreType))
-	    {
-		Class<? extends ObjectStore> osc = ObjectStoreType.typeToClass(objStoreType);
-			
-		store = osc.newInstance();
-		store.unpack(os);
-			
-		objectUid = UidHelper.unpackFrom(os);
-		typeName = os.unpackString();
-	    }
-	    else {
-            tsLogger.i18NLogger.warn_DisposeRecord_4(Integer.toString(objStoreType));
+        boolean res = true;
 
+        try
+        {
+            objectUid = UidHelper.unpackFrom(os);
+            typeName = os.unpackString();
+
+            res = (res && super.restore_state(os, ot));
+
+        }
+        catch (final Exception e)
+        {
             res = false;
         }
-	}
-	catch (final Exception e)
-	{
-	    res = false;
-	}
-	
-	return res;
+
+        return res;
     }
     
     public String type ()
@@ -285,11 +264,10 @@ public class DisposeRecord extends CadaverRecord
 
 	objectUid = new Uid(Uid.nullUid());
 	typeName = null;
-	store = null;
+	targetParticipantStore = null;
     }
     
     private Uid         objectUid;
     private String      typeName;
-    private ObjectStore store;
 }
 

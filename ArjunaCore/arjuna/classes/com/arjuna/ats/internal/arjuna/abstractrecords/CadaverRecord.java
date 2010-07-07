@@ -35,7 +35,7 @@ import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
 import java.io.PrintWriter;
 
@@ -45,7 +45,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * Cadaver records are created whenever a persistent object is deleted while
  * still in the scope of an atomic action. This ensures that if the
  * action commits the state of the persistent objects gets properly
- * reflected back in the object store. For objects that are only
+ * reflected back in the object participantStore. For objects that are only
  * recoverable such work is unnecessary. Cadaver records replace
  * PersistenceRecords in the record list of an atomic action so they must
  * be merged with such records to enable both commits and aborts to occur.
@@ -63,34 +63,19 @@ public class CadaverRecord extends PersistenceRecord
      *
      * @param os the state of the object that is being
      * removed.
-     * @param objStore the object store instance used to manipulate the
+     * @param participantStore the object participantStore instance used to manipulate the
      * persistent state.
      * @param sm the object being removed.
      */
 
-    public CadaverRecord (OutputObjectState os, ObjectStore objStore,
+    public CadaverRecord (OutputObjectState os, ParticipantStore participantStore,
 			  StateManager sm)
     {
-	super(os, objStore, sm);
+	super(os, participantStore, sm);
 
 	newStateIsValid = ((os != null) ? true : false);
 	oldState = null;
 	oType = RecordType.NONE_RECORD;
-	store = objStore;  // implicit ref count in Java
-
-	if (store != null)
-	{
-	    /*
-	     * If the object goes out of scope its object store may
-	     * be inaccessable - increase reference count to compensate
-	     */
-
-	    /*
-	     * Don't need this in Java.
-	     */
-
-	    //	    ObjectStore.reference(store);
-	}
 
 	if (tsLogger.logger.isDebugEnabled()) {
         tsLogger.logger.debug("CadaverRecord::CadaverRecord(" + os + ", " + sm.get_uid() + ")");
@@ -194,9 +179,9 @@ public class CadaverRecord extends PersistenceRecord
 
     /**
      * At topLevelCommit we commit the uncommitted version already saved
-     * into object store.
+     * into object participantStore.
      * Cannot use inherited version since that assumes object is alive
-     * instead talk directly to the object store itself.
+     * instead talk directly to the object participantStore itself.
      */
 
     public int topLevelCommit ()
@@ -210,12 +195,12 @@ public class CadaverRecord extends PersistenceRecord
 
 	if ((oState != null) && (oType == RecordType.PERSISTENCE))
 	{
-	    if (store == null)
+	    if (targetParticipantStore == null)
 		return TwoPhaseOutcome.FINISH_ERROR;
 
 	    try
 	    {
-		res = store.commit_state(oState.stateUid(), oState.type());
+		res = targetParticipantStore.commit_state(oState.stateUid(), oState.type());
 	    }
 	    catch (ObjectStoreException e)
 	    {
@@ -229,9 +214,9 @@ public class CadaverRecord extends PersistenceRecord
     }
 
     /**
-     * At topLevelPrepare write uncommitted version into object store.
+     * At topLevelPrepare write uncommitted version into object participantStore.
      * Cannot use inherited version since that assumes object is alive
-     * instead talk directly to the object store itself.
+     * instead talk directly to the object participantStore itself.
      */
 
     public int topLevelPrepare ()
@@ -247,12 +232,12 @@ public class CadaverRecord extends PersistenceRecord
 	{
 	    if (oType == RecordType.PERSISTENCE)
 	    {
-		if (store == null)
+		if (targetParticipantStore == null)
 		    return TwoPhaseOutcome.PREPARE_NOTOK;
 
 		try
 		{
-		    if (store.write_uncommitted(oState.stateUid(), oState.type(), oState))
+		    if (targetParticipantStore.write_uncommitted(oState.stateUid(), oState.type(), oState))
 		    {
 			if (shadowForced())
 			    tlpOk = TwoPhaseOutcome.PREPARE_OK;
@@ -285,7 +270,7 @@ public class CadaverRecord extends PersistenceRecord
 
     /**
      * The type of the class - may be used to save information in an
-     * hierarchical manner in the object store.
+     * hierarchical manner in the object participantStore.
      */
 
     public String type()
@@ -397,7 +382,7 @@ public class CadaverRecord extends PersistenceRecord
 	newStateIsValid = false;
 	oldState = null;
 	oType = RecordType.NONE_RECORD;
-	store = null;
+	targetParticipantStore = null;
 
 	if (tsLogger.logger.isDebugEnabled()) {
         tsLogger.logger.debug("CadaverRecord::CadaverRecord ()");
@@ -407,6 +392,4 @@ public class CadaverRecord extends PersistenceRecord
     private boolean           newStateIsValid;
     private OutputObjectState oldState;
     private int               oType;
-    private ObjectStore       store;
-
 }

@@ -38,17 +38,12 @@ import java.util.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.jts.utils.*;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
-
-import java.io.IOException;
 
 /**
  * This class is a plug-in module for the recovery manager.
@@ -95,7 +90,7 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
 		try
 		    {
 		     // Is the intentions list still there? Is this the best way to check?
-		     if (_transactionStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
+		     if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
 		       {
                    jtsLogger.i18NLogger.info_recovery_transactions_ServerTransactionRecoveryModule_5(currentUid);
     			   recoverTransaction(currentUid);

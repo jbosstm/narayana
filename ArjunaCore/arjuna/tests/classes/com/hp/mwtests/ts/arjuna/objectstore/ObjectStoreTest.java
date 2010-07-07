@@ -36,11 +36,7 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.utils.FileLock;
@@ -570,10 +566,10 @@ public class ObjectStoreTest
         Uid u1 = new Uid();
         Uid u2 = new Uid();
         
-        TxControl.getStore().write_committed(u1, "foo", new OutputObjectState());
-        TxControl.getStore().write_committed(u2, "foo", new OutputObjectState());
+        StoreManager.getTxLog().write_committed(u1, "foo", new OutputObjectState());
+        StoreManager.getTxLog().write_committed(u2, "foo", new OutputObjectState());
         
-        ObjectStoreIterator iter = new ObjectStoreIterator(TxControl.getStore(), "foo");
+        ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), "foo");
         Uid x = iter.iterate();
         
         assertTrue(x.notEquals(Uid.nullUid()));

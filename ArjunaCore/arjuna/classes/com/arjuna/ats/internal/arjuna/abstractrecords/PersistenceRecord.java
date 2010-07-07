@@ -37,10 +37,10 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -64,7 +64,7 @@ public class PersistenceRecord extends RecoveryRecord
 	 * This constructor is used to create a new instance of PersistenceRecord.
 	 */
 
-	public PersistenceRecord (OutputObjectState os, ObjectStore objStore, StateManager sm)
+	public PersistenceRecord (OutputObjectState os, ParticipantStore participantStore, StateManager sm)
 	{
 		super(os, sm);
 
@@ -74,7 +74,7 @@ public class PersistenceRecord extends RecoveryRecord
         }
 
 		shadowMade = false;
-		store = objStore;
+		this.targetParticipantStore = participantStore;
 		topLevelState = null;
 	}
 
@@ -123,7 +123,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 		try
 		{
-			if (!store.remove_uncommitted(uid, type)) {
+			if (!targetParticipantStore.remove_uncommitted(uid, type)) {
                 tsLogger.i18NLogger.warn_PersistenceRecord_19();
 
                 return TwoPhaseOutcome.FINISH_ERROR;
@@ -151,9 +151,9 @@ public class PersistenceRecord extends RecoveryRecord
 
 		if (tsLogger.logger.isDebugEnabled())
 		{
-			if (store != null) {
+			if (targetParticipantStore != null) {
                 tsLogger.logger.debug(", store = "
-                        + store + "(" + store.typeIs() + ")");
+                        + targetParticipantStore + "(" + targetParticipantStore.typeIs() + ")");
             }
 			else {
                 tsLogger.logger.debug("");
@@ -162,13 +162,13 @@ public class PersistenceRecord extends RecoveryRecord
 
 		boolean result = false;
 
-		if (store != null)
+		if (targetParticipantStore != null)
 		{
 			try
 			{
 				if (shadowMade)
 				{
-					result = store.commit_state(order(), super.getTypeOfObject());
+					result = targetParticipantStore.commit_state(order(), super.getTypeOfObject());
 
 					if (!result) {
                         tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
@@ -178,7 +178,7 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					if (topLevelState != null)
 					{
-						result = store.write_committed(order(), super.getTypeOfObject(), topLevelState);
+						result = targetParticipantStore.write_committed(order(), super.getTypeOfObject(), topLevelState);
 					}
 					else {
                         tsLogger.i18NLogger.warn_PersistenceRecord_3();
@@ -227,7 +227,7 @@ public class PersistenceRecord extends RecoveryRecord
 		int result = TwoPhaseOutcome.PREPARE_NOTOK;
 		StateManager sm = super.objectAddr;
 
-		if ((sm != null) && (store != null))
+		if ((sm != null) && (targetParticipantStore != null))
 		{
 		    /*
 		     * Get ready to create our state to be saved. At this stage we're not
@@ -238,7 +238,7 @@ public class PersistenceRecord extends RecoveryRecord
 			topLevelState = new OutputObjectState(sm.get_uid(), sm.type());
 
 			if (writeOptimisation
-					&& (!store.fullCommitNeeded()
+					&& (!targetParticipantStore.fullCommitNeeded()
 							&& (sm.save_state(topLevelState, ObjectType.ANDPERSISTENT)) && (topLevelState.size() <= PersistenceRecord.MAX_OBJECT_SIZE)))
 			{
 			    /*
@@ -259,7 +259,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 					try
 					{
-						store.write_uncommitted(sm.get_uid(), sm.type(), dummy);
+						targetParticipantStore.write_uncommitted(sm.get_uid(), sm.type(), dummy);
 						result = TwoPhaseOutcome.PREPARE_OK;
 					}
 					catch (ObjectStoreException e) {
@@ -279,7 +279,7 @@ public class PersistenceRecord extends RecoveryRecord
 			}
 			else
 			{
-				if (sm.deactivate(store.getStoreName(), false))
+				if (sm.deactivate(targetParticipantStore.getStoreName(), false))
 				{
 					shadowMade = true;
 
@@ -330,46 +330,32 @@ public class PersistenceRecord extends RecoveryRecord
         }
 
 		boolean res = false;
-		int objStoreType = 0;
-
 		topLevelState = null;
-		
-		try
-		{
-			objStoreType = os.unpackInt();
 
-			if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug(" PersistenceRecord::restore_state: Just unpacked object store type = "+Integer.toString(objStoreType));
+        try
+        {
+            shadowMade = os.unpackBoolean();
+
+            // topLevelState = null;
+
+            if (!shadowMade)
+            {
+                topLevelState = new OutputObjectState(os);
+                res = topLevelState.valid();
             }
+            else
+                res = true;
 
-			if (ObjectStoreType.valid(objStoreType))
-			{
-				/* discard old store before creating new */
+            res = (res && super.restore_state(os, ot));
 
-				if (store == null)
-				{
-				    Class<? extends ObjectStore> oc = ObjectStoreType.typeToClass(objStoreType);
-				    
-				    store = oc.newInstance();
-				}
+            // Note: we don't persist the targetParticipantStore, instead assuming the
+            // default one present at recovery time will be equivalent. Changing the
+            // objectstore config when records exist in the tx store is therefore a Bad Thing.
+            targetParticipantStore = getStore();
 
-				store.unpack(os);
-				shadowMade = os.unpackBoolean();
-
-				// topLevelState = null;
-
-				if (!shadowMade)
-				{
-					topLevelState = new OutputObjectState(os);
-					res = topLevelState.valid();
-				}
-				else
-					res = true;
-
-				return (res && super.restore_state(os, ot));
-			}
-		}
-		catch (final Exception e) {
+            return res;
+        }
+        catch (final Exception e) {
             tsLogger.i18NLogger.warn_PersistenceRecord_10();
         }
 
@@ -385,54 +371,39 @@ public class PersistenceRecord extends RecoveryRecord
 
 		boolean res = true;
 
-		if (store != null)
+		if (targetParticipantStore != null)
 		{
-			if (!ObjectStoreType.valid(store.typeIs())) {
-                tsLogger.i18NLogger.warn_PersistenceRecord_11();
+            // Note: we don't persist the targetParticipantStore, instead assuming the
+            // default one present at recovery time will be equivalent. Changing the
+            // objectstore config when records exist in the tx store is therefore a Bad Thing.
 
-                res = false;
-            }
-			else
-			{
-				try
-				{
-					os.packInt(store.typeIs());
+            try
+            {
+                os.packBoolean(shadowMade);
 
-					if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("PersistenceRecord::save_state: Packed object store type = "+Integer.toString(store.typeIs()));
+                /*
+                         * If we haven't written a shadow state, then pack the state
+                         * into the transaction log. There MUST be a state at this
+                         * point.
+                         */
+
+                if (!shadowMade)
+                {
+                    res = (topLevelState != null);
+
+                    if (res)
+                        topLevelState.packInto(os);
+                    else {
+                        tsLogger.i18NLogger.warn_PersistenceRecord_14();
                     }
-
-					store.pack(os);
-
-					if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("PersistenceRecord::save_state: Packed object store root");
-                    }
-
-					os.packBoolean(shadowMade);
-
-					/*
-					 * If we haven't written a shadow state, then pack the state
-					 * into the transaction log. There MUST be a state at this
-					 * point.
-					 */
-
-					if (!shadowMade)
-					{
-						res = (topLevelState != null);
-
-						if (res)
-							topLevelState.packInto(os);
-						else {
-                            tsLogger.i18NLogger.warn_PersistenceRecord_14();
-                        }
-					}
-				}
-				catch (IOException e) {
-                    res = false;
-
-                    tsLogger.i18NLogger.warn_PersistenceRecord_15();
                 }
-			}
+            }
+            catch (IOException e) {
+                res = false;
+
+                tsLogger.i18NLogger.warn_PersistenceRecord_15();
+            }
+
 		}
 		else {
             tsLogger.i18NLogger.warn_PersistenceRecord_16();
@@ -474,7 +445,7 @@ public class PersistenceRecord extends RecoveryRecord
         }
 
 		shadowMade = false;
-		store = null;
+		targetParticipantStore = null;
 		topLevelState = null;
 	}
 
@@ -502,7 +473,7 @@ public class PersistenceRecord extends RecoveryRecord
 	public static final int MAX_OBJECT_SIZE = 4096; // block size
 
 	protected boolean shadowMade;
-	protected ObjectStore store;
+	protected ParticipantStore targetParticipantStore;
 	protected OutputObjectState topLevelState;
 	protected static boolean classicPrepare = false;
 

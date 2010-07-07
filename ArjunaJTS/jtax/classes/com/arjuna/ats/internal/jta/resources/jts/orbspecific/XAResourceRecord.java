@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.jta.recovery.*;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -48,7 +50,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 import com.arjuna.ats.jts.utils.Utility;
@@ -117,7 +118,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_prepared = false;
 		_committed = false;
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
-		_objStore = null;
+		_participantStore = null;
 		_theUid = new Uid();
 		_theReference = null;
 		_recoveryCoordinator = null;
@@ -146,7 +147,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
             _prepared = true;
             _committed = false;
             _heuristic = TwoPhaseOutcome.FINISH_OK;
-            _objStore = null;
+            _participantStore = null;
             _theUid = new Uid();
             _theReference = null;
             _recoveryCoordinator = null;
@@ -1043,7 +1044,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_committed = false;
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
 		_theUid = new Uid(u);
-		_objStore = null;
+		_participantStore = null;
 		_valid = false;
 		_theReference = null;
 		_recoveryCoordinator = null;
@@ -1155,8 +1156,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	private final void setObjectStore()
 	{
-		if (_objStore == null)
-		    _objStore = TxControl.getStore();
+		if (_participantStore == null)
+		    _participantStore = StoreManager.getParticipantStore();
 	}
 
 	private final boolean createState()
@@ -1164,7 +1165,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		setObjectStore();
 
 		if ((_theXAResource != null) && (_tranID != null)
-				&& (_objStore != null))
+				&& (_participantStore != null))
 		{
 			OutputObjectState os = new OutputObjectState();
 
@@ -1172,7 +1173,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			{
 				try
 				{
-					_valid = _objStore.write_committed(_theUid, type(), os);
+					_valid = _participantStore.write_committed(_theUid, type(), os);
 					_prepared = true;
 				}
 				catch (Exception e)
@@ -1205,7 +1206,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			{
 				try
 				{
-					_valid = _objStore.write_committed(_theUid, type(), os);
+					_valid = _participantStore.write_committed(_theUid, type(), os);
 				}
 				catch (Exception e)
 				{
@@ -1231,7 +1232,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		try
 		{
-			os = _objStore.read_committed(_theUid, type());
+			os = _participantStore.read_committed(_theUid, type());
 		}
 		catch (Exception e)
 		{
@@ -1260,7 +1261,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		{
 			try
 			{
-				_valid = _objStore.remove_committed(_theUid, type());
+				_valid = _participantStore.remove_committed(_theUid, type());
 			}
 			catch (Exception e)
 			{
@@ -1371,7 +1372,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private boolean _committed;
 	private boolean _valid;
 	private int _heuristic;
-	private ObjectStore _objStore;
+	private ParticipantStore _participantStore;
 	private Uid _theUid;
 	private org.omg.CosTransactions.Resource _theReference;
 	private org.omg.CosTransactions.RecoveryCoordinator _recoveryCoordinator;

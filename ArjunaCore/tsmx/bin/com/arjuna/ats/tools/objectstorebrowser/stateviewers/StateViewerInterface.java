@@ -30,9 +30,9 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.tools.objectstorebrowser.*;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 
@@ -54,7 +54,7 @@ public interface StateViewerInterface
      * @param node
      * @throws ObjectStoreException
      */
-	public void uidNodeExpanded(ObjectStore os,
+	public void uidNodeExpanded(ParticipantStore os,
                                 String type,
                                 ObjectStoreBrowserTreeManipulationInterface manipulator,
                                 UidNode node,

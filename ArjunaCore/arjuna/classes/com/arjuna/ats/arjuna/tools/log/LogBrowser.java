@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
@@ -343,7 +344,7 @@ class LogConsole
         
         try
         {
-            if (TxControl.getStore().allObjUids(type, buff))
+            if (StoreManager.getRecoveryStore().allObjUids(type, buff))
             {
                 Uid u = null;
 
@@ -372,7 +373,7 @@ class LogConsole
         if (id.equals(Uid.nullUid()))
             return false;
 
-        ObjectStoreIterator iter = new ObjectStoreIterator(TxControl.getStore(), _transactionType);
+        ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), _transactionType);
         Uid u;
 
         do

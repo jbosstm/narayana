@@ -21,10 +21,10 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
@@ -70,7 +70,7 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
 	 */
     private boolean transactionLog(Xid xid)
     {
-        ObjectStore transactionStore = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String transactionType = new AtomicAction().type();
 
         XidImple theXid = new XidImple(xid);
@@ -90,7 +90,7 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
                     jtaLogger.logger.debug("Looking for " + u + " and " + transactionType);
                 }
 
-                if (transactionStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
+                if (recoveryStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
                 {
                     if (jtaLogger.logger.isDebugEnabled()) {
                         jtaLogger.logger.debug("Found record for " + theXid);

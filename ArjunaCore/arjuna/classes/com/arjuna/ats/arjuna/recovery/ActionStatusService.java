@@ -38,9 +38,9 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.utils.Utility;
 
@@ -54,9 +54,9 @@ public class ActionStatusService implements Service
     */
    public ActionStatusService()
    {
-      if ( _objectStore == null )
+      if ( _recoveryStore == null )
       {
-         _objectStore = TxControl.getStore();
+         _recoveryStore = StoreManager.getRecoveryStore();
       }
    }
 
@@ -249,7 +249,7 @@ public class ActionStatusService implements Service
          InputObjectState types = new InputObjectState();
 
          // find all types
-         if ( _objectStore.allTypes(types) )
+         if ( _recoveryStore.allTypes(types) )
          {
             String theTypeName = null;
 
@@ -274,7 +274,7 @@ public class ActionStatusService implements Service
                      {
                         boolean endOfUids = false;
 
-                        if ( _objectStore.allObjUids( theTypeName, uids ) )
+                        if ( _recoveryStore.allObjUids( theTypeName, uids ) )
                         {
                            Uid theUid = null;
 
@@ -362,7 +362,7 @@ public class ActionStatusService implements Service
 
       try
       {
-         int osState = _objectStore.currentState( tranUid, transactionType );
+         int osState = _recoveryStore.currentState( tranUid, transactionType );
 
          switch ( osState )
          {
@@ -391,7 +391,7 @@ public class ActionStatusService implements Service
     * Reference to transaction object store.
     */
 
-   private static ObjectStore _objectStore = null;
+   private static RecoveryStore _recoveryStore = null;
 }
 
 

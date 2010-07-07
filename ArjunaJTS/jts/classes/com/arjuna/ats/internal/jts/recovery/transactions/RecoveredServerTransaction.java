@@ -116,7 +116,7 @@ public class RecoveredServerTransaction extends ServerTransaction implements
 
         try
         {
-            if ((store().currentState(getSavingUid(), effectiveTypeName) != StateStatus.OS_UNKNOWN))
+            if ((StoreManager.getRecoveryStore().currentState(getSavingUid(), effectiveTypeName) != StateStatus.OS_UNKNOWN))
             {
                 /*
                  * By activating the state we get the actual transaction id and
@@ -377,7 +377,7 @@ public class RecoveredServerTransaction extends ServerTransaction implements
     {
         try
         {
-            store().remove_committed(getSavingUid(), super.type());
+            getStore().remove_committed(getSavingUid(), super.type());
         }
         catch (ObjectStoreException ex)
         {

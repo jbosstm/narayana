@@ -32,8 +32,9 @@
 package com.arjuna.ats.arjuna.tools;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -80,15 +81,14 @@ public class ObjectStateQuery
 
         try
         {
-            Class osc = Class.forName(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
-            ObjectStore imple = (ObjectStore) osc.newInstance();
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
             System.out.println("Status is "
-                    + imple.currentState(new Uid(uid), type));
+                    + recoveryStore.currentState(new Uid(uid), type));
 
             InputObjectState buff = new InputObjectState();
 
-            imple.allObjUids(type, buff, StateStatus.OS_UNCOMMITTED);
+            recoveryStore.allObjUids(type, buff, StateStatus.OS_UNCOMMITTED);
 
             Uid u = UidHelper.unpackFrom(buff);
             

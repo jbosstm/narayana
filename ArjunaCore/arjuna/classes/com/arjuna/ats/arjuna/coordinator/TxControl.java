@@ -33,12 +33,8 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 import com.arjuna.ats.arjuna.utils.Utility;
-import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 /**
  * Transaction configuration object. We have a separate object for this so that
@@ -142,119 +138,12 @@ public class TxControl
 	{
 		return TxControl.enable;
 	}
-
-	public static final String getActionStoreType()
-	{
-		return actionStoreType;
-	}
-
-	/**
-         * By default we should use the same store as the coordinator. However, there
-         * may be some ObjectStore implementations that preclude this and in which
-         * case we will default to the basic action store since performance is not
-         * an issue.
-         * 
-         * @return the <code>ObjectStore</code> implementation which the
-         * recovery manager uses.
-         * 
-         * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
-         */
-        
-        @SuppressWarnings("unchecked")
-        public static final ObjectStore getRecoveryStore ()
-        {
-            if (_recoveryStore != null)
-                return _recoveryStore;
-            
-            if (TxControl.actionStoreType == null)
-            {
-                    if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
-                            TxControl.actionStoreType = LogStore.class.getName();
-                    else
-                            TxControl.actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
-
-                sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
-            }
-
-            String recoveryType = TxControl.actionStoreType;
-            
-            if (TxControl.actionStoreType.equals(LogStore.class.getName()))
-                recoveryType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
-            
-            /*
-             * Defaults to ObjectStore.OS_UNSHARED
-             */
-
-            if (sharedTransactionLog)
-                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
-            
-            try
-            {
-                Class osc = Class.forName(recoveryType);
-                
-                _recoveryStore = (ObjectStore) osc.newInstance();
-            }
-            catch (final Throwable ex)
-            {
-                throw new FatalError(tsLogger.i18NLogger.get_coordinator_invalidos() + " "+recoveryType);
-            }
-            
-            return _recoveryStore;
-        }
         
 	/**
 	 * @return the <code>ObjectStore</code> implementation which the
 	 *         transaction coordinator will use.
 	 * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
 	 */
-
-	@SuppressWarnings("unchecked")
-    public static final ObjectStore getStore()
-	{
-        if(_objectStore != null) {
-            return _objectStore;
-        }
-
-		/*
-		 * Check for action store once per application. The second parameter is
-		 * the default value, which is returned if no other value is specified.
-		 */
-
-		if (TxControl.actionStoreType == null)
-		{
-			if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
-				TxControl.actionStoreType = LogStore.class.getName();
-			else
-				TxControl.actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
-
-            sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
-		}
-
-		/*
-		 * Defaults to ObjectStore.OS_UNSHARED
-		 *
-		 * yes, it's unsynchronized. It does not matter much if we create more than once, we just want best
-		 * effort to avoid doing so on every call as it's a little bit expensive.
-		 */
-
-		if (sharedTransactionLog)
-	            arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
-	        
-	        try
-	        {
-	            Class osc = Class.forName(actionStoreType);
-	            
-	            _objectStore = (ObjectStore) osc.newInstance();
-	        }
-	        catch (final Throwable ex)
-	        {
-	            ex.printStackTrace();
-	            
-	            throw new FatalError(tsLogger.i18NLogger.get_coordinator_invalidos() + " "+actionStoreType);
-	        }
-
-        return _objectStore;
-	}
 
 	public static final boolean getAsyncPrepare()
 	{
@@ -333,20 +222,12 @@ public class TxControl
 
 	static boolean readonlyOptimisation = true;
 
-	static boolean sharedTransactionLog = false;
-
-	static int numberOfTransactions = 100;
-
     /**
      * flag which is true if transaction service is enabled and false if it is disabled
      */
 	static volatile boolean enable = true;
 
 	private static TransactionStatusManager transactionStatusManager = null;
-
-	static String actionStoreType = null;
-    private static ObjectStore _objectStore = null;
-    private static ObjectStore _recoveryStore = null;
 
 	static byte[] xaNodeName = null;
 

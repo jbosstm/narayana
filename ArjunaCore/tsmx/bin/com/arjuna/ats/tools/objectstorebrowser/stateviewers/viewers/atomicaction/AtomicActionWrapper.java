@@ -22,9 +22,9 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
 
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.XAResourceInfo;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.UidInfo;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.SynchronizationInfo;
@@ -47,17 +47,17 @@ import java.util.Collections;
 public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
 {
     private UidInfo uidInfo;
-    private ObjectStore os;
+    private ParticipantStore participantStore;
 
-    public AtomicActionWrapper(ObjectStore os, String type, Uid objUid)
+    public AtomicActionWrapper(ParticipantStore participantStore, String type, Uid objUid)
     {
         super(objUid);
-        this.os = os;
+        this.participantStore = participantStore;
         uidInfo = new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
         
         try
         {
-            uidInfo.setCommitted(os.read_committed(objUid, type));
+            uidInfo.setCommitted(participantStore.read_committed(objUid, type));
 //            uidInfo.setUncommitted(os.read_uncommitted(objUid, type));
         }
         catch (ObjectStoreException e)
@@ -65,9 +65,9 @@ public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
         }
     }
 
-    public ObjectStore getStore()
+    public ParticipantStore getParticipantStore()
     {
-        return os;
+        return participantStore;
     }
     
     public RecordList getFailedList()
@@ -128,7 +128,7 @@ public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
     
     public void remove() throws ObjectStoreException
     {
-        if (!getStore().remove_committed(getSavingUid(), type()))
+        if (!getParticipantStore().remove_committed(getSavingUid(), type()))
             throw new ObjectStoreException();
     }
 

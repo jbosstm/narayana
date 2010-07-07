@@ -24,7 +24,8 @@ package com.arjuna.ats.internal.arjuna.recovery;
 import java.util.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -44,7 +45,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 {
 	public ExpiredTransactionScanner(String typeName, String movedTypeName)
 	{
-		_objectStore = TxControl.getStore();
+		_recoveryStore = StoreManager.getRecoveryStore();
 		_typeName = typeName;
 		_movedTypeName = movedTypeName;
 	}
@@ -68,7 +69,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 			// take a snapshot of the log
 
-			if (_objectStore.allObjUids(_typeName, uids))
+			if (_recoveryStore.allObjUids(_typeName, uids))
 			{
 				Uid theUid = null;
 
@@ -136,19 +137,19 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 	public boolean moveEntry (Uid newUid) throws ObjectStoreException
 	{
-	    InputObjectState state = _objectStore.read_committed(newUid, _typeName);
+	    InputObjectState state = _recoveryStore.read_committed(newUid, _typeName);
 	    boolean res = false;
 	    
 	    if (state != null) // just in case recovery
 	        // kicked-in
 	    {
-	        boolean moved = _objectStore.write_committed(newUid, _movedTypeName, new OutputObjectState(state));
+	        boolean moved = _recoveryStore.write_committed(newUid, _movedTypeName, new OutputObjectState(state));
 
 	        if (!moved) {
                 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
             }
 	        else
-	            res = _objectStore.remove_committed(newUid, _typeName);
+	            res = _recoveryStore.remove_committed(newUid, _typeName);
 	    }
           
 	    return res;
@@ -158,7 +159,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 	private String _movedTypeName;
 
-	private ObjectStore _objectStore;
+	private RecoveryStore _recoveryStore;
 
 	private Hashtable _scanM = null;
 

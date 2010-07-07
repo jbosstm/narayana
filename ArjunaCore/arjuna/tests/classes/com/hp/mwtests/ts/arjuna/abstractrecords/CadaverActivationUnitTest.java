@@ -23,6 +23,11 @@ package com.hp.mwtests.ts.arjuna.abstractrecords;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
+import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.RecordType;
@@ -40,6 +45,8 @@ public class CadaverActivationUnitTest
     @Test
     public void test ()
     {
+        ParticipantStore store = StoreManager.setupStore(null, StateType.OS_UNSHARED);
+
         CadaverActivationRecord cr = new CadaverActivationRecord(new ExtendedObject());
         
         assertTrue(cr.propagateOnAbort());
@@ -49,7 +56,7 @@ public class CadaverActivationUnitTest
         assertTrue(cr.type() != null);
         assertEquals(cr.doSave(), false);
 
-        assertFalse(cr.shouldReplace(new PersistenceRecord(new OutputObjectState(), TxControl.getStore(), new ExtendedObject())));
+        assertFalse(cr.shouldReplace(new PersistenceRecord(new OutputObjectState(), store, new ExtendedObject())));
         
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_READONLY);
         assertEquals(cr.nestedAbort(), TwoPhaseOutcome.FINISH_OK);

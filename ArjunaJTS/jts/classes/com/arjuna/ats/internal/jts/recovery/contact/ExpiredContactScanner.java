@@ -56,7 +56,7 @@ public class ExpiredContactScanner implements ExpiryScanner
 	if (jtsLogger.logger.isDebugEnabled()) {
         jtsLogger.logger.debug("ExpiredContactScanner created, with expiry time of "+_expiryTime+" seconds");
     }
-	_objectStore  = FactoryContactItem.getStore();
+	_recoveryStore = StoreManager.getRecoveryStore();
 	_itemTypeName = FactoryContactItem.getTypeName();
     
     }
@@ -79,7 +79,7 @@ public class ExpiredContactScanner implements ExpiryScanner
 	    InputObjectState uids = new InputObjectState();
 	    
 	    // find the uids of all the contact items
-	    if (_objectStore.allObjUids(_itemTypeName, uids))
+	    if (_recoveryStore.allObjUids(_itemTypeName, uids))
 	    {
 		Uid theUid = null;
 
@@ -103,7 +103,7 @@ public class ExpiredContactScanner implements ExpiryScanner
 			    if (timeOfDeath != null && timeOfDeath.before(oldestSurviving)) 
 			    {
                     jtsLogger.i18NLogger.info_recovery_ExpiredContactScanner_3(newUid);
-				_objectStore.remove_committed(newUid, _itemTypeName);
+				_recoveryStore.remove_committed(newUid, _itemTypeName);
 			    }
 			}
 		    }
@@ -122,7 +122,7 @@ public class ExpiredContactScanner implements ExpiryScanner
     }
 
     private String	 _itemTypeName;
-    private ObjectStore _objectStore;
+    private RecoveryStore _recoveryStore;
     private static int _expiryTime = 12 *60*60; // default is 12 hours
     private static SimpleDateFormat    _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 

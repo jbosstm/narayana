@@ -36,9 +36,9 @@ import java.net.* ;
 import java.util.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
-import com.arjuna.ats.arjuna.coordinator.TxControl ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 import com.arjuna.ats.arjuna.state.OutputObjectState ;
 import com.arjuna.ats.arjuna.utils.Utility ;
@@ -81,13 +81,9 @@ public class TransactionStatusManagerItem
     /**
      * Get a reference to the Object Store.
      */
-    public static ObjectStore getStore()
+    private static RecoveryStore getStore()
     {
-	if ( _objectStore == null )
-	    {
-		_objectStore = TxControl.getRecoveryStore();
-	    }
-	return _objectStore;
+        return StoreManager.getRecoveryStore();
     }
     
     /**
@@ -352,9 +348,6 @@ public class TransactionStatusManagerItem
     // Host/port pair on which to connect to the Transaction status manager.
     private String _host ;
     private int    _port ;
-
-    // Reference to the object store.
-    private static ObjectStore _objectStore = null;
     
     // The singleton instance of this class.
     private static TransactionStatusManagerItem _singularItem = null ;

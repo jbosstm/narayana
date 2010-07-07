@@ -20,7 +20,9 @@
  */
 package org.jboss.jbossts.xts.recovery.participant.at;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -28,7 +30,6 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.util.Vector;
@@ -53,9 +54,9 @@ public class ATParticipantRecoveryModule implements RecoveryModule
             XTSLogger.logger.debug("ATParticipantRecoveryModule created - default");
         }
 
-        if (_objectStore == null)
+        if (_recoveryStore == null)
         {
-            _objectStore = TxControl.getStore() ;
+            _recoveryStore = StoreManager.getRecoveryStore();
         }
 
         _participantType = ATParticipantRecoveryRecord.type();
@@ -67,7 +68,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
      */
     public void install()
     {
-        XTSATRecoveryManager.setRecoveryManager(new XTSATRecoveryManagerImple(_objectStore));
+        XTSATRecoveryManager.setRecoveryManager(new XTSATRecoveryManagerImple(_recoveryStore));
         // Subordinate Coordinators register durable participants with their parent transaction so
         // we need to add an XTSATRecoveryModule which knows about the registered participants
 
@@ -107,7 +108,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
                 XTSLogger.logger.debug("ATParticipantRecoveryModule: first pass");
             }
 
-            ATParticipants = _objectStore.allObjUids(_participantType, acc_uids );
+            ATParticipants = _recoveryStore.allObjUids(_participantType, acc_uids );
 
         }
         catch ( ObjectStoreException ex )
@@ -151,7 +152,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
             // an application recovery module so we need to load it
             try {
                 // retrieve the data for the participant
-                InputObjectState inputState = _objectStore.read_committed(recoverUid, _participantType);
+                InputObjectState inputState = _recoveryStore.read_committed(recoverUid, _participantType);
 
                 if (inputState != null) {
                     try {
@@ -241,7 +242,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 
             try
             {
-                if ( _objectStore.currentState( currentUid, _participantType) != StateStatus.OS_UNKNOWN )
+                if ( _recoveryStore.currentState( currentUid, _participantType) != StateStatus.OS_UNKNOWN )
                 {
                     doRecoverParticipant( currentUid ) ;
                 }
@@ -266,7 +267,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
     private Vector _participantUidVector = null ;
 
     // Reference to the Object Store.
-    private static ObjectStore _objectStore = null ;
+    private static RecoveryStore _recoveryStore = null ;
 
     // This object provides information about whether or not a participant is currently active.
 

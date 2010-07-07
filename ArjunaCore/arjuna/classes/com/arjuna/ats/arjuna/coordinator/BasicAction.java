@@ -35,8 +35,9 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.Header;
@@ -74,7 +75,7 @@ public class BasicAction extends StateManager
 		heuristicList = null;
 
 		currentHierarchy = null;
-		currentStore = null;
+		participantStore = null;
 		savedIntentionList = false;
 
 		actionStatus = ActionStatus.CREATED;
@@ -111,7 +112,7 @@ public class BasicAction extends StateManager
 		heuristicList = null;
 
 		currentHierarchy = null;
-		currentStore = null;
+		participantStore = null;
 		savedIntentionList = false;
 
 		actionStatus = ActionStatus.CREATED;
@@ -198,7 +199,7 @@ public class BasicAction extends StateManager
 		failedList = null;
 		heuristicList = null;
 
-		currentStore = null;
+		participantStore = null;
 		currentHierarchy = null;
 
 		_checkedAction = null;
@@ -376,25 +377,20 @@ public class BasicAction extends StateManager
 	}
 
 	/**
-	 * Set up an object store and assign it to the currentStore variable.
+	 * Set up an object store and assign it to the participantStore variable.
 	 * 
 	 * @return the object store implementation to use.
 	 * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
 	 */
 
-	public ObjectStore getStore ()
+	public ParticipantStore getStore ()
 	{
-		if (currentStore == null)
+		if (participantStore == null)
 		{
-			currentStore = TxControl.getStore();
+			participantStore = StoreManager.getParticipantStore();
 		}
 
-		return currentStore;
-	}
-
-	public final ObjectStore store ()
-	{
-		return getStore();
+		return participantStore;
 	}
 
 	/**
@@ -463,7 +459,7 @@ public class BasicAction extends StateManager
 		boolean restored = false;
 
 		// Set up store
-		ObjectStore aaStore = store();
+		ParticipantStore aaStore = getStore();
 
 		if (aaStore == null)
 			return false;
@@ -520,7 +516,7 @@ public class BasicAction extends StateManager
 		boolean deactivated = false;
 
 		// Set up store
-		ObjectStore aaStore = store();
+		ParticipantStore aaStore = getStore();
 
 		if (aaStore == null)
 			return false;
@@ -1639,7 +1635,7 @@ public class BasicAction extends StateManager
 		heuristicList = null;
 
 		currentHierarchy = null;
-		currentStore = null;
+		participantStore = null;
 		savedIntentionList = false;
 
 		actionStatus = ActionStatus.CREATED;
@@ -1669,7 +1665,7 @@ public class BasicAction extends StateManager
 		heuristicList = null;
 
 		currentHierarchy = null;
-		currentStore = null;
+		participantStore = null;
 		savedIntentionList = false;
 
 		actionStatus = ActionStatus.CREATED;
@@ -1964,7 +1960,7 @@ public class BasicAction extends StateManager
 
 		if (actionType == ActionType.TOP_LEVEL)
 		{
-			if (store() == null)
+			if (getStore() == null)
 			{
 				actionStatus = ActionStatus.ABORT_ONLY;
 
@@ -2219,7 +2215,7 @@ public class BasicAction extends StateManager
 			{
 				try
 				{
-					if (!currentStore.write_committed(u, tn, state)) {
+					if (!participantStore.write_committed(u, tn, state)) {
                         tsLogger.i18NLogger.warn_coordinator_BasicAction_46(get_uid());
 
                         criticalEnd();
@@ -2387,7 +2383,7 @@ public class BasicAction extends StateManager
 		{			
 			if (stateToSave && ((heuristicList.size() > 0) || (failedList.size() > 0)))
 			{
-				if (store() == null)
+				if (getStore() == null)
 				{
 					tsLogger.i18NLogger.fatal_coordinator_BasicAction_48();
 
@@ -3117,7 +3113,7 @@ public class BasicAction extends StateManager
 			 * action.
 			 */
 
-			store();
+			getStore();
 
 			/*
 			 * If we have failures then rewrite the intentions list. Otherwise,
@@ -3148,7 +3144,7 @@ public class BasicAction extends StateManager
 				{
 					try
 					{
-						if (!currentStore.write_committed(u, tn, state)) {
+						if (!participantStore.write_committed(u, tn, state)) {
                             tsLogger.i18NLogger.warn_coordinator_BasicAction_65();
                         }
 					}
@@ -3164,7 +3160,7 @@ public class BasicAction extends StateManager
 				{
 					if (savedIntentionList)
 					{						
-						if (currentStore.remove_committed(getSavingUid(), type()))
+						if (participantStore.remove_committed(getSavingUid(), type()))
 						{
 							savedIntentionList = false;
 						}
@@ -3576,7 +3572,7 @@ public class BasicAction extends StateManager
 	protected boolean savedIntentionList;
 	
 	private ActionHierarchy currentHierarchy;
-	private ObjectStore currentStore;
+	private ParticipantStore participantStore;
 
 	//    private boolean savedIntentionList;
 

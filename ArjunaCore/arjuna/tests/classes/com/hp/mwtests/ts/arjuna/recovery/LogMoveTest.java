@@ -33,9 +33,9 @@ package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner;
@@ -48,7 +48,7 @@ public class LogMoveTest
     @Test
     public void test()
     {
-        ObjectStore os = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         OutputObjectState fluff = new OutputObjectState();
         Uid kungfuTx = new Uid();
         boolean passed = false;
@@ -59,9 +59,9 @@ public class LogMoveTest
 
             System.err.println("Creating dummy log");
 
-            os.write_committed(kungfuTx, tn, fluff);
+            recoveryStore.write_committed(kungfuTx, tn, fluff);
 
-            if (os.currentState(kungfuTx, tn) == StateStatus.OS_COMMITTED) {
+            if (recoveryStore.currentState(kungfuTx, tn) == StateStatus.OS_COMMITTED) {
                 System.err.println("Wrote dummy transaction " + kungfuTx);
 
                 // quicker to deal with scanner directly
@@ -72,7 +72,7 @@ public class LogMoveTest
                 
                 scanner.scan();
 
-                if (os.currentState(kungfuTx, tn) == StateStatus.OS_COMMITTED)
+                if (recoveryStore.currentState(kungfuTx, tn) == StateStatus.OS_COMMITTED)
                     System.err.println("Transaction log not moved!");
                 else {
                     System.err.println("Transaction log moved!");

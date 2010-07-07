@@ -32,6 +32,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.omg.CORBA.*;
 import org.omg.PortableServer.*;
 import org.omg.CosTransactions.*;
@@ -47,10 +49,7 @@ import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-
-import java.lang.Object;
 
 /**
  * Implementation of RecoveryCreator for JacOrb
@@ -153,12 +152,12 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
 		try
 		{
 		    //Retrieve from Object Store
-		    if (currentStore == null)
+		    if (participantStore == null)
 		    {
-			currentStore = TxControl.getStore();
+			participantStore = StoreManager.getParticipantStore();
 		    }
 
-		    InputObjectState iState = currentStore.read_committed(new Uid( JacOrbRCServiceInit.uid4Recovery), JacOrbRCServiceInit.type());
+		    InputObjectState iState = participantStore.read_committed(new Uid( JacOrbRCServiceInit.uid4Recovery), JacOrbRCServiceInit.type());
 
             if (iState != null)
                 ref_ReCoo = iState.unpackString();
@@ -184,7 +183,7 @@ private POA _ourPOA;
     private static boolean _runWithoutDaemon = false;
     private static boolean _initialised = false;
 
-    private ObjectStore     currentStore;
+    private ParticipantStore participantStore;
 
     static
     {

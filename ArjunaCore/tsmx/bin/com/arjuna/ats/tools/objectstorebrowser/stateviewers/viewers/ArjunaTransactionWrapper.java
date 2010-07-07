@@ -24,8 +24,8 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,23 +34,23 @@ public class ArjunaTransactionWrapper extends BasicAction implements BasicAction
 {
     private String type;
     private UidInfo uidInfo;
-    private ObjectStore os;
+    private ParticipantStore participantStore;
 
     public ArjunaTransactionWrapper(Uid objUid, String type)
     {
         this(null, type, objUid);
     }
 
-    public ArjunaTransactionWrapper(ObjectStore os, String type, Uid objUid)
+    public ArjunaTransactionWrapper(ParticipantStore participantStore, String type, Uid objUid)
     {
         super(objUid, ObjectType.ANDPERSISTENT);
         this.type = type;
-        this.os = os;
+        this.participantStore = participantStore;
         uidInfo = new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
         
         try
         {
-            uidInfo.setCommitted(os.read_committed(objUid, type));
+            uidInfo.setCommitted(participantStore.read_committed(objUid, type));
 //            uidInfo.setUncommitted(os.read_uncommitted(objUid, type));
         }
         catch (ObjectStoreException e)
@@ -59,9 +59,9 @@ public class ArjunaTransactionWrapper extends BasicAction implements BasicAction
         }
     }
 
-    public ObjectStore getStore()
+    public ParticipantStore getStore()
     {
-        return os;
+        return participantStore;
     }
 
     /**

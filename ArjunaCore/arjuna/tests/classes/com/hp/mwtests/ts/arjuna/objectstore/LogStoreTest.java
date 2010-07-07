@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
@@ -51,7 +51,7 @@ public class LogStoreTest
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
 
-        ObjectStore objStore = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         final int numberOfTransactions = 1000;
         final Uid[] ids = new Uid[numberOfTransactions];
         final int fakeData = 0xdeedbaaf;
@@ -63,7 +63,7 @@ public class LogStoreTest
             try {
                 dummyState.packInt(fakeData);
                 ids[i] = new Uid();
-                objStore.write_committed(ids[i], type, dummyState);
+                recoveryStore.write_committed(ids[i], type, dummyState);
             }
             catch (final Exception ex) {
                 ex.printStackTrace();
@@ -74,7 +74,7 @@ public class LogStoreTest
         boolean passed = false;
 
         try {
-            if (objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
+            if (recoveryStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
                 Uid id = new Uid(Uid.nullUid());
                 int numberOfEntries = 0;
 

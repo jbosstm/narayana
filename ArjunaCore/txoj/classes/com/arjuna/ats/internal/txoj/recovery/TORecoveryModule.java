@@ -41,7 +41,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import java.util.*;
 
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -71,17 +70,8 @@ public class TORecoveryModule implements RecoveryModule
         /*
          * Where are TO's stored. Default.
          */
-      
-        try
-        {
-            Class osc = Class.forName(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
 
-            _objectStore = (ObjectStore) osc.newInstance();
-        }
-        catch (final Throwable ex)
-        {
-            throw new FatalError(txojLogger.i18NLogger.get_recovery_TORecoveryModule_osproblem(), ex);
-        }
+        _objectStore = StoreManager.getTxOJStore();
     }
 
     public void periodicWorkFirstPass ()
@@ -233,7 +223,7 @@ public class TORecoveryModule implements RecoveryModule
          */
 
         RecoveredTransactionalObject recoveredTO = new RecoveredTransactionalObject(
-                objUid, objType, _objectStore);
+                objUid, objType,_objectStore);
 
         /*
          * Tell it to replayPhase2, in whatever way it does (in fact it won't do
@@ -245,6 +235,6 @@ public class TORecoveryModule implements RecoveryModule
 
     private Hashtable _uncommittedTOTable;
 
-    private static ObjectStore _objectStore = null;
+    private static ObjectStoreAPI _objectStore = null;
 
 }

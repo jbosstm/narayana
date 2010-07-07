@@ -30,6 +30,8 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewerInterface;
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserTreeManipulationInterface;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
@@ -39,7 +41,6 @@ import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoNode;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
@@ -57,7 +58,7 @@ public class AtomicActionViewer implements StateViewerInterface
      * @param uidNode
      * @throws ObjectStoreException
      */
-    public void uidNodeExpanded(ObjectStore os,
+    public void uidNodeExpanded(ParticipantStore os,
                                 String type,
                                 ObjectStoreBrowserTreeManipulationInterface manipulator,
                                 UidNode uidNode,

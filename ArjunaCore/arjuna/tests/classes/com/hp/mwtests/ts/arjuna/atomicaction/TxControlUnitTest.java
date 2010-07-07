@@ -56,10 +56,6 @@ public class TxControlUnitTest
     @Test
     public void testGetSet () throws Exception
     {
-        assertEquals(TxControl.getActionStoreType(), arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore());
-        
-        assertTrue(TxControl.getRecoveryStore() != null);
-        
         TxControl.setDefaultTimeout(1000);
         
         assertEquals(TxControl.getDefaultTimeout(), 1000);

@@ -59,7 +59,6 @@ public class FactoryContactItem
 
 private static final String _pseudoTypeName = "/Recovery/FactoryContact";
 private static final int    version = 1;
-private static ObjectStore  _objectStore = null;
 
 private static FactoryContactItem _theSingularItem = null;
 
@@ -109,12 +108,9 @@ static FactoryContactItem recreate (Uid uid)
 
 /*  provide information for other classes (and ourselves) in this package
  */
-static ObjectStore getStore()
+static RecoveryStore getStore()
 {
-    if ( _objectStore == null ) {
-	_objectStore = TxControl.getStore();
-    }
-    return _objectStore;
+    return StoreManager.getRecoveryStore();
 }
 
 

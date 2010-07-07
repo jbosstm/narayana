@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
@@ -43,7 +45,6 @@ import com.arjuna.ats.internal.jts.utils.TxStoreLog;
 import com.arjuna.ats.jts.utils.Utility;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -566,7 +567,7 @@ public class TransactionFactoryImple extends
 		{
 			// if here then it is not active, so look in the object store
 
-			ObjectStore store = com.arjuna.ats.arjuna.coordinator.TxControl.getStore();
+			RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
 			try
 			{
@@ -576,7 +577,7 @@ public class TransactionFactoryImple extends
 				 * certainty what the status is of the root coordinator.
 				 */
 
-				int status = store.currentState(u, ArjunaTransactionImple.typeName());
+				int status = recoveryStore.currentState(u, ArjunaTransactionImple.typeName());
 
 				switch (status)
 				{

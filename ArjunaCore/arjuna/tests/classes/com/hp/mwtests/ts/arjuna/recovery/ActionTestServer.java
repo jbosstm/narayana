@@ -36,11 +36,8 @@ import java.net.*;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.utils.Utility;
-
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -248,9 +245,6 @@ public class ActionTestServer
             _to_client.write(Utility.intToHexString(Utility.getpid())+"\n");
             
             _to_client.flush();
-
-            // needed to force TxControl static initialization
-            ObjectStore os = TxControl.getStore();
 
             _transaction_1 = new AtomicAction();
             _transaction_2 = new AtomicAction();

@@ -31,8 +31,9 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -49,21 +50,21 @@ public class AllObjUidsTest
     @Test
     public void test() throws IOException, ObjectStoreException
     {
-        ObjectStore objStore = TxControl.getStore();
+        RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/DummyAtomicAction";
 
         InputObjectState ios = new InputObjectState();
-        objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN);
+        recoveryStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN);
         Uid uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
-        objStore.allObjUids(type, ios, StateStatus.OS_COMMITTED);
+        recoveryStore.allObjUids(type, ios, StateStatus.OS_COMMITTED);
         uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
-        objStore.allObjUids(type, ios, StateStatus.OS_UNCOMMITTED);
+        recoveryStore.allObjUids(type, ios, StateStatus.OS_UNCOMMITTED);
         uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
     }

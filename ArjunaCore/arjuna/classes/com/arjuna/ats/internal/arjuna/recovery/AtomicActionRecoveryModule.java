@@ -38,8 +38,9 @@ import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
 import com.arjuna.ats.arjuna.coordinator.TxControl ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction ;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule ;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager ;
@@ -62,9 +63,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
            tsLogger.logger.debug("AtomicActionRecoveryModule created");
        }
 
-      if (_transactionStore == null)
+      if (_recoveryStore == null)
       {
-         _transactionStore = TxControl.getStore() ;
+         _recoveryStore = StoreManager.getRecoveryStore();
       }
 
       _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
@@ -87,7 +88,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
           tsLogger.logger.debug("AtomicActionRecoveryModule first pass");
       }
 
-	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
+	  AtomicActions = _recoveryStore.allObjUids( _transactionType, aa_uids );
 
       }
       catch ( ObjectStoreException ex ) {
@@ -115,9 +116,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
            tsLogger.logger.debug("AtomicActionRecoveryModule created");
        }
 
-      if (_transactionStore == null)
+      if (_recoveryStore == null)
       {
-         _transactionStore = TxControl.getStore() ;
+         _recoveryStore = StoreManager.getRecoveryStore();
       }
 
       _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
@@ -246,7 +247,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
          try
          {
-            if ( _transactionStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
+            if ( _recoveryStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
             {
                doRecoverTransaction( currentUid ) ;
             }
@@ -266,7 +267,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    private Vector _transactionUidVector = null ;
 
    // Reference to the Object Store.
-   private static ObjectStore _transactionStore = null ;
+   private static RecoveryStore _recoveryStore = null ;
 
    // This object manages the interface to all TransactionStatusManagers
    // processes(JVMs) on this system/node.

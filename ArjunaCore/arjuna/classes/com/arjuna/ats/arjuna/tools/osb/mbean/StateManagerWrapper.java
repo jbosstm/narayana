@@ -4,7 +4,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class StateManagerWrapper extends StateManager {
 	Uid processUid = Uid.nullUid();
 	long birthDate = -1;
 
-	public StateManagerWrapper(ObjectStore os, Uid uid, String type) {
+	public StateManagerWrapper(RecoveryStore os, Uid uid, String type) {
 		super(uid);
 
         try {

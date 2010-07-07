@@ -26,59 +26,35 @@
  * Tyne and Wear,
  * UK.  
  *
- * $Id: ObjectStoreIterator.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: ObjectStore.java 2342 2006-03-30 13:06:17Z  $
  */
 
 package com.arjuna.ats.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import java.io.IOException;
-
 /**
- * Class that allows us to iterate through instances of objects that may be
- * stored within a specific object store.
+ * The BasicStore provides core methods that all implementations MUST provide.
+ *
+ * @author Mark Little (mark@arjuna.com)
+ * @version $Id: ObjectStore.java 2342 2006-03-30 13:06:17Z  $
+ * @since JTS 1.0.
  */
 
-public class ObjectStoreIterator
+public interface BaseStore
 {
-
-    public ObjectStoreIterator(RecoveryStore recoveryStore, String tName)
-    {
-        try
-        {
-            recoveryStore.allObjUids(tName, uidList);
-        }
-        catch (ObjectStoreException e)
-        {
-        }
-    }
-
     /**
-     * return the Uids from the list one at a time. ObjStore returns either null
-     * list or a list terminated by the NIL_UID. Use the latter to return 0 (for
-     * end of list)
+     * The type of the object store. This is used to order the
+     * instances in the intentions list.
+     *
+     * @return the type of the record.
+     * @see com.arjuna.ats.arjuna.coordinator.RecordType
      */
 
-    public final synchronized Uid iterate ()
-    {
-        Uid newUid = null;
+    public int typeIs ();
 
-        try
-        {
-            newUid = UidHelper.unpackFrom(uidList);
-        }
-        catch (IOException e)
-        {
-        }
+    /**
+     * @return the "name" of the object store. Where in the hierarchy it appears, e.g., /ObjectStore/MyName/...
+     */
 
-        return newUid;
-    }
-
-    private InputObjectState uidList = new InputObjectState();
-
+    public String getStoreName ();
 }
+

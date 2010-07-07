@@ -8,6 +8,7 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
 import java.lang.reflect.Constructor;
@@ -50,7 +51,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 		}
 
 		ra.activate();
-		sminfo = new StateManagerWrapper(TxControl.getStore(), getUid(), getType());
+		sminfo = new StateManagerWrapper(StoreManager.getRecoveryStore(), getUid(), getType());
 
 		if (isJTS) {
 			/*
@@ -94,7 +95,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 	 */
 	public String remove() {
 		try {
-			if (!TxControl.getStore().remove_committed(getUid(), getType()))
+			if (!StoreManager.getRecoveryStore().remove_committed(getUid(), getType()))
 				return "remove committed failed"; // TODO com.arjuna.ats.arjuna.tools.osb.mbean.m_1
 			else
 				w.probe();

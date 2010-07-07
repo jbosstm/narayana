@@ -50,9 +50,9 @@ import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 public class TxLogWritePersistenceRecord extends PersistenceRecord
 {
 
-    public TxLogWritePersistenceRecord (OutputObjectState state, ObjectStore store, StateManager sm)
+    public TxLogWritePersistenceRecord (OutputObjectState state, ParticipantStore participantStore, StateManager sm)
     {
-	super(state, store, sm);
+	super(state, participantStore, sm);
     }
     
     public int typeIs ()
@@ -81,13 +81,13 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 	    writeToLog = false;
 	}
 	
-	if (store != null)
+	if (targetParticipantStore != null)
 	{
 	    try
 	    {
 		if (shadowMade)
 		{
-		    result = store.commit_state(order(), super.getTypeOfObject());
+		    result = targetParticipantStore.commit_state(order(), super.getTypeOfObject());
 			    
 		    if (!result) {
                 tsLogger.i18NLogger.warn_PersistenceRecord_2(order());
@@ -98,7 +98,7 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 		    if (topLevelState != null)
 		    {
 			if (!writeToLog)
-			    result = store.write_committed(order(), super.getTypeOfObject(), topLevelState);
+			    result = targetParticipantStore.write_committed(order(), super.getTypeOfObject(), topLevelState);
 			else
 			    result = true;
 		    }
@@ -153,11 +153,11 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 	    writeToLog = false;
 	}
 	
-	if ((sm != null) && (store != null))
+	if ((sm != null) && (targetParticipantStore != null))
 	{
 	    topLevelState = new OutputObjectState(sm.get_uid(), sm.type());
 	    
-	    if (writeToLog || (!store.fullCommitNeeded() &&
+	    if (writeToLog || (!targetParticipantStore.fullCommitNeeded() &&
 			       (sm.save_state(topLevelState, ObjectType.ANDPERSISTENT)) &&
 			       (topLevelState.size() <= PersistenceRecord.MAX_OBJECT_SIZE)))
 	    {
@@ -173,7 +173,7 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 		    
 		    try
 		    {
-			store.write_uncommitted(sm.get_uid(), sm.type(), dummy);
+			targetParticipantStore.write_uncommitted(sm.get_uid(), sm.type(), dummy);
 			result = TwoPhaseOutcome.PREPARE_OK;
 		    }
 		    catch (ObjectStoreException e) {
@@ -189,7 +189,7 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 	    }
 	    else
 	    {
-		if (sm.deactivate(store.getStoreName(), false))
+		if (sm.deactivate(targetParticipantStore.getStoreName(), false))
 		{
  		    shadowMade = true;
 		    

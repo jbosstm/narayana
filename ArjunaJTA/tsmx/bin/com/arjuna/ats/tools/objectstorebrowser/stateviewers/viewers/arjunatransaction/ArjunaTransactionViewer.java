@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.icons.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.nodes.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoNode;
@@ -32,7 +33,6 @@ import com.arjuna.ats.tools.objectstorebrowser.panels.SubTreeViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.UidNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 
@@ -60,7 +60,7 @@ public class ArjunaTransactionViewer extends AtomicActionViewer
      * @param uidNode
      * @throws ObjectStoreException
      */
-    public void uidNodeExpanded(ObjectStore os,
+    public void uidNodeExpanded(ParticipantStore os,
                                 String type,
                                 ObjectStoreBrowserTreeManipulationInterface manipulator,
                                 UidNode uidNode,

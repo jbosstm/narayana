@@ -23,14 +23,15 @@ package com.hp.mwtests.ts.arjuna.abstractrecords;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
@@ -43,7 +44,9 @@ public class PersistenceRecordUnitTest
     @Test
     public void test ()
     {
-        PersistenceRecord cr = new PersistenceRecord(new OutputObjectState(), TxControl.getStore(), new ExtendedObject());
+        ParticipantStore store = StoreManager.setupStore(null, StateType.OS_UNSHARED);
+        
+        PersistenceRecord cr = new PersistenceRecord(new OutputObjectState(), store, new ExtendedObject());
         
         arjPropertyManager.getCoordinatorEnvironmentBean().setClassicPrepare(true);
         
@@ -57,7 +60,7 @@ public class PersistenceRecordUnitTest
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.topLevelAbort(), TwoPhaseOutcome.FINISH_ERROR);
  
-        cr = new PersistenceRecord(new OutputObjectState(), TxControl.getStore(), new ExtendedObject());
+        cr = new PersistenceRecord(new OutputObjectState(), store, new ExtendedObject());
         
         assertEquals(cr.topLevelPrepare(), TwoPhaseOutcome.PREPARE_OK);
         assertEquals(cr.topLevelCommit(), TwoPhaseOutcome.FINISH_OK);

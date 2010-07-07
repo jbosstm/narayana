@@ -96,7 +96,7 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
 
         try
         {
-            if ((store().currentState(actionUid, effectiveTypeName) != StateStatus.OS_UNKNOWN))
+            if ((StoreManager.getRecoveryStore().currentState(actionUid, effectiveTypeName) != StateStatus.OS_UNKNOWN))
             {
                 if (activate())
                     _recoveryStatus = RecoveryStatus.ACTIVATED;
@@ -271,7 +271,7 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
     {
         try
         {
-            store().remove_committed(get_uid(), super.type());
+            getStore().remove_committed(get_uid(), super.type());
         }
         catch (ObjectStoreException ex) {
             jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredTransaction_8(ex);

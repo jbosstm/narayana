@@ -20,11 +20,12 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewerInterface;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.UidNode;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -49,7 +50,7 @@ public class DefaultStateViewer implements StateViewerInterface
      * @param node
      * @throws ObjectStoreException
      */
-    public void uidNodeExpanded(ObjectStore os,
+    public void uidNodeExpanded(ParticipantStore os,
                                 String type,
                                 ObjectStoreBrowserTreeManipulationInterface manipulator,
                                 UidNode node,
@@ -67,7 +68,7 @@ public class DefaultStateViewer implements StateViewerInterface
      * @param statePanel
      * @throws ObjectStoreException
      */
-    public void entrySelected(ObjectStore os,
+    public void entrySelected(RecoveryStore os,
                               String type,
                               Uid uid,
                               ObjectStoreViewEntry entry,

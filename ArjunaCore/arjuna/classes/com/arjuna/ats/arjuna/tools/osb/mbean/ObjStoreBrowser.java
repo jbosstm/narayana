@@ -9,6 +9,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
@@ -173,7 +174,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 		InputObjectState types = new InputObjectState();
 
 		try {
-			if (TxControl.getStore().allTypes(types)) {
+			if (StoreManager.getRecoveryStore().allTypes(types)) {
 				String tname;
 
 				do {
@@ -221,7 +222,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 	}
 
 	private void updateMBeans(List<UidWrapper> uids, long tstamp, boolean register, String type, String thandler) {
-		ObjectStoreIterator iter = new ObjectStoreIterator(TxControl.getStore(), type);
+		ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), type);
 
 		while (true) {
 			Uid u = iter.iterate();

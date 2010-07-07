@@ -31,17 +31,11 @@
 
 package com.arjuna.ats.internal.jts.utils;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
-
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
 
 public class TxStoreLog
 {
@@ -53,11 +47,11 @@ public class TxStoreLog
  
     public static boolean getTransactions (InputObjectState os, int status)
     {
-	ObjectStore store = TxControl.getStore();
+	RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
 	try
 	{
-	    return store.allObjUids(com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple.typeName(), os, status);
+	    return recoveryStore.allObjUids(com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple.typeName(), os, status);
 	}
 	catch (NullPointerException ex)
 	{

@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.txoj.recovery;
 
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -70,7 +71,7 @@ public class RecoveryModuleUnitTest
         
         assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
         
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
+        assertTrue(StoreManager.getParticipantStore().write_uncommitted(u, obj.type(), os));
         
         A.abort();
         

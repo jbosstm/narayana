@@ -36,7 +36,6 @@ import org.omg.CosTransactions.*;
 import java.util.*;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -62,9 +61,9 @@ public abstract class TransactionRecoveryModule
         jtsLogger.logger.debug("TransactionRecoveryModule created");
     }
 
-	if (_transactionStore == null)
+	if (_recoveryStore == null)
 	{
-	    _transactionStore = TxControl.getStore();
+	    _recoveryStore = StoreManager.getRecoveryStore();
 	}
     }
 
@@ -92,7 +91,7 @@ public abstract class TransactionRecoveryModule
             jtsLogger.logger.debug("TransactionRecoveryModule: scanning for "+_transactionType);
         }
 
-	    anyTransactions = _transactionStore.allObjUids(_transactionType, uids);
+	    anyTransactions = _recoveryStore.allObjUids(_transactionType, uids);
 	}
 	catch (ObjectStoreException e1)
 	{
@@ -153,7 +152,7 @@ public abstract class TransactionRecoveryModule
 	    try
 	    {
 		// Is the intentions list still there? Is this the best way to check?
-		if (_transactionStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
+		if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
 		{
             jtsLogger.i18NLogger.info_recovery_transactions_TransactionRecoveryModule_6(currentUid);
 
@@ -218,11 +217,11 @@ public abstract class TransactionRecoveryModule
     }
 
     protected String	   _transactionType = null;
-    //private static ObjectStore _transactionStore = null;
+    //private static ObjectStore _recoveryStore = null;
 
     //private Vector	     _transactionUidVector;
 
-    protected static ObjectStore _transactionStore = null;
+    protected static RecoveryStore _recoveryStore = null;
 
     protected Vector	     _transactionUidVector;
 

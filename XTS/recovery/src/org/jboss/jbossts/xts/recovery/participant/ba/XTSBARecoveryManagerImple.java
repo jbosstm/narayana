@@ -1,8 +1,8 @@
 package org.jboss.jbossts.xts.recovery.participant.ba;
 
+import com.arjuna.ats.arjuna.objectstore.TxLog;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -18,11 +18,11 @@ import java.io.IOException;
 public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
     /**
      * constructor for use by BAParticipantRecoveryModule
-     * @param objectStore
+     * @param txLog
      */
-    XTSBARecoveryManagerImple(ObjectStore objectStore)
+    XTSBARecoveryManagerImple(TxLog txLog)
     {
-        this.objectStore = objectStore;
+        this.txLog = txLog;
     }
 
     /**
@@ -77,7 +77,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         if (participantRecoveryRecord.saveState(oos)) {
             Uid uid = new Uid();
             try {
-                objectStore.write_committed(uid, type, oos);
+                txLog.write_committed(uid, type, oos);
                 // we need to be able to identify the uid from the participant id
                 // in order to delete it later
                 uidMap.put(participantRecoveryRecord.getId(), uid);
@@ -101,7 +101,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         if (uid != null) {
 
             try {
-                objectStore.remove_committed(uid, type);
+                txLog.remove_committed(uid, type);
                 uidMap.remove(id);
                 return true;
             } catch (ObjectStoreException ose) {
@@ -359,7 +359,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
     /**
      * the tx object store to be used for saving and deleting participant details
      */
-    private ObjectStore objectStore;
+    private TxLog txLog;
 
     private final static String type = BAParticipantRecoveryRecord.type();
 }

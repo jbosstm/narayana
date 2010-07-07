@@ -34,7 +34,8 @@ package com.hp.mwtests.ts.txoj.recovery;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject;
 
@@ -46,9 +47,9 @@ import static org.junit.Assert.*;
 class MyRecoveredTO extends RecoveredTransactionalObject
 {
     public MyRecoveredTO(Uid objectUid, String originalType,
-            ObjectStore objectStore)
+            ParticipantStore participantStore)
     {
-        super(objectUid, originalType, objectStore);
+        super(objectUid, originalType, participantStore);
     }
     
     public void replay ()
@@ -72,9 +73,9 @@ public class RecoveryTest
         
         assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
         
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
+        assertTrue(StoreManager.getParticipantStore().write_uncommitted(u, obj.type(), os));
         
-        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), TxControl.getStore());
+        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), StoreManager.getParticipantStore());
         
         rto.replay();
         
@@ -94,9 +95,9 @@ public class RecoveryTest
         
         assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
         
-        assertTrue(TxControl.getStore().write_uncommitted(u, obj.type(), os));
+        assertTrue(StoreManager.getParticipantStore().write_uncommitted(u, obj.type(), os));
         
-        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), TxControl.getStore());
+        MyRecoveredTO rto = new MyRecoveredTO(u, obj.type(), StoreManager.getParticipantStore());
         
         A.abort();
         

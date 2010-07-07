@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionViewer;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.LiveAtomicActionWrapper;
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserTreeManipulationInterface;
@@ -31,7 +32,6 @@ import com.arjuna.ats.tools.objectstorebrowser.panels.SubTreeViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.UidNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.tools.toolsframework.plugin.ToolPluginException;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.transaction.Transaction;
@@ -52,7 +52,7 @@ public class InFlightTransactionViewer extends AtomicActionViewer
         ObjectStoreBrowserPlugin.getRootProvider().addRoot(InFlightTransactionPseudoStore.STORE_NAME);
     }
 
-    public void uidNodeExpanded(ObjectStore os,
+    public void uidNodeExpanded(ParticipantStore os,
                                 String type,
                                 ObjectStoreBrowserTreeManipulationInterface manipulator,
                                 UidNode uidNode,

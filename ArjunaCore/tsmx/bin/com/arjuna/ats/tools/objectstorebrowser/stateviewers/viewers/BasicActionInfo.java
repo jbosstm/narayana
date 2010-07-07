@@ -23,7 +23,7 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 
 import java.util.Collection;
 
@@ -49,5 +49,5 @@ public interface BasicActionInfo
     String type();
     void remove() throws ObjectStoreException;
     boolean isLive();
-    ObjectStore getStore();
+    ParticipantStore getStore();
 }

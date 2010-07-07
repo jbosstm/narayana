@@ -74,11 +74,11 @@ import com.arjuna.ats.internal.arjuna.Header;
 
 public class RecoveredTransactionalObject extends StateManager
 {
-    protected RecoveredTransactionalObject(Uid objectUid, String originalType, ObjectStore objectStore)
+    protected RecoveredTransactionalObject(Uid objectUid, String originalType, ParticipantStore participantStore)
     {
         _ourUid = objectUid;
         _type = originalType;
-        _objectStore = objectStore;
+        _participantStore = participantStore;
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
 
         if (txojLogger.logger.isDebugEnabled()) {
@@ -155,7 +155,7 @@ public class RecoveredTransactionalObject extends StateManager
 
         try
         {
-            uncommittedState = _objectStore.read_uncommitted(_ourUid, _type);
+            uncommittedState = _participantStore.read_uncommitted(_ourUid, _type);
         }
         catch (ObjectStoreException e)
         {
@@ -199,7 +199,7 @@ public class RecoveredTransactionalObject extends StateManager
     {
         try
         {
-            _objectStore.remove_uncommitted(_ourUid, _type);
+            _participantStore.remove_uncommitted(_ourUid, _type);
         }
         catch (ObjectStoreException e)
         {
@@ -211,7 +211,7 @@ public class RecoveredTransactionalObject extends StateManager
     {
         try
         {
-            _objectStore.commit_state(_ourUid, _type);
+            _participantStore.commit_state(_ourUid, _type);
         }
         catch (ObjectStoreException e)
         {
@@ -225,7 +225,7 @@ public class RecoveredTransactionalObject extends StateManager
 
     private Uid _originalProcessUid;
 
-    private ObjectStore _objectStore;
+    private ParticipantStore _participantStore;
 
     private String _type;
 

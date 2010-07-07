@@ -37,7 +37,8 @@ import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
 import com.arjuna.ats.arjuna.coordinator.TxControl ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector ;
@@ -52,9 +53,9 @@ public class TransactionStatusConnectionManager
      */
     public TransactionStatusConnectionManager()
     {
-	if ( _objStore == null )
+	if ( _recoveryStore == null )
 	{
-	    _objStore = TxControl.getStore() ;
+	    _recoveryStore = StoreManager.getRecoveryStore();
 	}
 
 	updateTSMI() ;
@@ -181,7 +182,7 @@ public class TransactionStatusConnectionManager
 
 	try
 	{
-	    tsmis = _objStore.allObjUids( _typeName, uids ) ;
+	    tsmis = _recoveryStore.allObjUids( _typeName, uids ) ;
 	}
 	catch ( ObjectStoreException ex ) {
         tsLogger.i18NLogger.warn_recovery_TransactionStatusConnectionManager_2(ex);
@@ -261,7 +262,7 @@ public class TransactionStatusConnectionManager
    private Hashtable _tscTable  = new Hashtable() ;
 
     // Reference to object store.
-    private static ObjectStore _objStore = null ;
+    private static RecoveryStore _recoveryStore = null ;
 
     private static Uid _localUid = new Uid();
 }

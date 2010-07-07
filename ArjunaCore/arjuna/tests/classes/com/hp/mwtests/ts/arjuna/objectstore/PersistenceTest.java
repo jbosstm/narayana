@@ -31,8 +31,7 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.*;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
@@ -58,7 +57,7 @@ public class PersistenceTest
 
         for (int i = 0; i < 1000; i++) {
             try {
-                ObjectStore store = null;
+                ParticipantStore store = null;
 
                 if (!threaded)
                     store = new ShadowingStore();

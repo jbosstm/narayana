@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.internal.jts.interposition;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
@@ -39,7 +41,6 @@ import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
@@ -178,7 +179,7 @@ public class ServerFactory
 		{
 			// if here then it is not active, so look in the object store
 
-			ObjectStore store = com.arjuna.ats.arjuna.coordinator.TxControl.getStore();
+			RecoveryStore store = StoreManager.getRecoveryStore();
 
 			try
 			{

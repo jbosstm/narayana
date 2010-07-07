@@ -31,7 +31,7 @@ package com.hp.mwtests.ts.txoj.basic;
  * $Id: PersistenceTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
@@ -46,7 +46,7 @@ public class PersistenceTest
     @Test
     public void test () throws ObjectStoreException
     {
-        ObjectStore store = new ShadowingStore();
+        ParticipantStore store = new ShadowingStore();
         OutputObjectState state = new OutputObjectState();
         Uid u = new Uid();
 

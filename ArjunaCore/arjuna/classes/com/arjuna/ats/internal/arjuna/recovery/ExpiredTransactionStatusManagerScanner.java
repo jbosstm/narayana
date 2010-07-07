@@ -36,7 +36,8 @@ import java.text.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
@@ -57,7 +58,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
            tsLogger.logger.debug("ExpiredTransactionStatusManagerScanner created, with expiry time of "+Integer.toString(_expiryTime)+"  seconds");
        }
 
-      _objectStore  = TransactionStatusManagerItem.getStore() ;
+      _recoveryStore = StoreManager.getRecoveryStore();
       _itemTypeName = TransactionStatusManagerItem.typeName() ;
    }
 
@@ -78,7 +79,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
          InputObjectState uids = new InputObjectState() ;
 
          // find the uids of all the transaction status manager items
-         if ( _objectStore.allObjUids(_itemTypeName, uids) )
+         if ( _recoveryStore.allObjUids(_itemTypeName, uids) )
          {
             Uid theUid = null;
 
@@ -107,7 +108,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                      {
 			 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
 			 
-			 _objectStore.remove_committed( newUid, _itemTypeName ) ;
+			 _recoveryStore.remove_committed( newUid, _itemTypeName ) ;
                      }
                      else
                      {
@@ -148,7 +149,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     }
     
     private String      _itemTypeName ;
-    private ObjectStore _objectStore ;
+    private RecoveryStore _recoveryStore;
     
     private static int _expiryTime = 12 * 60 * 60 ; // default is 12 hours
     

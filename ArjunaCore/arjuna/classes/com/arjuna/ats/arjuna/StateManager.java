@@ -32,9 +32,10 @@
 package com.arjuna.ats.arjuna;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -281,7 +282,7 @@ public class StateManager
 
                     try
                     {
-                        oldState = objectStore
+                        oldState = participantStore
                                 .read_committed(objectUid, type());
                     }
                     catch (ObjectStoreException e)
@@ -438,10 +439,10 @@ public class StateManager
                     try
                     {
                         if (commit)
-                            result = objectStore.write_committed(objectUid, tn,
+                            result = participantStore.write_committed(objectUid, tn,
                                     newState);
                         else
-                            result = objectStore.write_uncommitted(objectUid,
+                            result = participantStore.write_uncommitted(objectUid,
                                     tn, newState);
                     }
                     catch (ObjectStoreException e) {
@@ -517,13 +518,13 @@ public class StateManager
 
         boolean result = false;
 
-        if (objectStore != null)
+        if (participantStore != null)
         {
             BasicAction action = BasicAction.Current();
 
             if (action != null) // add will fail if the status is wrong!
             {
-                DisposeRecord dr = new DisposeRecord(objectStore, this);
+                DisposeRecord dr = new DisposeRecord(participantStore, this);
 
                 if (action.add(dr) != AddOutcome.AR_ADDED) {
                     dr = null;
@@ -537,7 +538,7 @@ public class StateManager
             {
                 try
                 {
-                    result = objectStore.remove_committed(get_uid(), type());
+                    result = participantStore.remove_committed(get_uid(), type());
 
                     /*
                      * Once destroyed, we can never use the object again.
@@ -617,16 +618,16 @@ public class StateManager
      *         state of the object to storage.
      */
 
-    public ObjectStore getStore ()
+    public ParticipantStore getStore ()
     {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("StateManager::getStore ()");
         }
 
-        if (objectStore == null)
+        if (participantStore == null)
             setupStore();
 
-        return objectStore;
+        return participantStore;
     }
 
     /**
@@ -803,7 +804,7 @@ public class StateManager
         currentStatus = ObjectStatus.PASSIVE;
         initialStatus = ObjectStatus.PASSIVE;
         myType = ot;
-        objectStore = null;
+        participantStore = null;
         storeRoot = null;
 
         objectUid = objUid;
@@ -844,7 +845,7 @@ public class StateManager
                 : ObjectStatus.PASSIVE_NEW);
         initialStatus = currentStatus;
         myType = ot;
-        objectStore = null;
+        participantStore = null;
         storeRoot = null;
 
         objectUid = new Uid();
@@ -927,7 +928,7 @@ public class StateManager
                     record = new RecoveryRecord(state, this);
                 }
                 else
-                    record = new PersistenceRecord(state, objectStore, this);
+                    record = new PersistenceRecord(state, participantStore, this);
 
                 if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
                 {
@@ -1046,7 +1047,7 @@ public class StateManager
 
                             setupStore(storeRoot);
 
-                            record = new CadaverRecord(state, objectStore, this);
+                            record = new CadaverRecord(state, participantStore, this);
 
                             if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
                                 record = null;
@@ -1136,7 +1137,7 @@ public class StateManager
          * Already setup? Assume type will not change once object is created.
          */
 
-        if (objectStore != null)
+        if (participantStore != null)
             return;
 
         if (rootName == null)
@@ -1157,7 +1158,7 @@ public class StateManager
 
             /* No - destroy old store and create new */
 
-            objectStore = null;
+            participantStore = null;
         }
 
         if (rootName == null)
@@ -1175,22 +1176,7 @@ public class StateManager
             int sharedStatus = ((objectModel == ObjectModel.SINGLE) ? StateType.OS_UNSHARED
                     : StateType.OS_SHARED);
 
-            arjPropertyManager.getObjectStoreEnvironmentBean().setShare(
-                    sharedStatus);
-            arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(
-                    storeRoot);
-
-            try
-            {
-                Class osc = Class.forName(objectStoreType);
-
-                objectStore = (ObjectStore) osc.newInstance();
-            }
-            catch (final Throwable ex)
-            {
-                throw new FatalError(tsLogger.i18NLogger.get_StateManager_16()
-                        + " " + objectStoreType);
-            }
+            participantStore = StoreManager.setupStore(rootName, sharedStatus);
         }
         else {
             /*
@@ -1203,18 +1189,10 @@ public class StateManager
 
             throw new FatalError(tsLogger.i18NLogger.get_StateManager_14());
 
-            // objectStore = new
+            // participantStore = new
             // ObjectStore(ArjunaNames.Implementation_ObjectStore_VolatileStore
             // (), storeRoot);
         }
-
-        /*
-         * Do any work needed to initialise the object store. Really only makes
-         * sense for replicated object store where we attempt to do early
-         * binding to the replicas.
-         */
-
-        objectStore.initialise(get_uid(), type());
     }
 
     /**
@@ -1422,7 +1400,7 @@ public class StateManager
 
     private int myType;
 
-    private ObjectStore objectStore;
+    private ParticipantStore participantStore;
 
     private String storeRoot;
 

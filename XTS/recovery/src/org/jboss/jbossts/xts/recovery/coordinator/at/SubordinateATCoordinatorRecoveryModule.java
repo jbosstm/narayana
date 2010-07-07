@@ -20,7 +20,9 @@
  */
 package org.jboss.jbossts.xts.recovery.coordinator.at;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
@@ -31,7 +33,6 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
@@ -55,9 +56,9 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
             XTSLogger.logger.debug("SubordinateATCoordinatorRecoveryModule created - default");
         }
 
-        if (_transactionStore == null)
+        if (_recoveryStore == null)
         {
-            _transactionStore = TxControl.getStore() ;
+            _recoveryStore = StoreManager.getRecoveryStore();
         }
 
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
@@ -97,7 +98,7 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
                 XTSLogger.logger.debug("StatusModule: first pass ");
             }
 
-            SubordinateCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
+            SubordinateCoordinators = _recoveryStore.allObjUids( _transactionType, acc_uids );
 
         }
         catch ( ObjectStoreException ex )
@@ -131,9 +132,9 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
             XTSLogger.logger.debug("SubordinateATCoordinatorRecoveryModule created " + type);
         }
 
-        if (_transactionStore == null)
+        if (_recoveryStore == null)
         {
-            _transactionStore = TxControl.getStore() ;
+            _recoveryStore = StoreManager.getRecoveryStore();
         }
 
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
@@ -269,7 +270,7 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
 
             try
             {
-                if ( _transactionStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
+                if ( _recoveryStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
                 {
                     doRecoverTransaction( currentUid ) ;
                 }
@@ -291,7 +292,7 @@ public class SubordinateATCoordinatorRecoveryModule implements RecoveryModule
     private Vector _transactionUidVector = null ;
 
     // Reference to the Object Store.
-    private static ObjectStore _transactionStore = null ;
+    private static RecoveryStore _recoveryStore = null ;
 
     // This object manages the interface to all TransactionStatusManagers
     // processes(JVMs) on this system/node.

@@ -52,9 +52,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_CadaverRecord_1(Uid arg0, String arg1);
 
-	@Message(id = 12004, value = "DisposeRecord::save_state - type of store is unknown", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_DisposeRecord_1();
+//	@Message(id = 12004, value = "DisposeRecord::save_state - type of store is unknown", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_DisposeRecord_1();
 
 	@Message(id = 12005, value = "DisposeRecord::save_state - failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -64,9 +64,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_DisposeRecord_3();
 
-	@Message(id = 12007, value = "DisposeRecord::restore_state - invalid store type {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_DisposeRecord_4(String arg0);
+//	@Message(id = 12007, value = "DisposeRecord::restore_state - invalid store type {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_DisposeRecord_4(String arg0);
 
 	@Message(id = 12008, value = "DisposeRecord::topLevelCommit - exception while deleting state", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -76,9 +76,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_PersistenceRecord_10();
 
-	@Message(id = 12010, value = "PersistenceRecord::save_state - type of store is unknown", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_PersistenceRecord_11();
+//	@Message(id = 12010, value = "PersistenceRecord::save_state - type of store is unknown", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_PersistenceRecord_11();
 
 	@Message(id = 12011, value = "PersistenceRecord::save_state - packing top level state failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -170,8 +170,8 @@ public interface arjunaI18NLogger {
 	@Message(id = 12033, value = "Invalid object state.", format = MESSAGE_FORMAT)
 	public String get_StateManager_15();
 
-	@Message(id = 12034, value = "Invalid object store type:", format = MESSAGE_FORMAT)
-	public String get_StateManager_16();
+//	@Message(id = 12034, value = "Invalid object store type:", format = MESSAGE_FORMAT)
+//	public String get_StateManager_16();
 
 	@Message(id = 12035, value = "Activate of object with id = {0} and type {1} unexpectedly failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -567,8 +567,8 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_coordinator_checkedactionfactory(String arg0);
 
-	@Message(id = 12135, value = "Could not create ObjectStore type:", format = MESSAGE_FORMAT)
-    public String get_coordinator_invalidos();
+	@Message(id = 12135, value = "Could not create Store type:", format = MESSAGE_FORMAT)
+    public String get_StoreManager_invalidtype();
 
 	@Message(id = 12136, value = "Could not recreate abstract record {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1430,7 +1430,10 @@ public interface arjunaI18NLogger {
     @Message(id = 12362, value = "Failed to create StateManagerWrapper", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
     public void info_osb_StateManagerWrapperFail(Throwable arg0);
-    
+
+    @Message(id = 12363, value = "Invalid rootName. Expected {0} but was {1}", format = MESSAGE_FORMAT)
+    public String get_StoreManager_invalidroot(String arg0, String arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

@@ -31,7 +31,7 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
@@ -45,9 +45,9 @@ class WriterThread extends Thread
 {
     private static final String TYPE = "test";
 
-    public WriterThread(ObjectStore theStore)
+    public WriterThread(ParticipantStore theStore)
     {
-        store = theStore;
+        participantStore = theStore;
     }
 
     public void run()
@@ -59,8 +59,8 @@ class WriterThread extends Thread
         try {
             state.packBytes(data);
 
-            if (store.write_committed(u, TYPE, state)) {
-                InputObjectState s = store.read_committed(u, TYPE);
+            if (participantStore.write_committed(u, TYPE, state)) {
+                InputObjectState s = participantStore.read_committed(u, TYPE);
 
                 if (s != null)
                     passed = true;
@@ -76,7 +76,7 @@ class WriterThread extends Thread
 
     public boolean passed = false;
 
-    private ObjectStore store = null;
+    private ParticipantStore participantStore = null;
 }
 
 
@@ -93,7 +93,7 @@ public class WriteCachedTest
 
         System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
 
-        ObjectStore store = new CacheStore();
+        ParticipantStore store = new CacheStore();
         long stime = Calendar.getInstance().getTime().getTime();
 
         for (int i = 0; (i < threads) && passed; i++) {

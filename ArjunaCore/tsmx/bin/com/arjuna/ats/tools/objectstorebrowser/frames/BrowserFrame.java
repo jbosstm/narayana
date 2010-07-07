@@ -30,6 +30,9 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.frames;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreCellRenderer;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
@@ -42,13 +45,10 @@ import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanel;
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserPlugin;
 import com.arjuna.ats.tools.objectstorebrowser.rootprovider.ObjectStoreRootProvider;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import javax.swing.*;
@@ -68,7 +68,9 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
     private static DefaultTreeModel _treeModel = null;
     private static StatePanel _stateViewer = null;
     private static JTree _tree = null;
-    private static ObjectStore _objectStore = null;
+
+    private static RecoveryStore _recoveryStore = null;
+    private static ParticipantStore _participantStore = null;
 
 	private JSplitPane _splitPane = null;
 	private IconPanel _objectView = null;
@@ -121,7 +123,8 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
             arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(rootStr);
             
-            _objectStore = TxControl.getStore();
+            _recoveryStore = StoreManager.getRecoveryStore();
+            _participantStore = StoreManager.getParticipantStore();
 
             _treeModel = new DefaultTreeModel(createTree());
             _tree = new JTree(_treeModel);
@@ -346,7 +349,8 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
             _stateViewer.clear();
             _stateViewer.setVisible(false);
             arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(objectStoreRoot);
-            _objectStore = TxControl.getStore();
+            _recoveryStore = StoreManager.getRecoveryStore();
+            _participantStore = StoreManager.getParticipantStore();
             _treeModel.setRoot(createTree());
 
             Thread.currentThread().setContextClassLoader(loader);
@@ -362,7 +366,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 		{
 			InputObjectState types = new InputObjectState();
 
-			if (_objectStore.allTypes(types))
+			if (_recoveryStore.allTypes(types))
 			{
 				String theName;
 
@@ -502,7 +506,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
         {
             try
             {
-                StateViewersRepository.lookupStateViewer(((UidNode)lastNode).getType()).uidNodeExpanded(_objectStore, ((UidNode)lastNode).getType(), (UidNode)lastNode, (UidNode)lastNode, _stateViewer);
+                StateViewersRepository.lookupStateViewer(((UidNode)lastNode).getType()).uidNodeExpanded(_participantStore, ((UidNode)lastNode).getType(), (UidNode)lastNode, (UidNode)lastNode, _stateViewer);
             }
             catch (ObjectStoreException e)
             {
@@ -523,7 +527,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
             {
                 InputObjectState types = new InputObjectState();
 
-                if (_objectStore.allTypes(types))
+                if (_recoveryStore.allTypes(types))
                 {
                     try
                     {
@@ -585,7 +589,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
                 {
                     InputObjectState uids = new InputObjectState();
 
-                    if (_objectStore.allObjUids(theName, uids))
+                    if (_recoveryStore.allObjUids(theName, uids))
                     {
                         Uid theUid = null;
 
@@ -606,7 +610,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
                                     if ( getChildWithName(node, theUid.stringForm()) == null )
                                     {
                                         _treeModel.insertNodeInto(uidNode = new UidNode(theUid.toString(), theUid, theName), node, _treeModel.getChildCount(node));
-                                        uidNode.setIconPanelEntry(new ObjectViewEntry(theName, theUid.toString(), _objectStore.currentState(theUid, theName), uidNode));
+                                        uidNode.setIconPanelEntry(new ObjectViewEntry(theName, theUid.toString(), _recoveryStore.currentState(theUid, theName), uidNode));
                                         _treeModel.insertNodeInto(new DefaultMutableTreeNode(""), uidNode, _treeModel.getChildCount(uidNode));
                                     }
                                     nodesAdded.add(theUid.toString());
@@ -701,9 +705,9 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 		}
 	}
 
-    public static ObjectStore getObjectStore()
+    public static RecoveryStore getRecoveryStore()
     {
-        return _objectStore;
+        return _recoveryStore;
     }
 
     public static StatePanel getStatePanel()

@@ -31,8 +31,8 @@
 
 package com.arjuna.ats.internal.txoj.lockstore;
 
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.txoj.lockstore.LockStore;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.*;
@@ -66,9 +66,6 @@ public class BasicPersistentLockStore extends LockStore
         if (txojLogger.logger.isDebugEnabled()) {
             txojLogger.logger.debug("BasicPersistentLockStore.BasicPersistentLockStore(" + key + ")");
         }
-
-        lockStoreLocation = txojPropertyManager.getTxojEnvironmentBean()
-                .getLockStoreDir();
 
         _key = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
 
@@ -132,8 +129,5 @@ public class BasicPersistentLockStore extends LockStore
 
     private String _key;
 
-    private ObjectStore _lockStore;
-
-    private static String lockStoreLocation = null;
-
+    private ParticipantStore _lockStore;
 }

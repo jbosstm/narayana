@@ -32,8 +32,9 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -113,7 +114,7 @@ public class XARecoveryModule implements RecoveryModule
 
 		try
 		{
-			if (!_objStore.allObjUids(_recoveryManagerClass.type(), _uids))
+			if (!_recoveryStore.allObjUids(_recoveryManagerClass.type(), _uids))
 			{
                 jtaLogger.i18NLogger.warn_recovery_alluids();
 			}
@@ -240,7 +241,7 @@ public class XARecoveryModule implements RecoveryModule
 					 * probably recovered it.
 					 */
 
-					if (_objStore.currentState(theUid, _recoveryManagerClass
+					if (_recoveryStore.currentState(theUid, _recoveryManagerClass
 							.type()) != StateStatus.OS_UNKNOWN)
 					{
 						boolean problem = false;
@@ -822,7 +823,7 @@ public class XARecoveryModule implements RecoveryModule
 			_failures.clear();
 	}
 
-	private ObjectStore _objStore = TxControl.getStore();
+	private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
 
 	private InputObjectState _uids = new InputObjectState();
 

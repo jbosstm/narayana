@@ -33,6 +33,8 @@
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
 import com.arjuna.ats.jts.logging.*;
@@ -52,7 +54,6 @@ import org.omg.PortableServer.*;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 
 import java.io.IOException;
@@ -247,14 +248,14 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
                 try
                     {
-                        if (currentStore == null)
+                        if (participantStore == null)
                         {
-                            currentStore = TxControl.getStore();
+                            participantStore = StoreManager.getParticipantStore();
                         }
 
                         OutputObjectState oState = new OutputObjectState();
                         oState.packString(reference);
-                        currentStore.write_committed( new Uid(uid4Recovery), type(), oState);
+                        participantStore.write_committed( new Uid(uid4Recovery), type(), oState);
                     }
                 catch ( java.lang.SecurityException sex )
                 {
@@ -304,8 +305,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     private static final String orbNamePrefix = "ots_";
     private static final String orbName = "arjuna.portable_interceptor.";
 
-    private ObjectStore     currentStore;
+    private ParticipantStore participantStore;
 
     static protected String uid4Recovery = "0:ffff52e38d0c:c91:4140398c:0";
 
-};
+}

@@ -31,9 +31,10 @@
 
 package com.arjuna.ats.arjuna.tools;
 
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -219,15 +220,13 @@ public class OTM extends JSplitPane
 
             try
             {
-                Class actionStoreType = Class.forName(arjPropertyManager
-                        .getCoordinatorEnvironmentBean().getActionStore());
-                ObjectStore imple = (ObjectStore) actionStoreType.newInstance();
+                RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
                 InputObjectState types = new InputObjectState();
 
                 startSweep();
 
-                if (imple.allTypes(types))
+                if (recoveryStore.allTypes(types))
                 {
                     String fullPathName = null;
                     boolean found = false;
@@ -279,7 +278,7 @@ public class OTM extends JSplitPane
                                 if (added)
                                     currentRoot.add(currentNode);
 
-                                if (imple.allObjUids(fullPathName, uids))
+                                if (recoveryStore.allObjUids(fullPathName, uids))
                                 {
                                     Uid theUid = new Uid(Uid.nullUid());
 
@@ -327,7 +326,7 @@ public class OTM extends JSplitPane
                                                         .add(new DefaultMutableTreeNode(
                                                                 new String(
                                                                         "status: "
-                                                                                + statusToString(imple
+                                                                                + statusToString(recoveryStore
                                                                                         .currentState(
                                                                                                 theUid,
                                                                                                 fullPathName)))));
@@ -462,13 +461,11 @@ public class OTM extends JSplitPane
 
         try
         {
-            String actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
-            Class osImple = Class.forName(actionStoreType);
-            ObjectStore imple = (ObjectStore) osImple.newInstance();
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
 
             InputObjectState types = new InputObjectState();
 
-            if (imple.allTypes(types))
+            if (recoveryStore.allTypes(types))
             {
                 String fullPathName = null;
                 boolean found = false;
@@ -500,7 +497,7 @@ public class OTM extends JSplitPane
                             currentRoot = findRoot(top, currentNode);
                             currentRoot.add(currentNode);
 
-                            if (imple.allObjUids(fullPathName, uids))
+                            if (recoveryStore.allObjUids(fullPathName, uids))
                             {
                                 Uid theUid = new Uid(Uid.nullUid());
 
@@ -523,7 +520,7 @@ public class OTM extends JSplitPane
                                                     .add(new DefaultMutableTreeNode(
                                                             new String(
                                                                     "status: "
-                                                                            + statusToString(imple
+                                                                            + statusToString(recoveryStore
                                                                                     .currentState(
                                                                                             theUid,
                                                                                             fullPathName)))));

@@ -21,12 +21,12 @@
 package org.jboss.jbossts.qa.astests.taskdefs;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
@@ -39,11 +39,11 @@ import java.util.Collection;
 public class TransactionLog
 {
     /**
-     * Default object type for store operations
+     * Default object type for recoveryStore operations
      */
     public static final String DEFAULT_OBJECT_TYPE = "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction";
 
-    private ObjectStore store;
+    private RecoveryStore recoveryStore;
 
     public TransactionLog(String storeDir, String impleType)
     {
@@ -61,7 +61,7 @@ public class TransactionLog
             {
                 Class c = Class.forName(impleType);
                 
-                store = (ObjectStore) c.newInstance();
+                recoveryStore = (RecoveryStore) c.newInstance();
             }
             catch (final Throwable ex)
             {
@@ -69,21 +69,21 @@ public class TransactionLog
             }
         }
         else
-            store = TxControl.getStore();
+            recoveryStore = StoreManager.getRecoveryStore();
     }
 
     /**
      * Remove any committed objects from the storer
      * @param objectType the type of objects that should be removed
      * @return the number of objects that were purged
-     * @throws ObjectStoreException the store implementation was unable to remove a committed object
+     * @throws ObjectStoreException the recoveryStore implementation was unable to remove a committed object
      */
     public int clearXids(String objectType) throws ObjectStoreException
     {
         Collection<Uid> uids = getIds(objectType);
 
         for (Uid uid : uids)
-            store.remove_committed(uid, objectType);
+            recoveryStore.remove_committed(uid, objectType);
 
         return uids.size();
     }
@@ -97,9 +97,9 @@ public class TransactionLog
      * Get a list object ids for a given object type
      *
      * @param ids holder for the returned uids
-     * @param objectType The type of object to search in the store for
+     * @param objectType The type of object to search in the recoveryStore for
      * @return all objects of the given type
-     * @throws ObjectStoreException the store implementation was unable retrieve all types of objects
+     * @throws ObjectStoreException the recoveryStore implementation was unable retrieve all types of objects
      */
     public Collection<Uid> getIds(Collection<Uid> ids, String objectType) throws ObjectStoreException
     {
@@ -109,7 +109,7 @@ public class TransactionLog
 
         InputObjectState types = new InputObjectState();
 
-        if (store.allTypes(types))
+        if (recoveryStore.allTypes(types))
         {
             String theName;
 
@@ -130,7 +130,7 @@ public class TransactionLog
 
                         InputObjectState uids = new InputObjectState();
 
-                        if (store.allObjUids(theName, uids))
+                        if (recoveryStore.allObjUids(theName, uids))
                         {
                             Uid theUid = new Uid(Uid.nullUid());
 

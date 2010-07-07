@@ -1,9 +1,8 @@
 package org.jboss.jbossts.xts.recovery.participant.at;
 
+import com.arjuna.ats.arjuna.objectstore.TxLog;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
-import com.arjuna.wst.Durable2PCParticipant;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -19,11 +18,11 @@ import java.io.IOException;
 public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     /**
      * constructor for use by ATParticipantRecoveryModule
-     * @param objectStore
+     * @param txLog
      */
-    XTSATRecoveryManagerImple(ObjectStore objectStore)
+    XTSATRecoveryManagerImple(TxLog txLog)
     {
-        this.objectStore = objectStore;
+        this.txLog = txLog;
     }
 
     /**
@@ -82,7 +81,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         if (participantRecoveryRecord.saveState(oos)) {
             Uid uid = new Uid();
             try {
-                objectStore.write_committed(uid, type, oos);
+                txLog.write_committed(uid, type, oos);
                 // we need to be able to identify the uid from the participant id
                 // in order to delete it later
                 uidMap.put(participantRecoveryRecord.getId(), uid);
@@ -106,7 +105,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         if (uid != null) {
 
             try {
-                objectStore.remove_committed(uid, type);
+                txLog.remove_committed(uid, type);
                 uidMap.remove(id);
                 return true;
             } catch (ObjectStoreException ose) {
@@ -374,7 +373,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     /**
      * the tx object store to be used for saving and deleting participant details
      */
-    private ObjectStore objectStore;
+    private TxLog txLog;
 
     private final static String type = ATParticipantRecoveryRecord.type();
 }
