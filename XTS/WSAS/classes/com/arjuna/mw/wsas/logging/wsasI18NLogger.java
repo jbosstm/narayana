@@ -41,11 +41,11 @@ public interface wsasI18NLogger {
 
     @Message(id = 41001, value = "allHighLevelServices threw exception", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-	public void warn_context_ContextManager_1(Throwable arg0);
+	public void warn_context_ContextManager_1(@Cause() Throwable arg0);
 
 	@Message(id = 41002, value = "assembling contexts and received exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_context_ContextManager_2(Throwable arg0);
+	public void warn_context_ContextManager_2(@Cause() Throwable arg0);
 
 //	@Message(id = 41003, value = "not found.", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -56,23 +56,23 @@ public interface wsasI18NLogger {
 
 	@Message(id = 41005, value = "Activity.start caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserActivityImple_1(Throwable arg0);
+	public void warn_UserActivityImple_1(@Cause() Throwable arg0);
 
 	@Message(id = 41006, value = "currentActivity.end threw:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserActivityImple_2(Throwable arg0);
+	public void warn_UserActivityImple_2(@Cause() Throwable arg0);
 
 	@Message(id = 41007, value = "Activity.completed caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserActivityImple_3(Throwable arg0);
+	public void warn_UserActivityImple_3(@Cause() Throwable arg0);
 
 	@Message(id = 41008, value = "Activity.suspended caught:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserActivityImple_4(Throwable arg0);
+	public void warn_UserActivityImple_4(@Cause() Throwable arg0);
 
 	@Message(id = 41009, value = "Activity.resumed caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserActivityImple_5(Throwable arg0);
+	public void warn_UserActivityImple_5(@Cause() Throwable arg0);
 
 	@Message(id = 41010, value = "Unknown activity implementation!", format = MESSAGE_FORMAT)
 	public String get_UserActivityImple_51();

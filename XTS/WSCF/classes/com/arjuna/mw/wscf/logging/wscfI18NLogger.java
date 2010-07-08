@@ -42,11 +42,11 @@ public interface wscfI18NLogger {
 
     @Message(id = 44001, value = "WSCF Initialisation: init failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mw_wsc_deploy_WSCFI_1(Throwable arg0);
+	public void error_mw_wsc_deploy_WSCFI_1(@Cause() Throwable arg0);
 
 	@Message(id = 44002, value = "WSCF11 Initialisation: init failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mw_wsc11_deploy_WSCFI_1(Throwable arg0);
+	public void error_mw_wsc11_deploy_WSCFI_1(@Cause() Throwable arg0);
 
 	@Message(id = 44003, value = "Failed to create {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -121,7 +121,7 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44023, value = "ParticipantRecord.topLevelOnePhaseCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_10(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_10(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44024, value = "ParticipantRecord.forgetHeuristic for {0} called without a resource!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -129,19 +129,19 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44025, value = "ParticipantRecord.forgetHeuristic {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_12(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_12(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44026, value = "ParticipantRecord.complete {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_13(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_13(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44027, value = "ParticipantRecord.restore_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_14(Throwable arg0);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_14(@Cause() Throwable arg0);
 
 	@Message(id = 44028, value = "ParticipantRecord.save_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_15(Throwable arg0);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_15(@Cause() Throwable arg0);
 
 	@Message(id = 44029, value = "ParticipantRecord.setValue() called illegally.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -149,31 +149,31 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44030, value = "ParticipantRecord.nestedAbort {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_3(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_3(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44031, value = "ParticipantRecord.nestedCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_4(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_4(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44032, value = "ParticipantRecord.nestedPrepare {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_5(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_5(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44033, value = "ParticipantRecord.topLevelAbort {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_6(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_6(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44034, value = "ParticipantRecord.topLevelCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_7(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_7(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44035, value = "ParticipantRecord.topLevelPrepare {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_8(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_8(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44036, value = "ParticipantRecord.nestedOnePhaseCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_9(Uid arg0, Throwable arg1);
+	public void warn_model_sagas_coordinator_arjunacore_ParticipantRecord_9(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44037, value = "ArjunaCore does not support removal of participants", format = MESSAGE_FORMAT)
 	public String get_model_twophase_arjunacore_ATCoordinator_1();
@@ -196,7 +196,7 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44043, value = "ParticipantRecord.topLevelOnePhaseCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_10(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_10(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44044, value = "ParticipantRecord.forgetHeuristic for {0} called without a resource!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -204,15 +204,15 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44045, value = "ParticipantRecord.forgetHeuristic {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_12(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_12(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44046, value = "ParticipantRecord.restore_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_13(Throwable arg0);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_13(@Cause() Throwable arg0);
 
 	@Message(id = 44047, value = "ParticipantRecord.save_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_14(Throwable arg0);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_14(@Cause() Throwable arg0);
 
 	@Message(id = 44048, value = "ParticipantRecord.setValue() called illegally.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -220,31 +220,31 @@ public interface wscfI18NLogger {
 
 	@Message(id = 44049, value = "ParticipantRecord.nestedAbort {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_3(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_3(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44050, value = "ParticipantRecord.nestedCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_4(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_4(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44051, value = "ParticipantRecord.nestedPrepare {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_5(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_5(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44052, value = "ParticipantRecord.topLevelAbort {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_6(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_6(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44053, value = "ParticipantRecord.topLevelCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_7(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_7(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44054, value = "ParticipantRecord.topLevelPrepare {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_8(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_8(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44055, value = "ParticipantRecord.nestedOnePhaseCommit {0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_model_twophase_arjunacore_ParticipantRecord_9(Uid arg0, Throwable arg1);
+	public void warn_model_twophase_arjunacore_ParticipantRecord_9(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 44056, value = "SynchronizationRecord {0} - null participant provided!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

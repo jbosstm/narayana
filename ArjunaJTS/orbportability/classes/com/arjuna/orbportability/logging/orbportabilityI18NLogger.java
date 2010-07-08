@@ -42,11 +42,11 @@ public interface orbportabilityI18NLogger {
 
     @Message(id = 21001, value = "{0} caught exception whilst initialising Object Adapter.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_OA_caughtexception(String arg0, Throwable arg1);
+	public void warn_OA_caughtexception(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 21002, value = "{0}: exception caught for {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_OA_exceptioncaughtforobj(String arg0, String arg1, Throwable arg2);
+	public void warn_OA_exceptioncaughtforobj(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 21003, value = "caught org.omg.CORBA.INITIALIZE whilst initialising Object Adapter. Check another ORB/service is not active on same port.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -77,11 +77,11 @@ public interface orbportabilityI18NLogger {
 
 	@Message(id = 21010, value = "ORBInfo ORB specific class creation failed with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
-	public void fatal_ORBInfo_creationfailed(Throwable arg0);
+	public void fatal_ORBInfo_creationfailed(@Cause() Throwable arg0);
 
 	@Message(id = 21011, value = "ORBInfo ORB specific class creation failed - unable to find supported ORB", format = MESSAGE_FORMAT)
     @LogMessage(level = FATAL)
-	public void fatal_ORBInfo_unsupportedorb(Throwable arg0);
+	public void fatal_ORBInfo_unsupportedorb(@Cause() Throwable arg0);
 
 //	@Message(id = 21012, value = "{0} - could not open config file: {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -105,7 +105,7 @@ public interface orbportabilityI18NLogger {
 
 	@Message(id = 21017, value = "{0} - caught unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_Services_unexpectedexception(String arg0, Throwable arg1);
+	public void warn_Services_unexpectedexception(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 21018, value = "Services.getService - {0} option not supported by ORB.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -117,11 +117,11 @@ public interface orbportabilityI18NLogger {
 
 	@Message(id = 21020, value = "{0} - caught exception for {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_event_EventManager_caughtexceptionfor(String arg0, String arg1, Throwable arg2);
+	public void warn_event_EventManager_caughtexceptionfor(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 21021, value = "{0} - for: {1} threw exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_event_EventManager_forhandlethrewexception(String arg0, String arg1, Throwable arg2);
+	public void warn_event_EventManager_forhandlethrewexception(String arg0, String arg1, @Cause() Throwable arg2);
 
 //	@Message(id = 21022, value = "{0} - no value for: {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -137,7 +137,7 @@ public interface orbportabilityI18NLogger {
 
 	@Message(id = 21025, value = "Exception whilst loading {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_internal_utils_InitLoader_exception(String arg0, Throwable arg1);
+	public void warn_internal_utils_InitLoader_exception(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 21026, value = "{0} - attempt to initialise {1} with null class name!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

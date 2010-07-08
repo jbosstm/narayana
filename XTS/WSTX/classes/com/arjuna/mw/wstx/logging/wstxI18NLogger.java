@@ -42,7 +42,7 @@ public interface wstxI18NLogger {
 
     @Message(id = 45001, value = "Error in {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mw_wst_client_JaxHCP_1(String arg0, Throwable arg1);
+	public void warn_mw_wst_client_JaxHCP_1(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 45002, value = "Error in {0} Unknown context type: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -54,7 +54,7 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45004, value = "WSTX Initialisation: init failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mw_wst_deploy_WSTXI_1(Throwable arg0);
+	public void error_mw_wst_deploy_WSTXI_1(@Cause() Throwable arg0);
 
 	@Message(id = 45005, value = "{0} not found.", format = MESSAGE_FORMAT)
 	public String get_mw_wst_deploy_WSTXI_21(String arg0);
@@ -67,7 +67,7 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45008, value = "Error in {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mw_wst_service_JaxHCP_1(String arg0, Throwable arg1);
+	public void warn_mw_wst_service_JaxHCP_1(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 45009, value = "Error in {0} Unknown context type: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -79,7 +79,7 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45011, value = "Error in {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mw_wst11_client_JaxHC11P_1(String arg0, Throwable arg1);
+	public void warn_mw_wst11_client_JaxHC11P_1(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 45012, value = "Error in {0} Unknown context type: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -91,7 +91,7 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45014, value = "WSTX11 Initialisation: init failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mw_wst11_deploy_WSTXI_1(Throwable arg0);
+	public void error_mw_wst11_deploy_WSTXI_1(@Cause() Throwable arg0);
 
 	@Message(id = 45015, value = "{0} not found.", format = MESSAGE_FORMAT)
 	public String get_mw_wst11_deploy_WSTXI_21(String arg0);
@@ -104,7 +104,7 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45018, value = "Error in {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mw_wst11_service_JaxHC11P_1(String arg0, Throwable arg1);
+	public void warn_mw_wst11_service_JaxHC11P_1(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 45019, value = "Error in {0} Unknown context type: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -237,11 +237,11 @@ public interface wstxI18NLogger {
 
 	@Message(id = 45055, value = "Error persisting participant.", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mwlabs_wst_util_PersistableParticipantHelper_2(Throwable arg0);
+	public void error_mwlabs_wst_util_PersistableParticipantHelper_2(@Cause() Throwable arg0);
 
 	@Message(id = 45056, value = "Error restoring participant.", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_mwlabs_wst_util_PersistableParticipantHelper_3(Throwable arg0);
+	public void error_mwlabs_wst_util_PersistableParticipantHelper_3(@Cause() Throwable arg0);
 
 	@Message(id = 45057, value = "ignoring context {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

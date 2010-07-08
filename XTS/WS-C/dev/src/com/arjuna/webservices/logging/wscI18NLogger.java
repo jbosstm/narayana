@@ -44,7 +44,7 @@ public interface wscI18NLogger {
 
 	@Message(id = 42001, value = "Unhandled error executing task", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_services_framework_task_TaskWorker_run_1(Throwable arg0);
+	public void error_services_framework_task_TaskWorker_run_1(@Cause() Throwable arg0);
 
 	@Message(id = 42002, value = "Invalid fault type enumeration: {0}", format = MESSAGE_FORMAT)
 	public String get_webservices_SoapFaultType_1(String arg0);

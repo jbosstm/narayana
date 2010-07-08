@@ -80,7 +80,7 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17013, value = "Caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_drcdest(Throwable arg0);
+	public void warn_drcdest(@Cause() Throwable arg0);
 
 //	@Message(id = 17014, value = "caught exception:", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -98,7 +98,7 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17018, value = "Failed to get modifier for driver:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_getmoderror(Throwable arg0);
+	public void warn_getmoderror(@Cause() Throwable arg0);
 
 //	@Message(id = 17019, value = "Caught exception", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -120,7 +120,7 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17024, value = "{0} - failed to set isolation level", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_isolationlevelfailset(String arg0, Throwable arg1);
+	public void warn_isolationlevelfailset(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 17025, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
 	public String get_jndierror();
@@ -130,7 +130,7 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17027, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_basic_initexp(Throwable arg0);
+	public void warn_recovery_basic_initexp(@Cause() Throwable arg0);
 
 	@Message(id = 17028, value = "{0} could not find information for connection!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -138,7 +138,7 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17029, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_xa_initexp(Throwable arg0);
+	public void warn_recovery_xa_initexp(@Cause() Throwable arg0);
 
 //	@Message(id = 17030, value = "{0} could not find information for connection!", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

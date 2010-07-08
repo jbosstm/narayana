@@ -41,11 +41,11 @@ public interface jbossatxI18NLogger {
 
     @Message(id = 32001, value = "createConnection got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jta_AppServerJDBCXARecovery_createconnectionproblem(Throwable arg0);
+	public void error_jta_AppServerJDBCXARecovery_createconnectionproblem(@Cause() Throwable arg0);
 
 	@Message(id = 32002, value = "createDataSource got exception during getXADataSource call", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jta_AppServerJDBCXARecovery_createproblem(Throwable arg0);
+	public void error_jta_AppServerJDBCXARecovery_createproblem(@Cause() Throwable arg0);
 
 	@Message(id = 32003, value = "InstanceNotFound. Datasource {0} not deployed, or wrong name?", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -53,11 +53,11 @@ public interface jbossatxI18NLogger {
 
 	@Message(id = 32004, value = "createDataSource {0} got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jta_AppServerJDBCXARecovery_problem(String arg0, Throwable arg1);
+	public void error_jta_AppServerJDBCXARecovery_problem(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 32005, value = "Unexpected exception occurred", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jta_PropagationContextManager_exception(Throwable arg0);
+	public void error_jta_PropagationContextManager_exception(@Cause() Throwable arg0);
 
 	@Message(id = 32006, value = "unknown Tx PropagationContext", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
@@ -65,7 +65,7 @@ public interface jbossatxI18NLogger {
 
 	@Message(id = 32007, value = "getCurrentTransaction() failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jts_InboundTransactionCurrentImple_exception(Throwable arg0);
+	public void error_jts_InboundTransactionCurrentImple_exception(@Cause() Throwable arg0);
 
 	@Message(id = 32008, value = "unknown Tx PropagationContext", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
@@ -73,7 +73,7 @@ public interface jbossatxI18NLogger {
 
 	@Message(id = 32009, value = "Unexpected exception occurred", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_jts_PropagationContextManager_exception(Throwable arg0);
+	public void error_jts_PropagationContextManager_exception(@Cause() Throwable arg0);
 
 	@Message(id = 32010, value = "JBossTS Recovery Service (tag: {0}) - JBoss Inc.", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)

@@ -70,7 +70,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22008, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_context_genfail(String arg0, Throwable arg1);
+	public void warn_context_genfail(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22009, value = "{0} does not support ORB: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -81,15 +81,15 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22011, value = "Failed to cancel transaction", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_cwabort(Throwable arg0);
+	public void warn_cwabort(@Cause() Throwable arg0);
 
 	@Message(id = 22012, value = "Failed to mark transaction as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_cwcommit(Throwable arg0);
+	public void warn_cwcommit(@Cause() Throwable arg0);
 
 	@Message(id = 22013, value = "Failed to cancel transaction", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_interposition_cwabort(Throwable arg0);
+	public void warn_interposition_cwabort(@Cause() Throwable arg0);
 
 	@Message(id = 22014, value = "{0} - default already set!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -125,7 +125,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22022, value = "{0} for transaction {1} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_interposition_sfcaught(String arg0, Uid arg1, Throwable arg2);
+	public void warn_interposition_sfcaught(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22023, value = "{0} - no parent transaction given!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -133,15 +133,15 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22024, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_coordinator_generror(String arg0, Throwable arg1);
+	public void warn_orbspecific_coordinator_generror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22025, value = "{0} attempt to mark transaction {1} as rollback only threw exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_coordinator_rbofail(String arg0, Uid arg1, Throwable arg2);
+	public void warn_orbspecific_coordinator_rbofail(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22026, value = "Creation of RecoveryCoordinator for {0} threw exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_coordinator_rccreate(Uid arg0, Throwable arg1);
+	public void warn_orbspecific_coordinator_rccreate(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22027, value = "not created!", format = MESSAGE_FORMAT)
 	public String get_orbspecific_coordinator_rcnotcreated();
@@ -163,7 +163,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22032, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_interposition_coordinator_generror(String arg0, Throwable arg1);
+	public void warn_orbspecific_interposition_coordinator_generror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22033, value = "{0} - synchronizations have not been called!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -175,7 +175,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22035, value = "{0} could not destroy object", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_interposition_destfailed(String arg0, Throwable arg1);
+	public void warn_orbspecific_interposition_destfailed(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22036, value = "Could not remove child {0} from {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -183,11 +183,11 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22037, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_interposition_resources_arjuna_generror(String arg0, Throwable arg1);
+	public void warn_orbspecific_interposition_resources_arjuna_generror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22038, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_interposition_resources_arjuna_generror_2(String arg0, Throwable arg1);
+	public void warn_orbspecific_interposition_resources_arjuna_generror_2(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22039, value = "{0} - could not register interposed hierarchy!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -255,15 +255,15 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22056, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_codecerror(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_jacorb_interceptors_context_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22057, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_duplicatename(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_jacorb_interceptors_context_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22058, value = "Context interceptor caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_error(Throwable arg0);
+	public void warn_orbspecific_jacorb_interceptors_context_error(@Cause() Throwable arg0);
 
 	@Message(id = 22059, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
 	public String get_orbspecific_jacorb_interceptors_context_invalidparam();
@@ -273,18 +273,18 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22061, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_context_srie(String arg0, Throwable arg1);
+	public void warn_orbspecific_jacorb_interceptors_context_srie(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22062, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_jacorb_interceptors_interposition_codeccreate();
 
 	@Message(id = 22063, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_codecerror(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_jacorb_interceptors_interposition_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22064, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_duplicatename(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_jacorb_interceptors_interposition_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22065, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
 	public String get_orbspecific_jacorb_interceptors_interposition_invalidparam();
@@ -294,7 +294,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22067, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_interceptors_interposition_srie(String arg0, Throwable arg1);
+	public void warn_orbspecific_jacorb_interceptors_interposition_srie(String arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 22068, value = "Client Interceptor for RecoveryCoordinators created", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -302,7 +302,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22069, value = "Failed to retreive the Object reference of the default RecoverCoordinator Object.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_2(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_2(@Cause() Throwable arg0);
 
 //	@Message(id = 22070, value = "Failed to obtain the ObjectId string of the RecveryCoordinator target.", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -310,11 +310,11 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22071, value = "Failed to build service context with the ObjectId", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_4(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_ClientForwardInterceptor_4(@Cause() Throwable arg0);
 
 	@Message(id = 22072, value = "Failed in ClientInitializer::post_init -", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ClientInitializer_1(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_ClientInitializer_1(@Cause() Throwable arg0);
 
 //	@Message(id = 22073, value = "JacOrbDefaultServant replay_completion for recoverId {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -326,7 +326,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22075, value = "JacOrbServant.replay_completion got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCDefaultServant_3(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCDefaultServant_3(@Cause() Throwable arg0);
 
 //	@Message(id = 22076, value = "JacOrbRCManager: Created reference for tran {0} = {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -334,7 +334,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22077, value = "RCManager.makeRC did not make rcvco reference", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_2(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_2(@Cause() Throwable arg0);
 
 	@Message(id = 22078, value = "RCManager could not find file in object store.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -346,11 +346,11 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22080, value = "Unexpected exception during IOR setup", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_5(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_5(@Cause() Throwable arg0);
 
 	@Message(id = 22081, value = "Failed to create poa for recoverycoordinators", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(@Cause() Throwable arg0);
 
 //	@Message(id = 22082, value = "JacOrbRCServiceInit - set default servant and activated", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -358,7 +358,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22083, value = "JacOrbRCServiceInit - Failed to start RC service", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_3(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_3(@Cause() Throwable arg0);
 
 //	@Message(id = 22084, value = "Unable to create file ObjectId", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -378,7 +378,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22088, value = "Failed to create orb and poa for transactional objects", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(@Cause() Throwable arg0);
 
 	@Message(id = 22089, value = "RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -390,7 +390,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22091, value = "Failed in ServerInitializer::post_init -", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(Throwable arg0);
+	public void warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(@Cause() Throwable arg0);
 
 //	@Message(id = 22092, value = "Failed to obtain the service context -", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -401,15 +401,15 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22094, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_context_codecerror(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_javaidl_interceptors_context_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22095, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_context_duplicatename(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_javaidl_interceptors_context_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22096, value = "Context interceptor caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_context_error(Throwable arg0);
+	public void warn_orbspecific_javaidl_interceptors_context_error(@Cause() Throwable arg0);
 
 	@Message(id = 22097, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_context_invalidparam();
@@ -419,18 +419,18 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22099, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_context_srie(String arg0, Throwable arg1);
+	public void warn_orbspecific_javaidl_interceptors_context_srie(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22100, value = "Cannot create a codec of the required encoding.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_interposition_codeccreate();
 
 	@Message(id = 22101, value = "{0} - a failure occured when getting {1} codec - unknown encoding.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_interposition_codecerror(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_javaidl_interceptors_interposition_codecerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22102, value = "{0} - duplicate interceptor name for {1} when registering", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_interposition_duplicatename(String arg0, String arg1, Throwable arg2);
+	public void warn_orbspecific_javaidl_interceptors_interposition_duplicatename(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22103, value = "Invalid portable interceptor transaction parameter!", format = MESSAGE_FORMAT)
 	public String get_orbspecific_javaidl_interceptors_interposition_invalidparam();
@@ -440,26 +440,26 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22105, value = "{0} caught an unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_javaidl_interceptors_interposition_srie(String arg0, Throwable arg1);
+	public void warn_orbspecific_javaidl_interceptors_interposition_srie(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22106, value = "is not a valid unique identifier!", format = MESSAGE_FORMAT)
     public String get_orbspecific_otiderror();
 
 	@Message(id = 22107, value = "{0} for {1} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_tficaught(String arg0, Uid arg1, Throwable arg2);
+	public void warn_orbspecific_tficaught(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 22108, value = "{0} attempt to clean up failed with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_orbspecific_tidyfail(String arg0, Throwable arg1);
+	public void warn_orbspecific_tidyfail(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22109, value = "Resolution of OTS server failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_otsservererror(Throwable arg0);
+	public void warn_otsservererror(@Cause() Throwable arg0);
 
 	@Message(id = 22110, value = "Resolution of OTS server failed - invalid name", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_otsserverfailed(Throwable arg0);
+	public void warn_otsserverfailed(@Cause() Throwable arg0);
 
 //	@Message(id = 22111, value = "ExpiredContactScanner created, with expiry time of {0} seconds", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -503,7 +503,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22121, value = "The Recovery Service Initialisation failed}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_RecoveryEnablement_6(Throwable arg0);
+	public void warn_recovery_RecoveryEnablement_6(@Cause() Throwable arg0);
 
 //	@Message(id = 22122, value = "added ORBAttribute for recoveryCoordinatorInitialiser", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -527,7 +527,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22127, value = "Problem with storing process/factory link", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_contact_FactoryContactItem_1(Throwable arg0);
+	public void warn_recovery_contact_FactoryContactItem_1(@Cause() Throwable arg0);
 
 	@Message(id = 22128, value = "Attempted to read FactoryContactItem of different version", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -539,7 +539,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22130, value = "Problem with restoring process/factory link", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_contact_FactoryContactItem_4(Throwable arg0);
+	public void warn_recovery_contact_FactoryContactItem_4(@Cause() Throwable arg0);
 
 	@Message(id = 22131, value = "Problem with restoring process/factory link", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -551,7 +551,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22133, value = "Problem with removing contact item", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_contact_FactoryContactItem_7(Throwable arg0);
+	public void warn_recovery_contact_FactoryContactItem_7(@Cause() Throwable arg0);
 
 //	@Message(id = 22134, value = "RecoveryContactWriter() created", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -575,11 +575,11 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22139, value = "CORBA exception on trying to contact original process", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_contact_StatusChecker_11(Throwable arg0);
+	public void warn_recovery_contact_StatusChecker_11(@Cause() Throwable arg0);
 
 	@Message(id = 22140, value = "Exception on trying to contact original process", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void  warn_recovery_contact_StatusChecker_12(Throwable arg0);
+	public void  warn_recovery_contact_StatusChecker_12(@Cause() Throwable arg0);
 
 //	@Message(id = 22141, value = "StatusChecker.getStatus({0}) -  no factory, process previously dead", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -591,7 +591,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22143, value = "surprise item in StatusChecker list for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_contact_StatusChecker_15(Uid arg0, Throwable arg1);
+	public void warn_recovery_contact_StatusChecker_15(Uid arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 22144, value = "StatusChecker.getStatus( {0} ) - stored status = {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -651,7 +651,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22158, value = "System exception when creating RecoveryCoordinator object key", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_recoverycoordinators_RecoveryCoordinatorId_2(Throwable arg0);
+	public void warn_recovery_recoverycoordinators_RecoveryCoordinatorId_2(@Cause() Throwable arg0);
 
 	@Message(id = 22159, value = "RecoveryCoordinatorId could not decode data {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -699,7 +699,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22170, value = "RecoveredServerTransaction: caught unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_transactions_RecoveredServerTransaction_13(Throwable arg0);
+	public void warn_recovery_transactions_RecoveredServerTransaction_13(@Cause() Throwable arg0);
 
 	@Message(id = 22171, value = "RecoveredServerTransaction: {0} is invalid", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -755,7 +755,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22184, value = "RecoveredTransaction activate of {0} failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_transactions_RecoveredTransaction_3(Uid arg0, Throwable arg1);
+	public void warn_recovery_transactions_RecoveredTransaction_3(Uid arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 22185, value = "RecoveredTransaction.replayPhase2 ({0}) - status = {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -771,7 +771,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22188, value = "RecoveredTransaction.removeOldStoreEntry - problem", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_transactions_RecoveredTransaction_8(Throwable arg0);
+	public void warn_recovery_transactions_RecoveredTransaction_8(@Cause() Throwable arg0);
 
 //	@Message(id = 22189, value = "ServerTransactionRecoveryModule created", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -887,7 +887,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22217, value = "TransactionRecoveryModule: Object store exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_transactions_TransactionRecoveryModule_4(Throwable arg0);
+	public void warn_recovery_transactions_TransactionRecoveryModule_4(@Cause() Throwable arg0);
 
 //	@Message(id = 22218, value = "found transaction  {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -911,7 +911,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22223, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_errgenerr(String arg0, Throwable arg1);
+	public void warn_resources_errgenerr(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22224, value = "{0} - no parent!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -939,7 +939,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22230, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_rrcaught(String arg0, Throwable arg1);
+	public void warn_resources_rrcaught(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22231, value = "{0} called illegally.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -951,7 +951,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22233, value = "{0} caught unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_eicaughtexception(String arg0, Throwable arg1);
+	public void warn_eicaughtexception(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22234, value = "{0} called multiple times.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -975,7 +975,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22239, value = "{0} caught unexpected exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_extensions_atgenerror(String arg0, Throwable arg1);
+	public void warn_extensions_atgenerror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22240, value = "{0} - no transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -999,11 +999,11 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22245, value = "Cannot determine transaction name!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_extensions_namefail(Throwable arg0);
+	public void warn_extensions_namefail(@Cause() Throwable arg0);
 
 	@Message(id = 22246, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_extensions_threadasserror(String arg0, Throwable arg1);
+	public void warn_extensions_threadasserror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22247, value = "Top-level transaction going out of scope with nested transaction {0} still set.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1015,7 +1015,7 @@ public interface jtsI18NLogger {
 
 	@Message(id = 22249, value = "{0} - could not resume transaction", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_thread_resumefailed(String arg0, Throwable arg1);
+	public void warn_thread_resumefailed(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 22250, value = "could not resume transaction:", format = MESSAGE_FORMAT)
 	public String get_thread_resumefailederror();
@@ -1026,7 +1026,7 @@ public interface jtsI18NLogger {
 
     @Message(id = 22252, value = "Failed to remove old ObjectStore entry", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_recoveredServerTransaction_removeOldStoreEntry(Throwable arg0);
+    public void warn_recoveredServerTransaction_removeOldStoreEntry(@Cause() Throwable arg0);
     
 	@Message(id = 22253, value = "A client-side request interceptor already exists with that name.", format = MESSAGE_FORMAT)
 	public String get_orbspecific_jacorb_interceptors_context_cie();

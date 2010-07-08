@@ -54,7 +54,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16004, value = "XARecoveryModule setup failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_constfail(Throwable arg0);
+	public void warn_recovery_constfail(@Cause() Throwable arg0);
 
 	@Message(id = 16005, value = "{0} - failed to recover XAResource. status is ${1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -62,7 +62,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16006, value = "{0} - forget threw exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_forgetfailed(String arg0, Throwable arg1);
+	public void warn_recovery_forgetfailed(String arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 16007, value = "Caught exception: {0} for {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -70,11 +70,11 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16008, value = "{0} - caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_generalrecoveryerror(String arg0, Throwable arg1);
+	public void warn_recovery_generalrecoveryerror(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16009, value = "Caught:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_getxaresource(Throwable arg0);
+	public void warn_recovery_getxaresource(@Cause() Throwable arg0);
 
 //	@Message(id = 16010, value = "{0} - first pass", format = MESSAGE_FORMAT)
 //	@LogMessage(level = INFO)
@@ -110,15 +110,15 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16018, value = "XARecoveryModule periodicWork failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_objstoreerror(Throwable arg0);
+	public void warn_recovery_objstoreerror(@Cause() Throwable arg0);
 
 	@Message(id = 16019, value = "{0} exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_periodicfirstpass(String arg0, Throwable arg1);
+	public void warn_recovery_periodicfirstpass(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16020, value = "{0} exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_periodicsecondpass(String arg0, Throwable arg1);
+	public void warn_recovery_periodicsecondpass(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16021, value = "JTA recovery delayed for {0}; got status {1} so waiting for coordinator driven recovery", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -126,7 +126,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16022, value = "Recovery threw:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_recoveryerror(Throwable arg0);
+	public void warn_recovery_recoveryerror(@Cause() Throwable arg0);
 
 	@Message(id = 16023, value = "JTA failed to recovery {0}; got status {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -138,7 +138,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16025, value = "Unexpected recovery error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_unexpectedrecoveryerror(Throwable arg0);
+	public void warn_recovery_unexpectedrecoveryerror(@Cause() Throwable arg0);
 
 //	@Message(id = 16026, value = "{0} - first pass", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -146,22 +146,22 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16027, value = "{0} got XA exception {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_xarecovery1(String arg0, String arg1, Throwable arg2);
+	public void warn_recovery_xarecovery1(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 16028, value = "{0} got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_xarecovery2(String arg0, Throwable arg1);
+	public void warn_recovery_xarecovery2(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16029, value = "SynchronizationImple.afterCompletion - failed for {0} with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_SynchronizationImple(String arg0, Throwable arg1);
+	public void warn_resources_arjunacore_SynchronizationImple(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16030, value = "XAOnePhaseResource.pack failed to serialise resource", format = MESSAGE_FORMAT)
 	public String get_resources_arjunacore_XAOnePhaseResource_pack();
 
 	@Message(id = 16031, value = "XAOnePhaseResource.rollback for {0} failed with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_XAOnePhaseResource_rollbackexception(String arg0, Throwable arg1);
+	public void warn_resources_arjunacore_XAOnePhaseResource_rollbackexception(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16032, value = "failed to deserialise resource", format = MESSAGE_FORMAT)
 	public String get_resources_arjunacore_XAOnePhaseResource_unpack();
@@ -179,7 +179,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16036, value = "commit on {0} ({1}) failed with exception ${2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_commitxaerror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_resources_arjunacore_commitxaerror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16037, value = "Could not find new XAResource to use for recovering non-serializable XAResource {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -191,7 +191,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16039, value = "onePhaseCommit on {0} ({1}) failed with exception {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_opcerror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_resources_arjunacore_opcerror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16040, value = "{0} - null transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -199,7 +199,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16041, value = "prepare on {0} ({1}) failed with exception {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_preparefailed(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_resources_arjunacore_preparefailed(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16042, value = "{0} - null transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -207,15 +207,15 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16043, value = "Exception on attempting to restore XAResource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_restorestate(Throwable arg0);
+	public void warn_resources_arjunacore_restorestate(@Cause() Throwable arg0);
 
 	@Message(id = 16044, value = "An error occurred during restore_state for XAResource {0} and transaction {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_restorestateerror(String arg0, String arg1, Throwable arg2);
+	public void warn_resources_arjunacore_restorestateerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 16045, value = "attempted rollback of {0} ({1}) failed with exception code {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_rollbackerror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_resources_arjunacore_rollbackerror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16046, value = "{0} - null transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -227,7 +227,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16048, value = "An error occurred during save_state for XAResource {0} and transaction {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_resources_arjunacore_savestateerror(String arg0, String arg1, Throwable arg2);
+	public void warn_resources_arjunacore_savestateerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 16049, value = "{0} called illegally.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -252,11 +252,11 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16055, value = "{0} caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_delistgeneral(String arg0, Throwable arg1);
+	public void warn_transaction_arjunacore_delistgeneral(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16056, value = "{0} - caught exception during delist : {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_delistresource(String arg0, String arg1, Throwable arg2);
+	public void warn_transaction_arjunacore_delistresource(String arg0, String arg1, @Cause() Throwable arg2);
 
 //	@Message(id = 16057, value = "Can't enlist the resource because the transaction is marked for rollback", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -275,7 +275,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16061, value = "{0} - XAResource.start returned: {2} for {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_enliststarterror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_transaction_arjunacore_enliststarterror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16062, value = "illegal resource state", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_illresstate();
@@ -292,18 +292,18 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16066, value = "Failed to create instance of TransactionImporter", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-	public void error_transaction_arjunacore_jca_SubordinationManager_importerfailure(Throwable arg0);
+	public void error_transaction_arjunacore_jca_SubordinationManager_importerfailure(@Cause() Throwable arg0);
 
 	@Message(id = 16067, value = "Failed to create instance of XATerminator", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
-	public void error_transaction_arjunacore_jca_SubordinationManager_terminatorfailure(Throwable arg0);
+	public void error_transaction_arjunacore_jca_SubordinationManager_terminatorfailure(@Cause() Throwable arg0);
 
 	@Message(id = 16068, value = "Work already active!", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_jca_busy();
 
 	@Message(id = 16069, value = "failed to load Last Resource Optimisation Interface {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0, Throwable arg1);
+	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 16070, value = "{0} - could not mark {0} as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -311,7 +311,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16071, value = "{0} caught XAException: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_newtmerror(String arg0, String arg1, Throwable arg2);
+	public void warn_transaction_arjunacore_newtmerror(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 16072, value = "No such transaction!", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_nosuchtx();
@@ -356,11 +356,11 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16085, value = "Caught the following error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_threadexception(Throwable arg0);
+	public void warn_transaction_arjunacore_threadexception(@Cause() Throwable arg0);
 
 	@Message(id = 16086, value = "{0} setTransactionTimeout on XAResource {1} threw: {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_timeouterror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_transaction_arjunacore_timeouterror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 16087, value = "{0} - unknown resource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -368,11 +368,11 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16088, value = "Could not call end on a suspended resource!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_xaenderror(Throwable arg0);
+	public void warn_transaction_arjunacore_xaenderror(@Cause() Throwable arg0);
 
 	@Message(id = 16089, value = "{0} - caught: {2} for {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_xastart(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_transaction_arjunacore_xastart(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 //	@Message(id = 16090, value = "Failed to create instance of TransactionManager", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -380,7 +380,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16091, value = "Failed to lookup transaction manager in JNDI context", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_TransactionManager_jndifailure(Throwable arg0);
+	public void warn_TransactionManager_jndifailure(@Cause() Throwable arg0);
 
 //	@Message(id = 16092, value = "Failed to create instance of UserTransaction", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -388,7 +388,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16093, value = "Failed to lookup user transaction in JNDI context", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_UserTransaction_jndifailure(Throwable arg0);
+	public void warn_UserTransaction_jndifailure(@Cause() Throwable arg0);
 
 //	@Message(id = 16094, value = "Failed to bind the JTA implementations with the appropriate JNDI contexts: {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

@@ -53,7 +53,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24004, value = "Caught the following error while trying to single phase complete resource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_coperror(Throwable arg0);
+	public void warn_jtax_resources_jts_orbspecific_coperror(@Cause() Throwable arg0);
 
 	@Message(id = 24005, value = "Committing of resource state failed.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -61,7 +61,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24006, value = "{0} caused an error from resource {1} in transaction {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_generror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_jtax_resources_jts_orbspecific_generror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 24007, value = "You have chosen to disable the Multiple Last Resources warning. You will see it only once.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -81,7 +81,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24011, value = "Reading state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_loadstateread(Throwable arg0);
+	public void warn_jtax_resources_jts_orbspecific_loadstateread(@Cause() Throwable arg0);
 
 	@Message(id = 24012, value = "Could not find new XAResource to use for recovering non-serializable XAResource {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -97,23 +97,23 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24015, value = "XAResource prepare failed on resource {0} for transaction {1} with: {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_preparefailed(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_jtax_resources_jts_orbspecific_preparefailed(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 	@Message(id = 24016, value = "Recovery of resource failed when trying to call {0} got exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_recfailed(String arg0, Throwable arg1);
+	public void warn_jtax_resources_jts_orbspecific_recfailed(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 24017, value = "Attempted shutdown of resource failed with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_remconn(Throwable arg0);
+	public void warn_jtax_resources_jts_orbspecific_remconn(@Cause() Throwable arg0);
 
 	@Message(id = 24018, value = "Exception on attempting to resource XAResource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_restoreerror1(Throwable arg0);
+	public void warn_jtax_resources_jts_orbspecific_restoreerror1(@Cause() Throwable arg0);
 
 	@Message(id = 24019, value = "Unexpected exception on attempting to resource XAResource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_restoreerror2(Throwable arg0);
+	public void warn_jtax_resources_jts_orbspecific_restoreerror2(@Cause() Throwable arg0);
 
 	@Message(id = 24020, value = "Could not serialize a serializable XAResource!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -121,7 +121,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24021, value = "{0} caught unexpected exception during recovery phase!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_unexpected(String arg0, Throwable arg1);
+	public void warn_jtax_resources_jts_orbspecific_unexpected(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 24022, value = "Updating of resource state failed.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -129,14 +129,14 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24023, value = "{0} caused an XA error: {1} from resource {2} in transaction {3}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_resources_jts_orbspecific_xaerror(String arg0, String arg1, String arg2, String arg3, Throwable arg4);
+	public void warn_jtax_resources_jts_orbspecific_xaerror(String arg0, String arg1, String arg2, String arg3, @Cause() Throwable arg4);
 
 	@Message(id = 24024, value = "thread is already associated with a transaction and subtransaction support is not enabled!", format = MESSAGE_FORMAT)
 	public String get_jtax_transaction_jts_alreadyassociated();
 
 	@Message(id = 24025, value = "Delist of resource failed with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_delistfailed(Throwable arg0);
+	public void warn_jtax_transaction_jts_delistfailed(@Cause() Throwable arg0);
 
 	@Message(id = 24026, value = "Ending suspended RMs failed when rolling back the transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -163,7 +163,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24033, value = "failed to load Last Resource Optimisation Interface {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0, Throwable arg1);
+	public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 24034, value = "Could not enlist resource because the transaction is marked for rollback.", format = MESSAGE_FORMAT)
 	public String get_jtax_transaction_jts_markedrollback();
@@ -197,11 +197,11 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24043, value = "An error occurred while checking if this is a new resource manager:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_rmerror(Throwable arg0);
+	public void warn_jtax_transaction_jts_rmerror(@Cause() Throwable arg0);
 
 	@Message(id = 24044, value = "{0} could not mark the transaction as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_rollbackerror(String arg0, Throwable arg1);
+	public void warn_jtax_transaction_jts_rollbackerror(String arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 24045, value = "setRollbackOnly called from:", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -209,7 +209,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24046, value = "{0} returned XA error {1} for transaction {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_starterror(String arg0, String arg1, String arg2, Throwable arg3);
+	public void warn_jtax_transaction_jts_starterror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
 //	@Message(id = 24047, value = "Not allowed to terminate subordinate transaction directly.", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -220,7 +220,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24049, value = "cleanup synchronization failed to register:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_syncproblem(Throwable arg0);
+	public void warn_jtax_transaction_jts_syncproblem(@Cause() Throwable arg0);
 
 	@Message(id = 24050, value = "The transaction implementation threw a RollbackException", format = MESSAGE_FORMAT)
 	public String get_jtax_transaction_jts_syncrollbackexception();
@@ -230,7 +230,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24052, value = "Active thread error:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_threaderror(Throwable arg0);
+	public void warn_jtax_transaction_jts_threaderror(@Cause() Throwable arg0);
 
 	@Message(id = 24053, value = "{0} attempt to delist unknown resource!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -245,11 +245,11 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24056, value = "{0} caught XA exception: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_xaerror(String arg0, String arg1, Throwable arg2);
+	public void warn_jtax_transaction_jts_xaerror(String arg0, String arg1, @Cause() Throwable arg2);
 
     @Message(id = 24057, value = "{0} setTransactionTimeout on XAResource {2} threw: {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_jtax_transaction_jts_timeouterror(String arg0, String arg1, String arg2, Throwable arg3);
+    public void warn_jtax_transaction_jts_timeouterror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
     /*
         Allocate new messages directly above this notice.

@@ -70,7 +70,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12008, value = "DisposeRecord::topLevelCommit - exception while deleting state", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_DisposeRecord_5(Throwable arg0);
+	public void warn_DisposeRecord_5(@Cause() Throwable arg0);
 
 	@Message(id = 12009, value = "PersistenceRecord::restore_state: Failed to unpack object store type", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -106,11 +106,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12017, value = "PersistenceRecord::topLevelAbort() - Received ObjectStoreException", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_PersistenceRecord_20(Throwable arg0);
+	public void warn_PersistenceRecord_20(@Cause() Throwable arg0);
 
 	@Message(id = 12018, value = "PersistenceRecord.topLevelPrepare - write_uncommitted error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_PersistenceRecord_21(Throwable arg0);
+	public void warn_PersistenceRecord_21(@Cause() Throwable arg0);
 
 	@Message(id = 12019, value = "PersistenceRecord::topLevelCommit - no state to commit!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -118,7 +118,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12020, value = "PersistenceRecord::topLevelCommit - caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_PersistenceRecord_4(Throwable arg0);
+	public void warn_PersistenceRecord_4(@Cause() Throwable arg0);
 
 	@Message(id = 12021, value = "PersistenceRecord::topLevelCommit - no object store specified!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -179,7 +179,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12036, value = "StateManager::deactivate - object store error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_StateManager_3(Throwable arg0);
+	public void warn_StateManager_3(@Cause() Throwable arg0);
 
 	@Message(id = 12037, value = "StateManager::deactivate - save_state error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -191,7 +191,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12039, value = "StateManager.destroy - caught object store exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_StateManager_7(Throwable arg0);
+	public void warn_StateManager_7(@Cause() Throwable arg0);
 
 	@Message(id = 12040, value = "StateManager.destroy - called on non-persistent or new object!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -225,7 +225,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12048, value = "Uid general parsing error: {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-	public void warn_common_Uid_3(String arg0, Throwable arg1);
+	public void warn_common_Uid_3(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12049, value = "Uid.Uid string constructor could not create nullUid for incorrect string: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
@@ -252,15 +252,15 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12055, value = "Exception thrown creating Uid from bytes!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_Uid_bytes(Throwable arg0);
+	public void warn_common_Uid_bytes(@Cause() Throwable arg0);
 
 	@Message(id = 12056, value = "Exception thrown getting bytes!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_Uid_getbytes(Throwable arg0);
+	public void warn_common_Uid_getbytes(@Cause() Throwable arg0);
 
 	@Message(id = 12057, value = "Uid.Uid string constructor {0} caught other throwable", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_Uid_npe(String arg0, Throwable arg1);
+	public void warn_common_Uid_npe(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12058, value = "AbstractRecord.create {0} failed to find record.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -450,7 +450,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12105, value = "Could not remove intentions list:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_BasicAction_70(Throwable arg0);
+	public void warn_coordinator_BasicAction_70(@Cause() Throwable arg0);
 
 //	@Message(id = 12106, value = "Deactivation of atomic action with id {0} and type {1} unexpectedly failed", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -477,7 +477,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12112, value = "TransactionReaper::check exception while marking TX {0} as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TransactionReaper_12(Uid arg0, Throwable arg1);
+	public void warn_coordinator_TransactionReaper_12(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12113, value = "TransactionReaper::doCancellations worker {0} missed interrupt when cancelling TX {1} -- exiting as zombie (zombie count decremented to {2})", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -493,7 +493,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12116, value = "TransactionReaper::doCancellations worker {0} exception while marking TX {1} as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TransactionReaper_16(String arg0, Uid arg1, Throwable arg2);
+	public void warn_coordinator_TransactionReaper_16(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 12117, value = "TransactionReaper::check timeout for TX {0} in state  {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -521,7 +521,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12123, value = "TransactionReaper::doCancellations worker {0} exception during cancel of TX {1} -- rescheduling for mark-as-rollback", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TransactionReaper_9(String arg0, Uid arg1, Throwable arg2);
+	public void warn_coordinator_TransactionReaper_9(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 12124, value = "TwoPhaseCoordinator.beforeCompletion - attempted rollback_only failed!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -529,7 +529,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12125, value = "TwoPhaseCoordinator.beforeCompletion - failed for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TwoPhaseCoordinator_2(String arg0, Throwable arg1);
+	public void warn_coordinator_TwoPhaseCoordinator_2(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12126, value = "TwoPhaseCoordinator.beforeCompletion TwoPhaseCoordinator.afterCompletion called on still running transaction!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -541,11 +541,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12128, value = "TwoPhaseCoordinator.afterCompletion - failed for {0} with exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TwoPhaseCoordinator_4a(String arg0, Throwable arg1);
+	public void warn_coordinator_TwoPhaseCoordinator_4a(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12129, value = "TwoPhaseCoordinator.afterCompletion - failed for {0} with error", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_TwoPhaseCoordinator_4b(String arg0, Throwable arg1);
+	public void warn_coordinator_TwoPhaseCoordinator_4b(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12130, value = "Name of XA node not defined. Using {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -611,7 +611,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12146, value = "ActionStatusService: searching for uid: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_ActionStatusService_5(Uid arg0, Throwable arg1);
+	public void warn_recovery_ActionStatusService_5(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12147, value = "transactionType: {0} uid: {1}   Status is {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -619,11 +619,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12148, value = "Other Exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_ActionStatusService_2(Throwable arg0);
+	public void warn_recovery_ActionStatusService_2(@Cause() Throwable arg0);
 
 	@Message(id = 12149, value = "Exception retrieving action status", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_ActionStatusService_3(Throwable arg0);
+	public void warn_recovery_ActionStatusService_3(@Cause() Throwable arg0);
 
 	@Message(id = 12150, value = "matching Uid {0} found", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -631,7 +631,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12151, value = "Exception when accessing transaction store", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_ActionStatusService_6(Throwable arg0);
+	public void warn_recovery_ActionStatusService_6(@Cause() Throwable arg0);
 
 	@Message(id = 12152, value = "Connection Lost to Recovery Manager", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -671,11 +671,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12161, value = "Exception when accessing data store", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusConnectionManager_1(Throwable arg0);
+	public void warn_recovery_TransactionStatusConnectionManager_1(@Cause() Throwable arg0);
 
 	@Message(id = 12162, value = "Object store exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusConnectionManager_2(Throwable arg0);
+	public void warn_recovery_TransactionStatusConnectionManager_2(@Cause() Throwable arg0);
 
 	@Message(id = 12163, value = "Starting service {0} on port {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -819,7 +819,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12204, value = "Error registering {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_tools_osb_util_JMXServer_m_3(String arg0, Throwable arg1);
+	public void warn_tools_osb_util_JMXServer_m_3(String arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 12205, value = "Try to unregister mbean with invalid name {0}.", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -827,11 +827,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12206, value = "Unable to unregister bean {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_tools_osb_util_JMXServer_m_5(String arg0, Throwable arg1);
+	public void warn_tools_osb_util_JMXServer_m_5(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12207, value = "Unable to unregister bean {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_tools_osb_util_JMXServer_m_6(String arg0, Throwable arg1);
+	public void warn_tools_osb_util_JMXServer_m_6(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12208, value = "An error occurred while creating file {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -839,7 +839,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12209, value = "Utility.getDefaultProcess - failed with", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_utils_Utility_1(Throwable arg0);
+	public void warn_utils_Utility_1(@Cause() Throwable arg0);
 
 	@Message(id = 12210, value = "Unable to use InetAddress.getLocalHost() to resolve address.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -851,15 +851,15 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12212, value = "StateManagerFriend.forgetAction", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_abstractrecords_smf1(Throwable arg0);
+	public void warn_abstractrecords_smf1(@Cause() Throwable arg0);
 
 	@Message(id = 12213, value = "StateManagerFriend.destroyed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_abstractrecords_smf2(Throwable arg0);
+	public void warn_abstractrecords_smf2(@Cause() Throwable arg0);
 
 	@Message(id = 12214, value = "StateManagerFriend.rememberAction", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_abstractrecords_smf3(Throwable arg0);
+	public void warn_abstractrecords_smf3(@Cause() Throwable arg0);
 
 	@Message(id = 12215, value = "className is null", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -867,23 +867,23 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12216, value = "attempt to load {0} threw ClassNotFound. Wrong classloader?", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_ClassloadingUtility_2(String arg0, Throwable arg1);
+	public void warn_common_ClassloadingUtility_2(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12217, value = "class {0} does not implement {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_ClassloadingUtility_3(String arg0, String arg1, Throwable arg2);
+	public void warn_common_ClassloadingUtility_3(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 12218, value = "can't create new instance of {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_ClassloadingUtility_4(String arg0, Throwable arg1);
+	public void warn_common_ClassloadingUtility_4(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12219, value = "can't access {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_ClassloadingUtility_5(String arg0, Throwable arg1);
+	public void warn_common_ClassloadingUtility_5(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12220, value = "can't initialize from string {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_common_ClassloadingUtility_6(String arg0, Throwable arg1);
+	public void warn_common_ClassloadingUtility_6(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12221, value = "Commit state failed for {0} and {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -950,7 +950,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12239, value = "hide_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_1(Throwable arg0);
+	public void warn_objectstore_JDBCImple_1(@Cause() Throwable arg0);
 
 	@Message(id = 12240, value = "remove_state - type() operation of object with uid {0} returns NULL", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -966,11 +966,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12243, value = "initialise caught exceptionatorLoader_3", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_13(Throwable arg0);
+	public void warn_objectstore_JDBCImple_13(@Cause() Throwable arg0);
 
 	@Message(id = 12244, value = "getState caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_14(Throwable arg0);
+	public void warn_objectstore_JDBCImple_14(@Cause() Throwable arg0);
 
 	@Message(id = 12245, value = "removeFromCache - no entry for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -978,7 +978,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12246, value = "getPool caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_16(Throwable arg0);
+	public void warn_objectstore_JDBCImple_16(@Cause() Throwable arg0);
 
 	@Message(id = 12247, value = "getPool - interrupted while waiting for a free connection", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -990,31 +990,31 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12249, value = "reveal_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_2(Throwable arg0);
+	public void warn_objectstore_JDBCImple_2(@Cause() Throwable arg0);
 
 	@Message(id = 12250, value = "currentState caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_3(Throwable arg0);
+	public void warn_objectstore_JDBCImple_3(@Cause() Throwable arg0);
 
 	@Message(id = 12251, value = "allObjUids caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_4(Throwable arg0);
+	public void warn_objectstore_JDBCImple_4(@Cause() Throwable arg0);
 
 	@Message(id = 12252, value = "allObjUids - pack of Uid failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_5(Throwable arg0);
+	public void warn_objectstore_JDBCImple_5(@Cause() Throwable arg0);
 
 	@Message(id = 12253, value = "allTypes caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_6(Throwable arg0);
+	public void warn_objectstore_JDBCImple_6(@Cause() Throwable arg0);
 
 	@Message(id = 12254, value = "allTypes - pack of Uid failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_7(Throwable arg0);
+	public void warn_objectstore_JDBCImple_7(@Cause() Throwable arg0);
 
 	@Message(id = 12255, value = "remove_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_8(Throwable arg0);
+	public void warn_objectstore_JDBCImple_8(@Cause() Throwable arg0);
 
 	@Message(id = 12256, value = "remove_state() attempted removal of {0} state for object with uid {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1026,7 +1026,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12258, value = "JDBCImple:write_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_JDBCImple_writefailed(Throwable arg0);
+	public void warn_objectstore_JDBCImple_writefailed(@Cause() Throwable arg0);
 
 	@Message(id = 12259, value = "JDBCStore could not setup store < {0} , {1} >", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
@@ -1034,7 +1034,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12260, value = "Received exception for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
-	public void fatal_objectstore_JDBCStore_2(String arg0, Throwable arg1);
+	public void fatal_objectstore_JDBCStore_2(String arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12261, value = "JDBCStore.setupStore failed to initialise!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1137,7 +1137,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12286, value = "oracle:write_state caught exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_jdbc_oracle_2(Throwable arg0);
+	public void warn_objectstore_jdbc_oracle_2(@Cause() Throwable arg0);
 
 	@Message(id = 12287, value = "No typename for object:", format = MESSAGE_FORMAT)
 	public String get_objectstore_notypenameuid();
@@ -1147,15 +1147,15 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12289, value = "RecoveryManagerStatusModule: Object store exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_AtomicActionRecoveryModule_1(Throwable arg0);
+	public void warn_recovery_AtomicActionRecoveryModule_1(@Cause() Throwable arg0);
 
 	@Message(id = 12290, value = "failed to recover Transaction {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_AtomicActionRecoveryModule_2(Uid arg0, Throwable arg1);
+	public void warn_recovery_AtomicActionRecoveryModule_2(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12291, value = "failed to access transaction store {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_AtomicActionRecoveryModule_3(Uid arg0, Throwable arg1);
+	public void warn_recovery_AtomicActionRecoveryModule_3(Uid arg0, @Cause() Throwable arg1);
 
 	@Message(id = 12292, value = "Connection - IOException", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1195,7 +1195,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12301, value = "ExpiredTransactionScanner - exception during attempted move {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_ExpiredTransactionScanner_2(Uid arg0, Throwable arg1);
+	public void warn_recovery_ExpiredTransactionScanner_2(Uid arg0, @Cause() Throwable arg1);
 
 //	@Message(id = 12302, value = "ExpiredTransactionScanner - could not moved log {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1239,11 +1239,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12312, value = "Loading recovery module", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_3(Throwable arg0);
+	public void warn_recovery_PeriodicRecovery_3(@Cause() Throwable arg0);
 
 	@Message(id = 12313, value = "Loading recovery module", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_4(Throwable arg0);
+	public void warn_recovery_PeriodicRecovery_4(@Cause() Throwable arg0);
 
 	@Message(id = 12314, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1263,7 +1263,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12318, value = "Could not create recovery listener", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_9(Throwable arg0);
+	public void warn_recovery_PeriodicRecovery_9(@Cause() Throwable arg0);
 
 	@Message(id = 12319, value = "Attempt to load recovery activator with null class name!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1275,11 +1275,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12321, value = "Loading recovery activator", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_3(Throwable arg0);
+	public void warn_recovery_RecActivatorLoader_3(@Cause() Throwable arg0);
 
 	@Message(id = 12322, value = "Loading recovery activator", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_4(Throwable arg0);
+	public void warn_recovery_RecActivatorLoader_4(@Cause() Throwable arg0);
 
 	@Message(id = 12323, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1295,7 +1295,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12326, value = "socket I/O exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_RecoveryManagerImple_2(Throwable arg0);
+	public void warn_recovery_RecoveryManagerImple_2(@Cause() Throwable arg0);
 
 	@Message(id = 12327, value = "TransactionStatusConnector.delete called erroneously", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1323,19 +1323,19 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12333, value = "Problem with removing host/port item", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManagerItem_1(Throwable arg0);
+	public void warn_recovery_TransactionStatusManagerItem_1(@Cause() Throwable arg0);
 
 	@Message(id = 12334, value = "Problem with storing host/port", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManagerItem_2(Throwable arg0);
+	public void warn_recovery_TransactionStatusManagerItem_2(@Cause() Throwable arg0);
 
 	@Message(id = 12335, value = "Problem retrieving host/port", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManagerItem_3(Throwable arg0);
+	public void warn_recovery_TransactionStatusManagerItem_3(@Cause() Throwable arg0);
 
 	@Message(id = 12336, value = "Failed to obtain host", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManagerItem_4(Throwable arg0);
+	public void warn_recovery_TransactionStatusManagerItem_4(@Cause() Throwable arg0);
 
 	@Message(id = 12337, value = "TransactionStatusManagerItem host: {0} port: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -1343,7 +1343,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12338, value = "Other Exception:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_WorkerService_1(Throwable arg0);
+	public void warn_recovery_WorkerService_1(@Cause() Throwable arg0);
 
 	@Message(id = 12339, value = "IOException", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1391,7 +1391,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12351, value = "Encountered a problem when closing the data stream", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_utils_ExecProcessId_5(Throwable arg0);
+	public void warn_utils_ExecProcessId_5(@Cause() Throwable arg0);
 
 	@Message(id = 12352, value = "FileProcessId.getpid - could not locate temporary directory.", format = MESSAGE_FORMAT)
 	public String get_utils_FileProcessId_1();
@@ -1421,15 +1421,15 @@ public interface arjunaI18NLogger {
 
     @Message(id = 12360, value = "Unable to instantiate ExpiryScanner", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_recovery_ExpiredEntryMonitor_6(Throwable arg0);
+    public void warn_recovery_ExpiredEntryMonitor_6(@Cause() Throwable arg0);
 
     @Message(id = 12361, value = "Error constructing mbean", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
-    public void info_osb_MBeanCtorFail(Throwable arg0);
+    public void info_osb_MBeanCtorFail(@Cause() Throwable arg0);
 
     @Message(id = 12362, value = "Failed to create StateManagerWrapper", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
-    public void info_osb_StateManagerWrapperFail(Throwable arg0);
+    public void info_osb_StateManagerWrapperFail(@Cause() Throwable arg0);
 
     @Message(id = 12363, value = "Invalid rootName. Expected {0} but was {1}", format = MESSAGE_FORMAT)
     public String get_StoreManager_invalidroot(String arg0, String arg1);
