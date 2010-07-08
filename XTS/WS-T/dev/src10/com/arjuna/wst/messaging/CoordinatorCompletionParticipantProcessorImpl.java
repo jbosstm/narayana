@@ -109,17 +109,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from cancel:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from cancel:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.tracev("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendCancelled(addressingContext, arjunaContext) ;
         }
@@ -145,17 +145,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from close:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from close:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.tracev("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendClosed(addressingContext, arjunaContext) ;
         }
@@ -181,17 +181,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from compensate:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from compensate:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Compensate called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.tracev("Compensate called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendCompensated(addressingContext, arjunaContext) ;
         }
@@ -217,17 +217,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from complete:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from complete:", th) ;
                 }
             }
         }
         else
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                WSTLogger.logger.tracev("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
             }
             sendFault(addressingContext, arjunaContext, WSTLogger.i18NLogger.get_messaging_CoordinatorCompletionParticipantProcessorImpl_complete_3()) ;
         }
@@ -253,15 +253,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from exited:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from exited:", th) ;
                 }
             }
         }
-        else if (WSTLogger.logger.isDebugEnabled())
+        else if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("Exited called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.tracev("Exited called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -285,15 +285,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from faulted:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from faulted:", th) ;
                 }
             }
         }
-        else if (WSTLogger.logger.isDebugEnabled())
+        else if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("Faulted called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.tracev("Faulted called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -317,17 +317,17 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from getStatus:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from getStatus:", th) ;
                 }
             }
         }
         else
         {
-        if (WSTLogger.logger.isDebugEnabled())
+        if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("GetStatus called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.tracev("GetStatus called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
             // send an invalid state fault
 
@@ -373,15 +373,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from status:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from status:", th) ;
                 }
             }
         }
-        else if (WSTLogger.logger.isDebugEnabled())
+        else if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("Status called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.tracev("Status called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -406,15 +406,15 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             }
             catch (final Throwable th)
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Unexpected exception thrown from soapFault:", th) ;
+                    WSTLogger.logger.tracev("Unexpected exception thrown from soapFault:", th) ;
                 }
             }
         }
-        else if (WSTLogger.logger.isDebugEnabled())
+        else if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("SoapFault called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+            WSTLogger.logger.tracev("SoapFault called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -436,9 +436,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Cancelled", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Cancelled", th) ;
             }
         }
     }
@@ -461,9 +461,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Closed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Closed", th) ;
             }
         }
     }
@@ -486,9 +486,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Compensated", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Compensated", th) ;
             }
         }
     }
@@ -512,9 +512,9 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Fail", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Fail", th) ;
             }
         }
     }

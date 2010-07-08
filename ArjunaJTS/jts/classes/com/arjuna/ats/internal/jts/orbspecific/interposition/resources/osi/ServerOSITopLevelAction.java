@@ -53,8 +53,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     {
         super(control, doRegister);
 
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::ServerOSITopLevelAction ( ServerControl, "
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::ServerOSITopLevelAction ( ServerControl, "
                     + doRegister + " )");
         }
     }
@@ -66,8 +66,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed,
             HeuristicHazard, SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::prepare for " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::prepare for " + _theUid);
         }
 
         /*
@@ -83,8 +83,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public void rollback () throws SystemException, HeuristicCommit,
             HeuristicMixed, HeuristicHazard
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::rollback for " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::rollback for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -95,8 +95,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
     public void commit () throws SystemException, NotPrepared,
             HeuristicRollback, HeuristicMixed, HeuristicHazard
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::commit for " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::commit for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -106,8 +106,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 
     public void forget () throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::forget for " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::forget for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());
@@ -122,8 +122,8 @@ public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 
     public void commit_one_phase () throws HeuristicHazard, SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerOSITopLevelAction::commit_one_phase for " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerOSITopLevelAction::commit_one_phase for " + _theUid);
         }
 
         OTIDMap.remove(get_uid());

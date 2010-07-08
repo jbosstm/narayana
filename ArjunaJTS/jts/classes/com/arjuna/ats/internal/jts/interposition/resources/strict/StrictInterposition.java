@@ -223,7 +223,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 	    action.addChild((ServerStrictNestedAction) nestedAction);
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(ctx, newElement);
 
 	/*
@@ -447,7 +447,7 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier, P
 	    }
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(context, hier);
 
 	return control;

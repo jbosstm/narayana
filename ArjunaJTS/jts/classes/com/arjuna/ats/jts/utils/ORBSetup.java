@@ -59,8 +59,8 @@ public class ORBSetup implements InitClassInterface
     {
 	if ( !ORBManager.isInitialised() )
         {
-            if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("The ORBSetup.invoke method has been invoked");
+            if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("The ORBSetup.invoke method has been invoked");
             }
 
             /**
@@ -73,8 +73,8 @@ public class ORBSetup implements InitClassInterface
 
                 if ( !( orb instanceof InternalORB ) )
                 {
-                    if (jtsLogger.logger.isDebugEnabled()) {
-                        jtsLogger.logger.debug("The JTS ORB has been set to " + orb);
+                    if (jtsLogger.logger.isTraceEnabled()) {
+                        jtsLogger.logger.trace("The JTS ORB has been set to " + orb);
                     }
 
                     /**
@@ -96,8 +96,8 @@ public class ORBSetup implements InitClassInterface
 
                 if ( ( oa != null ) && ( !( oa.getAssociatedORB() instanceof InternalORB ) ) )
                 {
-                    if (jtsLogger.logger.isDebugEnabled()) {
-                        jtsLogger.logger.debug("The JTS OA has been set " + oa);
+                    if (jtsLogger.logger.isTraceEnabled()) {
+                        jtsLogger.logger.trace("The JTS OA has been set " + oa);
                     }
                     ORBManager.setPOA(oa);
                 }

@@ -73,8 +73,8 @@ public class TransactionImple extends
 
 	public boolean equals (Object obj)
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.equals");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.equals");
         }
 
 		if (obj == null)

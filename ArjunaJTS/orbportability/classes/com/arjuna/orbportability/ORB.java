@@ -65,8 +65,8 @@ public class ORB
 
 public synchronized void initORB () throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::initORB ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::initORB ()");
         }
 
 	/*
@@ -115,8 +115,8 @@ public synchronized void initORB () throws SystemException
 
 public synchronized void initORB (Applet a, Properties p) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::initORB (Applet, Properties)");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::initORB (Applet, Properties)");
         }
 
 	if (!_orb.initialised())
@@ -159,8 +159,8 @@ public synchronized void initORB (Applet a, Properties p) throws SystemException
 
 public synchronized void initORB (String[] s, Properties p) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::initORB (String[], Properties)");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::initORB (String[], Properties)");
         }
 
 	if (!_orb.initialised())
@@ -199,8 +199,8 @@ public synchronized void initORB (String[] s, Properties p) throws SystemExcepti
 
 public synchronized boolean addAttribute (Attribute p)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::addAttribute (" + p + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::addAttribute (" + p + ")");
         }
 
 	if (_orb.initialised())  // orb already set up!
@@ -220,8 +220,8 @@ public synchronized boolean addAttribute (Attribute p)
 
 public synchronized void shutdown ()
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::shutdown ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::shutdown ()");
         }
 
 	/*
@@ -238,8 +238,8 @@ public synchronized void shutdown ()
 
 		if (c != null)
 		{
-                    if (opLogger.logger.isDebugEnabled()) {
-                        opLogger.logger.debug("ORB - pre-orb shutdown on " + c.name());
+                    if (opLogger.logger.isTraceEnabled()) {
+                        opLogger.logger.trace("ORB - pre-orb shutdown on " + c.name());
                     }
 
 		    c.work();
@@ -263,8 +263,8 @@ public synchronized void shutdown ()
 
 		if (c != null)
 		{
-                    if (opLogger.logger.isDebugEnabled()) {
-                        opLogger.logger.debug("ORB - post-orb shutdown on " + c.name());
+                    if (opLogger.logger.isTraceEnabled()) {
+                        opLogger.logger.trace("ORB - post-orb shutdown on " + c.name());
                     }
 
 		    c.work();
@@ -307,8 +307,8 @@ public synchronized boolean setOrb (org.omg.CORBA.ORB theORB)
 
 public synchronized void addPreShutdown (PreShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::addPreShutdown (" + c + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::addPreShutdown (" + c + ")");
         }
 
 	_preORBShutdown.put(c, c);
@@ -316,8 +316,8 @@ public synchronized void addPreShutdown (PreShutdown c)
 
 public synchronized void addPostShutdown (PostShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::addPostShutdown (" + c + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::addPostShutdown (" + c + ")");
         }
 
 	_postORBShutdown.put(c, c);
@@ -325,8 +325,8 @@ public synchronized void addPostShutdown (PostShutdown c)
 
 public synchronized void destroy() throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::destroyORB ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::destroyORB ()");
         }
 
 	_orb.destroy();
@@ -355,8 +355,8 @@ private void loadProperties (Properties p)
 
                 if ( PreInitLoader.isPreInitProperty(o) || PostInitLoader.isPostInitProperty(o) )
                 {
-                    if ( opLogger.logger.isDebugEnabled() ) {
-                        opLogger.logger.debug("Adding property '" + o + "' to the ORB portability properties");
+                    if ( opLogger.logger.isTraceEnabled() ) {
+                        opLogger.logger.trace("Adding property '" + o + "' to the ORB portability properties");
                     }
 
                     synchronized (ORB.class) {
@@ -371,8 +371,8 @@ private void loadProperties (Properties p)
 
 private void parseProperties (String[] params, boolean postInit)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB::parseProperties (String[], " + postInit + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB::parseProperties (String[], " + postInit + ")");
         }
 
 	Hashtable work = ((postInit) ? _postORBInitProperty : _preORBInitProperty);
@@ -387,8 +387,8 @@ private void parseProperties (String[] params, boolean postInit)
 
 		if (p != null)
 		{
-                    if (opLogger.logger.isDebugEnabled()) {
-                        opLogger.logger.debug("Attribute " + p + " initialising.");
+                    if (opLogger.logger.isTraceEnabled()) {
+                        opLogger.logger.trace("Attribute " + p + " initialising.");
                     }
 
 		    p.initialise(params);

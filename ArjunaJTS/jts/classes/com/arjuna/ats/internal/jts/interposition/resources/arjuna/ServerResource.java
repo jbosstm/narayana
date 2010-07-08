@@ -64,8 +64,8 @@ public class ServerResource
 
 public void finalize () throws Throwable
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerResource.finalize ( " + _theUid + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerResource.finalize ( " + _theUid + " )");
     }
 
 	tidyup();
@@ -235,8 +235,8 @@ public final org.omg.CosTransactions.Status otsStatus ()
 
 protected ServerResource ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerResource::ServerResource ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerResource::ServerResource ()");
     }
 
 	_theControl = null;
@@ -253,8 +253,8 @@ protected ServerResource (ServerControl control)
 	_valid = true;
 	_destroyed = false;
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerResource::ServerResource ( " + _theUid + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerResource::ServerResource ( " + _theUid + " )");
     }
     }
 

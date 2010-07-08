@@ -59,8 +59,8 @@ class CadaverLockManager extends LockManager
 
         objectTypeName = new String(tName);
 
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("CadaverLockManager::CadaverLockManager(" + objUid + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("CadaverLockManager::CadaverLockManager(" + objUid + ")");
         }
     }
 

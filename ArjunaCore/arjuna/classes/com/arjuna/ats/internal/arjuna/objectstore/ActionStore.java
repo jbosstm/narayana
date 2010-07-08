@@ -81,8 +81,8 @@ public class ActionStore extends ShadowNoFileLockStore
             path = null;
         }
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.currentState("+objUid+", "+tName+") - returning "+
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.currentState("+objUid+", "+tName+") - returning "+
                     StateStatus.stateStatusString(theState));
         }
 
@@ -98,8 +98,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean commit_state (Uid objUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.commit_state(" + objUid + ", " + tName + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.commit_state(" + objUid + ", " + tName + ")");
         }
 
         boolean result = false;
@@ -117,8 +117,8 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.hide_state(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.hide_state(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -126,8 +126,8 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.reveal_state(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.reveal_state(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -136,8 +136,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public InputObjectState read_committed (Uid storeUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.read_committed(" + storeUid + ", " + tName
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.read_committed(" + storeUid + ", " + tName
                     + ")");
         }
 
@@ -147,8 +147,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public InputObjectState read_uncommitted (Uid u, String tn)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.read_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.read_uncommitted(" + u + ", " + tn + ")");
         }
 
         return null;
@@ -157,8 +157,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean remove_committed (Uid storeUid, String tName)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.remove_committed(" + storeUid + ", " + tName
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.remove_committed(" + storeUid + ", " + tName
                     + ")");
         }
 
@@ -168,8 +168,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean remove_uncommitted (Uid u, String tn)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.remove_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.remove_uncommitted(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -178,8 +178,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean write_committed (Uid storeUid, String tName,
             OutputObjectState state) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.write_committed(" + storeUid + ", " + tName
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.write_committed(" + storeUid + ", " + tName
                     + ")");
         }
 
@@ -189,8 +189,8 @@ public class ActionStore extends ShadowNoFileLockStore
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s)
             throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ActionStore.write_uncommitted(" + u + ", " + tn + ", " + s
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ActionStore.write_uncommitted(" + u + ", " + tn + ", " + s
                     + ")");
         }
 

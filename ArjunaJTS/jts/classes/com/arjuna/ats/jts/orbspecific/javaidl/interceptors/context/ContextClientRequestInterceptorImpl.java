@@ -121,9 +121,9 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 
 public ContextClientRequestInterceptorImpl (int localSlot, Codec codec)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl ( "+localSlot+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl ( "+localSlot+" )");
 	}
 
 	_localSlot = localSlot;
@@ -137,9 +137,9 @@ public String name ()
 
 public void send_request (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::send_request ( "+request_info+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl::send_request ( "+request_info+" )");
 	}
 
 	if (systemCall(request_info))
@@ -283,25 +283,25 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 
 public void send_poll (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::send_poll ( "+request_info+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl::send_poll ( "+request_info+" )");
 	}
     }
 
 public void receive_reply (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_reply ( "+request_info+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl::receive_reply ( "+request_info+" )");
 	}
     }
 
 public void receive_exception (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_exception ( "+request_info+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl::receive_exception ( "+request_info+" )");
 	}
 
 	// mark transaction as rollback only if a system exception
@@ -309,9 +309,9 @@ public void receive_exception (ClientRequestInfo request_info) throws SystemExce
 
 public void receive_other (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextClientRequestInterceptorImpl::receive_other ( "+request_info+" )");
+	    jtsLogger.logger.trace("ContextClientRequestInterceptorImpl::receive_other ( "+request_info+" )");
 	}
     }
 

@@ -87,15 +87,15 @@ public abstract class BaseProcessor
                     }
                     catch (final Throwable th)
                     {
-                        if (WSCLogger.logger.isDebugEnabled())
+                        if (WSCLogger.logger.isTraceEnabled())
                         {
-                            WSCLogger.logger.debugv("Unexpected throwable while executing callback:", th) ;
+                            WSCLogger.logger.tracev("Unexpected throwable while executing callback:", th) ;
                         }
                         callback.setFailed() ;
                     }
                 }
             }
-            if (!executed && WSCLogger.logger.isDebugEnabled())
+            if (!executed && WSCLogger.logger.isTraceEnabled())
             {
                 executor.executeUnknownIds(ids) ;
             }
@@ -156,7 +156,7 @@ public abstract class BaseProcessor
          */
         public void executeUnknownIds(final String[] ids)
         {
-            WSCLogger.logger.debugv("Received a response for non existent message IDs {0}", new Object[] {toString(ids)}) ;
+            WSCLogger.logger.tracev("Received a response for non existent message IDs {0}", new Object[] {toString(ids)}) ;
         }
         
         /**

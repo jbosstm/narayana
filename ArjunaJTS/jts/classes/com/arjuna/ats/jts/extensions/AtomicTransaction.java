@@ -83,8 +83,8 @@ public class AtomicTransaction
 
 	public AtomicTransaction ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::AtomicTransaction ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::AtomicTransaction ()");
         }
 
 		_theAction = null;
@@ -94,8 +94,8 @@ public class AtomicTransaction
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction.finalize ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction.finalize ()");
         }
 
 		if (_theAction != null)
@@ -131,8 +131,8 @@ public class AtomicTransaction
 
 	public String get_transaction_name () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::get_transaction_name ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::get_transaction_name ()");
         }
 
 		if (_theAction != null)
@@ -166,8 +166,8 @@ public class AtomicTransaction
 
 	public void begin () throws SubtransactionsUnavailable, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::begin ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::begin ()");
         }
 
 		// already begun?
@@ -189,8 +189,8 @@ public class AtomicTransaction
 
 		_theStatus = current.get_status();
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::begin create "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::begin create "
                     + _theAction);
         }
 	}
@@ -223,8 +223,8 @@ public class AtomicTransaction
 	public void commit (boolean report_heuristics) throws NoTransaction,
 			HeuristicMixed, HeuristicHazard, WrongTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::commit ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::commit ( "
                     + report_heuristics + " ) for " + _theAction);
         }
 
@@ -317,8 +317,8 @@ public class AtomicTransaction
 	public void rollback () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::rollback for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::rollback for "
                     + _theAction);
         }
 
@@ -384,8 +384,8 @@ public class AtomicTransaction
 
 	public void set_timeout (int seconds) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::set_timeout ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::set_timeout ( "
                     + seconds + " )");
         }
 
@@ -410,8 +410,8 @@ public class AtomicTransaction
 		{
 			int val = current.get_timeout();
 
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("AtomicTransaction::get_timeout returning "
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("AtomicTransaction::get_timeout returning "
                         + val);
             }
 
@@ -477,8 +477,8 @@ public class AtomicTransaction
 	public RecoveryCoordinator registerResource (Resource r) throws Inactive,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::registerResource ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::registerResource ( "
                     + r + " )");
         }
 
@@ -509,8 +509,8 @@ public class AtomicTransaction
 	public void registerSubtranAware (SubtransactionAwareResource r)
 			throws Inactive, NotSubtransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::registerSubtranAware ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::registerSubtranAware ( "
                     + r + " )");
         }
 
@@ -539,8 +539,8 @@ public class AtomicTransaction
 	public void registerSynchronization (Synchronization sync) throws Inactive,
 			SynchronizationUnavailable, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::registerSynchronization ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::registerSynchronization ( "
                     + sync + " )");
         }
 
@@ -632,8 +632,8 @@ public class AtomicTransaction
 	public void suspend () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::suspend called for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::suspend called for "
                     + _theAction);
         }
 
@@ -670,8 +670,8 @@ public class AtomicTransaction
 
 	public void resume () throws InvalidControl, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::resume called for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::resume called for "
                     + _theAction);
         }
 
@@ -692,8 +692,8 @@ public class AtomicTransaction
 	{
 		_theStatus = getStatus();
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::get_status called for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::get_status called for "
                     + _theAction
                     + " returning "
                     + Utility.stringStatus(_theStatus));
@@ -709,8 +709,8 @@ public class AtomicTransaction
 
 	public void rollbackOnly () throws SystemException, NoTransaction
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::rollbackOnly called for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::rollbackOnly called for "
                     + _theAction);
         }
 
@@ -752,8 +752,8 @@ public class AtomicTransaction
 
 	protected final boolean validTransaction ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::validTransaction called for "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::validTransaction called for "
                     + _theAction);
         }
 
@@ -805,8 +805,8 @@ public class AtomicTransaction
 
 	protected AtomicTransaction (ControlWrapper tx)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("AtomicTransaction::AtomicTransaction ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("AtomicTransaction::AtomicTransaction ()");
         }
 
 		_theAction = tx;

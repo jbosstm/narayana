@@ -68,8 +68,8 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super(os, sm);
 
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::PersistenceRecord("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::PersistenceRecord("
                     + os + ", " + sm.get_uid() + ")");
         }
 
@@ -95,8 +95,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelAbort ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::topLevelAbort() for "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::topLevelAbort() for "
                     + order());
         }
 
@@ -144,19 +144,19 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCommit ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::topLevelCommit() : About to commit state, "+
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::topLevelCommit() : About to commit state, "+
                     "uid = "+order()+", ObjType = "+getTypeOfObject());
         }
 
-		if (tsLogger.logger.isDebugEnabled())
+		if (tsLogger.logger.isTraceEnabled())
 		{
 			if (targetParticipantStore != null) {
-                tsLogger.logger.debug(", store = "
+                tsLogger.logger.trace(", store = "
                         + targetParticipantStore + "(" + targetParticipantStore.typeIs() + ")");
             }
 			else {
-                tsLogger.logger.debug("");
+                tsLogger.logger.trace("");
             }
 		}
 
@@ -219,8 +219,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelPrepare ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::topLevelPrepare() for "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::topLevelPrepare() for "
                     + order());
         }
 
@@ -305,8 +305,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCleanup ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::topLevelCleanup() for "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::topLevelCleanup() for "
                     + order());
         }
 
@@ -324,8 +324,8 @@ public class PersistenceRecord extends RecoveryRecord
 
     public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::restore_state() for "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::restore_state() for "
                     + order());
         }
 
@@ -364,8 +364,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public boolean save_state (OutputObjectState os, int ot)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::save_state() for "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::save_state() for "
                     + order());
         }
 
@@ -440,8 +440,8 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super();
 
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PersistenceRecord::PersistenceRecord() - crash recovery constructor");
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("PersistenceRecord::PersistenceRecord() - crash recovery constructor");
         }
 
 		shadowMade = false;

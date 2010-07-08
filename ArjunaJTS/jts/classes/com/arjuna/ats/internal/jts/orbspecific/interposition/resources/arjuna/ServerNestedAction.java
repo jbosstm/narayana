@@ -69,8 +69,8 @@ public class ServerNestedAction extends ServerResource implements
     {
         super(myControl);
 
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerNestedAction::ServerNestedAction ( " + _theUid
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerNestedAction::ServerNestedAction ( " + _theUid
                     + " )");
         }
 
@@ -112,8 +112,8 @@ public class ServerNestedAction extends ServerResource implements
     public void commit_subtransaction (Coordinator parent)
             throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerNestedAction::commit_subtransaction : " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerNestedAction::commit_subtransaction : " + _theUid);
         }
 
         if (_theControl == null) {
@@ -199,8 +199,8 @@ public class ServerNestedAction extends ServerResource implements
 
     public void rollback_subtransaction () throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerNestedAction::rollback_subtransaction : " + _theUid);
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerNestedAction::rollback_subtransaction : " + _theUid);
         }
 
         if (_theControl == null) {
@@ -280,8 +280,8 @@ public class ServerNestedAction extends ServerResource implements
 
     protected ServerNestedAction()
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerNestedAction::ServerNestedAction ()");
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerNestedAction::ServerNestedAction ()");
         }
 
         _theResource = null;

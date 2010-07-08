@@ -77,9 +77,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.logger.isDebugEnabled())
+                    if (WSCLogger.logger.isTraceEnabled())
                     {
-                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
+                        WSCLogger.logger.tracev("Unexpected exception thrown from create:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -90,9 +90,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
             }
             else
             {
-                if (WSCLogger.logger.isDebugEnabled())
+                if (WSCLogger.logger.isTraceEnabled())
                 {
-                    WSCLogger.logger.debugv("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
+                    WSCLogger.logger.tracev("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME,

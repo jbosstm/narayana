@@ -231,9 +231,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
         } catch (final Throwable th) {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending InvalidState", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending InvalidState", th) ;
             }
         }
     }
@@ -257,9 +257,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Rollback", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Rollback", th) ;
             }
         }
     }

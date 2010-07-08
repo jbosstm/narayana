@@ -78,8 +78,8 @@ public abstract class ConnectionImple
 
 	public ConnectionImple(String dbName, Properties info) throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled()) {
-            jdbcLogger.logger.debug("ConnectionImple.ConnectionImple ( " + dbName + " )");
+		if (jdbcLogger.logger.isTraceEnabled()) {
+            jdbcLogger.logger.trace("ConnectionImple.ConnectionImple ( " + dbName + " )");
         }
 
 		String user = null;
@@ -121,8 +121,8 @@ public abstract class ConnectionImple
 	public ConnectionImple(String dbName, String user, String passwd,
 			String dynamic) throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled()) {
-            jdbcLogger.logger.debug("ConnectionImple.ConnectionImple ( " + dbName + ", " + user
+		if (jdbcLogger.logger.isTraceEnabled()) {
+            jdbcLogger.logger.trace("ConnectionImple.ConnectionImple ( " + dbName + ", " + user
                     + ", " + passwd + ", " + dynamic + " )");
         }
 
@@ -738,8 +738,8 @@ public abstract class ConnectionImple
 
 	protected final synchronized void registerDatabase() throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled()) {
-            jdbcLogger.logger.debug("ConnectionImple.registerDatabase ()");
+		if (jdbcLogger.logger.isTraceEnabled()) {
+            jdbcLogger.logger.trace("ConnectionImple.registerDatabase ()");
         }
 
 		Connection theConnection = getConnection();
@@ -839,8 +839,8 @@ public abstract class ConnectionImple
 
 	protected final void checkTransaction() throws SQLException
 	{
-		if (jdbcLogger.logger.isDebugEnabled()) {
-            jdbcLogger.logger.debug("ConnectionImple.checkTransaction ()");
+		if (jdbcLogger.logger.isTraceEnabled()) {
+            jdbcLogger.logger.trace("ConnectionImple.checkTransaction ()");
         }
 
 		try

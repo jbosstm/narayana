@@ -98,8 +98,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public boolean equals(Object obj)
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.equals");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.equals");
         }
 
 		if (obj == null)
@@ -161,8 +161,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.commit");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.commit");
         }
 
 		if (_theTransaction != null)
@@ -220,8 +220,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void rollback() throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.rollback");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.rollback");
         }
 
 		if (_theTransaction != null)
@@ -274,8 +274,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-	    if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.setRollbackOnly");
+	    if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.setRollbackOnly");
         }
 
 	    if (_theTransaction != null)
@@ -313,8 +313,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public int getStatus() throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.getStatus");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.getStatus");
         }
 
 		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
@@ -331,8 +331,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.registerSynchronization");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.registerSynchronization");
         }
 
 		if (sync == null)
@@ -394,8 +394,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws RollbackException, IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.enlistResource ( " + xaRes + " )");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.enlistResource ( " + xaRes + " )");
         }
 
 		if (xaRes == null)
@@ -779,8 +779,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public boolean delistResource(XAResource xaRes, int flags)
 			throws IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.delistResource ( " + xaRes + " )");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.delistResource ( " + xaRes + " )");
         }
 
 		if (xaRes == null)
@@ -1124,8 +1124,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.commitAndDisassociate");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.commitAndDisassociate");
         }
 
 		try
@@ -1201,8 +1201,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("TransactionImple.rollbackAndDisassociate");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("TransactionImple.rollbackAndDisassociate");
         }
 
 		try

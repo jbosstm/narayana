@@ -49,8 +49,8 @@ public class CadaverActivationRecord extends ActivationRecord
     {
 	super(ObjectStatus.PASSIVE, sm, null);
 	    
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::CadaverActivationRecord(" + sm.get_uid() + ")");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::CadaverActivationRecord(" + sm.get_uid() + ")");
     }
     }
     
@@ -65,8 +65,8 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::nestedAbort() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::nestedAbort() for " + get_uid());
     }
 	
 	super.nestedAbort();
@@ -76,8 +76,8 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int nestedCommit ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::nestedCommit() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::nestedCommit() for " + get_uid());
     }
 	
 	return TwoPhaseOutcome.FINISH_OK;	
@@ -85,8 +85,8 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int nestedPrepare ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::nestedPrepare() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::nestedPrepare() for " + get_uid());
     }
 	
 	super.nestedPrepare();
@@ -96,8 +96,8 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::topLevelAbort() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::topLevelAbort() for " + get_uid());
     }
 	
 	super.topLevelAbort();
@@ -107,8 +107,8 @@ public class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::topLevelCommit() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::topLevelCommit() for " + get_uid());
     }
 	
 	super.topLevelCommit();
@@ -118,8 +118,8 @@ public class CadaverActivationRecord extends ActivationRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::topLevelPrepare() for " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::topLevelPrepare() for " + get_uid());
     }
 	
 	// make sure SM instance forgets about action
@@ -155,8 +155,8 @@ public class CadaverActivationRecord extends ActivationRecord
     {
 	super();
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverActivationRecord::CadaverActivationRecord ()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverActivationRecord::CadaverActivationRecord ()");
     }
     }
     

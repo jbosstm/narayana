@@ -48,9 +48,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
     public ContextORBInitializerImpl ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextORBInitializerImpl ()");
+	    jtsLogger.logger.trace("ContextORBInitializerImpl ()");
 	}
 
 	/*
@@ -63,9 +63,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
     public void pre_init (ORBInitInfo init_info)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextORBInitializer.pre_init ()");
+	    jtsLogger.logger.trace("ContextORBInitializer.pre_init ()");
 	}
 
 	/*
@@ -87,9 +87,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("ContextORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
+		jtsLogger.logger.trace("ContextORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
 	    }
 
 	    Encoding cdr_encoding = new Encoding(ENCODING_CDR_ENCAPS.value, (byte)1, (byte)0);
@@ -110,9 +110,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("ContextORBInitializerImpl - registering ClientRequestInterceptor");
+		jtsLogger.logger.trace("ContextORBInitializerImpl - registering ClientRequestInterceptor");
 	    }
 
 	    ClientRequestInterceptor client_interceptor = new ContextClientRequestInterceptorImpl(localSlot, cdr_codec);
@@ -133,9 +133,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("ContextORBInitializerImpl - registering ServerRequestInterceptor");
+		jtsLogger.logger.trace("ContextORBInitializerImpl - registering ServerRequestInterceptor");
 	    }
 
 	    ServerRequestInterceptor server_interceptor = new ContextServerRequestInterceptorImpl(receivedSlot, cdr_codec);
@@ -153,9 +153,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
     public void post_init (ORBInitInfo init_info)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextORBInitializerImpl.post_init ()");
+	    jtsLogger.logger.trace("ContextORBInitializerImpl.post_init ()");
 	}
 
 	// nothing to do

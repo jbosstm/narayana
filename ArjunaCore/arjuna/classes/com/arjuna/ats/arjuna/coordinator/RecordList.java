@@ -335,8 +335,8 @@ public class RecordList
         {
             if (newRecord.shouldMerge(current))
             {
-                if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("RecordList::insert("+this+") : merging "+newRecord.type()+
+                if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("RecordList::insert("+this+") : merging "+newRecord.type()+
                             " and "+current.type()+" for "+newRecord.order());
                 }
 
@@ -349,8 +349,8 @@ public class RecordList
             {
                 if (newRecord.shouldReplace(current))
                 {
-                    if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("RecordList::insert("+this+") : replacing "+current.type()+
+                    if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("RecordList::insert("+this+") : replacing "+current.type()+
                                 " and "+newRecord.type()+" for "+newRecord.order());
                     }
 
@@ -362,8 +362,8 @@ public class RecordList
                 {
                     if (newRecord.shouldAdd(current))
                     {
-                        if (tsLogger.logger.isDebugEnabled()) {
-                            tsLogger.logger.debug("RecordList::insert("+this+") : adding extra record of type "+
+                        if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("RecordList::insert("+this+") : adding extra record of type "+
                                 newRecord.type()+" before "+current.type()+" for "+newRecord.order());
                         }
 
@@ -382,8 +382,8 @@ public class RecordList
                         }
                         else if (newRecord.lessThan(current))
                         {
-                            if (tsLogger.logger.isDebugEnabled()) {
-                                tsLogger.logger.debug("RecordList::insert("+this+") : inserting "+
+                            if (tsLogger.logger.isTraceEnabled()) {
+                                tsLogger.logger.trace("RecordList::insert("+this+") : inserting "+
                                         newRecord.type()+" for "+newRecord.order()+" before "+current.type());
                             }
 
@@ -400,16 +400,16 @@ public class RecordList
 
         if (current == null)
         {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("RecordList::insert("+this+") : appending "+newRecord.type()+" for "+newRecord.order());
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("RecordList::insert("+this+") : appending "+newRecord.type()+" for "+newRecord.order());
             }
 
             putRear(newRecord);
         }
         else
         {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("RecordList::insert("+this+") : inserting "+newRecord.type()+" for "+newRecord.order()+
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("RecordList::insert("+this+") : inserting "+newRecord.type()+" for "+newRecord.order()+
                         " before "+current.type()+" for "+current.order());
             }
 

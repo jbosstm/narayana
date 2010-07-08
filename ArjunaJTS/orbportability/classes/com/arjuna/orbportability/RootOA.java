@@ -65,8 +65,8 @@ public class RootOA extends OA
      */
     public synchronized void destroy () throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::destroyRootPOA ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::destroyRootPOA ()");
         }
 
         if (_oa.initialised())
@@ -129,8 +129,8 @@ public org.omg.CORBA.Object corbaReference (Servant obj)
 
 public boolean objectIsReady (Servant obj, byte[] id) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("RootOA::objectIsReady (Servant, byte[], " + _oaName + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("RootOA::objectIsReady (Servant, byte[], " + _oaName + ")");
         }
 
         try
@@ -149,8 +149,8 @@ public boolean objectIsReady (Servant obj, byte[] id) throws SystemException
 
 public boolean objectIsReady (Servant obj) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("RootOA::objectIsReady (Servant)");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("RootOA::objectIsReady (Servant)");
         }
 
         boolean result = true;
@@ -189,8 +189,8 @@ public boolean objectIsReady (Servant obj) throws SystemException
 
 public boolean shutdownObject (org.omg.CORBA.Object obj)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("RootOA::shutdownObject ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("RootOA::shutdownObject ()");
         }
 
         boolean result = true;
@@ -225,8 +225,8 @@ public boolean shutdownObject (org.omg.CORBA.Object obj)
 
 public boolean shutdownObject (Servant obj)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("RootOA::shutdownObject (Servant)");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("RootOA::shutdownObject (Servant)");
         }
 
         boolean result = true;

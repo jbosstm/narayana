@@ -53,8 +53,8 @@ public class ServerStrictNestedAction extends ServerNestedAction
     {
         super(control);
 
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerStrictNestedAction::ServerStrictNestedAction ( "
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerStrictNestedAction::ServerStrictNestedAction ( "
                     + _theUid + " )");
         }
 
@@ -117,8 +117,8 @@ public class ServerStrictNestedAction extends ServerNestedAction
     public void commit_subtransaction (Coordinator parent)
             throws SystemException
     {
-        if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerStrictNestedAction::commit_subtransaction : "
+        if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerStrictNestedAction::commit_subtransaction : "
                     + _theUid);
         }
 

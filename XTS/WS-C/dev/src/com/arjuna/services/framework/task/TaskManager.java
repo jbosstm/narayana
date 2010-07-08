@@ -110,14 +110,14 @@ public class TaskManager
      */
     public boolean queueTask(final Task task)
     {
-        final boolean debugEnabled = WSCLogger.logger.isDebugEnabled() ;
+        final boolean debugEnabled = WSCLogger.logger.isTraceEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("Shutdown in progress, ignoring task") ;
+                    WSCLogger.logger.tracev("Shutdown in progress, ignoring task") ;
                 }
                 return false ;
             }
@@ -132,7 +132,7 @@ public class TaskManager
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("queueTask: notifying waiting workers ({0})",
+                    WSCLogger.logger.tracev("queueTask: notifying waiting workers ({0})",
                             new Object[] {new Integer(waitingCount)}) ;
                 }
                 taskList.notify() ;
@@ -150,13 +150,13 @@ public class TaskManager
         {
             if (debugEnabled)
             {
-                WSCLogger.logger.debugv("queueTask: creating worker") ;
+                WSCLogger.logger.tracev("queueTask: creating worker") ;
             }
             createWorker() ;
         }
         else if (debugEnabled)
         {
-            WSCLogger.logger.debugv("queueTask: queueing task for execution") ;
+            WSCLogger.logger.tracev("queueTask: queueing task for execution") ;
         }
         
         return true ;
@@ -170,14 +170,14 @@ public class TaskManager
      */
     public void setMinimumWorkerCount(final int minimumWorkerCount)
     {
-        final boolean debugEnabled = WSCLogger.logger.isDebugEnabled() ;
+        final boolean debugEnabled = WSCLogger.logger.isTraceEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("shutdown in progress, ignoring set minimum worker count") ;
+                    WSCLogger.logger.tracev("shutdown in progress, ignoring set minimum worker count") ;
                 }
                 return ;
             }
@@ -190,7 +190,7 @@ public class TaskManager
 
             if (debugEnabled)
             {
-                WSCLogger.logger.debugv("setMinimumWorkerCount: {0}") ;
+                WSCLogger.logger.tracev("setMinimumWorkerCount: {0}") ;
             }
         }
 
@@ -233,14 +233,14 @@ public class TaskManager
      */
     public void setMaximumWorkerCount(final int maximumWorkerCount)
     {
-        final boolean debugEnabled = WSCLogger.logger.isDebugEnabled() ;
+        final boolean debugEnabled = WSCLogger.logger.isTraceEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("shutdown in progress, ignoring set maximum worker count") ;
+                    WSCLogger.logger.tracev("shutdown in progress, ignoring set maximum worker count") ;
                 }
                 return ;
             }
@@ -253,7 +253,7 @@ public class TaskManager
 
             if (debugEnabled)
             {
-                WSCLogger.logger.debugv("setMaximumWorkerCount: {0}",
+                WSCLogger.logger.tracev("setMaximumWorkerCount: {0}",
                         new Object[] {new Integer(this.maximumWorkerCount)}) ;
             }
 
@@ -264,7 +264,7 @@ public class TaskManager
                 {
                     if (debugEnabled)
                     {
-                        WSCLogger.logger.debugv("setMaximumWorkerCount: reducing pool size from {0} to {1}",
+                        WSCLogger.logger.tracev("setMaximumWorkerCount: reducing pool size from {0} to {1}",
                                 new Object[] {new Integer(workerPool.size()), new Integer(this.maximumWorkerCount)}) ;
                     }
                     taskList.notify() ;
@@ -305,7 +305,7 @@ public class TaskManager
      */
     public void shutdown()
     {
-        final boolean debugEnabled = WSCLogger.logger.isDebugEnabled() ;
+        final boolean debugEnabled = WSCLogger.logger.isTraceEnabled() ;
 
         synchronized(workerPool)
         {
@@ -313,7 +313,7 @@ public class TaskManager
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("Shutdown already in progress") ;
+                    WSCLogger.logger.tracev("Shutdown already in progress") ;
                 }
             }
             else
@@ -373,7 +373,7 @@ public class TaskManager
      */
     Task getTask()
     {
-        final boolean debugEnabled = WSCLogger.logger.isDebugEnabled() ;
+        final boolean debugEnabled = WSCLogger.logger.isTraceEnabled() ;
 
         while(true)
         {
@@ -385,7 +385,7 @@ public class TaskManager
                 {
                     if (debugEnabled)
                     {
-                        WSCLogger.logger.debugv("getTask: releasing thread") ;
+                        WSCLogger.logger.tracev("getTask: releasing thread") ;
                     }
                     synchronized(taskList)
                     {
@@ -393,7 +393,7 @@ public class TaskManager
                         {
                             if (debugEnabled)
                             {
-                                WSCLogger.logger.debugv("getTask: notifying waiting thread about excess count {0}",
+                                WSCLogger.logger.tracev("getTask: notifying waiting thread about excess count {0}",
                                         new Object[] {new Integer(excessCount)}) ;
                             }
                             taskList.notify() ;
@@ -429,14 +429,14 @@ public class TaskManager
                     }
                     if (debugEnabled)
                     {
-                        WSCLogger.logger.debugv("getTask: returning task") ;
+                        WSCLogger.logger.tracev("getTask: returning task") ;
                     }
                     return task ;
                 }
                 waitingCount++ ;
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.debugv("getTask: waiting for task") ;
+                    WSCLogger.logger.tracev("getTask: waiting for task") ;
                 }
                 try
                 {
@@ -446,7 +446,7 @@ public class TaskManager
                 {
                     if (debugEnabled)
                     {
-                        WSCLogger.logger.debugv("getTask: interrupted") ;
+                        WSCLogger.logger.tracev("getTask: interrupted") ;
                     }
                 }
                 finally

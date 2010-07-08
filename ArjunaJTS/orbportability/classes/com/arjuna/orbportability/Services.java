@@ -141,9 +141,9 @@ public org.omg.CORBA.Object getService (String serviceName,
 		catch (Exception e)
 		{
 
-            if (opLogger.logger.isDebugEnabled())
+            if (opLogger.logger.isTraceEnabled())
             {
-                opLogger.logger.debug("Services.getService - resolve_initial_references on "+serviceName+" failed: "+e.toString());
+                opLogger.logger.trace("Services.getService - resolve_initial_references on "+serviceName+" failed: "+e.toString());
             }
 
 		    throw new InvalidName();
@@ -190,9 +190,9 @@ public org.omg.CORBA.Object getService (String serviceName,
 		}
 		catch (FileNotFoundException e)
 		{
-            if ( opLogger.logger.isDebugEnabled() )
+            if ( opLogger.logger.isTraceEnabled() )
             {
-                opLogger.logger.debug("Services.getService could not open config file "+configFile);
+                opLogger.logger.trace("Services.getService could not open config file "+configFile);
             }
 
 		    throw new InvalidName();
@@ -348,8 +348,8 @@ public void registerService (org.omg.CORBA.Object objRef,
 	    
 		    rootContext.rebind(contextName, objRef);
 
-                    if (opLogger.logger.isDebugEnabled()) {
-                        opLogger.logger.debug("Services.registerService - object " + serviceName + " registered with name service.");
+                    if (opLogger.logger.isTraceEnabled()) {
+                        opLogger.logger.trace("Services.registerService - object " + serviceName + " registered with name service.");
                     }
 		}
 		catch (org.omg.CORBA.ORBPackage.InvalidName e)
@@ -383,9 +383,9 @@ public void registerService (org.omg.CORBA.Object objRef,
 		}
 		catch (FileNotFoundException e)
 		{
-            if ( opLogger.logger.isDebugEnabled() )
+            if ( opLogger.logger.isTraceEnabled() )
             {
-                opLogger.logger.debug("Services.registerService could not open config file "+configFile);
+                opLogger.logger.trace("Services.registerService could not open config file "+configFile);
             }
 
 		    currFile = null;
@@ -457,8 +457,8 @@ public void registerService (org.omg.CORBA.Object objRef,
 		outputFile = null;
 		nuFile = null;
 
-                if (opLogger.logger.isDebugEnabled()) {
-                    opLogger.logger.debug("Services.registerService - object " + serviceName + " registered with configuration file: " + configFile);
+                if (opLogger.logger.isTraceEnabled()) {
+                    opLogger.logger.trace("Services.registerService - object " + serviceName + " registered with configuration file: " + configFile);
                 }
 	    }
 	break;
@@ -478,8 +478,8 @@ public void registerService (org.omg.CORBA.Object objRef,
 		ofile.write(b);
 		ofile.close();
 
-                if (opLogger.logger.isDebugEnabled()) {
-                    opLogger.logger.debug("Services.registerService - object " + serviceName + " reference file created: " + fileDir + serviceName);
+                if (opLogger.logger.isTraceEnabled()) {
+                    opLogger.logger.trace("Services.registerService - object " + serviceName + " reference file created: " + fileDir + serviceName);
                 }
 	    }
 	break;

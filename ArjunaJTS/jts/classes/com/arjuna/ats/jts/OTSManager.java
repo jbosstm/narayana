@@ -100,8 +100,8 @@ public class OTSManager
 
     public static void destroyControl (ControlImple control) throws ActiveTransaction, ActiveThreads, BadControl, Destroyed, SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("OTS::destroyControl ( " + control + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("OTS::destroyControl ( " + control + " )");
     }
 	
 	if (control == null)
@@ -136,8 +136,8 @@ public class OTSManager
 			 * add explicit add/removes for local instances.
 			 */
 
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("OTS::destroyControl - removing control from reaper.");
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("OTS::destroyControl - removing control from reaper.");
             }
 
             // wrap the control so it gets compared against reaper list entries using the correct test
@@ -165,8 +165,8 @@ public class OTSManager
 	 * remotely?
 	 */
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("OTS::destroyControl - local transaction: " + control.get_uid());
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("OTS::destroyControl - local transaction: " + control.get_uid());
     }
 
 	control.destroy();
@@ -232,8 +232,8 @@ public class OTSManager
 	     * the same control!
 	     */
 
-	    if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("OTS::destroyControl - remote control.");
+	    if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("OTS::destroyControl - remote control.");
         }
 
 	    /*
@@ -256,8 +256,8 @@ public class OTSManager
 
 	    if (action != null)
 	    {
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("OTS::destroyControl - Arjuna control.");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("OTS::destroyControl - Arjuna control.");
         }
 
 		/*

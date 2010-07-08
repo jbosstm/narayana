@@ -157,8 +157,8 @@ public class OA
             }
         }
 
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA.initialise() - using OA Implementation " + className);
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA.initialise() - using OA Implementation " + className);
         }
 
         try

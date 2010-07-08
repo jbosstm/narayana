@@ -326,12 +326,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
-        if (WSTLogger.logger.isDebugEnabled())
+        if (WSTLogger.logger.isTraceEnabled())
         {
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
             final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
             final QName subCode = soapFault.getSubcode() ;
-            WSTLogger.logger.debugv("Unexpected SOAP fault for participant {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
+            WSTLogger.logger.tracev("Unexpected SOAP fault for participant {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
         }
 
         QName subcode = soapFault.getSubcode();
@@ -586,9 +586,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
             	    state = State.STATE_PREPARED_SUCCESS ;
                 }
             }
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant commit", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant commit", th) ;
             }
         }
     }
@@ -609,9 +609,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant rollback", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant rollback", th) ;
             }
         }
         return true ;
@@ -630,17 +630,17 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final SystemException se)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant prepare", se) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant prepare", se) ;
             }
             return ;
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant prepare", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant prepare", th) ;
             }
             rollbackDecision() ;
             return ;
@@ -660,9 +660,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         else
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected result from participant prepare: {0}", new Object[] {(vote == null ? "null" : vote.getClass().getName())});
+                WSTLogger.logger.tracev("Unexpected result from participant prepare: {0}", new Object[] {(vote == null ? "null" : vote.getClass().getName())});
             }
             rollbackDecision() ;
         }
@@ -694,9 +694,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Committed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Committed", th) ;
             }
         }
     }
@@ -725,9 +725,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Prepared", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Prepared", th) ;
             }
         }
 
@@ -771,9 +771,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Aborted", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Aborted", th) ;
             }
         }
     }
@@ -792,9 +792,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending ReadOnly", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending ReadOnly", th) ;
             }
         }
     }

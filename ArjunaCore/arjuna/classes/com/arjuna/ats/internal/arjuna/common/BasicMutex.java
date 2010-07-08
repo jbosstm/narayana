@@ -67,8 +67,8 @@ public class BasicMutex implements Mutex
     
     public int lock ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("Mutex::lock()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("Mutex::lock()");
     }
 	
 	synchronized (_lock)
@@ -117,8 +117,8 @@ public class BasicMutex implements Mutex
 	    
     public int unlock ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("Mutex::unlock()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("Mutex::unlock()");
     }
 	
 	synchronized (_lock)
@@ -163,8 +163,8 @@ public class BasicMutex implements Mutex
     
     public int tryLock ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("Mutex::tryLock()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("Mutex::tryLock()");
     }
 	
 	synchronized (_lock)

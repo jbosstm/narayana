@@ -130,9 +130,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from cancel:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from cancel:", th) ;
                     }
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(th) ;
@@ -144,9 +144,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final MAP faultMAP =
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
@@ -210,9 +210,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from close:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from close:", th) ;
                     }
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault11(th) ;
@@ -224,9 +224,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final MAP faultMAP =
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
@@ -287,9 +287,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from complete:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from complete:", th) ;
                     }
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
                     final SoapFault soapFault = new SoapFault11(th) ;
@@ -301,9 +301,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final MAP faultMAP =
                         AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
@@ -333,9 +333,9 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
     {
         // in this case all we do is log a message
 
-        if (WSTLogger.logger.isDebugEnabled())
+        if (WSTLogger.logger.isTraceEnabled())
         {
-            WSTLogger.logger.debugv("Service {0} received unexpected fault: {1}",
+            WSTLogger.logger.tracev("Service {0} received unexpected fault: {1}",
                     new Object[] {ArjunaTXConstants.SERVICE_TERMINATION_COORDINATOR, soapFault}) ;
         }
     }

@@ -277,7 +277,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 	    action.addChild((ServerNestedAction) nestedAction);
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(ctx, newElement);
 
 	return control;
@@ -472,7 +472,7 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
 	    }
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(context, hier);
 
 	return control;
@@ -489,7 +489,7 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
         }
         else
         {
-            if (jtsLogger.logger.isDebugEnabled()) {
+            if (jtsLogger.logger.isTraceEnabled()) {
                 jtsLogger.i18NLogger.warn_interposition_resources_arjuna_ipfail("Interposition.removeHeirarchy", theUid);
             }
         }
@@ -561,7 +561,7 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
     }
 
 	if (!printHierarchies)
-	    printHierarchies = jtsLogger.logger.isDebugEnabled();
+	    printHierarchies = jtsLogger.logger.isTraceEnabled();
 
 	if (printHierarchies)
 	{
@@ -569,9 +569,9 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
         {
             if (!problem)
             {
-                if (jtsLogger.logger.isDebugEnabled()) {
-                    jtsLogger.logger.debug(Utility.getHierarchy(ctx));
-                    jtsLogger.logger.debug(hierarchytoString(action));
+                if (jtsLogger.logger.isTraceEnabled()) {
+                    jtsLogger.logger.trace(Utility.getHierarchy(ctx));
+                    jtsLogger.logger.trace(hierarchytoString(action));
                 }
             }
             else

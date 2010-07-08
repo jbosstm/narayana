@@ -117,9 +117,9 @@ class InterpositionServerRequestInterceptorImpl extends LocalObject implements S
 
 public InterpositionServerRequestInterceptorImpl (int dataSlot, Codec codec)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl ( "+dataSlot+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl ( "+dataSlot+" )");
 	}
 
 	_dataSlot = dataSlot;
@@ -133,9 +133,9 @@ public String name ()
 
 public void receive_request_service_contexts (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -213,9 +213,9 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 
 public void receive_request (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
 	}
     }
 
@@ -229,9 +229,9 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	 * //    PropagationContext* ctx = theCoordinator->get_txcontext();
 	 */
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -254,9 +254,9 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 
 public void send_exception (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -277,9 +277,9 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 
 public void send_other (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl::send_other ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl::send_other ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -309,9 +309,9 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 
 private void suspendContext (ServerRequestInfo request_info) throws SystemException, InvalidSlot
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
 	}
 
 	Any data = request_info.get_slot(_dataSlot);

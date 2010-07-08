@@ -50,8 +50,8 @@ public ServerStrictTopLevelAction (ServerControl control, boolean doRegister)
     {
 	super(control);
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerStrictTopLevelAction::ServerStrictTopLevelAction (ServerControl, " + doRegister + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerStrictTopLevelAction::ServerStrictTopLevelAction (ServerControl, " + doRegister + " )");
     }
 
 	_registered = false;

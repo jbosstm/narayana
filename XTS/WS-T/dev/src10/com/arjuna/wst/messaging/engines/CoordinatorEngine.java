@@ -293,12 +293,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
-        if (WSTLogger.logger.isDebugEnabled())
+        if (WSTLogger.logger.isTraceEnabled())
         {
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
             final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
             final QName subCode = soapFault.getSubcode() ;
-            WSTLogger.logger.debugv("Unexpected SOAP fault for coordinator {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
+            WSTLogger.logger.tracev("Unexpected SOAP fault for coordinator {0}: {1} {2}", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
         }
     }
     
@@ -615,9 +615,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending Prepare", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending Prepare", th) ;
             }
         }
         
@@ -666,9 +666,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending Commit", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending Commit", th) ;
             }
         }
         
@@ -699,9 +699,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending Rollback", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending Rollback", th) ;
             }
         }
     }
@@ -728,9 +728,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending InvalidState", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending InvalidState", th) ;
             }
         }
     }

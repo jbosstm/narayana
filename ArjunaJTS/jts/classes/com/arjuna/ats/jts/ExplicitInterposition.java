@@ -80,8 +80,8 @@ public class ExplicitInterposition
 
 	public ExplicitInterposition (boolean remember)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::ExplicitInterposition ( "
                     + remember + " )");
         }
 
@@ -100,8 +100,8 @@ public class ExplicitInterposition
 	public ExplicitInterposition (Control action, boolean remember)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( Control action, "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::ExplicitInterposition ( Control action, "
                     + remember + " )");
         }
 
@@ -122,8 +122,8 @@ public class ExplicitInterposition
 	public ExplicitInterposition (PropagationContext ctx, boolean remember)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::ExplicitInterposition ( PropagationContext ctx, "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::ExplicitInterposition ( PropagationContext ctx, "
                     + remember + " )");
         }
 
@@ -136,8 +136,8 @@ public class ExplicitInterposition
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition.finalize ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition.finalize ()");
         }
 
 		if (_inUse)
@@ -160,8 +160,8 @@ public class ExplicitInterposition
 	public final synchronized void registerTransaction (Control action)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::registerTransaction ( Control action )");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::registerTransaction ( Control action )");
         }
 
 		if (_inUse)
@@ -243,8 +243,8 @@ public class ExplicitInterposition
 
 	public synchronized void unregisterTransaction () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::unregisterTransaction ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::unregisterTransaction ()");
         }
 
 		if (!_inUse)
@@ -295,8 +295,8 @@ public class ExplicitInterposition
 	private final synchronized void registerTransaction (PropagationContext ctx)
 			throws InterpositionFailed, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ExplicitInterposition::registerTransaction ( PropagationContext ctx )");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ExplicitInterposition::registerTransaction ( PropagationContext ctx )");
         }
 
 		if (_inUse)

@@ -108,8 +108,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      */
 	public void setTypes(Map<String, String> types) {
 		for (Map.Entry<String, String> entry : types.entrySet()) {
-			if (tsLogger.logger.isDebugEnabled())
-				tsLogger.logger.debug("ObjStoreBrowser: adding type handler " + entry.getKey() + "," + entry.getValue());
+			if (tsLogger.logger.isTraceEnabled())
+				tsLogger.logger.trace("ObjStoreBrowser: adding type handler " + entry.getKey() + "," + entry.getValue());
 			typeHandlers.put(entry.getKey(), entry.getValue());
 		}
 	}
@@ -118,8 +118,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 		if (logDir != null)
 			arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(logDir);
 
-		if (tsLogger.logger.isDebugEnabled())
-			tsLogger.logger.debug("ObjectStoreDir: " + arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+		if (tsLogger.logger.isTraceEnabled())
+			tsLogger.logger.trace("ObjectStoreDir: " + arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
 
 		allUids = new HashMap<String, List<UidWrapper>> ();
 		typeHandlers = loadProperties(OS_BEAN_PROPFILE);
@@ -197,8 +197,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 				} while (tname.length() != 0);
 			}
 		} catch (ObjectStoreException e2) {
-			if (tsLogger.logger.isDebugEnabled())
-				tsLogger.logger.debug(e2.toString());
+			if (tsLogger.logger.isTraceEnabled())
+				tsLogger.logger.trace(e2.toString());
 		}
 	}
 

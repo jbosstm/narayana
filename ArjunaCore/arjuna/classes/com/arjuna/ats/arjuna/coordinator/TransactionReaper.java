@@ -64,8 +64,8 @@ public class TransactionReaper
 
     private TransactionReaper(long checkPeriod)
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("TransactionReaper::TransactionReaper ( " + checkPeriod
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("TransactionReaper::TransactionReaper ( " + checkPeriod
                     + " )");
         }
 
@@ -108,8 +108,8 @@ public class TransactionReaper
 
     public final void check()
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("TransactionReaper::check ()");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("TransactionReaper::check ()");
         }
 
         do {
@@ -119,8 +119,8 @@ public class TransactionReaper
                 final long now = System.currentTimeMillis();
                 final long next = nextDynamicCheckTime.get();
 
-                if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("TransactionReaper::check - comparing " + Long.toString(next));
+                if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("TransactionReaper::check - comparing " + Long.toString(next));
                 }
 
                 if (now < next) {
@@ -161,8 +161,8 @@ public class TransactionReaper
 
                         reinsertElement(reaperElement, _cancelWaitPeriod);
 
-                        if (tsLogger.logger.isDebugEnabled()) {
-                            tsLogger.logger.debug("Reaper scheduling TX for cancellation " + reaperElement._control.get_uid());
+                        if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("Reaper scheduling TX for cancellation " + reaperElement._control.get_uid());
                         }
 
                         // insert into cancellation queue for a worker
@@ -190,8 +190,8 @@ public class TransactionReaper
 
                         reinsertElement(reaperElement, _cancelWaitPeriod);
 
-                        if (tsLogger.logger.isDebugEnabled()) {
-                            tsLogger.logger.debug("Reaper deferring interrupt for TX scheduled for cancel " + reaperElement._control.get_uid());
+                        if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("Reaper deferring interrupt for TX scheduled for cancel " + reaperElement._control.get_uid());
                         }
                     }
                     break;
@@ -210,8 +210,8 @@ public class TransactionReaper
 
                         // log that we interrupted cancel()
 
-                        if (tsLogger.logger.isDebugEnabled()) {
-                            tsLogger.logger.debug("TransactionReaper::check interrupting cancel in progress for " + reaperElement._control.get_uid());
+                        if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("TransactionReaper::check interrupting cancel in progress for " + reaperElement._control.get_uid());
                         }
                     }
                     break;
@@ -228,8 +228,8 @@ public class TransactionReaper
                         synchronized(this) {
                             _zombieCount++;
 
-                            if (tsLogger.logger.isDebugEnabled()) {
-                                tsLogger.logger.debug("Reaper " + Thread.currentThread() + " got a zombie " + reaperElement._worker + " (zombie count now " + _zombieCount + ") cancelling " + reaperElement._control.get_uid());
+                            if (tsLogger.logger.isTraceEnabled()) {
+                                tsLogger.logger.trace("Reaper " + Thread.currentThread() + " got a zombie " + reaperElement._worker + " (zombie count now " + _zombieCount + ") cancelling " + reaperElement._control.get_uid());
                             }
 
                             if (_zombieCount == _zombieMax) {
@@ -340,8 +340,8 @@ public class TransactionReaper
             // ok, current status must be SCHEDULE_CANCEL.
             // progress state to CANCEL and call cancel()
 
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("Reaper Worker " + Thread.currentThread() + " attempting to cancel " + e._control.get_uid());
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("Reaper Worker " + Thread.currentThread() + " attempting to cancel " + e._control.get_uid());
             }
 
             boolean cancelled = false;
@@ -503,8 +503,8 @@ public class TransactionReaper
      */
     public final void insert(Reapable control, int timeout)
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("TransactionReaper::insert ( " + control + ", " + timeout
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("TransactionReaper::insert ( " + control + ", " + timeout
                     + " )");
         }
 
@@ -556,8 +556,8 @@ public class TransactionReaper
     // takes an Object because OTSManager.destroyControl(Control|ControlImple) uses PseudoControlWrapper not Reapable
     public final void remove(Object control)
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("TransactionReaper::remove ( " + control + " )");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("TransactionReaper::remove ( " + control + " )");
         }
 
         if (control == null)
@@ -600,8 +600,8 @@ public class TransactionReaper
         // arg is an Object because ArjunaTransactionImple.propagationContext does not have a Reapable
 
         if ((_timeouts.isEmpty()) || (control == null)) {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("TransactionReaper::getRemainingTimeout for " + control
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("TransactionReaper::getRemainingTimeout for " + control
                         + " returning 0");
             }
 
@@ -618,8 +618,8 @@ public class TransactionReaper
             timeout = reaperElement.getAbsoluteTimeout() - System.currentTimeMillis();
         }
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("TransactionReaper::getRemainingTimeoutMillis for "+control+" returning "+timeout);
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("TransactionReaper::getRemainingTimeoutMillis for "+control+" returning "+timeout);
         }
 
         return timeout;
@@ -637,8 +637,8 @@ public class TransactionReaper
     public final int getTimeout(Object control)
     {
         if ((_timeouts.isEmpty()) || (control == null)) {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("TransactionReaper::getTimeout for " + control
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("TransactionReaper::getTimeout for " + control
                         + " returning 0");
             }
 
@@ -649,7 +649,7 @@ public class TransactionReaper
 
         int timeout = (reaperElement == null ? 0 : reaperElement._timeout);
 
-        tsLogger.logger.debug("TransactionReaper::getTimeout for "+control+" returning "+timeout);
+        tsLogger.logger.trace("TransactionReaper::getTimeout for "+control+" returning "+timeout);
 
         return timeout;
     }
@@ -799,8 +799,8 @@ public class TransactionReaper
     {
         if (TransactionReaper._theReaper == null)
         {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("TransactionReaper::instantiate()");
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("TransactionReaper::instantiate()");
             }
 
             // default to dynamic mode

@@ -62,14 +62,14 @@ public class PropagationContextManager
 
 	public Object getTransactionPropagationContext()
 	{
-		if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext - called");
+		if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("PropagationContextManager.getTransactionPropagationContext - called");
         }
 
 		String txid = ((BasicAction.Current() == null) ? null : BasicAction.Current().get_uid().stringForm());
 
-        if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext() - returned tpc = " + txid);
+        if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("PropagationContextManager.getTransactionPropagationContext() - returned tpc = " + txid);
         }
 		
 		return txid;
@@ -84,16 +84,16 @@ public class PropagationContextManager
 
 	public Object getTransactionPropagationContext(Transaction tx)
 	{
-		if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = " + tx);
+		if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = " + tx);
         }
 
 		if (tx instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple)
 		{
 		    String tpc = ((com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple) tx).get_uid().stringForm();
 
-            if (jbossatxLogger.logger.isDebugEnabled()) {
-                jbossatxLogger.logger.debug("PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = " + tpc);
+            if (jbossatxLogger.logger.isTraceEnabled()) {
+                jbossatxLogger.logger.trace("PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = " + tpc);
             }
 		    
 		    return tpc;
@@ -115,8 +115,8 @@ public class PropagationContextManager
 
 	public Transaction importTransactionPropagationContext(Object tpc)
 	{
-        if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = " + tpc);
+        if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = " + tpc);
         }
 
         javax.transaction.TransactionManager tm = TransactionManager.transactionManager();
@@ -129,8 +129,8 @@ public class PropagationContextManager
 
                 Transaction newTx = com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction(importedTx);
 
-                if (jbossatxLogger.logger.isDebugEnabled()) {
-                    jbossatxLogger.logger.debug("PropagationContextManager.importTransactionPropagationContext(Object) - transaction = " + newTx);
+                if (jbossatxLogger.logger.isTraceEnabled()) {
+                    jbossatxLogger.logger.trace("PropagationContextManager.importTransactionPropagationContext(Object) - transaction = " + newTx);
                 }
 
                 return newTx;

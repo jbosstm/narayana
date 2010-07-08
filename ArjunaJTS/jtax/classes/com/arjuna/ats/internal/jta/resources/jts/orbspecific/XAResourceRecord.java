@@ -96,8 +96,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public XAResourceRecord(TransactionImple tx, XAResource res, Xid xid,
 			Object[] params)
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.XAResourceRecord ( " + xid + " )");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.XAResourceRecord ( " + xid + " )");
         }
 
 		_theXAResource = res;
@@ -180,8 +180,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
 			HeuristicHazard, org.omg.CORBA.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.prepare for " + _tranID);
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.prepare for " + _tranID);
         }
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
@@ -282,8 +282,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void rollback() throws org.omg.CORBA.SystemException,
 			HeuristicCommit, HeuristicMixed, HeuristicHazard
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.rollback for " + _tranID);
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.rollback for " + _tranID);
         }
 
 		if (_theTransaction != null
@@ -416,8 +416,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void commit() throws org.omg.CORBA.SystemException, NotPrepared,
 			HeuristicRollback, HeuristicMixed, HeuristicHazard
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.commit for " + _tranID);
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.commit for " + _tranID);
         }
 
 		if (_tranID == null)
@@ -633,8 +633,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void commit_one_phase() throws HeuristicHazard,
 			org.omg.CORBA.SystemException
 	{
-	    if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.commit_one_phase for " + _tranID);
+	    if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.commit_one_phase for " + _tranID);
         }
 
 	    if (_tranID == null)
@@ -799,8 +799,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	public void forget() throws org.omg.CORBA.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.forget for " + _tranID);
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.forget for " + _tranID);
         }
 
 		handleForget() ;
@@ -942,8 +942,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						_theXAResource = (XAResource) o.readObject();
 						o.close();
 
-						if (jtaxLogger.logger.isDebugEnabled()) {
-                            jtaxLogger.logger.debug("XAResourceRecord.restore_state - XAResource de-serialized");
+						if (jtaxLogger.logger.isTraceEnabled()) {
+                            jtaxLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
                         }
 					}
 					catch (Exception ex)
@@ -972,8 +972,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                     jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_norecoveryxa(XAHelper.xidToString(_tranID));
 				}
 
-				if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("XAResourceRecord.restore_state - XAResource got from "
+				if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("XAResourceRecord.restore_state - XAResource got from "
                             + creatorName);
                 }
 			}
@@ -1064,8 +1064,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	protected int recover()
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.recover");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.recover");
         }
 
 		if (_valid)
@@ -1110,8 +1110,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				return XARecoveryResource.FAILED_TO_RECOVER;
 			}
 
-			if (jtaxLogger.logger.isDebugEnabled()) {
-                jtaxLogger.logger.debug("XAResourceRecord.recover got status: "
+			if (jtaxLogger.logger.isTraceEnabled()) {
+                jtaxLogger.logger.trace("XAResourceRecord.recover got status: "
                         + Utility.stringStatus(s));
             }
 
@@ -1310,8 +1310,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	private final int doRecovery(boolean commit)
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("XAResourceRecord.doRecovery ( " + commit + " )");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("XAResourceRecord.doRecovery ( " + commit + " )");
         }
 
 		int result = XARecoveryResource.FAILED_TO_RECOVER;

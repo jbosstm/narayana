@@ -52,19 +52,19 @@ public void initialise (String[] params)
     {
 	if (params != null)
 	{
-            if (opLogger.logger.isDebugEnabled()) {
-                opLogger.logger.debug("ORBAttribute.initialise - parameters: ");
+            if (opLogger.logger.isTraceEnabled()) {
+                opLogger.logger.trace("ORBAttribute.initialise - parameters: ");
             }
 
 	    for (int i = 0; i < params.length; i++)
 	    {
-                if (opLogger.logger.isDebugEnabled()) {
-                    opLogger.logger.debug(params[i]);
+                if (opLogger.logger.isTraceEnabled()) {
+                    opLogger.logger.trace(params[i]);
                 }
 	    }
 
-            if ( opLogger.logger.isDebugEnabled() ) {
-                opLogger.logger.debug("");
+            if ( opLogger.logger.isTraceEnabled() ) {
+                opLogger.logger.trace("");
             }
 	}
 		

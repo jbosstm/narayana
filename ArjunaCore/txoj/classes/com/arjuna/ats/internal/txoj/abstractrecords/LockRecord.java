@@ -54,9 +54,9 @@ public class LockRecord extends AbstractRecord
     {
 	super(lm.get_uid(), lm.type(), ObjectType.ANDPERSISTENT);
 
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::LockRecord("+lm.get_uid()+", "
+	    txojLogger.logger.trace("LockRecord::LockRecord("+lm.get_uid()+", "
 				       +(readOnly ? "PREPARE_READONLY" : "WRITEABLE")+")");
 	}
 	
@@ -84,9 +84,9 @@ public class LockRecord extends AbstractRecord
 
     public int nestedAbort ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::nestedAbort() for "+order());
+	    txojLogger.logger.trace("LockRecord::nestedAbort() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -115,9 +115,9 @@ public class LockRecord extends AbstractRecord
 
     public int nestedCommit ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::nestedCommit() for "+order());
+	    txojLogger.logger.trace("LockRecord::nestedCommit() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -143,9 +143,9 @@ public class LockRecord extends AbstractRecord
 
     public int nestedPrepare ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::nestedPrepare() for "+order());
+	    txojLogger.logger.trace("LockRecord::nestedPrepare() for "+order());
 	}
 	
 	return TwoPhaseOutcome.PREPARE_OK;
@@ -153,9 +153,9 @@ public class LockRecord extends AbstractRecord
 
     public int topLevelAbort ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::topLevelAbort() for "+order());
+	    txojLogger.logger.trace("LockRecord::topLevelAbort() for "+order());
 	}
 	
 	return nestedAbort();
@@ -163,9 +163,9 @@ public class LockRecord extends AbstractRecord
 
     public int topLevelCommit ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::topLevelCommit() for "+order());
+	    txojLogger.logger.trace("LockRecord::topLevelCommit() for "+order());
 	}
 	
 	/* default constructor problem. */
@@ -194,9 +194,9 @@ public class LockRecord extends AbstractRecord
 
     public int topLevelPrepare ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::topLevelPrepare() for "+order());
+	    txojLogger.logger.trace("LockRecord::topLevelPrepare() for "+order());
 	}
 	
 	if (readOnly)
@@ -298,9 +298,9 @@ public class LockRecord extends AbstractRecord
     {
 	super();
 
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("LockRecord::LockRecord()");
+	    txojLogger.logger.trace("LockRecord::LockRecord()");
 	}
 	
 	actionHandle = null;

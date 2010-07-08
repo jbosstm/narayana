@@ -126,9 +126,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from cancel:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from cancel:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -141,9 +141,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Cancel called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
@@ -204,9 +204,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from close:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from close:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -219,9 +219,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Close called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
@@ -280,9 +280,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from complete:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from complete:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -295,9 +295,9 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Complete called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,

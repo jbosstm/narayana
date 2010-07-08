@@ -673,9 +673,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Exit", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Exit", th) ;
             }
         }
     }
@@ -703,9 +703,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Completed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Completed", th) ;
             }
         }
         
@@ -752,9 +752,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Fault", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Fault", th) ;
             }
         }
     }
@@ -772,9 +772,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Cancelled", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Cancelled", th) ;
             }
         }
     }
@@ -792,9 +792,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Closed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Closed", th) ;
             }
         }
     }
@@ -812,9 +812,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Compensated", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Compensated", th) ;
             }
         }
     }
@@ -833,9 +833,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Status", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Status", th) ;
             }
         }
     }
@@ -929,9 +929,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant cancel fro WS-BA participant {0}", new Object[] { id}, th) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant cancel fro WS-BA participant {0}", new Object[] { id}, th) ;
             }
             /*
              * we only get here in from state ACTIVE so if we are still in state CANCELING then roll back the
@@ -960,9 +960,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant close for WS-BA participant {0}", new Object[] {id}, th) ;
+                WSTLogger.logger.tracev("Unexpected exception from participant close for WS-BA participant {0}", new Object[] {id}, th) ;
             }
             // restore previous state so we can retry the close otherwise we get stuck in state closing forever
             changeState(State.STATE_COMPLETED);
@@ -1021,9 +1021,9 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 initiateTimer() ;
             }
             
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from participant compensate for WS-BA participant {0}", new Object[] {id}, th);
+                WSTLogger.logger.tracev("Unexpected exception from participant compensate for WS-BA participant {0}", new Object[] {id}, th);
             }
             return ;
         }

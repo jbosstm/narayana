@@ -108,8 +108,8 @@ public class LockManager extends StateManager
 
     public void finalize () throws Throwable
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager.finalize()");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager.finalize()");
         }
 
         boolean doSignal = false;
@@ -145,8 +145,8 @@ public class LockManager extends StateManager
 
     public final boolean propagate (Uid from, Uid to)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::propagate(" + from + ", " + to + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::propagate(" + from + ", " + to + ")");
         }
 
         boolean result = false;
@@ -245,8 +245,8 @@ public class LockManager extends StateManager
 
     public final boolean releaseAll (Uid actionUid)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::releaseAll(" + actionUid + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::releaseAll(" + actionUid + ")");
         }
 
         return doRelease(actionUid, true);
@@ -259,8 +259,8 @@ public class LockManager extends StateManager
 
     public final boolean releaselock (Uid lockUid)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::releaseLock(" + lockUid + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::releaseLock(" + lockUid + ")");
         }
 
         return doRelease(lockUid, false);
@@ -303,8 +303,8 @@ public class LockManager extends StateManager
 
     public final int setlock (Lock toSet, int retry, int sleepTime)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::setlock(" + toSet + ", " + retry + ", "
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::setlock(" + toSet + ", " + retry + ", "
                     + sleepTime + ")");
         }
 
@@ -569,8 +569,8 @@ public class LockManager extends StateManager
     {
         super(storeUid, ot, om);
         
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::LockManager(" + storeUid + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::LockManager(" + storeUid + ")");
         }
 
         systemKey = null;
@@ -604,8 +604,8 @@ public class LockManager extends StateManager
     {
         super(ot, om);
         
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::LockManager(" + ot + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::LockManager(" + ot + ")");
         }
 
         systemKey = null;
@@ -626,8 +626,8 @@ public class LockManager extends StateManager
 
     protected void terminate ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::terminate() for object-id " + get_uid());
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::terminate() for object-id " + get_uid());
         }
 
         cleanUp();
@@ -637,8 +637,8 @@ public class LockManager extends StateManager
 
     private final void cleanUp ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::cleanUp() for object-id " + get_uid());
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::cleanUp() for object-id " + get_uid());
         }
 
         if (hasBeenLocked)
@@ -706,8 +706,8 @@ public class LockManager extends StateManager
 
     private final boolean doRelease (Uid u, boolean all)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::doRelease(" + u + ", " + all + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::doRelease(" + u + ", " + all + ")");
         }
 
         Lock previous = null;
@@ -811,8 +811,8 @@ public class LockManager extends StateManager
         {
             if (!deleted)
             {
-                if (txojLogger.logger.isDebugEnabled()) {
-                    txojLogger.logger.debug(" *** CANNOT locate locks  ***");
+                if (txojLogger.logger.isTraceEnabled()) {
+                    txojLogger.logger.trace(" *** CANNOT locate locks  ***");
                 }
             }
 
@@ -852,8 +852,8 @@ public class LockManager extends StateManager
 
     private final void freeState ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::freeState()");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::freeState()");
         }
 
         if (mutex != null)
@@ -897,8 +897,8 @@ public class LockManager extends StateManager
 
     private final boolean initialise ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::initialise()");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::initialise()");
         }
 
         boolean result = false;
@@ -953,8 +953,8 @@ public class LockManager extends StateManager
 
     private final boolean isAncestorOf (Lock heldLock)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::isAncestorOf(" + heldLock.getCurrentOwner()
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::isAncestorOf(" + heldLock.getCurrentOwner()
                     + ")");
         }
 
@@ -978,8 +978,8 @@ public class LockManager extends StateManager
 
     private final boolean loadState ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::loadState()");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::loadState()");
         }
 
         if (super.objectModel == ObjectModel.SINGLE)
@@ -1031,8 +1031,8 @@ public class LockManager extends StateManager
 
                         boolean cleanLoad = true;
 
-                        if (txojLogger.logger.isDebugEnabled()) {
-                            txojLogger.logger.debug("LockManager::loadState() loading " + count
+                        if (txojLogger.logger.isTraceEnabled()) {
+                            txojLogger.logger.trace("LockManager::loadState() loading " + count
                                     + " lock(s)");
                         }
 
@@ -1105,8 +1105,8 @@ public class LockManager extends StateManager
 
     private final int lockConflict (Lock otherLock)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::lockConflict(" + otherLock.get_uid() + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::lockConflict(" + otherLock.get_uid() + ")");
         }
 
         boolean matching = false;
@@ -1144,8 +1144,8 @@ public class LockManager extends StateManager
 
     private final boolean unloadState ()
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("LockManager::unloadState()");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("LockManager::unloadState()");
         }
 
         /*
@@ -1169,8 +1169,8 @@ public class LockManager extends StateManager
 
             /* destroy old state from lock store */
 
-            if (txojLogger.logger.isDebugEnabled()) {
-                txojLogger.logger.debug("LockManager::unloadState() unloading " + lockCount
+            if (txojLogger.logger.isTraceEnabled()) {
+                txojLogger.logger.trace("LockManager::unloadState() unloading " + lockCount
                         + " lock(s)");
             }
 

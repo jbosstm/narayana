@@ -97,8 +97,8 @@ public class CurrentImple extends LocalObject implements
 
 	public CurrentImple ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::CurrentImple ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::CurrentImple ()");
         }
 
 		_theManager = new ContextManager();
@@ -110,8 +110,8 @@ public class CurrentImple extends LocalObject implements
 
 		if (currentAction == null) // no current, so create top-level action
 		{
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("CurrentImple::begin - creating new top-level transaction.");
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("CurrentImple::begin - creating new top-level transaction.");
             }
 
 			if (OTSImpleManager.localFactory())
@@ -123,8 +123,8 @@ public class CurrentImple extends LocalObject implements
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("CurrentImple::begin - creating new subtransaction.");
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("CurrentImple::begin - creating new subtransaction.");
             }
 
 			/*
@@ -215,8 +215,8 @@ public class CurrentImple extends LocalObject implements
 	public void commit (boolean report_heuristics) throws NoTransaction,
 			HeuristicMixed, HeuristicHazard, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::commit ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::commit ( "
                     + report_heuristics + " )");
         }
 
@@ -308,8 +308,8 @@ public class CurrentImple extends LocalObject implements
 
 	public void rollback () throws NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::rollback ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::rollback ()");
         }
 
 		ControlWrapper currentAction = _theManager.current();
@@ -364,8 +364,8 @@ public class CurrentImple extends LocalObject implements
 
 	public void rollback_only () throws NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::rollback_only ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::rollback_only ()");
         }
 
 		ControlWrapper currentAction = _theManager.current();
@@ -401,8 +401,8 @@ public class CurrentImple extends LocalObject implements
 		org.omg.CosTransactions.Status stat = ((currentAction == null) ? org.omg.CosTransactions.Status.StatusNoTransaction
 				: currentAction.get_status());
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::get_status - returning "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::get_status - returning "
                     + Utility.stringStatus(stat));
         }
 
@@ -415,8 +415,8 @@ public class CurrentImple extends LocalObject implements
 		String ch = ((currentAction == null) ? "null"
 				: currentAction.get_transaction_name());
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::get_transaction_name - returning "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::get_transaction_name - returning "
                     + ch);
         }
 
@@ -425,8 +425,8 @@ public class CurrentImple extends LocalObject implements
 
 	public synchronized void set_timeout (int seconds) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::set_timeout ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::set_timeout ( "
                     + seconds + " )");
         }
 
@@ -464,8 +464,8 @@ public class CurrentImple extends LocalObject implements
 		else
 		    v = TxControl.getDefaultTimeout();
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::get_timeout - returning "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::get_timeout - returning "
                     + v);
         }
 
@@ -474,8 +474,8 @@ public class CurrentImple extends LocalObject implements
 
 	public void setCheckedAction (CheckedAction ca) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::setCheckedAction ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::setCheckedAction ( "
                     + ca + " )");
         }
 
@@ -484,8 +484,8 @@ public class CurrentImple extends LocalObject implements
 
 	public CheckedAction getCheckedAction () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::getCheckedAction ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::getCheckedAction ()");
         }
 
 		return CheckedActions.get();
@@ -577,8 +577,8 @@ public class CurrentImple extends LocalObject implements
 
 	public org.omg.CosTransactions.Control suspend () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::suspend ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::suspend ()");
         }
 
 		ControlWrapper actPtr = _theManager.popAction();
@@ -630,8 +630,8 @@ public class CurrentImple extends LocalObject implements
 
 	public void resume (Control which) throws InvalidControl, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::resume ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::resume ( "
                     + which + " )");
         }
 
@@ -774,8 +774,8 @@ public class CurrentImple extends LocalObject implements
 	public void resumeImple (ControlImple which) throws InvalidControl,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::resumeImple ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::resumeImple ( "
                     + which + " )");
         }
 
@@ -824,8 +824,8 @@ public class CurrentImple extends LocalObject implements
 	public void resumeWrapper (ControlWrapper which) throws InvalidControl,
 			SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::resumeWrapper ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::resumeWrapper ( "
                     + which + " )");
         }
 
@@ -851,8 +851,8 @@ public class CurrentImple extends LocalObject implements
 
 	public ControlWrapper suspendWrapper () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple::suspendWrapper ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple::suspendWrapper ()");
         }
 
 		ControlWrapper actPtr = _theManager.popAction();
@@ -881,8 +881,8 @@ public class CurrentImple extends LocalObject implements
 
 	public ControlWrapper getControlWrapper () throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("CurrentImple.getControlWrapper ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("CurrentImple.getControlWrapper ()");
         }
 
 		return _theManager.current();

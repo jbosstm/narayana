@@ -51,8 +51,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
 
         public Object getTransactionKey()
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.getTransactionKey");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.getTransactionKey");
                 }
 
         javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -76,8 +76,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Add or replace an object in the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
         public void putResource(Object key, Object value)
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.putResource");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.putResource");
                 }
 
                 if(key ==  null)
@@ -92,8 +92,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Get an object from the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
         public Object getResource(Object key)
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.getResource");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.getResource");
                 }
 
                 if(key ==  null)
@@ -108,8 +108,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Register a Synchronization instance with special ordering semantics.
         public void registerInterposedSynchronization(Synchronization synchronization)
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.registerInterposedSynchronization");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.registerInterposedSynchronization");
                 }
 
                 TransactionImple transactionImple = getTransactionImple();
@@ -131,8 +131,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Return the status of the transaction bound to the current thread at the time this method is called.
         public int getTransactionStatus()
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.getTransactionStatus");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.getTransactionStatus");
                 }
 
                 javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -150,8 +150,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Set the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
         public void setRollbackOnly()
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.setRollbackOnly");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.setRollbackOnly");
                 }
 
                 javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -175,8 +175,8 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
         // Get the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
         public boolean getRollbackOnly()
         {
-                if (jtaxLogger.logger.isDebugEnabled()) {
-                    jtaxLogger.logger.debug("TransactionSynchronizationRegistryImple.getRollbackOnly");
+                if (jtaxLogger.logger.isTraceEnabled()) {
+                    jtaxLogger.logger.trace("TransactionSynchronizationRegistryImple.getRollbackOnly");
                 }
 
                 TransactionImple transactionImple = getTransactionImple();

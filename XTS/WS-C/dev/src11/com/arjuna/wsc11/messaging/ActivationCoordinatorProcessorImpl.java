@@ -80,9 +80,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.logger.isDebugEnabled())
+                    if (WSCLogger.logger.isTraceEnabled())
                     {
-                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
+                        WSCLogger.logger.tracev("Unexpected exception thrown from create:", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME) ;
@@ -92,9 +92,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
             }
             else
             {
-                if (WSCLogger.logger.isDebugEnabled())
+                if (WSCLogger.logger.isTraceEnabled())
                 {
-                    WSCLogger.logger.debugv("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
+                    WSCLogger.logger.tracev("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
                 }
 
                 SOAPFactory factory = SOAPFactory.newInstance();

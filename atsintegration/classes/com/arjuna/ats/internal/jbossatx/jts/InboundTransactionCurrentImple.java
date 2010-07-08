@@ -49,8 +49,8 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
 {
     public Transaction getCurrentTransaction()
     {
-        if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("InboundTransactionCurrentImple.getCurrentTransaction() called");
+        if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("InboundTransactionCurrentImple.getCurrentTransaction() called");
         }
 
         TransactionManager transactionManager = null;
@@ -81,8 +81,8 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
             throw new RuntimeException("InboundTransactionCurrentImple unable to determine inbound transaction context", e);
         }
 
-        if (jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("InboundTransactionCurrentImple.getCurrentTransaction() returning tx=" + transaction);
+        if (jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("InboundTransactionCurrentImple.getCurrentTransaction() returning tx=" + transaction);
         }
 
         return transaction;

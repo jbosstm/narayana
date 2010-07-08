@@ -59,8 +59,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public DirectRecoverableConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.DirectRecoverableConnection()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection()");
     }
 
 	_dbName = null;
@@ -80,8 +80,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 				      String passwd, String dynamic,
 				      ConnectionImple conn) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + dynamic + " )");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + dynamic + " )");
     }
 
 	_dbName = dbName;
@@ -115,8 +115,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public boolean packInto (OutputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.packInto ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.packInto ()");
     }
 
 	try
@@ -136,8 +136,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public boolean unpackFrom (InputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.unpackFrom ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.unpackFrom ()");
     }
 
 	try
@@ -190,8 +190,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XAResource getResource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.getResource ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getResource ()");
     }
 
 	try
@@ -246,8 +246,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XAConnection getConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.getConnection ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getConnection ()");
     }
 
 	try
@@ -274,8 +274,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     public XADataSource getDataSource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.getDataSource ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getDataSource ()");
     }
 
 	return _theDataSource;
@@ -326,8 +326,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
     private final void createConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("DirectRecoverableConnection.createConnection");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.createConnection");
     }
 
 	if ((_dynamic == null) || (_dynamic.equals("")))
@@ -348,16 +348,16 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
 		if ((_user == null) && (_passwd == null))
 		{
-		    if (jdbcLogger.logger.isDebugEnabled()) {
-                jdbcLogger.logger.debug("DirectRecoverableConnection - getting connection with no user");
+		    if (jdbcLogger.logger.isTraceEnabled()) {
+                jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection with no user");
             }
 
 		    _theConnection = _theDataSource.getXAConnection();
 		}
 		else
 		{
-		    if (jdbcLogger.logger.isDebugEnabled()) {
-                jdbcLogger.logger.debug("DirectRecoverableConnection - getting connection for user " + _user);
+		    if (jdbcLogger.logger.isTraceEnabled()) {
+                jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection for user " + _user);
             }
 
 		    _theConnection = _theDataSource.getXAConnection(_user, _passwd);

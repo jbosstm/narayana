@@ -59,8 +59,8 @@ protected Shutdown (String theName)
     {
 	_name = theName;
 
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("Shutdown.Shutdown (" + theName + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("Shutdown.Shutdown (" + theName + ")");
         }
     }
 

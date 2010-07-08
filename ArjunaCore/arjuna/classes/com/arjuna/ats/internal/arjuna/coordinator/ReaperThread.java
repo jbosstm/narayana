@@ -57,8 +57,8 @@ public ReaperThread (TransactionReaper arg)
 
 public void run ()
     {
-    	if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("ReaperThread.run ()");
+    	if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ReaperThread.run ()");
         }
 
     	for (;;)
@@ -83,8 +83,8 @@ public void run ()
                 {
                      try
                      {
-                          if (tsLogger.logger.isDebugEnabled()) {
-                              tsLogger.logger.debug("Thread "+Thread.currentThread()+" sleeping for "+Long.toString(sleepPeriod));
+                          if (tsLogger.logger.isTraceEnabled()) {
+                              tsLogger.logger.trace("Thread "+Thread.currentThread()+" sleeping for "+Long.toString(sleepPeriod));
                           }
 
                           reaperObject.wait(sleepPeriod);
@@ -99,8 +99,8 @@ public void run ()
                 }
             }
     
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("ReaperThread.run ()");
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("ReaperThread.run ()");
             }
 
     	    reaperObject.check();

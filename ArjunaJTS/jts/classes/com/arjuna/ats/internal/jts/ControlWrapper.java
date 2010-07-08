@@ -219,8 +219,8 @@ public class ControlWrapper implements Reapable
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("ControlWrapper::create_subtransaction - subtransaction parent is inactive.");
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("ControlWrapper::create_subtransaction - subtransaction parent is inactive.");
             }
 
 			throw new INVALID_TRANSACTION(

@@ -59,8 +59,8 @@ public class JMXServer
 			constructor.newInstance();
 			isJTS = true;
 		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
-			if (tsLogger.logger.isDebugEnabled())
-				tsLogger.logger.debug("JTS not available: " + e);
+			if (tsLogger.logger.isTraceEnabled())
+				tsLogger.logger.trace("JTS not available: " + e);
 		}
 
 

@@ -131,8 +131,8 @@ private final void initialise ()
             }
         }
 
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("ORB.initialise() - using ORB Implementation " + className);
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("ORB.initialise() - using ORB Implementation " + className);
         }
 
 	try

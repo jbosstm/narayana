@@ -322,9 +322,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpecting exception while sending InvalidState", th) ;
+                WSTLogger.logger.tracev("Unexpecting exception while sending InvalidState", th) ;
             }
         }
     }
@@ -348,9 +348,9 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Rollback", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Rollback", th) ;
             }
         }
     }

@@ -71,9 +71,9 @@ public class TransactionServiceMX
 
 	protected TransactionServiceMX()
 	{
-		if (tsmxLogger.logger.isDebugEnabled())
+		if (tsmxLogger.logger.isTraceEnabled())
 		{
-			tsmxLogger.logger.debug("TransactionService Management Extentions initialising");
+			tsmxLogger.logger.trace("TransactionService Management Extentions initialising");
 		}
 
         try
@@ -183,9 +183,9 @@ public class TransactionServiceMX
 		Enumeration propNames = props.propertyNames();
 		HashSet foundProperties = new HashSet();
 
-		if (tsmxLogger.logger.isDebugEnabled())
+		if (tsmxLogger.logger.isTraceEnabled())
 		{
-			tsmxLogger.logger.debug("Registering transaction service mbeans");
+			tsmxLogger.logger.trace("Registering transaction service mbeans");
 		}
 
 
@@ -202,9 +202,9 @@ public class TransactionServiceMX
 					String mbeanObjectName = props.getProperty(getObjectPropertyName(mbeanName));
 					try
 					{
-						if (tsmxLogger.logger.isDebugEnabled())
+						if (tsmxLogger.logger.isTraceEnabled())
 						{
-							tsmxLogger.logger.debug("Registering mbean '"+mbeanClassname+"' against '"+mbeanObjectName+"'");
+							tsmxLogger.logger.trace("Registering mbean '"+mbeanClassname+"' against '"+mbeanObjectName+"'");
 						}
 
 						_mbeanServer.createMBean(mbeanClassname, new ObjectName(mbeanObjectName));

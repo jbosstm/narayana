@@ -175,8 +175,8 @@ public abstract class OA
     public synchronized void initPOA (String[] args) throws InvalidName,
             SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::initPOA (String[])");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::initPOA (String[])");
         }
 
         if (!_oa.initialised())
@@ -218,8 +218,8 @@ public abstract class OA
     public synchronized ChildOA createPOA (String adapterName, Policy[] policies)
             throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::createPOA ("
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::createPOA ("
                     + adapterName + " )");
         }
 
@@ -265,8 +265,8 @@ public abstract class OA
 
     public synchronized boolean addAttribute (Attribute p)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::addAttribute (" + p
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::addAttribute (" + p
                     + ")");
         }
 
@@ -307,8 +307,8 @@ public abstract class OA
 
     public synchronized void addPreShutdown (PreShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::addPreShutdown ("
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::addPreShutdown ("
                     + c + ")");
         }
 
@@ -317,8 +317,8 @@ public abstract class OA
 
     public synchronized void addPostShutdown (PostShutdown c)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::addPostShutdown ("
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::addPostShutdown ("
                     + c + ")");
         }
 
@@ -365,8 +365,8 @@ public abstract class OA
 
     public void run (String name) throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::run (" + name + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::run (" + name + ")");
         }
 
         _oa.run(name);
@@ -374,8 +374,8 @@ public abstract class OA
 
     public void run () throws SystemException
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::run ()");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::run ()");
         }
 
         _oa.run();
@@ -383,8 +383,8 @@ public abstract class OA
 
     private final void parseProperties (String[] params, boolean preInit)
     {
-        if (opLogger.logger.isDebugEnabled()) {
-            opLogger.logger.debug("OA::parseProperties (String[], " + preInit + ")");
+        if (opLogger.logger.isTraceEnabled()) {
+            opLogger.logger.trace("OA::parseProperties (String[], " + preInit + ")");
         }
 
         Hashtable work = ((preInit) ? _preOAInitProperty : _postOAInitProperty);
@@ -399,8 +399,8 @@ public abstract class OA
 
                 if (p != null)
                 {
-                    if (opLogger.logger.isDebugEnabled()) {
-                        opLogger.logger.debug("Attribute "
+                    if (opLogger.logger.isTraceEnabled()) {
+                        opLogger.logger.trace("Attribute "
                                 + p + " initialising.");
                     }
 

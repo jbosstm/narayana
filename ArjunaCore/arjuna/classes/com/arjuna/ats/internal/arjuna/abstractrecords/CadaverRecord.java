@@ -77,8 +77,8 @@ public class CadaverRecord extends PersistenceRecord
 	oldState = null;
 	oType = RecordType.NONE_RECORD;
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::CadaverRecord(" + os + ", " + sm.get_uid() + ")");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::CadaverRecord(" + os + ", " + sm.get_uid() + ")");
     }
     }
 
@@ -113,8 +113,8 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedAbort ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::nestedAbort() for " + order());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::nestedAbort() for " + order());
     }
 
 	if (oldState != null)
@@ -146,8 +146,8 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedPrepare ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::nestedPrepare() for " + order());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::nestedPrepare() for " + order());
     }
 
 	if (newStateIsValid)
@@ -162,8 +162,8 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelAbort ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::topLevelAbort() for " + order());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::topLevelAbort() for " + order());
     }
 
 	newStateIsValid = false;
@@ -186,8 +186,8 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelCommit ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::topLevelCommit() for " + order());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::topLevelCommit() for " + order());
     }
 
 	boolean res = true;
@@ -221,8 +221,8 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::topLevelPrepare() for " + order());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::topLevelPrepare() for " + order());
     }
 
 	int tlpOk = TwoPhaseOutcome.PREPARE_NOTOK;
@@ -384,8 +384,8 @@ public class CadaverRecord extends PersistenceRecord
 	oType = RecordType.NONE_RECORD;
 	targetParticipantStore = null;
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("CadaverRecord::CadaverRecord ()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("CadaverRecord::CadaverRecord ()");
     }
     }
 

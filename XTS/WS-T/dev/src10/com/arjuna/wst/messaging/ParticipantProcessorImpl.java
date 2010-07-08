@@ -267,9 +267,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Committed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Committed", th) ;
             }
         }
     }
@@ -293,9 +293,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Aborted", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Aborted", th) ;
             }
         }
     }

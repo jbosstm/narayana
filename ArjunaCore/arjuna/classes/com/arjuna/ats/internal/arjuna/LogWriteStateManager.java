@@ -94,8 +94,8 @@ public class LogWriteStateManager extends StateManager
     
     protected synchronized boolean modified ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("StateManager::modified() for object-id " + get_uid());
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("StateManager::modified() for object-id " + get_uid());
     }
 
 	if ((super.objectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))

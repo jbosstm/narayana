@@ -118,9 +118,9 @@ class ContextServerRequestInterceptorImpl extends LocalObject implements ServerR
 
 public ContextServerRequestInterceptorImpl (int dataSlot, Codec codec)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl ( "+dataSlot+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl ( "+dataSlot+" )");
 	}
 
 	_dataSlot = dataSlot;
@@ -134,9 +134,9 @@ public String name ()
 
 public void receive_request_service_contexts (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -216,9 +216,9 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 
 public void receive_request (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl.receive_request ( "+request_info.operation()+" )");
 	}
     }
 
@@ -229,9 +229,9 @@ public void receive_request (ServerRequestInfo request_info) throws SystemExcept
 
 public void send_reply (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl::send_reply ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -252,9 +252,9 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 
 public void send_exception (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl::send_exception ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -275,9 +275,9 @@ public void send_exception (ServerRequestInfo request_info) throws SystemExcepti
 
 public void send_other (ServerRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl.send_other ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl.send_other ( "+request_info.operation()+" )");
 	}
 
 	try
@@ -307,9 +307,9 @@ public void send_other (ServerRequestInfo request_info) throws SystemException
 
 private void suspendContext (ServerRequestInfo request_info) throws SystemException, InvalidSlot
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ContextServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("ContextServerRequestInterceptorImpl.suspendContext ( "+request_info.operation()+" )");
 	}
 
 	Any data = request_info.get_slot(_dataSlot);

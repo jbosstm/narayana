@@ -104,9 +104,9 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 }
                 catch (final Throwable th)
                 {
-                    if (WSCLogger.logger.isDebugEnabled())
+                    if (WSCLogger.logger.isTraceEnabled())
                     {
-                        WSCLogger.logger.debugv("Unexpected exception thrown from create:", th) ;
+                        WSCLogger.logger.tracev("Unexpected exception thrown from create:", th) ;
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME);
@@ -116,9 +116,9 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
             }
             else
             {
-                if (WSCLogger.logger.isDebugEnabled())
+                if (WSCLogger.logger.isTraceEnabled())
                 {
-                    WSCLogger.logger.debugv("Register called for unknown protocol identifier: {0}", new Object[] {protocolIdentifier}) ;
+                    WSCLogger.logger.tracev("Register called for unknown protocol identifier: {0}", new Object[] {protocolIdentifier}) ;
                 }
                 SOAPFactory factory = SOAPFactory.newInstance();
                 SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME);

@@ -647,9 +647,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Close", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Close", th) ;
             }
         }
     }
@@ -667,9 +667,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Compensate", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Compensate", th) ;
             }
         }
     }
@@ -687,9 +687,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Cancel", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Cancel", th) ;
             }
         }
     }
@@ -707,9 +707,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Exited", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Exited", th) ;
             }
         }
     }
@@ -727,9 +727,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Faulted", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Faulted", th) ;
             }
         }
     }
@@ -747,9 +747,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending NotCompleted", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending NotCompleted", th) ;
             }
         }
     }
@@ -768,9 +768,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception while sending Status", th) ;
+                WSTLogger.logger.tracev("Unexpected exception while sending Status", th) ;
             }
         }
     }
@@ -864,9 +864,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from coordinator completed", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from coordinator completed", th) ;
             }
         }
     }
@@ -883,9 +883,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from coordinator exit", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from coordinator exit", th) ;
             }
             return ;
         }
@@ -908,9 +908,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from coordinator fault", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from coordinator fault", th) ;
             }
             return ;
         }
@@ -932,9 +932,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.logger.isDebugEnabled())
+            if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.debugv("Unexpected exception from coordinator error", th) ;
+                WSTLogger.logger.tracev("Unexpected exception from coordinator error", th) ;
             }
             return ;
         }

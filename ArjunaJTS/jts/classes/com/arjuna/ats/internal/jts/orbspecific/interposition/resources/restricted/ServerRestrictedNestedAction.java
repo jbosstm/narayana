@@ -50,8 +50,8 @@ public ServerRestrictedNestedAction (ServerControl myControl)
     {
 	super(myControl);
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerRestrictedNestedAction::ServerRestrictedNestedAction ( " + _theUid + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerRestrictedNestedAction::ServerRestrictedNestedAction ( " + _theUid + " )");
     }
     }
 

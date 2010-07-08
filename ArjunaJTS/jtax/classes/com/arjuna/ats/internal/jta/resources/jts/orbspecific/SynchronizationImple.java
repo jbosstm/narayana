@@ -105,8 +105,8 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
     public void before_completion () throws org.omg.CORBA.SystemException
     {
-	if (jtaxLogger.logger.isDebugEnabled()) {
-        jtaxLogger.logger.debug("SynchronizationImple.before_completion");
+	if (jtaxLogger.logger.isTraceEnabled()) {
+        jtaxLogger.logger.trace("SynchronizationImple.before_completion");
     }
 
 	if (_theSynch != null)
@@ -126,8 +126,8 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
     public void after_completion (org.omg.CosTransactions.Status status) throws org.omg.CORBA.SystemException
     {
-	if (jtaxLogger.logger.isDebugEnabled()) {
-        jtaxLogger.logger.debug("SynchronizationImple.after_completion");
+	if (jtaxLogger.logger.isTraceEnabled()) {
+        jtaxLogger.logger.trace("SynchronizationImple.after_completion");
     }
 
 	if (_theSynch != null)

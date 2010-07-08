@@ -86,8 +86,8 @@ public class AtomicTransaction extends
 			throws NoTransaction, HeuristicMixed, HeuristicHazard,
 			WrongTransaction, SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("AtomicTransaction::end ( "
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("AtomicTransaction::end ( "
                     + report_heuristics + " ) for " + _theAction);
         }
 
@@ -147,8 +147,8 @@ public class AtomicTransaction extends
 	public synchronized void abort () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("AtomicTransaction::abort for "
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("AtomicTransaction::abort for "
                     + _theAction);
         }
 

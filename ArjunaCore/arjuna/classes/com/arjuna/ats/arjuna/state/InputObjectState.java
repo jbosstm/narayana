@@ -56,8 +56,8 @@ public class InputObjectState extends InputBuffer
 
 public InputObjectState ()
     {
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("InputObjectState::InputObjectState()");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("InputObjectState::InputObjectState()");
     }
        	
 	bufferUid = new Uid(Uid.nullUid());
@@ -69,8 +69,8 @@ public InputObjectState (InputObjectState copyFrom)
     {
 	super(copyFrom);
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("InputObjectState::InputObjectState(" + copyFrom + ")");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("InputObjectState::InputObjectState(" + copyFrom + ")");
     }
 	
 	try
@@ -90,8 +90,8 @@ public InputObjectState (OutputObjectState copyFrom)
     {
 	super(copyFrom.buffer());
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("InputObjectState::InputObjectState(" + copyFrom + ")");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("InputObjectState::InputObjectState(" + copyFrom + ")");
     }
 
 	try
@@ -111,8 +111,8 @@ public InputObjectState (Uid newUid, String tName, byte[] buff)
     {
 	super(buff);  // implicitly copies the array contents.
 
-	if (tsLogger.logger.isDebugEnabled()) {
-        tsLogger.logger.debug("InputObjectState::InputObjectState(" + newUid + ", " + tName + ")");
+	if (tsLogger.logger.isTraceEnabled()) {
+        tsLogger.logger.trace("InputObjectState::InputObjectState(" + newUid + ", " + tName + ")");
     }
 
 	bufferUid = new Uid(newUid);
@@ -183,8 +183,8 @@ public void print (PrintWriter strm)
 
 public synchronized void copy (InputObjectState objstate)
     {
-        if (tsLogger.logger.isDebugEnabled())
-            tsLogger.logger.debug("InputObjectState::copy for " + bufferUid);
+        if (tsLogger.logger.isTraceEnabled())
+            tsLogger.logger.trace("InputObjectState::copy for " + bufferUid);
        
 	super.copy(objstate);
 

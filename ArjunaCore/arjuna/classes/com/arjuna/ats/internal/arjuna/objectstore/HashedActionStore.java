@@ -75,8 +75,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.HashedActionStore( " + shareStatus + " )");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.HashedActionStore( " + shareStatus + " )");
         }
         
         try
@@ -94,8 +94,8 @@ public class HashedActionStore extends HashedStore
     {
         this(locationOfStore, StateType.OS_SHARED);
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try
@@ -114,8 +114,8 @@ public class HashedActionStore extends HashedStore
     {
         super(shareStatus);
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.HashedActionStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.HashedActionStore(" + locationOfStore + ")");
         }
 
         try

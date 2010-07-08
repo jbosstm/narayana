@@ -81,8 +81,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 		super(actUid, myParent, parentImpl);
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction::ServerTransaction ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction::ServerTransaction ( "
                     + actUid
                     + ", Control myParent, "
                     + ((parentImpl != null) ? parentImpl.get_uid()
@@ -98,8 +98,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public void finalize ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction.finalize ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction.finalize ( "
                     + get_uid() + " )");
         }
 
@@ -132,8 +132,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPrepare ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction::doPrepare ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction::doPrepare ( "
                     + get_uid() + " )");
         }
 
@@ -213,8 +213,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPhase2Commit ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction::doPhase2Commit ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction::doPhase2Commit ( "
                     + get_uid() + " )");
         }
 
@@ -256,8 +256,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public final int doPhase2Abort ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction::doPhase2Abort ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction::doPhase2Abort ( "
                     + get_uid() + " )");
         }
 
@@ -613,8 +613,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 	    super(recoveringActUid);
 
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("ServerTransaction::ServerTransaction ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("ServerTransaction::ServerTransaction ( "
                     + recoveringActUid + " )");
         }
 

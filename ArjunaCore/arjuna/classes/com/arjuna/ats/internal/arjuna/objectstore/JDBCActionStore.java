@@ -62,8 +62,8 @@ public class JDBCActionStore extends JDBCStore
     public synchronized boolean commit_state (Uid objUid,
                                               String tName) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.commit_state(" + objUid + ", " + tName + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.commit_state(" + objUid + ", " + tName + ")");
         }
 
         boolean result = false;
@@ -81,8 +81,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.hide_state(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.hide_state(" + u + ", " + tn + ")");
         }
 
         return false;
@@ -90,8 +90,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.reveal_state(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.reveal_state(" + u + ", " + tn + ")");
         }
         
         return false;
@@ -99,8 +99,8 @@ public class JDBCActionStore extends JDBCStore
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.read_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.read_committed(" + storeUid + ", " + tName + ")");
         }
         
         return super.read_committed(storeUid, tName);
@@ -108,8 +108,8 @@ public class JDBCActionStore extends JDBCStore
 
     public InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.read_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.read_uncommitted(" + u + ", " + tn + ")");
         }
         
         return null;
@@ -117,8 +117,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.remove_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.remove_committed(" + storeUid + ", " + tName + ")");
         }
         
         return super.remove_committed(storeUid, tName);
@@ -126,8 +126,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.remove_uncommitted(" + u + ", " + tn + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.remove_uncommitted(" + u + ", " + tn + ")");
         }
         
         return false;
@@ -135,8 +135,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.write_committed(" + storeUid + ", " + tName + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.write_committed(" + storeUid + ", " + tName + ")");
         }
         
         return super.write_committed(storeUid, tName, state);
@@ -144,8 +144,8 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("JDBCActionStore.write_uncommitted(" + u + ", " + tn + ", " + s + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCActionStore.write_uncommitted(" + u + ", " + tn + ", " + s + ")");
         }
         
         return false;

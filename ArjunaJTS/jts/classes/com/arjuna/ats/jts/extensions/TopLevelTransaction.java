@@ -62,8 +62,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public TopLevelTransaction ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::TopLevelTransaction ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::TopLevelTransaction ()");
     }
 
 	_originalTransaction = null;
@@ -71,8 +71,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public void finalize ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction.finalize ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction.finalize ()");
     }
 
 	if (_originalTransaction != null)
@@ -111,8 +111,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public synchronized void begin () throws SystemException, SubtransactionsUnavailable
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::begin ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::begin ()");
     }
 
 	// already begun?
@@ -126,8 +126,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
 	_originalTransaction = current.suspend();
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::begin - suspend transaction " + _originalTransaction);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::begin - suspend transaction " + _originalTransaction);
     }
 
 	super.begin();
@@ -135,8 +135,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public synchronized void commit (boolean report_heuristics) throws SystemException, NoTransaction, HeuristicMixed, HeuristicHazard, WrongTransaction
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::commit ( " + report_heuristics + " ) called for " + _originalTransaction);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::commit ( " + report_heuristics + " ) called for " + _originalTransaction);
     }
 
 	if (validTransaction())
@@ -166,8 +166,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     public synchronized void rollback () throws SystemException, NoTransaction, WrongTransaction
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::rollback () called for " + _originalTransaction);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::rollback () called for " + _originalTransaction);
     }
 
 	if (validTransaction())
@@ -197,8 +197,8 @@ public class TopLevelTransaction extends AtomicTransaction
 
     private final void resumeTransaction ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("TopLevelTransaction::resumeTransaction for " + _originalTransaction);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("TopLevelTransaction::resumeTransaction for " + _originalTransaction);
     }
 
 	try

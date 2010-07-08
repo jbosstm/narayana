@@ -92,8 +92,8 @@ public class TransactionFactoryImple extends
 
 	public TransactionFactoryImple ()
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::TransactionFactoryImple ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::TransactionFactoryImple ()");
         }
 
 		_factoryRef = getReference();
@@ -101,8 +101,8 @@ public class TransactionFactoryImple extends
 
 	public TransactionFactoryImple (String name)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::TransactionFactoryImple ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::TransactionFactoryImple ( "
                     + name + " )");
         }
 
@@ -127,8 +127,8 @@ public class TransactionFactoryImple extends
 
 	public Control create (int time_out) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::create ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::create ( "
                     + time_out + " )");
         }
 
@@ -145,8 +145,8 @@ public class TransactionFactoryImple extends
 
 	public ControlImple createLocal (int time_out) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::createLocal ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::createLocal ( "
                     + time_out + " )");
         }
 
@@ -195,8 +195,8 @@ public class TransactionFactoryImple extends
 	public ControlImple recreateLocal (PropagationContext ctx)
 			throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::recreateLocal ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::recreateLocal ()");
         }
 
 		if (ctx.current.coord == null) // nothing to use!!
@@ -224,8 +224,8 @@ public class TransactionFactoryImple extends
 
 	public Control recreate (PropagationContext ctx) throws SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::recreate ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::recreate ()");
         }
 
 		return recreateLocal(ctx).getControl();
@@ -238,8 +238,8 @@ public class TransactionFactoryImple extends
 
 	public static Control create_subtransaction (Control control, ArjunaTransactionImple parent)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::create_subtransaction ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::create_subtransaction ( "
                     + control
                     + ", "
                     + ((parent != null) ? parent.get_uid() : Uid.nullUid())
@@ -267,8 +267,8 @@ public class TransactionFactoryImple extends
 
 	public static Control createProxy (Coordinator coordinator, Terminator terminator, Control parentControl)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::createProxy ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::createProxy ( "
                     + coordinator
                     + ", "
                     + terminator
@@ -335,8 +335,8 @@ public class TransactionFactoryImple extends
 
 	public static Control createPropagatedControl (Coordinator coord)
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::createPropagatedControl ( "
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::createPropagatedControl ( "
                     + coord + " )");
         }
 
@@ -763,8 +763,8 @@ public class TransactionFactoryImple extends
 	private final org.omg.CosTransactions.otid_t[] activeTransactions ()
 			throws Inactive, NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::activeTransactions ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::activeTransactions ()");
         }
 
 		if (ControlImple.allControls == null)
@@ -802,8 +802,8 @@ public class TransactionFactoryImple extends
 	private final org.omg.CosTransactions.otid_t[] unresolvedTransactions ()
 			throws Inactive, NoTransaction, SystemException
 	{
-		if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("TransactionFactoryImple::terminatedTransactions ()");
+		if (jtsLogger.logger.isTraceEnabled()) {
+            jtsLogger.logger.trace("TransactionFactoryImple::terminatedTransactions ()");
         }
 
 		InputObjectState uids = new InputObjectState();

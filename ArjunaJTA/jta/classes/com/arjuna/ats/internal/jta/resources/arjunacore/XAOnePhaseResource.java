@@ -114,8 +114,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final XAException xae)
         {
-            if (jtaLogger.logger.isDebugEnabled()) {
-                jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
             }
             
             switch (xae.errorCode)
@@ -153,8 +153,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final Throwable ex)
         {
-            if (jtaLogger.logger.isDebugEnabled()) {
-                jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") " + ex.getMessage());
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("XAOnePhaseResource.commit(" + xid + ") " + ex.getMessage());
             }
         }
         finally
@@ -166,8 +166,8 @@ public class XAOnePhaseResource implements OnePhaseResource
             }
             catch (final Throwable ex)
             {
-                if (jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("XAOnePhaseResource.commit(" + xid + ") called forget and got " + ex.getMessage());
+                if (jtaLogger.logger.isTraceEnabled()) {
+                    jtaLogger.logger.trace("XAOnePhaseResource.commit(" + xid + ") called forget and got " + ex.getMessage());
                 }
             }
         }
@@ -192,8 +192,8 @@ public class XAOnePhaseResource implements OnePhaseResource
         }
         catch (final Throwable ex)
         {
-            if (jtaLogger.logger.isDebugEnabled()) {
-                jtaLogger.logger.debug("XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
             }
         }
         

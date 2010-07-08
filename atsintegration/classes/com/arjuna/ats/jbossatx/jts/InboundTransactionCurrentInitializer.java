@@ -47,8 +47,8 @@ public class InboundTransactionCurrentInitializer extends LocalObject implements
 {
     public void pre_init(ORBInitInfo info)
     {
-        if(jbossatxLogger.logger.isDebugEnabled()) {
-            jbossatxLogger.logger.debug("InboundTransactionCurrentInitializer.pre_init()");
+        if(jbossatxLogger.logger.isTraceEnabled()) {
+            jbossatxLogger.logger.trace("InboundTransactionCurrentInitializer.pre_init()");
         }
 
         try

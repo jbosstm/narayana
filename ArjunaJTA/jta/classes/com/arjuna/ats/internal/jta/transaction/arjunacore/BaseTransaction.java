@@ -45,8 +45,8 @@ public class BaseTransaction
 	public void begin() throws javax.transaction.NotSupportedException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.begin");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.begin");
         }
 
 		/*
@@ -105,8 +105,8 @@ public class BaseTransaction
 			java.lang.SecurityException, java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.commit");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.commit");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -122,8 +122,8 @@ public class BaseTransaction
 	public void rollback() throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.rollback");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.rollback");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -139,8 +139,8 @@ public class BaseTransaction
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.setRollbackOnly");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.setRollbackOnly");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -154,8 +154,8 @@ public class BaseTransaction
 
 	public int getStatus() throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.getStatus");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.getStatus");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -199,8 +199,8 @@ public class BaseTransaction
 
 	public TransactionImple createSubordinate () throws javax.transaction.NotSupportedException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("BaseTransaction.createSubordinate");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("BaseTransaction.createSubordinate");
         }
 
 		try

@@ -63,8 +63,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public BasicPersistentLockStore(String key)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("BasicPersistentLockStore.BasicPersistentLockStore(" + key + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("BasicPersistentLockStore.BasicPersistentLockStore(" + key + ")");
         }
 
         _key = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
@@ -81,8 +81,8 @@ public class BasicPersistentLockStore extends LockStore
     public InputObjectState read_state (Uid u, String tName)
             throws LockStoreException
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("BasicPersistentLockStore.read_state(" + u + ", " + tName + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("BasicPersistentLockStore.read_state(" + u + ", " + tName + ")");
         }
 
         try
@@ -97,8 +97,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public boolean remove_state (Uid u, String tName)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("BasicPersistentLockStore.remove_state(" + u + ", " + tName + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("BasicPersistentLockStore.remove_state(" + u + ", " + tName + ")");
         }
 
         try
@@ -113,8 +113,8 @@ public class BasicPersistentLockStore extends LockStore
 
     public boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
-        if (txojLogger.logger.isDebugEnabled()) {
-            txojLogger.logger.debug("BasicPersistentLockStore.write_committed(" + u + ", " + tName + ", " + state + ")");
+        if (txojLogger.logger.isTraceEnabled()) {
+            txojLogger.logger.trace("BasicPersistentLockStore.write_committed(" + u + ", " + tName + ", " + state + ")");
         }
 
         try

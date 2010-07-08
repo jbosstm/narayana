@@ -125,9 +125,9 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from commit:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from commit:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -140,9 +140,9 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Commit called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Commit called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
@@ -195,9 +195,9 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 }
                 catch (final Throwable th)
                 {
-                    if (WSTLogger.logger.isDebugEnabled())
+                    if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.debugv("Unexpected exception thrown from rollback:", th) ;
+                        WSTLogger.logger.tracev("Unexpected exception thrown from rollback:", th) ;
                     }
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault10(th) ;
@@ -210,9 +210,9 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
             }
             else
             {
-                if (WSTLogger.logger.isDebugEnabled())
+                if (WSTLogger.logger.isTraceEnabled())
                 {
-                    WSTLogger.logger.debugv("Rollback called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.logger.tracev("Rollback called on unknown participant: {0}", new Object[] {instanceIdentifier}) ;
                 }
                 final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,

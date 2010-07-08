@@ -143,8 +143,8 @@ public class ServerControlWrapper extends ControlWrapper
 		}
 		else
 		{
-			if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("ServerControlWrapper::create_subtransaction - subtransaction parent is inactive.");
+			if (jtsLogger.logger.isTraceEnabled()) {
+                jtsLogger.logger.trace("ServerControlWrapper::create_subtransaction - subtransaction parent is inactive.");
             }
 
 			throw new INVALID_TRANSACTION(

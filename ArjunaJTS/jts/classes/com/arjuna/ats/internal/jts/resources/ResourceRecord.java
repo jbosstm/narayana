@@ -163,25 +163,25 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 		if (theOrb == null)
 		    throw new UNKNOWN();
 
-		if (jtsLogger.logger.isDebugEnabled())
+		if (jtsLogger.logger.isTraceEnabled())
 		{
-		    jtsLogger.logger.debug("ResourceRecord: About to string_to_object on "+_stringifiedResourceHandle);
+		    jtsLogger.logger.trace("ResourceRecord: About to string_to_object on "+_stringifiedResourceHandle);
 		}
 
 		org.omg.CORBA.Object optr = theOrb.string_to_object(_stringifiedResourceHandle);
 
-		if (jtsLogger.logger.isDebugEnabled())
+		if (jtsLogger.logger.isTraceEnabled())
 		{
-		    jtsLogger.logger.debug("ResourceRecord: Successfully stringed to object, next try to narrow");
+		    jtsLogger.logger.trace("ResourceRecord: Successfully stringed to object, next try to narrow");
 		}
 		
 		theOrb = null;
 		
 		_resourceHandle = org.omg.CosTransactions.ResourceHelper.narrow(optr);
 
-		if (jtsLogger.logger.isDebugEnabled())
+		if (jtsLogger.logger.isTraceEnabled())
 		{
-		    jtsLogger.logger.debug("ResourceRecord: Successfully narrowed");
+		    jtsLogger.logger.trace("ResourceRecord: Successfully narrowed");
 		}
 		
 		if (_resourceHandle == null)
@@ -195,9 +195,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	    {
 		// Failed to narrow to a Resource
 
-		if (jtsLogger.logger.isDebugEnabled())
+		if (jtsLogger.logger.isTraceEnabled())
 		{
-		    jtsLogger.logger.debug("ResourceRecord: Failed to narrow to Resource");
+		    jtsLogger.logger.trace("ResourceRecord: Failed to narrow to Resource");
 		}
 	    }
 	}
@@ -239,9 +239,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int nestedAbort ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::nestedAbort() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::nestedAbort() for "+order());
 	}
 
 	/*
@@ -306,9 +306,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int nestedCommit ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::nestedCommit() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::nestedCommit() for "+order());
 	}
 
 	return TwoPhaseOutcome.FINISH_OK;
@@ -324,9 +324,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int nestedPrepare ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::nestedPrepare() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::nestedPrepare() for "+order());
 	}
 
 	int o = TwoPhaseOutcome.ONE_PHASE_ERROR;
@@ -382,9 +382,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int topLevelAbort ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::topLevelAbort() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::topLevelAbort() for "+order());
 	}
 
 	try
@@ -436,9 +436,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int topLevelCommit ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::topLevelCommit() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::topLevelCommit() for "+order());
 	}
 
 	try
@@ -477,9 +477,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
     public int topLevelPrepare ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord::topLevelPrepare() for "+order());
+	    jtsLogger.logger.trace("ResourceRecord::topLevelPrepare() for "+order());
 	}
 
 	try
@@ -643,9 +643,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
 		_recCoordUid = UidHelper.unpackFrom(os);
 
-		if (jtsLogger.logger.isDebugEnabled())
+		if (jtsLogger.logger.isTraceEnabled())
 		{
-		    jtsLogger.logger.debug("ResourceRecord.restore_state: unpacked rec co with uid="+_recCoordUid);
+		    jtsLogger.logger.trace("ResourceRecord.restore_state: unpacked rec co with uid="+_recCoordUid);
 		}
 	    }
 	}
@@ -707,9 +707,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 		{
 		    os.packString(stringRef);
 
-		    if (jtsLogger.logger.isDebugEnabled())
+		    if (jtsLogger.logger.isTraceEnabled())
 		    {
-			jtsLogger.logger.debug("ResourceRecord: packed obj ref "+stringRef);
+			jtsLogger.logger.trace("ResourceRecord: packed obj ref "+stringRef);
 		    }
 		}
 		else
@@ -724,9 +724,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 		    // Pack recovery coordinator Uid
 		    UidHelper.packInto(_recCoordUid, os);
 
-		    if (jtsLogger.logger.isDebugEnabled())
+		    if (jtsLogger.logger.isTraceEnabled())
 		    {
-			jtsLogger.logger.debug("Packed rec co uid of "+_recCoordUid);
+			jtsLogger.logger.trace("Packed rec co uid of "+_recCoordUid);
 		    }
 		}
 	    }
@@ -804,9 +804,9 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	    }
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("ResourceRecord: shouldReplace() = "+replace);
+	    jtsLogger.logger.trace("ResourceRecord: shouldReplace() = "+replace);
 	}
 
 	return replace;

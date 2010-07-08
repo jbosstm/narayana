@@ -51,8 +51,8 @@ public class SynchronizationRecord implements Comparable
 
     public SynchronizationRecord (Synchronization ptr)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("SynchronizationRecord::SynchronizationRecord ( " + ptr + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("SynchronizationRecord::SynchronizationRecord ( " + ptr + " )");
     }
 
 	_ptr = ptr;
@@ -67,8 +67,8 @@ public class SynchronizationRecord implements Comparable
 
     public final Synchronization contents ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("SynchronizationRecord::contents - for " + _ptr);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("SynchronizationRecord::contents - for " + _ptr);
     }
 
 	return _ptr;

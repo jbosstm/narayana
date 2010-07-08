@@ -80,9 +80,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
         {
             if (!replyTo.isValid())
             {
-                if (WSCLogger.logger.isDebugEnabled())
+                if (WSCLogger.logger.isTraceEnabled())
                 {
-                    WSCLogger.logger.debugv("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
+                    WSCLogger.logger.tracev("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
                 }
             }
             else if (!AddressingConstants.WSA_ADDRESS_ANONYMOUS.equals(replyTo.getAddress().getValue()))
@@ -92,9 +92,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                 {
                     if (!faultTo.isValid())
                     {
-                        if (WSCLogger.logger.isDebugEnabled())
+                        if (WSCLogger.logger.isTraceEnabled())
                         {
-                            WSCLogger.logger.debugv("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
+                            WSCLogger.logger.tracev("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
                         }
                     }
                     else if (AddressingConstants.WSA_ADDRESS_ANONYMOUS.equals(faultTo.getAddress().getValue()))
@@ -158,9 +158,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                 {
                     if (!to.isValid())
                     {
-                        if (WSCLogger.logger.isDebugEnabled())
+                        if (WSCLogger.logger.isTraceEnabled())
                         {
-                            WSCLogger.logger.debugv("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
+                            WSCLogger.logger.tracev("Ignoring invalid WS-Addressing replyTo endpoint reference.") ;
                         }
                     }
                     else
@@ -210,9 +210,9 @@ public class AddressingInterceptorHandler implements InterceptorHandler
             {
                 if (!to.isValid())
                 {
-                    if (WSCLogger.logger.isDebugEnabled())
+                    if (WSCLogger.logger.isTraceEnabled())
                     {
-                        WSCLogger.logger.debugv("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
+                        WSCLogger.logger.tracev("Ignoring invalid WS-Addressing faultTo endpoint reference.") ;
                     }
                 }
                 else

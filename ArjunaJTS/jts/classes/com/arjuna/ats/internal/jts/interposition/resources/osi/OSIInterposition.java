@@ -251,7 +251,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 	 * Always return reference to 'current' transaction.
 	 */
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(ctx, newElement);
 
 	return control;
@@ -475,7 +475,7 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
 	    }
 	}
 
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	    compareHierarchies(context, hier);
 
 	return control;

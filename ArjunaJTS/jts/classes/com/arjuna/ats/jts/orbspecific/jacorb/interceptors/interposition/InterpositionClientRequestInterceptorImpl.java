@@ -104,9 +104,9 @@ class InterpositionClientRequestInterceptorImpl extends LocalObject implements C
 
 public InterpositionClientRequestInterceptorImpl (int localSlot, Codec codec)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl ( "+localSlot+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl ( "+localSlot+" )");
 	}
 
 	_localSlot = localSlot;
@@ -120,9 +120,9 @@ public String name ()
 
 public void send_request (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::send_request ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::send_request ( "+request_info.operation()+" )");
 	}
 
 	if (systemCall(request_info))
@@ -270,25 +270,25 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 
 public void send_poll (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::send_poll ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::send_poll ( "+request_info.operation()+" )");
 	}
     }
 
 public void receive_reply (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_reply ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_reply ( "+request_info.operation()+" )");
 	}
     }
 
 public void receive_exception (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_exception ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_exception ( "+request_info.operation()+" )");
 	}
 
 	// mark transaction as rollback only if a system exception
@@ -296,17 +296,17 @@ public void receive_exception (ClientRequestInfo request_info) throws SystemExce
 
 public void receive_other (ClientRequestInfo request_info) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl::receive_other ( "+request_info.operation()+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_other ( "+request_info.operation()+" )");
 	}
     }
 
 private final Any packPropagationContext (PropagationContext ctx)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionClientRequestInterceptorImpl.packPropagationContext ( "+ctx+" )");
+	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl.packPropagationContext ( "+ctx+" )");
 	}
 
 	Any data = ORBManager.getORB().orb().create_any();

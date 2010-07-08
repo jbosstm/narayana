@@ -95,8 +95,8 @@ public class XAResourceRecord extends AbstractRecord
 	{
 		super(new Uid(), null, ObjectType.ANDPERSISTENT);
 
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.XAResourceRecord ( " + xid + ", " + res + " )");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.XAResourceRecord ( " + xid + ", " + res + " )");
         }
 
 		_theXAResource = res;
@@ -179,8 +179,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelPrepare()
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.topLevelPrepare for " + _tranID);
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + _tranID);
         }
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
@@ -261,8 +261,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelAbort()
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.topLevelAbort for " + _tranID);
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.topLevelAbort for " + _tranID);
         }
 
 		if (!_valid)
@@ -409,8 +409,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelCommit()
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.topLevelCommit for " + _tranID);
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.topLevelCommit for " + _tranID);
         }
 
 		if (!_prepared)
@@ -555,8 +555,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelOnePhaseCommit()
 	{
-	    if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
+	    if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
         }
 
 	    boolean commit = true;
@@ -728,8 +728,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	public boolean forgetHeuristic()
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.forget for " + _tranID);
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.forget for " + _tranID);
         }
 
 		forget();
@@ -762,8 +762,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	protected int recover()
 	{
-		if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("XAResourceRecord.recover");
+		if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("XAResourceRecord.recover");
         }
 
 		if (_committed)
@@ -887,8 +887,8 @@ public class XAResourceRecord extends AbstractRecord
 						_theXAResource = (XAResource) o.readObject();
 						o.close();
 
-						if (jtaLogger.logger.isDebugEnabled()) {
-                            jtaLogger.logger.debug("XAResourceRecord.restore_state - XAResource de-serialized");
+						if (jtaLogger.logger.isTraceEnabled()) {
+                            jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
                         }
 					}
 					catch (Exception ex)
@@ -933,8 +933,8 @@ public class XAResourceRecord extends AbstractRecord
 				_recoveryObject.unpackFrom(os);
 				_theXAResource = _recoveryObject.getResource();
 
-				if (jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("XAResourceRecord.restore_state - XAResource got from "
+				if (jtaLogger.logger.isTraceEnabled()) {
+                    jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource got from "
                             + creatorName);
                 }
 			}

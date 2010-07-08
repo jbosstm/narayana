@@ -61,8 +61,8 @@ public ServerOSINestedAction (ServerControl control,
     {
 	super(control, doRegister);
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerOSINestedAction::ServerOSINestedAction ( " + _theUid + " )");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerOSINestedAction::ServerOSINestedAction ( " + _theUid + " )");
     }
     }
 
@@ -73,8 +73,8 @@ public ServerOSINestedAction (ServerControl control,
 
 public void commit_subtransaction (Coordinator parent) throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerOSINestedAction::commit_subtransaction :" + _theUid);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerOSINestedAction::commit_subtransaction :" + _theUid);
     }
 
 	/*
@@ -90,8 +90,8 @@ public void commit_subtransaction (Coordinator parent) throws SystemException
 
 public void rollback_subtransaction () throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerOSINestedAction::rollback_subtransaction :" + _theUid);
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerOSINestedAction::rollback_subtransaction :" + _theUid);
     }
 
 	OTIDMap.remove(get_uid());

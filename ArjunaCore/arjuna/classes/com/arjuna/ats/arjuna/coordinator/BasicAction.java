@@ -64,8 +64,8 @@ public class BasicAction extends StateManager
 	{
 		super(ObjectType.NEITHER);
 
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::BasicAction()");
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::BasicAction()");
         }
 
 		pendingList = null;
@@ -100,8 +100,8 @@ public class BasicAction extends StateManager
 	{
 		super(objUid, ObjectType.NEITHER);
 
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::BasicAction("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::BasicAction("
                     + objUid + ")");
         }
 
@@ -140,8 +140,8 @@ public class BasicAction extends StateManager
 
 	public void finalize ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::finalize()");
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::finalize()");
         }
 
 		if ((actionStatus == ActionStatus.RUNNING)
@@ -236,8 +236,8 @@ public class BasicAction extends StateManager
 
 	public final boolean preventCommit ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::preventCommit( " + this + ")");
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::preventCommit( " + this + ")");
         }
 		
 		boolean res = false;
@@ -451,8 +451,8 @@ public class BasicAction extends StateManager
 
 	public boolean activate (String root)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::activate() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::activate() for action-id "
                     + get_uid());
         }
 
@@ -508,8 +508,8 @@ public class BasicAction extends StateManager
 
 	public boolean deactivate ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::deactivate() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::deactivate() for action-id "
                     + get_uid());
         }
 
@@ -575,8 +575,8 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildThread (Thread t)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::addChildThread () action "+get_uid()+" adding "+t);
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::addChildThread () action "+get_uid()+" adding "+t);
         }
 
 		if (t == null)
@@ -602,8 +602,8 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::addChildThread () action "+get_uid()+" adding "+t+" result = "+result);
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::addChildThread () action "+get_uid()+" adding "+t+" result = "+result);
         }
 
 		return result;
@@ -634,8 +634,8 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildThread (String threadId)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId);
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId);
         }
 
 		if (threadId == null)
@@ -656,9 +656,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.logger.isDebugEnabled())
+		if (tsLogger.logger.isTraceEnabled())
 		{
-                tsLogger.logger.debug("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId+" result = "+result);
+                tsLogger.logger.trace("BasicAction::removeChildThread () action "+get_uid()+" removing "+threadId+" result = "+result);
 		}
 
 		return result;
@@ -673,8 +673,8 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildAction (BasicAction act)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::addAction () action "+get_uid()+" adding "+((act != null) ? act.get_uid() : Uid.nullUid()));
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::addAction () action "+get_uid()+" adding "+((act != null) ? act.get_uid() : Uid.nullUid()));
         }
 
 		if (act == null)
@@ -703,9 +703,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.logger.isDebugEnabled())
+		if (tsLogger.logger.isTraceEnabled())
 		{
-            tsLogger.logger.debug("BasicAction::addChildAction () action "+get_uid()+" adding "+act.get_uid()+" result = "+result);
+            tsLogger.logger.trace("BasicAction::addChildAction () action "+get_uid()+" adding "+act.get_uid()+" result = "+result);
 		}
 
 		return result;
@@ -755,8 +755,8 @@ public class BasicAction extends StateManager
     
     public boolean save_state (OutputObjectState os, int ot)
     {
-    	if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::save_state ()");
+    	if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::save_state ()");
         }
     
     	try
@@ -818,9 +818,9 @@ public class BasicAction extends StateManager
     		 * which type of record to create when restoring.
     		 */
     
-    		if (tsLogger.logger.isDebugEnabled())
+    		if (tsLogger.logger.isTraceEnabled())
     		{
-                tsLogger.logger.debug("BasicAction::save_state - next record to pack is a "+temp.typeIs()
+                tsLogger.logger.trace("BasicAction::save_state - next record to pack is a "+temp.typeIs()
                         +" record "+temp.type()+" should save it? = "+temp.doSave());
     		}
     
@@ -830,8 +830,8 @@ public class BasicAction extends StateManager
     
     			try
     			{
-    				if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("Packing a "+temp.typeIs()+" record");
+    				if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("Packing a "+temp.typeIs()+" record");
                     }
     
     				os.packInt(temp.typeIs());
@@ -861,8 +861,8 @@ public class BasicAction extends StateManager
     	{
     		try
     		{
-    			if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("Packing a NONE_RECORD");
+    			if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("Packing a NONE_RECORD");
                 }
     
     			os.packInt(RecordType.NONE_RECORD);
@@ -903,8 +903,8 @@ public class BasicAction extends StateManager
     
     					try
     					{
-    						if (tsLogger.logger.isDebugEnabled()) {
-                                tsLogger.logger.debug("HeuristicList - packing a "+temp.typeIs()+" record");
+    						if (tsLogger.logger.isTraceEnabled()) {
+                                tsLogger.logger.trace("HeuristicList - packing a "+temp.typeIs()+" record");
                             }
     
     						os.packInt(temp.typeIs());
@@ -929,8 +929,8 @@ public class BasicAction extends StateManager
     			{
     				try
     				{
-    					if (tsLogger.logger.isDebugEnabled()) {
-                            tsLogger.logger.debug("HeuristicList - packing a NONE_RECORD");
+    					if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("HeuristicList - packing a NONE_RECORD");
                         }
     
     					os.packInt(RecordType.NONE_RECORD);
@@ -947,8 +947,8 @@ public class BasicAction extends StateManager
     	{
     		try
     		{
-    			if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("Packing action status of "+ActionStatus.stringForm(actionStatus));
+    			if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("Packing action status of "+ActionStatus.stringForm(actionStatus));
                 }
     
     			os.packInt(actionStatus);
@@ -973,8 +973,8 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildAction (BasicAction act)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::removeChildAction () action "+get_uid()+" removing "+((act != null) ? act.get_uid() : Uid.nullUid()));
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::removeChildAction () action "+get_uid()+" removing "+((act != null) ? act.get_uid() : Uid.nullUid()));
         }
 
 		if (act == null)
@@ -995,9 +995,9 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.logger.isDebugEnabled())
+		if (tsLogger.logger.isTraceEnabled())
 		{
-            tsLogger.logger.debug("BasicAction::removeChildAction () action "+get_uid()+" removing "+act.get_uid()+" result = "+result);
+            tsLogger.logger.trace("BasicAction::removeChildAction () action "+get_uid()+" removing "+act.get_uid()+" result = "+result);
 		}
 
 		return result;
@@ -1047,8 +1047,8 @@ public class BasicAction extends StateManager
 
 	public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::restore_state ()");
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::restore_state ()");
         }
 
 		createPreparedLists();
@@ -1080,8 +1080,8 @@ public class BasicAction extends StateManager
 		{
 			record_type = os.unpackInt();
 
-			if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("Unpacked a "+record_type+" record");
+			if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("Unpacked a "+record_type+" record");
             }
 		}
 		catch (IOException e)
@@ -1107,8 +1107,8 @@ public class BasicAction extends StateManager
 				{
 					record_type = os.unpackInt();
 
-					if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("Unpacked a "+record_type+" record");
+					if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("Unpacked a "+record_type+" record");
                     }
 				}
 				catch (IOException e)
@@ -1128,8 +1128,8 @@ public class BasicAction extends StateManager
 			{
 				hSize = os.unpackInt();
 
-				if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("HeuristicList - Unpacked heuristic list size of "+hSize);
+				if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("HeuristicList - Unpacked heuristic list size of "+hSize);
                 }
 			}
 			catch (IOException e)
@@ -1144,8 +1144,8 @@ public class BasicAction extends StateManager
 			{
 				record_type = os.unpackInt();
 
-				if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("HeuristicList - Unpacked a "+record_type+" record");
+				if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("HeuristicList - Unpacked a "+record_type+" record");
                 }
 			}
 			catch (IOException e)
@@ -1163,8 +1163,8 @@ public class BasicAction extends StateManager
 
 					record_type = os.unpackInt();
 
-					if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("HeuristicList - Unpacked a "+record_type+" record");
+					if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("HeuristicList - Unpacked a "+record_type+" record");
                     }
 				}
 				catch (IOException e)
@@ -1196,15 +1196,15 @@ public class BasicAction extends StateManager
 
 		if (res)
 		{
-			if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("Restored action status of "+ActionStatus.stringForm(tempActionStatus)+
+			if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("Restored action status of "+ActionStatus.stringForm(tempActionStatus)+
                         " "+Integer.toString(tempActionStatus));
 
-                tsLogger.logger.debug("Restored action type "+
+                tsLogger.logger.trace("Restored action type "+
                         ((tempActionType == ActionType.NESTED) ? "Nested" : "Top-level")+
                         " "+Integer.toString(tempActionType));
 
-                tsLogger.logger.debug(" Restored heuristic decision of "+
+                tsLogger.logger.trace(" Restored heuristic decision of "+
                         TwoPhaseOutcome.stringForm(tempHeuristicDecision)+" "+Integer.toString(tempHeuristicDecision));
             }
 
@@ -1328,8 +1328,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized int Begin (BasicAction parentAct)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::Begin() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::Begin() for action-id "
                     + get_uid());
         }
 		
@@ -1405,8 +1405,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized int End (boolean reportHeuristics)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::End() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::End() for action-id "
                     + get_uid());
         }
 
@@ -1556,8 +1556,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized int Abort ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::Abort() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::Abort() for action-id "
                     + get_uid());
         }
 
@@ -1721,8 +1721,8 @@ public class BasicAction extends StateManager
 
 	protected final synchronized void phase2Cleanup ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::phase2Cleanup() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::phase2Cleanup() for action-id "
                     + get_uid());
         }
 
@@ -1760,8 +1760,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized final void phase2Commit (boolean reportHeuristics)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::phase2Commit() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::phase2Commit() for action-id "
                     + get_uid());
         }
 
@@ -1870,8 +1870,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized final void phase2Abort (boolean reportHeuristics)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::phase2Abort() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::phase2Abort() for action-id "
                     + get_uid());
         }
 
@@ -1935,8 +1935,8 @@ public class BasicAction extends StateManager
 
 	protected synchronized final int prepare (boolean reportHeuristics)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::prepare () for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::prepare () for action-id "
                     + get_uid());
         }
 
@@ -2249,8 +2249,8 @@ public class BasicAction extends StateManager
 
 	protected void onePhaseCommit (boolean reportHeuristics)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::onePhaseCommit() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::onePhaseCommit() for action-id "
                     + get_uid());
         }
 
@@ -2767,8 +2767,8 @@ public class BasicAction extends StateManager
 
 	protected int doCommit (boolean reportHeuristics, AbstractRecord record)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::doCommit ("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::doCommit ("
                     + record + ")");
         }
 
@@ -2803,8 +2803,8 @@ public class BasicAction extends StateManager
 				}
 				else
 				{				
-					if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("BasicAction.doCommit for "+get_uid()+" received "+
+					if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("BasicAction.doCommit for "+get_uid()+" received "+
                                 TwoPhaseOutcome.stringForm(ok)+" from "+RecordType.typeToClass(recordBeingHandled.typeIs()));
                     }
 
@@ -2887,8 +2887,8 @@ public class BasicAction extends StateManager
 
 	protected int doAbort (boolean reportHeuristics, AbstractRecord record)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::doAbort ("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::doAbort ("
                     + record + ")");
         }
 
@@ -3092,8 +3092,8 @@ public class BasicAction extends StateManager
 
 	protected void updateState ()
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::updateState() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::updateState() for action-id "
                     + get_uid());
         }
 
@@ -3355,8 +3355,8 @@ public class BasicAction extends StateManager
 			{
 				t = (Thread) iter.nextElement();
 
-				if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("BasicAction::removeAllChildThreads () action "+get_uid()+" removing "+t);
+				if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("BasicAction::removeAllChildThreads () action "+get_uid()+" removing "+t);
                 }
 
 				if (t != currentThread)
@@ -3374,8 +3374,8 @@ public class BasicAction extends StateManager
 
 	private final void actionInitialise (BasicAction parent)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::actionInitialise() for action-id "
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::actionInitialise() for action-id "
                     + get_uid());
         }
 
@@ -3383,8 +3383,8 @@ public class BasicAction extends StateManager
 
 		if (parent != null) /* ie not top_level */
 		{
-			if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug("Action "+get_uid()+" with parent status "+parent.actionStatus);
+			if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("Action "+get_uid()+" with parent status "+parent.actionStatus);
             }
 
 			currentHierarchy = new ActionHierarchy(parent.getHierarchy());
@@ -3412,8 +3412,8 @@ public class BasicAction extends StateManager
 				 * nested top-level actions are used for.
 				 */
 
-				if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("Running Top Level Action "+get_uid()+" from within " +
+				if (tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("Running Top Level Action "+get_uid()+" from within " +
                             "nested action ("+parent.get_uid()+")");
                 }
 			}
@@ -3431,8 +3431,8 @@ public class BasicAction extends StateManager
 
 	private final void doForget (RecordList list_toprocess)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::doForget ("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::doForget ("
                     + list_toprocess + ")");
         }
 
@@ -3497,8 +3497,8 @@ public class BasicAction extends StateManager
 
 	private final void doCleanup (RecordList list_toprocess)
 	{
-		if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("BasicAction::doCleanup ("
+		if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("BasicAction::doCleanup ("
                     + list_toprocess + ")");
         }
 

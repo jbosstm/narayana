@@ -20,14 +20,14 @@ public class OSEntryBean implements OSEntryBeanMBean {
 	}
 
 	public void register(String name) {
-		if (tsLogger.logger.isDebugEnabled())
-			tsLogger.logger.debug("Registering: " + name);
+		if (tsLogger.logger.isTraceEnabled())
+			tsLogger.logger.trace("Registering: " + name);
 		JMXServer.getAgent().registerMBean(name, this);
 	}
 
 	public void unregister(String name) {
-		if (tsLogger.logger.isDebugEnabled())
-			tsLogger.logger.debug("Unregistering: " + name);
+		if (tsLogger.logger.isTraceEnabled())
+			tsLogger.logger.trace("Unregistering: " + name);
 
 		JMXServer.getAgent().unregisterMBean(name);
 	}

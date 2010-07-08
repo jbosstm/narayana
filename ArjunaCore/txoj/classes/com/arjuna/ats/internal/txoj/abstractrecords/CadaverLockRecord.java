@@ -74,9 +74,9 @@ public class CadaverLockRecord extends LockRecord
 	else
 	    doRelease = true;
 
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::CadaverLockRecord("+store+
+	    txojLogger.logger.trace("CadaverLockRecord::CadaverLockRecord("+store+
 				       ", "+((lm != null) ? lm.get_uid() : Uid.nullUid())+")");
 	}
     }
@@ -99,9 +99,9 @@ public class CadaverLockRecord extends LockRecord
 
     public int nestedAbort ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::nestedAbort() for "+order());
+	    txojLogger.logger.trace("CadaverLockRecord::nestedAbort() for "+order());
 	}
 	
 	if (doRelease)
@@ -121,9 +121,9 @@ public class CadaverLockRecord extends LockRecord
 
     public int nestedCommit ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::nestedCommit() for "+order());
+	    txojLogger.logger.trace("CadaverLockRecord::nestedCommit() for "+order());
 	}
 	
 	if (doRelease)
@@ -149,9 +149,9 @@ public class CadaverLockRecord extends LockRecord
 
     public int topLevelAbort ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::topLevelAbort() for "+order());
+	    txojLogger.logger.trace("CadaverLockRecord::topLevelAbort() for "+order());
 	}
 	
 	if (doRelease)
@@ -171,9 +171,9 @@ public class CadaverLockRecord extends LockRecord
 
     public int topLevelCommit ()
     {
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::topLevelCommit() for "+order());
+	    txojLogger.logger.trace("CadaverLockRecord::topLevelCommit() for "+order());
 	}
 	
 	if (doRelease)
@@ -229,9 +229,9 @@ public class CadaverLockRecord extends LockRecord
 	objectTypeName = null;
 	doRelease = false;
 	
-	if (txojLogger.logger.isDebugEnabled())
+	if (txojLogger.logger.isTraceEnabled())
 	{
-	    txojLogger.logger.debug("CadaverLockRecord::CadaverLockRecord ()");
+	    txojLogger.logger.trace("CadaverLockRecord::CadaverLockRecord ()");
 	}
     }
 

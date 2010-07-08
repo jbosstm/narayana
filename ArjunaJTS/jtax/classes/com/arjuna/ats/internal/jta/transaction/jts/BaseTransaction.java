@@ -58,8 +58,8 @@ public class BaseTransaction
 	public void begin () throws javax.transaction.NotSupportedException,
 			javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("BaseTransaction.begin");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("BaseTransaction.begin");
         }
 
 		/*
@@ -121,8 +121,8 @@ public class BaseTransaction
 			java.lang.SecurityException, java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("BaseTransaction.commit");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("BaseTransaction.commit");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -147,8 +147,8 @@ public class BaseTransaction
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("BaseTransaction.rollback");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("BaseTransaction.rollback");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -168,8 +168,8 @@ public class BaseTransaction
 	public void setRollbackOnly () throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("BaseTransaction.setRollbackOnly");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("BaseTransaction.setRollbackOnly");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -187,8 +187,8 @@ public class BaseTransaction
 
 	public int getStatus () throws javax.transaction.SystemException
 	{
-		if (jtaxLogger.logger.isDebugEnabled()) {
-            jtaxLogger.logger.debug("BaseTransaction.getStatus");
+		if (jtaxLogger.logger.isTraceEnabled()) {
+            jtaxLogger.logger.trace("BaseTransaction.getStatus");
         }
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();

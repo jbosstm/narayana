@@ -73,8 +73,8 @@ public ServerRestrictedTopLevelAction (ServerControl myControl)
     {
 	super(myControl);
 
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ServerRestrictedTopLevelAction::ServerRestrictedTopLevelAction ( " +
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ServerRestrictedTopLevelAction::ServerRestrictedTopLevelAction ( " +
                 ((myControl != null) ? myControl.get_uid() : Uid.nullUid()) + " )");
     }
     }

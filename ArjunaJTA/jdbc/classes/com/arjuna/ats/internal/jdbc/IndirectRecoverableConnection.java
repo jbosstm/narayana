@@ -62,8 +62,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public IndirectRecoverableConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.IndirectRecoverableConnection ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ()");
     }
 
 	_dbName = null;
@@ -81,8 +81,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 				     String passwd,
 				     ConnectionImple conn) throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.IndirectRecoverableConnection ( " + dbName + ", " + user + ", " + passwd + " )");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ( " + dbName + ", " + user + ", " + passwd + " )");
     }
 
 	_dbName = dbName;
@@ -126,8 +126,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public boolean packInto (OutputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.packInto ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.packInto ()");
     }
 
 	try
@@ -146,8 +146,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public boolean unpackFrom (InputObjectState os)
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.unpackFrom ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.unpackFrom ()");
     }
 
 	try
@@ -171,8 +171,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public XAResource getResource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.getResource ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getResource ()");
     }
 
 	try
@@ -254,8 +254,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public XAConnection getConnection () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.getConnection ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getConnection ()");
     }
 
 	try
@@ -281,8 +281,8 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 
     public XADataSource getDataSource () throws SQLException
     {
-	if (jdbcLogger.logger.isDebugEnabled()) {
-        jdbcLogger.logger.debug("IndirectRecoverableConnection.getDataSource ()");
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getDataSource ()");
     }
 
 	return _theDataSource;

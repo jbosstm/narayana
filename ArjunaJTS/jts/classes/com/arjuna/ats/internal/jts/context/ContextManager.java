@@ -76,8 +76,8 @@ public class ContextManager
 {
     public ContextManager ()
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::ContextManager ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::ContextManager ()");
     }
 
 	try
@@ -133,8 +133,8 @@ public class ContextManager
 
     public ControlWrapper current () throws SystemException
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::current ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::current ()");
     }
 
 	Object arg = otsCurrent.get(ThreadUtil.getThreadId());
@@ -188,8 +188,8 @@ public class ContextManager
 
     public final ControlWrapper popAction (String threadId)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::popAction ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::popAction ()");
     }
 
 	ControlWrapper action = null;
@@ -271,8 +271,8 @@ public class ContextManager
 
     public final void purgeActions (String threadId)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::purgeActions ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::purgeActions ()");
     }
 
 	/*
@@ -320,8 +320,8 @@ public class ContextManager
 
     public final boolean addRemoteHierarchy (Control cont)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::addRemoteHierarchy ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::addRemoteHierarchy ()");
     }
 
 	/*
@@ -395,8 +395,8 @@ public class ContextManager
 
     public final boolean addActionControlHierarchy (ActionControl cont)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::addActionControlHierarchy ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::addActionControlHierarchy ()");
     }
 
 	boolean isError = false;
@@ -460,8 +460,8 @@ public class ContextManager
 
     public final boolean addControlImpleHierarchy (ControlImple which)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::addControlImpleHierarchy ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::addControlImpleHierarchy ()");
     }
 
 	boolean isError = false;
@@ -515,8 +515,8 @@ public class ContextManager
 
     public final void pushAction (ControlWrapper action)
     {
-	if (jtsLogger.logger.isDebugEnabled()) {
-        jtsLogger.logger.debug("ContextManager::pushAction ()");
+	if (jtsLogger.logger.isTraceEnabled()) {
+        jtsLogger.logger.trace("ContextManager::pushAction ()");
     }
 
 	final String threadId = ThreadUtil.getThreadId() ;

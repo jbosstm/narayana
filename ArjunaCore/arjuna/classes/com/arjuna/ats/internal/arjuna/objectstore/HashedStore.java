@@ -82,8 +82,8 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.allObjUids(" + tName + ", " + state + ", " + match + ")");
         }
 
         /*
@@ -193,8 +193,8 @@ public class HashedStore extends ShadowNoFileLockStore
     {
         super(shareStatus);
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.HashedStore( " + shareStatus + " )");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.HashedStore( " + shareStatus + " )");
         }
         
         try
@@ -218,8 +218,8 @@ public class HashedStore extends ShadowNoFileLockStore
     {
         super(shareStatus);
 
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.HashedStore(" + locationOfStore + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.HashedStore(" + locationOfStore + ")");
         }
 
         try
@@ -273,8 +273,8 @@ public class HashedStore extends ShadowNoFileLockStore
 
     protected String genPathName (Uid objUid, String tName, int otype) throws ObjectStoreException
     {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("HashedStore.genPathName(" + objUid + ", " + tName + ", " + StateType.stateTypeString(otype) + ")");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HashedStore.genPathName(" + objUid + ", " + tName + ", " + StateType.stateTypeString(otype) + ")");
         }
 
         String storeName = locateStore(getStoreName());

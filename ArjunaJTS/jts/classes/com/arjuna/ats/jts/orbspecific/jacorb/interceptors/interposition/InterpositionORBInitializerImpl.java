@@ -49,9 +49,9 @@ public class InterpositionORBInitializerImpl extends LocalObject implements ORBI
 
 public InterpositionORBInitializerImpl ()
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionORBInitializerImpl ()");
+	    jtsLogger.logger.trace("InterpositionORBInitializerImpl ()");
 	}
 
 	/*
@@ -64,9 +64,9 @@ public InterpositionORBInitializerImpl ()
 
 public void pre_init (ORBInitInfo init_info)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionORBInitializer.pre_init ()");
+	    jtsLogger.logger.trace("InterpositionORBInitializer.pre_init ()");
 	}
 
 	/*
@@ -88,9 +88,9 @@ public void pre_init (ORBInitInfo init_info)
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("InterpositionORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
+		jtsLogger.logger.trace("InterpositionORBInitializerImpl - getting reference to ENCODING_CDR_ENCAPS codec");
 	    }
 
 	    Encoding cdr_encoding = new Encoding(ENCODING_CDR_ENCAPS.value, (byte)1, (byte)0);
@@ -111,9 +111,9 @@ public void pre_init (ORBInitInfo init_info)
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("InterpositionORBInitializerImpl - registering ClientRequestInterceptor");
+		jtsLogger.logger.trace("InterpositionORBInitializerImpl - registering ClientRequestInterceptor");
 	    }
 
 	    ClientRequestInterceptor client_interceptor = new InterpositionClientRequestInterceptorImpl(localSlot, cdr_codec);
@@ -134,9 +134,9 @@ public void pre_init (ORBInitInfo init_info)
 
 	try
 	{
-	    if (jtsLogger.logger.isDebugEnabled())
+	    if (jtsLogger.logger.isTraceEnabled())
 	    {
-		jtsLogger.logger.debug("InterpositionORBInitializerImpl - registering ServerRequestInterceptor");
+		jtsLogger.logger.trace("InterpositionORBInitializerImpl - registering ServerRequestInterceptor");
 	    }
 
 	    ServerRequestInterceptor server_interceptor = new InterpositionServerRequestInterceptorImpl(receivedSlot, cdr_codec);
@@ -154,9 +154,9 @@ public void pre_init (ORBInitInfo init_info)
 
 public void post_init (ORBInitInfo init_info)
     {
-	if (jtsLogger.logger.isDebugEnabled())
+	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.debug("InterpositionORBInitializerImpl.post_init ()");
+	    jtsLogger.logger.trace("InterpositionORBInitializerImpl.post_init ()");
 	}
 
 	// nothing to do
