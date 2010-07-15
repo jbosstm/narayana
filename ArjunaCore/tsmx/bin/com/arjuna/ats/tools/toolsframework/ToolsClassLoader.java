@@ -110,27 +110,15 @@ public class ToolsClassLoader extends URLClassLoader implements FilenameFilter
             while (entries.hasMoreElements())
             {
                 ZipEntry ze = entries.nextElement();
-                String fname = tmpDir + '/' + ze.getName();
+                File f = ToolPluginInformation.externalizeFile(tmpDir, zf.getInputStream(ze), ze);
 
-                if (ze.isDirectory())
-                {
-                    new File(fname).mkdirs();
-                }
-                else
-                {
-                    File f = ToolPluginInformation.externalizeFile(fname, zf.getInputStream(ze));
-
-                    if (accept(ze.getName()))
-                        addURL(ToolPluginInformation.getToolPluginInformation(_toolJars, f));
-//                        urls.add(ToolPluginInformation.getToolPluginInformation(_toolJars, f));
+                if (accept(ze.getName())) {
+                    addURL(ToolPluginInformation.getToolPluginInformation(_toolJars, f));
                 }
             }
 
             addURL(new File(getTmpDir()).toURL());
-//            urls.add(new File(getTmpDir()).toURL());
             toolsDir = new File(getTmpDir() + DEFAULT_LIB_DIRECTORY).toURL();
-
-//            setClassLoader(urls, getTmpDir() + DEFAULT_LIB_DIRECTORY);
 
             zf.close();
         }

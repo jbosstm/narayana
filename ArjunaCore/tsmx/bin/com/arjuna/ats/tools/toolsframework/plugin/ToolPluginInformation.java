@@ -183,14 +183,18 @@ public class ToolPluginInformation
 
     public static File externalizeFile(String tmpDir, InputStream is, ZipEntry ze) throws IOException
     {
-        File f = new File(tmpDir + ze.getName());
+        File f = new File(tmpDir + File.separatorChar + ze.getName());
         
-        if (f.isFile())
+        if (!ze.isDirectory())
         {
-            File d = f.getParentFile();
+            int i = ze.getName().lastIndexOf(File.separatorChar);
 
-            if (d != null)
-                f.mkdirs();
+            if (i != -1) {
+				// this file name is part of a directory path - create the parent directories
+                String path = f.getPath();
+				String sp = path.substring(0, path.lastIndexOf(File.separatorChar));
+				new File(sp).mkdirs();
+			}
 
             OutputStream out = new FileOutputStream(f);
             byte[] buf = new byte[1024];
