@@ -53,7 +53,6 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
-        boolean isSecure = "https".equals(request.getScheme());
         final NotificationType complete = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
