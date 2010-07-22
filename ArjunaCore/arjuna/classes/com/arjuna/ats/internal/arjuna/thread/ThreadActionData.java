@@ -58,15 +58,9 @@ public class ThreadActionData
 		ThreadActionData.setup();
 		Stack txs = (Stack) _threadList.get();
 
-		if (txs != null)
+		if (txs != null && !txs.isEmpty())
 		{
-			try
-			{
-				return (BasicAction) txs.peek();
-			}
-			catch (EmptyStackException e)
-			{
-			}
+			return (BasicAction) txs.peek();
 		}
 
 		return null;
