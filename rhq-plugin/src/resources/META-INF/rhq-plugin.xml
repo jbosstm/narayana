@@ -4,33 +4,33 @@
 
 <!ENTITY enginePluginConfig '
 	<plugin-configuration>
-		<c:simple-property name="jmxurl" default="service:jmx:rmi:///jndi/rmi://localhost:1090/jmxrmi" description="The URL for contacting the JMX listener running on the monitored server" readOnly="false"/>
+		<c:simple-property name="jmxurl" default="service:jmx:rmi:///jndi/rmi://localhost:1090/jmxrmi" description="The URL for contacting the JMX listener running on the monitored server" readOnly="true"/>
 		<c:simple-property name="key" default="TxnEngine1" readOnly="true"/>
-		<c:simple-property name="name" default="Transaction Engine" readOnly="false"/>
+		<c:simple-property name="name" default="Transaction Engine" readOnly="true"/>
 		<c:simple-property name="version" default="0.1" readOnly="true"/>
-		<c:simple-property name="description" default="JBossTS Transaction System Management" readOnly="false"/>
+		<c:simple-property name="description" default="JBossTS Transaction System Management" readOnly="true"/>
 	</plugin-configuration>
 '>
 <!ENTITY objStorePluginConfig '
 	<plugin-configuration>
 		<c:simple-property name="key" default="TxnLog1" readOnly="true"/>
-		<c:simple-property name="name" default="Transaction Log" readOnly="false"/>
+		<c:simple-property name="name" default="Transaction Log" readOnly="true"/>
 		<c:simple-property name="version" default="0.1" readOnly="true"/>
-		<c:simple-property name="description" default="Transaction Logging: Transactions that have been prepared will appear as services below this entry and are removed once they successfully complete." readOnly="false"/>
+		<c:simple-property name="description" default="Transaction Logging: Transactions that have been prepared will appear as services below this entry and are removed once they successfully complete." readOnly="true"/>
 	</plugin-configuration>
 '>
 
 <!ENTITY txnEntryPluginConfig '
 	<plugin-configuration>
 		<c:simple-property name="version" default="0.1" readOnly="true"/>
-		<c:simple-property name="description" default="A Terminating Transaction" readOnly="false"/>
+		<c:simple-property name="description" default="A Terminating Transaction" readOnly="true"/>
 	</plugin-configuration>
 '>
 
 <!ENTITY txnParticipantPluginConfig '
 	<plugin-configuration>
 		<c:simple-property name="version" default="0.1" readOnly="true"/>
-		<c:simple-property name="description" default="A transaction participant (such as a database or a JMS queue)" readOnly="false"/>
+		<c:simple-property name="description" default="A transaction participant (such as a database or a JMS queue)" readOnly="true"/>
 	</plugin-configuration>
 '>
 
@@ -39,23 +39,23 @@
 
 		<c:group name="CommonConfiguration" displayName="Common Configuration Options">
 			<c:simple-property name="EnableStatistics" description="Set to true to start recording transaction statistics. Note that enabling statistics may have a slight performance impact due to locking on the counter variables." displayName="Enable Transaction Statistics" required="true" readOnly="false"/>
-			<c:simple-property name="DefaultTimeout" description="The default interval after which a transaction may be considered for timeout, in seconds.  Note: depending on the reaper mode and workload, transactions may not be timed out immediately." displayName="DefaultTimeout" required="true" readOnly="false"/>
+			<c:simple-property name="DefaultTimeout" description="The default interval after which a transaction may be considered for timeout, in seconds.  Note: depending on the reaper mode and workload, transactions may not be timed out immediately." displayName="DefaultTimeout" required="true" readOnly="true"/>
 
-			<c:simple-property name="AllowMultipleLastResources" description="True if multiple last (i.e. one-phase) resources are allowed in the same transaction or not." displayName="Allow Multiple Last Resources" required="true" readOnly="false"/>
-			<c:simple-property name="DisableMultipleLastResourcesWarning" description="True if the per-transaction warning on enlistment of multiple last resources is disabled or not." displayName="Disable Multiple Last Resources Warning" required="true" readOnly="false"/>
+			<c:simple-property name="AllowMultipleLastResources" description="True if multiple last (i.e. one-phase) resources are allowed in the same transaction or not." displayName="Allow Multiple Last Resources" required="true" readOnly="true"/>
+			<c:simple-property name="DisableMultipleLastResourcesWarning" description="True if the per-transaction warning on enlistment of multiple last resources is disabled or not." displayName="Disable Multiple Last Resources Warning" required="true" readOnly="true"/>
 			<c:simple-property name="BuildVersion" description="The version control tag of the source used" displayName="Build Version"  required="false" readOnly="true"/>
 			<c:simple-property name="BuildId" description=" The build identification line indicating the os name and version and build date" displayName="Build Id"  required="false" readOnly="true"/>
 
 		</c:group>
 
 		<c:group name="EngineConfiguration" displayName="Transaction Manager Options" hiddenByDefault="true">
-			<c:simple-property name="XaRollbackOptimization" description="True if connections associated to XAResources that fail during prepare should be cleaned up immediately. False for cleanup during phase two rollback." displayName="XA Rollback Optimization" required="true" readOnly="false"/>
-			<c:simple-property name="XaAssumeRecoveryComplete" description="if XAResources that cannot be recovered should be assumed to have completed.  WARNING: enabling this property is not recommended and may cause inconsistency if your recovery configuration is incorrect or resource managers are not available." displayName=" XA Assume Recovery Complete" required="true" readOnly="false"/>
-			<c:simple-property name="XaTransactionTimeoutEnabled" description="True if the transaction timeout is passed on to the enlisted XAResources." displayName="XA Transaction Timeout Enabled" required="true" readOnly="false"/>
+			<c:simple-property name="XaRollbackOptimization" description="True if connections associated to XAResources that fail during prepare should be cleaned up immediately. False for cleanup during phase two rollback." displayName="XA Rollback Optimization" required="true" readOnly="true"/>
+			<c:simple-property name="XaAssumeRecoveryComplete" description="if XAResources that cannot be recovered should be assumed to have completed.  WARNING: enabling this property is not recommended and may cause inconsistency if your recovery configuration is incorrect or resource managers are not available." displayName=" XA Assume Recovery Complete" required="true" readOnly="true"/>
+			<c:simple-property name="XaTransactionTimeoutEnabled" description="True if the transaction timeout is passed on to the enlisted XAResources." displayName="XA Transaction Timeout Enabled" required="true" readOnly="true"/>
 
 			<c:simple-property name="SupportSubtransactions" description="True if subtransactions are allowed." displayName="Support Subtransactions" required="true" readOnly="true"/>
 <!--
-			<c:simple-property name="UserTransactionJNDIContext" description="The JNDI bind name for the implementation of UserTransaction interface." displayName="UserTransaction JNDI Context" required="true" readOnly="false"/>
+			<c:simple-property name="UserTransactionJNDIContext" description="The JNDI bind name for the implementation of UserTransaction interface." displayName="UserTransaction JNDI Context" required="true" readOnly="true"/>
 			<c:simple-property name="TransactionManagerJNDIContext" description="The JNDI bind name for the implementation of TransactionManager interface." displayName="TransactionManager JNDI Context" required="true" readOnly="true"/>
 			<c:simple-property name="TransactionSynchronizationRegistryJNDIContext" description="The JNDI bind name for the implementation of TransactionSynchronizationRegistry interface." displayName="TransactionSynchronizationRegistry JNDI Context" required="true" readOnly="true"/>
 -->		
@@ -99,19 +99,19 @@
 		</c:group>
 
 		<c:group name="CoordinatorConfiguration" displayName="Coordinator Options" hiddenByDefault="true">
-			<c:simple-property name="BeforeCompletionWhenRollbackOnly" description="True if beforeCompletion should be called on Synchronizations when completing transactions that are marked rollback only." displayName="BeforeCompletionWhenRollbackOnly" required="true" readOnly="false"/>
-			<c:simple-property name="ClassicPrepare" description="True is classic prepare handling is enabled, false otherwise." displayName="ClassicPrepare" required="true" readOnly="false"/>
-			<c:simple-property name="CommitOnePhase" description="True if one phase commit optimization is to be used." displayName="CommitOnePhase" required="true" readOnly="false"/>
+			<c:simple-property name="BeforeCompletionWhenRollbackOnly" description="True if beforeCompletion should be called on Synchronizations when completing transactions that are marked rollback only." displayName="BeforeCompletionWhenRollbackOnly" required="true" readOnly="true"/>
+			<c:simple-property name="ClassicPrepare" description="True is classic prepare handling is enabled, false otherwise." displayName="ClassicPrepare" required="true" readOnly="true"/>
+			<c:simple-property name="CommitOnePhase" description="True if one phase commit optimization is to be used." displayName="CommitOnePhase" required="true" readOnly="true"/>
 			<!--
-			<c:simple-property name="DefaultTimeout" description="The default interval after which a transaction may be considered for timeout, in seconds.  Note: depending on the reaper mode and workload, transactions may not be timed out immediately." displayName="DefaultTimeout" required="true" readOnly="false"/>
+			<c:simple-property name="DefaultTimeout" description="The default interval after which a transaction may be considered for timeout, in seconds.  Note: depending on the reaper mode and workload, transactions may not be timed out immediately." displayName="DefaultTimeout" required="true" readOnly="true"/>
 			-->
 			<!--
-			<c:simple-property name="EnableStatistics" description="True if transaction statistics should be recorded.  Note: Enabling statistics may have a slight performance impact due to locking on the counter variables." displayName="EnableStatistics" required="true" readOnly="false"/>
+			<c:simple-property name="EnableStatistics" description="True if transaction statistics should be recorded.  Note: Enabling statistics may have a slight performance impact due to locking on the counter variables." displayName="EnableStatistics" required="true" readOnly="true"/>
 			-->
-			<c:simple-property name="MaintainHeuristics" description="True if heuristic outcomes should be recorded." displayName="MaintainHeuristics" required="true" readOnly="false"/>
-			<c:simple-property name="ReadonlyOptimisation" description="True if handling of read only resources should be optimized." displayName="ReadonlyOptimisation" required="true" readOnly="false"/>
-			<c:simple-property name="SharedTransactionLog" description="True if the transaction log sould be run in shared mode or not." displayName="SharedTransactionLog" required="true" readOnly="false"/>
-			<c:simple-property name="StartDisabled" description="True if the transaction manager should be created in a disabled state or not." displayName="StartDisabled" required="true" readOnly="false"/>
+			<c:simple-property name="MaintainHeuristics" description="True if heuristic outcomes should be recorded." displayName="MaintainHeuristics" required="true" readOnly="true"/>
+			<c:simple-property name="ReadonlyOptimisation" description="True if handling of read only resources should be optimized." displayName="ReadonlyOptimisation" required="true" readOnly="true"/>
+			<c:simple-property name="SharedTransactionLog" description="True if the transaction log sould be run in shared mode or not." displayName="SharedTransactionLog" required="true" readOnly="true"/>
+			<c:simple-property name="StartDisabled" description="True if the transaction manager should be created in a disabled state or not." displayName="StartDisabled" required="true" readOnly="true"/>
 			<c:simple-property name="TransactionLog" description="True if the transaction log should be distinct from the action store." displayName="TransactionLog" required="true" readOnly="true"/>
 			<c:simple-property name="TransactionStatusManagerEnable" description="True if the transaction status manager (TSM) service, needed for out of process recovery, should be provided or not." displayName="TransactionStatusManagerEnable" required="true" readOnly="true"/>
 			<c:simple-property name="TxReaperCancelFailWaitPeriod" description="The number of millisecs delay afer a worker thread is interrupted, before the reaper writes the it off as a zombie and starts a new thread." displayName="TxReaperCancelFailWaitPeriod" required="true" readOnly="true"/>
@@ -131,16 +131,16 @@
 
 		<c:group name="RecoveryConfiguration" displayName="Recovery System" hiddenByDefault="true">
 
-			<c:simple-property name="PeriodicRecoveryPeriod" description="The interval between recovery scans, in seconds." displayName="PeriodicRecoveryPeriod" required="true" readOnly="false"/>
-			<c:simple-property name="RecoveryBackoffPeriod" description="The interval between recovery phases within a recovery scan, in seconds." displayName="RecoveryBackoffPeriod" required="true" readOnly="false"/>
-			<c:simple-property name="RecoveryListener" description="True if the recovery system should listen on a network socket. False for local JVM only use." displayName="RecoveryListener" required="true" readOnly="false"/>
-			<c:simple-property name="RecoveryPort" description="The network port number on which the recovery listener should bind." displayName="RecoveryPort" required="true" readOnly="false"/>
-			<c:simple-property name="RecoveryAddress" description="The hostname on which the recovery listener shoud bind." displayName="RecoveryAddress" required="true" readOnly="false"/>
-			<c:simple-property name="TransactionStatusManagerPort" description="The network port number on which the transaction status manager should bind." displayName="TransactionStatusManagerPort" required="true" readOnly="false"/>
-			<c:simple-property name="TransactionStatusManagerAddress" description="The hostname on which the transaction status manager should bind." displayName="TransactionStatusManagerAddress" required="true" readOnly="false"/>
-			<c:simple-property name="ExpiryScanInterval" description="The interval on which the ObjectStore will be scanned for expired items, in hours." displayName="ExpiryScanInterval" required="true" readOnly="false"/>
-			<c:simple-property name="TransactionStatusManagerExpiryTime" description="The time period after which items will be considered to have expired, in hours." displayName="TimeoutSocket" required="true" readOnly="false"/>
-			<c:simple-property name="TimeoutSocket" description="True if SO_TIMEOUT should be set on Listener socket instances." displayName="TimeoutSocket" required="true" readOnly="false"/>
+			<c:simple-property name="PeriodicRecoveryPeriod" description="The interval between recovery scans, in seconds." displayName="PeriodicRecoveryPeriod" required="true" readOnly="true"/>
+			<c:simple-property name="RecoveryBackoffPeriod" description="The interval between recovery phases within a recovery scan, in seconds." displayName="RecoveryBackoffPeriod" required="true" readOnly="true"/>
+			<c:simple-property name="RecoveryListener" description="True if the recovery system should listen on a network socket. False for local JVM only use." displayName="RecoveryListener" required="true" readOnly="true"/>
+			<c:simple-property name="RecoveryPort" description="The network port number on which the recovery listener should bind." displayName="RecoveryPort" required="true" readOnly="true"/>
+			<c:simple-property name="RecoveryAddress" description="The hostname on which the recovery listener shoud bind." displayName="RecoveryAddress" required="true" readOnly="true"/>
+			<c:simple-property name="TransactionStatusManagerPort" description="The network port number on which the transaction status manager should bind." displayName="TransactionStatusManagerPort" required="true" readOnly="true"/>
+			<c:simple-property name="TransactionStatusManagerAddress" description="The hostname on which the transaction status manager should bind." displayName="TransactionStatusManagerAddress" required="true" readOnly="true"/>
+			<c:simple-property name="ExpiryScanInterval" description="The interval on which the ObjectStore will be scanned for expired items, in hours." displayName="ExpiryScanInterval" required="true" readOnly="true"/>
+			<c:simple-property name="TransactionStatusManagerExpiryTime" description="The time period after which items will be considered to have expired, in hours." displayName="TimeoutSocket" required="true" readOnly="true"/>
+			<c:simple-property name="TimeoutSocket" description="True if SO_TIMEOUT should be set on Listener socket instances." displayName="TimeoutSocket" required="true" readOnly="true"/>
 
 <!-- List<String> -->
 			<c:simple-property name="ExpiryScanners" description="A list of names of classes that implement ExpiryScanner." displayName="ExpiryScanners" required="false" readOnly="true"/>
