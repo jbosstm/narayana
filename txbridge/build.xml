@@ -52,7 +52,7 @@
         </fileset>
 
         <fileset dir="${global.ext.lib.dir}">
-            <include name="log4j.jar"/>
+            <include name="jboss-logging.jar"/>
             <include name="jboss-transaction-api_1.1_spec.jar"/>
             <include name="jboss-connector-api_1.5_spec.jar"/>
         </fileset>
@@ -109,6 +109,7 @@
     <!-- the following targets are utility functions for the JBossTS dev team.
             You probably don't need to worry about them. -->
 
+    
     <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT"/>
     <property name="jbossas.server" value="default"/>
 

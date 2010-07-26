@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge.outbound;
 
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst.TxContext;
@@ -38,8 +38,6 @@ import com.arjuna.wst.UnknownTransactionException;
  */
 public class OutboundBridge
 {
-    private static final Logger log = Logger.getLogger(OutboundBridge.class);
-
     /**
      * Management object for the subordinate transaction
      */
@@ -52,7 +50,7 @@ public class OutboundBridge
      */
     public OutboundBridge(BridgeWrapper bridgeWrapper)
     {
-        log.trace("OutboundBridge(BridgeWrapper="+bridgeWrapper+")");
+        txbridgeLogger.logger.trace("OutboundBridge.<ctor>(BridgeWrapper="+bridgeWrapper+")");
 
         this.bridgeWrapper = bridgeWrapper;
     }
@@ -66,7 +64,7 @@ public class OutboundBridge
      */
     public void start() throws UnknownTransactionException, SystemException
     {
-        log.trace("start(BridgeWrapper="+bridgeWrapper+")");
+        txbridgeLogger.logger.trace("OutboundBridge.start(BridgeWrapper="+bridgeWrapper+")");
 
         TxContext txContext = bridgeWrapper.getContext();
 
@@ -81,7 +79,7 @@ public class OutboundBridge
      */
     public void stop() throws SystemException
     {
-        log.trace("stop(BridgeWrapper="+bridgeWrapper+")");
+        txbridgeLogger.logger.trace("OutboundBridge.stop(BridgeWrapper="+bridgeWrapper+")");
 
         TransactionManagerFactory.transactionManager().suspend();
     }

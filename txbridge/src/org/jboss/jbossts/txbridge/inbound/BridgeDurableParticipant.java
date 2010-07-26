@@ -23,10 +23,12 @@
  */
 package org.jboss.jbossts.txbridge.inbound;
 
+import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
+import org.omg.XA.XIDsHelper;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -47,8 +49,6 @@ import java.io.ObjectOutputStream;
  */
 public class BridgeDurableParticipant implements Durable2PCParticipant, Serializable
 {
-    private static final Logger log = Logger.getLogger(BridgeDurableParticipant.class);
-
     /*
      * Uniq String used to prefix ids at participant registration,
      * so that the recovery module can identify relevant instances.
@@ -82,7 +82,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     BridgeDurableParticipant(String externalTxId, Xid xid)
     {
-        log.trace("BridgeDurableParticipant(TxId="+externalTxId+", Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.<ctor>(TxId="+externalTxId+", Xid="+xid+")");
 
         this.xid = xid;
         this.externalTxId = externalTxId;
@@ -97,7 +97,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        log.trace("writeObject() for Xid="+xid);
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.writeObject() for Xid="+xid);
 
         // we need to preserve the Uid of the underlying SubordinateTx, as it's required
         // to get a handle on it again during recovery, Using the xid wont work,
@@ -108,10 +108,8 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         }
         catch(XAException xaException)
         {
-            log.error("Unable to get subordinate transaction id", xaException);
-            IOException ioException = new IOException("Unable to serialize");
-            ioException.initCause(xaException);
-            throw ioException;
+            txbridgeLogger.i18NLogger.error_ibdp_nosub(xaException);
+            throw new IOException(xaException);
         }
 
         //out.defaultWriteObject();
@@ -129,7 +127,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        log.trace("readObject()");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.readObject()");
 
         //in.defaultReadObject();
         xid = (Xid)in.readObject();
@@ -146,10 +144,8 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
         }
         catch(XAException xaException)
         {
-            log.error("Unable to recover subordinate transaction id="+subordinateTransactionId, xaException);
-            IOException ioException = new IOException("unable to deserialize");
-            ioException.initCause(xaException);
-            throw ioException;
+            txbridgeLogger.i18NLogger.error_ibdp_norecovery(subordinateTransactionId, xaException);
+            throw new IOException(xaException);
         }
     }
 
@@ -164,7 +160,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public Vote prepare() throws WrongStateException, SystemException
     {
-        log.trace("prepare(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.prepare(Xid="+xid+")");
 
         try
         {
@@ -172,13 +168,13 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
             int result = xaTerminator.prepare(xid);
             if(result == XAResource.XA_OK)
             {
-                log.debug("prepare on Xid="+xid+" returning Prepared");
+                txbridgeLogger.logger.trace("prepare on Xid="+xid+" returning Prepared");
                 return new Prepared();
             }
             else
             {
                 cleanupRefs();
-                log.debug("prepare on Xid="+xid+" returning ReadOnly");
+                txbridgeLogger.logger.trace("prepare on Xid="+xid+" returning ReadOnly");
                 return new ReadOnly();
             }
 
@@ -189,7 +185,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
             // e.g. due to failure of VolatileParticipant.prepare, then it's expected the prepare will fail.
             // we really need to use XATerminatorExtensions to expose a isSetRollbackOnly...
             cleanupRefs();
-            log.warn("prepare on Xid="+xid+" returning Aborted", e);
+            txbridgeLogger.i18NLogger.warn_ibdp_aborted(XAHelper.xidToString(xid), e);
             return new Aborted();
         }
     }
@@ -202,16 +198,16 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public void commit() throws WrongStateException, SystemException
     {
-        log.trace("commit(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.commit(Xid="+xid+")");
 
         try
         {
             xaTerminator.commit(xid, false);
-            log.debug("commit on Xid="+xid+" OK");
+            txbridgeLogger.logger.trace("commit on Xid="+xid+" OK");
         }
         catch (XAException e)
         {
-            log.error("commit on Xid="+xid+" failed", e);
+            txbridgeLogger.i18NLogger.error_ibdp_commitfailed(XAHelper.xidToString(xid), e);
         }
         finally
         {
@@ -228,16 +224,16 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public void rollback() throws WrongStateException, SystemException
     {
-        log.trace("rollback(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.rollback(Xid="+xid+")");
 
         try
         {
             xaTerminator.rollback(xid);
-            log.debug("rollback on Xid="+xid+" OK");
+            txbridgeLogger.logger.trace("rollback on Xid="+xid+" OK");
         }
         catch (XAException e)
         {
-            log.error("rollback on Xid="+xid+" failed", e);
+            txbridgeLogger.i18NLogger.error_ibdp_rollbackfailed(XAHelper.xidToString(xid), e);
         }
         finally
         {
@@ -253,7 +249,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public void unknown() throws SystemException
     {
-        log.trace("unknown(Xid="+xid+"): NOT IMPLEMENTED");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.unknown(Xid="+xid+"): NOT IMPLEMENTED");
     }
 
     /**
@@ -263,7 +259,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      */
     public void error() throws SystemException
     {
-        log.trace("error(Xid="+xid+"): NOT IMPLEMENTED");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.error(Xid="+xid+"): NOT IMPLEMENTED");
     }
 
     public boolean isAwaitingRecovery() {
@@ -277,7 +273,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
 
     private void cleanupRefs()
     {
-        log.trace("cleanupRefs()");
+        txbridgeLogger.logger.trace("BridgeDurableParticipant.cleanupRefs()");
 
         org.jboss.jbossts.txbridge.inbound.InboundBridgeManager.removeMapping(externalTxId);
         isAwaitingRecovery = false;

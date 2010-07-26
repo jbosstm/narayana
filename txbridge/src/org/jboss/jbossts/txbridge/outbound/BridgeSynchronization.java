@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge.outbound;
 
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
 import javax.transaction.Synchronization;
@@ -38,13 +38,11 @@ import com.arjuna.ats.jta.utils.JTAHelper;
  */
 public class BridgeSynchronization implements Synchronization
 {
-    private static final Logger log = Logger.getLogger(BridgeSynchronization.class);
-
     private final BridgeWrapper bridgeWrapper;
 
     public BridgeSynchronization(BridgeWrapper bridgeWrapper)
     {
-        log.trace("BridgeSynchronization(BridgeWrapper="+bridgeWrapper+")");
+        txbridgeLogger.logger.trace("BridgeSynchronization.<ctor>(BridgeWrapper="+bridgeWrapper+")");
 
         this.bridgeWrapper = bridgeWrapper;
     }
@@ -54,7 +52,7 @@ public class BridgeSynchronization implements Synchronization
      */
     public void beforeCompletion()
     {
-        log.trace("beforeCompletion()");
+        txbridgeLogger.logger.trace("BridgeSynchronization.beforeCompletion()");
 
         if(!bridgeWrapper.prepareVolatile())
         {
@@ -72,7 +70,7 @@ public class BridgeSynchronization implements Synchronization
      */
     public void afterCompletion(int status)
     {
-        log.trace("afterCompletion(status="+status+"/"+ JTAHelper.stringForm(status)+")");
+        txbridgeLogger.logger.trace("BridgeSynchronization.afterCompletion(status="+status+"/"+ JTAHelper.stringForm(status)+")");
 
         switch(status)
         {
@@ -83,7 +81,7 @@ public class BridgeSynchronization implements Synchronization
                 bridgeWrapper.rollbackVolatile();
                 break;
             default:
-                log.warn("unexpected Status "+status+", treating as ROLLEDBACK");
+                txbridgeLogger.i18NLogger.warn_obs_unexpectedstatus(Integer.toString(status));
                 bridgeWrapper.rollbackVolatile();
         }
     }

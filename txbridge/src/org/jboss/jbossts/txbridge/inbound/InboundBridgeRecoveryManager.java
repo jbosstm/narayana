@@ -28,7 +28,8 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
-import org.apache.log4j.Logger;
+import com.arjuna.ats.jta.utils.XAHelper;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import com.arjuna.wst.Durable2PCParticipant;
@@ -48,8 +49,6 @@ import java.util.*;
  */
 public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, RecoveryModule, XAResourceOrphanFilter
 {
-    private static final Logger log = Logger.getLogger(InboundBridgeRecoveryManager.class);
-
     private final XTSATRecoveryManager xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
     private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
     private final XATerminator xaTerminator = SubordinationManager.getXATerminator();
@@ -63,7 +62,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
      */
     public void start()
     {
-        log.info("InboundBridgeRecoveryManager starting");
+        txbridgeLogger.i18NLogger.info_ibrm_start();
 
         xtsATRecoveryManager.registerRecoveryModule(this);
         acRecoveryManager.addModule(this);
@@ -77,7 +76,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
      */
     public void stop()
     {
-        log.info("InboundBridgeRecoveryManager stopping");
+        txbridgeLogger.i18NLogger.info_ibrm_stop();
 
         xtsATRecoveryManager.unregisterRecoveryModule(this);
         acRecoveryManager.removeModule(this, false);
@@ -125,7 +124,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
     @Override
     public Durable2PCParticipant deserialize(String id, ObjectInputStream objectInputStream) throws Exception
     {
-        log.trace("deserialize(id="+id+")");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.deserialize(id="+id+")");
 
         // Inbound bridge transactions don't have an independent log - their state is inlined into the
         // XTS Participant log and this callback is used to recover that state.
@@ -161,7 +160,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
     @Override
     public void periodicWorkFirstPass()
     {
-        log.trace("periodicWorkFirstPass()");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.periodicWorkFirstPass()");
     }
 
     /**
@@ -171,7 +170,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
     @Override
     public void periodicWorkSecondPass()
     {
-        log.trace("periodicWorkSecondPass()");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.periodicWorkSecondPass()");
 
         cleanupRecoveredParticipants();
 
@@ -185,11 +184,11 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         List<Xid> indoubtSubordinates = getIndoubtSubordinates();
         for(Xid xid : indoubtSubordinates) {
             if(checkXid(xid) == XAResourceOrphanFilter.Vote.ROLLBACK) {
-                log.trace("rolling back orphaned subordinate tx "+xid);
+                txbridgeLogger.logger.trace("rolling back orphaned subordinate tx "+xid);
                 try {
                     xaTerminator.rollback(xid);
                 } catch(XAException e) {
-                    log.error("problem rolling back orphaned subordinate tx "+xid, e);
+                    txbridgeLogger.i18NLogger.error_ibrm_rollbackerr(XAHelper.xidToString(xid), e);
                 }
             }
         }
@@ -204,13 +203,13 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
      */
     private List<Xid> getIndoubtSubordinates()
     {
-        log.trace("getIndoubtSubordinates()");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.getIndoubtSubordinates()");
 
         Xid[] allSubordinateXids = null;
         try {
             allSubordinateXids = xaTerminator.recover(XAResource.TMSTARTRSCAN);
         } catch(XAException e) {
-            log.error("Problem whilst scanning for in-doubt subordinate transactions", e);
+            txbridgeLogger.i18NLogger.error_ibrm_scanerr(e);
         } finally {
             try {
                 xaTerminator.recover(XAResource.TMENDRSCAN);
@@ -226,7 +225,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         for(Xid xid : allSubordinateXids) {
             if(xid.getFormatId() == BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
                 mySubordinateXids.add(xid);
-                log.trace("in-doubt subordinate, xid: "+xid);
+                txbridgeLogger.logger.trace("in-doubt subordinate, xid: "+xid);
             }
         }
 
@@ -239,7 +238,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
      */
     private void cleanupRecoveredParticipants()
     {
-        log.trace("cleanupRecoveredParticipants()");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.cleanupRecoveredParticipants()");
 
         synchronized(participantsAwaitingRecovery) {
             Iterator<org.jboss.jbossts.txbridge.inbound.BridgeDurableParticipant> iter = participantsAwaitingRecovery.iterator();
@@ -263,7 +262,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
     @Override
     public Vote checkXid(Xid xid)
     {
-        log.trace("checkXid("+xid+")");
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+")");
 
         if(xid.getFormatId() != BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
             return Vote.ABSTAIN; // it's not one of ours, ignore it.

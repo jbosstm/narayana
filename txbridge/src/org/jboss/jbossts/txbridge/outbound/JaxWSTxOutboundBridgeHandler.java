@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge.outbound;
 
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
@@ -42,8 +42,6 @@ import javax.xml.ws.handler.MessageContext;
  */
 public class JaxWSTxOutboundBridgeHandler implements Handler
 {
-    private static final Logger log = Logger.getLogger(JaxWSTxOutboundBridgeHandler.class);
-
     /**
      * Process a message. Determines if it is inbound or outbound and dispatches accordingly.
      *
@@ -52,7 +50,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     public boolean handleMessage(MessageContext msgContext)
     {
-        log.trace("handleMessage()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleMessage()");
 
         Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outbound == null)
@@ -69,14 +67,14 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     public boolean handleFault(MessageContext messageContext)
     {
-        log.trace("handleFault()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleFault()");
 
         return suspendTransaction();
     }
 
     public void close(MessageContext messageContext)
     {
-        log.trace("close()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.close()");
     }
 
     /**
@@ -87,7 +85,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     protected boolean handleInbound(MessageContext msgContext)
     {
-        log.trace("handleInbound()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleInbound()");
 
         return suspendTransaction();
     }
@@ -101,7 +99,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     protected boolean handleOutbound(MessageContext msgContext)
     {
-        log.trace("handleOutbound()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleOutbound()");
 
         try
         {
@@ -110,7 +108,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
         }
         catch (Exception e)
         {
-            log.error(e);
+            txbridgeLogger.logger.error(e);
             return false;
         }
 
@@ -124,7 +122,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     private boolean suspendTransaction()
     {
-        log.trace("suspendTransaction()");
+        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.suspendTransaction()");
 
         try
         {
@@ -133,7 +131,7 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
         }
         catch (Exception e)
         {
-            log.error(e);
+            txbridgeLogger.logger.error(e);
             return false;
         }
 

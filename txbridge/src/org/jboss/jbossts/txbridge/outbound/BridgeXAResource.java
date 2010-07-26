@@ -24,7 +24,7 @@
 package org.jboss.jbossts.txbridge.outbound;
 
 import com.arjuna.wst.UnknownTransactionException;
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
 import javax.transaction.xa.XAResource;
@@ -53,8 +53,6 @@ public class BridgeXAResource implements XAResource, Serializable
     // Design note: Given the way JBossTS is designed, we could subclass AbstractRecord rather than
     // implementing XAResource, but this design is more standards friendly and thus portable.
 
-    private static final Logger log = Logger.getLogger(BridgeXAResource.class);
-
     private static final List<BridgeXAResource> xaResourcesAwaitingRecovery =
             Collections.synchronizedList(new LinkedList<BridgeXAResource>());
 
@@ -74,7 +72,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public BridgeXAResource(Uid externalTxId, BridgeWrapper bridgeWrapper)
     {
-        log.trace("BridgeXARresource(TxId="+externalTxId+", BridgeWrapper="+bridgeWrapper+")");
+        txbridgeLogger.logger.trace("BridgeXARresource.<ctor>(TxId="+externalTxId+", BridgeWrapper="+bridgeWrapper+")");
 
         this.externalTxId = externalTxId;
         this.bridgeWrapper = bridgeWrapper;
@@ -89,7 +87,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        log.trace("writeObject() for tx id="+externalTxId);
+        txbridgeLogger.logger.trace("BridgeXAResource.writeObject() for tx id="+externalTxId);
 
         //out.defaultWriteObject();
         out.writeObject(externalTxId);
@@ -106,7 +104,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        log.trace("readObject()");
+        txbridgeLogger.logger.trace("BridgeXAResource.readObject()");
 
         //in.defaultReadObject();
         externalTxId = (Uid)in.readObject();
@@ -125,10 +123,8 @@ public class BridgeXAResource implements XAResource, Serializable
         }
         catch(UnknownTransactionException unknownTransactionException)
         {
-            log.error("Unable to recover subordinate transaction id="+bridgeWrapperId, unknownTransactionException);
-            IOException ioException = new IOException("unable to deserialize");
-            ioException.initCause(unknownTransactionException);
-            throw ioException;
+            txbridgeLogger.i18NLogger.error_obxar_unabletorecover(bridgeWrapperId, unknownTransactionException);
+            throw new IOException(unknownTransactionException);
         }
     }
 
@@ -153,7 +149,7 @@ public class BridgeXAResource implements XAResource, Serializable
             }
             catch(UnknownTransactionException unknownTransactionException)
             {
-                log.error("Unable to recover subordinate transaction id="+bridgeWrapperId, unknownTransactionException);
+                txbridgeLogger.i18NLogger.error_obxar_unabletorecover(bridgeWrapperId, unknownTransactionException);
                 XAException xaException = new XAException(XAException.XAER_NOTA);
                 xaException.initCause(unknownTransactionException);
                 throw xaException;
@@ -171,25 +167,25 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public int prepare(Xid xid) throws XAException
     {
-        log.trace("prepare(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.prepare(Xid="+xid+")");
 
         // TwoPhaseOutcome needs converting to XAResource rtn type.
         int twoPhaseOutcome = bridgeWrapper.prepare();
 
-        log.trace("prepare TwoPhaseOutcome is "+twoPhaseOutcome+"/"+TwoPhaseOutcome.stringForm(twoPhaseOutcome));
+        txbridgeLogger.logger.trace("prepare TwoPhaseOutcome is "+twoPhaseOutcome+"/"+TwoPhaseOutcome.stringForm(twoPhaseOutcome));
 
         switch(twoPhaseOutcome)
         {
             case TwoPhaseOutcome.PREPARE_OK:
-                log.trace("prepare returning XAResource.XA_OK");
+                txbridgeLogger.logger.trace("prepare returning XAResource.XA_OK");
                 return XAResource.XA_OK;
             case TwoPhaseOutcome.PREPARE_READONLY:
                 cleanupRefs();
-                log.trace("prepare returning XAResource.XA_RDONLY");
+                txbridgeLogger.logger.trace("prepare returning XAResource.XA_RDONLY");
                 return XAResource.XA_RDONLY;
             default:
                 // TODO more find-grained error type handling
-                log.trace("prepare TwoPhaseOutcome is "+twoPhaseOutcome+"/"+
+                txbridgeLogger.logger.trace("prepare TwoPhaseOutcome is "+twoPhaseOutcome+"/"+
                         TwoPhaseOutcome.stringForm(twoPhaseOutcome)+", throwing XAException...");
                 XAException xaException = new XAException("unexpected oucome: "+TwoPhaseOutcome.stringForm(twoPhaseOutcome));
                 xaException.errorCode = XAException.XA_RBROLLBACK;
@@ -203,7 +199,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public static void cleanupRecoveredXAResources()
     {
-        log.trace("cleanupRecoveredXAResources()");
+        txbridgeLogger.logger.trace("BridgeXAResource.cleanupRecoveredXAResources()");
 
         synchronized(xaResourcesAwaitingRecovery) {
             Iterator<BridgeXAResource> iter = xaResourcesAwaitingRecovery.iterator();
@@ -244,7 +240,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public void rollback(Xid xid) throws XAException
     {
-        log.trace("rollback(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.rollback(Xid="+xid+")");
 
         // if XTS has not finished recovery yet we can't throw XA_RETRY here.
         // We'll settle for RMFAIL which has transient semantics.
@@ -269,7 +265,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public void commit(Xid xid, boolean onePhase) throws XAException
     {
-        log.trace("commit(Xid="+xid+", onePhase="+onePhase+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.commit(Xid="+xid+", onePhase="+onePhase+")");
 
         // if XTS has not finished recovery yet we wont be able to complete until it does.
         ensureRecoveryIsDoneIfNeeded(XAException.XA_RETRY);
@@ -302,7 +298,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public void start(Xid xid, int flags) throws XAException
     {
-        log.trace("start(Xid="+xid+", flags="+flags+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.start(Xid="+xid+", flags="+flags+")");
 
         // do nothing
     }
@@ -316,21 +312,21 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public void end(Xid xid, int flags) throws XAException
     {
-        log.trace("end(Xid="+xid+", flags="+flags+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.end(Xid="+xid+", flags="+flags+")");
 
         // do nothing
     }
 
     public boolean isSameRM(XAResource xaResource) throws XAException
     {
-        log.trace("isSameRM(XAResource="+xaResource+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.isSameRM(XAResource="+xaResource+")");
 
         return false;  // TODO
     }
 
     public void forget(Xid xid) throws XAException
     {
-        log.trace("forget(Xid="+xid+")");
+        txbridgeLogger.logger.trace("forget(Xid="+xid+")");
 
         // TODO
     }
@@ -344,7 +340,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public Xid[] recover(int flag) throws XAException
     {
-        log.trace("recover(flag="+flag+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.recover(flag="+flag+")");
 
         return new Xid[0];  // TODO
     }
@@ -358,7 +354,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public boolean setTransactionTimeout(int seconds) throws XAException
     {
-        log.trace("setTransactionTimeout(seconds="+seconds+")");
+        txbridgeLogger.logger.trace("BridgeXAResource.setTransactionTimeout(seconds="+seconds+")");
 
         return false;  // TODO
     }
@@ -371,7 +367,7 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     public int getTransactionTimeout() throws XAException
     {
-        log.trace("getTransactionTimeout()");
+        txbridgeLogger.logger.trace("BridgeXAResource.getTransactionTimeout()");
 
         return 0;  // TODO
     }
@@ -382,7 +378,7 @@ public class BridgeXAResource implements XAResource, Serializable
 
     private void cleanupRefs()
     {
-        log.trace("cleanupRefs()");
+        txbridgeLogger.logger.trace("BridgeXAResource.cleanupRefs()");
 
         OutboundBridgeManager.removeMapping(externalTxId);
         isAwaitingRecovery = false;

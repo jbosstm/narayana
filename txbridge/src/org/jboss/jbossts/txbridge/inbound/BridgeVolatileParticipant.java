@@ -23,11 +23,12 @@
  */
 package org.jboss.jbossts.txbridge.inbound;
 
+import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.wst.*;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.utils.JTAHelper;
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.Status;
@@ -40,8 +41,6 @@ import javax.transaction.Status;
  */
 public class BridgeVolatileParticipant implements Volatile2PCParticipant
 {
-    private static final Logger log = Logger.getLogger(BridgeVolatileParticipant.class);
-
     // no standard interface for driving Synchronization phases separately
     // in JCA, so we have to use proprietary API.
     private final XATerminatorExtensions xaTerminatorExtensions;
@@ -58,7 +57,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     BridgeVolatileParticipant(String externalTxId, Xid xid)
     {
-        log.trace("BridgeVolatileParticipant(TxId="+externalTxId+", Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.<ctor>(TxId="+externalTxId+", Xid="+xid+")");
 
         this.xid = xid;
         this.externalTxId = externalTxId;
@@ -73,7 +72,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     public Vote prepare() throws WrongStateException, SystemException
     {
-        log.trace("prepare(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.prepare(Xid="+xid+")");
 
         // Usually a VolatileParticipant would return Aborted to stop the tx in error cases. However, that
         // would mean rollback() would not be called on the instance returning Aborted, which would make it
@@ -92,7 +91,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
 
             if(!xaTerminatorExtensions.beforeCompletion(xid))
             {
-                log.warn("prepare on Xid="+xid+" failed, setting RollbackOnly");
+                txbridgeLogger.i18NLogger.warn_ibvp_preparefailed(XAHelper.xidToString(xid), null);
                 inboundBridge.setRollbackOnly();
             }
 
@@ -100,14 +99,14 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
         }
         catch(Exception e)
         {
-            log.warn("prepare on Xid="+xid+" failed, setting RollbackOnly", e);
+            txbridgeLogger.i18NLogger.warn_ibvp_preparefailed(XAHelper.xidToString(xid), e);
             try
             {
                 inboundBridge.setRollbackOnly();
             }
             catch(Exception e2)
             {
-                log.warn("setRollbackOnly failed", e2);
+                txbridgeLogger.i18NLogger.warn_ibvp_setrollbackfailed(e2);
             }
 
             return new Prepared();
@@ -120,7 +119,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
             }
             catch(Exception e)
             {
-                log.warn("stop failed for Xid="+xid, e);
+                txbridgeLogger.i18NLogger.warn_ibvp_stopfailed(XAHelper.xidToString(xid), e);
             }
         }
     }
@@ -132,7 +131,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     public void commit() throws WrongStateException, SystemException
     {
-        log.trace("commit(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.commit(Xid="+xid+")");
 
         afterCompletion(Status.STATUS_COMMITTED);
     }
@@ -144,7 +143,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     public void rollback() throws WrongStateException, SystemException
     {
-        log.trace("rollback(Xid="+xid+")");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.rollback(Xid="+xid+")");
 
         afterCompletion(Status.STATUS_ROLLEDBACK);
     }
@@ -156,7 +155,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     private void afterCompletion(int status)
     {
-        log.trace("afterCompletion(Xid="+xid+", status="+status+"/"+JTAHelper.stringForm(status)+")");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.afterCompletion(Xid="+xid+", status="+status+"/"+JTAHelper.stringForm(status)+")");
 
         // this is a null-op, the afterCompletion is done implicitly at the XAResource commit/rollback stage.
     }
@@ -166,7 +165,7 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     public void unknown() throws SystemException
     {
-        log.trace("unknown(Xid="+xid+"): NOT IMPLEMENTED");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.unknown(Xid="+xid+"): NOT IMPLEMENTED");
     }
 
     /**
@@ -174,6 +173,6 @@ public class BridgeVolatileParticipant implements Volatile2PCParticipant
      */
     public void error() throws SystemException
     {
-        log.trace("unknown(Xid="+xid+"): NOT IMPLEMENTED");
+        txbridgeLogger.logger.trace("BridgeVolatileParticipant.unknown(Xid="+xid+"): NOT IMPLEMENTED");
     }
 }

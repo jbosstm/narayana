@@ -32,7 +32,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
 import java.util.concurrent.ConcurrentMap;
@@ -49,8 +49,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class OutboundBridgeManager
 {
-    private static final Logger log = Logger.getLogger(OutboundBridgeManager.class);
-
     public static String BRIDGEWRAPPER_PREFIX = "txbridge_";
 
     // maps JTA Tx Id to OutboundBridge instance.
@@ -64,7 +62,7 @@ public class OutboundBridgeManager
      */
     public static org.jboss.jbossts.txbridge.outbound.OutboundBridge getOutboundBridge()
     {
-        log.trace("getOutboundBridge()");
+        txbridgeLogger.logger.trace("OutboundBridgeManager.getOutboundBridge()");
 
         try
         {
@@ -81,7 +79,7 @@ public class OutboundBridgeManager
         }
         catch(SystemException e)
         {
-            log.error("problem", e);
+            txbridgeLogger.logger.error(e);
         }
 
         return null;
@@ -94,7 +92,7 @@ public class OutboundBridgeManager
      */
     public static synchronized void removeMapping(Uid externalTxId)
     {
-        log.trace("removeMapping(externalTxId="+externalTxId+")");
+        txbridgeLogger.logger.trace("OutboundBridgeManager.removeMapping(externalTxId="+externalTxId+")");
 
         if(externalTxId != null) {
             outboundBridgeMappings.remove(externalTxId);
@@ -109,7 +107,7 @@ public class OutboundBridgeManager
      */
     private static synchronized void createMapping(Transaction transaction, Uid externalTxId) throws SystemException
     {
-        log.trace("createmapping(externalTxId="+externalTxId+")");
+        txbridgeLogger.logger.trace("OutboundBridgeManager.createmapping(externalTxId="+externalTxId+")");
 
         if(outboundBridgeMappings.containsKey(externalTxId)) {
             return;
@@ -129,7 +127,7 @@ public class OutboundBridgeManager
         }
         catch(RollbackException e)
         {
-            log.error("Unable to enlist BridgeXAResource or register BridgeSynchronization: ", e);
+            txbridgeLogger.i18NLogger.error_obm_unabletoenlist(e);
             throw new SystemException(e.toString());
         }
 

@@ -22,13 +22,8 @@ package org.jboss.jbossts.txbridge.outbound;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Integrates with JBossAS MC lifecycle and JBossTS recovery manager to provide
@@ -38,8 +33,6 @@ import java.util.List;
  */
 public class OutboundBridgeRecoveryManager implements RecoveryModule
 {
-    private static final Logger log = Logger.getLogger(OutboundBridgeRecoveryManager.class);
-
     private final RecoveryManager acRecoveryManager = RecoveryManager.manager();
 
     private volatile boolean orphanedBridgeWrappersAreIdentifiable = false;
@@ -49,7 +42,7 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
      */
     public void start()
     {
-        log.info("OutboundBridgeRecoveryManager starting");
+        txbridgeLogger.i18NLogger.info_obrm_start();
 
         acRecoveryManager.addModule(this);
     }
@@ -59,7 +52,7 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
      */
     public void stop()
     {
-        log.info("OutboundBridgeRecoveryManager stopping");
+        txbridgeLogger.i18NLogger.info_obrm_stop();
 
         acRecoveryManager.removeModule(this, false);
     }
@@ -72,7 +65,7 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     @Override
     public void periodicWorkFirstPass()
     {
-        log.trace("periodicWorkFirstPass()");
+        txbridgeLogger.logger.trace("OutboundBridgeRecoveryManager.periodicWorkFirstPass()");
     }
 
     /**
@@ -82,7 +75,7 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
     @Override
     public void periodicWorkSecondPass()
     {
-        log.trace("periodicWorkSecondPass()");
+        txbridgeLogger.logger.trace("OutboundBridgeRecoveryManager.periodicWorkSecondPass()");
 
         BridgeXAResource.cleanupRecoveredXAResources();
 
@@ -95,7 +88,7 @@ public class OutboundBridgeRecoveryManager implements RecoveryModule
 
         for(BridgeWrapper bridgeWrapper : bridgeWrappers) {
             if( !BridgeXAResource.isAwaitingRecovery(bridgeWrapper.getIdentifier()) ) {
-                log.info("rolling back orphaned subordinate BridgeWrapper "+bridgeWrapper.getIdentifier());
+                txbridgeLogger.logger.trace("rolling back orphaned subordinate BridgeWrapper "+bridgeWrapper.getIdentifier());
                 bridgeWrapper.rollback();
             }
         }

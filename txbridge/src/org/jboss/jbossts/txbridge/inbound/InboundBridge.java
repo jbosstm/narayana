@@ -25,6 +25,7 @@ package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -32,8 +33,6 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.Transaction;
-
-import org.apache.log4j.Logger;
 
 /**
  * Manages Thread association of the interposed coordinator.
@@ -43,8 +42,6 @@ import org.apache.log4j.Logger;
  */
 public class InboundBridge
 {
-    private static final Logger log = Logger.getLogger(InboundBridge.class);
-
     /**
      * Identifier for the subordinate transaction.
      */
@@ -59,7 +56,7 @@ public class InboundBridge
      */
     InboundBridge(Xid xid) throws XAException, SystemException
     {
-        log.trace("InboundBridge(Xid="+xid+")");
+        txbridgeLogger.logger.trace("InboundBridge.<ctor>(Xid="+xid+")");
 
         this.xid = xid;
 
@@ -76,7 +73,7 @@ public class InboundBridge
      */
     public void start() throws XAException, SystemException, InvalidTransactionException
     {
-        log.trace("start(Xid="+xid+")");
+        txbridgeLogger.logger.trace("InboundBridge.start(Xid="+xid+")");
 
         Transaction tx = getTransaction();
 
@@ -93,14 +90,14 @@ public class InboundBridge
      */
     public void stop() throws XAException, SystemException, InvalidTransactionException
     {
-        log.trace("stop("+xid+")");
+        txbridgeLogger.logger.trace("InboundBridge.stop("+xid+")");
 
         TransactionManager.transactionManager().suspend();
     }
 
     public void setRollbackOnly() throws XAException, SystemException
     {
-        log.trace("setRollbackOnly("+xid+")");
+        txbridgeLogger.logger.trace("InboundBridge.setRollbackOnly("+xid+")");
 
         getTransaction().setRollbackOnly();
     }

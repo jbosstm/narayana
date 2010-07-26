@@ -39,7 +39,7 @@ import javax.transaction.xa.XAException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.log4j.Logger;
+import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 /**
  * Maintains the mapping data that relates WS-AT transactions to JTA subordinate transactions and related objects.
@@ -52,8 +52,6 @@ import org.apache.log4j.Logger;
  */
 public class InboundBridgeManager
 {
-    private static final Logger log = Logger.getLogger(InboundBridgeManager.class);
-
     // maps WS-AT Tx Id to InboundBridge instance.
     private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
 
@@ -71,7 +69,7 @@ public class InboundBridgeManager
             throws XAException, WrongStateException, UnknownTransactionException,
             com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
     {
-        log.trace("getInboundBridge()");
+        txbridgeLogger.logger.trace("InboundBridgeManager.getInboundBridge()");
 
         String externalTxId = UserTransactionFactory.userTransaction().toString();
 
@@ -104,7 +102,7 @@ public class InboundBridgeManager
      */
     public static synchronized void removeMapping(String externalTxId)
     {
-        log.trace("removeMapping(externalTxId="+externalTxId+")");
+        txbridgeLogger.logger.trace("InboundBridgeManager.removeMapping(externalTxId="+externalTxId+")");
 
         if(externalTxId != null) {
             inboundBridgeMappings.remove(externalTxId);
@@ -124,7 +122,7 @@ public class InboundBridgeManager
             throws XAException, WrongStateException, UnknownTransactionException,
             com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
     {
-        log.trace("createMapping(externalTxId="+externalTxId+")");
+        txbridgeLogger.logger.trace("InboundBridgeManager.createMapping(externalTxId="+externalTxId+")");
 
         if(inboundBridgeMappings.containsKey(externalTxId)) {
             return;
