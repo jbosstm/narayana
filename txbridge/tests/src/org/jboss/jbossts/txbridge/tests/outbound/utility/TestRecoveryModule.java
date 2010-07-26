@@ -21,7 +21,7 @@
 package org.jboss.jbossts.txbridge.tests.outbound.utility;
 
 import com.arjuna.wst.Durable2PCParticipant;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 

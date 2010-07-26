@@ -24,7 +24,7 @@ import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.wst.TransactionRolledBackException;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

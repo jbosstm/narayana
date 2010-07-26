@@ -20,7 +20,7 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.transaction.Synchronization;
 

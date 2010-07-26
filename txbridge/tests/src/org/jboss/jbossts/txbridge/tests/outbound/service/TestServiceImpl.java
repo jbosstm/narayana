@@ -23,9 +23,8 @@ package org.jboss.jbossts.txbridge.tests.outbound.service;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
-import com.arjuna.mw.wst11.UserTransactionFactory;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import org.jboss.jbossts.txbridge.tests.outbound.utility.TestDurableParticipant;
 import org.jboss.jbossts.txbridge.tests.outbound.utility.TestVolatileParticipant;
@@ -40,7 +39,7 @@ import javax.jws.soap.SOAPBinding;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-@WebService
+@WebService()
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @HandlerChain(file = "jaxws-handlers-server.xml") // relative path from the class file
 public class TestServiceImpl

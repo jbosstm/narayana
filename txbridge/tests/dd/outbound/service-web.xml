@@ -26,13 +26,14 @@
 
     <description>XML Transaction Bridge Outbound Test Service</description>
 
+    <!-- don't put spaces in the servet name: https://jira.jboss.org/browse/JBWS-3059 -->
     <servlet>
-        <servlet-name>Outbound Test Service Servlet</servlet-name>
+        <servlet-name>OutboundTestServiceServlet</servlet-name>
         <servlet-class>org.jboss.jbossts.txbridge.tests.outbound.service.TestServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Outbound Test Service Servlet</servlet-name>
+        <servlet-name>OutboundTestServiceServlet</servlet-name>
         <url-pattern>/TestServiceImpl/*</url-pattern>
     </servlet-mapping>
 </web-app>

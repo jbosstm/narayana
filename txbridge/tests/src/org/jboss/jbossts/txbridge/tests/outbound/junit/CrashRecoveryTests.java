@@ -184,7 +184,7 @@ public class CrashRecoveryTests
         manager.startServer("default");
     }
 
-    @Test
+    //@Test
     public void testCrashOneLog() throws Exception {
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$1 = true"); // shouldCommit=true
@@ -214,7 +214,7 @@ public class CrashRecoveryTests
         instrumentedTestDurableParticipant.assertMethodNotCalled("commit");
     }
 
-    @Test
+    //@Test
     public void testCrashTwoLogs() throws Exception {
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$1 = true"); // shouldCommit=true

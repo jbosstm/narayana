@@ -21,7 +21,7 @@
 package org.jboss.jbossts.txbridge.tests.outbound.utility;
 
 import com.arjuna.wst.*;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import java.io.Serializable;
 

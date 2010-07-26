@@ -25,7 +25,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;

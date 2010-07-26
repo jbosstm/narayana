@@ -20,7 +20,7 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.service;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
 

@@ -22,7 +22,7 @@ package org.jboss.jbossts.txbridge.tests.outbound.client;
 
 import com.arjuna.ats.jta.exceptions.RollbackException;
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler;
 
 import javax.naming.Context;

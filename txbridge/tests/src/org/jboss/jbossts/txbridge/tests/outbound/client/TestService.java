@@ -30,17 +30,10 @@ import javax.jws.soap.SOAPBinding;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-@WebService
+@WebService(targetNamespace = "http://service.outbound.tests.txbridge.jbossts.jboss.org/",
+        portName = "TestServiceImplPort")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface TestService
 {
-    public void doTestResourceEnlistment();
-
     public void doNothing();
-
-    public void arrangeBeforeCompletionFailure();
-
-    public void resetState();
-
-    public void arrangeDurableParticipantPrepareOutcome(String outcome);
 }
