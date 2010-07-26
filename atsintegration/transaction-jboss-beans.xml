@@ -149,7 +149,6 @@
 
     <bean name="RecoveryManager" class="com.arjuna.ats.jbossatx.jta.RecoveryManagerService">
 
-        <demand state="Create">LoggingEnvironmentBean</demand>
         <demand state="Create">RecoveryEnvironmentBean</demand>
 
     </bean>
@@ -165,7 +164,6 @@
         <property name="jbossXATerminator"><inject bean="XATerminator"/></property>
         <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
 
-        <demand state="Create">LoggingEnvironmentBean</demand>
         <demand state="Create">RecoveryEnvironmentBean</demand>
         <demand state="Create">CoreEnvironmentBean</demand>
         <demand state="Create">CoordinatorEnvironmentBean</demand>

@@ -164,7 +164,6 @@
             <parameter><inject bean="jboss:service=CorbaORB" property="ORB"/></parameter>
         </constructor>
 
-        <demand state="Create">LoggingEnvironmentBean</demand>
         <demand state="Create">RecoveryEnvironmentBean</demand>
 
     </bean>
@@ -184,7 +183,6 @@
             <parameter><inject bean="jboss:service=CorbaORB" property="ORB"/></parameter>            
         </start>
 
-        <demand state="Create">LoggingEnvironmentBean</demand>
         <demand state="Create">RecoveryEnvironmentBean</demand>
         <demand state="Create">CoreEnvironmentBean</demand>
         <demand state="Create">CoordinatorEnvironmentBean</demand>
