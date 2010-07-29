@@ -158,7 +158,7 @@
             <dependency>
                 <groupId>org.jboss.ejb3.bom</groupId>
                 <artifactId>bom-as6</artifactId>
-                <version>0.1.2</version>
+                <version>0.2.0-alpha-10</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -167,7 +167,7 @@
                 <!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
                 <groupId>org.jboss.jbossas</groupId>
                 <artifactId>jboss-as-component-matrix</artifactId>
-                <version>6.0.0.20100429-M3</version>
+                <version>6.0.0.20100721-M4</version>
                 <!--<version>6.0.0-SNAPSHOT</version>-->
                 <type>pom</type>
                 <scope>import</scope>
@@ -234,6 +234,13 @@
             <groupId>emma</groupId>
             <artifactId>emma_ant</artifactId>
             <version>2.0.5312</version>
+        </dependency>
+
+        <!-- HornetQ Journal based object store requires HornetQ core,
+            at least until HORNETQ-274 is done -->
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
         </dependency>
 
         <!-- installation as a service requires the wrapper, but is an optional deployment model -->
@@ -322,17 +329,17 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
         </dependency>
-
+<!--
         <dependency>
-            <groupId>sun-jaxb</groupId>
+            <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging-spi</artifactId>
-            <version>2.2.0.CR1</version>
-        </dependency>
+-->
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.logging</groupId>-->
+            <!--<artifactId>jboss-logging-spi</artifactId>-->
+            <!--<version>2.2.0.CR1</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -354,12 +361,12 @@
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-common</artifactId>
         </dependency>
-
+<!--
         <dependency>
             <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
         </dependency>
-
+-->
         <!-- txbridge demo -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
