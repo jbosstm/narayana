@@ -163,6 +163,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- warning: 2nd evil maven kludge to work around http://jira.codehaus.org/browse/MNG-3537 -->
+            <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee6-specs-bom</artifactId>
+                <version>1.0.0.Beta5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
                 <groupId>org.jboss.jbossas</groupId>
