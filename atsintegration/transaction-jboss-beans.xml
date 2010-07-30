@@ -2,8 +2,8 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
     <!--
-        This is an example transaction-jboss-beans.xml file suitable for installing JBossTS 4.9 JTA
-        into AS 6.0 alpha. The canonical version of this file normally resides in the JBossAS svn
+        This is an example transaction-jboss-beans.xml file suitable for installing JBossTS 4.12 JTA
+        into AS 6.0.M4. The canonical version of this file normally resides in the JBossAS svn
         but right now JBossAS is running an earlier TS release, so we provide this file via the
         JBossTS svn as an example to facilitate upgrading. Take care - some non-arjuna beans many have
         changed in the AS svn since we forked this file, so you may need to merge rather than overwrite.
