@@ -71,7 +71,7 @@
 				<!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
 				<groupId>org.jboss.jbossas</groupId>
 				<artifactId>jboss-as-component-matrix</artifactId>
-				<version>6.0.0.20100429-M3</version>
+				<version>6.0.0.20100721-M4</version>
 				<!--<version>6.0.0-SNAPSHOT</version>-->
 				<type>pom</type>
 				<scope>import</scope>
@@ -82,7 +82,7 @@
 	<dependencies>
 		<!-- Compile (global dependencies) -->
 		<dependency>
-			<groupId>org.jboss.integration</groupId>
+			<groupId>org.jboss.profileservice</groupId>
 			<artifactId>jboss-profileservice-spi</artifactId>
 		</dependency>
 		<dependency>
