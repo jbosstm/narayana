@@ -250,11 +250,6 @@
 	</target>
 
 
-    <!-- by default we build 1.0 and 1.1 for ease of testing,
-        but release bundles should use -Dsartype=sar-11 so that
-        they contain only the supported version. -->
-    <property name="sartype" value="sar-both"/>
-
 	<!-- Module targets -->
 	<target name="wsas.build">
 		<ant dir="${wsas.dir}" inheritall="false">
