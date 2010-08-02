@@ -43,6 +43,9 @@
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
         <pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/commons-codec.jar"/>
+        <pathelement location="${jbossts.build.extlib.dir}/slf4j-api.jar"/>
+        <pathelement location="${jbossts.build.extlib.dir}/jcl-over-slf4j.jar"/>
+        <pathelement location="${jbossts.build.extlib.dir}/slf4j-simple.jar"/>
 		<pathelement location="${jbossts.build.extlib.dir}/junit.jar"/>
     </path>
 

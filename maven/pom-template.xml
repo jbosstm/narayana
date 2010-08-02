@@ -200,10 +200,19 @@
         </dependency>
         
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+       </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+       </dependency>
+
+      <dependency>
+            <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-simple</artifactId>
+      </dependency>
 
         <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and JCA (for tx inflow) apis. -->
 
