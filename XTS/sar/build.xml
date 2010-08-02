@@ -38,7 +38,7 @@
     <import file="../sharedbuild.xml"/>
 
     <!-- Set module name -->
-    <property name="modulename" value="recovery"/>
+    <property name="modulename" value="sar"/>
 
     <!-- the directory in which XTS resides -->
     <property name="xts.home" value="../xts-install"/>
@@ -78,8 +78,6 @@
 
     <property name="javac.debug" value="on"/>
 
-    <property name="bridge.api.class.files" value="org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class"/>
-
     <!-- by default we build 1.0 and 1.1 for ease of testing,
         but release bundles should use -Dsartype=sar-11 so that
         they contain only the supported version. -->
@@ -109,16 +107,7 @@
 
     <!-- compile the generic classes in the sar source -->
     <target name="compile" depends="init">
-        <compile.macro excluded.classes="org/jboss/jbossts/xts/bridge/**/*">
-            <additional.classpath>
-                <fileset dir="${lib.dir}" includes="*.jar"/>
-            </additional.classpath>
-        </compile.macro>
-    </target>
-
-    <!-- compile the 1.1 specific classes in the sar source which support WS-AT 1.1. bridging -->
-    <target name="compile.bridge" depends="compile">
-        <compile.macro included.classes="org/jboss/jbossts/xts/bridge/**/*">
+        <compile.macro>
             <additional.classpath>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
             </additional.classpath>
@@ -136,10 +125,7 @@
         <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
-        <!-- include bridge api class -->
-        <copy todir="${build.dir}/tmp/api">
-            <fileset dir="${build.classes.dir}" includes="${bridge.api.class.files}"/>
-        </copy>
+        <unjar src="${lib.dir}/bridge-api.jar" dest="${build.dir}/tmp/api"/>
         <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
         <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
         <delete dir="${build.dir}/tmp/api"/>
@@ -153,16 +139,13 @@
         <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
-        <!-- include bridge api class -->
-        <copy todir="${build.dir}/tmp/api">
-            <fileset dir="${build.classes.dir}" includes="${bridge.api.class.files}"/>
-        </copy>
+        <unjar src="${lib.dir}/bridge-api.jar" dest="${build.dir}/tmp/api"/>
         <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
         <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
         <delete dir="${build.dir}/tmp/api"/>
     </target>
     
-    <target name="api-jar" depends="api-both-jar, api11-jar"/>
+    <target name="api-jar" depends="compile, api-both-jar, api11-jar"/>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
     <target name="sar-both" if="build10">
@@ -204,8 +187,8 @@
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
-	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
+            <!-- include sar boot and shutdown codes -->
+	        <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
@@ -246,12 +229,12 @@
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
-	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
+            <!-- include sar boot and shutdown code -->
+	        <fileset dir="${build.classes.dir}" includes="**/*" />
         </jar>
     </target>
 
-    <target name="sar" depends="compile.bridge, api-jar, sar-both, sar-11"/>
+    <target name="sar" depends="api-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>

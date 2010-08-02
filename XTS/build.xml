@@ -66,7 +66,7 @@
 					    init.emma.report.dir, wsas.build,
                                             ws-c.build, wscf.build,
                                             ws-t.build, wstx.build,
-                                            recovery.build, htdocs">
+                                            recovery.build, bridge.build, htdocs">
 
     </target>
 
@@ -134,6 +134,7 @@
 			<fileset dir="WS-T/build/lib" includes="*.jar"/>
             <fileset dir="WSTX/build/lib" includes="*.jar"/>
             <fileset dir="recovery/build/lib" includes="*.jar"/>
+            <fileset dir="bridge/build/lib" includes="*.jar"/>
 		</copy>
 
 		<echo message="Installing webapps"/>
@@ -288,6 +289,13 @@
 
     <target name="recovery.build">
         <ant dir="recovery">
+            <property name="sartype" value="${sartype}"/>
+            <property name="emma.enabled" value="${emma.enabled}"/>
+        </ant>
+    </target>
+
+    <target name="bridge.build">
+        <ant dir="bridge">
             <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
