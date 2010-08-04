@@ -42,13 +42,9 @@ import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import org.omg.CosTransactions.*;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class CurrentTest
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -65,15 +61,11 @@ public class CurrentTest
 
         CurrentImple current = OTSImpleManager.current();
         Control myControl = null;
-        String gridReference = "/tmp/grid.ref";
-        String serverName = "Grid";
+
+        String gridReference = args[0];
+
         grid gridVar = null;  // pointer the grid object that will be used.
         int h = -1, w = -1, v = -1;
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            gridReference = "C:\\temp\\grid.ref";
-        }
 
         System.out.println("Beginning transaction.");
 
@@ -83,12 +75,12 @@ public class CurrentTest
 
             myControl = current.get_control();
 
-            assertNotNull(myControl);
+            TestUtility.assertTrue(myControl != null);
         }
         catch (Exception sysEx)
         {
             sysEx.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(sysEx.toString());
         }
 
         try
@@ -99,7 +91,7 @@ public class CurrentTest
         }
         catch (Exception sysEx)
         {
-            fail("failed to bind to grid: "+sysEx);
+            TestUtility.fail("failed to bind to grid: "+sysEx);
             sysEx.printStackTrace(System.err);
         }
 
@@ -110,7 +102,7 @@ public class CurrentTest
         }
         catch (Exception sysEx)
         {
-            fail("grid height/width failed: "+sysEx);
+            TestUtility.fail("grid height/width failed: "+sysEx);
             sysEx.printStackTrace(System.err);
         }
 
@@ -124,7 +116,7 @@ public class CurrentTest
         }
         catch (Exception sysEx)
         {
-            fail("grid set/get failed: "+sysEx);
+            TestUtility.fail("grid set/get failed: "+sysEx);
             sysEx.printStackTrace(System.err);
         }
 
@@ -134,8 +126,7 @@ public class CurrentTest
         // sanity check: make sure we got the value 123 back:
         if (v != 123)
         {
-            fail();
-            System.err.println("something went seriously wrong");
+            TestUtility.fail("something went seriously wrong");
 
             try
             {
@@ -143,11 +134,9 @@ public class CurrentTest
             }
             catch (Exception e)
             {
-                fail("rollback error: "+e);
+                TestUtility.fail("rollback error: "+e);
                 e.printStackTrace(System.err);
             }
-
-            fail();
         }
         else
         {
@@ -159,14 +148,14 @@ public class CurrentTest
             }
             catch (Exception e)
             {
-                fail("commit error: "+e);
+                TestUtility.fail("commit error: "+e);
                 e.printStackTrace(System.err);
             }
 
             myOA.destroy();
             myORB.shutdown();
 
-            System.out.println("Test completed successfully.");
+            System.out.println("Passed");
         }
     }
 }

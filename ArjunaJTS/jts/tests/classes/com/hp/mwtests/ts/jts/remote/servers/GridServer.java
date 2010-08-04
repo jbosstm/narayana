@@ -38,13 +38,9 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class GridServer
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -58,14 +54,7 @@ public class GridServer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-        String gridReference = "/tmp/grid.ref";
-        String serverName = "Grid";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            gridReference = "C:\\temp\\grid.ref";
-        }
+        String gridReference = args[0];
 
         grid_i myGrid = new grid_i(100, 100);
         Services serv = new Services(myORB);
@@ -74,14 +63,13 @@ public class GridServer
         {
             TestUtility.registerService(gridReference, myORB.orb().object_to_string(myGrid.getReference()));
 
-            System.out.println("**Grid server started**");
-            //assertReady();
+            System.out.println("Ready");
 
             myOA.run();
         }
         catch (Exception e)
         {
-            fail("**GridServer caught exception: "+e);
+            TestUtility.fail("**GridServer caught exception: "+e);
         }
 
         myOA.shutdownObject(myGrid);

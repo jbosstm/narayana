@@ -41,9 +41,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import org.omg.CORBA.IntHolder;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class DistributedHammer1
 {
     private final static int   START_VALUE_1 = 10;
@@ -51,8 +48,7 @@ public class DistributedHammer1
 
     private final static int   EXPECTED_RESULT = START_VALUE_1 + START_VALUE_2;
 
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -66,16 +62,8 @@ public class DistributedHammer1
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-
-        String server1 = "/tmp/hammer1.ref";
-        String server2 = "/tmp/hammer2.ref";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            server1 = "C:\\temp\\hammer1.ref";
-            server2 = "C:\\temp\\hammer2.ref";
-        }
+        String server1 = args[0];
+        String server2 = args[1];
 
         try
         {
@@ -84,16 +72,16 @@ public class DistributedHammer1
             DistributedHammerWorker1.hammerObject_1 = HammerHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(server1)));
             DistributedHammerWorker1.hammerObject_2 = HammerHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(server2)));
 
-            assertTrue( DistributedHammerWorker1.hammerObject_1.set(START_VALUE_1, null) );
+            TestUtility.assertTrue( DistributedHammerWorker1.hammerObject_1.set(START_VALUE_1, null) );
 
-            assertTrue( DistributedHammerWorker1.hammerObject_2.set(START_VALUE_2, null) );
+            TestUtility.assertTrue( DistributedHammerWorker1.hammerObject_2.set(START_VALUE_2, null) );
 
             DistributedHammerWorker1.get12('m', 0);
             DistributedHammerWorker1.get21('m', 0);
         }
         catch (Exception e)
         {
-            fail("DistributedHammer1: "+e);
+            TestUtility.fail("DistributedHammer1: "+e);
             e.printStackTrace(System.err);
         }
 
@@ -106,12 +94,14 @@ public class DistributedHammer1
         IntHolder value1 = new IntHolder(0);
         IntHolder value2 = new IntHolder(0);
 
-        assertTrue( DistributedHammerWorker1.get1(value1) | DistributedHammerWorker1.get2(value2) );
+        TestUtility.assertTrue( DistributedHammerWorker1.get1(value1) | DistributedHammerWorker1.get2(value2) );
 
-        assertEquals(EXPECTED_RESULT, (value1.value + value2.value) );
+        TestUtility.assertEquals(EXPECTED_RESULT, (value1.value + value2.value) );
 
         myOA.destroy();
         myORB.shutdown();
+
+        System.out.println("Passed");
     }
 }
 

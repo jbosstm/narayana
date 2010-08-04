@@ -40,13 +40,9 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class StackServer
 {
-    @Test
-    public void test() throws Exception
+   public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -60,14 +56,7 @@ public class StackServer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-        String refFile = "/tmp/stack.ref";
-        String serverName = "Stack";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile = "C:\\temp\\stack.ref";
-        }
+        String refFile = args[0];
 
         stackPOATie theStack = new stackPOATie (new StackImple());
 
@@ -79,13 +68,13 @@ public class StackServer
         {
             TestUtility.registerService(refFile, myORB.orb().object_to_string(stackHelper.narrow(myOA.corbaReference(theStack))));
 
-            System.out.println("**StackServer started**");
-            //assertReady();
+            System.out.println("Ready");
+
             myOA.run();
         }
         catch (Exception e)
         {
-            fail("StackServer caught exception: "+e);
+            TestUtility.fail("StackServer caught exception: "+e);
         }
 
         myOA.shutdownObject(theStack);

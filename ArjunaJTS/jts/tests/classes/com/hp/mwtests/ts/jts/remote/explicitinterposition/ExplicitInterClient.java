@@ -42,13 +42,9 @@ import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import org.omg.CosTransactions.*;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ExplicitInterClient
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -65,14 +61,8 @@ public class ExplicitInterClient
 
         CurrentImple current = OTSImpleManager.current();
         Control theControl = null;
-        String objectReference = "/tmp/object.ref";
-        String serverName = "SetGet";
 
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            objectReference = "C:\\temp\\object.ref";
-        }
-
+        String objectReference = args[0];
 
         SetGet SetGetVar = null;
         short h = 0;
@@ -85,7 +75,7 @@ public class ExplicitInterClient
         }
         catch (Exception e)
         {
-            fail("Caught exception during begin: "+e);
+            TestUtility.fail("Caught exception during begin: "+e);
             e.printStackTrace(System.err);
         }
 
@@ -97,7 +87,7 @@ public class ExplicitInterClient
         }
         catch (Exception ex)
         {
-            fail("Failed to bind to setget server: "+ex);
+            TestUtility.fail("Failed to bind to setget server: "+ex);
             ex.printStackTrace(System.err);
         }
 
@@ -114,7 +104,7 @@ public class ExplicitInterClient
         }
         catch (Exception ex1)
         {
-            fail("Unexpected system exception during set: "+ex1);
+            TestUtility.fail("Unexpected system exception during set: "+ex1);
             ex1.printStackTrace(System.err);
         }
 
@@ -132,7 +122,7 @@ public class ExplicitInterClient
         }
         catch (Exception sysEx)
         {
-            fail("Caught unexpected exception during commit: "+sysEx);
+            TestUtility.fail("Caught unexpected exception during commit: "+sysEx);
             sysEx.printStackTrace(System.err);
         }
 
@@ -148,7 +138,7 @@ public class ExplicitInterClient
         }
         catch (Exception ex2)
         {
-            fail("Unexpected system exception during get: "+ex2);
+            TestUtility.fail("Unexpected system exception during get: "+ex2);
             ex2.printStackTrace(System.err);
         }
 
@@ -160,11 +150,13 @@ public class ExplicitInterClient
         }
         catch (Exception ep)
         {
-            fail("Caught commit exception for top-level action: "+ep);
+            TestUtility.fail("Caught commit exception for top-level action: "+ep);
             ep.printStackTrace(System.err);
         }
 
         myOA.destroy();
         myORB.shutdown();
+
+        System.out.println("Passed");
     }
 }

@@ -38,55 +38,43 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ImplGridServer
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(new String[] {}, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
+        String refFile = args[0];
 
-	String refFile = "/tmp/trangrid.ref";
-	String serverName = "ImplGrid";
+        trangrid_i gridI = new trangrid_i((short) 100, (short) 100);
+        Services serv = new Services(myORB);
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\trangrid.ref";
-	}
+        try
+        {
+            TestUtility.registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
 
-	trangrid_i gridI = new trangrid_i((short) 100, (short) 100);
-	Services serv = new Services(myORB);
+            System.out.println("Ready");
 
-	try
-	{
-	    TestUtility.registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            TestUtility.fail("ImplGrid server caught exception: "+e);
+        }
 
-	    System.out.println("**ImplGrid server started**");
+        myOA.shutdownObject(gridI);
 
-	    //assertReady();
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    fail("ImplGrid server caught exception: "+e);
-	}
-
-	myOA.shutdownObject(gridI);
-
-	System.out.println("**ImplGrid server exiting**");
+        System.out.println("**ImplGrid server exiting**");
     }
 }
 

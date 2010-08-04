@@ -194,6 +194,7 @@ public class TaskImpl implements Task
 
         String[] command = assembleCommand(clazz.getCanonicalName(), params);
 
+        logCommand(System.out, "performing command: ", command);
         logCommand(out, "performing command: ", command);
 
         // cannot restart a task
@@ -314,6 +315,7 @@ public class TaskImpl implements Task
     {
         String[] command = assembleCommand(clazz.getCanonicalName(), params);
 
+        logCommand(System.out, "starting command: ", command);
         logCommand(out, "starting command: ", command);
 
         // cannot restart a task
@@ -617,7 +619,7 @@ public class TaskImpl implements Task
 
         /**
          * called by the test thread under Task.start() to ensure that a type READY task's process has printed a
-         * Ready output line before returning forom the start call.
+         * Ready output line before returning from the start call.
          */
         public void blockingWaitForReady() {
             synchronized (printedReady) {

@@ -40,13 +40,9 @@ import com.hp.mwtests.ts.jts.TestModule.TranGrid;
 import com.hp.mwtests.ts.jts.TestModule.TranGridHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ImplicitClient
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -60,14 +56,7 @@ public class ImplicitClient
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-        String refFile = "/tmp/trangrid.ref";
-        String serverName = "ImplGrid";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile = "C:\\temp\\trangrid.ref";
-        }
+        String refFile = args[0];
 
         CurrentImple current = OTSImpleManager.current();
 
@@ -88,9 +77,7 @@ public class ImplicitClient
             }
             catch (Exception e)
             {
-                fail("Invocation failed: "+e);
-
-                e.printStackTrace();
+                TestUtility.fail("Invocation failed: "+e);
             }
 
             System.out.println("height is "+h);
@@ -108,7 +95,7 @@ public class ImplicitClient
             }
             catch (Exception sysEx)
             {
-                fail("Grid set/get failed: "+sysEx);
+                TestUtility.fail("Grid set/get failed: "+sysEx);
                 sysEx.printStackTrace(System.err);
             }
 
@@ -123,7 +110,7 @@ public class ImplicitClient
                 // oops - we didn't:
 
                 current.rollback();
-                fail("Result not as expected");
+                TestUtility.fail("Result not as expected");
             }
             else
             {
@@ -132,14 +119,14 @@ public class ImplicitClient
         }
         catch (Exception e)
         {
-            fail("Caught exception: "+e);
+            TestUtility.fail("Caught exception: "+e);
             e.printStackTrace(System.err);
         }
 
         myOA.destroy();
         myORB.shutdown();
 
-        System.out.println("Test completed.");
+        System.out.println("Passed");
     }
 }
 

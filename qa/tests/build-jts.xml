@@ -56,6 +56,7 @@
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
         <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
+        <pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 	</path>
 
 	<target name="org.jboss.jbossts.qa.init">

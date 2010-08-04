@@ -39,13 +39,9 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ExplicitStackServer
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -59,14 +55,7 @@ public class ExplicitStackServer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-        String refFile = "/tmp/explicitstack.ref";
-        String serverName = "ExplicitStack";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile = "C:\\temp\\explicitstack.ref";
-        }
+        String refFile = args[0];
 
         ExplicitStackPOATie theObject = new ExplicitStackPOATie (new ExplicitStackImple());
 
@@ -78,14 +67,13 @@ public class ExplicitStackServer
         {
             TestUtility.registerService(refFile, myORB.orb().object_to_string(myOA.corbaReference(theObject)));
 
-            System.out.println("**ExplicitStackServer started**");
-            //assertReady();
+            System.out.println("Ready");
 
             myOA.run();
         }
         catch (Exception e)
         {
-            fail("ExplicitStackServer caught exception: "+e);
+            e.printStackTrace();
         }
 
         myOA.shutdownObject(theObject);

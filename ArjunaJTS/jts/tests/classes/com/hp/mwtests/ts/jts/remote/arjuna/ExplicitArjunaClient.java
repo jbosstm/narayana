@@ -44,13 +44,9 @@ import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.IntHolder;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ExplicitArjunaClient
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -65,15 +61,10 @@ public class ExplicitArjunaClient
         ORBManager.setPOA(myOA);
 
         CurrentImple current = OTSImpleManager.current();
-        String refFile = "/tmp/explicitstack.ref";
-        String serverName = "ExplicitStack";
+        String refFile = args[0];
+
         int value = 1;
         Control cont = null;
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile = "C:\\temp\\explicitstack.ref";
-        }
 
         try
         {
@@ -85,8 +76,7 @@ public class ExplicitArjunaClient
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(e.toString());
         }
 
         ExplicitStack stackVar = null;   // pointer the grid object that will be used.
@@ -97,8 +87,7 @@ public class ExplicitArjunaClient
         }
         catch (Exception e)
         {
-            System.err.println("Bind error: "+e);
-            fail();
+            TestUtility.fail("Bind error: "+e);
         }
 
         try
@@ -116,8 +105,7 @@ public class ExplicitArjunaClient
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(e.toString());
         }
 
         try
@@ -176,7 +164,7 @@ public class ExplicitArjunaClient
                     System.out.println("Error - current transaction name: "
                             +current.get_transaction_name());
 
-                assertEquals(value, val.value);
+                TestUtility.assertEquals(value, val.value);
 
             }
             else
@@ -196,16 +184,18 @@ public class ExplicitArjunaClient
             }
             catch (Exception e)
             {
-                fail("\nError - could not print.");
+                TestUtility.fail("\nError - could not print.");
             }
         }
         catch (Exception e)
         {
-            fail("Caught unexpected exception: "+e);
+            TestUtility.fail("Caught unexpected exception: "+e);
         }
 
         myOA.destroy();
         myORB.shutdown();
+
+        System.out.println("Passed");
     }
 }
 

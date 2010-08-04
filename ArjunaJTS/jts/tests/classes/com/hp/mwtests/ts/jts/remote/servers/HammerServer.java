@@ -40,13 +40,10 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class HammerServer
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -60,28 +57,7 @@ public class HammerServer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-
-        String refFile1 = "/tmp/hammer1.ref";
-        String refFile2 = "/tmp/hammer2.ref";
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile1 = "C:\\temp\\hammer1.ref";
-            refFile2 = "C:\\temp\\hammer2.ref";
-        }
-
-        String refFile = null;
-        int number = 0;
-
-        assertFalse( (number != 1) && (number != 2) );
-
-        if ( refFile == null )
-        {
-            if (number == 1)
-                refFile = refFile1;
-            else
-                refFile = refFile2;
-        }
+        String refFile = args[0];
 
         HammerPOATie theObject = new HammerPOATie(new HammerObject());
 
@@ -93,16 +69,16 @@ public class HammerServer
         {
             TestUtility.registerService( refFile, myORB.orb().object_to_string(HammerHelper.narrow(myOA.corbaReference(theObject))) );
 
-            System.out.println("**HammerServer started**");
-
             System.out.println("\nIOR file: "+refFile);
+
+            System.out.println("Ready");
 
             //assertReady();
             myOA.run();
         }
         catch (Exception e)
         {
-            fail("HammerServer caught exception: "+e);
+            //fail("HammerServer caught exception: "+e);
             e.printStackTrace(System.err);
         }
 

@@ -44,13 +44,9 @@ import org.omg.CosTransactions.*;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class TimeoutClient
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -68,11 +64,8 @@ public class TimeoutClient
 
             CurrentImple current = OTSImpleManager.current();
             Control theControl = null;
-            String objectReference = "/tmp/object.ref";
-            String serverName = "SetGet";
 
-            if (System.getProperty("os.name").startsWith("Windows"))
-                objectReference = "C:\\temp\\object.ref";
+            String objectReference = args[0];
 
             SetGet SetGetVar = null;
 
@@ -91,7 +84,7 @@ public class TimeoutClient
             }
             catch (Exception e)
             {
-                fail("Bind to object failed: "+e);
+                TestUtility.fail("Bind to object failed: "+e);
                 e.printStackTrace(System.err);
             }
 
@@ -107,7 +100,7 @@ public class TimeoutClient
             }
             catch (Exception e)
             {
-                fail("Call to set or get failed: "+e);
+                TestUtility.fail("Call to set or get failed: "+e);
                 e.printStackTrace(System.err);
             }
 
@@ -126,7 +119,7 @@ public class TimeoutClient
             try
             {
                 current.commit(true);
-                fail();
+                TestUtility.fail("commit worked");
             }
             catch (TRANSACTION_ROLLEDBACK  e1)
             {
@@ -142,7 +135,7 @@ public class TimeoutClient
             try
             {
                 current.commit(true);
-                fail();
+                TestUtility.fail("commit worked");
             }
             catch (TRANSACTION_ROLLEDBACK  e2)
             {
@@ -154,18 +147,18 @@ public class TimeoutClient
             }
             catch (Exception e)
             {
-                fail("Caught other exception: "+e);
+                TestUtility.fail("Caught other exception: "+e);
             }
         }
         catch (Exception e)
         {
             e.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(e.toString());
         }
-
-        System.out.println("\nTest completed successfully.");
 
         myOA.destroy();
         myORB.shutdown();
+
+        System.out.println("Passed");
     }
 }

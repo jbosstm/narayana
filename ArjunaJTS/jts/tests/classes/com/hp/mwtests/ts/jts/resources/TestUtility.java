@@ -44,4 +44,22 @@ public class TestUtility
         fout.write(ior.getBytes());
         fout.close();
     }
+
+    public static void assertTrue(boolean value) {
+        if(!value) {
+            fail("assertionFailed");
+        }
+    }
+
+    public static void assertEquals(int a, int b) {
+        if(a != b) {
+            fail("assertionFailed");
+        }
+    }
+
+    public static void fail(String message) {
+        System.out.println("failing: "+message);
+        System.out.println("Failed");
+    }
+
 }

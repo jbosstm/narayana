@@ -48,13 +48,13 @@ public class TestGroupBase
         // no need to do this here as it gets done in tearDown
         // TaskImpl.cleanupTasks();
 
+        Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+        emptyObjectStore.perform();
+
         if(isRecoveryManagerNeeded) {
             recoveryManager = createTask("server0", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 480);
 		    recoveryManager.start("-test");
         }
-
-		Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		emptyObjectStore.perform();
     }
 
 	@After public void tearDown()

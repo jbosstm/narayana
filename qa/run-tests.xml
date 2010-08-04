@@ -42,6 +42,10 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
+        <antcall target="junit-tests">
+            <param name="tests" value="jtsremote"/>
+        </antcall>
+        
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
@@ -103,6 +107,9 @@
         <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
         <!-- otsserver : 20 tests, 4 minutes -->
         <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
+        <!-- jtsremote : 9 tests, 3 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="jtsremote"/></antcall>
+
 
         <!-- rawresources01_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_1"/></antcall>
@@ -376,6 +383,9 @@
                 <fileset dir="../install/lib/ext">
                     <include name="*.jar"/>
                     <include name="*.zip"/>
+                </fileset>
+                <fileset dir="../ArjunaJTS/jts/build/lib">
+                    <include name="jts_tests.jar"/>
                 </fileset>
                 <pathelement location="../install/etc"/>
 

@@ -42,13 +42,9 @@ import com.hp.mwtests.ts.jts.TestModule.stack;
 
 import org.omg.CORBA.IntHolder;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class ImplicitArjunaClient
 {
-    @Test
-    public void test() throws Exception
+    public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
@@ -62,13 +58,8 @@ public class ImplicitArjunaClient
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        String refFile = "/tmp/stack.ref";
-        String serverName = "Stack";
+        String refFile = args[0];
         CurrentImple current = OTSImpleManager.current();
-
-        if (System.getProperty("os.name").startsWith("Windows"))
-        {
-            refFile = "C:\\temp\\stack.ref";	}
 
         stack stackVar = null;   // pointer the grid object that will be used.
 
@@ -85,7 +76,7 @@ public class ImplicitArjunaClient
             catch (Exception e)
             {
                 e.printStackTrace(System.err);
-                fail();
+                TestUtility.fail(e.toString());
             }
 
             System.out.println("pushing 1 onto stack");
@@ -99,7 +90,7 @@ public class ImplicitArjunaClient
         catch (Exception e)
         {
             e.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(e.toString());
         }
 
         try
@@ -128,12 +119,12 @@ public class ImplicitArjunaClient
 
                 current.commit(false);
 
-                assertEquals(1, val.value);
+                TestUtility.assertEquals(1, val.value);
 
             }
             else
             {
-                fail("Error getting stack value.");
+                TestUtility.fail("Error getting stack value.");
 
                 current.rollback();
             }
@@ -141,11 +132,13 @@ public class ImplicitArjunaClient
         catch (Exception e)
         {
             e.printStackTrace(System.err);
-            fail();
+            TestUtility.fail(e.toString());
         }
 
         myOA.destroy();
         myORB.shutdown();
+
+        System.out.println("Passed");
     }
 }
 
