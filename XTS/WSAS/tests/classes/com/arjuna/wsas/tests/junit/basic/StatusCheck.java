@@ -64,7 +64,7 @@ public class StatusCheck
             fail("Status should be NoActivity " + ua.status());
         }
 
-        ua.start();
+        ua.start("dummy");
 		
 		if (ua.status() != Active.instance()) {
             fail("Status should be Active " + ua.status());

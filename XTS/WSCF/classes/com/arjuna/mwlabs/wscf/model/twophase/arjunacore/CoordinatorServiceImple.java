@@ -45,7 +45,6 @@ import com.arjuna.mw.wscf.common.CoordinatorId;
 import com.arjuna.mwlabs.wsas.UserActivityImple;
 
 import com.arjuna.mwlabs.wsas.activity.ActivityImple;
-import com.arjuna.mwlabs.wsas.activity.CompositeOutcomeImple;
 
 import com.arjuna.mw.wsas.activity.Outcome;
 
@@ -97,9 +96,9 @@ public class CoordinatorServiceImple implements UserCoordinator,
 	 *                Thrown in any other situation.
 	 */
 
-	public void begin () throws WrongStateException, SystemException
+	public void begin (String serviceType) throws WrongStateException, SystemException
 	{
-		UserActivityFactory.userActivity().start();
+		UserActivityFactory.userActivity().start(serviceType);
 	}
 
 	/**
@@ -121,10 +120,10 @@ public class CoordinatorServiceImple implements UserCoordinator,
 	 *                Thrown in any other situation.
 	 */
 
-	public void begin (int timeout) throws WrongStateException,
+	public void begin (String serviceType, int timeout) throws WrongStateException,
 			InvalidTimeoutException, SystemException
 	{
-		UserActivityFactory.userActivity().start(timeout);
+		UserActivityFactory.userActivity().start(serviceType, timeout);
 	}
 
 	/**
@@ -165,9 +164,6 @@ public class CoordinatorServiceImple implements UserCoordinator,
 			if (res != null)
 			{
 				// TODO properly! One HLS service per activity.
-
-				if (res instanceof CompositeOutcomeImple)
-					res = ((CompositeOutcomeImple) res).get(CoordinationOutcome.class.getName());
 
 				if (res instanceof CoordinationOutcome)
 				{
@@ -241,9 +237,6 @@ public class CoordinatorServiceImple implements UserCoordinator,
 
 			if (res != null)
 			{
-				if (res instanceof CompositeOutcomeImple)
-					res = ((CompositeOutcomeImple) res).get(CoordinationOutcome.class.getName());
-
 				if (res instanceof CoordinationOutcome)
 				{
 					CoordinationOutcome co = (CoordinationOutcome) res;

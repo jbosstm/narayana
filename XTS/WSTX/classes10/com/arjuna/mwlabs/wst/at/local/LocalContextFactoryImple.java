@@ -103,7 +103,7 @@ public class LocalContextFactoryImple implements ContextFactory
 			{
 				_coordManager.suspend();
 
-				_coordManager.begin();
+				_coordManager.begin("TwoPhaseHLS");
 
                 final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
 

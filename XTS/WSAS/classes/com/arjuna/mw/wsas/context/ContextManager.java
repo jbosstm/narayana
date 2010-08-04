@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -31,12 +31,18 @@
 
 package com.arjuna.mw.wsas.context;
 
+import com.arjuna.mw.wsas.UserActivity;
+import com.arjuna.mw.wsas.UserActivityFactory;
+import com.arjuna.mw.wsas.activity.ActivityHandle;
+import com.arjuna.mw.wsas.exceptions.NoActivityException;
 import com.arjuna.mw.wsas.logging.wsasLogger;
 
 import com.arjuna.mw.wsas.ActivityManager;
 import com.arjuna.mw.wsas.ActivityManagerFactory;
 
 import com.arjuna.mw.wsas.activity.HLS;
+import com.arjuna.mwlabs.wsas.ActivityManagerImple;
+import com.arjuna.mwlabs.wsas.activity.ActivityImple;
 
 /**
  * @author Mark Little (mark@arjuna.com)
@@ -52,51 +58,51 @@ public class ContextManager
 	_manager = ActivityManagerFactory.activityManager();
     }
 
-    public final Context[] contexts ()
+    /**
+     * @message com.arjuna.mw.wsas.context.ContextManager_3 [com.arjuna.mw.wsas.context.ContextManager_3] - getHighLevelServices threw:
+     * @message com.arjuna.mw.wsas.context.ContextManager_4 [com.arjuna.mw.wsas.context.ContextManager_4] - assembling context and received:
+     */
+
+    public final Context context (String serviceType)
     {
-	Context[] ctxs = null;
-	HLS[] services = null;
+        Context ctx = null;
+        HLS service = null;
 
-	try
-	{
-	    services = _manager.allHighLevelServices();
-	}
-	catch (Exception ex)
-	{
+        try
+        {
+            // ensure we are in an activity associated with the correct service type
+
+            String currentServiceType = UserActivityFactory.userActivity().serviceType();
+            if (currentServiceType == serviceType) {
+                service = _manager.getHighLevelService(serviceType);
+            }
+        }
+        catch (NoActivityException nae)
+        {
+            // ignore
+        }
+        catch (Exception ex)
+        {
         wsasLogger.i18NLogger.warn_context_ContextManager_1(ex);
-	}
-	
-	if (services != null)
-	{
-	    /*
-	     * Null entries are allowed and should be ignored.
-	     */
+        }
 
-	    ctxs = new Context[services.length];
+        if (service != null)
+        {
+            try
+            {
+                ctx = service.context();
+            }
+            catch (Exception ex)
+            {
+                wsasLogger.i18NLogger.warn_context_ContextManager_2(ex);
 
-	    try
-	    {
-		//		ActivityHierarchy ctx = _activity.currentActivity();
+                ctx = null;
+            }
+        }
 
-		/*
-		 * Check for null or leave to hls? (leave to hls at
-		 * the moment).
-		 */
-
-		for (int i = 0; i < services.length; i++)
-		    ctxs[i] = services[i].context();
-	    }
-	    catch (Exception ex)
-	    {
-            wsasLogger.i18NLogger.warn_context_ContextManager_2(ex);
-		
-		ctxs = null;
-	    }
-	}
-	
-	return ctxs;
+        return ctx;
     }
 
     private ActivityManager _manager;
-    
+
 }

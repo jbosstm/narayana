@@ -42,7 +42,6 @@ public class Environment
 {
 
     public static final String PROTOCOL_IMPLEMENTATION = "com.arjuna.mw.wscf.protocolImplementation";
-    public static final String JTA_CONTEXT = "com.arjuna.mw.wscf.protocols.jta.context";
     public static final String TWO_PHASE_CONTEXT = "com.arjuna.mw.wscf.protocols.twophase.context";
     public static final String SAGAS_CONTEXT = "com.arjuna.mw.wscf.protocols.sagas.context";
     

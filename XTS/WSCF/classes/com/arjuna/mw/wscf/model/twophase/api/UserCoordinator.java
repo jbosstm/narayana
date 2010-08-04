@@ -72,7 +72,7 @@ public interface UserCoordinator
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void begin () throws WrongStateException, SystemException;
+    public void begin (String serviceType) throws WrongStateException, SystemException;
 
     /**
      * Start a new activity. If there is already an activity associated
@@ -90,7 +90,7 @@ public interface UserCoordinator
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void begin (int timeout) throws WrongStateException, InvalidTimeoutException, SystemException;
+    public void begin (String serviceType, int timeout) throws WrongStateException, InvalidTimeoutException, SystemException;
 
     /**
      * Confirm the current activity.

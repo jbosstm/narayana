@@ -98,7 +98,7 @@ public class LocalContextFactoryImple implements ContextFactory
     	    {
         		_coordManager.suspend();
         
-        		_coordManager.begin();
+        		_coordManager.begin("SagasHLS");
         
                 final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
 

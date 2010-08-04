@@ -34,9 +34,6 @@ package com.arjuna.mwlabs.wsas.activity;
 import com.arjuna.mw.wsas.logging.wsasLogger;
 
 import com.arjuna.mw.wsas.activity.HLS;
-import com.arjuna.mw.wsas.activity.OutcomeManager;
-
-import com.arjuna.mwlabs.wsas.util.HLSWrapper;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.InvalidHLSException;
@@ -65,8 +62,9 @@ public class HLSManager
 	if (service == null) {
 	    throw new InvalidHLSException();
     } else {
-        synchronized(_hls) {
-	    _hls.add(new HLSWrapper(service));
+        String key = service.identity();
+        synchronized(_hlsMap) {
+            _hlsMap.put(key, service);
         }
     }
     }
@@ -77,70 +75,38 @@ public class HLSManager
 	    throw new InvalidHLSException();
 	else
 	{
-	    synchronized (_hls)
+        String key = service.identity();
+        HLS oldValue;
+	    synchronized (_hlsMap)
 	    {
-            HLSWrapper elem = null;
-            boolean found = false;
-            Iterator<HLSWrapper> iter = _hls.iterator();
-            while (!found && iter.hasNext()) {
-                elem = iter.next();
-                if (elem.hls() == service) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                throw new InvalidHLSException(wsasLogger.i18NLogger.get_activity_HLSManager_1());
-            } else {
-                _hls.remove(elem);
-            }
+            oldValue = _hlsMap.remove(key);
+        }
+        if (oldValue == null) {
+            throw new InvalidHLSException(wsasLogger.i18NLogger.get_activity_HLSManager_1());
         }
     }
     }
-
+    /*
+     * redundant?
+     */
     public static final HLS[] allHighLevelServices () throws SystemException
     {
-	synchronized (_hls)
+	synchronized (_hlsMap)
 	{
-	    HLS[] toReturn = new HLS[(int) _hls.size()];
-        Iterator<HLSWrapper> iter = _hls.iterator();
-	    HLSWrapper elem;
-	    int i = 0;
-	    
-	    while (iter.hasNext())
-	    {
-            elem = iter.next();
-            toReturn[i++] = ((HLSWrapper) elem).hls();
-	    }
-	    
-	    return toReturn;
+	    HLS[] toReturn = new HLS[(int) _hlsMap.size()];
+        Collection<HLS> services = _hlsMap.values();
+        return services.toArray(toReturn);
 	}
     }
 
-    public static final void setOutcomeManager (OutcomeManager om) throws SystemException
+    public static final HLS getHighLevelService (String serviceType) throws SystemException
     {
-	synchronized (_outcomeManager)
-	{
-	    if (om == null)
-		om = new OutcomeManagerImple();
-	    
-	    _outcomeManager = om;
-	}
+        synchronized (_hlsMap)
+        {
+            return _hlsMap.get(serviceType);
+        }
     }
 
-    public static final OutcomeManager getOutcomeManager () throws SystemException
-    {
-	synchronized (_outcomeManager)
-	{
-	    return _outcomeManager;
-	}
-    }
+    private static HashMap<String, HLS> _hlsMap = new HashMap<String, HLS>();
 
-    static final Iterator<HLSWrapper> HLServices ()
-    {
-	return _hls.iterator();
-    }
-    
-    private static SortedSet<HLSWrapper> _hls = new TreeSet(); // order decreasing as higher is first
-    private static OutcomeManager _outcomeManager = new OutcomeManagerImple();
-    
 }

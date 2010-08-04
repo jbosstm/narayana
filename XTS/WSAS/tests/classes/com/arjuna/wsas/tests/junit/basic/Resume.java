@@ -64,13 +64,13 @@ public class Resume
 	    GlobalId ac1 = null;
 	    GlobalId ac2 = null;
 	    
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    ac1 = ua.activityId();
 	    
 	    System.out.println("Started: "+ac1);
 	    
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    ac2 = ua.activityId();
 

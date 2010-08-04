@@ -26,7 +26,7 @@ public class ParticipantCannotCompleteClose
 	{
         String id = "1234";
 
-	    cm.begin();
+	    cm.begin("Sagas11HLS");
 
         SagasParticipant participant = new SagasParticipant(id);
 

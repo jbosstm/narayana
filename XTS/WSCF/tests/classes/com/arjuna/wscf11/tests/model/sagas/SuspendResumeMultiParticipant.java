@@ -24,7 +24,7 @@ public class SuspendResumeMultiParticipant
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("Sagas11HLS");
 
 	    cm.enlistParticipant(new SagasParticipant("p1"));
 	    cm.enlistParticipant(new SagasParticipant("p2"));

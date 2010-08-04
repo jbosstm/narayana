@@ -112,7 +112,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
     /**
      * The current activity is completing with the specified completion status.
      *
-     * @param CompletionStatus cs The completion status to use.
+     * @param cs The completion status to use.
      *
      * @return The result of terminating the relationship of this HLS and
      * the current activity.
@@ -157,7 +157,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 
     public String identity () throws SystemException
     {
-	return "SagasHLSImple";
+	return "SagasHLS";
     }
 
     /**
@@ -180,7 +180,6 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
      * Return the context augmentation for this HLS, if any on the current
      * activity.
      *
-     * @param ActivityHierarchy current The handle on the current activity
      * hierarchy. The HLS may use this when determining what information to
      * place in its context data.
      *
@@ -197,28 +196,24 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 
     public Context context () throws SystemException
     {
-	String contextImple = System.getProperty(Environment.SAGAS_CONTEXT);
+        if (CONTEXT_IMPLE_NAME != null) {
+            if (CONTEXT_IMPLE_CLASS != null) {
+                try {
+                    SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
 
-	if (contextImple != null)
-	{
-	    try
-	    {
-		Class c = Class.forName(contextImple);
-		SOAPContext ctx = (SOAPContext) c.newInstance();
-		
-		ctx.initialiseContext(_coordManager.currentCoordinator());
+                    ctx.initialiseContext(_coordManager.currentCoordinator());
 
-		return ctx;
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-		
-		throw new SystemException(ex.toString());
-	    }
-	}
-	else
-        throw new SystemException("SAGAS context implementation must be specified by setting environment property " + Environment.SAGAS_CONTEXT);
+                    return ctx;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    throw new SystemException(ex.toString());
+                }
+            } else {
+                throw new SystemException("Unable to create SOAPContext for SAGAS context implementation from class" + CONTEXT_IMPLE_NAME);
+            }
+        } else {
+            throw new SystemException("SAGAS context implementation must be specified by setting environment property " + Environment.SAGAS_CONTEXT);
+        }
     }
 
     /**
@@ -230,7 +225,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
      * This implementation only supports coordination at the end of the
      * activity.
      *
-     * @param CompletionStatus cs The completion status to use when determining
+     * @param cs The completion status to use when determining
      * how to execute the protocol.
      *
      * @exception WrongStateException Thrown if the coordinator is in a state
@@ -290,6 +285,18 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
     public static String className ()
     {
 	return SagasHLSImple.class.getName();
+    }
+
+    private final static String  CONTEXT_IMPLE_NAME = System.getProperty(Environment.SAGAS_CONTEXT);
+    private final static Class<?> CONTEXT_IMPLE_CLASS;
+    static {
+        Class<?> tmp;
+        try {
+            tmp = Class.forName(CONTEXT_IMPLE_NAME);
+        } catch (Exception ex) {
+            tmp = null;
+        }
+        CONTEXT_IMPLE_CLASS = tmp;
     }
 
     private CoordinatorControl      _coordManager;

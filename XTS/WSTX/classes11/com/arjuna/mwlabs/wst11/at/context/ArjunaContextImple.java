@@ -221,22 +221,17 @@ public class ArjunaContextImple implements SOAPContext
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
+        Context context = cxman.context("TwoPhase11HLS");
 
-        for (int i = 0; i < contexts.length; i++)
+        if (context instanceof ArjunaContextImple)
         {
-            if (contexts[i].identifier().equals(ArjunaContextImple.class.getName()))
-            {
-                if (contexts[i] instanceof ArjunaContextImple)
-                {
-                    return (ArjunaContextImple)contexts[i] ;
-                }
-                else {
-                    wstxLogger.i18NLogger.warn_mwlabs_wst11_at_context_ArjunaContextImple_1(contexts[i].toString());
-                }
-                break;
-            }
+            return (ArjunaContextImple)context ;
         }
+        else
+        {
+            wstxLogger.i18NLogger.warn_mwlabs_wst11_at_context_ArjunaContextImple_1(context.toString());
+        }
+
         return null ;
     }
 

@@ -154,12 +154,12 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
     }
 
     /**
-     * The HLS name.
+     * We identify the HLS by the name of the coordination protocol it supports.
      */
 
     public String identity () throws SystemException
     {
-	return "SagasHLSImple";
+        return "Sagas11HLS";
     }
 
     /**
@@ -185,29 +185,22 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
      * @return a context object or null if no augmentation is necessary.
      */
 
-    /*
-     * TODO This needs refactoring. It's true that the context format should
-     * be configurable to allow the same implementation to be used in
-     * different protocols (e.g., 2PC mapping to OTS or original Arjuna could
-     * use the same protocol implementation, but the context formats are
-     * different.) However, is this the best way of doing that?
-     */
-
     public Context context () throws SystemException
     {
-        String contextImple = System.getProperty(Environment.SAGAS_CONTEXT);
+        if (CONTEXT_IMPLE_NAME != null) {
+            if (CONTEXT_IMPLE_CLASS != null) {
+                try {
+                    SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
 
-        if (contextImple != null) {
-            try {
-                Class c = Class.forName(contextImple);
-                SOAPContext ctx = (SOAPContext) c.newInstance();
+                    ctx.initialiseContext(_coordManager.currentCoordinator());
 
-                ctx.initialiseContext(_coordManager.currentCoordinator());
-
-                return ctx;
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                throw new SystemException(ex.toString());
+                    return ctx;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    throw new SystemException(ex.toString());
+                }
+            } else {
+                throw new SystemException("Unable to create SOAPContext for SAGAS 1.1 context implementation from class" + CONTEXT_IMPLE_NAME);
             }
         } else {
             throw new SystemException("SAGAS 1.1 context implementation must be specified by setting environment property " + Environment.SAGAS_CONTEXT);
@@ -283,6 +276,18 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
     public static String className ()
     {
     	return SagasHLSImple.class.getName();
+    }
+
+    private final static String  CONTEXT_IMPLE_NAME = System.getProperty(Environment.SAGAS_CONTEXT);
+    private final static Class<?> CONTEXT_IMPLE_CLASS;
+    static {
+        Class<?> tmp;
+        try {
+            tmp = Class.forName(CONTEXT_IMPLE_NAME);
+        } catch (Exception ex) {
+            tmp = null;
+        }
+        CONTEXT_IMPLE_CLASS = tmp;
     }
 
     private CoordinatorControl      _coordManager;

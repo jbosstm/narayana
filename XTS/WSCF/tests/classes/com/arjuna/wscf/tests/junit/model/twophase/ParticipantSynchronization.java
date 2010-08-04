@@ -62,7 +62,7 @@ public class ParticipantSynchronization
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("TwoPhaseHLS");
 
 	    cm.enlistParticipant(new TwoPhaseParticipant(null));
 	    cm.enlistParticipant(new TwoPhaseParticipant(null));

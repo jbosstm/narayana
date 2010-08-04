@@ -64,29 +64,26 @@ public class ContextOutput
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
-        for (int i = 0; i < contexts.length; i++)
-        {
-            SOAPContext theContext = (SOAPContext)contexts[i];
+        Context context = cxman.context("TwoPhaseHLS");
+        SOAPContext theContext = (SOAPContext)context;
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document doc = builder.newDocument();
-            org.w3c.dom.Element root = doc.createElement("Context-test");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.newDocument();
+        org.w3c.dom.Element root = doc.createElement("Context-test");
 
-            // this fails because the documents are different -- need a better test than this
-            ((SOAPContext)theContext).serialiseToElement(root) ;
-            doc.appendChild(root);
+        // this fails because the documents are different -- need a better test than this
+        ((SOAPContext)theContext).serialiseToElement(root) ;
+        doc.appendChild(root);
 
-            // this does not do a full recursive conversion to text format -- need a better test than this
-            System.out.println(com.arjuna.mw.wscf.utils.DomUtil.nodeAsString(doc));
-	    
-        }
+        // this does not do a full recursive conversion to text format -- need a better test than this
+        System.out.println(com.arjuna.mw.wscf.utils.DomUtil.nodeAsString(doc));
+        
 	    ua.cancel();
 	}
 	catch (Exception ex)

@@ -61,18 +61,16 @@ public class WscContext
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
-        for (int i = 0; i < contexts.length; i++)
-        {
-            // this fails because the context toString method gets a NPE -- need a better test
-            SOAPContext theContext = (SOAPContext)contexts[i];
-            System.out.println("" + i + " " + theContext);
-        }
+        Context context = cxman.context("TwoPhaseHLS");
+
+        // this fails because the context toString method gets a NPE -- need a better test
+        SOAPContext theContext = (SOAPContext)context;
+        System.out.println(theContext);
 
 	    ua.cancel();
 	}

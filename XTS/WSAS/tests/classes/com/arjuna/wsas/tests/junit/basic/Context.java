@@ -66,19 +66,19 @@ public class Context
 
 	try
 	{
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    
-	    ua.start();
+	    ua.start("dummy");
 
 	    System.out.println("Started: "+ua.activityName());
 	    
 	    ContextManager manager = new ContextManager();
-	    com.arjuna.mw.wsas.context.Context[] contexts = manager.contexts();
+	    com.arjuna.mw.wsas.context.Context context = manager.context("dummy");
 	    
-	    if ((contexts != null) && (contexts.length != 0)) {
-            fail("Contexts not null: "+contexts);
+	    if (context != null) {
+            fail("Context not null: "+ context);
         }
     } finally {
         try {

@@ -57,7 +57,7 @@ public class BeginConfirm
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhase11HLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 

@@ -61,10 +61,13 @@ public interface UserActivity
 {
 
     /**
-     * Start a new activity. If there is already an activity associated
-     * with the thread then it will be nested. An implementation specific
-     * timeout will be associated with the activity (which may be no
-     * timeout).
+     * Start a new activity with a given coordination type. If there is already
+     * an activity associated with the thread then it will be nested. An
+     * implementation specific timeout will be associated with the activity
+     * (which may be no timeout).
+     *
+     * @param serviceType specifies the type of coordinator which will be
+     * instantiated to manage the activity.
      *
      * @exception WrongStateException Thrown if the any currently associated
      * activity is in a state that does not allow a new activity to be
@@ -72,16 +75,19 @@ public interface UserActivity
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void start () throws WrongStateException, SystemException;
+    public void start (String serviceType) throws WrongStateException, SystemException;
 
     /**
-     * Start a new activity. If there is already an activity associated
+     * Start a new activity with a given coordination type. If there is already an activity associated
      * with the thread then it will be nested. If the activity is still
      * active when the specified timeout elapses, it will be terminated.
      *
+     * @param serviceType specifies the type of coordinator which will be
+     * instantiated to manage the activity.
      * @param timeout The timeout associated with the activity (in
      * seconds). If the activity has not been terminated by the time this
      * period elapses, then it will automatically be terminated.
+     *
      * @exception WrongStateException Thrown if the currently associated
      * activity is in a state that does not allow a new activity to be
      * enlisted as a child.
@@ -90,7 +96,7 @@ public interface UserActivity
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void start (int timeout) throws WrongStateException, InvalidTimeoutException, SystemException;
+    public void start (String serviceType, int timeout) throws WrongStateException, InvalidTimeoutException, SystemException;
 
     /**
      * Complete the activity with the current completion status.
@@ -104,7 +110,7 @@ public interface UserActivity
      * @exception ProtocolViolationException Thrown if the a violation of the
      * activity service or HLS protocol occurs.
      * @exception NoActivityException Thrown if there is no activity
-     * associated with the invoking thread.
+     * associated with the invoking thread or none with the given type of coordinator.
      * @exception NoPermissionException Thrown if the invoking thread does
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
@@ -120,6 +126,8 @@ public interface UserActivity
     /**
      * Complete the activity with the completion status provided.
      *
+     * @param cs The CompletionStatus to use.
+     *
      * @exception InvalidActivityException Thrown if the current activity is
      * invalid in the execution environment.
      * @exception ActiveChildException Thrown if the current activity is a
@@ -129,12 +137,10 @@ public interface UserActivity
      * @exception ProtocolViolationException Thrown if the a violation of the
      * activity service or HLS protocol occurs.
      * @exception NoActivityException Thrown if there is no activity
-     * associated with the invoking thread.
+     * associated with the invoking thread or none with the given type of coordinator.
      * @exception NoPermissionException Thrown if the invoking thread does
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
-     *
-     * @param cs The CompletionStatus to use.
      *
      * @return the result of completing the activity. Null is valid and must
      * be interpreted within the context of any HLS that may exist.
@@ -142,7 +148,7 @@ public interface UserActivity
      * @see com.arjuna.mw.wsas.activity.Outcome
      */
 
-    public Outcome end (com.arjuna.mw.wsas.completionstatus.CompletionStatus cs) throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, ActiveChildException, NoActivityException, NoPermissionException;
+    public Outcome end (CompletionStatus cs) throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, ActiveChildException, NoActivityException, NoPermissionException;
 
     /**
      * Set the termination status for the current activity, if any.
@@ -274,6 +280,16 @@ public interface UserActivity
      */
 
     public ActivityHierarchy currentActivity () throws SystemException;
+
+    /**
+     * @return the service type supplied when the current activity was started.
+     *
+     * @exception NoActivityException Thrown if there is no activity
+     * associated with the invoking thread.
+     * @exception SystemException Thrown if any error occurs.
+     */
+
+    public String serviceType() throws NoActivityException, SystemException;
 
 }
 

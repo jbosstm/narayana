@@ -41,7 +41,6 @@ import com.arjuna.mw.wsas.activity.HLS;
 import com.arjuna.mw.wsas.context.Context;
 import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
-import com.arjuna.mwlabs.wsas.util.XMLUtils;
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.FailureHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
@@ -66,7 +65,7 @@ public class Context2
     {
         UserActivity ua = UserActivityFactory.userActivity();
         DemoHLS demoHLS = new DemoHLS();
-        FailureHLS failureHLS = new FailureHLS(); // this constructor means it will lnto fail
+        FailureHLS failureHLS = new FailureHLS(); // this constructor means it will not fail
         HLS[] currentHLS = ActivityManagerFactory.activityManager().allHighLevelServices();
 
         for (HLS hls : currentHLS) {
@@ -82,85 +81,76 @@ public class Context2
 	    org.w3c.dom.Document doc = docBuilder.newDocument();
 	    org.w3c.dom.Element root = doc.createElement("Context2-test");
         doc.appendChild(root);
+        String demoServiceType = demoHLS.identity();
+        String failureServiceType = failureHLS.identity();
 
-	    ua.start();
+	    ua.start(demoServiceType);
 	    
 	    System.out.println("Started: "+ua.activityName());
 
-	    ua.start();
+	    ua.start(failureServiceType);
 	    
 	    System.out.println("Started: "+ua.activityName()+"\n");
 
+        String currentServiceType = ua.serviceType();
+
+        if (currentServiceType != failureServiceType) {
+            fail("invalid service type for current activity");
+        }
+
         ContextManager contextManager = new ContextManager();
-        Context[] contexts = contextManager.contexts();
-        Context theContext1 = null;
-        Context theContext2 = null;
-        int numContexts = (contexts != null ? contexts.length : 0);
 
-        for (int i = 0; i < numContexts; i++) {
-            if (contexts[i] != null) {
-                if (theContext1 == null) {
-                    theContext1 = contexts[i];
-                } else {
-                    theContext2 = contexts[i];
-                    break;
-                }
-            }
+        Context demoServiceContext;
+        Context failureServiceContext;
+
+        demoServiceContext = contextManager.context(demoServiceType);
+        failureServiceContext = contextManager.context(failureServiceType);
+
+        // we should find a context for each service
+
+        if (failureServiceContext == null) {
+            fail("Failure context not found");
+        } else if (demoServiceContext != null) {
+            fail("Found multiple contexts");
         }
 
-        if (theContext1 == null || theContext2 == null) {
-            fail("Demo contexts not found");
+        if (!(failureServiceContext instanceof DemoSOAPContextImple)) {
+            fail("Failure context not found");
         }
 
-        if (!(theContext1 instanceof DemoSOAPContextImple) ||
-                !(theContext1 instanceof DemoSOAPContextImple)) {
-            fail("Demo contexts not found");
-        }
+        ((SOAPContext)failureServiceContext).serialiseToElement(root);
 
-        ((SOAPContext)theContext1).serialiseToElement(root);
-        ((SOAPContext)theContext2).serialiseToElement(root);
-
-        System.out.println("Context is " + root.getTextContent());
+        System.out.println("Faiure Context is " + root.getTextContent());
 
 	    ua.end();
 
 	    System.out.println("\nFinished child activity.\n");
 
-	    contexts = contextManager.contexts();
-        theContext1 = null;
-        theContext2 = null;
-        numContexts = (contexts != null ? contexts.length : 0);
+        currentServiceType = ua.serviceType();
 
-        for (int i = 0; i < numContexts; i++) {
-            if (contexts[i] != null) {
-                if (theContext1 == null) {
-                    theContext1 = contexts[i];
-                } else {
-                    theContext2 = contexts[i];
-                    break;
-                }
-            }
+        if (currentServiceType != demoServiceType) {
+            fail("invalid service type for current activity");
         }
 
-        if (theContext1 == null || theContext2 == null) {
-            fail("Demo contexts not found");
+        demoServiceContext = contextManager.context(demoServiceType);
+        failureServiceContext = contextManager.context(failureServiceType);
+
+        // we should only find one context for the demo service
+
+        if (demoServiceContext == null) {
+            fail("Demo context not found");
+        } else if (failureServiceContext != null) {
+            fail("Found multiple contexts");
         }
 
-        if (!(theContext1 instanceof DemoSOAPContextImple) ||
-                !(theContext1 instanceof DemoSOAPContextImple)) {
-            fail("Demo contexts not found");
+        if (!(demoServiceContext instanceof DemoSOAPContextImple)) {
+            fail("Demo context not found");
         }
 
-        doc = docBuilder.newDocument();
-	    root = doc.createElement("Context2-test");
-        doc.appendChild(root);
+        ((SOAPContext)demoServiceContext).serialiseToElement(root);
 
-
-        ((SOAPContext)theContext1).serialiseToElement(root);
-        ((SOAPContext)theContext2).serialiseToElement(root);
-
-        System.out.println("Context is " + root.getTextContent());
-
+        System.out.println("Demo Context is " + root.getTextContent());
+        
 	    ua.end();
 
 	    System.out.println("\nFinished parent activity.\n");

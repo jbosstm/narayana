@@ -60,7 +60,7 @@ public class Suspend
 
 	try
 	{
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    

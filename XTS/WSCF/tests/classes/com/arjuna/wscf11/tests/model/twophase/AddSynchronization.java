@@ -59,7 +59,7 @@ public class AddSynchronization
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("TwoPhase11HLS");
 
 	    cm.enlistSynchronization(new TwoPhaseSynchronization());
 

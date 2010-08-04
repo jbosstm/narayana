@@ -45,7 +45,6 @@ import com.arjuna.mw.wscf.common.CoordinatorId;
 import com.arjuna.mwlabs.wsas.UserActivityImple;
 
 import com.arjuna.mwlabs.wsas.activity.ActivityImple;
-import com.arjuna.mwlabs.wsas.activity.CompositeOutcomeImple;
 
 import com.arjuna.mw.wsas.activity.Outcome;
 
@@ -96,9 +95,9 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void begin () throws WrongStateException, SystemException
+    public void begin (String coordinationType) throws WrongStateException, SystemException
     {
-	UserActivityFactory.userActivity().start();
+	UserActivityFactory.userActivity().start(coordinationType);
     }
 
     /**
@@ -116,9 +115,9 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void begin (int timeout) throws WrongStateException, InvalidTimeoutException, SystemException
+    public void begin (String coordinationType, int timeout) throws WrongStateException, InvalidTimeoutException, SystemException
     {
-	UserActivityFactory.userActivity().start(timeout);
+	UserActivityFactory.userActivity().start(coordinationType, timeout);
     }	
 
 
@@ -157,11 +156,6 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 
 	    if (res != null)
 	    {
-		// TODO properly! One HLS service per activity.
-
-		if (res instanceof CompositeOutcomeImple)
-		    res = ((CompositeOutcomeImple) res).get(CoordinationOutcome.class.getName());
-
 		if (res instanceof CoordinationOutcome)
 		{
 		    CoordinationOutcome co = (CoordinationOutcome) res;
@@ -221,9 +215,6 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 	    
 	    if (res != null)
 	    {
-		if (res instanceof CompositeOutcomeImple)
-		    res = ((CompositeOutcomeImple) res).get(CoordinationOutcome.class.getName());
-
 		if (res instanceof CoordinationOutcome)
 		{
 		    CoordinationOutcome co = (CoordinationOutcome) res;

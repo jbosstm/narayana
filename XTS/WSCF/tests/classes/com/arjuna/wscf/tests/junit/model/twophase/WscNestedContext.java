@@ -61,49 +61,45 @@ public class WscNestedContext
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
-        for (int i = 0; i < contexts.length; i++)
-        {
-            SOAPContext theContext = (SOAPContext)contexts[i];
+        Context context = cxman.context("TwoPhaseHLS");
+
+        SOAPContext theContext = (SOAPContext)context;
 
             // this fails because the context toString method gets a NPE -- need a better test
-            System.out.println("Context: " + theContext);
-        }
-	    
-	    ua.cancel();
-
-        System.out.println("Cancelled");
-
-        for (int i = 0; i < contexts.length; i++)
-        {
-            SOAPContext theContext = (SOAPContext)contexts[i];
-
-            System.out.println("Context: " + theContext);
-        }
+        System.out.println("Context: " + theContext);
 
 	    ua.cancel();
 
         System.out.println("Cancelled");
 
-        for (int i = 0; i < contexts.length; i++)
-        {
-            SOAPContext theContext = (SOAPContext)contexts[i];
+        context = cxman.context("TwoPhaseHLS");
 
-            System.out.println("Context: " + theContext);
-        }
+        theContext = (SOAPContext)context;
+
+        System.out.println("Context: " + theContext);
+
+	    ua.cancel();
+
+        System.out.println("Cancelled");
+
+        context = cxman.context("TwoPhaseHLS");
+
+        theContext = (SOAPContext)context;
+
+        System.out.println("Context: " + theContext);
 
 	    ua.cancel();
 

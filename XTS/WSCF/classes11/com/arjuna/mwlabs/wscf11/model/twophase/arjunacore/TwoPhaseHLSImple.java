@@ -158,7 +158,7 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 
 	public String identity () throws SystemException
 	{
-		return "TwoPhaseHLSImple";
+		return "TwoPhase11HLS";
 	}
 
 	/**
@@ -184,33 +184,28 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 	 * @return a context object or null if no augmentation is necessary.
 	 */
 
-	/*
-	 * TODO This needs refactoring. It's true that the context format should be
-	 * configurable to allow the same implementation to be used in different
-	 * protocols (e.g., 2PC mapping to OTS or original Arjuna could use the same
-	 * protocol implementation, but the context formats are different.) However,
-	 * is this the best way of doing that?
-	 */
+    public Context context () throws SystemException
+    {
+        if (CONTEXT_IMPLE_NAME != null) {
+            if (CONTEXT_IMPLE_CLASS != null) {
+                try {
+                    SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
 
-	public Context context () throws SystemException
-	{
-		String contextImple = System.getProperty(Environment.TWO_PHASE_CONTEXT);
+                    ctx.initialiseContext(_coordManager.currentCoordinator());
 
-		if (contextImple != null){
-			try {
-				Class c = Class.forName(contextImple);
-				SOAPContext ctx = (SOAPContext) c.newInstance();
-
-				ctx.initialiseContext(_coordManager.currentCoordinator());
-
-				return ctx;
-			} catch (Exception ex) {
-				throw new SystemException(ex.toString());
-			}
-		} else {
+                    return ctx;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    throw new SystemException(ex.toString());
+                }
+            } else {
+                throw new SystemException("Unable to create SOAPContext for Two Phase 1.1 implementation from class" + CONTEXT_IMPLE_NAME);
+            }
+        } else {
             throw new SystemException("Two Phase 1.1 context implementation must be specified by setting environment property " + Environment.TWO_PHASE_CONTEXT);
         }
     }
+
 	/**
 	 * If the application requires and if the coordination protocol supports it,
 	 * then this method can be used to execute a coordination protocol on the
@@ -289,6 +284,18 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 	{
 		return TwoPhaseHLSImple.class.getName();
 	}
+
+    private final static String  CONTEXT_IMPLE_NAME = System.getProperty(Environment.TWO_PHASE_CONTEXT);
+    private final static Class<?> CONTEXT_IMPLE_CLASS;
+    static {
+        Class<?> tmp;
+        try {
+            tmp = Class.forName(CONTEXT_IMPLE_NAME);
+        } catch (Exception ex) {
+            tmp = null;
+        }
+        CONTEXT_IMPLE_CLASS = tmp;
+    }
 
 	private CoordinatorControl _coordManager;
 	private CoordinatorServiceImple _coordinatorService;

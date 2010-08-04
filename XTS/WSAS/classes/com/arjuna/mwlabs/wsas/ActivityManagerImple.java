@@ -34,8 +34,6 @@ package com.arjuna.mwlabs.wsas;
 import com.arjuna.mw.wsas.ActivityManager;
 
 import com.arjuna.mw.wsas.activity.HLS;
-import com.arjuna.mw.wsas.activity.OutcomeManager;
-
 import com.arjuna.mwlabs.wsas.activity.HLSManager;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
@@ -77,14 +75,8 @@ public class ActivityManagerImple implements ActivityManager
 	return HLSManager.allHighLevelServices();
     }
 
-    public void setOutcomeManager (OutcomeManager om) throws SystemException
+    public HLS getHighLevelService (String serviceType) throws SystemException
     {
-	HLSManager.setOutcomeManager(om);
+        return HLSManager.getHighLevelService(serviceType);
     }
-
-    public OutcomeManager getOutcomeManager () throws SystemException
-    {
-	return HLSManager.getOutcomeManager();
-    }
-    
 }

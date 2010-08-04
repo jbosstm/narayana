@@ -35,6 +35,7 @@ import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 
+import com.arjuna.mwlabs.wsas.activity.HLSManager;
 import com.arjuna.wscf.tests.TwoPhaseParticipant;
 import com.arjuna.wscf.tests.WSCFTestUtils;
 import org.junit.After;
@@ -61,7 +62,7 @@ public class AddParticipant
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("TwoPhaseHLS");
 
 	    cm.enlistParticipant(new TwoPhaseParticipant(null));
 	    

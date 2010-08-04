@@ -59,7 +59,7 @@ public class AddParticipant
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("TwoPhase11HLS");
 
 	    cm.enlistParticipant(new TwoPhaseParticipant(null));
 

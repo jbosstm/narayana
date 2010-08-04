@@ -26,7 +26,7 @@ public class ParticipantExitedClose
 	{
         String id = "1235";
 
-	    cm.begin();
+	    cm.begin("Sagas11HLS");
 
         SagasParticipant participant = new SagasParticipant(id);
 

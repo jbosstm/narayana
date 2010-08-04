@@ -23,7 +23,7 @@ public class SuspendResume
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("Sagas11HLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 

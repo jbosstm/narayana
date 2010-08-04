@@ -32,8 +32,6 @@
 package com.arjuna.mw.wsas;
 
 import com.arjuna.mw.wsas.activity.HLS;
-import com.arjuna.mw.wsas.activity.OutcomeManager;
-
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.InvalidHLSException;
 
@@ -92,29 +90,13 @@ public interface ActivityManager
     public HLS[] allHighLevelServices () throws SystemException;
 
     /**
-     * When multiple HLSs are registered with the activity service, some
-     * means of collating their Outcome responses may be required. An
-     * application may provide an OutcomeManager to do this work rather than
-     * use the default provided by the system.
-     *
-     * @param om The manager to use. If null is specified, then
-     * the default manager will be used.
-     *
-     * @exception SystemException Thrown if any error occurs.
-     */
-
-    public void setOutcomeManager (OutcomeManager om) throws SystemException;
-
-    /*
-     * When multiple HLSs are registered with the activity service, some
-     * means of collating their Outcome responses may be required. This
-     * method returns the current manager.
+     * Allows an invoker to obtain a specific registered HLS supporting a given coordination type.
      *
      * @exception SystemException Thrown if any error occurs.
      *
-     * @return The manager currently associated with activities.
+     * @return the HLS.
+     *
      */
 
-    public OutcomeManager getOutcomeManager () throws SystemException;
-    
+    public HLS getHighLevelService (String serviceType) throws SystemException;
 }

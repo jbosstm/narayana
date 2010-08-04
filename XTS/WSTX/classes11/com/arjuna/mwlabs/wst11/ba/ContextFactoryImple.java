@@ -139,7 +139,7 @@ public class ContextFactoryImple implements ContextFactory
                 timeout = (longTimeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)longTimeout) ;
             }
 
-    		_coordManager.begin(timeout);
+    		_coordManager.begin("Sagas11HLS", timeout);
 
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
             final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;

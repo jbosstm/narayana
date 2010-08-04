@@ -61,7 +61,7 @@ public class Timeout
 	try {
 	    ua.setTimeout(1);
 
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    Thread.currentThread().sleep(2000);
 

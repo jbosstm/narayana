@@ -62,7 +62,7 @@ public class SuspendParticipant
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("TwoPhase11HLS");
 
 	    cm.enlistParticipant(new TwoPhaseParticipant("p1"));
 	    cm.enlistParticipant(new TwoPhaseParticipant("p2"));

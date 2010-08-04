@@ -136,7 +136,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                     timeout = (timeoutVal > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)timeoutVal) ;
                 }
 
-				_coordManager.begin(timeout);
+				_coordManager.begin("TwoPhase11HLS", timeout);
 
                 final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
                 final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;

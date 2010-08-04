@@ -26,7 +26,7 @@ public class ParticipantFaultedClose
 	{
         String id = "1236";
 
-	    cm.begin();
+	    cm.begin("Sagas11HLS");
 
         SagasParticipant participant = new SagasParticipant(id);
 

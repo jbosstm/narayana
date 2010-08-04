@@ -31,6 +31,8 @@
 
 package com.arjuna.mwlabs.wsas.activity;
 
+import com.arjuna.mw.wsas.activity.HLS;
+import com.arjuna.mw.wsas.completionstatus.Success;
 import com.arjuna.mw.wsas.logging.wsasLogger;
 
 import com.arjuna.mw.wsas.activity.Outcome;
@@ -40,8 +42,6 @@ import com.arjuna.mw.wsas.common.GlobalId;
 // TODO: obtain via configuration
 
 import com.arjuna.mwlabs.wsas.common.arjunacore.GlobalIdImple;
-
-import com.arjuna.mwlabs.wsas.util.HLSWrapper;
 
 import com.arjuna.mw.wsas.status.Created;
 import com.arjuna.mw.wsas.status.Active;
@@ -80,12 +80,12 @@ import java.util.Iterator;
 public class ActivityImple
 {
 
-	public ActivityImple ()
+	public ActivityImple (String coordinationType)
 	{
-		this(null);
+		this(null, coordinationType);
 	}
 
-	public ActivityImple (ActivityImple parent)
+	public ActivityImple (ActivityImple parent, String serviceType)
 	{
 		_parent = parent;
 		_children = new Hashtable();
@@ -94,6 +94,7 @@ public class ActivityImple
 		_activityId = new GlobalIdImple();
 		_timeout = 0;
 		_result = null;
+        _serviceType = serviceType;
 	}
 
 	/**
@@ -273,7 +274,7 @@ public class ActivityImple
                                     + " " + this);
 				}
 
-				Outcome current = null;
+				Outcome result = null;
 
 				try
 				{
@@ -288,27 +289,12 @@ public class ActivityImple
 
 				try
 				{
-					Iterator<HLSWrapper> iter = HLSManager.HLServices();
-					HLSWrapper elem;
-
-					while (iter.hasNext())
-					{
-                        elem = iter.next();
-
-						Outcome result = null;
-
-						try
-						{
-							result = elem.hls().complete(getCompletionStatus());
-						}
-						catch (SystemException ex)
-						{
-							result = new OutcomeImple(new HLSException(ex),
-									getCompletionStatus());
-						}
-
-						current = HLSManager.getOutcomeManager().processOutcome(current, result);
-					}
+                    HLS hls = HLSManager.getHighLevelService(_serviceType);
+                    if (hls != null) {
+                        result = hls.complete(getCompletionStatus());
+                    } else {
+                        result = new OutcomeImple(Failure.instance());
+                    }
 				}
 				catch (SystemException ex)
 				{
@@ -320,7 +306,7 @@ public class ActivityImple
 					 * which have not?
 					 */
 
-					current = new OutcomeImple(new HLSException(ex),
+					result = new OutcomeImple(new HLSException(ex),
 							Failure.instance());
 				}
 
@@ -332,10 +318,7 @@ public class ActivityImple
 
 				_status = Completed.instance();
 
-				if (current == null)
-					current = new OutcomeImple(getCompletionStatus());
-
-				_result = current;
+				_result = result;
 
 				return _result;
 			}
@@ -487,6 +470,14 @@ public class ActivityImple
 		return _parent;
 	}
 
+    /**
+     *
+     * @return the type of the coordinator employed for this activity
+     */
+    public String serviceType()
+    {
+        return _serviceType;
+    }
 	/**
 	 */
 
@@ -678,5 +669,6 @@ public class ActivityImple
 	private GlobalIdImple _activityId;
 	private int _timeout;
 	private Outcome _result;
+    private String _serviceType;
 
 }

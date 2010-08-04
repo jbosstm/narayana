@@ -58,11 +58,11 @@ public class NestedActivity
 	
         try
         {
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    
-	    ua.start();
+	    ua.start("dummy");
 
 	    String nested = ua.activityName();
 	    

@@ -61,7 +61,7 @@ public class CancelOnlyConfirm
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 

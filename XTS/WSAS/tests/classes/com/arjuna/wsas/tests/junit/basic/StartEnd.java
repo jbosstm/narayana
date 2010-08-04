@@ -53,7 +53,7 @@ public class StartEnd
             throws Exception
     {
 	    UserActivity ua = UserActivityFactory.userActivity();
-	    ua.start();
+	    ua.start("dummy");
 	
 	    ua.end();
     }

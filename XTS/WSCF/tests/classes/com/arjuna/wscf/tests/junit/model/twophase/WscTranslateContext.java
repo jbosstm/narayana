@@ -67,29 +67,27 @@ public class WscTranslateContext
 
 	try
 	{
-	    ua.begin();
+	    ua.begin("TwoPhaseHLS");
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
-        for (int i = 0; i < contexts.length; i++)
-        {
-            SOAPContext theContext = (SOAPContext)contexts[i];
-            // this fails because the context toString method gets a NPE -- need a better test
-            System.out.println("" + i + " " + theContext);
+        Context context = cxman.context("TwoPhaseHLS");
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document doc = builder.newDocument();
-            org.w3c.dom.Element ctx = doc.createElement("Context-test");
-            final Element context = ((SOAPContext)theContext).serialiseToElement(ctx) ;
+        SOAPContext theContext = (SOAPContext)context;
+        // this fails because the context toString method gets a NPE -- need a better test
+        System.out.println(theContext);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.newDocument();
+        org.w3c.dom.Element ctx = doc.createElement("Context-test");
+        final Element contextElement = ((SOAPContext)theContext).serialiseToElement(ctx) ;
         
-            org.w3c.dom.Element wscCtx = translate(context);
+        org.w3c.dom.Element wscCtx = translate(contextElement);
 	    
-            System.out.println("\nNow got "+DomUtil.nodeAsString(wscCtx));
-        }
-        
+        System.out.println("\nNow got "+DomUtil.nodeAsString(wscCtx));
+
 	    ua.cancel();
 	}
 	catch (Exception ex)

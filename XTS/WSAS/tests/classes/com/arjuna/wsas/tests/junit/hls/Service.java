@@ -61,12 +61,13 @@ public class Service
 	try
 	{
 	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
-	    
-	    ua.start();
+        String coordinationType = demoHLS.identity();
+
+	    ua.start(coordinationType);
 	    
 	    System.out.println("Started: "+ua.activityName());
 
-	    ua.start();
+	    ua.start(coordinationType);
 	    
 	    System.out.println("Started: "+ua.activityName());
 

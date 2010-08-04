@@ -59,11 +59,11 @@ public class Hierarchy
 
 	try
 	{
-	    ua.start();
+	    ua.start("dummy");
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    
-	    ua.start();
+	    ua.start("dummy");
 
 	    System.out.println("Started: "+ua.activityName());
 

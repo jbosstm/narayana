@@ -121,7 +121,7 @@ public class ContextFactoryImple implements ContextFactory
                 timeout = (longTimeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)longTimeout) ;
             }
     		
-    		_coordManager.begin(timeout);
+    		_coordManager.begin("SagasHLS", timeout);
     
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
             final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -184,7 +184,6 @@ public class ContextFactoryImple implements ContextFactory
      * times if the context factory is removed from multiple context factory mappers or from the same context factory
      * mapper with different coordination type uris.
      *
-     * @param serviceAddress the address of the service
      * @param coordinationTypeURI the coordination type uri
      */
 

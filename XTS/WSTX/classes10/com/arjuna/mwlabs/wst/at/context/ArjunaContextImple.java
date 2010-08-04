@@ -219,25 +219,19 @@ public class ArjunaContextImple implements SOAPContext
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
-        Context[] contexts = cxman.contexts();
+        Context context = cxman.context("TwoPhaseHLS");
 
-        for (int i = 0; i < contexts.length; i++)
+        if (context instanceof ArjunaContextImple)
         {
-            if (contexts[i].identifier().equals(ArjunaContextImple.class.getName()))
-            {
-                if (contexts[i] instanceof ArjunaContextImple)
-                {
-                    return (ArjunaContextImple)contexts[i] ;
-                }
-                else {
-                    wstxLogger.i18NLogger.warn_mwlabs_wst_at_context_ArjunaContextImple_1(contexts[i].toString());
-                }
-                break;
-            }
+            return (ArjunaContextImple)context ;
         }
-        return null ;
+        else
+        {
+            wstxLogger.i18NLogger.warn_mwlabs_wst_at_context_ArjunaContextImple_1(context.toString());
+        }
+
+        return null;
     }
-    
 	private org.w3c.dom.Element _context;
     private String[] _identifierValues ;
     private int[] _expiresValues ;
@@ -248,5 +242,4 @@ public class ArjunaContextImple implements SOAPContext
 	private static final String _contextName = CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT;
 	private static final String _identifier = CoordinationConstants.WSCOOR_ELEMENT_IDENTIFIER;
 	private static final String _expires = CoordinationConstants.WSCOOR_ELEMENT_EXPIRES;
-
 }

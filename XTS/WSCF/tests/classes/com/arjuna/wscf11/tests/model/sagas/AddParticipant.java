@@ -21,7 +21,7 @@ public class AddParticipant
 
 	try
 	{
-	    cm.begin();
+	    cm.begin("Sagas11HLS");
 
 	    cm.enlistParticipant(new SagasParticipant(null));
 

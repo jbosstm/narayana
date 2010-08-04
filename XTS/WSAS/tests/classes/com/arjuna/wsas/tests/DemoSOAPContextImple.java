@@ -38,7 +38,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
-import com.arjuna.mwlabs.wsas.util.XMLUtils;
 
 /**
  */
@@ -92,7 +91,7 @@ public class DemoSOAPContextImple implements SOAPContext
 
     public String toString ()
     {
-        return XMLUtils.writeToString(_context) ;
+        return _context.toString() ;
     }
     
     private org.w3c.dom.Element _context;

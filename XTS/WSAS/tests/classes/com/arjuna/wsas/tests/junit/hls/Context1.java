@@ -41,7 +41,6 @@ import com.arjuna.mw.wsas.activity.HLS;
 import com.arjuna.mw.wsas.context.Context;
 import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
-import com.arjuna.mwlabs.wsas.util.XMLUtils;
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
 import com.arjuna.wsas.tests.DemoSOAPContextImple;
@@ -78,25 +77,18 @@ public class Context1
 	    org.w3c.dom.Document doc = docBuilder.newDocument();
 	    org.w3c.dom.Element root = doc.createElement("Context1-test");
         doc.appendChild(root);
+        String coordinationType = demoHLS.identity();
 	    
-	    ua.start();
+	    ua.start(coordinationType);
 	    
 	    System.out.println("Started: "+ua.activityName());
 
-	    ua.start();
+	    ua.start(coordinationType);
 	    
 	    System.out.println("Started: "+ua.activityName()+"\n");
 
         ContextManager contextManager = new ContextManager();
-        Context[] contexts = contextManager.contexts();
-        Context theContext = null;
-
-        for (int i = 0; i < contexts.length; i++) {
-            if (contexts[i] != null) {
-                theContext = contexts[i];
-                break;
-            }
-        }
+        Context theContext = contextManager.context(coordinationType);
 
         if (theContext == null) {
             fail("Demo context not found");
@@ -114,15 +106,7 @@ public class Context1
 
 	    System.out.println("\nFinished child activity.\n");
 
-        contexts = contextManager.contexts();
-        theContext = null;
-
-        for (int i = 0; i < contexts.length; i++) {
-            if (contexts[i] != null) {
-                theContext = contexts[i];
-                break;
-            }
-        }
+        theContext = contextManager.context(coordinationType);
 
         if (theContext == null) {
             fail("Demo context not found");
@@ -145,6 +129,11 @@ public class Context1
 
 	    System.out.println("\nFinished parent activity.\n");
 
+        theContext = contextManager.context(coordinationType);
+
+        if (theContext != null) {
+            fail("Demo context not removed");
+        }
 	}
 	catch (Exception ex)
 	{

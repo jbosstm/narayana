@@ -83,17 +83,20 @@ public class UserActivityImple implements UserActivity
      * timeout will be associated with the activity (which may be no
      * timeout).
      *
+     * @param serviceType specifies the type of coordinator which will be
+     * instantiated to manage the activity.
+     *
      * @exception WrongStateException Thrown if the any currently associated
      * activity is in a state that does not allow a new activity to be
      * enlisted.
      * @exception SystemException Thrown in any other situation.
      */
 
-    public void start () throws WrongStateException, SystemException
+    public void start (String serviceType) throws WrongStateException, SystemException
     {
 	try
 	{
-	    start(getTimeout());
+	    start(serviceType, getTimeout());
 	}
 	catch (InvalidTimeoutException ex)
 	{
@@ -104,7 +107,9 @@ public class UserActivityImple implements UserActivity
      * Start a new activity. If there is already an activity associated
      * with the thread then it will be nested.
      *
-     * @param int timeout The timeout associated with the activity. If the
+     * @param serviceType specifies the type of coordinator which will be
+     * instantiated to manage the activity.
+     * @param timeout The timeout associated with the activity. If the
      * activity has not been terminated by the time this period elapses, then
      * it will automatically be terminated.
      * @exception WrongStateException Thrown if the currently associated
@@ -116,137 +121,119 @@ public class UserActivityImple implements UserActivity
      *
      */
 
-    public void start (int timeout) throws WrongStateException, InvalidTimeoutException, SystemException
+    public void start (String serviceType, int timeout) throws WrongStateException, InvalidTimeoutException, SystemException
     {
-	if (timeout < 0)
-	    throw new InvalidTimeoutException();
-	else
-	{
-	    if (timeout == 0)
-		timeout = getTimeout();
-	}
+        if (timeout < 0)
+            throw new InvalidTimeoutException();
+        else
+        {
+            if (timeout == 0)
+                timeout = getTimeout();
+        }
 
-	ActivityImple currentActivity = new ActivityImple(current());
+        ActivityImple currentActivity = new ActivityImple(current(), serviceType);
 
-	currentActivity.start(timeout);
+        currentActivity.start(timeout);
 
-	push(currentActivity);
+        push(currentActivity);
 
-	HLS[] hls = HLSManager.allHighLevelServices();
+        HLS hls = HLSManager.getHighLevelService(serviceType);
 
-	if (hls != null)
-	{
-	    for (int i = 0; i < hls.length; i++)
-	    {
-		try
-		{
-		    hls[i].begun();
-		}
-		catch (SystemException ex)
-		{
-		    try
-		    {
-			setCompletionStatus(FailureOnly.instance());
-		    }
-		    catch (Exception e)
-		    {
-                wsasLogger.i18NLogger.warn_UserActivityImple_1(ex);
-		    }
+        try {
+            if (hls != null)
+            {
+                hls.begun();
+            }
+        } catch (SystemException ex) {
+            try {
+                setCompletionStatus(FailureOnly.instance());
+            } catch (Exception e) {
+                wsasLogger.i18NLogger.warn_UserActivityImple_1(e);
+            }
 
-		    throw ex;
-		}
-	    }
-	}
+            throw ex;
+        }
     }
     
-    /**
-     * Complete the activity with the current completion status.
-     *
-     * @exception InvalidActivityException Thrown if the current activity is
-     * invalid in the execution environment.
-     * @exception ActiveChildException Thrown if the current activity is a
-     * parent activity with active children.
-     * @exception WrongStateException Thrown if the current activity is not in a
-     * state that allows it to be completed.
-     * @exception ProtocolViolationException Thrown if a violation of the
-     * activity service or HLS protocol occurs.
-     * @exception NoActivityException Thrown if there is no activity
-     * associated with the invoking thread.
-     * @exception NoPermissionException Thrown if the invoking thread does
-     * not have permission to terminate the transaction.
-     * @exception SystemException Thrown if some other error occurred.
-     *
-     * @return the result of completing the activity. Null is valid and must
-     * be interpreted within the context of any HLS that may exist.
-     *
-     * @see com.arjuna.mw.wsas.Outcome
-     *
-     */
-
-    public Outcome end () throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, NoActivityException, SystemException, NoPermissionException, ActiveChildException
-    {
-	ActivityImple currentActivity = current();
-
-	if (currentActivity == null)
-	    throw new NoActivityException();
-
-	/*
-	if (currentActivity.parent() != null)
-	    throw new ActiveChildException();
-	*/
-
-	Outcome res = null;
-	
-	try
-	{
-	    res = currentActivity.end();
-	}
-	catch (Exception ex)
-	{
-        wsasLogger.i18NLogger.warn_UserActivityImple_1(ex);
-	}
-
-	HLS[] hls = HLSManager.allHighLevelServices();
-
-	if (hls != null)
-	{
-	    for (int i = 0; i < hls.length; i++)
-	    {
-		try
-		{
-		    hls[i].completed();
-		}
-		catch (SystemException ex)
-		{
-            wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
-		}
-	    }
-	}
-
-	pop();
-	
-	return res;
-    }
-
     /**
      * Complete the activity with the completion status provided.
      *
      * @exception InvalidActivityException Thrown if the current activity is
      * invalid in the execution environment.
      * @exception ActiveChildException Thrown if the current activity is a
-     * parent activity with active children.
      * @exception WrongStateException Thrown if the current activity is not in a
      * state that allows it to be completed, or is incompatible with the
      * completion status provided.
      * @exception ProtocolViolationException Thrown if the a violation of the
      * activity service or HLS protocol occurs.
      * @exception NoActivityException Thrown if there is no activity
-     * associated with the invoking thread.
+     * associated with the invoking thread or none with the given type of coordinator.
      * @exception NoPermissionException Thrown if the invoking thread does
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
      *
-     * @param CompletionStatus cs The CompletionStatus to use.
+     * @return the result of completing the activity. Null is valid and must
+     * be interpreted within the context of any HLS that may exist.
+     *
+     * @see com.arjuna.mw.wsas.activity.Outcome
+     * @message com.arjuna.mwlabs.wsas.UserActivityImple_2 [com.arjuna.mwlabs.wsas.UserActivityImple_2] - currentActivity.end threw: 
+     * @message com.arjuna.mwlabs.wsas.UserActivityImple_3 [com.arjuna.mwlabs.wsas.UserActivityImple_3] - Activity.completed caught:
+     */
+
+    public Outcome end () throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, NoActivityException, SystemException, NoPermissionException, ActiveChildException
+    {
+        ActivityImple currentActivity = current();
+
+        if (currentActivity == null) {
+            throw new NoActivityException();
+        }
+
+        Outcome res = null;
+        String serviceType = currentActivity.serviceType();
+	
+        try {
+            res = currentActivity.end();
+        } catch (Exception ex) {
+            wsasLogger.i18NLogger.warn_UserActivityImple_1(ex);
+        }
+
+        HLS hls = HLSManager.getHighLevelService(serviceType);
+
+        if (hls != null)
+        {
+            try
+            {
+                hls.completed();
+            }
+            catch (SystemException ex)
+            {
+                wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
+            }
+        }
+
+        pop();
+	
+        return res;
+    }
+
+    /**
+     * Complete the activity with the completion status provided.
+     *
+     * @param cs The CompletionStatus to use.
+     *
+     * @exception InvalidActivityException Thrown if the current activity is
+     * invalid in the execution environment.
+     * @exception ActiveChildException Thrown if the current activity is a
+     * @exception WrongStateException Thrown if the current activity is not in a
+     * state that allows it to be completed, or is incompatible with the
+     * completion status provided.
+     * @exception ProtocolViolationException Thrown if the a violation of the
+     * activity service or HLS protocol occurs.
+     * @exception NoActivityException Thrown if there is no activity
+     * associated with the invoking thread or none with the given type of coordinator.
+     * @exception NoPermissionException Thrown if the invoking thread does
+     * not have permission to terminate the transaction.
+     * @exception SystemException Thrown if some other error occurred.
      *
      * @return the result of completing the activity. Null is valid and must
      * be interpreted within the context of any HLS that may exist.
@@ -254,55 +241,48 @@ public class UserActivityImple implements UserActivity
      * @see com.arjuna.mw.wsas.Outcome
      */
 
-    public Outcome end (com.arjuna.mw.wsas.completionstatus.CompletionStatus cs) throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, NoActivityException, NoPermissionException, ActiveChildException
+    public Outcome end (CompletionStatus cs) throws InvalidActivityException, WrongStateException, ProtocolViolationException, SystemException, NoActivityException, NoPermissionException, ActiveChildException
     {
-	ActivityImple currentActivity = current();
+        ActivityImple currentActivity = current();
 
-	if (currentActivity == null)
-	    throw new NoActivityException();
+        if (currentActivity == null) {
+            throw new NoActivityException();
+        }
 
-	/*
+        /*
 	if (currentActivity.parent() != null)
 	    throw new ActiveChildException();
 	*/
 
-	Outcome res = null;
+        Outcome res = null;
+        String serviceType = currentActivity.serviceType();
+
+        try {
+            res = currentActivity.end(cs);
+        } catch (Exception ex) {
+            wsasLogger.i18NLogger.warn_UserActivityImple_2(ex);
+        }
+
+        HLS hls = HLSManager.getHighLevelService(serviceType);
+
+        if (hls != null)
+        {
+            try {
+                hls.completed();
+            } catch (SystemException ex) {
+                wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
+            }
+        }
+
+        pop();
 	
-	try
-	{
-	    res = currentActivity.end(cs);
-	}
-	catch (Exception ex)
-	{
-        wsasLogger.i18NLogger.warn_UserActivityImple_2(ex);
-	}
-
-	HLS[] hls = HLSManager.allHighLevelServices();
-
-	if (hls != null)
-	{
-	    for (int i = 0; i < hls.length; i++)
-	    {
-		try
-		{
-		    hls[i].completed();
-		}
-		catch (SystemException ex)
-		{
-            wsasLogger.i18NLogger.warn_UserActivityImple_3(ex);
-		}
-	    }
-	}
-
-	pop();
-	
-	return res;
+        return res;
     }
 
     /**
      * Set the termination status for the current activity, if any.
      *
-     * @param CompletionStatus endStatus The state in which the activity
+     * @param endStatus The state in which the activity
      * should attempt to terminate. This may
      * be one of the default values provided by WSAS or may be extended in
      * an implementation specific manner by an HLS.
@@ -370,7 +350,7 @@ public class UserActivityImple implements UserActivity
      * each thread and this means that no application specified timeout is
      * set for activities.
      *
-     * @param int timeout The timeout (in seconds) to associate with all
+     * @param timeout The timeout (in seconds) to associate with all
      * subsequently created activities. This value must be 0 or greater.
      *
      * @exception InvalidTimeoutException Thrown if the timeout value provided
@@ -452,29 +432,30 @@ public class UserActivityImple implements UserActivity
 
     public ActivityHierarchy suspend () throws SystemException
     {
-	HLS[] hls = HLSManager.allHighLevelServices();
+        ActivityImple currentActivity = current();
+        if (currentActivity == null) {
+            return null;
+        }
 
-	if (hls != null)
-	{
-	    for (int i = 0; i < hls.length; i++)
-	    {
-		try
-		{
-		    hls[i].suspended();
-		}
-		catch (SystemException ex)
-		{
-            wsasLogger.i18NLogger.warn_UserActivityImple_4(ex);
-		}
-	    }
-	}
+        String serviceType = currentActivity.serviceType();
+        
+        HLS hls = HLSManager.getHighLevelService(serviceType);
 
-	ActivityImple currentActivity = purge();
+        if (hls != null) {
+            try {
+                hls.suspended();
+            } catch (SystemException ex) {
+                wsasLogger.i18NLogger.warn_UserActivityImple_4(ex);
+            }
+        }
+
+        currentActivity = purge();
 	
-	if (currentActivity != null)
-	    return new ActivityHierarchyImple(currentActivity);
-	else
-	    return null;
+        if (currentActivity != null) {
+            return new ActivityHierarchyImple(currentActivity);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -483,7 +464,7 @@ public class UserActivityImple implements UserActivity
      * activities that it may already be associated with. If the parameter is
      * null then the thread is associated with no activity.
      *
-     * @param ActivityHierarchy tx The activity to associate with this thread. This
+     * @param tx The activity to associate with this thread. This
      * may be null in which case the current thread becomes associated with
      * no activity.
      *
@@ -495,50 +476,46 @@ public class UserActivityImple implements UserActivity
 
     public void resume (ActivityHierarchy tx) throws InvalidActivityException, SystemException
     {
-	if (tx == null)
-	{
-	    purge();
-	}
-	else
-	{
-	    if (tx instanceof ActivityHierarchyImple)
-	    {
-		try
-		{
-		    for (int i = 0; i < tx.size(); i++)
-		    {
-			ActivityHandleImple handle = (ActivityHandleImple) tx.activity(i);
+        if (tx == null)
+        {
+            purge();
+        }
+        else
+        {
+            if (tx instanceof ActivityHierarchyImple)
+            {
+                try
+                {
+                    for (int i = 0; i < tx.size(); i++)
+                    {
+                        ActivityHandleImple handle = (ActivityHandleImple) tx.activity(i);
 			
-			push(handle.getActivity());
-		    }
-		}
-		catch (Exception ex)
-		{
-		    ex.printStackTrace();
+                        push(handle.getActivity());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
 		    
-		    purge();
-		}
-	    }
-	    else
-		throw new InvalidActivityException(wsasLogger.i18NLogger.get_UserActivityImple_51());
-	}
+                    purge();
+                }
+            }
+            else
+                throw new InvalidActivityException(wsasLogger.i18NLogger.get_UserActivityImple_51());
+        }
 
-	HLS[] hls = HLSManager.allHighLevelServices();
+        ActivityImple currentActivity = current();
+        String serviceType = currentActivity.serviceType();
 
-	if (hls != null)
-	{
-	    for (int i = 0; i < hls.length; i++)
-	    {
-		try
-		{
-		    hls[i].resumed();
-		}
-		catch (SystemException ex)
-		{
-            wsasLogger.i18NLogger.warn_UserActivityImple_5(ex);
-		}
-	    }
-	}
+        HLS hls = HLSManager.getHighLevelService(serviceType);
+
+        if (hls != null) {
+            try	{
+                hls.resumed();
+            } catch (SystemException ex) {
+                wsasLogger.i18NLogger.warn_UserActivityImple_5(ex);
+            }
+        }
     }
 
     public ActivityHierarchy currentActivity () throws SystemException
@@ -549,6 +526,14 @@ public class UserActivityImple implements UserActivity
 	    return new ActivityHierarchyImple(curr);
 	else
 	    return null;
+    }
+
+    public String serviceType() throws NoActivityException, SystemException {
+        ActivityImple currentActivity = current();
+        if (currentActivity == null) {
+            throw new NoActivityException();
+        }
+        return currentActivity.serviceType();
     }
 
     public final ActivityImple current ()
