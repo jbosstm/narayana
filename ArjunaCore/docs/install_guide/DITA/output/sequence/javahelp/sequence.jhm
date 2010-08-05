@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0">
+   <mapID target="concepts_frontmatter" url="concepts/frontmatter.html"/>
+   <mapID target="concepts_about_this_guide" url="concepts/about_this_guide.html"/>
+   <mapID target="tasks_prepare_your_system" url="tasks/prepare_your_system.html"/>
+   <mapID target="tasks_installing-uninstalling-services-windows"
+          url="tasks/installing-uninstalling-services-windows.html"/>
+   <mapID target="tasks_installing_services-unix"
+          url="tasks/installing_services-unix.html"/>
+   <mapID target="tasks_uninstalling_services-unix"
+          url="tasks/uninstalling_services-unix.html"/>
+   <mapID target="concepts_logging" url="concepts/logging.html"/>
+   <mapID target="concepts_objectstore-management"
+          url="concepts/objectstore-management.html"/>
+   <mapID target="concepts_additional_jar_requirements"
+          url="concepts/additional_jar_requirements.html"/>
+   <mapID target="concepts_setting_properties" url="concepts/setting_properties.html"/>
+   <mapID target="concepts_licensing" url="concepts/licensing.html"/>
+</map>

@@ -1,0 +1,79 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Setting Properties">
+<meta name="abstract" content="">
+<meta name="description" content="">
+<meta name="DC.Creator" content="Andrew Dinn">
+<meta name="DC.Creator" content="Jonathan Halliday">
+<meta name="DC.Contributor" content="Misty Stanley-Jones">
+<meta name="DC.Creator" content="Mark Little">
+<meta name="copyright" content="JBoss, Inc. 2009" type="primary">
+<meta name="DC.Rights.Owner" content="JBoss, Inc. 2009" type="primary">
+<meta name="DC.Date.Created" content="2009-06-16">
+<meta name="DC.Date.Modified" content="2010-08-04">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="setting_properties">
+<meta name="DC.Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="../commonltr.css">
+<title>Setting Properties</title>
+</head>
+<body id="setting_properties"><a name="setting_properties"><!-- --></a>
+
+
+
+ <h1 class="title topictitle1">Setting Properties</h1>
+
+ 
+ <div class="body conbody"><p class="shortdesc"></p>
+
+   <p class="p">
+     ArjunaCore has been designed to be highly configurable at runtime through
+     the use of various property attributes, which will be described in
+     subsequent sections. Although these attributes can be provided at runtime
+     on the command line, it is possible (and may be more convenient) to specify
+     them through a single properties file. At runtime ArjunaCore looks for the
+     file jbossts-properties.xml in the following order:
+   </p>
+     
+   <ol class="ol">
+     <li class="li">the current working directory, i.e., where the application was executed
+     from.</li>
+
+     <li class="li">the user’s home directory.</li>
+
+     <li class="li">the etc directory of the ArjunaCore installation; this must be placed
+     in your <var class="keyword varname">CLASSPATH.</var></li>
+
+   </ol>
+
+   <p class="p">
+     If found, all entries within this file will be added to the system
+     properties. Obviously non- ArjunaCore specific properties can also be
+     specified in this file. For example:
+   </p>
+
+   <pre class="pre codeblock">
+     &lt;property
+	 name="com.arjuna.ats.arjuna.coordinator.asyncCommit"
+	 value="NO"/&gt;
+     &lt;property
+	 name="com.arjuna.ats.arjuna.objectstore.objectStoreDir"
+	 value="c:\temp\ObjectStore"/&gt;
+   </pre>
+
+   <p class="p">
+     The name of the properties file can be overridden at runtime by specifying
+     a new file using the
+     <var class="keyword varname">com.arjuna.ats.arjuna.common.propertiesFile</var> attribute
+     variable.
+   </p>
+
+ </div>
+
+
+</body>
+</html>

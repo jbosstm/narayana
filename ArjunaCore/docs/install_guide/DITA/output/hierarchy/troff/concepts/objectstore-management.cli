@@ -1,0 +1,27 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBObjectStore Management\fR
+.ce 0
+
+.sp 2
+
+.sp 2
+Within the transaction service installation, the object store is
+updated regularly whenever transactions are created, or when
+Transactional Objects for Java is used. In a failure free
+environment, the only object states which should reside within
+the object store are those representing objects created with the
+Transactional Objects for Java API. However, if failures occur,
+transaction logs may remain in the object store until crash
+recovery facilities have resolved the transactions they
+represent. As such it is very important that the contents of the
+object store are not deleted without due care and attention, as
+this will make it impossible to resolve in doubt transactions. In
+addition, if multiple users share the same object store it is
+important that they realize this and do not simply delete the
+contents of the object store assuming it is an exclusive
+resource.

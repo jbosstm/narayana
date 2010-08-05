@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="DC.Type" content="concept"/>
+<meta name="DC.Title" content="Logging"/>
+<meta name="abstract" content=""/>
+<meta name="description" content=""/>
+<meta name="DC.Creator" content="Andrew Dinn"/>
+<meta name="DC.Creator" content="Jonathan Halliday"/>
+<meta name="DC.Contributor" content="Misty Stanley-Jones"/>
+<meta name="DC.Creator" content="Mark Little"/>
+<meta name="copyright" content="JBoss, Inc. 2009" type="primary"/>
+<meta name="DC.Rights.Owner" content="JBoss, Inc. 2009" type="primary"/>
+<meta name="DC.Date.Created" content="2009-06-16"/>
+<meta name="DC.Date.Modified" content="2010-08-04"/>
+<meta name="DC.Format" content="XHTML"/>
+<meta name="DC.Identifier" content="logging"/>
+<meta name="DC.Language" content="en-us"/>
+<link rel="stylesheet" type="text/css" href="../commonltr.css"/>
+<title>Logging</title>
+</head>
+<body id="logging"><a name="logging"><!-- --></a>
+
+
+ <h1 class="title topictitle1">Logging</h1>
+
+ 
+ <div class="body conbody"><p class="shortdesc"/>
+
+   <p class="p">
+     The recovery manager and the transaction server services produce log files which are located
+     in the <span class="ph filepath">services/logs/</span> directory. There are two log files per service one called <span class="ph filepath">&lt;service
+     name&gt;-service.log</span> (e.g. <span class="ph filepath">recovery-manager-service.log</span>), which contains information
+regarding the state of the service (e.g. started, stopped, restarted etc). The other is called
+<span class="ph filepath">&lt;services-name&gt;.log</span> (e.g. <span class="ph filepath">recovery-manager.log</span>) this contains information logged from
+the actual service (e.g. application level logging). To configure what information is logged
+in these files please edit the appropriate LOG4J configuration files which are located in
+<span class="ph filepath">services/config/</span>.
+</p>
+
+ </div>
+
+
+</body>
+</html>

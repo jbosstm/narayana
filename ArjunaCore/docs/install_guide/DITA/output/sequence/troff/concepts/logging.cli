@@ -1,0 +1,23 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBLogging\fR
+.ce 0
+
+.sp 2
+
+.sp 2
+The recovery manager and the transaction server services produce
+log files which are located in the services/logs/ directory.
+There are two log files per service one called <service
+name>-service.log (e.g. recovery-manager-service.log), which
+contains information regarding the state of the service (e.g.
+started, stopped, restarted etc). The other is called
+<services-name>.log (e.g. recovery-manager.log) this contains
+information logged from the actual service (e.g. application
+level logging). To configure what information is logged in these
+files please edit the appropriate LOG4J configuration files which
+are located in services/config/.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><task xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/" id="installing_uninstalling_service_windows" xml:lang="en-us" ditaarch:DITAArchVersion="1.2" domains="(topic task)                            (topic hi-d)                             (topic ut-d)                             (topic indexing-d)                            (topic hazard-d)                            (topic abbrev-d)                            (topic pr-d)                             (topic sw-d)                            (topic ui-d)                            (topic task strictTaskbody-c)    " class="- topic/topic task/task ">
+
+  <title class="- topic/title ">Installing and uninstalling services - Windows</title>
+  <abstract class="- topic/abstract ">There are four scripts provided which will install/uninstall the recovery manager and transaction server services, these files can be found in <filepath class="+ topic/ph sw-d/filepath ">Services\bin\windows</filepath>. You must be logged in as an administrator or have administrator privileges to install and uninstall services.</abstract>
+  <prolog class="- topic/prolog "><author class="- topic/author " type="creator">Andrew Dinn</author><author class="- topic/author " type="creator">Jonathan Halliday</author><author class="- topic/author " type="contributor">Misty Stanley-Jones</author><author class="- topic/author " type="creator">Mark Little</author><copyright class="- topic/copyright ">
+      <copyryear class="- topic/copyryear " year="2009"/>
+      <copyrholder class="- topic/copyrholder ">JBoss, Inc.</copyrholder>
+    </copyright><critdates class="- topic/critdates ">
+      <created class="- topic/created " date="2009-06-16"/>
+      <revised class="- topic/revised " modified="2010-08-04"/>
+    </critdates></prolog><taskbody class="- topic/body task/taskbody ">
+    <steps class="- topic/ol task/steps ">
+      <step class="- topic/li task/step ">
+        <cmd class="- topic/ph task/cmd ">Recovery Manager</cmd>
+        <substeps class="- topic/ol task/substeps ">
+          <substep class="- topic/li task/substep ">
+            <cmd class="- topic/ph task/cmd "><cmdname class="+ topic/keyword sw-d/cmdname ">InstallRecoverymanagerService-NT.bat</cmdname> - running this script will install the Recovery manager as a Windows service.</cmd>
+          </substep>
+          <substep class="- topic/li task/substep ">
+            <cmd class="- topic/ph task/cmd "><cmdname class="+ topic/keyword sw-d/cmdname ">UninstallRecoveryManagerService-NT.bat</cmdname> - running this script will uninstall the Recovery Manager as a Windows service</cmd>
+          </substep>
+        </substeps>
+      </step>
+      <step class="- topic/li task/step ">
+        <cmd class="- topic/ph task/cmd ">Transaction Service</cmd>
+        <substeps class="- topic/ol task/substeps ">
+          <substep class="- topic/li task/substep ">
+            <cmd class="- topic/ph task/cmd "><cmdname class="+ topic/keyword sw-d/cmdname ">InstallTransactionServerService-NT.bat</cmdname> - running this script will install the Transaction Manager as a Windows service.</cmd>
+          </substep>
+          <substep class="- topic/li task/substep ">
+            <cmd class="- topic/ph task/cmd "><cmdname class="+ topic/keyword sw-d/cmdname ">UninstallTransactionServerService-NT.bat</cmdname> - running this script will uninstall the Transaction Server as a Windows service.</cmd>
+          </substep>
+        </substeps>
+      </step>
+      <step class="- topic/li task/step ">
+        <cmd class="- topic/ph task/cmd ">After running one of the scripts, you should see a message that indicates its success or failure.</cmd>
+      </step>
+      <step class="- topic/li task/step ">
+        <cmd class="- topic/ph task/cmd ">The service should also be visible in the services list from the Control Panel. <image placement="break" href="../images/windows-services.png" class="- topic/image "/></cmd>
+      </step>
+    </steps>
+  </taskbody>
+</task>

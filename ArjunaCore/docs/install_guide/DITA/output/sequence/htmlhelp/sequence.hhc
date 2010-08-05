@@ -1,0 +1,31 @@
+
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Sitemap 1.0 -->
+</head>
+<body>
+<UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="ArjunaCore Installation Guide"><param name="Local" value="concepts/frontmatter.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="About This Guide"><param name="Local" value="concepts/about_this_guide.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Preparing your system"><param name="Local" value="tasks/prepare_your_system.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Installing and uninstalling services - Windows"><param name="Local" value="tasks/installing-uninstalling-services-windows.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Installing services - UNIX"><param name="Local" value="tasks/installing_services-unix.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Uninstalling a service - UNIX"><param name="Local" value="tasks/uninstalling_services-unix.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Logging"><param name="Local" value="concepts/logging.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="ObjectStore Management"><param name="Local" value="concepts/objectstore-management.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Additional jar requirements"><param name="Local" value="concepts/additional_jar_requirements.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Setting Properties"><param name="Local" value="concepts/setting_properties.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Licensing"><param name="Local" value="concepts/licensing.html"></OBJECT>
+</LI></UL>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd" []>
+<task id="installing_service_unix" xml:lang="en-us">
+
+  <title>Installing services - UNIX</title>
+  <taskbody>
+    <steps>
+      <step>
+        <cmd> Make sure that you are logged in as the user `root&apos;, as the installer needs to create files under the directory <filepath>/etc</filepath>. </cmd>
+      </step>
+      <step>
+        <cmd>Change directory to <filepath>services/installer</filepath>. </cmd>
+      </step>
+      <step>
+        <cmd>Make sure the environment variable <varname>JAVA_HOME</varname> is set to the home directory of the JVM you wish the services to be run as. </cmd>
+        <substeps>
+          <substep>
+            <cmd><userinput> JAVA_HOME=/opt/java; export JAVA_HOME</userinput> (for sh)</cmd>
+          </substep>
+          <substep>
+            <cmd><userinput>setenv JAVA_HOME /opt/java</userinput> (for csh)</cmd>
+          </substep>
+        </substeps>
+      </step>
+      <step>
+        <cmd>Run the installer script: .<cmdname>/install_services.sh</cmdname> </cmd>
+      </step>
+      <step>
+        <cmd>The following is example output from a computer running the Solaris operating system: </cmd>
+        <stepresult>
+	  <msgblock>
+	    Adding $JAVA_HOME (/opt/java) to $PATH in
+	    /opt/arjuna/ats-3.2/services/bin/solaris/recoverymanagerservice.sh
+	    Adding $JAVA_HOME (/opt/java) to $PATH in
+	    /opt/arjuna/ats-3.2/services/bin/solaris/transactionserverservice.sh
+	    Installing shutdown scripts into /etc/rcS.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc0.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc1.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc2.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing startup scripts into /etc/rc3.d:
+	    S98recoverymanagerservice
+	    S99transactionserverservice
+	  </msgblock>
+	</stepresult>
+      </step>
+    </steps>
+    <result>
+      <p>Upon restarting the computer the transaction server and recovery manager service should be started. </p>
+    </result>
+  </taskbody>
+</task>

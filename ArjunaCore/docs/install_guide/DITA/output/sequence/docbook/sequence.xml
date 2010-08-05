@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article
+  PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article id="install_guide_top">
+   <title>ArjunaCore Installation Guide</title>
+   <para/>
+   <section remap="concept" id="frontmatter">
+      <sectioninfo id="prlgd9e11" remap="prolog">
+         <abstract>
+            <para id="shrtdscd9e8" remap="abstract">
+   Instructions for installing ArjunaCore 4.12.0 on Linux, UNIX, and Windows servers.
+ </para>
+         </abstract>
+         <author id="athrd9e13" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd9e15" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd9e17" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd9e19" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd9e21" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd9e24" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd9e27" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd9e31" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <copyright id="cprghtd9e37" remap="copyright">
+            <year id="cpryeard9e39" remap="copyryear">2009</year>
+            <holder id="cprhldrd9e41" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <copyright id="cprghtd9e44" remap="copyright">
+            <year id="cpryeard9e46" remap="copyryear">2009</year>
+            <holder id="cprhldrd9e48" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd9e52" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+         <subjectset>
+            <subject>
+               <subjectterm id="ctgryd9e66" remap="category">Installation</subjectterm>
+            </subject>
+         </subjectset>
+     
+     
+         <keywordset>
+            <keyword id="kywrdd9e71" remap="keyword">Installing</keyword>
+            <keyword id="kywrdd9e74" remap="keyword">Uninstalling</keyword>
+            <keyword id="kywrdd9e77" remap="keyword">Configuration</keyword>
+         </keywordset>
+     
+         <productname id="prdnmd9e83" remap="prodname">ArjunaCore</productname>
+       
+	        <productnumber id="vrmd9e88" remap="vrm" revision="4.12.0">4.12.0-2009-06-08</productnumber>
+       
+       
+       
+       
+     
+
+      </sectioninfo>
+      <title id="ttld9e5" remap="title">ArjunaCore Installation Guide</title>
+      <para id="parad9e8" remap="abstract">
+   Instructions for installing ArjunaCore 4.12.0 on Linux, UNIX, and Windows servers.
+ </para>
+      <sidebar id="sctnd9e105" remap="section">
+         <title id="ttld9e107" remap="title">Authors</title>
+         <itemizedlist id="uld9e110" remap="ul">
+            <listitem id="lid9e112" remap="li">
+               <para remap="#PCDATA">Mark Little</para>
+            </listitem>
+            <listitem id="lid9e115" remap="li">
+               <para remap="#PCDATA">Andrew Dinn</para>
+            </listitem>
+            <listitem id="lid9e118" remap="li">
+               <para remap="#PCDATA">Jonathan Halliday</para>
+            </listitem>
+         </itemizedlist>
+      </sidebar>
+      <formalpara id="sctnd9e123" remap="section">
+         <title>Copyright</title>
+         <para/>
+      </formalpara>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd27e8" remap="prolog">
+         <author id="athrd27e9" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd27e11" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd27e13" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd27e15" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd27e17" remap="copyright">
+            <year id="cpryeard27e19" remap="copyryear">2009</year>
+            <holder id="cprhldrd27e21" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd27e24" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld27e5" remap="title">About This Guide</title>
+      <formalpara id="sctnd27e32" remap="section">
+         <title>What This Guide Contains</title>
+         <para/>
+      </formalpara>
+      <formalpara id="sctnd27e38" remap="section">
+         <title>Audience</title>
+         <para/>
+      </formalpara>
+      <formalpara id="sctnd27e44" remap="section">
+         <title>Prerequisites</title>
+         <para/>
+      </formalpara>
+      <sidebar id="sctnd27e50" remap="section">
+         <title id="ttld27e52" remap="title">Document Conventions</title>
+         <para remap="#PCDATA">
+     
+     The following conventions are used in this guide:
+     </para>
+         <informaltable id="smtbld27e55" remap="simpletable">
+            <tgroup cols="2">
+               <thead id="sthdd27e57" remap="sthead">
+                  <row>
+	                    <entry id="stentd27e59" remap="stentry">Convention</entry>
+	                    <entry id="stentd27e62" remap="stentry">Description</entry>
+                  </row>
+               </thead>
+               <tbody>
+                  <row id="strwd27e66" remap="strow">
+	                    <entry id="stentd27e68" remap="stentry">
+                        <emphasis role="italic" id="id27e69" remap="i">Italic</emphasis>
+                     </entry>
+	                    <entry id="stentd27e72" remap="stentry">In paragraph text, <emphasis role="italic" id="id27e74" remap="i">italic</emphasis> identifies the titles of documents that are
+	 being referenced. When used in conjunction with the <literal id="cdphd27e77" remap="codeph">Code</literal> text
+	 described below, italics identify a variable that should be replaced
+	 by the user with an actual value.</entry>
+                  </row>
+                  <row id="strwd27e82" remap="strow">
+	                    <entry id="stentd27e84" remap="stentry">
+                        <emphasis role="bold" id="bd27e85" remap="b">Bold</emphasis>
+                     </entry>
+	                    <entry id="stentd27e88" remap="stentry">Emphasizes items of particular importance.</entry>
+                  </row>
+                  <row id="strwd27e92" remap="strow">
+	                    <entry id="stentd27e94" remap="stentry">
+                        <literal id="cdphd27e95" remap="codeph">Code</literal>
+                     </entry>
+	                    <entry id="stentd27e98" remap="stentry">Text that represents program code.</entry>
+                  </row>
+                  <row id="strwd27e102" remap="strow">
+	                    <entry id="stentd27e104" remap="stentry">
+	                       <menuchoice id="mncscdd27e106" remap="menucascade">
+                           <guimenu id="mnuictrld27e108" remap="uicontrol">File</guimenu>
+                           <guimenuitem id="mnuictrld27e111" remap="uicontrol">Open</guimenuitem>
+                        </menuchoice>
+	                    </entry>
+	                    <entry id="stentd27e116" remap="stentry">A path to a function or dialog box within an interface. For
+	 example,
+	 <menuchoice id="mncscdd27e118" remap="menucascade">
+                           <guimenu id="mnuictrld27e119" remap="uicontrol">File</guimenu>
+                           <guimenuitem id="mnuictrld27e121" remap="uicontrol">Open</guimenuitem>
+                        </menuchoice>
+	 indicates that you should select the Open function from the file
+	 menu.</entry>
+                  </row>
+                  <row id="strwd27e127" remap="strow">
+	                    <entry id="stentd27e129" remap="stentry">( ) and |</entry>
+	                    <entry id="stentd27e132" remap="stentry">Parentheses enclose optional items in command syntax. The vertical bar (pipe) separates syntax items in a list of choices. For example, any of the following three items can be entered in this syntax: persistPolicy (Never | OnTimer | OnUpdate | NoMoreOftenThan)</entry>
+                  </row>
+                  <row id="strwd27e136" remap="strow">
+	                    <entry id="stentd27e138" remap="stentry"> or </entry>
+	                    <entry id="stentd27e143" remap="stentry">A note highlights important supplemental information. A
+	 warning highlights procedures or information that is necessary to avoid
+	 damage to equipment, damage to software, loss of data, or invalid test
+	 results.</entry>
+                  </row>
+               </tbody>
+            </tgroup>
+         </informaltable>
+      </sidebar>
+
+      <sidebar id="sctnd27e149" remap="section">
+         <title id="ttld27e151" remap="title">Additional Documentation</title>
+         <itemizedlist id="uld27e154" remap="ul">
+            <listitem id="lid27e156" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Release Notes:  Provides late­breaking information about ArjunaCore 4.12.0.</para>
+            </listitem>
+            <listitem id="lid27e159" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Administration Guide:  This guide provides instructions for administering ArjunaCore 4.12.0.</para>
+            </listitem>
+            <listitem id="lid27e162" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Programmer’s Guide:  Provides guidance for writing applications. </para>
+            </listitem>
+         </itemizedlist>
+      </sidebar>
+
+      <formalpara id="sctnd27e168" remap="section">
+         <title>Contacting Us</title>
+         <para/>
+      </formalpara>
+   </section>
+   <section remap="task" id="preparing_your_system">
+      <sectioninfo id="prlgd64e11" remap="prolog">
+         <abstract>
+            <para id="shrtdscd64e8" remap="shortdesc">Before installing the ArjunaCore software, we recommend the following administrative steps be taken, assuming a default configuration for ArjunaCore:</para>
+         </abstract>
+         <author id="athrd64e12" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd64e14" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd64e16" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd64e18" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd64e20" remap="copyright">
+            <year id="cpryeard64e22" remap="copyryear">2009</year>
+            <holder id="cprhldrd64e24" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd64e27" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld64e5" remap="title">Preparing your system</title>
+      <para id="parad64e8" remap="shortdesc">Before installing the ArjunaCore software, we recommend the following administrative steps be taken, assuming a default configuration for ArjunaCore:</para>
+      <orderedlist id="old64e35" remap="steps">
+         <listitem id="lid64e37" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd64e39" remap="cmd">Install the distribution into the required location.</phrase>
+            </para>
+         </listitem>
+         <listitem id="lid64e43" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd64e45" remap="cmd">
+                  <command id="cmdnmd64e46" remap="cmdname">ArjunaCore</command> requires a minimum object store for storing the outcome of transactions in the event of system crashes. The location of this should be specified in the properties file using the <varname id="vrnmd64e49" remap="varname">com.arjuna.ats.arjuna.objectstore.objectStoreDir</varname> environment variable, e.g., <command id="cmdnmd64e52" remap="cmdname">java - Dcom.arjuna.ats.arjuna.objectstore.objectStoreDir=C:\temp foo</command>.</phrase>
+            </para>
+         </listitem>
+         <listitem id="lid64e57" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd64e59" remap="cmd">By default, all object states will be stored within the <filename id="flpthd64e61" remap="filepath">defaultStore</filename> subdirectory of the object store root, e.g., /<filename id="flpthd64e64" remap="filepath">usr/local/Arjuna/TransactionService/ObjectStore/defaultStore</filename>. However, this subdirectory can be changed by setting the <varname id="vrnmd64e67" remap="varname">com.arjuna.ats.arjuna.objectstore.localOSRoot</varname> property variable accordingly.</phrase>
+            </para>
+         </listitem>
+      </orderedlist>
+  </section>
+   <section remap="task" id="installing_uninstalling_service_windows">
+      <sectioninfo id="prlgd84e14" remap="prolog">
+         <abstract>
+            <para id="shrtdscd84e8" remap="abstract">There are four scripts provided which will install/uninstall the recovery manager and transaction server services, these files can be found in <filename id="flpthd84e10" remap="filepath">Services\bin\windows</filename>. You must be logged in as an administrator or have administrator privileges to install and uninstall services.</para>
+         </abstract>
+         <author id="athrd84e15" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd84e17" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd84e19" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd84e21" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd84e23" remap="copyright">
+            <year id="cpryeard84e25" remap="copyryear">2009</year>
+            <holder id="cprhldrd84e27" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd84e30" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld84e5" remap="title">Installing and uninstalling services - Windows</title>
+      <para id="parad84e8" remap="abstract">There are four scripts provided which will install/uninstall the recovery manager and transaction server services, these files can be found in <filename id="flpthd84e10" remap="filepath">Services\bin\windows</filename>. You must be logged in as an administrator or have administrator privileges to install and uninstall services.</para>
+      <orderedlist id="old84e38" remap="steps">
+         <listitem id="lid84e40" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd84e42" remap="cmd">Recovery Manager</phrase>
+            </para>
+            <orderedlist id="old84e45" remap="substeps">
+               <listitem id="lid84e47" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd84e49" remap="cmd">
+                        <command id="cmdnmd84e50" remap="cmdname">InstallRecoverymanagerService-NT.bat</command> - running this script will install the Recovery manager as a Windows service.</phrase>
+                  </para>
+               </listitem>
+               <listitem id="lid84e55" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd84e57" remap="cmd">
+                        <command id="cmdnmd84e58" remap="cmdname">UninstallRecoveryManagerService-NT.bat</command> - running this script will uninstall the Recovery Manager as a Windows service</phrase>
+                  </para>
+               </listitem>
+            </orderedlist>
+         </listitem>
+         <listitem id="lid84e65" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd84e67" remap="cmd">Transaction Service</phrase>
+            </para>
+            <orderedlist id="old84e70" remap="substeps">
+               <listitem id="lid84e72" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd84e74" remap="cmd">
+                        <command id="cmdnmd84e75" remap="cmdname">InstallTransactionServerService-NT.bat</command> - running this script will install the Transaction Manager as a Windows service.</phrase>
+                  </para>
+               </listitem>
+               <listitem id="lid84e80" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd84e82" remap="cmd">
+                        <command id="cmdnmd84e83" remap="cmdname">UninstallTransactionServerService-NT.bat</command> - running this script will uninstall the Transaction Server as a Windows service.</phrase>
+                  </para>
+               </listitem>
+            </orderedlist>
+         </listitem>
+         <listitem id="lid84e90" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd84e92" remap="cmd">After running one of the scripts, you should see a message that indicates its success or failure.</phrase>
+            </para>
+         </listitem>
+         <listitem id="lid84e96" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd84e98" remap="cmd">The service should also be visible in the services list from the Control Panel. <mediaobject id="imgd84e100" remap="image">
+                     <imageobject>
+                        <imagedata fileref="../images/windows-services.png"/>
+                     </imageobject>
+                  </mediaobject>
+               </phrase>
+            </para>
+         </listitem>
+      </orderedlist>
+  </section>
+   <section remap="task" id="installing_service_unix">
+      <sectioninfo id="prlgd142e8" remap="prolog">
+         <author id="athrd142e9" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd142e11" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd142e13" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd142e15" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd142e17" remap="copyright">
+            <year id="cpryeard142e19" remap="copyryear">2009</year>
+            <holder id="cprhldrd142e21" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd142e24" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld142e5" remap="title">Installing services - UNIX</title>
+      <orderedlist id="old142e32" remap="steps">
+         <listitem id="lid142e34" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd142e36" remap="cmd"> Make sure that you are logged in as the user `root', as the installer needs to create files under the directory <filename id="flpthd142e38" remap="filepath">/etc</filename>. </phrase>
+            </para>
+         </listitem>
+         <listitem id="lid142e43" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd142e45" remap="cmd">Change directory to <filename id="flpthd142e47" remap="filepath">services/installer</filename>. </phrase>
+            </para>
+         </listitem>
+         <listitem id="lid142e52" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd142e54" remap="cmd">Make sure the environment variable <varname id="vrnmd142e56" remap="varname">JAVA_HOME</varname> is set to the home directory of the JVM you wish the services to be run as. </phrase>
+            </para>
+            <orderedlist id="old142e60" remap="substeps">
+               <listitem id="lid142e62" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd142e64" remap="cmd">
+                        <userinput id="usrinptd142e65" remap="userinput"> JAVA_HOME=/opt/java; export JAVA_HOME</userinput> (for sh)</phrase>
+                  </para>
+               </listitem>
+               <listitem id="lid142e70" remap="substep">
+                  <para remap="#PCDATA">
+                     <phrase id="phrsd142e72" remap="cmd">
+                        <userinput id="usrinptd142e73" remap="userinput">setenv JAVA_HOME /opt/java</userinput> (for csh)</phrase>
+                  </para>
+               </listitem>
+            </orderedlist>
+         </listitem>
+         <listitem id="lid142e80" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd142e82" remap="cmd">Run the installer script: .<command id="cmdnmd142e84" remap="cmdname">/install_services.sh</command> 
+               </phrase>
+            </para>
+         </listitem>
+         <listitem id="lid142e89" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd142e91" remap="cmd">The following is example output from a computer running the Solaris operating system: </phrase>
+            </para>
+            <programlisting id="msgblckd142e96" remap="msgblock">
+	    Adding $JAVA_HOME (/opt/java) to $PATH in
+	    /opt/arjuna/ats-3.2/services/bin/solaris/recoverymanagerservice.sh
+	    Adding $JAVA_HOME (/opt/java) to $PATH in
+	    /opt/arjuna/ats-3.2/services/bin/solaris/transactionserverservice.sh
+	    Installing shutdown scripts into /etc/rcS.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc0.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc1.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing shutdown scripts into /etc/rc2.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Installing startup scripts into /etc/rc3.d:
+	    S98recoverymanagerservice
+	    S99transactionserverservice
+	  </programlisting>
+         </listitem>
+      </orderedlist>
+      <para id="parad142e104" remap="p">Upon restarting the computer the transaction server and recovery manager service should be started. </para>
+  </section>
+   <section remap="task" id="uninstalling_service_unix">
+      <sectioninfo id="prlgd207e8" remap="prolog">
+         <author id="athrd207e9" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd207e11" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd207e13" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd207e15" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd207e17" remap="copyright">
+            <year id="cpryeard207e19" remap="copyryear">2009</year>
+            <holder id="cprhldrd207e21" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd207e24" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld207e5" remap="title">Uninstalling a service - UNIX</title>
+      <orderedlist id="old207e32" remap="steps">
+         <listitem id="lid207e34" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd207e36" remap="cmd">Make sure that you are logged in as the user root, as the installer needs to remove files under the directory <filename id="flpthd207e38" remap="filepath"> /etc</filename>.</phrase>
+            </para>
+         </listitem>
+         <listitem id="lid207e43" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd207e45" remap="cmd">Change directory to services/installer.</phrase>
+            </para>
+         </listitem>
+         <listitem id="lid207e49" remap="step">
+            <para remap="#PCDATA">
+	              <phrase id="phrsd207e51" remap="cmd">Run the installer script with the "­u" argument:
+	<command id="cmdnmd207e53" remap="cmdname">./install_services.sh -u</command>
+               </phrase>
+            </para>
+         </listitem>
+         <listitem id="lid207e57" remap="step">
+            <para remap="#PCDATA">
+               <phrase id="phrsd207e59" remap="cmd">The following is example output from a computer running the Solaris operating system:</phrase>
+            </para>
+            <programlisting id="msgblckd207e64" remap="msgblock">
+	    Removing startup scripts from /etc/rc3.d:
+	    S98recoverymanagerservice
+	    S99transactionserverservice
+	    Removing shutdown scripts from /etc/rcS.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Removing shutdown scripts from /etc/rc0.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Removing shutdown scripts from /etc/rc1.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	    Removing shutdown scripts from /etc/rc2.d:
+	    K01recoverymanagerservice
+	    K00transactionserverservice
+	  </programlisting>
+         </listitem>
+      </orderedlist>
+  </section>
+   <section remap="concept" id="logging">
+      <sectioninfo id="prlgd243e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd243e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd243e11" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd243e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd243e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd243e17" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd243e19" remap="copyright">
+            <year id="cpryeard243e21" remap="copyryear">2009</year>
+            <holder id="cprhldrd243e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd243e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld243e5" remap="title">Logging</title>
+      <para id="parad243e8" remap="shortdesc"/>
+      <para id="parad243e34" remap="p">
+     The recovery manager and the transaction server services produce log files which are located
+     in the <filename id="flpthd243e36" remap="filepath">services/logs/</filename> directory. There are two log files per service one called <filename id="flpthd243e39" remap="filepath">&lt;service
+     name&gt;-service.log</filename> (e.g. <filename id="flpthd243e42" remap="filepath">recovery-manager-service.log</filename>), which contains information
+regarding the state of the service (e.g. started, stopped, restarted etc). The other is called
+<filename id="flpthd243e45" remap="filepath">&lt;services-name&gt;.log</filename> (e.g. <filename id="flpthd243e48" remap="filepath">recovery-manager.log</filename>) this contains information logged from
+the actual service (e.g. application level logging). To configure what information is logged
+in these files please edit the appropriate LOG4J configuration files which are located in
+<filename id="flpthd243e52" remap="filepath">services/config/</filename>.
+</para>
+   </section>
+   <section remap="concept" id="objectstore_management">
+      <sectioninfo id="prlgd245e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd245e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd245e11" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd245e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd245e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd245e17" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd245e19" remap="copyright">
+            <year id="cpryeard245e21" remap="copyryear">2009</year>
+            <holder id="cprhldrd245e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd245e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld245e5" remap="title">ObjectStore Management</title>
+      <para id="parad245e8" remap="shortdesc"/>
+      <para id="parad245e34" remap="p">
+     Within the transaction service installation, the object store is updated
+     regularly whenever transactions are created, or when <function id="apinmd245e36" remap="apiname">Transactional
+     Objects for Java</function> is used. In a failure free environment, the only
+     object states which should reside within the object store are those
+     representing objects created with the <function id="apinmd245e39" remap="apiname">Transactional Objects for
+     Java</function> API. However, if failures occur, transaction logs may remain
+     in the object store until crash recovery facilities have resolved the
+     transactions they represent. As such it is very important that the contents
+     of the object store are not deleted without due care and attention, as this
+     will make it impossible to resolve in doubt transactions. In addition, if
+     multiple users share the same object store it is important that they
+     realize this and do not simply delete the contents of the object store
+     assuming it is an exclusive resource.
+   </para>
+   </section>
+   <section remap="concept" id="additional_jar_requirements">
+      <sectioninfo id="prlgd247e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd247e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd247e11" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd247e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd247e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd247e17" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd247e19" remap="copyright">
+            <year id="cpryeard247e21" remap="copyryear">2009</year>
+            <holder id="cprhldrd247e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd247e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld247e5" remap="title">Additional jar requirements</title>
+      <para id="parad247e8" remap="shortdesc"/>
+      <para id="parad247e34" remap="p">
+     In order to fully utilize all of the facilities available within
+     ArjunaCore, it will be necessary to add all of the jar files contained in
+     the <filename id="flpthd247e36" remap="filepath">lib</filename> directory of the distribution.
+   </para>
+   </section>
+   <section remap="concept" id="setting_properties">
+      <sectioninfo id="prlgd249e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd249e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd249e11" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd249e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd249e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd249e17" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd249e19" remap="copyright">
+            <year id="cpryeard249e21" remap="copyryear">2009</year>
+            <holder id="cprhldrd249e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd249e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld249e5" remap="title">Setting Properties</title>
+      <para id="parad249e8" remap="shortdesc"/>
+      <para id="parad249e34" remap="p">
+     ArjunaCore has been designed to be highly configurable at runtime through
+     the use of various property attributes, which will be described in
+     subsequent sections. Although these attributes can be provided at runtime
+     on the command line, it is possible (and may be more convenient) to specify
+     them through a single properties file. At runtime ArjunaCore looks for the
+     file jbossts-properties.xml in the following order:
+   </para>     
+      <orderedlist id="old249e37" remap="ol">
+         <listitem id="lid249e39" remap="li">
+            <para remap="#PCDATA">the current working directory, i.e., where the application was executed
+     from.</para>
+         </listitem>
+         <listitem id="lid249e42" remap="li">
+            <para remap="#PCDATA">the user’s home directory.</para>
+         </listitem>
+         <listitem id="lid249e45" remap="li">
+            <para remap="#PCDATA">the etc directory of the ArjunaCore installation; this must be placed
+     in your <varname id="vrnmd249e47" remap="varname">CLASSPATH.</varname>
+            </para>
+         </listitem>
+      </orderedlist>
+      <para id="parad249e51" remap="p">
+     If found, all entries within this file will be added to the system
+     properties. Obviously non- ArjunaCore specific properties can also be
+     specified in this file. For example:
+   </para>
+      <programlisting id="cdblkd249e54" remap="codeblock">
+     &lt;property
+	 name="com.arjuna.ats.arjuna.coordinator.asyncCommit"
+	 value="NO"/&gt;
+     &lt;property
+	 name="com.arjuna.ats.arjuna.objectstore.objectStoreDir"
+	 value="c:\temp\ObjectStore"/&gt;
+   </programlisting>
+      <para id="parad249e57" remap="p">
+     The name of the properties file can be overridden at runtime by specifying
+     a new file using the
+     <varname id="vrnmd249e59" remap="varname">com.arjuna.ats.arjuna.common.propertiesFile</varname> attribute
+     variable.
+   </para>
+   </section>
+   <section remap="concept" id="licensing">
+      <sectioninfo id="prlgd259e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd259e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd259e11" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd259e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd259e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd259e17" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <copyright id="cprghtd259e19" remap="copyright">
+            <year id="cpryeard259e21" remap="copyryear">2009</year>
+            <holder id="cprhldrd259e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd259e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld259e5" remap="title">Licensing</title>
+      <para id="parad259e8" remap="shortdesc"/>
+      <para id="parad259e34" remap="p">
+     ArjunaCore no longer require a license key in order to operate.
+   </para>
+   </section>
+</article>

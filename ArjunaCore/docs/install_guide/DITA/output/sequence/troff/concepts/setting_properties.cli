@@ -1,0 +1,52 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBSetting Properties\fR
+.ce 0
+
+.sp 2
+
+.sp 2
+ArjunaCore has been designed to be highly configurable at runtime
+through the use of various property attributes, which will be
+described in subsequent sections. Although these attributes can
+be provided at runtime on the command line, it is possible (and
+may be more convenient) to specify them through a single
+properties file. At runtime ArjunaCore looks for the file
+jbossts-properties.xml in the following order:
+.sp 2
+1. the current working directory, i.e., where the application was
+   executed from.
+.sp 2
+2. the user’s home directory.
+.sp 2
+3. the etc directory of the ArjunaCore installation; this must be
+   placed in your \fICLASSPATH.\fR
+.sp 2
+If found, all entries within this file will be added to the
+system properties. Obviously non- ArjunaCore specific properties
+can also be specified in this file. For example:
+.sp 2
+
+.br
+     <property
+.br
+	 name="com.arjuna.ats.arjuna.coordinator.asyncCommit"
+.br
+	 value="NO"/>
+.br
+     <property
+.br
+	 name="com.arjuna.ats.arjuna.objectstore.objectStoreDir"
+.br
+	 value="c:\temp\ObjectStore"/>
+.br
+   
+.sp 2
+The name of the properties file can be overridden at runtime by
+specifying a new file using the
+\fIcom.arjuna.ats.arjuna.common.propertiesFile\fR attribute
+variable.

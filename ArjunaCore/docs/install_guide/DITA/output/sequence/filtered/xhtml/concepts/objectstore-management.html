@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="DC.Type" content="concept"/>
+<meta name="DC.Title" content="ObjectStore Management"/>
+<meta name="abstract" content=""/>
+<meta name="description" content=""/>
+<meta name="DC.Creator" content="Andrew Dinn"/>
+<meta name="DC.Creator" content="Jonathan Halliday"/>
+<meta name="DC.Contributor" content="Misty Stanley-Jones"/>
+<meta name="DC.Creator" content="Mark Little"/>
+<meta name="copyright" content="JBoss, Inc. 2009" type="primary"/>
+<meta name="DC.Rights.Owner" content="JBoss, Inc. 2009" type="primary"/>
+<meta name="DC.Date.Created" content="2009-06-16"/>
+<meta name="DC.Date.Modified" content="2010-08-04"/>
+<meta name="DC.Format" content="XHTML"/>
+<meta name="DC.Identifier" content="objectstore_management"/>
+<meta name="DC.Language" content="en-us"/>
+<link rel="stylesheet" type="text/css" href="../commonltr.css"/>
+<title>ObjectStore Management</title>
+</head>
+<body id="objectstore_management"><a name="objectstore_management"><!-- --></a>
+
+
+ <h1 class="title topictitle1">ObjectStore Management</h1>
+
+ 
+ <div class="body conbody"><p class="shortdesc"/>
+
+   <p class="p">
+     Within the transaction service installation, the object store is updated
+     regularly whenever transactions are created, or when <span class="keyword apiname">Transactional
+     Objects for Java</span> is used. In a failure free environment, the only
+     object states which should reside within the object store are those
+     representing objects created with the <span class="keyword apiname">Transactional Objects for
+     Java</span> API. However, if failures occur, transaction logs may remain
+     in the object store until crash recovery facilities have resolved the
+     transactions they represent. As such it is very important that the contents
+     of the object store are not deleted without due care and attention, as this
+     will make it impossible to resolve in doubt transactions. In addition, if
+     multiple users share the same object store it is important that they
+     realize this and do not simply delete the contents of the object store
+     assuming it is an exclusive resource.
+   </p>
+
+ </div>
+
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><concept xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/" id="objectstore_management" xml:lang="en-us" ditaarch:DITAArchVersion="1.2" domains="(topic concept)                            (topic hi-d)                             (topic ut-d)                             (topic indexing-d)                            (topic hazard-d)                            (topic abbrev-d)                            (topic pr-d)                             (topic sw-d)                            (topic ui-d)    " class="- topic/topic concept/concept ">
+ <title class="- topic/title ">ObjectStore Management</title>
+ <shortdesc class="- topic/shortdesc "/>
+ <prolog class="- topic/prolog "><author class="- topic/author " type="creator">Andrew Dinn</author><author class="- topic/author " type="creator">Jonathan Halliday</author><author class="- topic/author " type="contributor">Misty Stanley-Jones</author><author class="- topic/author " type="creator">Mark Little</author><copyright class="- topic/copyright ">
+      <copyryear class="- topic/copyryear " year="2009"/>
+      <copyrholder class="- topic/copyrholder ">JBoss, Inc.</copyrholder>
+    </copyright><critdates class="- topic/critdates ">
+      <created class="- topic/created " date="2009-06-16"/>
+      <revised class="- topic/revised " modified="2010-08-04"/>
+    </critdates></prolog><conbody class="- topic/body  concept/conbody ">
+   <p class="- topic/p ">
+     Within the transaction service installation, the object store is updated
+     regularly whenever transactions are created, or when <apiname class="+ topic/keyword pr-d/apiname ">Transactional
+     Objects for Java</apiname> is used. In a failure free environment, the only
+     object states which should reside within the object store are those
+     representing objects created with the <apiname class="+ topic/keyword pr-d/apiname ">Transactional Objects for
+     Java</apiname> API. However, if failures occur, transaction logs may remain
+     in the object store until crash recovery facilities have resolved the
+     transactions they represent. As such it is very important that the contents
+     of the object store are not deleted without due care and attention, as this
+     will make it impossible to resolve in doubt transactions. In addition, if
+     multiple users share the same object store it is important that they
+     realize this and do not simply delete the contents of the object store
+     assuming it is an exclusive resource.
+   </p>
+ </conbody>
+</concept>

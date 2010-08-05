@@ -1,0 +1,48 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="DC.Type" content="task">
+<meta name="DC.Title" content="Preparing your system">
+<meta name="abstract" content="Before installing the ArjunaCore software, we recommend the following administrative steps be taken, assuming a default configuration for ArjunaCore:">
+<meta name="description" content="Before installing the ArjunaCore software, we recommend the following administrative steps be taken, assuming a default configuration for ArjunaCore:">
+<meta name="DC.Creator" content="Andrew Dinn">
+<meta name="DC.Creator" content="Jonathan Halliday">
+<meta name="DC.Contributor" content="Misty Stanley-Jones">
+<meta name="DC.Creator" content="Mark Little">
+<meta name="copyright" content="JBoss, Inc. 2009" type="primary">
+<meta name="DC.Rights.Owner" content="JBoss, Inc. 2009" type="primary">
+<meta name="DC.Date.Created" content="2009-06-16">
+<meta name="DC.Date.Modified" content="2010-08-04">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="preparing_your_system">
+<meta name="DC.Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="../commonltr.css">
+<title>Preparing your system</title>
+</head>
+<body id="preparing_your_system"><a name="preparing_your_system"><!-- --></a>
+
+
+
+  <h1 class="title topictitle1">Preparing your system</h1>
+
+  
+  <div class="body taskbody"><p class="shortdesc">Before installing the ArjunaCore software, we recommend the following administrative steps be taken, assuming a default configuration for ArjunaCore:</p>
+
+    <ol class="ol steps"><li class="li step">
+        <span class="ph cmd">Install the distribution into the required location.</span>
+      </li>
+<li class="li step">
+        <span class="ph cmd"><span class="keyword cmdname">ArjunaCore</span> requires a minimum object store for storing the outcome of transactions in the event of system crashes. The location of this should be specified in the properties file using the <var class="keyword varname">com.arjuna.ats.arjuna.objectstore.objectStoreDir</var> environment variable, e.g., <span class="keyword cmdname">java - Dcom.arjuna.ats.arjuna.objectstore.objectStoreDir=C:\temp foo</span>.</span>
+      </li>
+<li class="li step">
+        <span class="ph cmd">By default, all object states will be stored within the <span class="ph filepath">defaultStore</span> subdirectory of the object store root, e.g., /<span class="ph filepath">usr/local/Arjuna/TransactionService/ObjectStore/defaultStore</span>. However, this subdirectory can be changed by setting the <var class="keyword varname">com.arjuna.ats.arjuna.objectstore.localOSRoot</var> property variable accordingly.</span>
+      </li>
+</ol>
+
+  </div>
+
+
+</body>
+</html>

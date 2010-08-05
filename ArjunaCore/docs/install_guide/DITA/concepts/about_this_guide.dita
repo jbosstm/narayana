@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="basic" xml:lang="en-us">
+ <title>About This Guide</title>
+ <conbody>
+   <section>
+     <title>What This Guide Contains</title>
+     The Installation Guide contains information on how to use ArjunaCore 4.12.0.
+   </section>
+   <section>
+     <title>Audience</title>
+     This guide is most relevant to engineers who are responsible for installing ArjunaCore 4.12.0.
+   </section>
+   <section>
+     <title>Prerequisites</title>
+     None
+   </section>
+   <section>
+     <title>Document Conventions</title>
+     The following conventions are used in this guide:
+     <simpletable>
+       <sthead>
+	 <stentry>Convention</stentry>
+	 <stentry>Description</stentry>
+       </sthead>
+       <strow>
+	 <stentry><i>Italic</i></stentry>
+	 <stentry>In paragraph text, <i>italic</i> identifies the titles of documents that are
+	 being referenced. When used in conjunction with the <codeph>Code</codeph> text
+	 described below, italics identify a variable that should be replaced
+	 by the user with an actual value.</stentry>
+       </strow>
+       <strow>
+	 <stentry><b>Bold</b></stentry>
+	 <stentry>Emphasizes items of particular importance.</stentry>
+       </strow>
+       <strow>
+	 <stentry><codeph>Code</codeph></stentry>
+	 <stentry>Text that represents program code.</stentry>
+       </strow>
+       <strow>
+	 <stentry>
+	   <menucascade>
+	     <uicontrol>File</uicontrol>
+	     <uicontrol>Open</uicontrol>
+	   </menucascade>
+	 </stentry>
+	 <stentry>A path to a function or dialog box within an interface. For
+	 example,
+	 <menucascade><uicontrol>File</uicontrol><uicontrol>Open</uicontrol></menucascade>
+	 indicates that you should select the Open function from the file
+	 menu.</stentry>
+       </strow>
+       <strow>
+	 <stentry>( ) and |</stentry>
+	 <stentry>Parentheses enclose optional items in command syntax. The vertical bar (pipe) separates syntax items in a list of choices. For example, any of the following three items can be entered in this syntax: persistPolicy (Never | OnTimer | OnUpdate | NoMoreOftenThan)</stentry>
+       </strow>
+       <strow>
+	 <stentry><note type="note"></note> or <note type="warning"></note></stentry>
+	 <stentry>A note highlights important supplemental information. A
+	 warning highlights procedures or information that is necessary to avoid
+	 damage to equipment, damage to software, loss of data, or invalid test
+	 results.</stentry>
+       </strow>
+     </simpletable>
+   </section>
+
+   <section>
+     <title>Additional Documentation</title>
+     <ul>
+       <li>ArjunaCore 4.12.0 Release Notes:  Provides late­breaking information about ArjunaCore 4.12.0.</li>
+       <li>ArjunaCore 4.12.0 Administration Guide:  This guide provides instructions for administering ArjunaCore 4.12.0.</li>
+       <li>ArjunaCore 4.12.0 Programmer’s Guide:  Provides guidance for writing applications. </li>
+     </ul>
+   </section>
+
+   <section>
+     <title>Contacting Us</title>
+     Questions or comments about ArjunaCore 4.12.0 should be directed to our support team.
+   </section>
+ </conbody>
+</concept>

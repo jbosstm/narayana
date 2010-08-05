@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+
+<concept id="licensing" xml:lang="en-us">
+ <title>Licensing</title>
+ <shortdesc></shortdesc>
+ <conbody>
+   <p>
+     ArjunaCore no longer require a license key in order to operate.
+   </p>
+ </conbody>
+</concept>

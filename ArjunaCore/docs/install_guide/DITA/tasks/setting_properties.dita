@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd" []>
+<task id="basic" xml:lang="en-us">
+<task xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="task-1" xsi:noNamespaceSchemaLocation="urn:oasis:names:tc:dita:xsd:task.xsd:1.1">
+  <title></title>
+  <taskbody>
+    <steps>
+      <step>
+        <cmd> </cmd>
+      </step>
+      <step>
+        <cmd></cmd>
+        <substeps>
+          <substep>
+            <cmd></cmd>
+          </substep>
+          <substep>
+            <cmd></cmd>
+          </substep>
+        </substeps>
+      </step>
+      <step>
+        <cmd> </cmd>
+        <stepresult>
+          <systemoutput></systemoutput>
+        </stepresult>
+      </step>
+    </steps>
+  </taskbody>
+</task>

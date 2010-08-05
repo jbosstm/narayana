@@ -1,0 +1,15 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBAdditional jar requirements\fR
+.ce 0
+
+.sp 2
+
+.sp 2
+In order to fully utilize all of the facilities available within
+ArjunaCore, it will be necessary to add all of the jar files
+contained in the lib directory of the distribution.

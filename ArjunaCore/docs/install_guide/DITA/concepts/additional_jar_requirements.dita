@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+
+<concept id="additional_jar_requirements" xml:lang="en-us">
+ <title>Additional jar requirements</title>
+ <shortdesc></shortdesc>
+ <conbody>
+   <p>
+     In order to fully utilize all of the facilities available within
+     ArjunaCore, it will be necessary to add all of the jar files contained in
+     the <filepath>lib</filepath> directory of the distribution.
+   </p>
+ </conbody>
+</concept>

@@ -1,0 +1,27 @@
+[OPTIONS]
+Compiled file=hierarchy.chm
+Contents file=hierarchy.hhc
+Default Window=default
+Full-text search=Yes
+Display compile progress=No
+Index file=hierarchy.hhk
+Binary Index=NoLanguage=0x0409 English (United States)
+Default topic=concepts/frontmatter.html
+Title=ArjunaCore Installation Guide
+
+[FILES]
+concepts/about_this_guide.html
+concepts/additional_jar_requirements.html
+concepts/frontmatter.html
+concepts/licensing.html
+concepts/logging.html
+concepts/objectstore-management.html
+concepts/setting_properties.html
+tasks/installing-uninstalling-services-windows.html
+tasks/installing_services-unix.html
+tasks/prepare_your_system.html
+tasks/uninstalling_services-unix.html
+
+
+[INFOTYPES]
+
