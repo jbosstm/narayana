@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd" []>
+<task id="basic" xml:lang="en-us">
+
+  <title>Name of the Basic Task</title>
+  
+  <prolog>
+		<author type="creator">Red Hat</author>
+		<author type="contributor">Your Name Here</author>
+		<publisher>Red Hat Engineering Content Services</publisher>
+		<copyright>
+			<copyryear year="2010"/>
+			<copyrholder>Red Hat</copyrholder>
+		</copyright>
+		<critdates>
+			<created date="2010"/>
+			<revised modified="2010-June-04"/>
+		</critdates>
+		<metadata>
+			<keywords>
+				<indexterm>Search</indexterm>
+				<indexterm>Terms</indexterm>
+				<indexterm>Here</indexterm>				
+			</keywords>
+			<prodinfo>
+				<prodname>DITA Open Toolkit</prodname>
+				<vrmlist>
+					<vrm version="1.3"/>
+				</vrmlist>
+			</prodinfo>
+		</metadata>
+	</prolog>
+  
+  <taskbody>
+  
+  
+    <context>		
+        <p>
+            Always include a context here to explain WHY you would do this
+            task. The reader needs to know why they should follow these
+            steps.
+       </p>
+
+        <note>    
+            I am a sample note in the context area. Remember that task
+            topics answer "How do I?" questions, and have a well-defined
+            structure that describes how to complete a procedure to
+            accomplish a specific goal. That structure appears below.
+        </note>             
+    </context>
+
+
+  
+
+    <steps>
+
+      <step>
+        <cmd>Each command must only be one sentence.</cmd>
+        
+        <info>
+            <p>
+                To elaborate with additional sentences, use the info tags. Remember to use active
+                voice when writing commands. 
+            </p>
+            
+            <p>
+                I am more elaboration.
+            </p>            
+        </info>            
+        
+         <stepresult>
+            <p>
+                Put the result of running that command here. What should
+                the user expect to happen if all is working properly?
+            </p>                
+        </stepresult>                
+      </step>
+
+      <step>
+        <cmd>This is the next step.</cmd>
+        <substeps>
+          <substep>
+            <cmd>I am a sub-step command.</cmd>
+          </substep>
+          <substep>
+            <cmd>I am another sub-step command</cmd>
+          </substep>
+        </substeps>
+      </step>
+      
+      
+      <step>
+        <cmd>This is yet another step.</cmd>
+        
+        <info>
+            <p>
+                Further elaboration again to explain the step in more
+                detail.
+            </p>
+        </info>
+                
+        <stepresult>
+          <systemoutput>System output as result.</systemoutput>
+        </stepresult>
+      </step>
+      
+      <step>      
+       <cmd>This step shows you how to link to a webpage: <xref
+            href="http://www.jboss.org/community/wiki/ConfiguringMultipleJBossInstancesOnOnemachine"
+            format="http"  /></cmd>
+        
+        <info>
+            <p>
+                Explain why you should go to that page in this info section. 
+            </p>
+<!--            
+            <p>
+                This is how you insert an image:  
+                <image href="../images/scenario1.png" alt="Clustering Scenario 1" height="171" width="249"/>
+            </p>
+-->            
+        </info>
+                
+        <stepresult>
+          <systemoutput>System output as result.</systemoutput>
+        </stepresult>
+      </step>
+      
+<step>
+			<cmd>
+				   Click on one of these:
+            </cmd>
+
+<!--  THIS IS AN OPTIONS TABLE.  PUT ALTERNATIVE COMMANDS AND THEIR OUTCOMES IN HERE  -->
+<choicetable>
+  <chhead>
+   <choptionhd>Optional Extra Step</choptionhd>
+   <chdeschd>Outcome</chdeschd>
+  </chhead>
+  <chrow><choption>Click Button A</choption>
+     <chdesc>Does something</chdesc></chrow>  
+ <chrow><choption>Click Button B</choption>
+     <chdesc>Does something else</chdesc></chrow> 
+ <chrow><choption>Click Button C</choption>
+     <chdesc>Does another thing</chdesc></chrow>            
+ </choicetable>        
+
+</step>
+      
+      
+    </steps>
+    
+    <result>
+        <p>
+            Having done all of the steps, describe the overall result here
+            so the user knows if he or she has been successful.
+        </p>            
+    </result>    
+    
+  </taskbody>
+  
+ <!--  LOTS OF SAMPLE RELATED LINKS 
+  	<related-links>
+	
+        <link href="../concepts/database.dita" format="dita" type="concept">
+			<linktext>Database and Message Store</linktext>
+		</link>
+	
+		<link href="../concepts/messagestore.dita" format="dita" type="concept">
+			<linktext>Message Store</linktext>
+		</link>
+		
+		<link href="../concepts/registry.dita" format="dita" type="concept">
+			<linktext>Service Registry</linktext>
+		</link>
+		
+		<link href="../concepts/databaseschema.dita" format="dita" type="concept">
+			<linktext>Database Schema</linktext>
+		</link>
+		
+		<link href="../concepts/persistencelayer.dita" format="dita" type="concept">
+			<linktext>Persistence Layer</linktext>
+		</link>
+		
+		<link href="../concepts/serviceregistry.dita" format="dita" type="concept">
+			<linktext>Service Registry</linktext>
+		</link>
+		
+		<link href="../concepts/sql.dita" format="dita" type="concept">
+			<linktext>Structured Query Language</linktext>
+		</link>
+		
+		<link href="../references/databasesettings.dita" format="dita" type="reference">
+			<linktext>Database Settings</linktext>
+		</link>
+		
+		<link href="../tasks/extensions.dita" format="dita" type="task">
+			<linktext>Configuring Extensions</linktext>
+		</link>
+
+  	</related-links>		
+  -->
+</task>

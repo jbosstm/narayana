@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN" "../dtd/map.dtd">
+<!-- (C) Copyright IBM Corporation 2001, 2006. All rights reserved. -->
+<map title="basic Document (sequence)" id="basic_document_top">
+
+  <title></title>
+  <topicmeta>
+    <!-- This stuff doesn't show up anywhere, it's for the CMS later -->
+    <author type="creator">Dude McPants</author>
+    <author type="contributor">Dude mcPants Jr.</author>
+
+    <source href="http://jboss.org">JBoss.org</source>
+    <copyright>
+      <copyryear year="2010" />
+      <copyrholder>JBoss, Inc.</copyrholder>
+    </copyright>
+    <critdates>
+      <created date="2009-06-16" />
+      <revised modified="2010-08-04" />
+    </critdates>
+  </topicmeta>
+  
+  <topicref href="concepts/basic-concept.dita" type="concept" />
+  <topicref href="tasks/basic-task.dita" type="task" />
+  <topicref href="references/basic-reference.dita" type="reference" />
+
+</map>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN"
+"http://docs.oasis-open.org/dita/v1.0.1/dtd/reference.dtd">
+<reference id="reference1">
+  <title>Title of Basic Reference</title>
+  
+   <prolog>
+		<author type="creator">Red Hat</author>
+		<author type="contributor">Your Name Here</author>
+		<publisher>Red Hat Engineering Content Services</publisher>
+		<copyright>
+			<copyryear year="2010"/>
+			<copyrholder>Red Hat</copyrholder>
+		</copyright>
+		<critdates>
+			<created date="2010"/>
+			<revised modified="2010-June-04"/>
+		</critdates>
+		<metadata>
+			<keywords>
+				<indexterm>Search</indexterm>
+				<indexterm>Terms</indexterm>
+				<indexterm>Here</indexterm>				
+			</keywords>
+			<prodinfo>
+				<prodname>DITA Open Toolkit</prodname>
+				<vrmlist>
+					<vrm version="1.3"/>
+				</vrmlist>
+			</prodinfo>
+		</metadata>
+	</prolog>
+  
+  
+  <refbody>
+    <refsyn>Describe command or api syntax here, possibly
+    using &lt;synph&gt; or &lt;syntax&gt; markup for explicit 
+    definition of syntax or prototype construction.
+    </refsyn>
+    
+    
+      <section>
+   <title>Title Here</title>
+   
+   
+            <p>
+                Reference topics describe regular features of a subject or
+                product, such as commands in a programming language. A
+                reference file will contain either a table or properties
+                (NOT BOTH!)  However, examples of each are included below
+            </p>
+           
+   </section> 
+
+
+
+<!-- THIS IS A TYPICAL REFERENCE TABLE -->
+
+<table>
+<tgroup cols="2">
+<colspec colname="COLSPEC0" colwidth="40*"/>
+<colspec colname="COLSPEC1" colwidth="76*"/>
+<thead>
+<row>
+<entry colname="COLSPEC0" valign="top">Level</entry>
+<entry colname="COLSPEC1" valign="top">Metric</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>ESB</entry>
+<entry>Message Count (Successful)</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Message Count (Total)</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Message Counts (Failed)</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Processed Bytes</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Last Failed Message Date</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Last Successful Message Date</entry>
+</row>
+<row>
+<entry>Service</entry>
+<entry>Message Count</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Message Count (avg) per Minute</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Messages Failed</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Messages Failed (avg) per Minute</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Messages Successfully Processed</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Messages Successfully Processed (avg) per Minute</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Overall Bytes</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Overall Bytes Failed</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Overall Bytes Processed</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Processing Time</entry>
+</row>
+<row>
+<entry>Listener</entry>
+<entry>Lifecycle State</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Maximum Number of Threads</entry>
+</row>
+<row>
+<entry></entry>
+<entry>MEP</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Service Category</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Service Description</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Service Name</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Start Date</entry>
+</row>
+<row>
+<entry></entry>
+<entry>Message Count (Total)</entry>
+</row>
+
+
+</tbody>
+</tgroup>
+</table>
+
+
+
+<!-- THIS IS A LIST OF PROPERTIES
+  <properties>
+     <prophead>
+		<proptypehd>Property</proptypehd>
+		<propvaluehd>Version</propvaluehd>  
+		<propdeschd>Description</propdeschd>
+		</prophead> 
+  
+   <property>
+    <proptype>jcr.jndi.path</proptype>
+
+    <propdesc>
+                this is an optional JNDI
+                path used to determine the location of the repository. If it
+                is not specified, a new repository will be created based
+                upon the <filepath>repository.xml</filepath> file (which is
+                located in the root of <filepath>jbossesb.sar</filepath>.)
+                In this latter case, the repository data will be stored in the
+                <filepath>JBossAS/server/{servername}/data/repository</filepath>
+                directory.
+    </propdesc>    
+    
+   </property>
+   
+      <property>
+    <proptype>jcr.username</proptype>
+ 
+    <propdesc>
+    this is the user
+                    name, needed to obtain a repository session.
+    </propdesc>    
+    
+   </property>
+   
+         <property>
+    <proptype>jcr.password</proptype>
+
+    <propdesc>
+    this is the password. It is
+            needed to access a repository session.
+    </propdesc>    
+    
+   </property>
+   
+   
+   <property>
+    <proptype>jcr.root.node.path</proptype>
+
+    <propdesc>
+    this is the path
+           relative to the root of the repository in which messages are to
+           be stored.
+    </propdesc>    
+    
+   </property>
+   
+   
+   
+  </properties>  -->
+
+
+ </refbody>
+ 
+ 
+ 
+ 
+ <!--  PUT LINKS IN HERE!
+  <related-links>
+	
+
+	
+		<link href="../concepts/jonforsoa.dita" format="dita" type="concept">
+			<linktext>JON for SOA</linktext>
+		</link>
+		
+		<link href="../tasks/gatheringesbstatistics.dita" format="dita" type="task">
+			<linktext>Gathering ESB Statistics</linktext>
+		</link>
+		
+		
+	</related-links> 
+	
+	-->
+</reference>
