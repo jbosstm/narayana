@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE map PUBLIC "-//OASIS//DTD DITA Map//EN" "../dtd/map.dtd">
 <!-- (C) Copyright IBM Corporation 2001, 2006. All rights reserved. -->
-<map title="Basic Document (hierarchy)" id="basic_document_top">
+<map title="ArjunaCore Release Notes (hierarchy)" id="release_notes_top">
 
-  <title></title>
+  <title>ArjunaCore 4.12.0 Release Notes</title>
   <topicmeta>
     <!-- This stuff doesn't show up anywhere, it's for the CMS later -->
-    <author type="creator">Dude McPants</author>
-    <author type="contributor">Dude mcPants Jr.</author>
+    <author type="creator">Andrew Dinn</author>
+    <author type="creator">Mark Little</author>
+    <author type="creator">Jonathan Halliday</author>
+    <author type="contributor">Misty Stanley-Jones</author>
 
     <source href="http://jboss.org">JBoss.org</source>
     <copyright>
@@ -20,10 +22,11 @@
     </critdates>
   </topicmeta>
   
-  <topicref href="concepts/basic-concept.dita" type="concept">
-    <topicref href="tasks/basic-task.dita" type="task" />
-  </topicref>
-  <topichead navtitle="Navigational Heading For Organization Only">
-    <topicref href="references/basic-reference.dita" type="reference"/>
-  </topichead>
+  <topicref href="concepts/frontmatter.dita" type="concept" />
+  <topicref href="concepts/about_this_guide.dita" type="concept" />
+  <topicref href="concepts/enhancements.dita" type="concept"/>
+  <topicref href="concepts/fixed_issues.dita" type="concept"/>
+  <topicref href="concepts/known_issues.dita" type="concept"/>
+  <topicref href="concepts/deprecations.dita" type="concept"/>
+  <topicref href="concepts/upgrade.dita" type="concept"/>
 </map>
