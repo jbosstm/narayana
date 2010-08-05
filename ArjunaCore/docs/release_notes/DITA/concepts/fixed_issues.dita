@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="basic" xml:lang="en-us">
+ <title>Fixed Issues</title>
+ <shortdesc></shortdesc>
+ <conbody>
+   <p>
+     These are tracked online via JIRA. See <xref format="html" href="http://jira.jboss.com/jira/browse/JBTM" />.
+   </p>
+ </conbody>
+</concept>

@@ -1,0 +1,71 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBAbout This Guide\fR
+.ce 0
+
+.sp 2
+
+.SH "What This Guide Contains"
+\fBWhat This Guide Contains\fR
+.sp 2
+The Release Notes contain important information on changes to
+ArjunaCore 4.11.0 since the last release and information on any
+outstanding issues.
+.SH "Audience"
+\fBAudience\fR
+.sp 2
+This guide is most relevant to engineers who are responsible for
+administering ArjunaCore 4.11.0 installations.
+.SH "Prerequisites"
+\fBPrerequisites\fR
+.sp 2
+None
+.SH "Document Conventions"
+\fBDocument Conventions\fR
+.sp 2
+The following conventions are used in this guide:
+ConventionDescription\fIItalic\fRIn paragraph text, \fIitalic\fR
+identifies the titles of documents that are being referenced.
+When used in conjunction with the \fRCode\fR text described
+below, italics identify a variable that should be replaced by the
+user with an actual value.\fBBold\fREmphasizes items of
+particular importance.\fRCode\fRText that represents program
+code. \fBFile\fR -> \fBOpen\fR A path to a function or dialog box
+within an interface. For example, \fBFile\fR -> \fBOpen\fR
+indicates that you should select the Open function from the file
+menu.( ) and |Parentheses enclose optional items in command
+syntax. The vertical bar (pipe) separates syntax items in a list
+of choices. For example, any of the following three items can be
+entered in this syntax: persistPolicy (Never | OnTimer | OnUpdate
+| NoMoreOftenThan)
+.sp 2
+\fBNote: \fR
+.sp 2
+or
+.sp 2
+\fBNote: \fR
+.sp 2
+A note highlights important supplemental information. A warning
+highlights procedures or information that is necessary to avoid
+damage to equipment, damage to software, loss of data, or invalid
+test results.
+.SH "Additional Documentation"
+\fBAdditional Documentation\fR
+.sp 2
+*  ArjunaCore 4.12.0 Administration Guide: This guide provides
+   instructions for administering ArjunaCore 4.12.0.
+.sp 2
+*  ArjunaCore 4.12.0 Installation Guide: This guide provides
+   instructions for installing ArjunaCore 4.12.0.
+.sp 2
+*  ArjunaCore 4.12.0 Programmer’s Guide: Provides guidance for
+   writing applications.
+.SH "Contacting Us"
+\fBContacting Us\fR
+.sp 2
+Questions or comments about ArjunaCore 4.12.0 should be directed
+to our support team.

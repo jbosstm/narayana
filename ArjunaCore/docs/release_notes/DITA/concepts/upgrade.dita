@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="basic" xml:lang="en-us">
+ <title>Upgrade Notes</title>
+ <shortdesc></shortdesc>
+ <conbody>
+   <p>
+     This version targets JDK 6 and JBossAS 6. Compatibility with earlier versions of the JDK and application server is untested.
+   </p>
+ </conbody>
+</concept>

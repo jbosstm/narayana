@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><concept xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/" id="basic" xml:lang="en-us" ditaarch:DITAArchVersion="1.2" domains="(topic concept)                            (topic hi-d)                             (topic ut-d)                             (topic indexing-d)                            (topic hazard-d)                            (topic abbrev-d)                            (topic pr-d)                             (topic sw-d)                            (topic ui-d)    " class="- topic/topic concept/concept ">
+ <title class="- topic/title ">About This Guide</title>
+ <prolog class="- topic/prolog "><author class="- topic/author " type="creator">Mark Little</author><author class="- topic/author " type="creator">Jonathan Halliday</author><author class="- topic/author " type="contributor">Misty Stanley-Jones</author><author class="- topic/author " type="creator">Andrew Dinn</author><copyright class="- topic/copyright ">
+      <copyryear class="- topic/copyryear " year="2010"/>
+      <copyrholder class="- topic/copyrholder ">JBoss, Inc.</copyrholder>
+    </copyright><critdates class="- topic/critdates ">
+      <created class="- topic/created " date="2009-06-16"/>
+      <revised class="- topic/revised " modified="2010-08-04"/>
+    </critdates></prolog><conbody class="- topic/body  concept/conbody ">
+   <section class="- topic/section ">
+     <title class="- topic/title ">What This Guide Contains</title>
+     The Release Notes contain important information on changes to ArjunaCore 4.11.0 since the last release and information on any outstanding issues.
+   </section>
+   <section class="- topic/section ">
+     <title class="- topic/title ">Audience</title>
+     This guide is most relevant to engineers who are responsible for administering ArjunaCore 4.11.0 installations.
+   </section>
+   <section class="- topic/section ">
+     <title class="- topic/title ">Prerequisites</title>
+     None
+   </section>
+   <section class="- topic/section ">
+     <title class="- topic/title ">Document Conventions</title>
+     The following conventions are used in this guide:
+     <simpletable class="- topic/simpletable ">
+       <sthead class="- topic/sthead ">
+	 <stentry class="- topic/stentry ">Convention</stentry>
+	 <stentry class="- topic/stentry ">Description</stentry>
+       </sthead>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry "><i class="+ topic/ph hi-d/i ">Italic</i></stentry>
+	 <stentry class="- topic/stentry ">In paragraph text, <i class="+ topic/ph hi-d/i ">italic</i> identifies the titles of documents that are
+	 being referenced. When used in conjunction with the <codeph class="+ topic/ph pr-d/codeph ">Code</codeph> text
+	 described below, italics identify a variable that should be replaced
+	 by the user with an actual value.</stentry>
+       </strow>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry "><b class="+ topic/ph hi-d/b ">Bold</b></stentry>
+	 <stentry class="- topic/stentry ">Emphasizes items of particular importance.</stentry>
+       </strow>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry "><codeph class="+ topic/ph pr-d/codeph ">Code</codeph></stentry>
+	 <stentry class="- topic/stentry ">Text that represents program code.</stentry>
+       </strow>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry ">
+	   <menucascade class="+ topic/ph ui-d/menucascade ">
+	     <uicontrol class="+ topic/ph ui-d/uicontrol ">File</uicontrol>
+	     <uicontrol class="+ topic/ph ui-d/uicontrol ">Open</uicontrol>
+	   </menucascade>
+	 </stentry>
+	 <stentry class="- topic/stentry ">A path to a function or dialog box within an interface. For
+	 example,
+	 <menucascade class="+ topic/ph ui-d/menucascade "><uicontrol class="+ topic/ph ui-d/uicontrol ">File</uicontrol><uicontrol class="+ topic/ph ui-d/uicontrol ">Open</uicontrol></menucascade>
+	 indicates that you should select the Open function from the file
+	 menu.</stentry>
+       </strow>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry ">( ) and |</stentry>
+	 <stentry class="- topic/stentry ">Parentheses enclose optional items in command syntax. The vertical bar (pipe) separates syntax items in a list of choices. For example, any of the following three items can be entered in this syntax: persistPolicy (Never | OnTimer | OnUpdate | NoMoreOftenThan)</stentry>
+       </strow>
+       <strow class="- topic/strow ">
+	 <stentry class="- topic/stentry "><note type="note" class="- topic/note "/> or <note type="warning" class="- topic/note "/></stentry>
+	 <stentry class="- topic/stentry ">A note highlights important supplemental information. A
+	 warning highlights procedures or information that is necessary to avoid
+	 damage to equipment, damage to software, loss of data, or invalid test
+	 results.</stentry>
+       </strow>
+     </simpletable>
+   </section>
+
+   <section class="- topic/section ">
+     <title class="- topic/title ">Additional Documentation</title>
+     <ul class="- topic/ul ">
+       <li class="- topic/li ">ArjunaCore 4.12.0 Administration Guide:  This guide provides instructions for administering ArjunaCore 4.12.0.</li>
+       <li class="- topic/li ">ArjunaCore 4.12.0 Installation Guide:  This guide provides instructions for installing ArjunaCore 4.12.0.</li>
+       <li class="- topic/li ">ArjunaCore 4.12.0 Programmer’s Guide:  Provides guidance for writing applications. </li>
+     </ul>
+   </section>
+
+   <section class="- topic/section ">
+     <title class="- topic/title ">Contacting Us</title>
+     Questions or comments about ArjunaCore 4.12.0 should be directed to our support team.
+   </section>
+ </conbody>
+</concept>

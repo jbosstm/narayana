@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><concept xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/" id="basic" xml:lang="en-us" ditaarch:DITAArchVersion="1.2" domains="(topic concept)                            (topic hi-d)                             (topic ut-d)                             (topic indexing-d)                            (topic hazard-d)                            (topic abbrev-d)                            (topic pr-d)                             (topic sw-d)                            (topic ui-d)    " class="- topic/topic concept/concept ">
+ <title class="- topic/title ">Fixed Issues</title>
+ <shortdesc class="- topic/shortdesc "/>
+ <prolog class="- topic/prolog "><author class="- topic/author " type="creator">Mark Little</author><author class="- topic/author " type="creator">Jonathan Halliday</author><author class="- topic/author " type="contributor">Misty Stanley-Jones</author><author class="- topic/author " type="creator">Andrew Dinn</author><copyright class="- topic/copyright ">
+      <copyryear class="- topic/copyryear " year="2010"/>
+      <copyrholder class="- topic/copyrholder ">JBoss, Inc.</copyrholder>
+    </copyright><critdates class="- topic/critdates ">
+      <created class="- topic/created " date="2009-06-16"/>
+      <revised class="- topic/revised " modified="2010-08-04"/>
+    </critdates></prolog><conbody class="- topic/body  concept/conbody ">
+   <p class="- topic/p ">
+     These are tracked online via JIRA. See <xref format="html" href="http://jira.jboss.com/jira/browse/JBTM" class="- topic/xref "><?ditaot gentext?>http://jira.jboss.com/jira/browse/JBTM</xref>.
+   </p>
+ </conbody>
+</concept>

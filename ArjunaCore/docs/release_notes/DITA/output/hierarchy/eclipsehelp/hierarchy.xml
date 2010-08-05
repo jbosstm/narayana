@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="ArjunaCore 4.12.0 Release Notes" topic="concepts/frontmatter.html">
+   <topic label="ArjunaCore Release Notes" href="concepts/frontmatter.html"/>
+   <topic label="About This Guide" href="concepts/about_this_guide.html"/>
+   <topic label="Enhancements" href="concepts/enhancements.html"/>
+   <topic label="Fixed Issues" href="concepts/fixed_issues.html"/>
+   <topic label="Known Issues" href="concepts/known_issues.html"/>
+   <topic label="Deprecations" href="concepts/deprecations.html"/>
+   <topic label="Upgrade Notes" href="concepts/upgrade.html"/>
+</toc>

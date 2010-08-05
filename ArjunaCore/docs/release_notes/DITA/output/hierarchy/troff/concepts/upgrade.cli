@@ -1,0 +1,14 @@
+
+.ad l
+
+.ll 72
+
+.ce 1000
+\fBUpgrade Notes\fR
+.ce 0
+
+.sp 2
+
+.sp 2
+This version targets JDK 6 and JBossAS 6. Compatibility with
+earlier versions of the JDK and application server is untested.

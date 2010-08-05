@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE article
+  PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article id="release_notes_top">
+   <title>ArjunaCore 4.12.0 Release Notes</title>
+   <para/>
+   <section remap="concept" id="frontmatter">
+      <sectioninfo id="prlgd9e11" remap="prolog">
+         <abstract>
+            <para id="shrtdscd9e8" remap="abstract">
+   Release Notes for ArjunaCore 4.12.0 on Linux, UNIX, and Windows servers.
+ </para>
+         </abstract>
+         <author id="athrd9e13" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd9e15" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd9e17" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd9e19" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd9e21" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd9e24" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <author id="athrd9e27" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd9e31" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <copyright id="cprghtd9e37" remap="copyright">
+            <year id="cpryeard9e39" remap="copyryear">2010</year>
+            <holder id="cprhldrd9e41" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <copyright id="cprghtd9e44" remap="copyright">
+            <year id="cpryeard9e46" remap="copyryear">2009</year>
+            <holder id="cprhldrd9e48" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd9e52" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+         <subjectset>
+            <subject>
+               <subjectterm id="ctgryd9e66" remap="category">Installation</subjectterm>
+            </subject>
+         </subjectset>
+     
+     
+         <keywordset>
+            <keyword id="kywrdd9e71" remap="keyword">Installing</keyword>
+            <keyword id="kywrdd9e74" remap="keyword">Uninstalling</keyword>
+            <keyword id="kywrdd9e77" remap="keyword">Configuration</keyword>
+         </keywordset>
+     
+         <productname id="prdnmd9e83" remap="prodname">ArjunaCore</productname>
+       
+	        <productnumber id="vrmd9e88" remap="vrm" revision="4.12.0">4.12.0-2009-06-08</productnumber>
+       
+       
+       
+       
+     
+
+      </sectioninfo>
+      <title id="ttld9e5" remap="title">ArjunaCore Release Notes</title>
+      <para id="parad9e8" remap="abstract">
+   Release Notes for ArjunaCore 4.12.0 on Linux, UNIX, and Windows servers.
+ </para>
+      <sidebar id="sctnd9e105" remap="section">
+         <title id="ttld9e107" remap="title">Authors</title>
+         <itemizedlist id="uld9e110" remap="ul">
+            <listitem id="lid9e112" remap="li">
+               <para remap="#PCDATA">Mark Little</para>
+            </listitem>
+            <listitem id="lid9e115" remap="li">
+               <para remap="#PCDATA">Andrew Dinn</para>
+            </listitem>
+            <listitem id="lid9e118" remap="li">
+               <para remap="#PCDATA">Jonathan Halliday</para>
+            </listitem>
+         </itemizedlist>
+      </sidebar>
+      <formalpara id="sctnd9e123" remap="section">
+         <title>Copyright</title>
+         <para/>
+      </formalpara>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd27e8" remap="prolog">
+         <author id="athrd27e9" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd27e11" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd27e13" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd27e15" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd27e17" remap="copyright">
+            <year id="cpryeard27e19" remap="copyryear">2010</year>
+            <holder id="cprhldrd27e21" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd27e24" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld27e5" remap="title">About This Guide</title>
+      <formalpara id="sctnd27e32" remap="section">
+         <title>What This Guide Contains</title>
+         <para/>
+      </formalpara>
+      <formalpara id="sctnd27e38" remap="section">
+         <title>Audience</title>
+         <para/>
+      </formalpara>
+      <formalpara id="sctnd27e44" remap="section">
+         <title>Prerequisites</title>
+         <para/>
+      </formalpara>
+      <sidebar id="sctnd27e50" remap="section">
+         <title id="ttld27e52" remap="title">Document Conventions</title>
+         <para remap="#PCDATA">
+     
+     The following conventions are used in this guide:
+     </para>
+         <informaltable id="smtbld27e55" remap="simpletable">
+            <tgroup cols="2">
+               <thead id="sthdd27e57" remap="sthead">
+                  <row>
+	                    <entry id="stentd27e59" remap="stentry">Convention</entry>
+	                    <entry id="stentd27e62" remap="stentry">Description</entry>
+                  </row>
+               </thead>
+               <tbody>
+                  <row id="strwd27e66" remap="strow">
+	                    <entry id="stentd27e68" remap="stentry">
+                        <emphasis role="italic" id="id27e69" remap="i">Italic</emphasis>
+                     </entry>
+	                    <entry id="stentd27e72" remap="stentry">In paragraph text, <emphasis role="italic" id="id27e74" remap="i">italic</emphasis> identifies the titles of documents that are
+	 being referenced. When used in conjunction with the <literal id="cdphd27e77" remap="codeph">Code</literal> text
+	 described below, italics identify a variable that should be replaced
+	 by the user with an actual value.</entry>
+                  </row>
+                  <row id="strwd27e82" remap="strow">
+	                    <entry id="stentd27e84" remap="stentry">
+                        <emphasis role="bold" id="bd27e85" remap="b">Bold</emphasis>
+                     </entry>
+	                    <entry id="stentd27e88" remap="stentry">Emphasizes items of particular importance.</entry>
+                  </row>
+                  <row id="strwd27e92" remap="strow">
+	                    <entry id="stentd27e94" remap="stentry">
+                        <literal id="cdphd27e95" remap="codeph">Code</literal>
+                     </entry>
+	                    <entry id="stentd27e98" remap="stentry">Text that represents program code.</entry>
+                  </row>
+                  <row id="strwd27e102" remap="strow">
+	                    <entry id="stentd27e104" remap="stentry">
+	                       <menuchoice id="mncscdd27e106" remap="menucascade">
+                           <guimenu id="mnuictrld27e108" remap="uicontrol">File</guimenu>
+                           <guimenuitem id="mnuictrld27e111" remap="uicontrol">Open</guimenuitem>
+                        </menuchoice>
+	                    </entry>
+	                    <entry id="stentd27e116" remap="stentry">A path to a function or dialog box within an interface. For
+	 example,
+	 <menuchoice id="mncscdd27e118" remap="menucascade">
+                           <guimenu id="mnuictrld27e119" remap="uicontrol">File</guimenu>
+                           <guimenuitem id="mnuictrld27e121" remap="uicontrol">Open</guimenuitem>
+                        </menuchoice>
+	 indicates that you should select the Open function from the file
+	 menu.</entry>
+                  </row>
+                  <row id="strwd27e127" remap="strow">
+	                    <entry id="stentd27e129" remap="stentry">( ) and |</entry>
+	                    <entry id="stentd27e132" remap="stentry">Parentheses enclose optional items in command syntax. The vertical bar (pipe) separates syntax items in a list of choices. For example, any of the following three items can be entered in this syntax: persistPolicy (Never | OnTimer | OnUpdate | NoMoreOftenThan)</entry>
+                  </row>
+                  <row id="strwd27e136" remap="strow">
+	                    <entry id="stentd27e138" remap="stentry"> or </entry>
+	                    <entry id="stentd27e143" remap="stentry">A note highlights important supplemental information. A
+	 warning highlights procedures or information that is necessary to avoid
+	 damage to equipment, damage to software, loss of data, or invalid test
+	 results.</entry>
+                  </row>
+               </tbody>
+            </tgroup>
+         </informaltable>
+      </sidebar>
+
+      <sidebar id="sctnd27e149" remap="section">
+         <title id="ttld27e151" remap="title">Additional Documentation</title>
+         <itemizedlist id="uld27e154" remap="ul">
+            <listitem id="lid27e156" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Administration Guide:  This guide provides instructions for administering ArjunaCore 4.12.0.</para>
+            </listitem>
+            <listitem id="lid27e159" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Installation Guide:  This guide provides instructions for installing ArjunaCore 4.12.0.</para>
+            </listitem>
+            <listitem id="lid27e162" remap="li">
+               <para remap="#PCDATA">ArjunaCore 4.12.0 Programmer’s Guide:  Provides guidance for writing applications. </para>
+            </listitem>
+         </itemizedlist>
+      </sidebar>
+
+      <formalpara id="sctnd27e168" remap="section">
+         <title>Contacting Us</title>
+         <para/>
+      </formalpara>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd64e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd64e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd64e11" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd64e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd64e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd64e17" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd64e19" remap="copyright">
+            <year id="cpryeard64e21" remap="copyryear">2010</year>
+            <holder id="cprhldrd64e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd64e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld64e5" remap="title">Enhancements</title>
+      <para id="parad64e8" remap="shortdesc"/>
+      <para id="parad64e34" remap="p">
+     These are tracked online via JIRA. See <ulink url="http://jira.jboss.com/jira/browse/JBTM" type="" id="linkd64e36"
+                remap="xref">http://jira.jboss.com/jira/browse/JBTM</ulink>.
+   </para>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd66e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd66e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd66e11" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd66e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd66e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd66e17" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd66e19" remap="copyright">
+            <year id="cpryeard66e21" remap="copyryear">2010</year>
+            <holder id="cprhldrd66e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd66e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld66e5" remap="title">Fixed Issues</title>
+      <para id="parad66e8" remap="shortdesc"/>
+      <para id="parad66e34" remap="p">
+     These are tracked online via JIRA. See <ulink url="http://jira.jboss.com/jira/browse/JBTM" type="" id="linkd66e36"
+                remap="xref">http://jira.jboss.com/jira/browse/JBTM</ulink>.
+   </para>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd68e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd68e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd68e11" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd68e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd68e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd68e17" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd68e19" remap="copyright">
+            <year id="cpryeard68e21" remap="copyryear">2010</year>
+            <holder id="cprhldrd68e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd68e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld68e5" remap="title">Known Issues</title>
+      <para id="parad68e8" remap="shortdesc"/>
+      <para id="parad68e34" remap="p">
+     These are tracked online via JIRA. Ssee <ulink url="http://jira.jboss.com/jira/browse/JBTM" type="" id="linkd68e36"
+                remap="xref">http://jira.jboss.com/jira/browse/JBTM</ulink>.
+   </para>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd70e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd70e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd70e11" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd70e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd70e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd70e17" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd70e19" remap="copyright">
+            <year id="cpryeard70e21" remap="copyryear">2010</year>
+            <holder id="cprhldrd70e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd70e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld70e5" remap="title">Deprecations</title>
+      <para id="parad70e8" remap="shortdesc"/>
+      <para id="parad70e34" remap="p">
+     There are no deprecations.
+   </para>
+   </section>
+   <section remap="concept" id="basic">
+      <sectioninfo id="prlgd72e10" remap="prolog">
+         <abstract>
+            <para id="shrtdscd72e8" remap="shortdesc"/>
+         </abstract>
+         <author id="athrd72e11" remap="author">
+            <othername>Mark Little</othername>
+         </author>
+         <author id="athrd72e13" remap="author">
+            <othername>Jonathan Halliday</othername>
+         </author>
+         <author id="athrd72e15" remap="author">
+            <othername>Misty Stanley-Jones</othername>
+         </author>
+         <author id="athrd72e17" remap="author">
+            <othername>Andrew Dinn</othername>
+         </author>
+         <copyright id="cprghtd72e19" remap="copyright">
+            <year id="cpryeard72e21" remap="copyryear">2010</year>
+            <holder id="cprhldrd72e23" remap="copyrholder">JBoss, Inc.</holder>
+         </copyright>
+         <revhistory id="crtdtsd72e26" remap="critdates">
+            <revision>
+               <revnumber/>
+               <date>2009-06-16</date>
+               <revremark>created</revremark>
+            </revision>
+            <revision>
+               <revnumber/>
+               <date/>
+               <revremark>modified</revremark>
+            </revision>
+         </revhistory>
+      </sectioninfo>
+      <title id="ttld72e5" remap="title">Upgrade Notes</title>
+      <para id="parad72e8" remap="shortdesc"/>
+      <para id="parad72e34" remap="p">
+     This version targets JDK 6 and JBossAS 6. Compatibility with earlier versions of the JDK and application server is untested.
+   </para>
+   </section>
+</article>

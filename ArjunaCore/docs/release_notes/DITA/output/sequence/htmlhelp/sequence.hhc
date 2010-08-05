@@ -1,0 +1,23 @@
+
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Sitemap 1.0 -->
+</head>
+<body>
+<UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="ArjunaCore Release Notes"><param name="Local" value="concepts/frontmatter.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="About This Guide"><param name="Local" value="concepts/about_this_guide.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Enhancements"><param name="Local" value="concepts/enhancements.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Fixed Issues"><param name="Local" value="concepts/fixed_issues.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Known Issues"><param name="Local" value="concepts/known_issues.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Deprecations"><param name="Local" value="concepts/deprecations.html"></OBJECT>
+</LI>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Upgrade Notes"><param name="Local" value="concepts/upgrade.html"></OBJECT>
+</LI></UL>
+</body>
+</html>
