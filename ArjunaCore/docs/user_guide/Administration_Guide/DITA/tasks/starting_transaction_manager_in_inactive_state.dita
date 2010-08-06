@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd" []>
+<task id="basic" xml:lang="en-us">
+
+  <title>Starting the transactin manager in an inactive state</title>
+  
+  <prolog>
+		<author type="creator">JBoss, Inc.</author>
+		<author type="contributor">Misty Stanley-Jones</author>
+		<publisher>Red Hat Engineering Content Services</publisher>
+		<copyright>
+			<copyryear year="2010"/>
+			<copyrholder>JBoss.org</copyrholder>
+		</copyright>
+		<critdates>
+			<created date="2010"/>
+			<revised modified="2010-Aug-06"/>
+		</critdates>
+		<metadata>
+			<keywords>
+				<indexterm>Search</indexterm>
+				<indexterm>Terms</indexterm>
+				<indexterm>Here</indexterm>				
+			</keywords>
+			<prodinfo>
+				<prodname>ArjunaCore</prodname>
+				<vrmlist>
+					<vrm version="4.12.0"/>
+				</vrmlist>
+			</prodinfo>
+		</metadata>
+	</prolog>
+  
+  <taskbody>
+  
+    <context>		
+        <p>
+	  By default the transaction manager starts up in an active state such that new transactions can be created immediately.
+       </p>
+
+    </context>
+
+    <steps>
+
+      <step>
+        <cmd>If you wish to have more control over this it is possible to set the <option>CoordinatorEnvironmentBean.startDisabled</option> configuration option to <boolean state="yes" />.</cmd>
+        
+      </step>
+    </steps>
+      
+    <result>
+        <p>
+	  No transactions can be created until the transaction manager is enabled via a call to <codeph>TxControl.enable</codeph>
+        </p>            
+    </result>    
+    
+  </taskbody>
+  
+ <!--  LOTS OF SAMPLE RELATED LINKS 
+  	<related-links>
+	
+        <link href="../concepts/database.dita" format="dita" type="concept">
+			<linktext>Database and Message Store</linktext>
+		</link>
+	
+		<link href="../concepts/messagestore.dita" format="dita" type="concept">
+			<linktext>Message Store</linktext>
+		</link>
+		
+		<link href="../concepts/registry.dita" format="dita" type="concept">
+			<linktext>Service Registry</linktext>
+		</link>
+		
+		<link href="../concepts/databaseschema.dita" format="dita" type="concept">
+			<linktext>Database Schema</linktext>
+		</link>
+		
+		<link href="../concepts/persistencelayer.dita" format="dita" type="concept">
+			<linktext>Persistence Layer</linktext>
+		</link>
+		
+		<link href="../concepts/serviceregistry.dita" format="dita" type="concept">
+			<linktext>Service Registry</linktext>
+		</link>
+		
+		<link href="../concepts/sql.dita" format="dita" type="concept">
+			<linktext>Structured Query Language</linktext>
+		</link>
+		
+		<link href="../references/databasesettings.dita" format="dita" type="reference">
+			<linktext>Database Settings</linktext>
+		</link>
+		
+		<link href="../tasks/extensions.dita" format="dita" type="task">
+			<linktext>Configuring Extensions</linktext>
+		</link>
+
+  	</related-links>		
+  -->
+</task>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="arjuna_core_introduction" xml:lang="en-us">
+ <title>Introduction</title>
+
+
+<prolog>
+		<author type="creator">JBoss, Inc.</author>
+		<author type="contributor">Misty Stanley-Jones</author>
+		<publisher>Red Hat Engineering Content Services</publisher>
+		<copyright>
+			<copyryear year="2010"/>
+			<copyrholder>JBoss.org</copyrholder>
+		</copyright>
+		<critdates>
+			<created date="2010"/>
+			<revised modified="2010-Aug-06"/>
+		</critdates>
+		<metadata>
+			<keywords>
+				<indexterm>security</indexterm>
+				<indexterm>object store</indexterm>
+				<indexterm>limitations</indexterm>				
+			</keywords>
+			<prodinfo>
+				<prodname>ArjunaCore</prodname>
+				<vrmlist>
+					<vrm version="4.12.0"/>
+				</vrmlist>
+			</prodinfo>
+		</metadata>
+	</prolog>
+
+
+ <conbody>
+   <p>
+     Apart from ensuring that the run-time system is executing normally, there is little continuous administration needed for the ArjunaCore software. There are a few points however, that should be made:
+   </p>
+   <ul>
+     <li>
+       <p>
+	 The present implementation of the ArjunaCore system provides no security or protection for data. The objects stored in the ArjunaCore object store are (typically) owned by the user who ran the application that created them. The Object Store and Object Manager facilities make no attempt to enforce even the limited form of protection that Unix/Windows provides. There is no checking of user or group IDs on access to objects for either reading or writing.
+       </p>
+     </li>
+     <li>
+       <p>
+	 Persistent objects created in the Object Store never go away unless the StateManager.destroy method is invoked on the object or some application program explicitly deletes them. This means that the Object Store gradually accumulates garbage (especially during application development and testing phases). At present we have no automated garbage collection facility. Further, we have not addressed the problem of dangling references. That is, a persistent object, A, may have stored a Uid for another persistent object, B, in its passive representation on disk. There is nothing to prevent an application from deleting B even though A still contains a reference to it. When A is next activated and attempts to access B, a run-time error will occur.
+       </p>
+     </li>
+     <li>
+       <p>
+	 There is presently no support for version control of objects or database reconfiguration in the event of class structure changes. This is a complex research area that we have not addressed. At present, if you change the definition of a class of persistent objects, you are entirely responsible for ensuring that existing instances of the object in the Object Store are converted to the new representation. The ArjunaCore software can neither detect nor correct references to old object state by new operation versions or vice versa.
+       </p>
+     </li>
+     <li>
+       <p>
+	 Object store management is critically important to the transaction service.
+       </p>
+     </li>
+   </ul>
+ 
+ <!-- SAMPLE LINKS
+ <related-links> 
+	<link href="../concepts/soapproxy.dita" format="dita" type="concept">
+			<linktext>SOAPProxy</linktext>
+		</link>
+<link href="../tasks/configure_soap.dita" format="dita" type="task">
+			<linktext>Configuring SOAP</linktext>
+		</link>		
+
+	</related-links> 
+	-->
+ 
+
+
+
+
+
+	</conbody>
+
+</concept>
