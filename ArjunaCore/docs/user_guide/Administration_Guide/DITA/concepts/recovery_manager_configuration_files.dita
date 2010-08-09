@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="recovery_manager_configuration_files" xml:lang="en-us">
+ <title>Recover manager configuration files</title>
+ <abstract>
+   The recovery manager uses a cascading system of configuration files.
+ </abstract>
+
+ <prolog>
+   <author type="creator">JBoss, Inc.</author>
+   <author type="contributor">Misty Stanley-Jones</author>
+   <publisher>Red Hat Engineering Content Services</publisher>
+   <copyright>
+     <copyryear year="2010"/>
+     <copyrholder>JBoss.org</copyrholder>
+   </copyright>
+   <critdates>
+     <created date="2010"/>
+     <revised modified="2010-Aug-06"/>
+   </critdates>
+   <metadata>
+     <keywords>
+       <indexterm>security</indexterm>
+       <indexterm>object store</indexterm>
+       <indexterm>limitations</indexterm>				
+     </keywords>
+     <prodinfo>
+       <prodname>ArjunaCore</prodname>
+       <vrmlist>
+	 <vrm version="4.12.0"/>
+       </vrmlist>
+     </prodinfo>
+   </metadata>
+ </prolog>
+
+ 
+ <conbody>
+   <p>
+     The RecoveryManager reads the properties defined in the following files, in order:
+   </p>
+   <ol>
+     <li><filepath>arjuna.properties</filepath></li>
+     <li><filepath>RecoveryManager.properties</filepath>, from the same directory as the <filepath>arjuna properties</filepath> file.</li>
+   </ol>
+   <p>
+     An entry for a property in the
+     <filepath>RecoveryManager.properties</filepath> file will override an entry
+     for the same property in the main TransactionService properties file. Most
+     of the entries are specific to the Recovery Manager.
+   </p>
+   <p>
+     A default version of <filepath>RecoveryManager.properties</filepath> is
+     supplied with the distribution. – This can be used without modification,
+     except possibly the debug tracing fields.
+     <!-- Glue
+	  The rest of this section discusses the
+	    issues relevant in setting the properties to other values (in the
+	    order of their appearance in the default version of the file)
+     -->
+   </p>
+ </conbody>
+</concept>

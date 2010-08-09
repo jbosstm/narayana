@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="arjuna_core_starting_recovery_manager" xml:lang="en-us">
+ <title>Starting the recovery manager</title>
+
+
+<prolog>
+		<author type="creator">JBoss, Inc.</author>
+		<author type="contributor">Misty Stanley-Jones</author>
+		<publisher>Red Hat Engineering Content Services</publisher>
+		<copyright>
+			<copyryear year="2010"/>
+			<copyrholder>JBoss.org</copyrholder>
+		</copyright>
+		<critdates>
+			<created date="2010"/>
+			<revised modified="2010-Aug-06"/>
+		</critdates>
+		<metadata>
+			<keywords>
+				<indexterm>security</indexterm>
+				<indexterm>object store</indexterm>
+				<indexterm>limitations</indexterm>				
+			</keywords>
+			<prodinfo>
+				<prodname>ArjunaCore</prodname>
+				<vrmlist>
+					<vrm version="4.12.0"/>
+				</vrmlist>
+			</prodinfo>
+		</metadata>
+	</prolog>
+
+
+ <conbody>
+   <p>
+
+   </p>
+
+ <!-- SAMPLE LINKS
+ <related-links> 
+	<link href="../concepts/soapproxy.dita" format="dita" type="concept">
+			<linktext>SOAPProxy</linktext>
+		</link>
+<link href="../tasks/configure_soap.dita" format="dita" type="task">
+			<linktext>Configuring SOAP</linktext>
+		</link>		
+
+	</related-links> 
+	-->
+ 
+
+
+
+
+
+	</conbody>
+
+</concept>

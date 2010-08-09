@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="arjuna_core_failure_recovery_administration" xml:lang="en-us">
+ <title>Failure recovery administration</title>
+
+
+ <prolog>
+   <author type="creator">JBoss, Inc.</author>
+   <author type="contributor">Misty Stanley-Jones</author>
+   <publisher>Red Hat Engineering Content Services</publisher>
+   <copyright>
+     <copyryear year="2010"/>
+     <copyrholder>JBoss.org</copyrholder>
+   </copyright>
+   <critdates>
+     <created date="2010"/>
+     <revised modified="2010-Aug-06"/>
+   </critdates>
+   <metadata>
+     <keywords>
+       <indexterm>security</indexterm>
+       <indexterm>object store</indexterm>
+       <indexterm>limitations</indexterm>				
+     </keywords>
+     <prodinfo>
+       <prodname>ArjunaCore</prodname>
+       <vrmlist>
+	 <vrm version="4.12.0"/>
+       </vrmlist>
+     </prodinfo>
+   </metadata>
+ </prolog>
+
+
+ <conbody>
+   <p>
+     The failure recovery subsystem of ArjunaCore will ensure that results of a
+     transaction are applied consistently to all resources affected by the
+     transaction, even if any of the application processes or the machine
+     hosting them crash or lose network connectivity. In the case of machine
+     (system) crash or network failure, the recovery will not take place until
+     the system or network are restored, but the original application does not
+     need to be restarted. –Recovery responsibility is delegated to the Recovery
+     Manager process. Recovery after failure requires that
+     information about the transaction and the resources involved survives the
+     failure and is accessible afterward: this information is held in the
+     ActionStore, which is part of the ObjectStore.
+   </p>
+   <p>
+     If the ObjectStore is destroyed or modified, recovery may not be possible.
+   </p>
+   <p>
+     Until the recovery procedures are complete, resources affected by a
+     transaction that was in progress at the time of the failure may be
+     inaccessible. For database resources, this may be reported as tables or
+     rows held by “in-doubt transactions”. For <apiname>Transactional Objects
+     for Java</apiname> resources, an attempt to activate the Transactional
+     Object (as when trying to get a lock) will fail.
+   </p>
+
+ <!-- SAMPLE LINKS
+ <related-links> 
+	<link href="../concepts/soapproxy.dita" format="dita" type="concept">
+			<linktext>SOAPProxy</linktext>
+		</link>
+<link href="../tasks/configure_soap.dita" format="dita" type="task">
+			<linktext>Configuring SOAP</linktext>
+		</link>		
+
+	</related-links> 
+	-->
+ 
+
+
+
+
+
+	</conbody>
+
+</concept>
