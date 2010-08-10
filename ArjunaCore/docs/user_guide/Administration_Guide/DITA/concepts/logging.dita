@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "../dtd/concept.dtd">
+<concept id="arjuna_core_runtime_information" xml:lang="en-us">
+  <title>ArjunaCore Logging Levels</title>
+
+
+  <prolog>
+    <author type="creator">JBoss, Inc.</author>
+    <author type="contributor">Misty Stanley-Jones</author>
+    <publisher>Red Hat Engineering Content Services</publisher>
+    <copyright>
+      <copyryear year="2010"/>
+      <copyrholder>JBoss.org</copyrholder>
+    </copyright>
+    <critdates>
+      <created date="2010"/>
+      <revised modified="2010-Aug-06"/>
+    </critdates>
+    <metadata>
+      <keywords>
+	<indexterm>security</indexterm>
+	<indexterm>object store</indexterm>
+	<indexterm>limitations</indexterm>				
+      </keywords>
+      <prodinfo>
+	<prodname>ArjunaCore</prodname>
+	<vrmlist>
+	  <vrm version="4.12.0"/>
+	</vrmlist>
+      </prodinfo>
+    </metadata>
+  </prolog>
+
+
+  <conbody>
+    <p>
+      It is likely that installations will want to have some form of output from the RecoveryManager, to provide a record of what recovery activity has taken place. RecoveryManager uses the logging tracing mechanism provided by the Arjuna Common Logging Framework (CLF), which provides a high level interface that hides differences that exist between existing logging APIs such <apiname>Jakarta log4j</apiname> or <apiname>JDK 1.4 logging API</apiname>. CLF indirects all logging via the <apiname>Apache Commons Logging</apiname> framework and configuration is assumed to occur through that framework.
+    </p>
+    <p>
+      With the CLF applications make logging calls on logger objects. Loggers may use logging Levels to decide if they are interested in a particular log message. Each log message has an associated log Level, that gives the importance and urgency of a log message.  The set of possible Log Levels, from least to most verbosity, are:
+    </p>
+    <ol>
+      <li>DEBUG</li>
+      <li>INFO</li>
+      <li>WARN</li>
+      <li>ERROR</li>
+      <li>FATAL</li>
+    </ol>
+    <p>
+      Messages describing the start and the periodical behavior made by the RecoveryManager are output using the INFO level. If other debug tracing is wanted, the finer debugging level should be set appropriately.
+    </p>
+    <p>
+      Setting the normal recovery messages to the INFO level allows the RecoveryManager to produce a moderate level of reporting. If nothing is going on, it just reports the entry into each module for each periodic pass. To disable INFO messages produced by the Recovery Manager, the logging level could be set to the higher level: ERROR. Setting the level to ERROR means that the RecoveryManager will only produce error, warning or fatal messages.
+    </p>
+    <!-- SAMPLE LINKS
+	 <related-links> 
+	 <link href="../concepts/soapproxy.dita" format="dita" type="concept">
+	 <linktext>SOAPProxy</linktext>
+	 </link>
+	 <link href="../tasks/configure_soap.dita" format="dita" type="task">
+	 <linktext>Configuring SOAP</linktext>
+	 </link>		
+
+</related-links> 
+    -->
+  </conbody>
+  
+</concept>
