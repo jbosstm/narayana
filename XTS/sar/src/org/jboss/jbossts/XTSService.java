@@ -20,6 +20,8 @@
  */
 package org.jboss.jbossts;
 
+import com.arjuna.mw.wscf.protocols.ProtocolManager;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule;
@@ -141,6 +143,9 @@ public class XTSService implements XTSServiceMBean {
         // read unified properties file (replaces wscf.xml and wstx.xml)
         // Configuration.initialise("/jbossxts.xml");
 
+        // install protocol implementation classes declared by config file
+        ProtocolRegistry.sharedManager().initialise();
+
         // before we can allow the services to start up we need to identify the server
         // bind address and the web service port so they services register themselves
         // in the registry using the correct URL
@@ -246,6 +251,7 @@ public class XTSService implements XTSServiceMBean {
                 System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL, coordinatorURL);
             }
         }
+
         // now it is safe to let the Sequencer class run any intiialisation routines it needs
 
         Sequencer.unlatch();

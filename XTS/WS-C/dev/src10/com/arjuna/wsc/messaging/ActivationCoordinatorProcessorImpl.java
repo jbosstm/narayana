@@ -49,7 +49,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
     public void createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
         final AddressingContext addressingContext)
     {
-        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;
+        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getMapper() ;
         try
         {
             final String coordinationType = createCoordinationContext.getCoordinationType().getValue() ;

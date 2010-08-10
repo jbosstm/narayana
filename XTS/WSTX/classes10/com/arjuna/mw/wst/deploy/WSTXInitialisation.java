@@ -47,11 +47,6 @@ import com.arjuna.wsc.common.Environment;
 public class WSTXInitialisation implements ServletContextListener
 {
     /**
-     * The name of the WS-T configuration.
-     */
-    private static final String WS_T_CONFIG = "/wst.xml" ;
-    
-    /**
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      * 
@@ -64,8 +59,6 @@ public class WSTXInitialisation implements ServletContextListener
            public void run() {
                try
                {
-                   Configuration.initialise("/wstx.xml");
-
                    // ok, if we just loaded a coordinator URL and one was already defined on
                    // the command line then reinstate the command line version
                    String commandLineCoordinatrURL  = System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL);
@@ -100,27 +93,10 @@ public class WSTXInitialisation implements ServletContextListener
         throws Exception
     {
         // mostly original JNDI binder code.  Should be tidied up.
-        final InputStream is = ClassLoaderHelper.getResourceAsStream(getClass(), WS_T_CONFIG) ;
-
-        if (is == null)
-        {
-            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst_deploy_WSTXI_21(WS_T_CONFIG));
-        }
-        
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance() ;
-        final DocumentBuilder builder = factory.newDocumentBuilder() ;
-        final Document doc = builder.parse(is);
-
-        if (doc == null)
-        {
-            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst_deploy_WSTXI_22(WS_T_CONFIG));
-        }
-
-        final Element docElem = doc.getDocumentElement() ;
-        final String userTx = getService(docElem, "UserTransaction") ;
-        final String txManager = getService(docElem, "TransactionManager") ;
-        final String userBa = getService(docElem, "UserBusinessActivity") ;
-        final String baManager = getService(docElem, "BusinessActivityManager") ;
+        final String userTx = System.getProperty("org.jboss.jbossts.xts.wsat.UserTransaction");
+        final String txManager = System.getProperty("org.jboss.jbossts.xts.wsat.TransactionManager") ;
+        final String userBa = System.getProperty("org.jboss.jbossts.xts.wsba.UserBusinessActivity") ;
+        final String baManager = System.getProperty("org.jboss.jbossts.xts.wsba.BusinessActivityManager") ;
 
         if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {

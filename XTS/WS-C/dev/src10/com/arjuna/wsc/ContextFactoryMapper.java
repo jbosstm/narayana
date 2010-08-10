@@ -38,28 +38,20 @@ public class ContextFactoryMapper
     /**
      * The factory singleton.
      */
-    private static final ContextFactoryMapper FACTORY = new ContextFactoryMapper() ;
+    private static final ContextFactoryMapper theMapper = new ContextFactoryMapper() ;
     
     /**
      * The context factory map.
      */
     private final Map contextFactoryMap = new HashMap() ;
-    /**
-     * The subordinate context factory mapper.
-     */
-    private ContextFactoryMapper subordinateContextFactoryMapper ;
-    /**
-     * The default context factory.
-     */
-    private ContextFactory defaultContextFactory ;
-    
+
     /**
      * Get the context factory mapper singleton.
      * @return The context factory mapper singleton.
      */
-    public static ContextFactoryMapper getFactory()
+    public static ContextFactoryMapper getMapper()
     {
-        return FACTORY ;
+        return theMapper;
     }
     
     /**
@@ -90,24 +82,10 @@ public class ContextFactoryMapper
      */
     public ContextFactory getContextFactory(final String coordinationTypeURI)
     {
-        final Object localContextFactory ;
         synchronized(contextFactoryMap)
         {
-            localContextFactory = contextFactoryMap.get(coordinationTypeURI) ;
+            return (ContextFactory)contextFactoryMap.get(coordinationTypeURI) ;
         }
-        if (localContextFactory != null)
-        {
-            return (ContextFactory)localContextFactory ;
-        }
-        if (subordinateContextFactoryMapper != null)
-        {
-            final ContextFactory subordinateContextFactory = subordinateContextFactoryMapper.getContextFactory(coordinationTypeURI) ;
-            if (subordinateContextFactory != null)
-            {
-                return subordinateContextFactory ;
-            }
-        }
-        return defaultContextFactory ;
     }
 
     /**
@@ -125,41 +103,5 @@ public class ContextFactoryMapper
         {
             ((ContextFactory)localContextFactory).uninstall(coordinationTypeURI) ;
         }
-    }
-
-    /**
-     * Get the subordinate coordination factory mapper.
-     * @return The subordinate coordination factory mapper.
-     */
-    public ContextFactoryMapper getSubordinateContextFactoryMapper()
-    {
-        return subordinateContextFactoryMapper ;
-    }
-
-    /**
-     * Set a subordinate coordination factory mapper.
-     * @param subordinateContextFactoryMapper The subordinate coordination factory mapper.
-     */
-    public void setSubordinateContextFactoryMapper(final ContextFactoryMapper subordinateContextFactoryMapper)
-    {
-        this.subordinateContextFactoryMapper = subordinateContextFactoryMapper ;
-    }
-
-    /**
-     * Get the default coordination factory.
-     * @return The default coordination factory.
-     */
-    public ContextFactory getDefaultContextFactory()
-    {
-        return defaultContextFactory ;
-    }
-
-    /**
-     * Set the default coordination factory.
-     * @param defaultContextFactory The default coordination factory.
-     */
-    public void setDefaultContextFactory(final ContextFactory defaultContextFactory)
-    {
-        this.defaultContextFactory = defaultContextFactory ;
     }
 }

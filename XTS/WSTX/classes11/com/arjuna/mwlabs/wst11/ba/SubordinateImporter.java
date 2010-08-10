@@ -2,7 +2,6 @@ package com.arjuna.mwlabs.wst11.ba;
 
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.ba.context.TxContextImple;
-import com.arjuna.mwlabs.wst11.ba.ContextFactoryImple;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.wsc11.ContextFactoryMapper;
@@ -23,7 +22,7 @@ public class SubordinateImporter
     /**
      * handle on the local 1.1 context factory implementation
      */
-    private static ContextFactoryImple baContextFactory = (ContextFactoryImple) ContextFactoryMapper.getFactory().getContextFactory(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME);
+    private static ContextFactoryImple baContextFactory = (ContextFactoryImple) ContextFactoryMapper.getMapper().getContextFactory(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME);
 
     public static TxContext importContext(CoordinationContextType cc)
     {

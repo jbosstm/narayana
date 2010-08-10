@@ -149,8 +149,11 @@
         <echo message="Installing configuration"/>
         <mkdir dir="${xts.installationdirectory}/conf"/>
         <copy todir="${xts.installationdirectory}/conf">
+            <!--
             <fileset dir="WSCF/config"/>
             <fileset dir="WSTX/config" includes="*.xml"/>
+            -->
+            <fileset  dir="." includes="xts.properties"/>
         </copy>
 
 		<echo message="Installing htdocs"/>

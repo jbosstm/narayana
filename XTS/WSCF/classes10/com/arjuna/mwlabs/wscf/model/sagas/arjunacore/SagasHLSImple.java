@@ -34,8 +34,6 @@ package com.arjuna.mwlabs.wscf.model.sagas.arjunacore;
 import com.arjuna.mw.wscf.model.sagas.api.*;
 import com.arjuna.mw.wscf.model.sagas.hls.SagasHLS;
 
-import com.arjuna.mw.wscf.common.Environment;
-
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 
 import com.arjuna.mw.wscf.common.Qualifier;
@@ -58,6 +56,11 @@ import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 import com.arjuna.mw.wsas.exceptions.HLSError;
 
 import com.arjuna.mw.wscf.exceptions.*;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
+import com.arjuna.mwlabs.wscf.utils.ContextProvider;
+import com.arjuna.mwlabs.wscf.utils.HLSProvider;
+
+import java.lang.annotation.Annotation;
 
 /**
  * The ArjunaCore coordination service implementation.
@@ -67,8 +70,11 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @since 1.0.
  */
 
+@HLSProvider(serviceType = SagasHLSImple.serviceType)
 public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 {
+    public final static String serviceType = "SagasHLS";
+    public final static String coordinationType = "http://schemas.xmlsoap.org/ws/2004/10/wsba/AtomicOutcome";
 
     public SagasHLSImple ()
     {
@@ -157,7 +163,7 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 
     public String identity () throws SystemException
     {
-	return "SagasHLS";
+	return serviceType;
     }
 
     /**
@@ -196,26 +202,49 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 
     public Context context () throws SystemException
     {
-        if (CONTEXT_IMPLE_NAME != null) {
-            if (CONTEXT_IMPLE_CLASS != null) {
-                try {
-                    SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
+        ensureContextInitialised();
+        if (CONTEXT_IMPLE_CLASS != null) {
+            try {
+                SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
 
-                    ctx.initialiseContext(_coordManager.currentCoordinator());
+                ctx.initialiseContext(_coordManager.currentCoordinator());
 
-                    return ctx;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    throw new SystemException(ex.toString());
-                }
-            } else {
-                throw new SystemException("Unable to create SOAPContext for SAGAS context implementation from class" + CONTEXT_IMPLE_NAME);
+                return ctx;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw new SystemException(ex.toString());
             }
         } else {
-            throw new SystemException("SAGAS context implementation must be specified by setting environment property " + Environment.SAGAS_CONTEXT);
+            throw new SystemException("Unable to create SOAPContext for SAGAS service");
         }
     }
 
+    private void ensureContextInitialised() throws SystemException
+    {
+        if (!initialised) {
+            synchronized(this) {
+                if (!initialised) {
+                    // we  only do this once no matter what happens
+                    initialised = true;
+                    try {
+                        Class<?> factoryClass = ProtocolRegistry.sharedManager().getProtocolImplementation(coordinationType).getClass();
+                        ContextProvider contextProvider = factoryClass.getAnnotation(ContextProvider.class);
+                        String providerServiceType = contextProvider.serviceType();
+                        if (!providerServiceType.equals(serviceType)) {
+                            throw new SystemException("Invalid serviceType for SOAPContext factory registered for SAGAS service expecting " + serviceType + " got " + providerServiceType);
+                        }
+                        Class contextClass = contextProvider.contextImplementation();
+                        if (!SOAPContext.class.isAssignableFrom(contextClass)) {
+                            throw new SystemException("SOAPContext factory registered for SAGAS service provides invalid context implementation");
+                        }
+                        CONTEXT_IMPLE_CLASS = contextClass;
+                    } catch (ProtocolNotRegisteredException pnre) {
+                        throw new SystemException("No SOAPContext factory registered for SAGAS service");
+                    }
+                }
+            }
+        }
+    }
     /**
      * If the application requires and if the coordination protocol supports
      * it, then this method can be used to execute a coordination protocol on
@@ -287,17 +316,8 @@ public class SagasHLSImple implements SagasHLS, UserCoordinatorService
 	return SagasHLSImple.class.getName();
     }
 
-    private final static String  CONTEXT_IMPLE_NAME = System.getProperty(Environment.SAGAS_CONTEXT);
-    private final static Class<?> CONTEXT_IMPLE_CLASS;
-    static {
-        Class<?> tmp;
-        try {
-            tmp = Class.forName(CONTEXT_IMPLE_NAME);
-        } catch (Exception ex) {
-            tmp = null;
-        }
-        CONTEXT_IMPLE_CLASS = tmp;
-    }
+    private static Class<?> CONTEXT_IMPLE_CLASS = null;
+    private static boolean initialised = false;
 
     private CoordinatorControl      _coordManager;
     private CoordinatorServiceImple _coordinatorService;

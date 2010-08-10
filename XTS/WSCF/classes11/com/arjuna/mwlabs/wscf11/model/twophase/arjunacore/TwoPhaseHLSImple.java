@@ -34,7 +34,7 @@ package com.arjuna.mwlabs.wscf11.model.twophase.arjunacore;
 import com.arjuna.mw.wscf.model.twophase.api.*;
 import com.arjuna.mw.wscf.model.twophase.hls.TwoPhaseHLS;
 
-import com.arjuna.mw.wscf11.common.Environment;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 
@@ -60,6 +60,8 @@ import com.arjuna.mw.wsas.exceptions.HLSError;
 import com.arjuna.mw.wscf.exceptions.*;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl;
+import com.arjuna.mwlabs.wscf.utils.ContextProvider;
+import com.arjuna.mwlabs.wscf.utils.HLSProvider;
 
 /**
  * The ArjunaCore coordination service implementation.
@@ -69,8 +71,11 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl;
  * @since 1.0.
  */
 
+@HLSProvider(serviceType = TwoPhaseHLSImple.serviceType)
 public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 {
+    public final static String serviceType = "TwoPhase11HLS";
+    public final static String coordinationType = "http://docs.oasis-open.org/ws-tx/wsat/2006/06";
 
 	public TwoPhaseHLSImple()
 	{
@@ -158,7 +163,7 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 
 	public String identity () throws SystemException
 	{
-		return "TwoPhase11HLS";
+		return serviceType;
 	}
 
 	/**
@@ -186,23 +191,47 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 
     public Context context () throws SystemException
     {
-        if (CONTEXT_IMPLE_NAME != null) {
-            if (CONTEXT_IMPLE_CLASS != null) {
-                try {
-                    SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
+        ensureContextInitialised();
+        if (CONTEXT_IMPLE_CLASS != null) {
+            try {
+                SOAPContext ctx = (SOAPContext) CONTEXT_IMPLE_CLASS.newInstance();
 
-                    ctx.initialiseContext(_coordManager.currentCoordinator());
+                ctx.initialiseContext(_coordManager.currentCoordinator());
 
-                    return ctx;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    throw new SystemException(ex.toString());
-                }
-            } else {
-                throw new SystemException("Unable to create SOAPContext for Two Phase 1.1 implementation from class" + CONTEXT_IMPLE_NAME);
+                return ctx;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw new SystemException(ex.toString());
             }
         } else {
-            throw new SystemException("Two Phase 1.1 context implementation must be specified by setting environment property " + Environment.TWO_PHASE_CONTEXT);
+            throw new SystemException("Unable to create SOAPContext for Two Phase 1.1 service");
+        }
+    }
+
+    private void ensureContextInitialised() throws SystemException
+    {
+        if (!initialised) {
+            synchronized(this) {
+                if (!initialised) {
+                    // we  only do this once no matter what happens
+                    initialised = true;
+                    try {
+                        Class<?> factoryClass = ProtocolRegistry.sharedManager().getProtocolImplementation(coordinationType).getClass();
+                        ContextProvider contextProvider = factoryClass.getAnnotation(ContextProvider.class);
+                        String providerServiceType = contextProvider.serviceType();
+                        if (!providerServiceType.equals(serviceType)) {
+                            throw new SystemException("Invalid serviceType for SOAPContext factory registered for Two Phase 1.1 service expecting " + serviceType + " got " + providerServiceType);
+                        }
+                        Class contextClass = contextProvider.contextImplementation();
+                        if (!SOAPContext.class.isAssignableFrom(contextClass)) {
+                            throw new SystemException("SOAPContext factory registered for Two Phase 1.1 service provides invalid context implementation");
+                        }
+                        CONTEXT_IMPLE_CLASS = contextClass;
+                    } catch (ProtocolNotRegisteredException pnre) {
+                        throw new SystemException("No SOAPContext factory registered for Two Phase 1.1 service");
+                    }
+                }
+            }
         }
     }
 
@@ -285,17 +314,8 @@ public class TwoPhaseHLSImple implements TwoPhaseHLS, UserCoordinatorService
 		return TwoPhaseHLSImple.class.getName();
 	}
 
-    private final static String  CONTEXT_IMPLE_NAME = System.getProperty(Environment.TWO_PHASE_CONTEXT);
-    private final static Class<?> CONTEXT_IMPLE_CLASS;
-    static {
-        Class<?> tmp;
-        try {
-            tmp = Class.forName(CONTEXT_IMPLE_NAME);
-        } catch (Exception ex) {
-            tmp = null;
-        }
-        CONTEXT_IMPLE_CLASS = tmp;
-    }
+    private static Class<?> CONTEXT_IMPLE_CLASS = null;
+    private static boolean initialised = false;
 
 	private CoordinatorControl _coordManager;
 	private CoordinatorServiceImple _coordinatorService;

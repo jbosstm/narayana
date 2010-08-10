@@ -58,6 +58,8 @@ import com.arjuna.webservices.wsba.BusinessActivityConstants;
 
 public class ArjunaContextImple implements SOAPContext
 {
+    public static final String serviceType = "SagasHLS";
+    public static final String coordinationType = BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME;
 
     public ArjunaContextImple ()
     {
@@ -218,7 +220,7 @@ public class ArjunaContextImple implements SOAPContext
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
-        Context context = cxman.context("SagasHLS");
+        Context context = cxman.context(serviceType);
 
         if (context instanceof ArjunaContextImple)
         {

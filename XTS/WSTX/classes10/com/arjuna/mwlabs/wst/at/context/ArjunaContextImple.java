@@ -58,6 +58,8 @@ import com.arjuna.webservices.wscoor.CoordinationConstants;
 
 public class ArjunaContextImple implements SOAPContext
 {
+    public static final String serviceType = "TwoPhaseHLS";
+    public static final String coordinationType = AtomicTransactionConstants.WSAT_PROTOCOL;
 
 	public ArjunaContextImple ()
 	{
@@ -219,7 +221,7 @@ public class ArjunaContextImple implements SOAPContext
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
-        Context context = cxman.context("TwoPhaseHLS");
+        Context context = cxman.context(serviceType);
 
         if (context instanceof ArjunaContextImple)
         {

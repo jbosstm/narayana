@@ -26,7 +26,7 @@ public class BridgeWrapper
      * transactions
      */
     private static ContextFactoryImple contextFactory =
-            (ContextFactoryImple)ContextFactoryMapper.getFactory().getContextFactory(AtomicTransactionConstants.WSAT_PROTOCOL);
+            (ContextFactoryImple)ContextFactoryMapper.getMapper().getContextFactory(AtomicTransactionConstants.WSAT_PROTOCOL);
 
     /**
      * this class handles all creation of bridged transactions 

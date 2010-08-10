@@ -57,6 +57,8 @@ import javax.xml.parsers.DocumentBuilder;
 
 public class ArjunaContextImple implements SOAPContext
 {
+    public static final String serviceType = "TwoPhase11HLS";
+    public static final String coordinationType = AtomicTransactionConstants.WSAT_PROTOCOL;
 
 	public ArjunaContextImple()
 	{
@@ -221,7 +223,7 @@ public class ArjunaContextImple implements SOAPContext
     public static ArjunaContextImple getContext()
     {
         ContextManager cxman = new ContextManager();
-        Context context = cxman.context("TwoPhase11HLS");
+        Context context = cxman.context(serviceType);
 
         if (context instanceof ArjunaContextImple)
         {

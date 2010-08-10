@@ -36,6 +36,7 @@ import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
 import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mwlabs.wscf.utils.ContextProvider;
 import com.arjuna.mwlabs.wst11.ba.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst11.ba.participants.CleanupSynchronization;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
@@ -48,6 +49,7 @@ import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.ContextFactory;
+import com.arjuna.wsc11.ContextFactoryMapper;
 import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wsc.InvalidCreateParametersException;
@@ -65,9 +67,11 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import javax.xml.namespace.QName;
 
+@ContextProvider(coordinationType = ArjunaContextImple.coordinationType,
+        serviceType = ArjunaContextImple.serviceType,
+        contextImplementation = ArjunaContextImple.class)
 public class ContextFactoryImple implements ContextFactory
 {
-
     public ContextFactoryImple()
     {
         try
@@ -75,6 +79,10 @@ public class ContextFactoryImple implements ContextFactory
             _coordManager = CoordinatorManagerFactory.coordinatorManager();
 
             _theRegistrar = new RegistrarImple();
+
+            // install the factory for the mapper to locate
+
+            ContextFactoryMapper.getMapper().addContextFactory(ArjunaContextImple.coordinationType, this);
         }
         catch (Exception ex)
         {
@@ -139,7 +147,7 @@ public class ContextFactoryImple implements ContextFactory
                 timeout = (longTimeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)longTimeout) ;
             }
 
-    		_coordManager.begin("Sagas11HLS", timeout);
+    		_coordManager.begin(ArjunaContextImple.serviceType, timeout);
 
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
             final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
@@ -399,5 +407,4 @@ public class ContextFactoryImple implements ContextFactory
 
     private CoordinatorManager                   _coordManager;
     private RegistrarImple _theRegistrar;
-
 }

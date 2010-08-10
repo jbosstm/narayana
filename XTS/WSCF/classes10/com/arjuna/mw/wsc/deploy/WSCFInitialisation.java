@@ -25,8 +25,6 @@ import javax.servlet.ServletContextListener;
 
 import com.arjuna.mw.wsas.utils.Configuration;
 import com.arjuna.mw.wscf.logging.wscfLogger;
-import com.arjuna.mwlabs.wsc.ContextFactoryMapperImple;
-import com.arjuna.wsc.ContextFactoryMapper;
 import com.arjuna.services.framework.startup.Sequencer;
 
 /**
@@ -42,25 +40,7 @@ public class WSCFInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR10, Sequencer.WEBAPP_WSCF10) {
-           public void run() {
-               try
-               {
-                   Configuration.initialise("/wscf.xml");
-
-                   final ContextFactoryMapper wscfImpl = ContextFactoryMapper.getFactory() ;
-
-                   wscfImpl.setSubordinateContextFactoryMapper(new ContextFactoryMapperImple());
-               }
-               catch (Exception exception) {
-                   wscfLogger.i18NLogger.error_mw_wsc_deploy_WSCFI_1(exception);
-               }
-               catch (Error error) {
-                   wscfLogger.i18NLogger.error_mw_wsc_deploy_WSCFI_1(error);
-               }
-           }
-        };
-        // this is the last WSCF callback to be initialised so close the list
+        // there is no WSCF initialization required so close the list
 
         Sequencer.close(Sequencer.SEQUENCE_WSCOOR10, Sequencer.WEBAPP_WSCF10);
     }

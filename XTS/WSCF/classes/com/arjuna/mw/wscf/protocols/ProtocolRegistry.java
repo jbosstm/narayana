@@ -29,9 +29,9 @@
  * $Id:$
  */
 
-package com.arjuna.mw.wscf11.protocols;
+package com.arjuna.mw.wscf.protocols;
 
-import com.arjuna.mw.wscf11.protocols.ProtocolManager;
+import com.arjuna.mw.wscf.protocols.ProtocolManager;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)

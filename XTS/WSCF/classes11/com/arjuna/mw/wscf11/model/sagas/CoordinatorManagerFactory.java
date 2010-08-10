@@ -45,8 +45,8 @@ import com.arjuna.mw.wscf.common.CoordinatorXSD;
 import com.arjuna.mw.wscf.utils.*;
 
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
-import com.arjuna.mw.wscf11.protocols.ProtocolManager;
-import com.arjuna.mw.wscf11.protocols.ProtocolRegistry;
+import com.arjuna.mw.wscf.protocols.ProtocolManager;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 
 import java.util.HashMap;
 
@@ -76,25 +76,7 @@ public class CoordinatorManagerFactory
 
     public static CoordinatorManager coordinatorManager () throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    ProtocolLocator pl = new ProtocolLocator(SagasHLSImple.class);
-	    org.w3c.dom.Document doc = pl.getProtocol();
-
-	    if (doc == null) {
-            wscfLogger.i18NLogger.warn_mw_wscf11_model_sagas_CMF_1(SagasHLSImple.className());
-        }
-	    else
-		return coordinatorManager(doc);
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-
-	    throw new SystemException(ex.toString());
-	}
-
-	return null;
+        return coordinatorManager("Sagas11HLS");
     }
 
     /**
@@ -115,43 +97,35 @@ public class CoordinatorManagerFactory
      * can be passed to the implementation in the same way ObjectName was.
      */
 
-    public static CoordinatorManager coordinatorManager (org.w3c.dom.Document protocol) throws ProtocolNotRegisteredException, SystemException
+    public static CoordinatorManager coordinatorManager (String protocol) throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    synchronized (_implementations)
-	    {
-		org.w3c.dom.Text child = DomUtil.getTextNode(protocol, CoordinatorXSD.coordinatorType);
-		String protocolType = child.getNodeValue();
-		SagasHLS coordHLS = (SagasHLS) _implementations.get(protocolType);
+        try
+        {
+            SagasHLS coordHLS;
 
-		if (coordHLS == null)
-		{
-		    Object implementation = _protocolManager.getProtocolImplementation(protocol);
+            synchronized (_implementations)
+            {
+                coordHLS = (SagasHLS) _implementations.get(protocol);
 
-		    if (implementation instanceof String)
-		    {
-			Class c = Class.forName((String) implementation);
+                if (coordHLS == null)
+                {
+                    coordHLS = (SagasHLS) _protocolManager.getProtocolImplementation(protocol);
+                    
+                    _implementations.put(protocol, coordHLS);
+                }
+            }
 
-			coordHLS = (SagasHLS) c.newInstance();
-		    }
-		    else
-			coordHLS = (SagasHLS) implementation;
+            return coordHLS.coordinatorManager();
 
-		    _implementations.put(protocolType, coordHLS);
-		}
-
-		return coordHLS.coordinatorManager();
-	    }
-	}
-	catch (ProtocolNotRegisteredException ex)
-	{
-	    throw ex;
-	}
-	catch (Exception ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
+        }
+        catch (ProtocolNotRegisteredException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new SystemException(ex.toString());
+        }
     }
 
     private static ProtocolManager _protocolManager = ProtocolRegistry.sharedManager();

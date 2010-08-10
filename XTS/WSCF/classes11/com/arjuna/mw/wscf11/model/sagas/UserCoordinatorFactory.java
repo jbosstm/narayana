@@ -45,8 +45,8 @@ import com.arjuna.mw.wscf.common.CoordinatorXSD;
 import com.arjuna.mw.wscf.utils.*;
 
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
-import com.arjuna.mw.wscf11.protocols.ProtocolManager;
-import com.arjuna.mw.wscf11.protocols.ProtocolRegistry;
+import com.arjuna.mw.wscf.protocols.ProtocolManager;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 
 import java.util.HashMap;
 
@@ -75,26 +75,8 @@ public class UserCoordinatorFactory
 
     public static UserCoordinator userCoordinator () throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    ProtocolLocator pl = new ProtocolLocator(SagasHLSImple.class);
-	    org.w3c.dom.Document doc = pl.getProtocol();
-
-	    if (doc == null) {
-            wscfLogger.i18NLogger.warn_mw_wscf11_model_sagas_UCF_1(SagasHLSImple.className());
-        }
-	    else
-		return userCoordinator(doc);
+		return userCoordinator("Sagas11HLS");
 	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-
-	    throw new SystemException(ex.toString());
-	}
-
-	return null;
-    }
 
     /**
      * Obtain a reference to a coordinator that implements the specified
@@ -109,48 +91,34 @@ public class UserCoordinatorFactory
      * @return the CoordinatorManager implementation to use.
      */
 
-    /*
-     * Have the type specified in XML. More data may be specified, which
-     * can be passed to the implementation in the same way ObjectName was.
-     */
-
-    public static UserCoordinator userCoordinator (org.w3c.dom.Document protocol) throws ProtocolNotRegisteredException, SystemException
+    public static UserCoordinator userCoordinator (String protocol) throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    synchronized (_implementations)
-	    {
-		org.w3c.dom.Text child = DomUtil.getTextNode(protocol, CoordinatorXSD.coordinatorType);
-		String protocolType = child.getNodeValue();
-		SagasHLS coordHLS = (SagasHLS) _implementations.get(protocolType);
+        try
+        {
+            SagasHLS coordHLS;
 
-		if (coordHLS == null)
-		{
-		    Object implementation = _protocolManager.getProtocolImplementation(protocol);
+            synchronized (_implementations)
+            {
+                coordHLS = (SagasHLS) _implementations.get(protocol);
 
-		    if (implementation instanceof String)
-		    {
-			Class c = Class.forName((String) implementation);
+                if (coordHLS == null)
+                {
+                    coordHLS = (SagasHLS) _protocolManager.getProtocolImplementation(protocol);
 
-			coordHLS = (SagasHLS) c.newInstance();
-		    }
-		    else
-			coordHLS = (SagasHLS) implementation;
+                    _implementations.put(protocol, coordHLS);
+                }
 
-		    _implementations.put(protocolType, coordHLS);
-		}
-
-		return coordHLS.userCoordinator();
-	    }
-	}
-	catch (ProtocolNotRegisteredException ex)
-	{
-	    throw ex;
-	}
-	catch (Exception ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
+                return coordHLS.userCoordinator();
+            }
+        }
+        catch (ProtocolNotRegisteredException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new SystemException(ex.toString());
+        }
     }
 
     private static ProtocolManager _protocolManager = ProtocolRegistry.sharedManager();

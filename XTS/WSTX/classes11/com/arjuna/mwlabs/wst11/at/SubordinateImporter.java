@@ -22,7 +22,7 @@ public class SubordinateImporter
     /**
      * handle on the local 1.1 context factory implementation
      */
-    private static ContextFactoryImple atContextFactory = (ContextFactoryImple) ContextFactoryMapper.getFactory().getContextFactory(AtomicTransactionConstants.WSAT_PROTOCOL);
+    private static ContextFactoryImple atContextFactory = (ContextFactoryImple) ContextFactoryMapper.getMapper().getContextFactory(AtomicTransactionConstants.WSAT_PROTOCOL);
 
     public static TxContext importContext(CoordinationContextType cc)
     {

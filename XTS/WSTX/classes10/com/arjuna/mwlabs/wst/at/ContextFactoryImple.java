@@ -43,6 +43,7 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst.at.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst.at.participants.CleanupSynchronization;
+import com.arjuna.mwlabs.wscf.utils.ContextProvider;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -53,10 +54,7 @@ import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices.wscoor.AttributedUnsignedIntType;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
-import com.arjuna.wsc.ContextFactory;
-import com.arjuna.wsc.InvalidCreateParametersException;
-import com.arjuna.wsc.InvalidProtocolException;
-import com.arjuna.wsc.RegistrationCoordinator;
+import com.arjuna.wsc.*;
 import com.arjuna.wsc.messaging.MessageId;
 import com.arjuna.wst.Volatile2PCParticipant;
 import com.arjuna.wst.Durable2PCParticipant;
@@ -64,6 +62,9 @@ import com.arjuna.wst.stub.SubordinateVolatile2PCStub;
 import com.arjuna.wst.stub.SubordinateDurable2PCStub;
 import com.arjuna.wst.messaging.engines.ParticipantEngine;
 
+@ContextProvider(coordinationType = ArjunaContextImple.coordinationType,
+        serviceType = ArjunaContextImple.serviceType,
+        contextImplementation = ArjunaContextImple.class)
 public class ContextFactoryImple implements ContextFactory, LocalFactory
 {
 	public ContextFactoryImple ()
@@ -73,6 +74,10 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 			_coordManager = CoordinatorManagerFactory.coordinatorManager();
 
             _theRegistrar = new RegistrarImple();
+
+            // install the factory for the mapper to locate
+
+            ContextFactoryMapper.getMapper().addContextFactory(ArjunaContextImple.coordinationType, this);
 		}
 		catch (Exception ex)
 		{
@@ -134,7 +139,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                     timeout = (timeoutVal > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)timeoutVal) ;
                 }
 
-				_coordManager.begin("TwoPhaseHLS", timeout);
+				_coordManager.begin(ArjunaContextImple.serviceType, timeout);
 				
                 final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
                 final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -315,5 +320,4 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 
 	private CoordinatorManager _coordManager;
 	private RegistrarImple _theRegistrar;
-
 }

@@ -35,6 +35,7 @@ import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.ba.context.ArjunaContextImple;
+import com.arjuna.mwlabs.wscf.utils.ContextProvider;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -46,11 +47,14 @@ import com.arjuna.webservices.wscoor.AttributedUnsignedIntType;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.wsc.ContextFactory;
+import com.arjuna.wsc.ContextFactoryMapper;
 import com.arjuna.wsc.InvalidCreateParametersException;
 
+@ContextProvider(coordinationType = ArjunaContextImple.coordinationType,
+        serviceType = ArjunaContextImple.serviceType,
+        contextImplementation = ArjunaContextImple.class)
 public class ContextFactoryImple implements ContextFactory
 {
-
     public ContextFactoryImple ()
     {
         try
@@ -58,6 +62,10 @@ public class ContextFactoryImple implements ContextFactory
             _coordManager = CoordinatorManagerFactory.coordinatorManager();
 
             _theRegistrar = new RegistrarImple();
+
+            // install the factory for the mapper to locate
+
+            ContextFactoryMapper.getMapper().addContextFactory(ArjunaContextImple.coordinationType, this);
         }
         catch (Exception ex)
         {
@@ -121,7 +129,7 @@ public class ContextFactoryImple implements ContextFactory
                 timeout = (longTimeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)longTimeout) ;
             }
     		
-    		_coordManager.begin("SagasHLS", timeout);
+    		_coordManager.begin(ArjunaContextImple.serviceType, timeout);
     
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
             final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
@@ -199,5 +207,4 @@ public class ContextFactoryImple implements ContextFactory
 
     private CoordinatorManager                   _coordManager;
     private RegistrarImple                       _theRegistrar;
-    
 }

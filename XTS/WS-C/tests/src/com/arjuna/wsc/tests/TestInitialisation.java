@@ -38,7 +38,7 @@ public class TestInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;
+        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getMapper() ;
         final TestContextFactory testContextFactory = new TestContextFactory(TestUtil.COORDINATION_TYPE) ;
 
         contextFactoryMapper.addContextFactory(TestUtil.COORDINATION_TYPE, testContextFactory) ;
@@ -60,7 +60,7 @@ public class TestInitialisation implements ServletContextListener
      */
     public void contextDestroyed(final ServletContextEvent servletContextEvent)
     {
-        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;
+        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getMapper() ;
         contextFactoryMapper.removeContextFactory(TestUtil.COORDINATION_TYPE);
         contextFactoryMapper.removeContextFactory(TestUtil.INVALID_CREATE_PARAMETERS_COORDINATION_TYPE);
         

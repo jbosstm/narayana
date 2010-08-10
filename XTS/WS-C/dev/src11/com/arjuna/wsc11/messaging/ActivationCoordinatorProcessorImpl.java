@@ -52,7 +52,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                                   final MAP map,
                                   final boolean isSecure)
     {
-        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;
+        final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getMapper() ;
         try
         {
             final String coordinationType = createCoordinationContext.getCoordinationType() ;

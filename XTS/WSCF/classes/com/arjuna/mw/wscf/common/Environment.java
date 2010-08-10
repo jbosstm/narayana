@@ -29,7 +29,7 @@
  * $Id: Environment.java,v 1.6 2004/03/15 13:25:01 nmcl Exp $
  */
 
-package com.arjuna.mw.wscf11.common;
+package com.arjuna.mw.wscf.common;
 
 /**
  *
@@ -40,7 +40,7 @@ package com.arjuna.mw.wscf11.common;
 
 public class Environment
 {
-    public static final String PROTOCOL_IMPLEMENTATION = "com.arjuna.mw.wscf11.protocolImplementation";
-    public static final String TWO_PHASE_CONTEXT = "com.arjuna.mw.wscf11.protocols.twophase.context";
-    public static final String SAGAS_CONTEXT = "com.arjuna.mw.wscf11.protocols.sagas.context";
+
+    public static final String PROTOCOL_IMPLEMENTATION = "org.jboss.jbossts.xts.protocolImplementation";
+    
 }

@@ -31,25 +31,16 @@
 
 package com.arjuna.mw.wscf.model.twophase;
 
-import com.arjuna.mw.wscf.logging.wscfLogger;
-
 import com.arjuna.mw.wscf.model.twophase.hls.TwoPhaseHLS;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 
-import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
-
-import com.arjuna.mw.wscf.common.CoordinatorXSD;
-
 import com.arjuna.mw.wscf.protocols.*;
-import com.arjuna.mw.wscf.utils.*;
 
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 
 import java.util.HashMap;
-
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.TwoPhaseHLSImple;
 
 /**
  * The factory which returns the UserCoordinator implementation to use.
@@ -74,26 +65,8 @@ public class UserCoordinatorFactory
 
     public static UserCoordinator userCoordinator () throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    ProtocolLocator pl = new ProtocolLocator(TwoPhaseHLSImple.class);
-	    org.w3c.dom.Document doc = pl.getProtocol();
-	    
-	    if (doc == null) {
-            wscfLogger.i18NLogger.warn_model_twophase_UCF_1(TwoPhaseHLSImple.className());
-        }
-	    else
-		return userCoordinator(doc);
+		return userCoordinator("TwoPhaseHLS");
 	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-
-	    throw new SystemException(ex.toString());
-	}
-
-	return null;
-    }
 
     /**
      * Obtain a reference to a coordinator that implements the specified
@@ -108,48 +81,34 @@ public class UserCoordinatorFactory
      * @return the CoordinatorManager implementation to use.
      */
     
-    /*
-     * Have the type specified in XML. More data may be specified, which
-     * can be passed to the implementation in the same way ObjectName was.
-     */
-
-    public static UserCoordinator userCoordinator (org.w3c.dom.Document protocol) throws ProtocolNotRegisteredException, SystemException
+    public static UserCoordinator userCoordinator (String protocol) throws ProtocolNotRegisteredException, SystemException
     {
-	try
-	{
-	    synchronized (_implementations)
-	    {
-		org.w3c.dom.Text child = DomUtil.getTextNode(protocol, CoordinatorXSD.coordinatorType);
-		String protocolType = child.getNodeValue();
-		TwoPhaseHLS coordHLS = (TwoPhaseHLS) _implementations.get(protocolType);
+        try
+        {
+            TwoPhaseHLS coordHLS;
+
+            synchronized (_implementations)
+            {
+                coordHLS = (TwoPhaseHLS) _implementations.get(protocol);
 	
-		if (coordHLS == null)
-		{
-		    Object implementation = _protocolManager.getProtocolImplementation(protocol);
-		
-		    if (implementation instanceof String)
-		    {
-			Class c = Class.forName((String) implementation);
+                if (coordHLS == null)
+                {
+                    coordHLS = (TwoPhaseHLS) _protocolManager.getProtocolImplementation(protocol);
 
-			coordHLS = (TwoPhaseHLS) c.newInstance();
-		    }
-		    else
-			coordHLS = (TwoPhaseHLS) implementation;
-
-		    _implementations.put(protocolType, coordHLS);
-		}
+                    _implementations.put(protocol, coordHLS);
+                }
+            }
 	    
-		return coordHLS.userCoordinator();
-	    }
-	}
-	catch (ProtocolNotRegisteredException ex)
-	{
-	    throw ex;
-	}
-	catch (Exception ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
+            return coordHLS.userCoordinator();
+        }
+        catch (ProtocolNotRegisteredException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new SystemException(ex.toString());
+        }
     }
 
     private static ProtocolManager _protocolManager = ProtocolRegistry.sharedManager();

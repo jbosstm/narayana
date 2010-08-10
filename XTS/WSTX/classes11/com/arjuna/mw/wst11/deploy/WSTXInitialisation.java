@@ -45,11 +45,6 @@ import java.io.InputStream;
 public class WSTXInitialisation implements ServletContextListener
 {
     /**
-     * The name of the WS-T configuration.
-     */
-    private static final String WS_T11_CONFIG = "/wst11.xml" ;
-
-    /**
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      *
@@ -62,8 +57,6 @@ public class WSTXInitialisation implements ServletContextListener
            public void run() {
                try
                {
-                   Configuration.initialise("/wstx11.xml");
-
                    fixCoordinatorURL();
 
                    listener.configure();
@@ -90,28 +83,10 @@ public class WSTXInitialisation implements ServletContextListener
     private void configure()
         throws Exception
     {
-        // mostly original JNDI binder code.  Should be tidied up.
-        final InputStream is = ClassLoaderHelper.getResourceAsStream(getClass(), WS_T11_CONFIG) ;
-
-        if (is == null)
-        {
-            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst11_deploy_WSTXI_21(WS_T11_CONFIG));
-        }
-
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance() ;
-        final DocumentBuilder builder = factory.newDocumentBuilder() ;
-        final Document doc = builder.parse(is);
-
-        if (doc == null)
-        {
-            throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst11_deploy_WSTXI_22(WS_T11_CONFIG));
-        }
-
-        final Element docElem = doc.getDocumentElement() ;
-        final String userTx = getService(docElem, "UserTransaction") ;
-        final String txManager = getService(docElem, "TransactionManager") ;
-        final String userBa = getService(docElem, "UserBusinessActivity") ;
-        final String baManager = getService(docElem, "BusinessActivityManager") ;
+        final String userTx = System.getProperty("org.jboss.jbossts.xts.wsat11.UserTransaction");
+        final String txManager = System.getProperty("org.jboss.jbossts.xts.wsat11.TransactionManager") ;
+        final String userBa = System.getProperty("org.jboss.jbossts.xts.wsba11.UserBusinessActivity") ;
+        final String baManager = System.getProperty("org.jboss.jbossts.xts.wsba11.BusinessActivityManager") ;
 
         if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
