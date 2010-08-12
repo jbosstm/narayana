@@ -31,26 +31,16 @@
 
 package com.arjuna.mw.wscf11.model.twophase;
 
-import com.arjuna.mw.wscf.logging.wscfLogger;
-
 import com.arjuna.mw.wscf.model.twophase.hls.TwoPhaseHLS;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
-
-import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
-
-import com.arjuna.mw.wscf.common.CoordinatorXSD;
-
-import com.arjuna.mw.wscf.utils.*;
 
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.protocols.ProtocolManager;
 import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 
 import java.util.HashMap;
-
-import com.arjuna.mwlabs.wscf11.model.twophase.arjunacore.TwoPhaseHLSImple;
 
 /**
  * The factory to return the specific CoordinatorManager implementation.

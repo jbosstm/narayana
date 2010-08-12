@@ -20,6 +20,9 @@
  */
 package com.arjuna.webservices.util;
 
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
+
 import java.util.Timer;
 
 /**
@@ -114,5 +117,14 @@ public class TransportTimer
         }
 
         return MAX_PERIOD ;
+    }
+
+    // initialise timings from configuration values
+    static
+    {
+        WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        setTransportPeriod(wscEnvironmentBean.getInitialTransportPeriod());
+        setMaximumTransportPeriod(wscEnvironmentBean.getMaximumTransportPeriod());
+        setTransportTimeout(wscEnvironmentBean.getTransportTimeout());
     }
 }

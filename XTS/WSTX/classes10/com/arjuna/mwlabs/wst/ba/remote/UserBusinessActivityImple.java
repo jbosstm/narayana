@@ -54,6 +54,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.stub.BusinessActivityTerminatorStub;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
  * This is the interface that allows transactions to be started and terminated.
@@ -68,7 +69,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     {
         try
         {
-            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR_URL);
+            _activationCoordinatorService = XTSPropertyManager.getWSCEnvironmentBean().getCoordinatorURL10();
 
             /*
              * If the coordinator URL hasn't been specified via the

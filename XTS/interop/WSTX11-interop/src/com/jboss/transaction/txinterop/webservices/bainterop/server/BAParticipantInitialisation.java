@@ -27,6 +27,8 @@ import javax.servlet.ServletContext;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropConstants;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
  * Initialise the interop initiator service.
@@ -41,7 +43,10 @@ public class BAParticipantInitialisation implements ServletContextListener
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
         ServletContext context = servletContextEvent.getServletContext();
-        String baseURI = context.getInitParameter("BaseURI");
+        WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        String bindAddress = wscEnvironmentBean.getBindAddress11();
+        int bindPort = wscEnvironmentBean.getBindPort11();
+        String baseURI = "http://" + bindAddress + ":" +  bindPort + "/interop11";
         final String uri = baseURI + "/BAParticipantService";
 
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;

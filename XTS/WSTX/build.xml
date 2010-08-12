@@ -264,12 +264,6 @@
     </target>
 
     <target name="jar10" if="build10">
-        <copy file="xml/UserTwoPhaseTx.xml"
-              tofile="${build.classes10.dir}/com/arjuna/mwlabs/wstx/model/as/twophase/UserTwoPhaseTx.xml"/>
-        <copy file="xml/AtomicTransaction.xml"
-              tofile="${build.classes10.dir}/com/arjuna/mwlabs/wst/at/ContextFactoryImple.xml"/>
-        <copy file="xml/BusinessActivity.xml"
-              tofile="${build.classes10.dir}/com/arjuna/mwlabs/wst/ba/ContextFactoryImple.xml"/>
         <jar jarfile="${build.lib.dir}/${modulename}10.jar">
             <fileset dir="${build.classes10.dir}" excludes="${wstx10.api.classes}"/>
         </jar>
@@ -279,12 +273,6 @@
     </target>
 
     <target name="jar11">
-        <copy file="xml/UserTwoPhaseTx.xml"
-              tofile="${build.classes11.dir}/com/arjuna/mwlabs/wstx11/model/as/twophase/UserTwoPhaseTx.xml"/>
-        <copy file="xml/AtomicTransaction11.xml"
-              tofile="${build.classes11.dir}/com/arjuna/mwlabs/wst11/at/ContextFactoryImple.xml"/>
-        <copy file="xml/BusinessActivity11.xml"
-              tofile="${build.classes11.dir}/com/arjuna/mwlabs/wst11/ba/ContextFactoryImple.xml"/>
         <jar jarfile="${build.lib.dir}/${modulename}11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${wstx11.api.classes}"/>
         </jar>

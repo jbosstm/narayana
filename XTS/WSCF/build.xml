@@ -160,17 +160,6 @@
 
     <target name="jar10" if="build10">
         <echo message="Building 10 jar files"/>
-        <copy file="xml/ArjunaCoreHLS.xml"
-        tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
-        <copy file="xml/JTAHLS.xml"
-        tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
-        <copy file="xml/TwoPhaseHLSImple.xml"
-        tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
-        <copy file="xml/SagasHLSImple.xml"
-        tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/sagas/arjunacore/SagasHLSImple.xml"/>
-        <copy file="xml/JTAHLSImple.xml"
-        tofile="${build.classes10.dir}/com/arjuna/mwlabs/wscf/model/jta/arjunajta/JTAHLSImple.xml"/>
-
         <jar jarfile="${build.lib.dir}/${modulename}10.jar"
             basedir="${build.classes10.dir}">
         </jar>
@@ -178,15 +167,6 @@
 
     <target name="jar11">
         <echo message="Building 11 jar files"/>
-        <copy file="xml/ArjunaCoreHLS.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/arjunacore/ArjunaCoreHLS.xml"/>
-        <copy file="xml/JTAHLS.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf/model/as/coordinator/jta/JTAHLS.xml"/>
-        <copy file="xml/TwoPhase11HLSImple.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/twophase/arjunacore/TwoPhaseHLSImple.xml"/>
-        <copy file="xml/Sagas11HLSImple.xml"
-        tofile="${build.classes11.dir}/com/arjuna/mwlabs/wscf11/model/sagas/arjunacore/SagasHLSImple.xml"/>
-
         <jar jarfile="${build.lib.dir}/${modulename}11.jar"
             basedir="${build.classes11.dir}">
         </jar>

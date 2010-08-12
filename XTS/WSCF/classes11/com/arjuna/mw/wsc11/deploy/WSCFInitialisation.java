@@ -22,6 +22,7 @@ package com.arjuna.mw.wsc11.deploy;
 
 import com.arjuna.mw.wsas.utils.Configuration;
 import com.arjuna.mw.wscf.logging.wscfLogger;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 import com.arjuna.services.framework.startup.Sequencer;
 
 import javax.servlet.ServletContextEvent;
@@ -40,8 +41,10 @@ public class WSCFInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        // there is no WSCF initialization required so close the list
+        // ensure we load any required protocol implementations
 
+        ProtocolRegistry.sharedManager().initialise();
+        
         Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSCF11);
 
     }

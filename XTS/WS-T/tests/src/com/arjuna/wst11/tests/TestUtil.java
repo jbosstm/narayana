@@ -30,6 +30,7 @@ import com.arjuna.webservices11.soapfault.SoapFaultConstants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
@@ -58,7 +59,7 @@ public class TestUtil
 
     public static final String NONEXISTENT_PARTICIPANT_IDENTIFIER                    = "NONE123456PI";
 
-    final private static String bindHost = System.getProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_ADDRESS);
+    final private static String bindHost = XTSPropertyManager.getWSCEnvironmentBean().getBindAddress11();
 
     public static String participantServiceURI = "http://" + bindHost + ":8080/ws-t11/ParticipantService";
     public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CoordinatorService";

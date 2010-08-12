@@ -43,10 +43,7 @@ import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.mw.wscf.utils.DomUtil;
 import com.arjuna.wscf.tests.WSCFTestUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)

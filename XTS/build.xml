@@ -128,13 +128,13 @@
 		<echo message="Installing jar files"/>
 		<mkdir dir="${xts.installationdirectory}/lib"/>
 		<copy todir="${xts.installationdirectory}/lib">
-			<fileset dir="WSAS/build/lib" includes="*.jar"/>
-			<fileset dir="WS-C/build/lib" includes="*.jar"/>
-			<fileset dir="WSCF/build/lib" includes="*.jar"/>
-			<fileset dir="WS-T/build/lib" includes="*.jar"/>
-            <fileset dir="WSTX/build/lib" includes="*.jar"/>
-            <fileset dir="recovery/build/lib" includes="*.jar"/>
-            <fileset dir="bridge/build/lib" includes="*.jar"/>
+			<fileset dir="${wsas.dir}/build/lib" includes="*.jar"/>
+			<fileset dir="${ws-c.dir}/build/lib" includes="*.jar"/>
+			<fileset dir="${wscf.dir}/build/lib" includes="*.jar"/>
+			<fileset dir="${ws-t.dir}/build/lib" includes="*.jar"/>
+            <fileset dir="${wstx.dir}/build/lib" includes="*.jar"/>
+            <fileset dir="${recovery.dir}/build/lib" includes="*.jar"/>
+            <fileset dir="${bridge.dir}/build/lib" includes="*.jar"/>
 		</copy>
 
 		<echo message="Installing webapps"/>
@@ -149,11 +149,7 @@
         <echo message="Installing configuration"/>
         <mkdir dir="${xts.installationdirectory}/conf"/>
         <copy todir="${xts.installationdirectory}/conf">
-            <!--
-            <fileset dir="WSCF/config"/>
-            <fileset dir="WSTX/config" includes="*.xml"/>
-            -->
-            <fileset  dir="." includes="xts.properties"/>
+            <fileset  dir="${config.dir}" includes="xts-properties.xml, xts-properties11.xml"/>
         </copy>
 
 		<echo message="Installing htdocs"/>
@@ -298,7 +294,7 @@
     </target>
 
     <target name="bridge.build">
-        <ant dir="bridge">
+        <ant dir="${bridge.dir}">
             <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>

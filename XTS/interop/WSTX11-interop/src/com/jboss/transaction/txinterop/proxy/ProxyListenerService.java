@@ -44,6 +44,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -86,11 +88,11 @@ public class ProxyListenerService extends HttpServlet
         super.init(config);
         
         // Initialise the local host:port/urlstub for the proxy.
-        final String proxyServiceURI = config.getInitParameter("proxyServiceURI") ;
-        if (proxyServiceURI == null)
-        {
-            throw new ServletException("Proxy service URI missing") ;
-        }
+        WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        String bindAddress = wscEnvironmentBean.getBindAddress11();
+        int bindPort = wscEnvironmentBean.getBindPort11();
+        String baseURI = "http://" + bindAddress + ":" +  bindPort + "/interop11";
+        final String proxyServiceURI = baseURI + "/proxy";
         ProxyURIRewriting.setProxyURI(proxyServiceURI) ;
     }
     

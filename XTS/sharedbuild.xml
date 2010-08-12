@@ -30,6 +30,8 @@
     <property name="ws-t.dir" location="${root.dir}/WS-T"/>
     <property name="wstx.dir" location="${root.dir}/WSTX"/>
     <property name="recovery.dir" location="${root.dir}/recovery"/>
+    <property name="config.dir" location="${root.dir}/config"/>
+    <property name="bridge.dir" location="${root.dir}/bridge"/>
     <property name="sar.dir" location="${root.dir}/sar"/>
     <property name="demo.dir" location="${root.dir}/demo"/>
     <property name="localjunit.dir" location="${root.dir}/localjunit"/>

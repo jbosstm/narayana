@@ -54,6 +54,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.stub.BusinessActivityTerminatorStub;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
@@ -74,7 +75,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     {
         try
         {
-            _activationCoordinatorService = System.getProperty(Environment.COORDINATOR11_URL);
+            _activationCoordinatorService = XTSPropertyManager.getWSCEnvironmentBean().getCoordinatorURL11();
 
             /*
              * If the coordinator URL hasn't been specified via the

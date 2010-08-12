@@ -31,16 +31,15 @@
 
 package com.arjuna.mw.wscf.protocols;
 
-import com.arjuna.mw.wscf.common.Environment;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import org.jboss.jbossts.xts.environment.WSCFEnvironmentBean;
 import com.arjuna.mw.wscf.exceptions.ProtocolAlreadyRegisteredException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mwlabs.wscf.utils.ContextProvider;
 import com.arjuna.mwlabs.wscf.utils.HLSProvider;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
@@ -197,63 +196,41 @@ public class ProtocolManager
 		else
 			_initialised = true;
 
-        // TODO
-        // load properties file and add to environment -- eventually this will be autorun by
-        // the XTS configuration bean
-
-        InputStream is = ProtocolManager.class.getResourceAsStream("/xts.properties");
-        if (is != null) {
-            Properties props = new Properties();
-            try {
-                props.load(is);
-                Enumeration names = props.propertyNames();
-                while (names.hasMoreElements()) {
-                    String name = (String) names.nextElement();
-                    if (name.startsWith("org.jboss.jbossts.xts") ||
-                            name.startsWith(("com.arjuna.mw.wscf"))) {
-                        System.setProperty(name, props.getProperty(name));
-                    }
-                }
-            } catch(IOException ioe) {
-                System.out.println("cannot read xts.properties : " + ioe);
-                ioe.printStackTrace();
-            }
+        WSCFEnvironmentBean wscfEnvironmentBean = XTSPropertyManager.getWSCFEnvironmentBean();
+        List<String> protocolImplementations = wscfEnvironmentBean.getProtocolImplementations();
+        if (protocolImplementations == null) {
+            // TODO log info message
+            System.out.println("ProtocolManager : no service or context or high level; service protocol implementations configured");
+            return;
         }
-
-		Properties props = System.getProperties();
-		Enumeration names = props.propertyNames();
+        ListIterator<String> iterator = protocolImplementations.listIterator();
         List<Class<?>> contextProviderClasses =  new ArrayList<Class<?>>();
         List<Class<?>> hlsProviderClasses =  new ArrayList<Class<?>>();
 
         // look for protocol implementations
         
-		while (names.hasMoreElements())
+		while (iterator.hasNext())
 		{
-			String name = (String) names.nextElement();
+			String className = (String) iterator.next();
+            Class<?> clazz = null;
 
-
-			if (name.startsWith(Environment.PROTOCOL_IMPLEMENTATION))
-			{
-                String className = props.getProperty(name);
-                Class<?> clazz = null;
-                try {
-                    clazz = this.getClass().getClassLoader().loadClass(className);
-                    ContextProvider contextProvider = clazz.getAnnotation(ContextProvider.class);
-                    if (contextProvider !=  null) {
-                        contextProviderClasses.add(clazz);
+            try {
+                clazz = this.getClass().getClassLoader().loadClass(className);
+                ContextProvider contextProvider = clazz.getAnnotation(ContextProvider.class);
+                if (contextProvider !=  null) {
+                    contextProviderClasses.add(clazz);
+                } else {
+                    HLSProvider hlsProvider = clazz.getAnnotation(HLSProvider.class);
+                    if (hlsProvider !=  null) {
+                        hlsProviderClasses.add(clazz);
                     } else {
-                        HLSProvider hlsProvider = clazz.getAnnotation(HLSProvider.class);
-                        if (hlsProvider !=  null) {
-                            hlsProviderClasses.add(clazz);
-                        } else {
-                            System.out.println("ProtocolManager : Unknown protocol implementation : " + className);
-                        }
+                        System.out.println("ProtocolManager : Unknown protocol implementation : " + className);
                     }
-                } catch (ClassNotFoundException cnfe) {
-                    // TODO -- proper log message
-                    System.out.println("ProtocolManager : Unable to load protocol implementation class : " + className);
-                    cnfe.printStackTrace();
                 }
+            } catch (ClassNotFoundException cnfe) {
+                // TODO -- proper log message
+                System.out.println("ProtocolManager : Unable to load protocol implementation class : " + className);
+                cnfe.printStackTrace();
             }
         }
 

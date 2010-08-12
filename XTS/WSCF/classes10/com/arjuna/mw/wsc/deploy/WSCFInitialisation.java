@@ -25,6 +25,7 @@ import javax.servlet.ServletContextListener;
 
 import com.arjuna.mw.wsas.utils.Configuration;
 import com.arjuna.mw.wscf.logging.wscfLogger;
+import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 import com.arjuna.services.framework.startup.Sequencer;
 
 /**
@@ -40,7 +41,9 @@ public class WSCFInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        // there is no WSCF initialization required so close the list
+        // ensure we load any required protocol implementations
+
+        ProtocolRegistry.sharedManager().initialise();
 
         Sequencer.close(Sequencer.SEQUENCE_WSCOOR10, Sequencer.WEBAPP_WSCF10);
     }

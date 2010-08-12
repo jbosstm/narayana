@@ -26,6 +26,8 @@ import javax.servlet.ServletContext;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropConstants;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
  * Initialise the interop initiator service.
@@ -40,7 +42,10 @@ public class ATInitiatorInitialisation implements ServletContextListener
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
         ServletContext context = servletContextEvent.getServletContext();
-        String baseURI = context.getInitParameter("BaseURI");
+        WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        String bindAddress = wscEnvironmentBean.getBindAddress11();
+        int bindPort = wscEnvironmentBean.getBindPort11();
+        String baseURI = "http://" + bindAddress + ":" +  bindPort + "/interop11";
         final String uri = baseURI + "/ATInitiatorService";
 
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;

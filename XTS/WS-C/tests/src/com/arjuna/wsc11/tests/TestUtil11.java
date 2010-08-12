@@ -29,6 +29,7 @@ package com.arjuna.wsc11.tests;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.wsc.tests.TestUtil;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -43,7 +44,7 @@ public class TestUtil11
     final private static String PROTOCOL_COORDINATOR_ENDPOINT_NAME ="ProtocolCoordinatorEndpoint";
     final private static String PROTOCOL_COORDINATOR_SERVICE_NAME ="ProtocolCoordinatorService";
 
-    final private static String bindHost = System.getProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_ADDRESS);
+    final private static String bindHost = XTSPropertyManager.getWSCEnvironmentBean().getBindAddress11();
 
     final public static String activationCoordinatorService = "http://" + bindHost + ":8080/ws-c11/ActivationService";
     final public static String registrationCoordinatorService = "http://" + bindHost + ":8080/ws-c11/RegistrationService";

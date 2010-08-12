@@ -24,6 +24,8 @@ import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc.common.Environment;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -43,20 +45,21 @@ public class TerminationCoordinatorInitialisation implements ServletContextListe
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
            public void run() {
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-               String bindAddress = System.getProperty(Environment.XTS11_BIND_ADDRESS);
-               String bindPort = System.getProperty(Environment.XTS11_BIND_PORT);
-               String secureBindPort = System.getProperty(Environment.XTS11_SECURE_BIND_PORT);
+               WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+               String bindAddress = wscEnvironmentBean.getBindAddress11();
+               int bindPort = wscEnvironmentBean.getBindPort11();
+               int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
 
                if (bindAddress == null) {
                    bindAddress = "127.0.0.1";
                }
 
-               if (bindPort == null) {
-                   bindPort = "8080";
+               if (bindPort == 0) {
+                   bindPort = 8080;
                }
 
-               if (secureBindPort == null) {
-                   secureBindPort = "8443";
+               if (secureBindPort == 0) {
+                   secureBindPort = 8443;
                }
 
                final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";

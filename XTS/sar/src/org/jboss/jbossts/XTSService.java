@@ -20,8 +20,12 @@
  */
 package org.jboss.jbossts;
 
-import com.arjuna.mw.wscf.protocols.ProtocolManager;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import com.arjuna.common.util.propertyservice.PropertiesFactory;
+import org.jboss.jbossts.xts.environment.WSCFEnvironmentBean;
 import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
+import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
 import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule;
@@ -84,6 +88,7 @@ import com.arjuna.mwlabs.wsas.activity.ActivityReaper;
 
 import javax.management.MBeanServer;
 import java.net.InetAddress;
+import java.util.Properties;
 //import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 /**
@@ -140,119 +145,7 @@ public class XTSService implements XTSServiceMBean {
     {
         log.info("JBossTS XTS Transaction Service - starting");
 
-        // read unified properties file (replaces wscf.xml and wstx.xml)
-        // Configuration.initialise("/jbossxts.xml");
-
-        // install protocol implementation classes declared by config file
-        ProtocolRegistry.sharedManager().initialise();
-
-        // before we can allow the services to start up we need to identify the server
-        // bind address and the web service port so they services register themselves
-        // in the registry using the correct URL
-
-        // the app server's MicroContainer and ServiceBindingManager should work together
-        // to supply us the properties used by the web server. Check that it's done so:
-        // if this blows up, changes are binding.xml or XTS's jboss-beans.xml is broken.
-        if(httpBindInetAddress == null || (httpPort == 0 && httpsPort == 0)) {
-            log.error("insufficient webserver address:port information available - unable to start XTS.");
-            throw new Exception("insufficient webserver address:port information available - unable to start XTS.");
-        }
-
-        // The app servers gives us a InetAddress, but our config system is String based.
-        // so we convert it here, then XTS internally convert it back later. sigh.
-        // likewise for ints to Strings for hte port numbers.
-
-        String bindAddress = httpBindInetAddress.getHostName();
-
-        if (bindAddress == null || "".equals(bindAddress)) {
-            // use the ip address instead of the name
-            bindAddress= httpBindInetAddress.getHostAddress();
-        }
-
-        System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_ADDRESS, bindAddress);
-        System.setProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_ADDRESS, bindAddress);
-
-        if(httpPort != 0) {
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_PORT, ""+httpPort);
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS11_BIND_PORT, ""+httpPort);
-        }
-
-        if(httpsPort != 0) {
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS_SECURE_BIND_PORT, ""+httpsPort);
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS11_SECURE_BIND_PORT, ""+httpsPort);
-        }
-
-        // see if the coordinatorURL or host/port has been specified on the command line
-        // if so then we need to record that fact here so we override any value
-        // supplied in the  config file
-        // but we don't do this if we have already saved it and we are now reloading XTS
-        // yeeurrch really need to stop using System properties
-
-        if (System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
-            String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL);
-            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_SCHEME);
-            String coordinatorHost = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_HOST);
-            String coordinatorPort = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PORT);
-            String coordinatorPath = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PATH);
-            if (coordinatorURL != null) {
-                System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-            } else if (coordinatorScheme != null || coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
-                if (coordinatorScheme == null) {
-                    coordinatorScheme = "http";
-                }
-                if (coordinatorHost == null) {
-                    coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
-                }
-                if (coordinatorPort == null) {
-                    if ("https".equals(coordinatorScheme)) {
-                        coordinatorPort = (httpsPort != 0 ? ""+httpsPort : "8443");
-                    } else {
-                        coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
-                    }
-                }
-                if (coordinatorPath == null) {
-                    coordinatorPath = "ws-c10/soap/ActivationCoordinator";
-                }
-                coordinatorURL = coordinatorScheme + "://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
-                System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, coordinatorURL);
-            }
-        }
-
-        // ok now do the same for the 1.1 env settings
-
-        if (System.getProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL) == null) {
-            String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL);
-            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_SCHEME);
-            String coordinatorHost = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_HOST);
-            String coordinatorPort = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_PORT);
-            String coordinatorPath = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_PATH);
-            if (coordinatorURL != null) {
-                System.setProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-            } else if (coordinatorScheme != null || coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
-                if (coordinatorScheme == null) {
-                    coordinatorScheme = "http";
-                }
-                if (coordinatorHost == null) {
-                    coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
-                }
-                if (coordinatorPort == null) {
-                    if ("https".equals(coordinatorScheme)) {
-                        coordinatorPort = (httpsPort != 0 ? ""+httpsPort : "8443");
-                    } else {
-                        coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
-                    }
-                }
-                if (coordinatorPath == null) {
-                    coordinatorPath = "ws-c11/ActivationService";
-                }
-                coordinatorURL = coordinatorScheme + "://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
-                System.setProperty(com.arjuna.wsc.common.Environment.XTS11_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR11_URL, coordinatorURL);
-            }
-        }
-
-        // now it is safe to let the Sequencer class run any intiialisation routines it needs
+        // now it is safe to let the Sequencer class run any initialisation routines it needs
 
         Sequencer.unlatch();
 
@@ -448,53 +341,4 @@ public class XTSService implements XTSServiceMBean {
     }
 
     int httpsPort = 0;
-
-    // transport timing property reads/writes are redirected to the TransportTimer class
-    // however we cap the period settings to a minimum of 5 seconds and the timeout setting
-    // to a minimum of 10 seconds
-
-    private static final long MIN_PERIOD = 5 * 1000;
-    private static final long MIN_TIMEOUT = 10 * 1000;
-
-    public long getInitialTransportPeriod()
-    {
-        return TransportTimer.getTransportPeriod();
-    }
-
-    public void setInitialTransportPeriod(long initialTransportPeriod)
-    {
-        if (initialTransportPeriod > MIN_PERIOD) {
-            TransportTimer.setTransportPeriod(initialTransportPeriod);
-        } else {
-            TransportTimer.setTransportPeriod(MIN_PERIOD);
-        }
-    }
-
-    public long getMaximumTransportPeriod()
-    {
-        return TransportTimer.getMaximumTransportPeriod();
-    }
-
-    public void setMaximumTransportPeriod(long maximumTransportPeriod)
-    {
-        if (maximumTransportPeriod > MIN_PERIOD) {
-            TransportTimer.setMaximumTransportPeriod(maximumTransportPeriod);
-        } else {
-            TransportTimer.setMaximumTransportPeriod(MIN_PERIOD);
-        }
-    }
-
-    public long getTransportTimeout()
-    {
-        return TransportTimer.getTransportTimeout();
-    }
-
-    public void setTransportTimeout(long transportTimeout)
-    {
-        if (transportTimeout > MIN_TIMEOUT) {
-            TransportTimer.setTransportTimeout(transportTimeout);
-        } else {
-            TransportTimer.setTransportTimeout(MIN_TIMEOUT);
-        }
-    }
 }

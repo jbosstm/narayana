@@ -31,9 +31,12 @@
 
 package com.arjuna.mw.wst;
 
-import com.arjuna.wst.*;
-
 import com.arjuna.wsc.AlreadyRegisteredException;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.Volatile2PCParticipant;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.WrongStateException;
 
 /**
  * This is the interface that the core exposes in order to allow different

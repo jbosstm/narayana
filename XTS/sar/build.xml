@@ -152,12 +152,7 @@
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
-        <copy todir="${build.conf.dir}" filtering="true">
-            <!--
-            <fileset dir="${conf.dir}" includes="*.xml"/>
-            -->
-            <fileset dir="${conf.dir}" includes="xts.properties"/>
-        </copy>
+        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties.xml"/>
         <jar jarfile="${build.dir}/config.jar">
             <fileset dir="${build.conf.dir}"/>
         </jar>
@@ -179,10 +174,12 @@
             <fileset dir="${webapps.dir}" includes="*.war"/>
 
             <!-- include config jar -->
+            <!-- don't need this because we configure from beans.xml
             <fileset dir="${build.dir}" includes="config.jar"/>
+            -->
 
             <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
+            <fileset dir="." includes="META-INF/xts-jboss-beans.xml"/>
 
             <!-- include classloading directives -->
             <fileset dir="." includes="META-INF/jboss-classloading.xml"/>
@@ -198,14 +195,7 @@
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
     <target name="sar-11" if="nobuild10">
         <!-- create config jar containing conf files for 1.1 -->
-        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
-        <filter token="coordinator.port" value="${coordinator.port}"/>
-        <copy todir="${build.conf.dir}" filtering="true">
-            <!--
-            <fileset dir="${conf.dir}" includes="*11.xml"/>
-            -->
-            <fileset dir="${conf.dir}" includes="xts.properties"/>
-        </copy>
+        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties11.xml"/>
         <jar jarfile="${build.dir}/config.jar">
             <fileset dir="${build.conf.dir}"/>
         </jar>
@@ -224,10 +214,12 @@
             <fileset dir="${webapps.dir}" includes="*11.war"/>
 
             <!-- include config jar -->
+            <!-- don't need this because we configure from beans.xml
             <fileset dir="${build.dir}" includes="config.jar"/>
+            -->
 
             <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
+            <fileset dir="." includes="META-INF/xts11-jboss-beans.xml"/>
 
             <!-- include classloading directives -->
             <fileset dir="." includes="META-INF/jboss-classloading.xml"/>
