@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <!-- XTS 1.1 and 1.0 configuration beans  -->
+
+    <!-- the WSC environment properties configure three sets of data. firstly, the bind values are used by
+        the XTS services to construct URL handed out as references to the service. these URLS need to
+        incorporate the bind address and ports employed by the JBoss Web service. they are needed by
+        the all 3 sets of component services, client, participant (web service) and coordinator.
+
+        secondly the transport timings are
+
+        thirdly the coordinator URL properties are used to determine the URL of the coordinator service
+        to be contacted when a client begins a WSAT or WSBA transaction. they are only used by the client
+        code and they are only needed if the coordinator service is deployed in a container remote from
+        the client. If left unset the client uses the bind address and http port values to construct a
+        URL addressing a locally deployed coordinator service.
+     -->
+    <bean name="WSCEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCEnvironmentBean">
+        <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
+            factoryMethod="getWSCEnvironmentBean"/>
+        <!--
+            the bind address and bind ports must be specified in any container in which XTS is deployed,
+            whether it is running clients, transactional web services or the coordinator itself.
+        -->
+        <!--
+            this is a virtual property which is used to compute the stored bindAddress11 and
+            bindAddress10 properties both of which must match the bind address used by JBoss Web
+            it takes in an inet address and converts it to a string.
+        -->
+        <property name="httpBindInetAddress">
+           <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+           </value-factory>
+        </property>
+
+        <!-- the 1.1 http and https port are injected so that they match the corresponding ports
+            used by JBoss Web
+        -->
+        <property name="bindPort11">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+              <parameter>HttpConnector</parameter>
+           </value-factory>
+        </property>
+
+        <property name="bindPortSecure11">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+               <parameter>HttpsConnector</parameter>
+           </value-factory>
+        </property>
+
+        <!-- the 1.0 http and https port both need to match the _non-secure_ port used by JBoss Web
+            these values need not be specified if the 1.0 implementation is not deployed
+        -->
+        <property name="bindPort10">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+           </value-factory>
+        </property>
+
+        <property name="bindPortSecure10">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+               <parameter>HttpConnector</parameter>
+           </value-factory>
+        </property>
+
+        <!--
+            the transport timings are used  to configure timings in the transport layer
+            which manages messages between client and coordinator or participant (web
+            service) and coordinator. This layer is common to all 3 XTS components so
+            these properties may be set in all deployments. The example settings below
+            specify the default values which are all calibrated in milliseconds.
+
+            transportTimeout determines the maximum time a participant or coordinator
+            service will wait for a response to a protocol message before assuming that
+            the service at the other end has crashed. Note that in some cases,
+            particularly in the case of participants a timeout can only be handled by
+            resending the message. However, in other cases a timeout may lead to a
+            transaction start transition e.g. to aborting. n.b. transportTimeout should
+            be significantly greater than initialTransportPeriod which determines how
+            frequently messages are resent. The default timeout is 30 seconds which should
+            never be exceeded on a local network because of  message delivery delays. If
+            your service and coordinator are distributed across internet domains then you
+            may possibly need to increase this value.
+
+            initialTransportPeriod is the initial period for which a participant or
+            coordinator service will wait before resending a protocol message if it does
+            not receive a reply. In cases where a wait is performed the first resend will
+            only happen after the initial wait timeout and this property is used to
+            determine the period before the second resend. In cases where a wait is not
+            performed the resend happens automatically on the assumption that the first
+            message must not have reached its destination. Where a response is mandated
+            by the transaction protocol resends continue indefinitely at gradually
+            increasing intervals - the period roughly doubling every two resends. The
+            default period is 5 seconds which should never be exceeded on a local network
+            because of message delivery delays.If your service and coordinator are
+            distributed across internet domains then you may possibly need to increase
+            this value.
+
+            maximumTransportPeriod is the maximum value which the resend period can be
+            increased to. It should be significantly larger than initialTransportPeriod
+            since there is no point resending messages with high frequency if a the
+            server at the other end has been down for a long time. The default maximum
+            period is 300 seconds which will only be reached after a message has been
+            sent approximately 15 times.
+        -->
+        <!--
+        <property name="initialTransportPeriod">5000</property>
+        <property name="maximumTransportPeriod">300000</property>
+        <property name="transportTimeout">30000</property>
+        -->
+
+        <!--
+            the coordinator URL properties need only be specified in an XTS client container and even
+            then they are only needed if the client is expected to employ a coordinator located in some
+            other container. if no URL is set then clients will use the web service bind address and http
+            to construct a URL addressing a local XTS coordinator.
+        -->
+
+        <!-- if you want to use a coordinator running in a remote JVM then you can simply configure the 1.1
+            (or 1.0) URL. This will also be necessary if you are using a non-JBoss coordination service.
+        <property name="coordinatorURL11">
+           <value>http://10.0.1.99:8080/ws-c11/ActivationService</value>
+        </property>
+        <property name="coordinatorURL10">
+           <value>http://10.0.1.99:9191/ws-c10/soap/ActivationCoordinator</value>
+        </property>
+        -->
+        <!-- if you are using a remote JBoss XTS coordinator you can just redefine the scheme, address, port or
+            path to the desired value and the ones left undefined will be defaulted to use the standard XTS
+            coordinator URL elements. So, for example if your XTS coordinator services is deployed in another
+            AS on host myhost.myorg.com you only need to define property coordinatorHost11 to have value
+            myhost.myorg.com and the coordinator address used by clients will be
+            http://myhost.myorg.com:8080/ws-c11/ActivationService
+            n.b. if the remote machine is using JBoss XTS then you won't want to redefine the port unless
+            you have monkeyed around with the port config in the remote AS.
+            also you won't need to change the path unless you have tweaked the deployment descriptor to relocate
+            the XTS services.
+            if you have deployed XTS 1.0 then you may want to set the corresponding 1.0 properties
+        <property name="coordinatorScheme11">
+           <value>http</value>
+        </property>
+        <property name="coordinatorHost11">
+           <value>10.0.1.99</value>
+        </property>
+        <property name="coordinatorPort11">
+           <value>9191</value>
+        </property>
+        <property name="coordinatorPath11">
+           <value>ws-c11/ActivationService</value>
+        </property>
+
+        <property name="coordinatorScheme10">
+           <value>http</value>
+        </property>
+        <property name="coordinatorHost10">
+           <value>10.0.1.99</value>
+        </property>
+        <property name="coordinatorPort10">
+           <value>9191</value>
+        </property>
+        <property name="coordinatorPath10">
+           <value>ws-c11/soap/ActivationCoordinator</value>
+        </property>
+        -->
+
+    </bean>
+    
+    <!--
+        The WSCF environent properties specify a list of classes to be be loaded in order to
+        implement coordination operations. There are two related categories of implementations
+        classes, high level coordination services and coordination context factories. They need
+        to be loaded into any container which is running a coordinator. They can be omitted from
+        containers which only run clients or transactional web services.
+    -->
+    <bean name="WSCFEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCFEnvironmentBean">
+        <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
+            factoryMethod="getWSCFEnvironmentBean"/>
+        <!--  the protocol implementations property contains a list of classes which implement
+            high level services or context factories.
+        -->
+        <property name="protocolImplementations">
+            <list elementClass="java.lang.String">
+                <value>com.arjuna.mwlabs.wscf11.model.twophase.arjunacore.TwoPhaseHLSImple</value>
+                <value>com.arjuna.mwlabs.wscf11.model.sagas.arjunacore.SagasHLSImple</value>
+                <value>com.arjuna.mwlabs.wst11.at.ContextFactoryImple</value>
+                <value>com.arjuna.mwlabs.wst11.ba.ContextFactoryImple</value>
+                <!-- these entries are only needed if you are deploing the 1.0  implementation -->
+                <value>com.arjuna.mwlabs.wscf.model.twophase.arjunacore.TwoPhaseHLSImple</value>
+                <value>com.arjuna.mwlabs.wscf.model.sagas.arjunacore.SagasHLSImple</value>
+                <value>com.arjuna.mwlabs.wst.at.ContextFactoryImple</value>
+                <value>com.arjuna.mwlabs.wst.ba.ContextFactoryImple</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+        The WST environment properties are used to identify and load the classes which implement the
+        WSAT and WSBA client APIs. They need only be specified in a container which will be running
+        XTS clients.
+    -->
+    <bean name="WSTEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSTEnvironmentBean">
+        <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
+            factoryMethod="getWSTEnvironmentBean"/>
+        <!-- the 1.1 client API implementation classes.
+        -->
+        <property name="userTransaction11">
+            <value>com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple</value>
+        </property>
+        <property name="transactionManager11">
+            <value>com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</value>
+        </property>
+        <property name="userBusinessActivity11">
+            <value>com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple</value>
+        </property>
+        <property name="businessActivityManager11">
+            <value>com.arjuna.mwlabs.wst11.ba.remote.BusinessActivityManagerImple</value>
+        </property>
+
+        <!-- the 1.0 client API implementation classes. these are only needed if you are deploying the
+            1.0 XTS implementation
+        -->
+        <property name="userTransaction10">
+            <value>com.arjuna.mwlabs.wst.at.remote.UserTransactionImple</value>
+        </property>
+        <property name="transactionManager10">
+            <value>com.arjuna.mwlabs.wst.at.remote.TransactionManagerImple</value>
+        </property>
+        <property name="userBusinessActivity10">
+            <value>com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple</value>
+        </property>
+        <property name="businessActivityManager10">
+            <value>com.arjuna.mwlabs.wst.ba.remote.BusinessActivityManagerImple</value>
+        </property>
+    </bean>
+
+    <!-- The XTS service itself  -->
+
+    <bean name="XTSService" class="org.jboss.jbossts.XTSService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.xts:service=XTSService", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+
+       <depends>jboss.web:service=WebServer</depends>
+       <depends>jboss:service=TransactionManager</depends>
+       <depends>WSCFEnvironmentBean</depends>
+       <depends>WSCEnvironmentBean</depends>
+       <depends>WSTEnvironmentBean</depends>
+       <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+   </bean>
+
+</deployment>
