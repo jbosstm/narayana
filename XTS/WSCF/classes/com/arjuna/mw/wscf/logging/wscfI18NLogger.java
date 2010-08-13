@@ -265,6 +265,26 @@ public interface wscfI18NLogger {
 	@Message(id = 44061, value = "Failed to create:", format = MESSAGE_FORMAT)
 	public String get_utils_ProtocolLocator_2();
 
+    @Message(id = 44062, value = "No protocol implementations configured", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_protocols_ProtocolManager_1();
+
+    @Message(id = 44063, value = "Unable to identify protocol type for class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_protocols_ProtocolManager_2(String arg0);
+
+    @Message(id = 44064, value = "Unable to load protocol implementation class {0} caught exception", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_protocols_ProtocolManager_3(String arg0, Throwable arg1);
+
+    @Message(id = 44065, value = "Installed implementation class {0} for protocol type {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_protocols_ProtocolManager_4(String arg0, String arg1);
+
+    @Message(id = 44066, value = "Unable to instantiate protocol implementation class {0} caught exception", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_protocols_ProtocolManager_5(String arg0, Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

@@ -31,9 +31,7 @@
 
 package com.arjuna.mw.wscf.protocols;
 
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jboss.jbossts.xts.environment.WSCFEnvironmentBean;
-import com.arjuna.mw.wscf.exceptions.ProtocolAlreadyRegisteredException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mwlabs.wscf.utils.ContextProvider;
@@ -53,68 +51,6 @@ import java.util.*;
 
 public class ProtocolManager
 {
-
-	/**
-	 * Add a specific protocol implementation to the factory.
-	 *
-	 * @param     protocolName The name of the protocol.
-	 * @param     protocolImplementor The class that implements the protocol.
-	 *
-	 * @exception com.arjuna.mw.wscf.exceptions.ProtocolAlreadyRegisteredException
-	 *                Thrown if the exact same protocol definition has already
-	 *                been registered.
-	 * @exception IllegalArgumentException
-	 *                Thrown if either of the parameters is invalid.
-	 */
-
-	public void addProtocol (String protocolName, Object protocolImplementor)
-			throws ProtocolAlreadyRegisteredException,
-			IllegalArgumentException
-	{
-        synchronized(this) {
-            if ((protocolName == null) || (protocolImplementor == null))
-            {
-                throw new IllegalArgumentException();
-            }
-
-            if (_protocols.get(protocolName) != null) {
-                throw new ProtocolAlreadyRegisteredException();
-            } else {
-                _protocols.put(protocolName, protocolImplementor);
-            }
-        }
-	}
-
-	/**
-	 * Replace a specific protocol implementation in the factory.
-	 *
-	 * @param     protocolName The name of the protocol.
-	 * @param     protocolImplementor The class that implements the protocol.
-	 *
-	 * @exception com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException
-	 *                Thrown if the protocol to be removed has not been
-	 *                registered.
-	 * @exception IllegalArgumentException
-	 *                Thrown if either of the parameters is invalid.
-	 */
-
-	public void replaceProtocol (String protocolName, Object protocolImplementor)
-			throws ProtocolNotRegisteredException, IllegalArgumentException
-	{
-		synchronized (this)
-		{
-            if ((protocolName == null) || (protocolImplementor == null))
-            {
-                throw new IllegalArgumentException();
-            }
-
-            if (_protocols.get(protocolName) == null) {
-                throw new ProtocolNotRegisteredException();
-            } else {
-                _protocols.put(protocolName, protocolImplementor);
-            }
-		}
-	}
 
 	/**
      * @param     protocolName The name of the protocol.
@@ -149,41 +85,6 @@ public class ProtocolManager
         }
 	}
 
-	/**
-	 * Remove the specified protocol definition from the factory.
-	 *
-     * @param     protocolName The name of the protocol.
-	 *
-	 * @exception com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException
-	 *                Thrown if the protocol to be removed has not been
-	 *                registered.
-	 * @exception IllegalArgumentException
-	 *                Thrown if the paramater is invalid (e.g., null).
-	 *
-	 * @return the protocol implementation removed.
-	 */
-
-	public Object removeProtocol (String protocolName)
-			throws ProtocolNotRegisteredException, IllegalArgumentException
-	{
-        synchronized (this)
-        {
-            if (protocolName == null)
-            {
-                throw new IllegalArgumentException();
-            }
-
-            Object object = _protocols.remove(protocolName);
-
-            if (object == null) {
-                throw new ProtocolNotRegisteredException(wscfLogger.i18NLogger.get_mw_wscf11_protocols_ProtocolManager_1()
-                        + protocolName);
-            }
-
-            return object;
-        }
-	}
-
 	/*
 	 * install all registered protocol implementations which should be either context factories
 	 * or high level services
@@ -199,8 +100,7 @@ public class ProtocolManager
         WSCFEnvironmentBean wscfEnvironmentBean = XTSPropertyManager.getWSCFEnvironmentBean();
         List<String> protocolImplementations = wscfEnvironmentBean.getProtocolImplementations();
         if (protocolImplementations == null) {
-            // TODO log info message
-            System.out.println("ProtocolManager : no service or context or high level; service protocol implementations configured");
+            wscfLogger.i18NLogger.info_protocols_ProtocolManager_1();
             return;
         }
         ListIterator<String> iterator = protocolImplementations.listIterator();
@@ -224,13 +124,11 @@ public class ProtocolManager
                     if (hlsProvider !=  null) {
                         hlsProviderClasses.add(clazz);
                     } else {
-                        System.out.println("ProtocolManager : Unknown protocol implementation : " + className);
+                        wscfLogger.i18NLogger.error_protocols_ProtocolManager_2(className);
                     }
                 }
             } catch (ClassNotFoundException cnfe) {
-                // TODO -- proper log message
-                System.out.println("ProtocolManager : Unable to load protocol implementation class : " + className);
-                cnfe.printStackTrace();
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_3(className, cnfe);
             }
         }
 
@@ -243,17 +141,13 @@ public class ProtocolManager
             {
                 HLSProvider hlsProvider = clazz.getAnnotation(HLSProvider.class);
                 String serviceType = hlsProvider.serviceType();
-                System.out.println("ProtocolManager : Installing implementation class : " + className + " for service type " + serviceType);
+                wscfLogger.i18NLogger.info_protocols_ProtocolManager_4(className, serviceType);
                 Object object = clazz.newInstance();
                 _protocols.put(serviceType, object);
             } catch (InstantiationException ie) {
-                // TODO -- proper log message
-                System.out.println("ProtocolManager : Unable to instantiate protocol implementation class : " + className);
-                ie.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, ie);
             } catch (IllegalAccessException iae) {
-                // TODO -- proper log message
-                System.out.println("ProtocolManager : Unable to instantiate protocol implementation class : " + className);
-                iae.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, iae);
             }
 		}
 
@@ -264,17 +158,15 @@ public class ProtocolManager
                 ContextProvider contextProvider = clazz.getAnnotation(ContextProvider.class);
                 if (contextProvider !=  null) {
                     String coordinationType = contextProvider.coordinationType();
-                    System.out.println("ProtocolManager : Installing implementation class : " + className + " for coordination type " + coordinationType);
+                    wscfLogger.i18NLogger.info_protocols_ProtocolManager_4(className, coordinationType);
                     Object object = clazz.newInstance();
                     _protocols.put(coordinationType, object);
                 }
             } catch (InstantiationException ie) {
-                // TODO -- proper log message
-                System.out.println("ProtocolManager : Unable to instantiate protocol implementation class : " + className);
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, ie);
                 ie.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (IllegalAccessException iae) {
-                // TODO -- proper log message
-                System.out.println("ProtocolManager : Unable to instantiate protocol implementation class : " + className);
+                wscfLogger.i18NLogger.error_protocols_ProtocolManager_5(className, iae);
                 iae.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 		}

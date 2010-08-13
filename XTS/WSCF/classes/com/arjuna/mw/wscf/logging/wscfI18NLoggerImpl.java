@@ -281,4 +281,30 @@ public class wscfI18NLoggerImpl implements wscfI18NLogger {
 	public String get_utils_ProtocolLocator_2() {
 		return "ARJUNA-44061 Failed to create:";
 	}
+
+    public void info_protocols_ProtocolManager_1()
+    {
+         logger.logv(INFO, "ARJUNA-44062 No protocol implementations configured");
+    }
+
+    public void error_protocols_ProtocolManager_2(String arg0)
+    {
+         logger.logv(ERROR, "ARJUNA-44063 Unable to identify protocol type for class {0}", arg0);
+    }
+
+    public void error_protocols_ProtocolManager_3(String arg0, Throwable arg1)
+    {
+         logger.logv(ERROR, arg1, "ARJUNA-44064 Unable to load protocol implementation class {0} caught exception", arg0);
+    }
+
+    public void info_protocols_ProtocolManager_4(String arg0, String arg1)
+    {
+        logger.logv(INFO, "ARJUNA-44065 Installed implementation class {0} for protocol type {1}", arg0, arg1);
+    }
+
+    public void error_protocols_ProtocolManager_5(String arg0, Throwable arg1)
+    {
+         logger.logv(ERROR, arg1, "ARJUNA-44066 Unable to instantiate protocol implementation class {0} caught exception", arg0);
+    }
+
 }
