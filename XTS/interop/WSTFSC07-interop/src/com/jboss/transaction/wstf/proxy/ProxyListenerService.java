@@ -138,6 +138,7 @@ System.out.println("KEV: processing SOAP action " + trimAction(soapAction)) ;
             {
                 httpServletResponse.setStatus(HttpServletResponse.SC_ACCEPTED) ;
                 httpServletResponse.flushBuffer() ;
+System.out.println("KEV: handled SOAP action " + trimAction(soapAction)) ;
                 return ;
             }
             
