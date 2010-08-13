@@ -39,6 +39,9 @@ public class BeanPopulator
     private static final ConcurrentMap<Class, Object> singletonBeanInstances = new ConcurrentHashMap<Class, Object>();
 
     public static <T> T getSingletonInstance(Class<T> beanClass) throws RuntimeException {
+        return getSingletonInstance(beanClass, null);
+    }
+    public static <T> T getSingletonInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
@@ -46,8 +49,12 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
-                Properties properties = PropertiesFactory.getDefaultProperties();
-                configureFromProperties(bean, properties);
+                if (properties != null) {
+                    configureFromProperties(bean, properties);
+                } else {
+                    Properties defaultProperties = PropertiesFactory.getDefaultProperties();
+                    configureFromProperties(bean, defaultProperties);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
