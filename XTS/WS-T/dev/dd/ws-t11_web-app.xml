@@ -68,6 +68,11 @@
         <listener-class>com.arjuna.wst11.messaging.deploy.TransactionInitialisation</listener-class>
     </listener>
 
+    <!-- Close the WS-T  1.1 initialisation list -->
+    <listener>
+        <listener-class>com.arjuna.wst11.messaging.deploy.WSTCloseInitialisation</listener-class>
+    </listener>
+
     <!-- Define WSAT 1.1 JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>Coordinator</servlet-name>

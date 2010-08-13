@@ -30,4 +30,9 @@
     <listener>
         <listener-class>com.arjuna.mw.wsc11.deploy.WSCFInitialisation</listener-class>
     </listener>
+
+    <!-- close the initialisation list -->
+    <listener>
+        <listener-class>com.arjuna.mw.wsc11.deploy.WSCFCloseInitialisation</listener-class>
+    </listener>
 </web-app>

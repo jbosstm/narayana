@@ -384,6 +384,7 @@
             <fileset dir="${tests.build.webapps.dir}" includes="ws-t-tests.war ws-t11-tests.war"/>
             <fileset dir="${tests.build.lib.dir}" includes="ws-t-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+            <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 
@@ -393,6 +394,7 @@
             <fileset dir="${tests.build.webapps.dir}" includes="ws-t11-tests.war"/>
             <fileset dir="${tests.build.lib.dir}" includes="ws-t-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+            <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 

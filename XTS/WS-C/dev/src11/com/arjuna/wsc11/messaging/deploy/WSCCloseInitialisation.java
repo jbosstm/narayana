@@ -21,19 +21,15 @@
 package com.arjuna.wsc11.messaging.deploy;
 
 import com.arjuna.services.framework.startup.Sequencer;
-import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl;
-import com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * Initialise the coordination services.
+ * Complete initialisation of WS-C component by closing the callback sequence
  * @author kevin
  */
-public class CoordinationInitialisation implements ServletContextListener
+public class WSCCloseInitialisation implements ServletContextListener
 {
     /**
      * The context has been initialized.
@@ -41,12 +37,8 @@ public class CoordinationInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11) {
-           public void run() {
-               ActivationCoordinatorProcessor.setCoordinator(new ActivationCoordinatorProcessorImpl()) ;
-               RegistrationCoordinatorProcessor.setCoordinator(new RegistrationCoordinatorProcessorImpl()) ;
-           }
-        };
+        // close the WSC list
+        Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11);
     }
 
     /**

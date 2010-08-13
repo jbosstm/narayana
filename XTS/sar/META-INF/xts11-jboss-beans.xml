@@ -17,6 +17,9 @@
     <bean name="WSCEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSCEnvironmentBean"/>
+        <!-- we need the bind address and port from jboss web -->
+        <depends>jboss.web:service=WebServer</depends>
+        <depends>jboss:service=TransactionManager</depends>
         <!--
             the bind address and bind ports must be specified in any container in which XTS is deployed,
             whether it is running clients, transactional web services or the coordinator itself.
@@ -48,7 +51,7 @@
            <value-factory bean="ServiceBindingManager"
                            method="getIntBinding" >
               <parameter>jboss.web:service=WebServer</parameter>
-               <parameter>HttpsConnector</parameter>
+              <parameter>HttpsConnector</parameter>
            </value-factory>
         </property>
 
@@ -147,6 +150,7 @@
     <bean name="WSCFEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCFEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSCFEnvironmentBean"/>
+        <depends>jboss:service=TransactionManager</depends>
         <!--  the protocol implementations property contains a list of classes which implement
             high level services or context factories.
         -->
@@ -168,6 +172,7 @@
     <bean name="WSTEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSTEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSTEnvironmentBean"/>
+        <depends>jboss:service=TransactionManager</depends>
         <!-- the 1.1 client API implementation classes.
         -->
         <property name="userTransaction11">
@@ -189,8 +194,6 @@
     <bean name="XTSService" class="org.jboss.jbossts.XTSService">
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.xts:service=XTSService", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
 
-       <depends>jboss.web:service=WebServer</depends>
-       <depends>jboss:service=TransactionManager</depends>
        <depends>WSCFEnvironmentBean</depends>
        <depends>WSCEnvironmentBean</depends>
        <depends>WSTEnvironmentBean</depends>

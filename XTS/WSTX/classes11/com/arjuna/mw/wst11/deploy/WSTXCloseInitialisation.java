@@ -18,35 +18,28 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.wsc11.messaging.deploy;
+package com.arjuna.mw.wst11.deploy;
 
 import com.arjuna.services.framework.startup.Sequencer;
-import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl;
-import com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * Initialise the coordination services.
+ * Initialise WSTX.
  * @author kevin
  */
-public class CoordinationInitialisation implements ServletContextListener
+public class WSTXCloseInitialisation implements ServletContextListener
 {
     /**
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
+     *
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11) {
-           public void run() {
-               ActivationCoordinatorProcessor.setCoordinator(new ActivationCoordinatorProcessorImpl()) ;
-               RegistrationCoordinatorProcessor.setCoordinator(new RegistrationCoordinatorProcessorImpl()) ;
-           }
-        };
+        // this is the last WST callback to be initialised so close the list
+        Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSTX11);
     }
 
     /**

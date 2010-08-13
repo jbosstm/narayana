@@ -40,6 +40,11 @@
         <listener-class>com.arjuna.wsc11.messaging.deploy.CoordinationInitialisation</listener-class>
     </listener>
 
+    <!-- Close the WS-C 1.1 initialisation sequence must be last listener -->
+    <listener>
+        <listener-class>com.arjuna.wsc11.messaging.deploy.WSCCloseInitialisation</listener-class>
+    </listener>
+
     <!-- Define WSCOOR 1.1 JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>ActivationService</servlet-name>

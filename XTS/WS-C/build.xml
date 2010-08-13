@@ -280,6 +280,7 @@
             <fileset dir="${tests.build.webapps.dir}" includes="ws-c11-tests.war"/>
             <fileset dir="${tests.build.lib.dir}" includes="ws-c-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+            <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 
@@ -289,6 +290,7 @@
             <fileset dir="${tests.build.webapps.dir}" includes="ws-c11-tests.war"/>
             <fileset dir="${tests.build.lib.dir}" includes="ws-c-tests.jar"/>
             <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+            <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 

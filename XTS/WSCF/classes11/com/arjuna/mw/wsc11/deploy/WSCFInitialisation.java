@@ -44,9 +44,6 @@ public class WSCFInitialisation implements ServletContextListener
         // ensure we load any required protocol implementations
 
         ProtocolRegistry.sharedManager().initialise();
-        
-        Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSCF11);
-
     }
 
     /**

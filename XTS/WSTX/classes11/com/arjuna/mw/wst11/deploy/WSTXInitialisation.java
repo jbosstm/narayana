@@ -61,8 +61,6 @@ public class WSTXInitialisation implements ServletContextListener
                }
            }
         };
-        // this is the last WST callback to be initialised so close the list
-        Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSTX11);
     }
 
     /**
@@ -84,7 +82,7 @@ public class WSTXInitialisation implements ServletContextListener
             // only implementation. they will still need to install the API classes but not the implementation
             // code
             if (! (userTx == null && txManager == null && userBa == null && baManager == null)) {
-                throw new FileNotFoundException(wstxLogger.i18NLogger.get_mw_wst_deploy_WSTXI_23());
+                throw new Exception(wstxLogger.i18NLogger.get_mw_wst_deploy_WSTXI_23());
             }
         }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <!-- bean to declare the dependency of the test code on the XTS code  -->
+    <bean name="WSCTestBean" class="java.lang.Object">
+       <depends>jboss.web:service=WebServer</depends>
+   </bean>
+
+</deployment>

@@ -370,6 +370,7 @@
           <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
           <fileset dir="${tests.build.webapps.dir}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
           <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
+           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 
@@ -378,6 +379,7 @@
           <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
           <fileset dir="${tests.build.webapps.dir}" includes="wstx11-tests.war wstx-tests.jar"/>
           <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
+           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
         </ear>
     </target>
 

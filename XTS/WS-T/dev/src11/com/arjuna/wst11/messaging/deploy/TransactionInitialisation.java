@@ -58,8 +58,6 @@ public class TransactionInitialisation implements ServletContextListener
                ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
            }
         };
-        // this is the last WST callback to be initialised so close the list
-        Sequencer.close(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11);
     }
 
     /**
