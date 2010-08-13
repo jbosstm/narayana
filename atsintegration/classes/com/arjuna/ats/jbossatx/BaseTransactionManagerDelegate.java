@@ -251,22 +251,29 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         Map locks; // <TransactionLocal, TransactionLocalLock>
         // ideally for performance we should sync on the tx instance itself but that may have nasty
         // side effects so we use something else as the lock object for the sync block
-        synchronized (LOCKS_MAP) {
-            // ensure there is a holder for lock storage on the given tx instance.
-            locks = (Map) transactionImple.getTxLocalResource(LOCKS_MAP);
-            if (locks == null) {
-                locks = new HashMap(); // <TransactionLocal, TransactionLocalLock>
-                transactionImple.putTxLocalResource(LOCKS_MAP, locks);
+        locks = (Map) transactionImple.getTxLocalResource(LOCKS_MAP);
+        // this is not a double-check locking anti-pattern, because locks
+        // is a local variable and thus can not leak.
+        if (locks == null) {
+            synchronized (LOCKS_MAP) {
+                // ensure there is a holder for lock storage on the given tx instance.
+                locks = (Map) transactionImple.getTxLocalResource(LOCKS_MAP);
+                if (locks == null) {
+                    locks = new HashMap(); // <TransactionLocal, TransactionLocalLock>
+                    transactionImple.putTxLocalResource(LOCKS_MAP, locks);
+                }
             }
         }
 
-        TransactionLocalLock transactionLocalLock;
-        synchronized (locks) {
-            // ensure there is a lock for the specified local+tx tuple
-            transactionLocalLock = (TransactionLocalLock)locks.get(local);
-            if (transactionLocalLock == null) {
-                transactionLocalLock = new TransactionLocalLock();
-                locks.put(local, transactionLocalLock);
+        TransactionLocalLock transactionLocalLock = (TransactionLocalLock) locks.get(local);
+        if (transactionLocalLock == null) {
+            synchronized (locks) {
+                // ensure there is a lock for the specified local+tx tuple
+                transactionLocalLock = (TransactionLocalLock)locks.get(local);
+                if (transactionLocalLock == null) {
+                    transactionLocalLock = new TransactionLocalLock();
+                    locks.put(local, transactionLocalLock);
+                }
             }
         }
 
