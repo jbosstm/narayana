@@ -155,7 +155,7 @@ public class UidTest
 
 	public int mNumberOfThreads;
 	public int mNumberOfUids;
-	public String mCommand = "java -cp " + System.getProperty("java.class.path") + " org.jboss.jbossts.qa.ArjunaCore.Common.UidTestWorker";
+	public String mCommand = "java -Demma.verbosity.level=silent -cp " + System.getProperty("java.class.path") + " org.jboss.jbossts.qa.ArjunaCore.Common.UidTestWorker";
 	public ArrayList mUidList = new ArrayList();
 	private UidTestProcess[] mUidSubProcess;
 }

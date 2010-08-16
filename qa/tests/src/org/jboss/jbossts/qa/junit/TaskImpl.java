@@ -134,6 +134,12 @@ public class TaskImpl implements Task
      * an output stream to which the contents of the task's stdout and stderr are redirected.
      */
     private PrintStream out;
+
+    /**
+     * Name of a file to which emma code coverage should be written
+     */
+    private String emmaCoverageFile;
+
     /**
      * a thread which reads the task's merged stdout/stderr stream and identifies whether or not a Passed/Failed
      * or a Ready message has been printed. the reader thread alos needs to write the output to a log file.
@@ -152,8 +158,9 @@ public class TaskImpl implements Task
      * @param type the type of the test either PASS_FAIL or READY
      * @param out the output stream to which output from the task's process shoudl be redirected.
      * @param timeout the timeout for the task in seconds
+     * @param emmaCoverageFile name of a file to which emma code coverage should be written
      */
-    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout)
+    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout, String emmaCoverageFile)
     {
         if(clazz == null || type == null) {
             throw new ExceptionInInitializerError("TaskImpl()<ctor> params may not be null");
@@ -164,6 +171,7 @@ public class TaskImpl implements Task
         this.type = type;
         this.timeout = timeout;
         this.out = out;
+        this.emmaCoverageFile = emmaCoverageFile;
         this.started = false;
         this.isDone = false;
         this.isTimedOut = false;
@@ -531,7 +539,7 @@ public class TaskImpl implements Task
 
         int i = 0;
         boolean done = false;
-        List<String> list = new LinkedList();
+        List<String> list = new LinkedList<String>();
         while(!done) {
             String element = properties.getProperty("COMMAND_LINE_"+i);
             if(element == null) {
@@ -543,6 +551,11 @@ public class TaskImpl implements Task
         }
 
         list.addAll(additionalCommandLineElements);
+
+        if(emmaCoverageFile != null) {
+            list.add("-Demma.coverage.out.file="+emmaCoverageFile);
+            //list.add("-Demma.verbosity.level=silent");
+        }
 
         list.add(classname);
 

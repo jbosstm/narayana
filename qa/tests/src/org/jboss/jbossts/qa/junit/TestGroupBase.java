@@ -114,6 +114,7 @@ public class TestGroupBase
 
     protected Task createTask(String taskName, Class clazz, Task.TaskType taskType, int timeout) {
         OutputStream out;
+
         String filename = "./testoutput/"+getTestGroupName()+"/"+(testName.getMethodName() == null ? "" : testName.getMethodName())+
                 (testName.getParameterSetNumber() == null ? "" : "_paramSet"+testName.getParameterSetNumber())+"/"+taskName+"_output.txt";
         try {
@@ -127,7 +128,9 @@ public class TestGroupBase
             }
             out = new FileOutputStream(outFile);
 
-            return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout);
+            File emmaCoverageFile = new File(outFile.getParentFile(), taskName+"-coverage.ec");
+
+            return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout, emmaCoverageFile.getCanonicalPath());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("createTask : could not open output stream for file " + filename);
