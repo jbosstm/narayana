@@ -132,9 +132,9 @@ public class PluginClassloader implements FilenameFilter
                 {
                     System.err.println("Warning: The class '"+obj+"' is not defined");
                 }
-                catch (Exception e)
+                catch (Throwable e)
                 {
-                    System.err.println("Warning: cCould not instantiate the class '"+obj+"' - " + e.getMessage());
+                    System.err.println("Warning: Could not instantiate the class '"+obj+"' - " + e.getMessage());
                 }
         }
     }
