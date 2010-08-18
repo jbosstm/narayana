@@ -142,14 +142,13 @@
 
     <!-- user transaction and transaction manager implementation
          mappings.
-	these are used in the client container only to identify the
-	classes used to implement the WSAT and WSBA client APIs. they
-	will not normally be reconfigured since doing so requires
-	modifing the implementation to include new versions of these
-	classes.
+	these are used in the client or web service container to identify the
+	classes used to implement the WSAT and WSBA client and web service APIs. they
+	will not normally be reconfigured since doing so requires modifying the
+	implementation to include new versions of these classes.
 
-	if you are deploying XTS to a coordinator or participant (web
-	service) container which does not need to operate as a client
+	if you are deploying XTS to a coordinator container which does
+	not need to operate as a client or web service
 	then you can leave these properties unset and the corresponding
 	classes will  not be loaded.
     -->
