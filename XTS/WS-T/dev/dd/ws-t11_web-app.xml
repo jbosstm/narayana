@@ -65,7 +65,10 @@
     
     <!-- Initialise WS-T  1.1 -->
     <listener>
-        <listener-class>com.arjuna.wst11.messaging.deploy.TransactionInitialisation</listener-class>
+        <listener-class>com.arjuna.wst11.messaging.deploy.WSTCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.wst11.messaging.deploy.WSTParticipantInitialisation</listener-class>
     </listener>
 
     <!-- Close the WS-T  1.1 initialisation list -->

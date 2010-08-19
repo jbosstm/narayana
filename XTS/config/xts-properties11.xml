@@ -133,10 +133,12 @@
 	then you can leave these properties unset and the corresponding
 	classes will  not be loaded.
     -->
-    <!--  mappings for the 1.1 implementation
+    <!--  client mappings for the 1.1 implementation
     -->
     <entry key="org.jboss.jbossts.xts11.wsat.UserTransaction">com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple</entry>
     <entry key="org.jboss.jbossts.xts11.wsba.UserBusinessActivity">com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple</entry>
+    <!--  participant mappings for the 1.1 implementation
+    -->
     <entry key="org.jboss.jbossts.xts11.wsat.TransactionManager">com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</entry>
     <entry key="org.jboss.jbossts.xts11.wsba.BusinessActivityManager">com.arjuna.mwlabs.wst11.ba.remote.BusinessActivityManagerImple</entry>
 

@@ -24,21 +24,18 @@ import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
-import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
-import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
-import com.arjuna.webservices11.wsba.processors.ParticipantCompletionParticipantProcessor;
 import com.arjuna.wst11.messaging.*;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * Initialise the transaction services.
+ * Initialise the transaction corodinator services.
  * @author kevin
  */
-public class TransactionInitialisation implements ServletContextListener
+public class WSTCoordinatorInitialisation implements ServletContextListener
 {
     /**
      * The context has been initialized.
@@ -49,11 +46,8 @@ public class TransactionInitialisation implements ServletContextListener
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
            public void run() {
                CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
-               ParticipantProcessor.setProcessor(new ParticipantProcessorImpl()) ;
                CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
                TerminationCoordinatorProcessor.setProcessor(new TerminationCoordinatorProcessorImpl()) ;
-               CoordinatorCompletionParticipantProcessor.setProcessor(new CoordinatorCompletionParticipantProcessorImpl()) ;
-               ParticipantCompletionParticipantProcessor.setProcessor(new ParticipantCompletionParticipantProcessorImpl()) ;
                CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
                ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
            }

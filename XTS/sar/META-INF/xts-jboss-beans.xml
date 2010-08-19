@@ -221,14 +221,16 @@
         <property name="userTransaction11">
             <value>com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple</value>
         </property>
-        <property name="transactionManager11">
-            <value>com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</value>
-        </property>
         <property name="userBusinessActivity11">
             <value>com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple</value>
         </property>
+        <!-- the 1.1 participant API implementation classes.
+        -->
         <property name="businessActivityManager11">
             <value>com.arjuna.mwlabs.wst11.ba.remote.BusinessActivityManagerImple</value>
+        </property>
+        <property name="transactionManager11">
+            <value>com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</value>
         </property>
 
         <!-- the 1.0 client API implementation classes. these are only needed if you are deploying the
@@ -237,11 +239,14 @@
         <property name="userTransaction10">
             <value>com.arjuna.mwlabs.wst.at.remote.UserTransactionImple</value>
         </property>
-        <property name="transactionManager10">
-            <value>com.arjuna.mwlabs.wst.at.remote.TransactionManagerImple</value>
-        </property>
         <property name="userBusinessActivity10">
             <value>com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple</value>
+        </property>
+        <!-- the 1.0 participant API implementation classes. these are only needed if you are deploying the
+            1.0 XTS implementation
+        -->
+        <property name="transactionManager10">
+            <value>com.arjuna.mwlabs.wst.at.remote.TransactionManagerImple</value>
         </property>
         <property name="businessActivityManager10">
             <value>com.arjuna.mwlabs.wst.ba.remote.BusinessActivityManagerImple</value>

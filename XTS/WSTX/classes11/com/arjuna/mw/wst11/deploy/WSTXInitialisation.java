@@ -64,7 +64,7 @@ public class WSTXInitialisation implements ServletContextListener
     }
 
     /**
-     * Configure WSTX client implementations.
+     * Configure all configured WSTX client and participant implementations.
      *
      */
     private void configure()
@@ -76,22 +76,20 @@ public class WSTXInitialisation implements ServletContextListener
         final String userBa = wstEnvironmentBean.getUserBusinessActivity11();
         final String baManager = wstEnvironmentBean.getBusinessActivityManager11();
 
-        if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
-        {
-            // we  allow all the client classes to be null here in case someone wants to deploy a coordinator/server
-            // only implementation. they will still need to install the API classes but not the implementation
-            // code
-            if (! (userTx == null && txManager == null && userBa == null && baManager == null)) {
-                throw new Exception(wstxLogger.i18NLogger.get_mw_wst_deploy_WSTXI_23());
-            }
+        // we only load classes which have been configured
+        
+        if (userTx != null) {
+            UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
         }
-
-        UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
-        TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
-        UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
-        // we only have one choice for the 1.1 business activity manager
-        // BusinessActivityManager.setBusinessActivityManager(BusinessActivityManagerImple.class.newInstance());
-        BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance());
+        if (txManager != null) {
+            TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
+        }
+        if (userBa != null) {
+            UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
+        }
+        if (baManager != null) {
+            BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance());
+        }
     }
 
     /**

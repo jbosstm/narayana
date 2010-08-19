@@ -178,11 +178,13 @@
         <property name="userTransaction11">
             <value>com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple</value>
         </property>
-        <property name="transactionManager11">
-            <value>com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</value>
-        </property>
         <property name="userBusinessActivity11">
             <value>com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple</value>
+        </property>
+        <!-- the 1.1 participant API implementation classes.
+        -->
+        <property name="transactionManager11">
+            <value>com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</value>
         </property>
         <property name="businessActivityManager11">
             <value>com.arjuna.mwlabs.wst11.ba.remote.BusinessActivityManagerImple</value>
