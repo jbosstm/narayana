@@ -33,40 +33,12 @@ package com.arjuna.mw.wsas;
 
 import com.arjuna.mwlabs.wsas.UserActivityImple;
 
-import java.io.FileNotFoundException;
-
 /**
  * Return the UserActivity implementation to use.
  *
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: UserActivityFactory.java,v 1.7 2005/05/19 12:13:15 nmcl Exp $
  * @since 1.0.
- */
-
-/*
- * TODO
- *
- * DOH! This is severely broken/restricted, because we can only ever have
- * a single activity service per process in this model. All HLS-es are added
- * to the same service and run simultaneously, even if that doesn't actually
- * make sense! What we need is to have multiple activity services with
- * different HLS-es allowed for each. Very similar to having multiple POAs.
- *
- * At the moment it works as is because we know there is a very limited
- * set of HLS-es that are running and that they don't conflict. However, this
- * isn't guaranteed in general, so we need to fix this in the refactoring!
- *
- * The reason we can say with certainty that it currently works is: we only
- * have either AtomicTransaction (at) and/or BusinessActivity (ba) HLS-es
- * registered for AXTS. If both are registered then a start on an activity
- * will create an activity that has both running! However, the start was the
- * result of a specific incoming SOAP message on a specific ActivationService
- * (either an at or a ba). So, we give back a context that only contains
- * an at or a ba RegistrationService, not both. This means that participants
- * can only be registered with the at *or* the ba; the other is a redundant
- * coordinator and will just terminate in a success mode. We end up with
- * two coordinators for each activity, but only the right one will ever be
- * used. Not ideal, but one of the limitations of the original WS-AS model.
  */
 
 public class UserActivityFactory
@@ -108,21 +80,5 @@ public class UserActivityFactory
     */
 
     private static UserActivityImple _imple = new UserActivityImple();
-
-    static
-    {
-	try
-	{
-	    com.arjuna.mw.wsas.utils.Configuration.initialise("/wsas.xml");
-	}
-	catch (FileNotFoundException ex)
-	{
-	}
-	catch (Exception ex)
-	{
-	    throw new ExceptionInInitializerError(ex.toString());
-	}
-    }
-    
 }
 

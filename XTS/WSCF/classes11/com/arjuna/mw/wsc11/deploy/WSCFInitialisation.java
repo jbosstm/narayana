@@ -20,10 +20,7 @@
  */
 package com.arjuna.mw.wsc11.deploy;
 
-import com.arjuna.mw.wsas.utils.Configuration;
-import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
-import com.arjuna.services.framework.startup.Sequencer;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

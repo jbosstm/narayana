@@ -246,7 +246,6 @@ public class ActivityImple
 	 *
 	 */
 
-	// ActivityFailedException rather than an Outcome status?
 	public Outcome end (com.arjuna.mw.wsas.completionstatus.CompletionStatus cs)
 			throws InvalidActivityException, WrongStateException,
 			ProtocolViolationException, NoPermissionException, SystemException
