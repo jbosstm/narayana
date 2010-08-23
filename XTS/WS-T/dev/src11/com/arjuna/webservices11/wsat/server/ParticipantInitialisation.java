@@ -52,9 +52,9 @@ public class ParticipantInitialisation
                    secureBindPort = 8443;
                }
 
-               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
+               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-participant/";
                final String uri = baseUri + AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
-               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-participant/";
                final String secureUri = secureBaseUri + AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
 
                serviceRegistry.registerServiceProvider(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, uri) ;

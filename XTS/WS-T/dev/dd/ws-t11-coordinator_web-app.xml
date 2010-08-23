@@ -23,82 +23,49 @@
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-    <display-name>Arjuna Web Services Transaction 1.1</display-name>
+    <display-name>Arjuna Web Services Transaction 1.1 Coordinator Services</display-name>
 
-    <description>Arjuna Web Services Transaction 1.1</description>
+    <description>Arjuna Web Services Transaction 1.1 Coordinator Services</description>
 
-    <!-- Define WSAT 1.1 JaxWS Server Endpoints -->
+    <!-- Coordinator Side Endpoints -->
     <servlet>
       <servlet-name>Coordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsat.sei.CoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-      <servlet-name>Participant</servlet-name>
-      <servlet-class>com.arjuna.webservices11.wsat.sei.ParticipantPortTypeImpl</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
+
     <servlet>
       <servlet-name>CompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-      <servlet-name>CompletionInitiator</servlet-name>
-      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionInitiatorPortTypeImpl</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
 
-    <!-- Define WSBA 1.1 JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-      <servlet-name>BusinessAgreementWithCoordinatorCompletionParticipant</servlet-name>
-      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionParticipantPortTypeImpl</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
+
     <servlet>
       <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-      <servlet-name>BusinessAgreementWithParticipantCompletionParticipant</servlet-name>
-      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionParticipantPortTypeImpl</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
 
-    <!-- Define WSArjTX JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>TerminationCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-      <servlet-name>TerminationParticipant</servlet-name>
-      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
 
-    <!-- Define WSAT 1.1 JaxWS Server Endpoint Mappings -->
+    <!-- Coordinator Side Endpoint Mappings -->
     <servlet-mapping>
       <servlet-name>Coordinator</servlet-name>
       <url-pattern>/CoordinatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Participant</servlet-name>
-      <url-pattern>/ParticipantService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
       <servlet-name>CompletionCoordinator</servlet-name>
       <url-pattern>/CompletionCoordinatorService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>CompletionInitiator</servlet-name>
-      <url-pattern>/CompletionInitiatorService</url-pattern>
     </servlet-mapping>
 
     <!-- Define WSBA 1.1 JaxWS Server Endpoint Mappings -->
@@ -106,26 +73,14 @@
       <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
       <url-pattern>/BusinessAgreementWithCoordinatorCompletionCoordinatorService</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>BusinessAgreementWithCoordinatorCompletionParticipant</servlet-name>
-      <url-pattern>/BusinessAgreementWithCoordinatorCompletionParticipantService</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
       <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
       <url-pattern>/BusinessAgreementWithParticipantCompletionCoordinatorService</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>BusinessAgreementWithParticipantCompletionParticipant</servlet-name>
-      <url-pattern>/BusinessAgreementWithParticipantCompletionParticipantService</url-pattern>
-    </servlet-mapping>
 
-    <!-- Define WSArjTX JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
       <servlet-name>TerminationCoordinator</servlet-name>
       <url-pattern>/TerminationCoordinatorService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>TerminationParticipant</servlet-name>
-      <url-pattern>/TerminationParticipantService</url-pattern>
     </servlet-mapping>
 </web-app>

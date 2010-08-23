@@ -284,8 +284,9 @@
     </target>
 
     <target name="jars11">
+        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
-            <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes} com/arjuna/webservices11/wsat/sei/* com/arjuna/webservices11/wsba/sei/* com/arjuna/webservices11/wsarjtx/sei/* handlers.xml"/>
+            <fileset dir="${build.classes11.dir}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t11-api.jar">
             <fileset dir="${build.classes11.dir}" includes="${ws-t11.api.classes}"/>
@@ -296,16 +297,19 @@
 
     <target name="webapps10" if="build10">
         <copy file="${dd.dir}/ws-t_web-app.xml" tofile="${build.dd.dir}/web-app.xml"/>
-        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
         <war warfile="${build.webapps.dir}/ws-t10.war" webxml="${build.dd.dir}/web-app.xml"/>
     </target>
 
     <target name="webapps11" depends="jars11">
-        <copy file="${dd.dir}/ws-t11_web-app.xml" tofile="${build.dd.dir}/web-app11.xml"/>
-        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
-        <war warfile="${build.webapps.dir}/ws-t11.war" webxml="${build.dd.dir}/web-app11.xml">
-            <webinf dir="${build.dir}/classes11" includes="classes/com/arjuna/webservices11/wsat/sei/* classes/com/arjuna/webservices11/wsba/sei/* classes/com/arjuna/webservices11/wsarjtx/sei/* classes/handlers.xml"/>
-            <webinf dir="${build.dd.dir}" includes="wsdl/**"/>
+        <copy file="${dd.dir}/ws-t11-coordinator_web-app.xml" tofile="${build.dd.dir}/web-app11-coordinator.xml"/>
+        <copy file="${dd.dir}/ws-t11-participant_web-app.xml" tofile="${build.dd.dir}/web-app11-participant.xml"/>
+        <copy file="${dd.dir}/ws-t11-client_web-app.xml" tofile="${build.dd.dir}/web-app11-client.xml"/>
+        <!-- coordinator  -->
+        <war warfile="${build.webapps.dir}/ws-t11-coordinator.war" webxml="${build.dd.dir}/web-app11-coordinator.xml"/>
+        <!-- participants  -->
+        <war warfile="${build.webapps.dir}/ws-t11-participant.war" webxml="${build.dd.dir}/web-app11-participant.xml"/>
+        <!-- client  -->
+        <war warfile="${build.webapps.dir}/ws-t11-client.war" webxml="${build.dd.dir}/web-app11-client.xml">
         </war>
     </target>
 

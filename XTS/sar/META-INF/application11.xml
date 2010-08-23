@@ -38,22 +38,22 @@
 
     <module>
         <web>
-            <web-uri>ws-t11.war</web-uri>
-            <context-root>/ws-t11</context-root>
+            <web-uri>ws-t11-coordinator.war</web-uri>
+            <context-root>/ws-t11-coordinator</context-root>
         </web>
     </module>
 
     <module>
         <web>
-            <web-uri>wscf11.war</web-uri>
-            <context-root>/wscf11</context-root>
+            <web-uri>ws-t11-participant.war</web-uri>
+            <context-root>/ws-t11-participant</context-root>
         </web>
     </module>
 
     <module>
         <web>
-            <web-uri>wstx11.war</web-uri>
-            <context-root>/wstx11</context-root>
+            <web-uri>ws-t11-client.war</web-uri>
+            <context-root>/ws-t11-client</context-root>
         </web>
     </module>
 

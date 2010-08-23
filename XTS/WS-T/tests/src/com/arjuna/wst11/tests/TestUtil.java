@@ -61,17 +61,17 @@ public class TestUtil
 
     final private static String bindHost = XTSPropertyManager.getWSCEnvironmentBean().getBindAddress11();
 
-    public static String participantServiceURI = "http://" + bindHost + ":8080/ws-t11/ParticipantService";
-    public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CoordinatorService";
-    public static String completionInitiatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionInitiatorService";
-    public static String completionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionCoordinatorService";
+    public static String participantServiceURI = "http://" + bindHost + ":8080/ws-t11-participant/ParticipantService";
+    public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11-coordinator/CoordinatorService";
+    public static String completionInitiatorServiceURI = "http://" + bindHost + ":8080/ws-t11-client/CompletionInitiatorService";
+    public static String completionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11-coordinator/CompletionCoordinatorService";
     private final static String ATOMIC_TRANSACTION_FAULT_ACTION = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault";
     private final static String BUSINESS_ACTIVITY_FAULT_ACTION = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault";
 
-    public static String participantCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
-    public static String participantCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
-    public static String coordinatorCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
-    public static String coordinatorCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
+    public static String participantCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11-participant/BusinessAgreementWithParticipantCompletionParticipantService";
+    public static String participantCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11-coordinator/BusinessAgreementWithParticipantCompletionCoordinatorService";
+    public static String coordinatorCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11-participant/BusinessAgreementWithCoordinatorCompletionParticipantService";
+    public static String coordinatorCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11-coordinator/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
 
     public static synchronized String getAtomicTransactionFaultAction()
     {

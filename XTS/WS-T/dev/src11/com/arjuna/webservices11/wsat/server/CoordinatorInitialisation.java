@@ -52,9 +52,9 @@ public class CoordinatorInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-coordinator/";
         final String uri = baseUri + AtomicTransactionConstants.COORDINATOR_SERVICE_NAME;
-        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-coordinator/";
         final String secureUri = secureBaseUri + AtomicTransactionConstants.COORDINATOR_SERVICE_NAME;
 
         serviceRegistry.registerServiceProvider(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME, uri) ;

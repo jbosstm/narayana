@@ -287,11 +287,7 @@
         <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wstx_web-app.xml"/>
     </target>
 
-    <target name="war11">
-        <war warfile="${build.webapps.dir}/${modulename}11.war" webxml="xml/wstx_web-app11.xml"/>
-    </target>
-
-    <target name="war" depends="jar, war10, war11"/>
+    <target name="war" depends="jar, war10"/>
 
 	<target name="tests.init">
         <!-- delete the test destination directories -->

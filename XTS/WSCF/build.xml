@@ -213,11 +213,7 @@
         <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wscf_web-app.xml"/>
     </target>
 
-    <target name="war11">
-        <war warfile="${build.webapps.dir}/${modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
-    </target>
-
-    <target name="war" depends="jar, htdocs, war10, war11"/>
+    <target name="war" depends="jar, htdocs, war10"/>
 
 	<!-- test targets -->
 	<target name="tests.init">

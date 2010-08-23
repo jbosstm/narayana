@@ -51,9 +51,9 @@ public class TerminationCoordinatorInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-coordinator/";
         final String uri = baseUri + ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME;
-        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-coordinator/";
         final String secureUri = secureBaseUri + ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME;
 
         serviceRegistry.registerServiceProvider(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, uri) ;

@@ -226,7 +226,7 @@
             <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
 
             <!-- include 1.1 web apps-->
-            <fileset dir="${webapps.dir}" includes="*11.war"/>
+            <fileset dir="${webapps.dir}" includes="*11*.war"/>
 
             <!-- include config jar -->
             <!-- don't need this because we configure from beans.xml
