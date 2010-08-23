@@ -117,7 +117,7 @@
         <!-- if you are using a remote JBoss XTS coordinator you can just redefine the scheme, address, port or
             path to the desired value and the ones left undefined will be defaulted to use the standard XTS
             coordinator URL elements. So, for example if your XTS coordinator services is deployed in another
-            AS on host myhost.myorg.com you only need to define property coordinatorHost11 to have value
+            AS on host myhost.myorg.com you only need to define property coordinatorAddress11 to have value
             myhost.myorg.com and the coordinator address used by clients will be
             http://myhost.myorg.com:8080/ws-c11/ActivationService
             n.b. if the remote machine is using JBoss XTS then you won't want to redefine the port unless
@@ -127,7 +127,7 @@
         <property name="coordinatorScheme11">
            <value>http</value>
         </property>
-        <property name="coordinatorHost11">
+        <property name="coordinatorAddress11">
            <value>10.0.1.99</value>
         </property>
         <property name="coordinatorPort11">

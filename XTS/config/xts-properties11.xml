@@ -116,7 +116,7 @@
     <!--
     <entry key="org.jboss.jbossts.xts11.coordinatorURL">http://localhost:8080/ws-c11/ActivationService</entry>
     <entry key="org.jboss.jbossts.xts11.coordinator.scheme">http</entry>
-    <entry key="org.jboss.jbossts.xts11.coordinator.host">localhost</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.address">localhost</entry>
     <entry key="org.jboss.jbossts.xts11.coordinator.port">8080</entry>
     <entry key="org.jboss.jbossts.xts11.coordinator.path">ws-c11/ActivationService</entry>
     -->
