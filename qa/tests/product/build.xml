@@ -104,7 +104,6 @@ different object store implementations, the command would be
     </path>
     <!-- apache logging -->
     <path id="classpath.common">
-        <pathelement location="${jbossts.home}/lib/ext/commons-logging-1.1.jar" />
         <pathelement location="${jbossts.home}/lib/ext/log4j-1.2.14.jar" />
     </path>
     <!-- JOTM: http://jotm.objectweb.org/download/index.html -->

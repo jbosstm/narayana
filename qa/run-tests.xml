@@ -45,7 +45,7 @@
         <antcall target="junit-tests">
             <param name="tests" value="jtsremote"/>
         </antcall>
-        
+
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
@@ -155,13 +155,13 @@
         <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery05_1"/></antcall>
         <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
-         <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
         <!-- crashrecovery06 : 2 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
         <!-- crashrecovery07 : 16 tests, 4 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery07"/></antcall>
         <!-- crashrecovery08 : 32 tests, 15 minutes -->
-         <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
         <!-- crashrecovery09 : 6 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery09"/></antcall>
         <!-- crashrecovery10 : 6 tests, 2 minutes -->
@@ -218,7 +218,7 @@
         <antcall target="install-dbdriver"><param name="files" value="db2*"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_ibmdb2_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_ibmdb2_jndi"/></antcall>
-        
+
     </target>
 
     <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
@@ -244,7 +244,7 @@
         <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="crashrecovery11-oracle_jndi"/></antcall>
 
-         <!--mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
+        <!--mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
         <condition property="mssql.driver" value="sqljdbc4.jar">
             <equals arg1="${java.specification.version}" arg2="1.6"/>
         </condition>
@@ -313,7 +313,7 @@
 
         <antcall target="install-dbdriver"><param name="files" value="db2*"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbclocals01_ibmdb2_jndi"/></antcall>
-        
+
     </target>
 
     <target name="performance">
@@ -339,7 +339,7 @@
             <param name="additional.elements" value="-agentpath:ext/libjbossAgent_linux64.so"/>
         </antcall>
 
-    </target>    
+    </target>
 
     <!-- ##################################### -->
 
@@ -405,19 +405,57 @@
 
     </target>
 
-<!--
+    <!-- directory that contains emma.jar and emma_ant.jar: -->
+    <property name="emma.dir" value="../build/extlib" />
 
-unused groups, pending cleanup and wiring:
+    <path id="emma.lib" >
+        <pathelement location="${emma.dir}/emma.jar" />
+        <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
 
-ait01_ots_transactionmanager.java
-aitresources01.java
-crashrecovery13.java
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
-jdbcresources03_oracle_thin_jndi.java
-jdbcresources04_oracle_thin_jndi.java
+    <target name="emmareport">
+        <emma enabled="true">
+            <report>
 
-txoj.java - thse should be unit tests.
+                <fileset dir=".." >
+                    <include name="**/build/metadata.emma"/>
+                </fileset>
 
--->
+                <fileset dir="testoutput">
+                    <include name="**/*-coverage.ec"/>                    
+                </fileset>
+
+                <fileset dir="..">
+                    <include name="**/build/coverage.ec"/>
+                </fileset>
+
+
+                <sourcepath>
+                    <dirset dir="..">
+                        <include name="**/classes"/>
+                    </dirset>
+                </sourcepath>
+                <txt outfile="testoutput/emma/coverage.txt" />
+                <html outfile="testoutput/emma/coverage.html" />
+            </report>
+        </emma>
+    </target>
+
+    <!--
+
+    unused groups, pending cleanup and wiring:
+
+    ait01_ots_transactionmanager.java
+    aitresources01.java
+    crashrecovery13.java
+
+    jdbcresources03_oracle_thin_jndi.java
+    jdbcresources04_oracle_thin_jndi.java
+
+    txoj.java - thse should be unit tests.
+
+    -->
 
 </project>
