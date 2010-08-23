@@ -35,7 +35,7 @@ import javax.xml.ws.handler.MessageContext;
         portName = "BusinessAgreementWithCoordinatorCompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="/handlers.xml")
+@HandlerChain(file="/ws-t_handlers.xml")
 @Addressing(required=true)
 public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl // implements BusinessAgreementWithCoordinatorCompletionCoordinatorPortType
 {

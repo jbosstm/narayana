@@ -32,7 +32,7 @@ import org.xmlsoap.schemas.soap.envelope.Fault;
         portName = "ParticipantPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="/handlers.xml")
+@HandlerChain(file="/ws-t_handlers.xml")
 @Addressing(required=true)
 public class ParticipantPortTypeImpl // implements ParticipantPortType
 {

@@ -34,7 +34,7 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="/handlers.xml")
+@HandlerChain(file="/ws-c_handlers.xml")
 @Addressing(required=true)
 public class RegistrationPortTypeImpl // implements RegistrationPortType
 {

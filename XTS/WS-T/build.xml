@@ -284,9 +284,9 @@
     </target>
 
     <target name="jars11">
-        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/handlers.xml"/>
+        <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/ws-t_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
-            <fileset dir="${build.classes11.dir}"/>
+            <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t11-api.jar">
             <fileset dir="${build.classes11.dir}" includes="${ws-t11.api.classes}"/>

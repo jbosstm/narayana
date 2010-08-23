@@ -30,7 +30,7 @@ import com.arjuna.services.framework.task.Task;
         portName = "CompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="/handlers.xml")
+@HandlerChain(file="/ws-t_handlers.xml")
 @Addressing(required=true)
 public class CompletionCoordinatorPortTypeImpl // implements CompletionCoordinatorPortType
 {

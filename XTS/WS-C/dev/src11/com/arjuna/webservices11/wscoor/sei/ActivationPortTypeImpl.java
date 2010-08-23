@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="/handlers.xml")
+@HandlerChain(file="/ws-c_handlers.xml")
 @Addressing(required=true)
 public class ActivationPortTypeImpl // implements ActivationPortType
 {
