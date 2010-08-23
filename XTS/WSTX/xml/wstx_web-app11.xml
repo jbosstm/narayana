@@ -26,12 +26,4 @@
     <display-name>Arjuna WS-TX11</display-name>
 
     <description>Arjuna WS-TX11</description>
-
-    <listener>
-        <listener-class>com.arjuna.mw.wst11.deploy.WSTXInitialisation</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>com.arjuna.mw.wst11.deploy.WSTXCloseInitialisation</listener-class>
-    </listener>
 </web-app>

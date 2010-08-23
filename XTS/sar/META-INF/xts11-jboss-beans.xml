@@ -14,7 +14,7 @@
         the client. If left unset the client uses the bind address and http port values to construct a
         URL addressing a locally deployed coordinator service.
      -->
-    <bean name="WSCEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCEnvironmentBean">
+    <bean name="XTS:WSCEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSCEnvironmentBean"/>
         <!-- we need the bind address and port from jboss web -->
@@ -147,7 +147,7 @@
         to be loaded into any container which is running a coordinator. They can be omitted from
         containers which only run clients or transactional web services.
     -->
-    <bean name="WSCFEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCFEnvironmentBean">
+    <bean name="XTS:WSCFEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSCFEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSCFEnvironmentBean"/>
         <depends>jboss:service=TransactionManager</depends>
@@ -169,7 +169,7 @@
         WSAT and WSBA client and web service APIs. They need only be specified in a container which will
         be running XTS clients or web services.
     -->
-    <bean name="WSTEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSTEnvironmentBean">
+    <bean name="XTS:WSTEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSTEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
             factoryMethod="getWSTEnvironmentBean"/>
         <depends>jboss:service=TransactionManager</depends>
@@ -191,15 +191,68 @@
         </property>
     </bean>
 
+    <bean name="XTS:RecoveryEnvironmentBean" class="org.jboss.jbossts.xts.environment.RecoveryEnvironmentBean">
+        <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
+            factoryMethod="getRecoveryEnvironmentBean"/>
+        <depends>jboss:service=TransactionManager</depends>
+        <!--  the recoveryModules properties contains a list of XTS Recovery Module classes. these modules are
+            used to implement recovery on the coordinator and participant side. they should not be confused
+            with the application specific recovery modules registered by web service participants. The latter
+            are called when the AT and BA participant modules in the list below get run.
+
+            If you are only deploying participant services you can omit the coordinator modules. If you
+            are only deploying coordinator services you can omit the participant modules. If you are only
+            deploying a client app you can omit these entries altogether.
+
+            Note that the 1.0 and 1.1 implementations are recovered by the same modules
+        -->
+        <property name="coordinatorRecoveryModules">
+            <list elementClass="java.lang.String">
+                <value>org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule</value>
+                <value>org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule</value>
+                <value>org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule</value>
+                <value>org.jboss.jbossts.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule</value>
+            </list>
+        </property>
+        <property name="participantRecoveryModules">
+            <list elementClass="java.lang.String">
+                <value>org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule</value>
+                <value>org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- The bean which configures execution of client, participant and coordinator startup routines -->
+    <bean name="XTS:XTSEnvironmentBean" class="org.jboss.jbossts.xts.environment.XTSEnvironmentBean">
+        <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
+            factoryMethod="getXTSEnvironmentBean"/>
+        <depends>jboss:service=TransactionManager</depends>
+        <!-- This is a list of initialisation classes implementing the XTS lifecycle interface XTSInitialisation.
+            The classes are instantiated in order during XTS startup and their startup method is then called.
+            At XTS shutdown the corresponding shutdown methods are called in reverse order. The standard 3 entries
+            in this list perform all the required initialisation of the 1.1 coordinator side, participant side and
+            client side services since, by default, XTS is deployed with all 3 of these components included.
+            If you only wish to deploy a specific subset of these services you may want to remove some of these entries.
+         -->
+        <property name="xtsInitialisations">
+            <list elementClass="java.lang.String">
+                <value>org.jboss.jbossts.xts.initialisation.CoordinatorSideInitialisation</value>
+                <value>org.jboss.jbossts.xts.initialisation.ParticipantSideInitialisation</value>
+                <value>org.jboss.jbossts.xts.initialisation.ClientSideInitialisation</value>
+            </list>
+        </property>
+    </bean>
+
     <!-- The XTS service itself  -->
 
     <bean name="XTSService" class="org.jboss.jbossts.XTSService">
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.xts:service=XTSService", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
 
-       <depends>WSCFEnvironmentBean</depends>
-       <depends>WSCEnvironmentBean</depends>
-       <depends>WSTEnvironmentBean</depends>
-       <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+       <depends>XTS:WSCFEnvironmentBean</depends>
+       <depends>XTS:WSCEnvironmentBean</depends>
+       <depends>XTS:WSTEnvironmentBean</depends>
+       <depends>XTS:RecoveryEnvironmentBean</depends>
+       <depends>XTS:XTSEnvironmentBean</depends>
    </bean>
 
 </deployment>

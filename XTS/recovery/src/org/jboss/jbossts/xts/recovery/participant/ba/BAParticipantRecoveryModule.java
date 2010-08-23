@@ -23,14 +23,13 @@ package org.jboss.jbossts.xts.recovery.participant.ba;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import org.jboss.jbossts.xts.recovery.XTSRecoveryModule;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -46,12 +45,12 @@ import java.io.IOException;
  *
  */
 
-public class BAParticipantRecoveryModule implements RecoveryModule
+public class BAParticipantRecoveryModule implements XTSRecoveryModule
 {
     public BAParticipantRecoveryModule()
     {
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("BAParticipantRecoveryModule created - default");
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("BAParticipantRecoveryModule created - default");
         }
 
         if (_recoveryStore == null)
@@ -104,8 +103,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.logger.isDebugEnabled()) {
-                XTSLogger.logger.debug("BAParticipantRecoveryModule: first pass");
+            if (RecoveryLogger.logger.isDebugEnabled()) {
+                RecoveryLogger.logger.debug("BAParticipantRecoveryModule: first pass");
             }
 
             BAParticipants = _recoveryStore.allObjUids(_participantType, acc_uids );
@@ -113,7 +112,7 @@ public class BAParticipantRecoveryModule implements RecoveryModule
         }
         catch ( ObjectStoreException ex )
         {
-            XTSLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_1(ex);
+            RecoveryLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_1(ex);
         }
 
         if ( BAParticipants )
@@ -124,8 +123,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("BAParticipantRecoveryModule: Second pass");
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("BAParticipantRecoveryModule: Second pass");
         }
 
         processParticipantsStatus() ;
@@ -135,8 +134,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     {
         // Retrieve the participant from its original process.
 
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("participant type is " + _participantType + " uid is " +
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("participant type is " + _participantType + " uid is " +
                     recoverUid.toString());
         }
 
@@ -168,26 +167,26 @@ public class BAParticipantRecoveryModule implements RecoveryModule
                             // oh boy, not supposed to happen -- n.b. either the user deployed 1.0
                             // last time and 1.1 this time or vice versa or something is rotten in
                             // the state of Danmark
-                            XTSLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_4(participantRecordClazzName, recoverUid, cnfe);
+                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_4(participantRecordClazzName, recoverUid, cnfe);
                         } catch (InstantiationException ie) {
                             // this is also worrying, log an error
-                            XTSLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, ie);
+                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, ie);
                         } catch (IllegalAccessException iae) {
                             // this is another configuration problem, log an error
-                            XTSLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, iae);
+                            RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_5(participantRecordClazzName, recoverUid, iae);
                         }
                     } catch (IOException ioe) {
                         // hmm, record corrupted? log this as a warning
-                        XTSLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_6(recoverUid, ioe);
+                        RecoveryLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_6(recoverUid, ioe);
                     }
                 } else {
                     // hmm, it ought not to be able to disappear unless the recovery manager knows about it
                     // this is an error!
-                    XTSLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_7(recoverUid);
+                    RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_7(recoverUid);
                 }
             } catch (ObjectStoreException ose) {
                 // if the object store is not working this is serious
-                XTSLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_8(recoverUid, ose);
+                RecoveryLogger.i18NLogger.error_participant_ba_BAParticipantRecoveryModule_8(recoverUid, ose);
             }
         }
     }
@@ -196,8 +195,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("processing " + _participantType
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("processing " + _participantType
                     + " WS-BA participants");
         }
 
@@ -220,8 +219,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
                 break;
             }
 
-            if (XTSLogger.logger.isDebugEnabled()) {
-                XTSLogger.logger.debug("found WS-BA participant " + theUid);
+            if (RecoveryLogger.logger.isDebugEnabled()) {
+                RecoveryLogger.logger.debug("found WS-BA participant " + theUid);
             }
 
             uidVector.addElement( theUid ) ;
@@ -249,7 +248,7 @@ public class BAParticipantRecoveryModule implements RecoveryModule
             }
             catch ( ObjectStoreException ex )
             {
-                XTSLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_3(currentUid, ex);
+                RecoveryLogger.i18NLogger.warn_participant_ba_BAParticipantRecoveryModule_3(currentUid, ex);
             }
         }
         }

@@ -27,24 +27,6 @@
 
     <description>WS-Coordination 1.1 Services</description>
 
-    <!-- Initialise WS Coord 1.1 services -->
-    <listener>
-        <listener-class>com.arjuna.webservices11.wscoor.server.ActivationCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorInitialisation</listener-class>
-    </listener>
-
-    <!-- Initialise WS-C 1.1  -->
-    <listener>
-        <listener-class>com.arjuna.wsc11.messaging.deploy.CoordinationInitialisation</listener-class>
-    </listener>
-
-    <!-- Close the WS-C 1.1 initialisation sequence must be last listener -->
-    <listener>
-        <listener-class>com.arjuna.wsc11.messaging.deploy.WSCCloseInitialisation</listener-class>
-    </listener>
-
     <!-- Define WSCOOR 1.1 JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>ActivationService</servlet-name>

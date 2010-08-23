@@ -1,9 +1,9 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
- * of individual contributors.
+ * Copyright 2010, Red Hat, Inc. and/or its affiliates,
+ * and individual contributors as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
@@ -14,28 +14,18 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
- * (C) 2005-2006,
- * @author JBoss Inc.
+ *
+ * (C) 2010,
+ * @author JBoss, by Red Hat.
  */
-package com.arjuna.mw.wsc11.deploy;
+package org.jboss.jbossts.xts.recovery.logging;
 
-import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
+import org.jboss.jbossts.xts.recovery.logging.recoveryI18NLogger;
+import org.jboss.jbossts.xts.recovery.logging.recoveryI18NLoggerImpl;
+import org.jboss.logging.Logger;
 
-/**
- * Initialise WSCF.
- * @author kevin
- */
-public class WSCFInitialisation
+public class RecoveryLogger
 {
-    public static void startup()
-    {
-        // ensure we load any required protocol implementations
-
-        ProtocolRegistry.sharedManager().initialise();
-    }
-
-    public static void shutdown()
-    {
-    }
+    public static final Logger logger = Logger.getLogger("com.arjuna.wsrecovery");
+    public static final recoveryI18NLogger i18NLogger  = new recoveryI18NLoggerImpl(logger);
 }

@@ -20,40 +20,24 @@
  */
 package com.arjuna.wsc11.messaging.deploy;
 
-import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl;
 import com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
  * Initialise the coordination services.
  * @author kevin
  */
-public class CoordinationInitialisation implements ServletContextListener
+public class CoordinationInitialisation
 {
-    /**
-     * The context has been initialized.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11) {
-           public void run() {
-               ActivationCoordinatorProcessor.setCoordinator(new ActivationCoordinatorProcessorImpl()) ;
-               RegistrationCoordinatorProcessor.setCoordinator(new RegistrationCoordinatorProcessorImpl()) ;
-           }
-        };
+        ActivationCoordinatorProcessor.setCoordinator(new ActivationCoordinatorProcessorImpl()) ;
+        RegistrationCoordinatorProcessor.setCoordinator(new RegistrationCoordinatorProcessorImpl()) ;
     }
 
-    /**
-     * The context is about to be destroyed.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

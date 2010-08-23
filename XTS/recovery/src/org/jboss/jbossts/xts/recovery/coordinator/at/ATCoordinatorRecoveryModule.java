@@ -23,12 +23,11 @@ package org.jboss.jbossts.xts.recovery.coordinator.at;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
+import org.jboss.jbossts.xts.recovery.XTSRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -48,12 +47,12 @@ import java.util.Enumeration;
  * $Id$
  *
  */
-public class ATCoordinatorRecoveryModule implements RecoveryModule
+public class ATCoordinatorRecoveryModule implements XTSRecoveryModule
 {
     public ATCoordinatorRecoveryModule()
     {
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("ATCoordinatorRecoveryModule created - default");
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("ATCoordinatorRecoveryModule created - default");
         }
 
         if (_recoveryStore == null)
@@ -94,8 +93,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
 
         try
         {
-            if (XTSLogger.logger.isDebugEnabled()) {
-                XTSLogger.logger.debug("StatusModule: first pass ");
+            if (RecoveryLogger.logger.isDebugEnabled()) {
+                RecoveryLogger.logger.debug("StatusModule: first pass ");
             }
 
             ACCoordinators = _recoveryStore.allObjUids( _transactionType, acc_uids );
@@ -103,7 +102,7 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
         }
         catch ( ObjectStoreException ex )
         {
-            XTSLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_1(ex);
+            RecoveryLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_1(ex);
         }
 
         if ( ACCoordinators )
@@ -114,8 +113,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("ATCoordinatorRecoveryModule: Second pass ");
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("ATCoordinatorRecoveryModule: Second pass ");
         }
 
         if (_transactionUidVector != null) {
@@ -128,8 +127,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
 
     protected ATCoordinatorRecoveryModule(String type)
     {
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("ATCoordinatorRecoveryModule created " + type);
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("ATCoordinatorRecoveryModule created " + type);
         }
 
         if (_recoveryStore == null)
@@ -157,8 +156,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
 
         String Status = ActionStatus.stringForm( theStatus ) ;
 
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
                     recoverUid.toString() + "\n ActionStatus is " + Status +
                     " in flight is " + inFlight);
         }
@@ -166,7 +165,7 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
         if ( ! inFlight )
         {
             try {
-                XTSLogger.logger.debug("jjh doing revovery here for " + recoverUid);
+                RecoveryLogger.logger.debug("jjh doing revovery here for " + recoverUid);
                 // TODO jjh
                 RecoveryATCoordinator rcvACCoordinator =
                         new RecoveryATCoordinator(recoverUid);
@@ -178,7 +177,7 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
             }
             catch ( Exception ex )
             {
-                XTSLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_2(recoverUid, ex);
+                RecoveryLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_2(recoverUid, ex);
             }
         }
     }
@@ -223,8 +222,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (XTSLogger.logger.isDebugEnabled()) {
-            XTSLogger.logger.debug("processing " + _transactionType
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("processing " + _transactionType
                     + " transactions");
         }
 
@@ -246,8 +245,8 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
             {
                 break;
             }
-            if (XTSLogger.logger.isDebugEnabled()) {
-                XTSLogger.logger.debug("found transaction " + theUid);
+            if (RecoveryLogger.logger.isDebugEnabled()) {
+                RecoveryLogger.logger.debug("found transaction " + theUid);
             }
 
             uidVector.addElement( theUid ) ;
@@ -274,7 +273,7 @@ public class ATCoordinatorRecoveryModule implements RecoveryModule
             }
             catch ( ObjectStoreException ex )
             {
-                XTSLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_3(currentUid, ex);
+                RecoveryLogger.i18NLogger.warn_coordinator_at_ATCoordinatorRecoveryModule_3(currentUid, ex);
             }
         }
 

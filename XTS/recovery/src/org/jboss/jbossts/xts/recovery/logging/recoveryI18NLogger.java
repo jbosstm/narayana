@@ -18,7 +18,7 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.xts.logging;
+package org.jboss.jbossts.xts.recovery.logging;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import org.jboss.logging.*;
@@ -31,7 +31,7 @@ import static org.jboss.logging.Message.Format.*;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-06
  */
 @MessageLogger(projectCode = "ARJUNA")
-public interface xtsrecoveryI18NLogger {
+public interface recoveryI18NLogger {
 
     /*
         Message IDs are unique and non-recyclable.
@@ -219,6 +219,38 @@ public interface xtsrecoveryI18NLogger {
 	@Message(id = 46045, value = "Compensating orphaned subordinate WS-BA transcation {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_participant_ba_XTSBARecoveryModule_5(Uid arg0);
+
+    @Message(id = 46046, value = "Unable to load recovery module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_1(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46047, value = "Not a recovery module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_2(String arg0);
+
+    @Message(id = 46048, value = "Unable to instantiate module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_3(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46049, value = "Unable to access module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_4(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46050, value = "Unable to load recovery module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_1(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46051, value = "Not a recovery module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_2(String arg0);
+
+    @Message(id = 46052, value = "Unable to instantiate module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_3(String arg0, @Cause() Throwable arg1);
+
+    @Message(id = 46053, value = "Unable to access module class {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_4(String arg0, @Cause() Throwable arg1);
 
     /*
         Allocate new messages directly above this notice.

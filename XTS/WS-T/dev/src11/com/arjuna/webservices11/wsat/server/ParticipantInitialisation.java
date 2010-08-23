@@ -20,14 +20,8 @@
  */
 package com.arjuna.webservices11.wsat.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContext;
-
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.services.framework.startup.Sequencer;
-import com.arjuna.wsc.common.Environment;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
@@ -35,16 +29,10 @@ import org.jboss.jbossts.xts.environment.XTSPropertyManager;
  * Activate the Participant service
  * @author kevin
  */
-public class ParticipantInitialisation implements ServletContextListener
+public class ParticipantInitialisation
 {
-    /**
-     * The context has been initialized.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
-           public void run() {
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
                WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
                String bindAddress = wscEnvironmentBean.getBindAddress11();
@@ -71,15 +59,9 @@ public class ParticipantInitialisation implements ServletContextListener
 
                serviceRegistry.registerServiceProvider(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, uri) ;
                serviceRegistry.registerSecureServiceProvider(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, secureUri) ;
-           }
-        };
     }
 
-    /**
-     * The context is about to be destroyed.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

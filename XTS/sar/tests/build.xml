@@ -59,7 +59,7 @@
 
   <property name="jbossts.build.extlib.dir" location="${jbossts.dir}/build/extlib"/>
   <property name="jbossts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar stax-api.jar
-            jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar jboss-servlet-api_3.0_spec.jar"/>
+            jbossws-native-core.jar jbossws-common.jar jboss-logging.jar jboss-servlet-api_3.0_spec.jar"/>
 
   <target name="init">
     <delete dir="${build.dir}"/>

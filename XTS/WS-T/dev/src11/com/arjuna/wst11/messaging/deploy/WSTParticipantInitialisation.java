@@ -20,41 +20,25 @@
  */
 package com.arjuna.wst11.messaging.deploy;
 
-import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionParticipantProcessor;
 import com.arjuna.wst11.messaging.*;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
  * Initialise the transaction participant services.
  * @author kevin
  */
-public class WSTParticipantInitialisation implements ServletContextListener
+public class WSTParticipantInitialisation
 {
-    /**
-     * The context has been initialized.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
-           public void run() {
-               ParticipantProcessor.setProcessor(new ParticipantProcessorImpl()) ;
-               CoordinatorCompletionParticipantProcessor.setProcessor(new CoordinatorCompletionParticipantProcessorImpl()) ;
-               ParticipantCompletionParticipantProcessor.setProcessor(new ParticipantCompletionParticipantProcessorImpl()) ;
-           }
-        };
+        ParticipantProcessor.setProcessor(new ParticipantProcessorImpl()) ;
+        CoordinatorCompletionParticipantProcessor.setProcessor(new CoordinatorCompletionParticipantProcessorImpl()) ;
+        ParticipantCompletionParticipantProcessor.setProcessor(new ParticipantCompletionParticipantProcessorImpl()) ;
     }
 
-    /**
-     * The context is about to be destroyed.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

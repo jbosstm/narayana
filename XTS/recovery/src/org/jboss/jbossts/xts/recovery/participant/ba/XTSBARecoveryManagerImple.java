@@ -1,7 +1,7 @@
 package org.jboss.jbossts.xts.recovery.participant.ba;
 
 import com.arjuna.ats.arjuna.objectstore.TxLog;
-import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
 
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -70,7 +70,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         try {
             oos.packString(participantRecoveryRecord.getClass().getCanonicalName());
         } catch (IOException ioe) {
-            XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ioe);
+            RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ioe);
             return false;
         }
 
@@ -83,7 +83,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                 uidMap.put(participantRecoveryRecord.getId(), uid);
                 return true;
             } catch (ObjectStoreException ose) {
-                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ose);
+                RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_1(participantRecoveryRecord.getId(), ose);
             }
         }
 
@@ -105,7 +105,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                 uidMap.remove(id);
                 return true;
             } catch (ObjectStoreException ose) {
-                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_2(uid, id, ose);
+                RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_2(uid, id, ose);
             }
         }
 
@@ -216,14 +216,14 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
                         // but leave the participant in the table for next time in case the helper has merely
                         // suffered a transient failure
                         found = true;
-                        XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_3(participantRecoveryRecord.getId(), e);
+                        RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_3(participantRecoveryRecord.getId(), e);
                     }
                 }
 
                 if (!found) {
                     // we failed to find a helper to convert a participant record so log a warning
                     // but leave it in the table for next time
-                    XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_4(participantRecoveryRecord.getId());
+                    RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_4(participantRecoveryRecord.getId());
                 }
             }
         }
@@ -248,7 +248,7 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
         SubordinateBACoordinator[] coordinators = SubordinateBACoordinator.listRecoveredCoordinators();
         for (SubordinateBACoordinator coordinator : coordinators) {
             if (coordinator.isOrphaned()) {
-                XTSLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_5(coordinator.get_uid());
+                RecoveryLogger.i18NLogger.warn_participant_ba_XTSBARecoveryModule_5(coordinator.get_uid());
                 coordinator.cancel();
             }
         }

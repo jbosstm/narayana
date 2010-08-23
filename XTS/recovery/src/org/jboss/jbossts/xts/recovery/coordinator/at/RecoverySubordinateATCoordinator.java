@@ -1,6 +1,6 @@
 package org.jboss.jbossts.xts.recovery.coordinator.at;
 
-import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -61,8 +61,8 @@ public class RecoverySubordinateATCoordinator extends SubordinateATCoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.logger.isDebugEnabled()) {
-           XTSLogger.logger.debugv("RecoverySubordinateATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}", new Object[]{get_uid(), ActionStatus.stringForm(status)});
+       if (RecoveryLogger.logger.isDebugEnabled()) {
+           RecoveryLogger.logger.debugv("RecoverySubordinateATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}", new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
        if ( _activated )
@@ -92,13 +92,13 @@ public class RecoverySubordinateATCoordinator extends SubordinateATCoordinator {
            SubordinateATCoordinator.removeRecoveredCoordinator(this);
        }
 
-       if (XTSLogger.logger.isDebugEnabled()) {
-           XTSLogger.logger.debugv("RecoverySubordinateATCoordinator.replayPhase2( {0} )  finished", new Object[]{get_uid()});
+       if (RecoveryLogger.logger.isDebugEnabled()) {
+           RecoveryLogger.logger.debugv("RecoverySubordinateATCoordinator.replayPhase2( {0} )  finished", new Object[]{get_uid()});
        }
        }
        else
        {
-           XTSLogger.i18NLogger.warn_coordinator_at_RecoverySubordinateATCoordinator_4(get_uid());
+           RecoveryLogger.i18NLogger.warn_coordinator_at_RecoverySubordinateATCoordinator_4(get_uid());
        }
    }
 

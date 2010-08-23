@@ -20,14 +20,8 @@
  */
 package com.arjuna.webservices11.wsba.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContext;
-
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.services.framework.startup.Sequencer;
-import com.arjuna.wsc.common.Environment;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
@@ -35,51 +29,39 @@ import org.jboss.jbossts.xts.environment.XTSPropertyManager;
  * Activate the Participant Completion Coordinator service
  * @author kevin
  */
-public class ParticipantCompletionCoordinatorInitialisation implements ServletContextListener
+public class ParticipantCompletionCoordinatorInitialisation
 {
-    /**
-     * The context has been initialized.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
-           public void run() {
-               final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-               WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
-               String bindAddress = wscEnvironmentBean.getBindAddress11();
-               int bindPort = wscEnvironmentBean.getBindPort11();
-               int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+        WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        String bindAddress = wscEnvironmentBean.getBindAddress11();
+        int bindPort = wscEnvironmentBean.getBindPort11();
+        int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
 
 
-               if (bindAddress == null) {
-                   bindAddress = "127.0.0.1";
-               }
+        if (bindAddress == null) {
+            bindAddress = "127.0.0.1";
+        }
 
-               if (bindPort == 0) {
-                   bindPort = 8080;
-               }
+        if (bindPort == 0) {
+            bindPort = 8080;
+        }
 
-               if (secureBindPort == 0) {
-                   secureBindPort = 8443;
-               }
+        if (secureBindPort == 0) {
+            secureBindPort = 8443;
+        }
 
-               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
-               final String uri = baseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME;
-               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
-               final String secureUri = secureBaseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME;
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
+        final String uri = baseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME;
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+        final String secureUri = secureBaseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME;
 
-               serviceRegistry.registerServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, uri) ;
-               serviceRegistry.registerSecureServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, secureUri) ;
-           }
-        };
+        serviceRegistry.registerServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, uri) ;
+        serviceRegistry.registerSecureServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, secureUri) ;
     }
 
-    /**
-     * The context is about to be destroyed.
-     * @param servletContextEvent The servlet context event.
-     */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

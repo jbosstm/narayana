@@ -24,50 +24,45 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wst11.*;
-import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices.util.ClassLoaderHelper;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.io.FileNotFoundException;
 
 /**
  * Initialise WSTX.
  * @author kevin
  */
-public class WSTXInitialisation implements ServletContextListener
+public class WSTXInitialisation
 {
+    private static boolean initialised = false;
+
     /**
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      *
      */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        final WSTXInitialisation listener = this;
-
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSTX11) {
-           public void run() {
-               try
-               {
-                   listener.configure();
-               }
-               catch (Exception exception) {
-                   wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(exception);
-               }
-               catch (Error error)
-               {
-                   wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(error);
-               }
-           }
-        };
+        if (initialised) {
+            return;
+        }
+        try
+        {
+            configure();
+            initialised = true;
+        }
+        catch (Exception exception) {
+            wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(exception);
+        }
+        catch (Error error)
+        {
+            wstxLogger.i18NLogger.error_mw_wst11_deploy_WSTXI_1(error);
+        }
     }
 
     /**
      * Configure all configured WSTX client and participant implementations.
      *
      */
-    private void configure()
+    private static void configure()
         throws Exception
     {
         WSTEnvironmentBean wstEnvironmentBean = BeanPopulator.getSingletonInstance(WSTEnvironmentBean.class);
@@ -79,16 +74,16 @@ public class WSTXInitialisation implements ServletContextListener
         // we only load classes which have been configured
         
         if (userTx != null) {
-            UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
+            UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(WSTXInitialisation.class, userTx).newInstance()) ;
         }
         if (txManager != null) {
-            TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
+            TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(WSTXInitialisation.class, txManager).newInstance()) ;
         }
         if (userBa != null) {
-            UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
+            UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(WSTXInitialisation.class, userBa).newInstance()) ;
         }
         if (baManager != null) {
-            BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance());
+            BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(WSTXInitialisation.class, baManager).newInstance());
         }
     }
 
@@ -96,7 +91,7 @@ public class WSTXInitialisation implements ServletContextListener
      * The context is about to be destroyed.
      * @param servletContextEvent The servlet context event.
      */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

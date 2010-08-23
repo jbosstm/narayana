@@ -219,4 +219,35 @@
     <entry key="org.jboss.jbossts.xts.protocolImplementation7">com.arjuna.mwlabs.wst.at.ContextFactoryImple</entry>
     <entry key="org.jboss.jbossts.xts.protocolImplementation8">com.arjuna.mwlabs.wst.ba.ContextFactoryImple</entry>
 
+    <!-- XTS recovery modules to be deployed either in the coordinator or participant. you should
+        never need to change these values or add new ones. howver you may want to remove participant modules
+        if you are only deploying coordinator services or remove coordinator modules if you are only deploying
+        participant services. If you are only deploying a client then you can remove all these modules.
+
+        Note that these are the modules which implement XTS recovery and are not the same as the application
+        defined recovery modules registered by participant web services. The latter are called when the AT and BA
+        participant modules in the list below get run.
+
+        n.b. the 1.0 and 1.1 implementations both use the same recovery module.
+    -->
+
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule1">org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule2">org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule3">org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule4">org.jboss.jbossts.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule</entry>
+
+    <entry key="org.jboss.jbossts.xts.recovery.participantRecoveryModule1">org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.participantRecoveryModule2">org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule</entry>
+
+    <!-- initialisations
+	 these are classes which implement the startup and shutdown operations defined by the XTSInitialisation lifecycle
+	 interface. For 1.1 here are 3 such classes performing all initialisation relevant to the coordinator side, participant
+	 side and client side services. You may want to delete some of these entries if you only wish to deploy a subset
+	 of the 1.1 XTS services. For 1.0 there is onl one initialisation routine for all 3 components as it is not possible
+	 to deploy a subset of the 1.0 services.
+    -->
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_1">org.jboss.jbossts.xts.initialisation.CoordinatorSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_2">org.jboss.jbossts.xts.initialisation.ParticipantSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_3">org.jboss.jbossts.xts.initialisation.ClientSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_4">org.jboss.jbossts.xts.initialisation.XTS10Initialisation</entry>
 </properties>

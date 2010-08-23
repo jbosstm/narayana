@@ -21,6 +21,13 @@
 -->
 <project name="recovery" default="jar" basedir=".">
 
+    <!-- Set module name -->
+    <property name="modulename" value="recovery"/>
+
+    <!-- set root before including shared build -->
+
+    <property name="root.dir" location = ".."/>
+
     <import file="../sharedbuild.xml"/>
 
     <!-- Set module name -->
@@ -63,7 +70,6 @@
     <property name="wstx.jar.dest" value="../WSTX/build/lib"/>
 
     <path id="recovery.lib.classpath">
-        <path  refid="build.classpath"/>
         <fileset dir="${wsas.jar.dest}" includes="${wsas.libs}"/>
         <fileset dir="${wsc.jar.dest}" includes="${wsc.libs} ${wsc-api.libs}"/>
         <fileset dir="${wscf.jar.dest}" includes="${wscf.libs}"/>
@@ -89,13 +95,11 @@
 
     <target name="recovery.compile-generic" depends="recovery.init">
         <echo message="Compiling module generic code"/>
-        <javac srcdir="${recovery.src}"
-                       destdir="${recovery.dest}"
-                       debug="on">
-            <classpath>
+        <compile.macro src.dir="${recovery.src}" dest.dir="${recovery.dest}">
+            <additional.classpath>
                 <path refid="recovery.lib.classpath"/>
-            </classpath>
-        </javac>
+            </additional.classpath>
+        </compile.macro>
     </target>
 
 	<!-- Build htdocs for just mw, or mw and mwlabs -->

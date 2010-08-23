@@ -20,7 +20,6 @@
  */
 package com.arjuna.wst11.messaging.deploy;
 
-import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
@@ -28,37 +27,30 @@ import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinator
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.wst11.messaging.*;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
- * Initialise the transaction corodinator services.
+ * Initialise the transaction coordinator services.
  * @author kevin
  */
-public class WSTCoordinatorInitialisation implements ServletContextListener
+public class WSTCoordinatorInitialisation
 {
     /**
      * The context has been initialized.
      * @param servletContextEvent The servlet context event.
      */
-    public void contextInitialized(final ServletContextEvent servletContextEvent)
+    public static void startup()
     {
-        Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
-           public void run() {
-               CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
-               CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
-               TerminationCoordinatorProcessor.setProcessor(new TerminationCoordinatorProcessorImpl()) ;
-               CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
-               ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
-           }
-        };
+        CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
+        CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
+        TerminationCoordinatorProcessor.setProcessor(new TerminationCoordinatorProcessorImpl()) ;
+        CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
+        ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
     }
 
     /**
      * The context is about to be destroyed.
      * @param servletContextEvent The servlet context event.
      */
-    public void contextDestroyed(final ServletContextEvent servletContextEvent)
+    public static void shutdown()
     {
     }
 }

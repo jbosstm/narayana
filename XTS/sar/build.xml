@@ -105,14 +105,29 @@
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
 
-    <!-- compile the generic classes in the sar source -->
-    <target name="compile" depends="init">
+    <!-- compile the sar source -->
+    <target name="compile" depends="init, compile-both, compile-11"/>
+
+
+    <!-- compile 1.1 and 1.0 classes in the sar source -->
+    <target name="compile-both" if="build10">
         <compile.macro>
             <additional.classpath>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
             </additional.classpath>
         </compile.macro>
     </target>
+
+
+    <!-- compile just 1.1 classes in the sar source -->
+    <target name="compile-11" if="nobuild10">
+        <compile.macro excluded.classes="**/org/jboss/jbossts/xts/initialisation/XTS10Initialisation.java">
+            <additional.classpath>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
+            </additional.classpath>
+        </compile.macro>
+    </target>
+
 
     <!-- build the full api jar -->
     <target name="api-both-jar" if="build10">

@@ -28,6 +28,16 @@ public class XTSPropertyManager
         return BeanPopulator.getSingletonInstance(WSTEnvironmentBean.class, xtsProperties);
     }
 
+    public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
+    {
+        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class, xtsProperties);
+    }
+
+    public static XTSEnvironmentBean getXTSEnvironmentBean()
+    {
+        return BeanPopulator.getSingletonInstance(XTSEnvironmentBean.class, xtsProperties);
+    }
+
     private static Properties mergeSystemProperties(Properties properties)
     {
         Properties systemProperties = System.getProperties();

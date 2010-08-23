@@ -18,8 +18,9 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.jbossts.xts.logging;
+package org.jboss.jbossts.xts.recovery.logging;
 
+import org.jboss.jbossts.xts.recovery.logging.recoveryI18NLogger;
 import org.jboss.logging.Logger;
 import static org.jboss.logging.Logger.Level.*;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -30,11 +31,11 @@ import com.arjuna.ats.arjuna.common.Uid;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-06
  */
-public class xtsrecoveryI18NLoggerImpl implements xtsrecoveryI18NLogger {
+public class recoveryI18NLoggerImpl implements recoveryI18NLogger {
 
 	private final Logger logger;
 
-	xtsrecoveryI18NLoggerImpl(Logger logger) {
+	recoveryI18NLoggerImpl(Logger logger) {
 		this.logger = logger;
 	}
 
@@ -197,4 +198,36 @@ public class xtsrecoveryI18NLoggerImpl implements xtsrecoveryI18NLogger {
 	public void warn_participant_ba_XTSBARecoveryModule_5(Uid arg0) {
 		logger.logv(WARN, "ARJUNA-46045 Compensating orphaned subordinate WS-BA transcation {0}", arg0);
 	}
+
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_1(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46046 Unable to load recovery module class {0}", arg0);
+    }
+
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_2(String arg0) {
+        logger.logv(ERROR, "ARJUNA-46047 Not a recovery module class {0}", arg0);
+    }
+
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_3(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46048 Unable to instantiate module class {0}", arg0);
+    }
+
+    public void error_recovery_coordinator_CoordinatorRecoveryInitialisation_4(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46049 Unable to access module class {0}", arg0);
+    }
+
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_1(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46050 Unable to load recovery module class {0}", arg0);
+    }
+
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_2(String arg0) {
+        logger.logv(ERROR, "ARJUNA-46051 Not a recovery module class {0}", arg0);
+    }
+
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_3(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46052 Unable to instantiate module class {0}", arg0);
+    }
+
+    public void error_recovery_participant_ParticipantRecoveryInitialisation_4(String arg0, Throwable arg1) {
+        logger.logv(ERROR, arg1, "ARJUNA-46053 Unable to access module class {0}", arg0);
+    }
 }

@@ -1,7 +1,7 @@
 package org.jboss.jbossts.xts.recovery.participant.at;
 
 import com.arjuna.ats.arjuna.objectstore.TxLog;
-import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
 
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -74,7 +74,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         try {
             oos.packString(participantRecoveryRecord.getClass().getCanonicalName());
         } catch (IOException ioe) {
-            XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_1(participantRecoveryRecord.getId(), ioe);
+            RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_1(participantRecoveryRecord.getId(), ioe);
             return false;
         }
 
@@ -87,7 +87,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
                 uidMap.put(participantRecoveryRecord.getId(), uid);
                 return true;
             } catch (ObjectStoreException ose) {
-                XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_1(participantRecoveryRecord.getId(), ose);
+                RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_1(participantRecoveryRecord.getId(), ose);
             }
         }
 
@@ -109,7 +109,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
                 uidMap.remove(id);
                 return true;
             } catch (ObjectStoreException ose) {
-                XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_2(uid, id, ose);
+                RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_2(uid, id, ose);
             }
         }
 
@@ -220,14 +220,14 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
                         // but leave the participant in the table for next time in case the helper has merely
                         // suffered a transient failure
                         found = true;
-                        XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_3(participantRecoveryRecord.getId(), e);
+                        RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_3(participantRecoveryRecord.getId(), e);
                     }
                 }
 
                 if (!found) {
                     // we failed to find a helper to convert a participant record so log a warning
                     // but leave it in the table for next time
-                    XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_4(participantRecoveryRecord.getId());
+                    RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_4(participantRecoveryRecord.getId());
                 }
             }
         }
@@ -252,7 +252,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         SubordinateATCoordinator[] coordinators = SubordinateATCoordinator.listRecoveredCoordinators();
         for (SubordinateATCoordinator coordinator : coordinators) {
             if (coordinator.getSubordinateType() == SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT && coordinator.isOrphaned()) {
-                XTSLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_5(coordinator.get_uid());
+                RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_5(coordinator.get_uid());
                 coordinator.rollback();
             }
         }

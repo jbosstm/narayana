@@ -27,55 +27,6 @@
 
     <description>Arjuna Web Services Transaction 1.1</description>
 
-    <!-- Initialise Arjuna TX 1.1 services -->
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsarjtx.server.TerminationParticipantInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsarjtx.server.TerminationCoordinatorInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-AT 1.1 services -->
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsat.server.CompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsat.server.CompletionInitiatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsat.server.CoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsat.server.ParticipantInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-BA 1.1 services -->
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsba.server.CoordinatorCompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsba.server.CoordinatorCompletionParticipantInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsba.server.ParticipantCompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices11.wsba.server.ParticipantCompletionParticipantInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-T  1.1 -->
-    <listener>
-        <listener-class>com.arjuna.wst11.messaging.deploy.WSTCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.wst11.messaging.deploy.WSTParticipantInitialisation</listener-class>
-    </listener>
-
-    <!-- Close the WS-T  1.1 initialisation list -->
-    <listener>
-        <listener-class>com.arjuna.wst11.messaging.deploy.WSTCloseInitialisation</listener-class>
-    </listener>
-
     <!-- Define WSAT 1.1 JaxWS Server Endpoints -->
     <servlet>
       <servlet-name>Coordinator</servlet-name>
