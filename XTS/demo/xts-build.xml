@@ -87,7 +87,7 @@
              jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
     <property name="jboss.client.libs" value="${jboss.client.lib.jars}"/>
 
-    <property name="jboss.common.libs" value="jboss-servlet-api_3.0_spec.jar"/>
+    <property name="jboss.common.libs" value="jboss-servlet-api_3.0_spec.jar jaxrpc-api.jar"/>
 
     <!-- ================================================================== -->
 
