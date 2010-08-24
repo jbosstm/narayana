@@ -35,6 +35,7 @@ package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.objectstore.TxLog;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
 
 import com.arjuna.ats.jts.logging.*;
@@ -248,14 +249,11 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
                 try
                     {
-                        if (participantStore == null)
-                        {
-                            participantStore = StoreManager.getParticipantStore();
-                        }
-
                         OutputObjectState oState = new OutputObjectState();
                         oState.packString(reference);
-                        participantStore.write_committed( new Uid(uid4Recovery), type(), oState);
+
+                        TxLog txLog = StoreManager.getCommunicationStore();
+                        txLog.write_committed( new Uid(uid4Recovery), type(), oState);
                     }
                 catch ( java.lang.SecurityException sex )
                 {
@@ -304,8 +302,6 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
     private static final String orbNamePrefix = "ots_";
     private static final String orbName = "arjuna.portable_interceptor.";
-
-    private ParticipantStore participantStore;
 
     static protected String uid4Recovery = "0:ffff52e38d0c:c91:4140398c:0";
 

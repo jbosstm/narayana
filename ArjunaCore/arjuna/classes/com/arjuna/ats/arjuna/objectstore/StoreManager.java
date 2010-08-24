@@ -34,15 +34,29 @@ public class StoreManager
 {
     private static ObjectStoreAPI actionStore = null; // for BasicAction i.e. tx logging / recovery
     private static ObjectStoreAPI stateStore = null; // for StateManager i.e. txoj object type store.
+    private static ObjectStoreAPI communicationStore = null; // for IPC e.g. JacOrbRCServiceInit, TransactionStatusManagerItem
 
-    public StoreManager(ObjectStoreAPI actionStore, ObjectStoreAPI stateStore) {
+    public StoreManager(ObjectStoreAPI actionStore, ObjectStoreAPI stateStore, ObjectStoreAPI communicationStore) {
 
-        if(StoreManager.actionStore != null || StoreManager.stateStore != null) {
+        if(StoreManager.actionStore != null || StoreManager.stateStore != null || StoreManager.communicationStore != null) {
             throw new IllegalStateException("store already initialized!");
         }
 
         StoreManager.actionStore = actionStore;
         StoreManager.stateStore = stateStore;
+        StoreManager.communicationStore = communicationStore;
+    }
+
+    public static final void shutdown() {
+        if(actionStore != null) {
+            actionStore.stop();
+        }
+        if(stateStore != null) {
+            stateStore.stop();
+        }
+        if(communicationStore != null) {
+            communicationStore.stop();
+        }
     }
 
     public static final RecoveryStore getRecoveryStore ()
@@ -56,6 +70,41 @@ public class StoreManager
 
     public static final ParticipantStore getParticipantStore() {
         return getActionStore();
+    }
+
+    public static final ParticipantStore getCommunicationStore() {
+        return getCommunicationStoreInternal();
+    }
+
+    private static final ObjectStoreAPI getCommunicationStoreInternal()
+    {
+        if(communicationStore != null) {
+            return communicationStore;
+        }
+
+        synchronized(StoreManager.class) {
+
+            if(communicationStore != null) {
+                return communicationStore;
+            }
+
+            String communicationStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getCommunicationStore();
+
+            try
+            {
+                Class osc = Class.forName(communicationStoreType);
+
+                communicationStore = (ObjectStoreAPI) osc.newInstance();
+            }
+            catch (final Throwable ex)
+            {
+                throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + communicationStoreType, ex);
+            }
+
+            communicationStore.start();
+        }
+
+        return communicationStore;
     }
 
     /**
@@ -105,6 +154,8 @@ public class StoreManager
             {
                 throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + actionStoreType, ex);
             }
+
+            actionStore.start();
         }
 
         return actionStore;
@@ -147,6 +198,7 @@ public class StoreManager
                 throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
             }
 
+            stateStore.start();
         }
         return stateStore;
     }

@@ -59,6 +59,12 @@ import java.io.IOException;
 
 public abstract class ObjectStore implements ObjectStoreAPI
 {
+    @Override
+    public void start() {}
+
+    @Override
+    public void stop() {}
+
     public boolean allObjUids (String s, InputObjectState buff) throws ObjectStoreException
     {
         return allObjUids(s, buff, StateStatus.OS_UNKNOWN);

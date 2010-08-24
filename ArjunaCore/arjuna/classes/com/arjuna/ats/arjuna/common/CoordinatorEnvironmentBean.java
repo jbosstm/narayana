@@ -35,7 +35,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
 public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
-    private volatile String actionStore = HashedActionStore.class.getName();    
+    private volatile String actionStore = HashedActionStore.class.getName();
     private volatile boolean asyncCommit = false;
     private volatile boolean asyncPrepare = false;
     private volatile boolean asyncRollback = false;
@@ -72,6 +72,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile CheckedActionFactory checkedActionFactory = null;
 
     private volatile boolean alternativeRecordOrdering = false;
+
+    private volatile String communicationStore = HashedActionStore.class.getName();
 
     /**
      * Returns the symbolic name for the action store type.
@@ -669,5 +671,27 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setAlternativeRecordOrdering(boolean alternativeRecordOrdering)
     {
         this.alternativeRecordOrdering = alternativeRecordOrdering;
+    }
+
+    /**
+     * Returns the symbolic name for the communication store type.
+     *
+     * Default: "HashedActionStore"
+     *
+     * @return the communication store name.
+     */
+    public String getCommunicationStore()
+    {
+        return communicationStore;
+    }
+
+    /**
+     * Sets the symbolic name of the communication store.
+     *
+     * @param communicationStore the communication store name.
+     */
+    public void setCommunicationStore(String communicationStore)
+    {
+        this.communicationStore = communicationStore;
     }
 }

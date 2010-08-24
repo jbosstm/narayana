@@ -56,5 +56,9 @@ public interface BaseStore
      */
 
     public String getStoreName ();
+
+    public void start();
+
+    public void stop();
 }
 

@@ -72,4 +72,6 @@ public interface CoordinatorEnvironmentBeanMBean
     boolean isBeforeCompletionWhenRollbackOnly();
 
     String getCheckedActionFactoryClassName();
+
+    String getCommunicationStore();
 }

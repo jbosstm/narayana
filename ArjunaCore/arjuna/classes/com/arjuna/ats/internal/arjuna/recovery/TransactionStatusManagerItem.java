@@ -37,7 +37,7 @@ import java.util.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 import com.arjuna.ats.arjuna.state.OutputObjectState ;
@@ -81,9 +81,9 @@ public class TransactionStatusManagerItem
     /**
      * Get a reference to the Object Store.
      */
-    private static RecoveryStore getStore()
+    private static ParticipantStore getStore()
     {
-        return StoreManager.getRecoveryStore();
+        return StoreManager.getCommunicationStore();
     }
     
     /**
