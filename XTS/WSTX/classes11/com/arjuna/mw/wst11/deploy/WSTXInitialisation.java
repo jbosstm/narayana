@@ -25,6 +25,7 @@ import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wst11.*;
 import com.arjuna.webservices.util.ClassLoaderHelper;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
  * Initialise WSTX.
@@ -65,7 +66,7 @@ public class WSTXInitialisation
     private static void configure()
         throws Exception
     {
-        WSTEnvironmentBean wstEnvironmentBean = BeanPopulator.getSingletonInstance(WSTEnvironmentBean.class);
+        WSTEnvironmentBean wstEnvironmentBean = XTSPropertyManager.getWSTEnvironmentBean();
         final String userTx = wstEnvironmentBean.getUserTransaction11();
         final String txManager = wstEnvironmentBean.getTransactionManager11();
         final String userBa = wstEnvironmentBean.getUserBusinessActivity11();
