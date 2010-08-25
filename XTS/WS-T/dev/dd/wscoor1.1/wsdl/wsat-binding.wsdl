@@ -9,14 +9,14 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="CommitOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit" style="document"/>
-      <wsdl:input name="wsat:Commit">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="RollbackOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback" style="document"/>
-      <wsdl:input name="wsat:Rollback">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
@@ -26,14 +26,14 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="CommittedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed" style="document"/>
-      <wsdl:input name="wsat:Committed">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="AbortedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted" style="document"/>
-      <wsdl:input name="wsat:Aborted">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
@@ -43,28 +43,28 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="PreparedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepared" style="document"/>
-      <wsdl:input name="wsat:Prepared">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="AbortedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted" style="document"/>
-      <wsdl:input name="wsat:Aborted">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="ReadOnlyOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/ReadOnly" style="document"/>
-      <wsdl:input name="wsat:ReadOnly">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="CommittedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed" style="document"/>
-      <wsdl:input name="wsat:Committed">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
@@ -74,21 +74,21 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="PrepareOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepare" style="document"/>
-      <wsdl:input name="wsat:Prepare">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="CommitOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit" style="document"/>
-      <wsdl:input name="wsat:Commit">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="RollbackOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback" style="document"/>
-      <wsdl:input name="wsat:Rollback">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>

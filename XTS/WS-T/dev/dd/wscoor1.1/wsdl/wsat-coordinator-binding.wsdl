@@ -15,35 +15,35 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="PreparedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepared" style="document"/>
-      <wsdl:input message="wsat:Prepared">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="AbortedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted" style="document"/>
-      <wsdl:input message="wsat:Aborted">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="ReadOnlyOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/ReadOnly" style="document"/>
-      <wsdl:input message="wsat:ReadOnly">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="CommittedOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed" style="document"/>
-      <wsdl:input message="wsat:Committed">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
      <wsdl:operation name="SoapFault">
         <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault"/>
-        <wsdl:input message="wsat:SoapFault">
+        <wsdl:input>
           <soap:body use="literal"/>
         </wsdl:input>
      </wsdl:operation>

@@ -9,10 +9,10 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="CreateCoordinationContextOperation">
             <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/CreateCoordinationContext"/>
-            <wsdl:input name="wscoor:CreateCoordinationContext" message="wscoor:CreateCoordinationContext">
+            <wsdl:input name="wscoor:CreateCoordinationContext">
                 <soap:body use="literal"/>
             </wsdl:input>
-            <wsdl:output name="wscoor:CreateCoordinationContextResponse" message="wscoor:CreateCoordinationContextResponse">
+            <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
@@ -22,10 +22,10 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="RegisterOperation">
             <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register"/>
-            <wsdl:input name="wscoor:Register" message="wscoor:Register">
+            <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
-            <wsdl:output name="wscoor:RegisterResponse" message="wscoor:RegisterResponse">
+            <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

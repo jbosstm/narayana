@@ -9,20 +9,10 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="RegisterOperation">
             <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register"/>
-	    <!-- glassfish will eat this but JBoss uses com.ibm.wsdl code which
-		 decides that the name makes it a different input/ouput to the
-		 one specified in the port declaration which has no name
-            <wsdl:input name="wscoor:Register" message="wscoor:Register">
+            <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
-            <wsdl:output name="wscoor:RegisterResponse" message="wscoor:RegisterResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-	    -->
-            <wsdl:input message="wscoor:Register">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output message="wscoor:RegisterResponse">
+            <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

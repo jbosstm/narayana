@@ -9,14 +9,14 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="CommitOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit" style="document"/>
-      <wsdl:input message="wsat:Commit">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="RollbackOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback" style="document"/>
-      <wsdl:input message="wsat:Rollback">
+      <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
