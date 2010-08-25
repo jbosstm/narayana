@@ -54,24 +54,10 @@ public class XTSPropertyManager
     static Properties xtsProperties;
 
     static {
-        InputStream is = null;
         try {
-            is = XTSPropertyManager.class.getClassLoader().getResourceAsStream("xts-properties.xml");
-            Properties properties = new Properties();
-            properties.loadFromXML(is);
-            xtsProperties = mergeSystemProperties(properties);
+            xtsProperties = XTSPropertiesFactory.getDefaultProperties();
         } catch (Exception e) {
-            // ok, so we have no property file!
-            // just rely on system properties
-            xtsProperties = System.getProperties();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
+            xtsProperties = new Properties(System.getProperties());
         }
     }
 }
