@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Installation_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<book>
+  <xi:include href="Book_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Preface.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <!--	<xi:include href="Chapter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> -->
+  <xi:include href="Preparing_Your_System.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Operating_System_Services.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Installing_and_Uninstalling.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Windows.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="UNIX.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Logging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="ObjectStore_Management.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Additional_JAR_Requirements.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Setting_Properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <index />
+</book>
+
