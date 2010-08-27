@@ -1,0 +1,470 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Programmers_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  
+  <title>Participants</title>
+
+  <indexterm><primary>participants</primary></indexterm>
+  <indexterm><primary>atomic transactions</primary><secondary>atomicity</secondary></indexterm>
+  <indexterm><primary>Durable2PCParticipant</primary></indexterm>
+  <indexterm><primary>Volatile2PCParticipant</primary></indexterm>
+  <indexterm><primary>BusinessAgreementWithParticipantCompletion</primary></indexterm>
+  <indexterm><primary>BusinessAgreementWithCoordinatorCompletion</primary></indexterm>
+  <indexterm><primary>BAParticipantManager</primary></indexterm>
+  <indexterm><primary>implementation</primary></indexterm>
+  <indexterm><primary>deployment</primary></indexterm>
+
+  
+  <section>
+    <title>Overview</title>
+    <para>
+      The <firstterm>participant</firstterm> is the entity that performs the work pertaining to transaction management on behalf of the business services involved in an application. The Web service (in the example code, a theater booking system) contains some business logic to reserve a seat and inquire about availability, but it needs to be supported by something that maintains information in a durable manner. Typically this is a database, but it could be a file system, NVRAM, or other storage mechanism.
+    </para>
+    <para>
+      Although the service may talk to the back-end database directly, it cannot commit or undo any changes, since committing and rolling back are ultimately under the control of a transaction. For the transaction to exercise this control, it must communicate with the database. In XTS, participant does this communication, as shown in <xref linkend="fig-participant-backend-control" />.
+    </para>
+    <figure id="fig-participant-backend-control">
+      <title>Transactions, Participants, and Back-End Transaction Control</title>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="images/fig-participant-backend-control.png" format="PNG"/>
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <section>
+      <title>Atomic Transaction</title>
+      <para>
+	All Atomic Transaction participants are instances of the <xref linkend="sect-Durable2PCParticipant" /> or <xref linkend="sect-Volatile2PCParticipant" />.	
+      </para>
+
+      
+      <section id="sect-Durable2PCParticipant">
+	<title>Durable2PCParticipant</title>
+	<para>
+	  A Durable2PCParticipant supports the WS-Atomic Transaction Durable2PC protocol with the signatures listed in <xref linkend="list-Durable2PCParticipant-signatures" />, as per the <interfacename>com.arjuna.wst11.Durable2Participant</interfacename> interface.
+	</para>
+	<variablelist id="list-Durable2PCParticipant-signatures">
+	  <title>Durable2PCParticipant Signatures</title>
+	  <varlistentry>
+	    <term><methodname>prepare</methodname></term>
+	    <listitem>
+	      <para>
+		The participant should perform any work necessary, so that it
+		can either commit or roll back the work performed by the Web
+		service under the scope of the transaction. The implementation
+		is free to do whatever it needs to in order to fulfill the
+		implicit contract between it and the coordinator.
+	      </para>
+	      <para>
+		The participant indicates whether it can <systemitem>prepare</systemitem> by returning an instance of the <interfacename>com.arjuna.wst11.Vote</interfacename>, with one of three values.
+	      </para>
+	      <itemizedlist>
+		<listitem>
+		  <para>
+		    <literal>ReadOnly</literal> indicates that the participant does not need to be informed of the transaction outcome, because it did not update any state information.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    <literal>Prepared</literal> indicates that the participant is ready to commit or roll back, depending on the final transaction outcome. Sufficient state updates have been made persistent to accomplish this.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    <literal>Aborted</literal> indicates that the participant has aborted and the transaction should also attempt to do so.
+		  </para>
+		</listitem>
+	      </itemizedlist>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>commit</methodname></term>
+	    <listitem>
+	      <para>
+		The participant should make its work permanent. How it accomplishes this depends upon its implementation. For instance, in the theater example, the reservation of the ticket is committed. If commit processing cannot complete, the participant should throw a <systemitem>SystemException</systemitem> error, potentially leading to a heuristic outcome for the transaction.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>rollback</methodname></term>
+	    <listitem>
+	      <para>
+		The participant should undo its work. If rollback processing cannot complete, the participant should throw a <systemitem>SystemException</systemitem> error, potentially leading to a heuristic outcome for the transaction.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>unknown</methodname></term>
+	    <listitem>
+	      <para>
+		This method has been deprecated and is slated to be removed from XTS in the future.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>error</methodname></term>
+	    <listitem>
+	      <para>
+		In rare cases when recovering from a system crash, it may be impossible to complete or roll back a previously prepared participant, causing the <methodname>error</methodname> operation to be invoked.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
+
+      
+      <section id="sect-Volatile2PCParticipant">
+	<title>Volatile2PCParticipant</title>
+	<para>
+	  This participant supports the WS-Atomic Transaction Volatile2PC protocol with the signatures listed in <xref linkend="list-Volatile2PCParticipant-signatures" />, as per the <interfacename>com.arjuna.wst11.Volatile2Participant</interfacename> interface.
+	</para>
+	<variablelist id="list-Volatile2PCParticipant-signatures">
+	  <title>Volatile2PCParticipant Signatures</title>
+	  <varlistentry>
+	    <term><methodname>prepare</methodname></term>
+	    <listitem>
+	      <para>
+		The participant should perform any work necessary to flush any
+		volatile data created by the Web service under the scope of the
+		transaction, to the system store. The implementation is free to
+		do whatever it needs to in order to fulfill the implicit
+		contract between it and the coordinator.
+	      </para>
+	      <para>
+		The participant indicates whether it can <systemitem>prepare</systemitem> by returning an instance of the <interfacename>com.arjuna.wst11.Vote</interfacename>, with one of three values.
+	      </para>
+	      <itemizedlist>
+		<listitem>
+		  <para>
+		    <literal>ReadOnly</literal> indicates that the participant does not need to be informed of the transaction outcome, because it did not change any state information during the life of the transaction.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    <literal>Prepared</literal> indicates that the participant wants to be notified of the final transaction outcome via a call to <methodname>commit</methodname> or <methodname>rollback</methodname>.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    <literal>Aborted</literal> indicates that the participant has aborted and the transaction should also attempt to do so.
+		  </para>
+		</listitem>
+	      </itemizedlist>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>commit</term>
+	    <listitem>
+	      <para>
+		The participant should perform any cleanup activities required, in response to a successful transaction commit. These cleanup activities depend upon its implementation. For instance, it may flush cached backup copies of data modified during the transaction. In the unlikely event that commit processing cannot complete, the participant should throw a <systemitem>SystemException</systemitem> error. This will not affect the outcome of the transaction but will cause an error to be logged. This method may not be called if a crash occurs during commit processing.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>rollback</term>
+	    <listitem>
+	      <para>
+		The participant should perform any cleanup activities required, in response to a transaction abort. In the unlikely event that rollback processing cannot complete, the participant should throw a <systemitem>SystemException</systemitem> error. This will not affect the outcome of the transaction but will cause an error to be logged. This method may not be called if a crash occurs during commit processing.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>unknown</term>
+	    <listitem>
+	      <para>
+		This method is deprecated and will be removed in a future release of XTS.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>error</term>
+	    <listitem>
+	      <para>
+		This method should never be called, since volatile participants are not involved in recovery processing.	  
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+	
+      </section>
+
+
+    </section>
+
+    
+    <section>
+      <title>Business Activity</title>
+      <para>
+	All Business Activity participants are instances one or the other of the interfaces described in  <xref linkend="sect-BusinessAgreementWithParticipantCompletion" /> or <xref linkend="sect-BusinessAgreementWithCoordinatorCompletion" /> interface.	
+      </para>
+
+      
+      <section id="sect-BusinessAgreementWithParticipantCompletion">
+	<title>BusinessAgreementWithParticipantCompletion</title>
+	<para>
+	  The <interfacename>BusinessAgreementWithParticipantCompletion</interfacename> interface supports the WS-Transactions <systemitem>BusinessAgreementWithParticipantCompletion</systemitem> protocol with the signatures listed in <xref linkend="list-BusinessAgreementWithParticipantCompletion" />, as per interface <interfacename>com.arjuna.wst11.BusinessAgreementWithParticipantCompletionParticipant</interfacename>.
+	</para>
+	<variablelist id="list-BusinessAgreementWithParticipantCompletion">
+	  <title><interfacename>BusinessAgreementWithParticipantCompletion</interfacename> Signatures</title>
+	  <varlistentry>
+	    <term><methodname>close</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction has completed successfully. The participant has previously informed the coordinator that it was ready to complete.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>cancel</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction has canceled, and the participant should undo any work. The participant cannot have informed the coordinator that it has completed.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>compensate</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction has canceled. The participant previously informed the coordinator that it had finished work but could compensate later if required, and it is now requested to do so. If compensation cannot be performed, the participant should throw a <systemitem>FaultedException</systemitem> error, potentially leading to a heuristic outcome for the transaction. If compensation processing cannot complete because of a transient condition then the participant should throw a <systemitem>SystemException</systemitem> error, in which case the compensation action may be retried or the transaction may finish with a heuristic outcome.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>status</methodname></term>
+	    <listitem>
+	      <para>
+		Return the status of the participant.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>unknown</methodname></term>
+	    <listitem>
+	      <para>
+		This method is deprecated and will be removed a future XTS release.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>error</term>
+	    <listitem>
+	      <para>
+		In rare cases when recovering from a system crash, it may be impossible to compensate a previously-completed participant. In such cases the <methodname>error</methodname> operation is invoked.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
+
+      
+      <section id="sect-BusinessAgreementWithCoordinatorCompletion">
+	<title>BusinessAgreementWithCoordinatorCompletion</title>
+	<para>
+	  The BusinessAgreementWithCoordinatorCompletion participant supports the WS-Transactions <systemitem>BusinessAgreementWithCoordinatorCompletion</systemitem> protocol with the signatures listed in <xref linkend="list-BusinessAgreementWithCoordinatorCompletion-signatures" />, as per the <interfacename>com.arjuna.wst11.BusinessAgreementWithCoordinatorCompletionParticipant</interfacename> interface.
+	</para>
+	<variablelist id="list-BusinessAgreementWithCoordinatorCompletion-signatures">
+	  <title>BusinessAgreementWithCoordinatorCompletion Signatures</title>
+	  <varlistentry>
+	    <term><methodname>close</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction completed successfully. The participant previously informed the coordinator that it was ready to complete.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>cancel</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction canceled, and the participant should undo any work.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>compensate</methodname></term>
+	    <listitem>
+	      <para>
+		The transaction canceled. The participant previously informed the coordinator that it had finished work but could compensate later if required, and it is now requested to do so. In the unlikely event that compensation cannot be performed the participant should throw a <systemitem>FaultedException</systemitem> error, potentially leading to a heuristic outcome for the transaction. If compensation processing cannot complete because of a transient condition, the participant should throw a <systemitem>SystemException</systemitem> error, in which case the compensation action may be retried or the transaction may finish with a heuristic outcome.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>complete</methodname></term>
+	    <listitem>
+	      <!--
+	      <para>
+		The coordinator is informing the participant that all work it needs to do within the scope of this business activity has been received.
+	      </para>
+	      -->
+	      <para>
+		The coordinator is informing the participant all work it needs
+		to do within the scope of this business activity has been
+		completed and that it should make permananent any provisional
+		changes it has made.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>status</methodname></term>
+	    <listitem>
+	      <para>
+		Returns the status of the participant.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>unknown</methodname></term>
+	    <listitem>
+	      <para>
+		This method is deprecated and will be removed in a future
+		release of XTS.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>error</methodname></term>
+	    <listitem>
+	      <para>
+		In rare cases when recovering from a system crash, it may be impossible to compensate a previously completed participant. In such cases, the <methodname>error</methodname> method is invoked.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
+
+      
+      <section>
+	<title>BAParticipantManager</title>
+	<para>
+	  In order for the Business Activity protocol to work correctly, the participants must be able to autonomously notify the coordinator about changes in their status. Unlike the Atomic Transaction protocol, where all interactions between the coordinator and participants are instigated by the coordinator when the transaction terminates, the BAParticipantManager interaction pattern requires the participant to be able to talk to the coordinator at any time during the lifetime of the business activity.
+	</para>
+	<para>
+	  Whenever a participant is registered with a business activity, it
+	  receives a handle on the coordinator. <!--This handle is an instance
+	  of the <interfacename>BAParticipantManager</interfacename> interface,
+	  located in
+	  <interfacename>com.arjuna.wst11.BAParticipantManager</interfacename>,-->This
+	  handle is an instance of interface
+	  com.arjuna.wst11.BAParticipantManager with the methods listed in <xref
+	  linkend="list-BAParticipantManager" />.
+	</para>
+	<variablelist id="list-BAParticipantManager">
+	  <title>BAParticipantManager Methods</title>
+	  <varlistentry>
+	    <term><methodname>exit</methodname></term>
+	    <listitem>
+	      <para>
+		The participant uses the method <methodname>exit</methodname> to inform the coordinator that is has left the activity. It will not be informed when and how the business activity terminates. This method may only be invoked while the participant is in the <systemitem>active</systemitem> state (or the <systemitem>completing</systemitem> state, in the case of a participant registered for the <systemitem>ParticipantCompletion</systemitem> protocol). If it is called when the participant is in any other state, a <systemitem>WrongStateException</systemitem> error is thrown. An <methodname>exit</methodname> does not stop the activity as a whole from subsequently being closed or canceled/compensated, but only ensures that the exited participant is no longer involved in completion, close or compensation of the activity.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>completed</methodname></term>
+	    <listitem>
+	      <para>
+		The participant has completed its work, but wishes to continue in the business activity, so that it will eventually be informed when, and how, the activity terminates. The participant may later be asked to compensate for the work it has done or learn that the activity has been closed.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><methodname>fault</methodname></term>
+	    <listitem>
+	      <para>
+		The participant encountered an error during normal activation and has done whatever it can to compensate the activity. The <methodname>fault</methodname> method places the business activity into a mandatory <systemitem>cancel-only</systemitem> mode. The faulted participant is no longer involved in completion, close or compensation of the activity.	  
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
+
+    </section>
+
+  </section>
+
+  
+  <section>
+    <title>Participant Creation and Deployment</title>
+    <para>
+      The participant provides the plumbing that drives the transactional aspects of the service. This section discusses the specifics of Participant programming and usage.
+    </para>
+
+    
+    <section>
+      <title>Implementing Participants</title>
+      <para>
+	Implementing a participant is a relatively straightforward task. However, depending on the complexity of the transactional infrastructure that the participant needs to manage, the task can vary greatly in complexity and scope.  Your implementation needs to implement one of the interfaces found under <package>com.arjuna.wst11</package>.
+      </para>
+      <note>
+	<!--
+	<para>
+	  In previous versions of XTS, the interfaces were found in <package>com.arjuna.wst</package>.
+	</para>
+	-->
+	<para>
+	  The corresponding participant interfaces used in the 1.0 protocol 
+	  implementation are located in package <code>com.arjuna.wst</code>.
+	</para>
+      </note>
+    </section>
+
+    
+    <section>
+      <title>Deploying Participants</title>
+      <!--
+      <para>
+	XTS includes transparent message routing functionality, which allows participants to be located on a different server than the Transaction Service. The Participant classes are not exposed directly as Web Services, but registered with a web service which receives messages from the Transaction Manager and maps them to appropriate method invocations on the relevant Participant instance.
+      </para>
+      <para>
+	Transactional Web Services typically enroll a new Participant instance of the desired type for each new transaction. You need to provide a unique identifier during enrollment. This identifier is used to map transaction protocol messages to the appropriate participant instance. Participant method invocations occur outside of a specific transaction context. Therefore, if your Participant implementation needs information about the transaction context, then you should supply this to the Participant instance, typically as an argument to the constructor function. Sample Participant implementations and usage are available as part of the demonstration applications included with XTS.
+      </para>
+      <para>
+	You need to deploy the application code which creates and enrolls Participants, along with the XTS services and libraries necessary for receiving and processing incoming messages from the Transaction Manager. To deploy this code in the Enterprise Application Platform, place the XTS service archive (SAR) into the server <filename>deploy/</filename> directory. 
+      </para>
+
+      -->
+      <para>
+	Transactional web services and transactional clients are deployed by 
+	placing them in the application server deploy directory alongside the 
+	XTS service archive (SAR). The SAR exports all the client and web 
+	service API classes needed to manage transactions and enroll and 
+	manage participant web services. It provides implementations of all 
+	the WS-C and WS-T coordination services, not just the coordinator 
+	services. In particular, it exposes the client and web service 
+	participant endpoints which are needed to receive incoming messages 
+	originating from the coordinator.
+      </para>
+      <para>
+	Normally, a transactional application client and the transaction web 
+	service it invokes will be deployed in different application 
+	servers. As long as the XTS SAR is deployed to each of these 
+	containers XTS will transparently route coordination messages from 
+	clients or web services to their coordinator and vice versa. When the 
+	the client begins a transaction by default it creates a context using 
+	the coordination services in its local container. The context holds a 
+	reference to the local Registration Service which means that any web 
+	services enlisted in the transaction enrol with the cooridnation 
+	services in the same container."
+      </para>
+      <para>
+	The coordinator does not need to reside in the same container as the 
+	client application. By configuring the client deployment appropriately 
+	it is possible to use the coordinator services co-located with one of 
+	the web services or even to use services deployed in a separate, 
+	dedicated container. See Chapter 8 Stand-Alone Coordination for 
+	details of how to configure a coordinator located in a different 
+	container to the client.
+      </para>
+      <warning>
+	<para>
+	  In previous releases, XTS applications were deployed using the appropriate XTS and Transaction Manager <filename>.jar</filename>, <filename>.war</filename>, and configuration files bundled with the application. This deployment method is no longer supported in the &APPSERVER;.
+	</para>
+      </warning>
+    </section>
+  </section>
+</chapter>
+

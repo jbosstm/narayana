@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Programmers_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  
+  <title>Introduction</title>
+
+  <indexterm><primary>XTS</primary><secondary>XML Transaction Service</secondary></indexterm>
+  <indexterm><primary>Web Services</primary></indexterm>
+  <indexterm><primary>transactions</primary></indexterm>
+  <indexterm><primary>WS-Coordination</primary><secondary>WS-C</secondary></indexterm>
+  <indexterm><primary>WS-Atomic Transaction</primary><secondary>WS-AT</secondary></indexterm>
+  <indexterm><primary>WS-Business Activity</primary><secondary>WS-BA</secondary></indexterm>
+  <indexterm><primary>XTS 1.0</primary><secondary>XTS 1.1</secondary></indexterm>
+  <indexterm><primary>SOAP</primary></indexterm>
+  <indexterm><primary>fault-tolerance</primary></indexterm>
+  <indexterm><primary>undesirable outcomes</primary></indexterm>
+  <indexterm><primary>participants</primary><secondary>transaction participants</secondary></indexterm>
+  <indexterm><primary>active component</primary></indexterm>
+  <indexterm><primary>servlets</primary><secondary>Java servlets</secondary></indexterm>
+  <indexterm><primary>RPC</primary><secondary>Remote Procedure Calls</secondary></indexterm>
+  <indexterm><primary>DE</primary><secondary>Document Exchange</secondary></indexterm>
+  <indexterm><primary>WSDL</primary><secondary>Web Services Description Language</secondary></indexterm>
+
+  <para>
+    The <firstterm>XML Transaction Service (XTS)</firstterm> component of JBoss Transaction Service supports the coordination of private and public Web Services in a business transaction. Therefore, to understand XTS, you must be familiar with Web Services, and also understand something about transactions. This chapter introduces XTS and provides a brief overview of the technologies that form the Web Services standard. Additionally, this chapter explores some of the fundamentals of transactioning technology and how it can be applied to Web Services. Much of the content presented in this chapter is detailed throughout this guide. However, only overview information about Web Services is provided. If you are new to creating Web services, please see consult your Web Services platform documentation.
+  </para>
+  <para>
+    JBoss Transaction Service provides the XTS component as a transaction solution for Web Services. Using XTS, business partners can coordinate complex business transactions in a controlled and reliable manner. The XTS API supports a transactional coordination model based on the <firstterm>WS-Coordination</firstterm>, <firstterm>WS-Atomic Transaction</firstterm>, and <firstterm>WS-Business Activity</firstterm> specifications.
+  </para>
+  <itemizedlist id="protocol-spec-list">
+    <title>Protocols Included in XTS</title>
+    <listitem><para>WS-Coordination (WS-C) is a generic coordination framework developed by IBM, Microsoft and BEA.</para></listitem>
+    <listitem><para>WS-Atomic Transaction (WS-AT) and WS-Business Activity (WS-BA) together comprise the WS-Transaction (WS-T) transaction protocols that utilize this framework.</para></listitem>
+  </itemizedlist>
+  <para>
+    JBoss Transaction Service implements versions 1.0, 1.1, and 1.2 of these three specifications. Version specifications are available from <ulink url="http://www.oasis-open.org/specs/" />.
+  </para>
+  <note>
+    <para>
+      The 1.0, 1.1, and 1.2  specifications only differ in a small number of details. The rest of this document employs version 1.1 of these specifications when providing explanations and example code. On the few occasions where the modifications required to adapt these to the 1.1 specifications are not obvious, an explanatory note is provided.
+    </para>
+  </note>
+
+  <para>
+    <firstterm>Web Services</firstterm> are modular, reusable software components that are created by exposing business functionality through a Web service interface. Web Services communicate directly with other Web Services using standards-based technologies such as SOAP and HTTP. These standards-based communication technologies enable customers, suppliers, and trading partners to access Web Services, independent of hardware operating system, or programming environment. The result is a vastly improved collaboration environment as compared to today's EDI and <firstterm>business-to-business (B2B)</firstterm> solutions, an environment where businesses can expose their current and future business applications as Web Services that can be easily discovered and accessed by external partners.
+  </para>
+
+  <para>
+    Web Services, by themselves, are not fault-tolerant. In fact, some of the reasons that the Web Services model is an attractive development solution are also the same reasons that service-based applications may have drawbacks.
+  </para>
+  <itemizedlist>
+    <title>Properties of Web Services</title>
+    <listitem><para>Application components that are exposed as Web Services may be owned by third parties, which provides benefits in terms of cost of maintenance, but drawbacks in terms of having exclusive control over their behavior.</para></listitem>
+    <listitem><para>Web Services are usually remotely located, increasing risk of failure due to increased network travel for invocations.</para></listitem>
+  </itemizedlist>
+
+  <para>
+    Applications that have high dependability requirements need a method of minimizing the effects of errors that may occur when an application consumes Web Services. One method of safeguarding against such failures is to interact with an application’s Web Services within the context of a <firstterm>transaction</firstterm>. A transaction is a unit of work which is completed entirely, or in the case of failures is reversed to some agreed consistent state. The goal, in the event of a failure, is normally to appear as if the work had never occurred in the first place. With XTS, transactions can span multiple Web Services, meaning that work performed across multiple enterprises can be managed with transactional support.
+  </para>
+    
+  <section>
+    <title>Managing service-Based Processes</title>
+    <para>
+      XTS allows you to create transactions that drive complex business processes, spanning multiple Web Services. Current Web Services standards do not address the requirements for a high-level coordination of services. This is because in today’s Web Services applications, which use single request/receive interactions, coordination is typically not a problem. However, for applications that engage multiple services among multiple business partners, coordinating and controlling the resulting interactions is essential. This becomes even more apparent when you realize that you generally have little in the way of formal guarantees when interacting with third-party Web Services.
+    </para>
+    <para>
+      XTS provides the infrastructure for coordinating services during a business process. By organizing processes as transactions, business partners can collaborate on complex business interactions in a reliable manner, insuring the integrity of their data - usually represented by multiple changes to a database – but without the usual overheads and drawbacks of directly exposing traditional transaction-processing engines directly onto the web. <xref linkend="example-application" /> demonstrates how an application may manage service-based processes as transactions:
+    </para>
+    <formalpara id="example-application">
+      <title>An Evening On the Town</title>
+      <para>
+	The application in question allows a user to plan a social evening. This application is responsible for reserving a table at a restaurant, and reserving tickets to a show. Both activities are paid for using a credit card. In this example, each service represents exposed Web Services provided by different service providers. XTS is used to envelop the interactions between the theater and restaurant services into a single (potentially) long-running business transaction. The business transaction must insure that seats are reserved both at the restaurant and the theater. If one event fails the user has the ability to decline both events, thus returning both services back to their original state. If both events are successful, the user’s credit card is charged and both seats are booked. As you may expect, the interaction between the services must be controlled in a reliable manner over a period of time. In addition, management must span several third-party services that are remotely deployed.
+      </para>
+    </formalpara>
+    <para>
+      Without the backing of a transaction, an undesirable outcome may occur. For example, the user credit card may be charged, even if one or both of the bookings fail.
+    </para>
+    <para>
+      <xref linkend="example-application" /> describes the situations where XTS excels at supporting business processes across multiple enterprises. This example is further refined throughout this guide, and appears as a standard demonstrator (including source code) with the XTS distribution.
+    </para>
+  </section>
+
+  <section>
+    <title>Servlets</title>
+
+    <para>
+      The WS-Coordination, WS-Atomic Transaction, and WS-Business Activity protocols are based on one-way interactions of entities rather than traditional synchronous request/response RPC-style interactions. One group of entities, called transaction participants, invoke operations on other entities, such as the transaction coordinator, in order to return responses to requests. The programming model is based on peer-to-peer relationships, with the result that all services, whether they are participants, coordinators or clients, must have an <firstterm>active component</firstterm> that allows them to receive unsolicited messages.
+    </para>
+    <para>
+      <!--
+      In XTS, the active component is achieved through the use of <firstterm>Java servlet</firstterm> technology. Each endpoint that can be communicated with via SOAP/XML is represented as a servlet, and published within JNDI. Fortunately for the developer, this use of servlets occurs transparently. The only drawback is that clients must reside within a domain capable of hosting servlets, such as an application server. In the case of Enterprise Application Platform, JBoss Application Server provides this functionality.-->
+      In XTS, the active component is achieved through deployment of JaxWS
+      endpoints. Each XTS endpoint that is reachable through SOAP/XML is
+      published via JaxWS, without developer intevention. The only requirement
+      is that transactional client applications and transactional web services
+      must reside within a domain capable of hosting JaxWS endpoints, such as an
+      application server. JBoss Application Server can provide this functionality.
+    </para>
+
+    <note>
+      <para>
+	The XTS 1.0 protocol implementation is based on servlets.
+      </para>
+    </note>
+  </section>
+
+  <section>
+    <title>SOAP</title>
+
+    <para>
+      SOAP has emerged as the <foreignphrase>de facto</foreignphrase> message format for XML-based communication in the Web Services arena. It is a lightweight protocol that allows the user to define the content of a message and to provide hints as to how recipients should process that message.
+    </para>
+    <!--
+    <para>
+      SOAP messages can be divided into two main categories: <firstterm>Remote Procedure Call (RPC)</firstterm> and <firstterm>Document Exchange (DE)</firstterm>. The primary difference between the two categories is that the SOAP specification defines encoding rules and conventions for RPC. The document exchange model allows the exchange of arbitrary XML documents, which is a key ingredient of B2B document exchange. XTS is based on the loosely coupled DE style, yet it can support transactions spanning Web service that use either DE or RPC.
+    </para>
+    -->
+  </section>
+
+  <section>
+    <title>Web Services Description Language (WDSL)</title>
+    <para>
+      <firstterm>Web Services Description Language (WSDL)</firstterm> is an XML-based language used to define Web service interfaces. An application that consumes a Web service parses the service’s WSDL document to discover the location of the service, the operations that the service supports, the protocol bindings the service supports (SOAP, HTTP, etc), and how to access them. For each operation, WSDL describes the format that the client must follow.
+    </para>
+  </section>
+  
+</chapter>

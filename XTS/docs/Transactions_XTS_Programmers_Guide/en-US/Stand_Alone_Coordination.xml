@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Programmers_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  
+  <title>Stand-Alone Coordination</title>
+
+  <indexterm><primary>stand-alone coordination</primary></indexterm>
+  <indexterm><primary>activation coordinator</primary></indexterm>
+  <indexterm><primary>command-line options</primary></indexterm>
+  <indexterm><primary>SAR</primary><secondary>Service Archive</secondary></indexterm>
+
+
+  <section>
+    <title>Introduction</title>
+    <para>
+      The XTS service is deployed as a JBoss service archive (SAR). The version of the service archive provided with the Transaction Service implements version 1.1 of the WS-C, WS-AT and WS-BA services. You can rebuild the XTS service archive to include both the 1.0 and 1.1 implementations and deploy them side by side. See the service archive build script for for further details.
+    </para>
+    <para>
+      The release service archive obtains coordination contexts from the Activation Coordinator service running on the deployed host. Therefore, WS-AT transactions or WS-BA activities created by a locally-deployed client application are supplied with a context which identifies the Registration Service running on the client's machine. Any Web Services invoked by the client are coordinated by the Transaction Protocol services running on the client's host. This is the case whether the Web Services are running locally or remotely. Such a configuration is called <firstterm>local coordination</firstterm>.
+    </para>
+    <para>
+      You can reconfigure this setting globally for all clients, causing context creation requests to be redirected to an Activation Coordinator Service running on a remote host. Normally, the rest of the coordination process is executed from the remote host. This configuration is called <firstterm>stand-alone coordination</firstterm>.
+    </para>
+    <itemizedlist>
+      <title>Reasons for Choosing a Stand-Alone Coordinator</title>
+      <listitem>
+	<para>
+	  Efficiency: if a client application invokes Web Services on a remote &APPSERVER;, coordinating the transaction from the remote server might be more efficient, since the protocol-specific messages between the coordinator and the participants do not need to travel over the network.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Reliability: if the coordinator service runs on a dedicated host, there is no danger of failing applications or services affecting the coordinator and causing failures for unrelated transactions.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  A third reason might be to use a coordination service provided by a third party vendor.
+	</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Configuring the Activation Coordinator</title>
+    <para>
+      The simplest way to configure a stand-alone coordinator is to provide a command line switch when starting the &APPSERVER;. The <parameter>-D</parameter> option specifies a setting for a System property.  Several configuration options can be enabled, taking effect in <xref linkend="list-option-priority" />.
+    </para>
+
+    <table id="list-option-priority">
+      <title>Command-Line Options Passed with the <parameter>-D</parameter> Parameter, Ordered by Priority</title>
+      <tgroup cols="4">
+	<thead>
+	  <row>
+	    <entry><para>Category</para></entry>
+	    <entry><para>Property</para></entry>
+	    <entry><para>Format</para></entry>
+	    <entry><para>Description</para></entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry><para>Absolute URL</para></entry>
+	    <entry><para><varname>org.jboss.jbossts.xts11.coordinatorURL</varname></para></entry>
+	    <entry><para><ulink url="http://coord.host:coord.port/ws-c11/ActivationService" /></para></entry>
+	    <entry>
+	      <para>
+		The value assigned to these URLs depends upon the configuration of the remote coordinator host. The sample values listed with the property names are appropriate when the  coordinator is another JBoss Transaction Service XTS service. Substitute the <replaceable>coord.host</replaceable> and <replaceable>coord.port</replaceable> with the appropriate values for the &APPSERVER; instance running the Activation Coordinator service.
+	      </para>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry><para>Coordinator Host, Port, and Path</para></entry>
+	    <entry>
+	      <para><varname>org.jboss.jbossts.xts11.coordinator.host</varname></para>
+	      <para><varname>org.jboss.jbossts.xts11.coordinator.port</varname></para>
+	      <para><varname>org.jboss.jbossts.xts11.coordinator.path</varname></para>
+	    </entry>
+	    <entry>
+	      <para><replaceable>server.bind.address</replaceable></para>
+	      <para><replaceable>jboss.web.bind.port</replaceable></para>
+	      <para><replaceable>ws-c11/ActivationService</replaceable></para>
+	    </entry>
+	    <entry>
+	      <para>
+		If you set any of these three components, the coordinator URL is constructed using whichever of the component values is defined and substituting the default values specified for any undefined components. The values <replaceable>server.bind.address</replaceable> and <replaceable>jboss.web.bind.port</replaceable> represent the server bind address and the web service listener port obtained either from the application server command-line or the server configuration files.
+	      </para>
+	    </entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+	  
+  </section>
+    
+  <!-- Community version only
+  <section>
+    <title>Build-Time Default Coordinator Configuration</title>
+    <para>
+      You can reset the default coordinator host name and port used by the XTS service archive by defining the properties coordinator.hostname and coordinator.port on the build command-line when building the service archive. See the service archive build script in the sar directory of the XTS source code for further details.
+    </para>
+    <para>
+      You can also redefine the default absolute URL employed by the XTS service by modifying the values specified in the WSTX configuration files included in the service archive. The 1.0 specification URL is defined in the <filename>wstx.xml</filename> file, and the 1.1  specification URL is defined in the <filename>wstx11.xml</filename> file. You can redefine the values either by editing the service archive supplied in the <filename>sar</filename> directory of the XTS install tree, or by modifying the source files located in the <filename>config</filename> directory of the XTS source tree.      
+    </para>
+-->
+  <!--
+  <section>
+    <title>The XTS Service Archive</title>
+    <para>
+	The XTS <firstterm>service archive (SAR)</firstterm> must be deployed on hosts running client applications and participant Web Services, as well as on the stand-alone coordinator host. Clients and participants need access to the libraries deployed with XTS. These libraries are bundled into the SAR. However, clients and participants also need the ability to receive transaction management messages dispatched from the coordinator host. The XTS SAR provides implementations of client-side and participant-side listeners for this purpose. Although these services can be deployed separately from the coordinator-side service listeners and implementation, they are all bundled into a single SAR for simplicity.
+    </para>
+  </section>
+  -->
+</chapter>
+
