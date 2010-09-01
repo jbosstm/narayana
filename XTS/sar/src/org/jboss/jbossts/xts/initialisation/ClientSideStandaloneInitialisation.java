@@ -7,16 +7,13 @@ import com.arjuna.webservices11.wsat.server.CompletionInitiatorInitialisation;
 /**
  * A class used to perform all 1.1 client side initialisation
  */
-public class ClientSideInitialisation implements XTSInitialisation
+public class ClientSideStandaloneInitialisation implements XTSInitialisation
 {
     public void startup() throws Exception
     {
         // there is no WS-C client startup
 
-        // run WS-T initialisation code
-
-        CompletionInitiatorInitialisation.startup();
-        TerminationParticipantInitialisation.startup();
+        // there is no WS-T client startup for the standalone client
 
         // there is no WSCF client startup
 
@@ -33,11 +30,8 @@ public class ClientSideInitialisation implements XTSInitialisation
 
         // there is no WSCF client shutdown
 
-        // run WS-T shutdown code
+        // there is no WS-T client shutdown for the standalone client
 
-        TerminationParticipantInitialisation.shutdown();
-        CompletionInitiatorInitialisation.startup();
-
-        // there is no WS-C client shutdown
+        // there is no WS-C coordinator shutdown
     }
 }
