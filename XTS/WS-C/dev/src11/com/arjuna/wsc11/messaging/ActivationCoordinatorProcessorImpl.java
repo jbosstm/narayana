@@ -29,6 +29,7 @@ import com.arjuna.wsc11.ContextFactory;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc11.ContextFactoryMapper;
 
+import javax.xml.soap.SOAPException;
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.ProtocolException;
 import javax.xml.soap.SOAPFault;
@@ -103,11 +104,10 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 throw new SOAPFaultException(soapFault);
             }
         }
-        catch (Throwable throwable)
+        catch (SOAPException se)
         {
-            throwable.printStackTrace(System.err);
-            throw new ProtocolException(throwable);
-
+            se.printStackTrace(System.err);
+            throw new ProtocolException(se);
         }
     }
 }

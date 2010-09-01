@@ -180,14 +180,28 @@ public interface ArjunaTXConstants
     /**
      * The unknown error error code.
      */
+    public static final String FAULTED_ERROR_CODE       = "Faulted";
+    /**
+     * The faulted error code.
+     */
+    public static final QName  FAULTED_ERROR_CODE_QNAME = new QName(WSARJTX_NAMESPACE, FAULTED_ERROR_CODE, WSARJTX_PREFIX);
+    
+    /**
+     * The faulted error code.
+     */
     public static final String UNKNOWNERROR_ERROR_CODE       = "UnknownError";
     /**
      * The unknown error error code.
      */
     public static final QName  UNKNOWNERROR_ERROR_CODE_QNAME = new QName(WSARJTX_NAMESPACE, UNKNOWNERROR_ERROR_CODE, WSARJTX_PREFIX);
-    
+
     /**
      * The termination protocol.
      */
     public String WSARJTX_PROTOCOL_TERMINATION = WSARJTX_NAMESPACE + "/BATermination";
+
+    /**
+     * The RPC termination protocol.
+     */
+    public String WSARJTX_PROTOCOL_TERMINATION_RPC = WSARJTX_NAMESPACE + "/BATerminationRPC";
 }

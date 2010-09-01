@@ -249,6 +249,7 @@
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-coordinator-binding.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-initiator-binding.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+        <copy file="${dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-rpc-binding.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-coordinator-rpc-binding.wsdl"/>
 
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.wsdl"/>
         <copy file="${dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.xsd"/>
@@ -285,6 +286,7 @@
 
     <target name="jars11">
         <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/ws-t_handlers.xml"/>
+        <copy file="${dd.dir}/ws-t-rpc_handlers.xml" tofile="${build.classes11.dir}/ws-t-rpc_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes}"/>
         </jar>

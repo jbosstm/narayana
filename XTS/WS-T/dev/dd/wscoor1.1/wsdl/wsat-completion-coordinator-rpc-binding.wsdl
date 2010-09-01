@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsa="http://www.w3.org/2005/08/addressing"
+                  xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+                  targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+                  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+
+   <wsdl:import
+      namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+      location="wsat.wsdl" />
+
+    <wsdl:types>
+        <xs:schema targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06">
+            <xs:element name="Result" type="xs:boolean"/>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="Result">
+        <wsdl:part name="result" element="wsat:Result"/>
+    </wsdl:message>
+
+    <wsdl:portType name="CompletionCoordinatorRPCPortType">
+        <wsdl:operation name="CommitOperation">
+            <wsdl:input message="wsat:Commit"/>
+            <wsdl:output message="wsat:Result"/>
+        </wsdl:operation>
+        <wsdl:operation name="RollbackOperation">
+            <wsdl:input message="wsat:Rollback"/>
+            <wsdl:output message="wsat:Result"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+  <wsdl:binding name="CompletionCoordinatorRPC_SOAPBinding" type="wsat:CompletionCoordinatorRPCPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CommitOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Commit" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="RollbackOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Rollback" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="CompletionCoordinatorRPCService">
+    <wsdl:port binding="wsat:CompletionCoordinatorRPC_SOAPBinding" name="CompletionCoordinatorRPCPortType">
+      <soap:address location="http://localhost:9000/wst11/CompletionCoordinatorRPCService"/>
+       <wsaw:UsingAddressing required="true"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

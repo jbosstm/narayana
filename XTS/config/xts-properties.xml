@@ -151,6 +151,10 @@
 	not need to operate as a client or web service
 	then you can leave these properties unset and the corresponding
 	classes will  not be loaded.
+	
+	Note that in the client container you must define both the UserXX and XXManager classes.
+	In the participant container you do not have to define the UserXXX class unless you also
+	want it to operate as a client container
     -->
     <!--  client mappings for the 1.1 implementation
     -->

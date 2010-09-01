@@ -116,35 +116,6 @@ public class TransactionManagerImple extends TransactionManager
 		return _ctxManager.currentTransaction();
 	}
 
-	protected W3CEndpointReference enlistForCompletion (final W3CEndpointReference participantEndpoint)
-			throws WrongStateException, UnknownTransactionException, SystemException
-	{
-		try
-		{
-			TxContextImple currentTx = (TxContextImple) _ctxManager.currentTransaction();
-
-			if (currentTx == null)
-				throw new com.arjuna.wsc.CannotRegisterException();
-
-			return registerParticipant(participantEndpoint, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION);
-		}
-		catch (com.arjuna.wsc.InvalidProtocolException ex)
-		{
-			ex.printStackTrace();
-
-			throw new SystemException(ex.toString());
-		}
-		catch (com.arjuna.wsc.InvalidStateException ex)
-		{
-			throw new WrongStateException();
-		}
-		catch (com.arjuna.wsc.CannotRegisterException ex)
-		{
-            // cause could actually be no activity or already registered
-			throw new UnknownTransactionException();
-		}
-	}
-
     private boolean isCurrentContextSecure()  throws SystemException
     {
         TxContextImple currentTx = (TxContextImple) _ctxManager.currentTransaction();
@@ -154,7 +125,7 @@ public class TransactionManagerImple extends TransactionManager
         return false;
     }
 
-    private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
+    final W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
         final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
@@ -167,7 +138,7 @@ public class TransactionManagerImple extends TransactionManager
         return builder.build();
     }
 
-	private final W3CEndpointReference registerParticipant (final W3CEndpointReference participant, final String protocol)
+	final W3CEndpointReference registerParticipant (final W3CEndpointReference participant, final String protocol)
 			throws InvalidProtocolException, InvalidStateException, CannotRegisterException, SystemException
 	{
 		TxContextImple currentTx = null;

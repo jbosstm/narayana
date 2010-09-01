@@ -1,6 +1,8 @@
 
 package com.arjuna.schemas.ws._2005._10.wsarjtx;
 
+import org.xmlsoap.schemas.soap.envelope.Fault;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -71,6 +73,5 @@ public interface TerminationParticipantPortType {
     @Oneway
     public void faultOperation(
         @WebParam(name = "Fault", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx", partName = "parameters")
-        ExceptionType parameters);
-
+        Fault parameters);
 }

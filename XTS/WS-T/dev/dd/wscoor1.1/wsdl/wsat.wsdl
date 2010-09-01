@@ -49,7 +49,14 @@ This document and the information contained herein is provided on an "AS IS" bas
     <wsdl:message name="Committed">
         <wsdl:part name="parameters" element="wsat:Committed"/>
     </wsdl:message>
-    <wsdl:message name="SoapFault">
+    <!--
+    the WS-TX spec requires us to deliver asynchronous soap faults as a one way message payload
+    directed to the service endpoints but it does not specify any operations or messages in the
+    wsdl for this purpose. this message is used to define a soapenv:Fault payload which is used
+    by SoapFault operations added to the 3 WS-T ports which need to be able to receive an incoming
+    soap fault.
+    -->
+    <wsdl:message name="FaultWrapper">
         <wsdl:part name="parameters" element="soapenv:Fault"/>
     </wsdl:message>
     <!-- Port Types -->
@@ -69,7 +76,7 @@ This document and the information contained herein is provided on an "AS IS" bas
             <wsdl:input message="wsat:Aborted"/>
         </wsdl:operation>
         <wsdl:operation name="SoapFault">
-            <wsdl:input message="wsat:SoapFault"/>
+            <wsdl:input message="wsat:FaultWrapper"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:portType name="CoordinatorPortType">
@@ -86,7 +93,7 @@ This document and the information contained herein is provided on an "AS IS" bas
             <wsdl:input message="wsat:Committed"/>
         </wsdl:operation>
         <wsdl:operation name="SoapFault">
-            <wsdl:input message="wsat:SoapFault"/>
+            <wsdl:input message="wsat:FaultWrapper"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:portType name="ParticipantPortType">
@@ -100,7 +107,7 @@ This document and the information contained herein is provided on an "AS IS" bas
             <wsdl:input message="wsat:Rollback"/>
         </wsdl:operation>
         <wsdl:operation name="SoapFault">
-            <wsdl:input message="wsat:SoapFault"/>
+            <wsdl:input message="wsat:FaultWrapper"/>
         </wsdl:operation>
     </wsdl:portType>
 </wsdl:definitions>

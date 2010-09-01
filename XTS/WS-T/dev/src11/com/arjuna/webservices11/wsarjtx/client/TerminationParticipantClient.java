@@ -25,6 +25,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilder;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 /**
  * The Client side of the Terminator Coordinator.
@@ -189,14 +191,8 @@ public class TerminationParticipantClient
         //AddressingHelper.installFrom(map, terminationCoordinator, identifier);
         AddressingHelper.installNoneReplyTo(map);
         final TerminationParticipantPortType port = getPort(endpoint, map, identifier, soapFaultAction);
-        final ExceptionType fault = new ExceptionType();
-        // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
-        // built from Kev's element types rather than dom element types. this is all we need anyway since we only
-        // see faults containing those values
-        fault.setSoapFaultType(soapFault.getSoapFaultType().getValue());
-        fault.setReason(soapFault.getReason());
-        fault.setSubCode(soapFault.getSubcode());
-
+        SoapFault11 soapFault11 = (SoapFault11)soapFault;
+        Fault fault = soapFault11.toFault();
         port.faultOperation(fault);
     }
 
@@ -212,14 +208,8 @@ public class TerminationParticipantClient
         throws SoapFault, IOException
     {
         final TerminationParticipantPortType port = getPort(map, identifier, soapFaultAction);
-        final ExceptionType fault = new ExceptionType();
-        // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
-        // built from Kev's element types rather than dom element types. this is all we need anyway since we only
-        // see faults containing those values
-        fault.setSoapFaultType(soapFault.getSoapFaultType().getValue());
-        fault.setReason(soapFault.getReason());
-        fault.setSubCode(soapFault.getSubcode());
-
+        SoapFault11 soapFault11 = (SoapFault11)soapFault;
+        Fault fault = soapFault11.toFault();
         port.faultOperation(fault);
     }
 

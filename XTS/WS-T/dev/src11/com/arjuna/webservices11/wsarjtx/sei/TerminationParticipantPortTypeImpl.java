@@ -1,26 +1,22 @@
 
 package com.arjuna.webservices11.wsarjtx.sei;
 
-import com.arjuna.schemas.ws._2005._10.wsarjtx.ExceptionType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.SoapFault11;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantProcessor;
+import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.annotation.Resource;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
-import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 
@@ -142,23 +138,13 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
     @Oneway
     public void faultOperation(
         @WebParam(name = "Fault", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx", partName = "parameters")
-        ExceptionType parameters)
+        Fault parameters)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        String soapFaultTypeName = parameters.getSoapFaultType();
-        String reason = parameters.getReason();
-        QName subcode = parameters.getSubCode();
-        final SoapFault soapFault;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
-        try {
-            SoapFaultType soapFaultType = SoapFaultType.toState(soapFaultTypeName);
-            soapFault = new SoapFault11(soapFaultType, subcode, reason);
-        } catch (Exception e) {
-            String message = WSTLogger.i18NLogger.get_webservices11_wsarjtx_sei_TerminationParticipantPortTypeImpl_1();
-            throw new WebServiceException(message, e);
-        }
-
+        final SoapFault soapFault = SoapFault11.fromFault(parameters);
+    
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
                 TerminationParticipantProcessor.getProcessor().handleSoapFault(soapFault, inboundMap, arjunaContext);

@@ -2,7 +2,9 @@ package org.jboss.jbossts.xts.initialisation;
 
 import com.arjuna.mw.wsc11.deploy.WSCFInitialisation;
 import com.arjuna.webservices11.wsarjtx.server.TerminationCoordinatorInitialisation;
+import com.arjuna.webservices11.wsarjtx.server.TerminationCoordinatorRPCInitialisation;
 import com.arjuna.webservices11.wsat.server.CompletionCoordinatorInitialisation;
+import com.arjuna.webservices11.wsat.server.CompletionCoordinatorRPCInitialisation;
 import com.arjuna.webservices11.wsat.server.CoordinatorInitialisation;
 import com.arjuna.webservices11.wsba.server.CoordinatorCompletionCoordinatorInitialisation;
 import com.arjuna.webservices11.wsba.server.ParticipantCompletionCoordinatorInitialisation;
@@ -29,10 +31,12 @@ public class CoordinatorSideInitialisation implements XTSInitialisation
 
         CoordinatorInitialisation.startup();
         CompletionCoordinatorInitialisation.startup();
+        CompletionCoordinatorRPCInitialisation.startup();
 
         CoordinatorCompletionCoordinatorInitialisation.startup();
         ParticipantCompletionCoordinatorInitialisation.startup();
         TerminationCoordinatorInitialisation.startup();
+        TerminationCoordinatorRPCInitialisation.startup();
 
         WSTCoordinatorInitialisation.startup();
 
@@ -63,6 +67,7 @@ public class CoordinatorSideInitialisation implements XTSInitialisation
 
         WSTCoordinatorInitialisation.shutdown();
 
+        TerminationCoordinatorRPCInitialisation.shutdown();
         TerminationCoordinatorInitialisation.shutdown();
         ParticipantCompletionCoordinatorInitialisation.shutdown();
         CoordinatorCompletionCoordinatorInitialisation.shutdown();

@@ -1,40 +1,48 @@
 package com.arjuna.mwlabs.wst11.at.remote;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst.common.Environment;
-import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.mw.wst11.TransactionManager;
+import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.mwlabs.wst.at.remote.ContextManager;
 import com.arjuna.mwlabs.wst11.at.ContextImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-import com.arjuna.mwlabs.wst.at.remote.ContextManager;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.wsc11.ActivationCoordinator;
+import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.wsc.CannotRegisterException;
 import com.arjuna.wsc.InvalidCreateParametersException;
+import com.arjuna.wsc.InvalidProtocolException;
+import com.arjuna.wsc.InvalidStateException;
+import com.arjuna.wsc11.ActivationCoordinator;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst11.stub.CompletionRPCStub;
 import com.arjuna.wst11.stub.CompletionStub;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.util.Hashtable;
 
-public class UserTransactionImple extends UserTransaction
+/**
+ * An implementation of UserTransaction which employs an RPC MEP based completion protocol specific to
+ * JBoss to complete the transaction. This implementation allows the client to be deployed without the
+ * need to expose any service endpoints.
+ */
+public class UserTransactionStandaloneImple extends UserTransaction
 {
 
-	public UserTransactionImple()
+	public UserTransactionStandaloneImple()
 	{
 		try
 		{
@@ -58,7 +66,8 @@ public class UserTransactionImple extends UserTransaction
 
 			ex.printStackTrace();
 		}
-        _userSubordinateTransaction = new UserSubordinateTransactionImple();
+        // this implementation cannot provide support for subordinate transactions
+        _userSubordinateTransaction = null;
 	}
 
     public UserTransaction getUserSubordinateTransaction() {
@@ -83,13 +92,13 @@ public class UserTransactionImple extends UserTransaction
 
 			enlistCompletionParticipants();
 		}
-		catch (com.arjuna.wsc.InvalidCreateParametersException ex)
+		catch (InvalidCreateParametersException ex)
 		{
 			tidyup();
 
 			throw new SystemException(ex.toString());
 		}
-		catch (com.arjuna.wst.UnknownTransactionException ex)
+		catch (UnknownTransactionException ex)
 		{
 			tidyup();
 
@@ -163,47 +172,16 @@ public class UserTransactionImple extends UserTransaction
      * installed on the thread before it will start and instal la new transaction
      *
      * @param timeout
-     * @throws WrongStateException
-     * @throws SystemException
+     * @throws com.arjuna.wst.WrongStateException
+     * @throws com.arjuna.wst.SystemException
      */
     public void beginSubordinate(int timeout) throws WrongStateException, SystemException
     {
-        try
-        {
-            TxContext current = _ctxManager.currentTransaction();
-            if ((current == null) || !(current instanceof TxContextImple))
-                throw new WrongStateException();
-
-            TxContextImple currentImple = (TxContextImple) current;
-            Context ctx = startTransaction(timeout, currentImple);
-
-            _ctxManager.resume(new TxContextImple(ctx));
-            // n.b. we don't enlist the subordinate transaction for completion
-            // that ensures that any attempt to commit or rollback will fail
-        }
-        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
-        {
-            tidyup();
-
-            throw new SystemException(ex.toString());
-        }
-        catch (com.arjuna.wst.UnknownTransactionException ex)
-        {
-            tidyup();
-
-            throw new SystemException(ex.toString());
-        }
-        catch (SystemException ex)
-        {
-            tidyup();
-
-            throw ex;
-        }
+        throw new SystemException("UserTransactionStandaloneImple does not support subordinate transactions");
     }
 
 	/*
-	 * Not sure if this is right as it doesn't map to registering a participant
-	 * with the coordinator.
+	 * enlist the client for the completiopn protocol so it can commit or ro0ll back the transaction
 	 */
 
 	private final void enlistCompletionParticipants ()
@@ -217,24 +195,23 @@ public class UserTransactionImple extends UserTransaction
             throw new UnknownTransactionException();
 
         final String id = currentTx.identifier();
-        final W3CEndpointReference completionParticipant = getCompletionParticipant(id, currentTx.isSecure());
         W3CEndpointReference completionCoordinator = null;
 
         try
         {
-            completionCoordinator = tm.registerParticipant(completionParticipant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION);
+            completionCoordinator = tm.registerParticipant(null, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION_RPC);
         }
-        catch (com.arjuna.wsc.InvalidProtocolException ex)
+        catch (InvalidProtocolException ex)
         {
             ex.printStackTrace();
 
             throw new SystemException(ex.toString());
         }
-        catch (com.arjuna.wsc.InvalidStateException ex)
+        catch (InvalidStateException ex)
         {
             throw new WrongStateException();
         }
-        catch (com.arjuna.wsc.CannotRegisterException ex)
+        catch (CannotRegisterException ex)
         {
             // cause could actually be no activity or already registered
             throw new UnknownTransactionException();
@@ -274,7 +251,7 @@ public class UserTransactionImple extends UserTransaction
     }
 
     protected final Context startTransaction(int timeout, TxContextImple current)
-			throws com.arjuna.wsc.InvalidCreateParametersException,
+			throws InvalidCreateParametersException,
 			SystemException
 	{
 		try
@@ -340,7 +317,7 @@ public class UserTransactionImple extends UserTransaction
 			if (completionCoordinator == null)
 				throw new WrongStateException();
 
-			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
+			CompletionRPCStub completionStub = new CompletionRPCStub(id, completionCoordinator);
 
 			completionStub.commit();
 		}
@@ -417,7 +394,7 @@ public class UserTransactionImple extends UserTransaction
 			if (completionCoordinator == null)
 				throw new WrongStateException();
 
-			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
+			CompletionRPCStub completionStub = new CompletionRPCStub(id, completionCoordinator);
 
 			completionStub.rollback();
 		}
@@ -457,25 +434,6 @@ public class UserTransactionImple extends UserTransaction
 				_completionCoordinators.remove(id);
 		}
 	}
-
-    /**
-     * Create an endpoint for the local participant service labelled with the current context id which can be passed
-     * to the registration service and handed on to the registered coordinator to call back to this transaction
-     * @param id the current transaction context identifier
-     * @return
-     */
-    private W3CEndpointReference getCompletionParticipant(final String id, final boolean isSecure)
-    {
-        final QName serviceName = AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME;
-        final QName endpointName = AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, isSecure);
-        W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(serviceName);
-        builder.endpointName(endpointName);
-        builder.address(address);
-        InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
-        return builder.build();
-    }
 
 	protected final void tidyup ()
 	{

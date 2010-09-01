@@ -2,11 +2,16 @@ package com.arjuna.webservices11;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.util.InvalidEnumerationException;
 import org.w3c.dom.Element;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -157,6 +162,20 @@ public class SoapFault11 extends SoapFault {
         }
     }
 
+    public static SoapFault11 create(SOAPFaultException sfe)
+    {
+        try {
+            SOAPFault cause = sfe.getFault();
+            QName faultCode = cause.getFaultCodeAsQName();
+            String reason = cause.getFaultString();
+            SoapFaultType soapFaultType = SoapFaultType.toState(reason);
+            Detail detail = cause.getDetail();
+            return new SoapFault11(soapFaultType, faultCode, null, detail);
+        } catch (InvalidEnumerationException e) {
+            return new SoapFault11(e);
+        }
+
+    }
      /**
       * Get the SOAP fault detailElement.
       * @return The SOAP fault detailElement.

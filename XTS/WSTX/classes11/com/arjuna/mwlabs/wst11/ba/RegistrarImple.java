@@ -45,6 +45,7 @@ import com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple;
 import com.arjuna.mwlabs.wst11.ba.remote.SubordinateBAParticipantManagerImple;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
+import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorRPCProcessor;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -78,7 +79,8 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 			BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION, this);
 		mapper.addRegistrar(
 			BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION, this);
-		mapper.addRegistrar(com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION, this);
+        mapper.addRegistrar(com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION, this);
+        mapper.addRegistrar(com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION_RPC, this);
 	}
 
 	/**
@@ -228,6 +230,37 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 						throw new InvalidStateException();
 					}
 				}
+                else
+                    if (com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION_RPC.equals(protocolIdentifier))
+                    {
+                        /*
+                         * there is no end point ot update here so there is no need to look up the terminator
+                         *
+                         * this is a hack because the terminator has already been created at context create. this allows the
+                         * enlist to be delayed until close/cancel and just return the end point with the requisite instance
+                         * identifier. unfortunately this also means that you have to register in order to complete but not
+                         * remove the terminator.
+                         * 
+                         * TODO sort this out
+                         */
+                        /*
+                        BusinessActivityTerminatorImple terminator;
+                        terminator = (BusinessActivityTerminatorImple) TerminationCoordinatorProcessor.getProcessor().getParticipant(instanceIdentifier);
+                        */
+
+                        try
+                        {
+                            return getParticipantManager(
+                                    ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_QNAME,
+                                    ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_PORT_QNAME,
+                                    ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME, isSecure),
+                                    instanceIdentifier.getInstanceIdentifier());
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new InvalidStateException();
+                        }
+                    }
 				else {
                     wstxLogger.i18NLogger.warn_mwlabs_wst_ba_Registrar11Imple_1(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier);
 

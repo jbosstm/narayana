@@ -41,6 +41,12 @@
     </servlet>
 
     <servlet>
+      <servlet-name>CompletionCoordinatorRPC</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorRPCPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
       <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
@@ -58,6 +64,12 @@
       <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+      <servlet-name>TerminationCoordinatorRPC</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorRPCPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <!-- Coordinator Side Endpoint Mappings -->
     <servlet-mapping>
       <servlet-name>Coordinator</servlet-name>
@@ -66,6 +78,10 @@
     <servlet-mapping>
       <servlet-name>CompletionCoordinator</servlet-name>
       <url-pattern>/CompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>CompletionCoordinatorRPC</servlet-name>
+      <url-pattern>/CompletionCoordinatorRPCService</url-pattern>
     </servlet-mapping>
 
     <!-- Define WSBA 1.1 JaxWS Server Endpoint Mappings -->
@@ -82,5 +98,10 @@
     <servlet-mapping>
       <servlet-name>TerminationCoordinator</servlet-name>
       <url-pattern>/TerminationCoordinatorService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>TerminationCoordinatorRPC</servlet-name>
+      <url-pattern>/TerminationCoordinatorRPCService</url-pattern>
     </servlet-mapping>
 </web-app>

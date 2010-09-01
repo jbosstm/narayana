@@ -44,6 +44,8 @@ $JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-completion-coordinator-binding.w
 
 $JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-completion-initiator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-completion-initiator-binding.wsdl
 
+$JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-completion-coordinator-rpc-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-completion-coordinator-rpc-binding.wsdl
+
 $JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-coordinator-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-coordinator-binding.wsdl
 
 $JBOSS_HOME/bin/wsconsume.sh -v -k -w wsdl/wsat-participant-binding.wsdl -o tmp/classes -s tmp/src wsdl/wsat-participant-binding.wsdl
@@ -70,6 +72,7 @@ sed -i -e 's/CoordinatorService.class.getResource(".")/CoordinatorService.class.
 sed -i -e 's/ParticipantService.class.getResource(".")/ParticipantService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsat/_2006/_06/ParticipantService.java
 sed -i -e 's/CompletionInitiatorService.class.getResource(".")/CompletionInitiatorService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsat/_2006/_06/CompletionInitiatorService.java
 sed -i -e 's/CompletionCoordinatorService.class.getResource(".")/CompletionCoordinatorService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsat/_2006/_06/CompletionCoordinatorService.java
+sed -i -e 's/CompletionCoordinatorRPCService.class.getResource(".")/CompletionCoordinatorRPCService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsat/_2006/_06/CompletionCoordinatorRPCService.java
 
 sed -i -e 's/BusinessAgreementWithCoordinatorCompletionCoordinatorService.class.getResource(".")/BusinessAgreementWithCoordinatorCompletionCoordinatorService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsba/_2006/_06/BusinessAgreementWithCoordinatorCompletionCoordinatorService.java
 sed -i -e 's/BusinessAgreementWithCoordinatorCompletionParticipantService.class.getResource(".")/BusinessAgreementWithCoordinatorCompletionParticipantService.class.getResource("")/' tmp/src/org/oasis_open/docs/ws_tx/wsba/_2006/_06/BusinessAgreementWithCoordinatorCompletionParticipantService.java

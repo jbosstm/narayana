@@ -65,4 +65,22 @@ public interface ArjunaTX11Constants
      * The termination coordinator soap service port qname
      */
      public QName TERMINATION_COORDINATOR_PORT_QNAME = new QName(ArjunaTXConstants.WSARJTX_NAMESPACE, TERMINATION_COORDINATOR_PORT_NAME, ArjunaTXConstants.WSARJTX_PREFIX);
+
+    /**
+     * The termination coordinator service name.
+     */
+    public String TERMINATION_COORDINATOR_RPC_SERVICE_NAME = "TerminationCoordinatorRPCService" ;
+    /**
+     * The termination coordinator service qname.
+     */
+    public QName TERMINATION_COORDINATOR_RPC_SERVICE_QNAME = new QName(ArjunaTXConstants.WSARJTX_NAMESPACE, TERMINATION_COORDINATOR_RPC_SERVICE_NAME, ArjunaTXConstants.WSARJTX_PREFIX) ;
+
+    /**
+     * The termination coordinator soap service port name
+     */
+     public String TERMINATION_COORDINATOR_RPC_PORT_NAME = "TerminationCoordinatorRPCPortType";
+    /**
+     * The termination coordinator soap service port qname
+     */
+     public QName TERMINATION_COORDINATOR_RPC_PORT_QNAME = new QName(ArjunaTXConstants.WSARJTX_NAMESPACE, TERMINATION_COORDINATOR_RPC_PORT_NAME, ArjunaTXConstants.WSARJTX_PREFIX);
 }

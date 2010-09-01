@@ -33,6 +33,7 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextRespo
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
@@ -85,9 +86,11 @@ public class ActivationCoordinator
             final QName subcode = soapFault.getFaultCodeAsQName() ;
             if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME.equals(subcode))
             {
-                throw new InvalidCreateParametersException(soapFault.getFaultString());
+                Detail detail = soapFault.getDetail();
+                String message = (detail != null ? detail.getTextContent() : soapFault.getFaultString());
+                throw new InvalidCreateParametersException(message);
             }
-            throw new SoapFault11(sfe);
+            throw SoapFault11.create(sfe);
         }
     }
 }

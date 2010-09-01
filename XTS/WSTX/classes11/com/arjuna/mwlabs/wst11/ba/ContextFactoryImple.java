@@ -168,6 +168,10 @@ public class ContextFactoryImple implements ContextFactory
             final W3CEndpointReference registrationCoordinator = getRegistrationCoordinator(registrationCoordinatorURI, arjunaContext);
             coordinationContext.setRegistrationService(registrationCoordinator) ;
 
+                // why is this created early even though the enlistment for termination
+                // is done late? well that's a good question. look at the corresponding registrar
+                // code to see why
+                // TODO sort this out
             String transactionIdentifier = arjunaContext.getTransactionIdentifier();
             BusinessActivityTerminator terminator = new BusinessActivityTerminatorImple();
             TerminationCoordinatorProcessor.getProcessor().activateParticipant(terminator, transactionIdentifier);

@@ -21,7 +21,9 @@
 package com.arjuna.wst11.messaging.deploy;
 
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
+import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorRPCProcessor;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
+import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorRPCProcessor;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
@@ -40,8 +42,10 @@ public class WSTCoordinatorInitialisation
     public static void startup()
     {
         CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
+        CompletionCoordinatorRPCProcessor.setProcessor(new CompletionCoordinatorRPCProcessorImpl()) ;
         CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
         TerminationCoordinatorProcessor.setProcessor(new TerminationCoordinatorProcessorImpl()) ;
+        TerminationCoordinatorRPCProcessor.setProcessor(new TerminationCoordinatorRPCProcessorImpl()) ;
         CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
         ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
     }

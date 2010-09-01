@@ -60,6 +60,24 @@ public interface AtomicTransactionConstants
     public QName COMPLETION_INITIATOR_PORT_QNAME = new QName(WSAT_NAMESPACE, COMPLETION_INITIATOR_PORT_NAME, WSAT_PREFIX);
 
     /**
+     * The RPC completion coordinator service name.
+     */
+    public String COMPLETION_COORDINATOR_RPC_SERVICE_NAME = "CompletionCoordinatorRPCService" ;
+    /**
+     * The RPC completion coordinator service qname.
+     */
+    public QName COMPLETION_COORDINATOR_RPC_SERVICE_QNAME = new QName(WSAT_NAMESPACE, COMPLETION_COORDINATOR_RPC_SERVICE_NAME, WSAT_PREFIX);
+
+     /**
+     * The WSAT RPC Completion Cordinator Port Name.
+     */
+    public String COMPLETION_COORDINATOR_RPC_PORT_NAME = "CompletionCoordinatorRPCPortType";
+    /**
+     * The WSAT RPC Completion Cordinator Port QName.
+     */
+    public QName COMPLETION_COORDINATOR_RPC_PORT_QNAME = new QName(WSAT_NAMESPACE, COMPLETION_COORDINATOR_RPC_PORT_NAME, WSAT_PREFIX);
+
+    /**
      * The coordinator service name.
      */
     public String COORDINATOR_SERVICE_NAME = "CoordinatorService" ;
@@ -225,6 +243,10 @@ public interface AtomicTransactionConstants
      * The atomic transaction completion protocol.
      */
     public String WSAT_SUB_PROTOCOL_COMPLETION = WSAT_NAMESPACE + "/Completion" ;
+    /**
+     * The atomic transaction RPC completion protocol.
+     */
+    public String WSAT_SUB_PROTOCOL_COMPLETION_RPC = WSAT_NAMESPACE + "/CompletionRPC" ;
     /**
      * The atomic transaction durable 2PC protocol.
      */

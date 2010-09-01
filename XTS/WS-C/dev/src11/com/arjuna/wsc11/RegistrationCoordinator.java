@@ -11,6 +11,7 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -53,22 +54,27 @@ public class RegistrationCoordinator
             response = port.registerOperation(registerType);
             return response.getCoordinatorProtocolService();
         } catch (SOAPFaultException sfe) {
-            // TODO -- work out which faults we should really throw. in particular do we need to retain SoapFault
             final SOAPFault soapFault = sfe.getFault() ;
             final QName subcode = soapFault.getFaultCodeAsQName() ;
             if (CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_REGISTER_QNAME.equals(subcode))
             {
-                throw new CannotRegisterException(soapFault.getFaultString()) ;
+                Detail detail = soapFault.getDetail();
+                String message = (detail != null ? detail.getTextContent() : soapFault.getFaultString());
+                throw new CannotRegisterException(message) ;
             }
             else if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME.equals(subcode))
             {
-                throw new InvalidProtocolException(soapFault.getFaultString()) ;
+                Detail detail = soapFault.getDetail();
+                String message = (detail != null ? detail.getTextContent() : soapFault.getFaultString());
+                throw new InvalidProtocolException(message) ;
             }
             else if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME.equals(subcode))
             {
-                throw new InvalidStateException(soapFault.getFaultString()) ;
+                Detail detail = soapFault.getDetail();
+                String message = (detail != null ? detail.getTextContent() : soapFault.getFaultString());
+                throw new InvalidStateException(message) ;
             }
-            throw new SoapFault11(sfe);
+            throw SoapFault11.create(sfe);
         }
     }
 }

@@ -29,11 +29,12 @@ package com.arjuna.wst11.stub;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarjtx.client.TerminationCoordinatorClient;
+import com.arjuna.webservices11.wsarjtx.client.TerminationCoordinatorRPCClient;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantCallback;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantProcessor;
 import com.arjuna.wsc11.messaging.MessageId;
@@ -42,16 +43,17 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst11.BusinessActivityTerminator;
+import org.jboss.wsf.common.addressing.MAP;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-public class BusinessActivityTerminatorStub implements BusinessActivityTerminator
+public class BusinessActivityTerminatorRPCStub implements BusinessActivityTerminator
 {
     private W3CEndpointReference _terminationCoordinator = null;
     private final String _id ;
 
-    public BusinessActivityTerminatorStub(final String id, final W3CEndpointReference terminationCoordinator)
+    public BusinessActivityTerminatorRPCStub(final String id, final W3CEndpointReference terminationCoordinator)
         throws Exception
     {
         _terminationCoordinator = terminationCoordinator;
@@ -63,44 +65,26 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     {
         final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
-        final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
-        terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendClose(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
+            TerminationCoordinatorRPCClient.getClient().sendClose(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
         }
-        catch (final Throwable th)
+        catch (SoapFault11 soapFault)
         {
-            throw new SystemException() ;
-        }
-        finally
-        {
-            terminationParticipantProcessor.removeCallback(_id) ;
-        }
+            if ((ArjunaTXConstants.TRANSACTIONROLLEDBACK_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))) {
+                throw new TransactionRolledBackException(soapFault.getMessage());
+            }
+            else if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            {
+                throw new UnknownTransactionException(soapFault.getMessage()) ;
+            }
 
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedClosed())
-            {
-                return ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if (soapFault != null)
-            {
-                final QName subcode = soapFault.getSubcode() ;
-                if (ArjunaTXConstants.TRANSACTIONROLLEDBACK_ERROR_CODE_QNAME.equals(subcode))
-                {
-                    throw new TransactionRolledBackException();
-                }
-                else if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(subcode))
-                {
-                    throw new UnknownTransactionException() ;
-                }
-            }
+            throw new SystemException(soapFault.getMessage()) ;
         }
-        throw new SystemException() ;
+        catch (Exception e)
+        {
+            throw new SystemException();
+        }
     }
 
     public void cancel ()
@@ -108,44 +92,32 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     {
         final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
-        final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
-        terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendCancel(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
+            TerminationCoordinatorRPCClient.getClient().sendCancel(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
+        }
+        catch (SoapFault11 soapFault)
+        {
+            if (ArjunaTXConstants.FAULTED_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            {
+                throw new FaultedException(soapFault.getMessage()) ;
+            }
+            else if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            {
+                throw new UnknownTransactionException(soapFault.getMessage()) ;
+            }
+
+            throw new SystemException(soapFault.getMessage()) ;
+        }
+        catch (Exception e)
+        {
+            throw new SystemException(e.getMessage());
         }
         catch (final Throwable th)
         {
-            throw new SystemException() ;
+            th.printStackTrace() ;
+            throw new SystemException(th.getMessage()) ;
         }
-        finally
-        {
-            terminationParticipantProcessor.removeCallback(_id) ;
-        }
-
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedCancelled())
-            {
-                return ;
-            }
-            else if (callback.receivedFaulted())
-            {
-                throw new FaultedException() ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if (soapFault != null)
-            {
-                final QName subcode = soapFault.getSubcode() ;
-                if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(subcode))
-                {
-                    throw new UnknownTransactionException() ;
-                }
-            }
-        }
-        throw new SystemException() ;
     }
 
     public void complete ()
@@ -153,44 +125,32 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     {
         final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
-        final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
-        terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendComplete(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
+            TerminationCoordinatorRPCClient.getClient().sendComplete(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
+        }
+        catch (SoapFault11 soapFault)
+        {
+            if (ArjunaTXConstants.FAULTED_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            {
+                throw new FaultedException(soapFault.getMessage()) ;
+            }
+            else if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            {
+                throw new UnknownTransactionException(soapFault.getMessage()) ;
+            }
+
+            throw new SystemException(soapFault.getMessage()) ;
+        }
+        catch (Exception e)
+        {
+            throw new SystemException(e.getMessage());
         }
         catch (final Throwable th)
         {
-            throw new SystemException() ;
+            th.printStackTrace() ;
+            throw new SystemException(th.getMessage()) ;
         }
-        finally
-        {
-            terminationParticipantProcessor.removeCallback(_id) ;
-        }
-
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedCompleted())
-            {
-                return ;
-            }
-            else if (callback.receivedFaulted())
-            {
-                throw new FaultedException() ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if (soapFault != null)
-            {
-                final QName subcode = soapFault.getSubcode() ;
-                if (ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME.equals(subcode))
-                {
-                    throw new UnknownTransactionException() ;
-                }
-            }
-        }
-        throw new SystemException() ;
     }
 
     public W3CEndpointReference getEndpoint()

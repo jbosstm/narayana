@@ -6,7 +6,6 @@ import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.*;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
@@ -41,6 +40,11 @@ public class WSATClient
      *  thread local which maintains a per thread completion initiator service instance
      */
     private static ThreadLocal<CompletionInitiatorService> completionInitiatorService = new ThreadLocal<CompletionInitiatorService>();
+
+    /**
+     *  thread local which maintains a per thread completion coordinator service instance
+     */
+    private static ThreadLocal<CompletionCoordinatorRPCService> completionCoordinatorRPCService = new ThreadLocal<CompletionCoordinatorRPCService>();
 
     /**
      *  builder used to construct addressing info for calls
@@ -99,6 +103,18 @@ public class WSATClient
         return completionInitiatorService.get();
     }
 
+    /**
+     * fetch an RPC completion coordinator service unique to the current thread
+     * @return
+     */
+    private static synchronized CompletionCoordinatorRPCService getCompletionCoordinatorRPCService()
+    {
+        if (completionCoordinatorRPCService.get() == null) {
+            completionCoordinatorRPCService.set(new CompletionCoordinatorRPCService());
+        }
+        return completionCoordinatorRPCService.get();
+    }
+
     // fetch ports when we HAVE an endpoint
 
     public static CoordinatorPortType getCoordinatorPort(W3CEndpointReference endpointReference,
@@ -146,6 +162,19 @@ public class WSATClient
     {
         CompletionInitiatorService service = getCompletionInitiatorService();
         CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class, new AddressingFeature(true, true));
+        BindingProvider bindingProvider = (BindingProvider)port;
+
+        configureEndpointPort(bindingProvider, action, map);
+
+        return port;
+    }
+
+    public static CompletionCoordinatorRPCPortType getCompletionCoordinatorRPCPort(W3CEndpointReference endpointReference,
+                                                                             String action,
+                                                                             MAP map)
+    {
+        CompletionCoordinatorRPCService service = getCompletionCoordinatorRPCService();
+        CompletionCoordinatorRPCPortType port = service.getPort(endpointReference, CompletionCoordinatorRPCPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
         configureEndpointPort(bindingProvider, action, map);

@@ -33,6 +33,7 @@ import com.arjuna.wsc11.Registrar;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
@@ -126,10 +127,10 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                 throw new SOAPFaultException(soapFault);
             }
         }
-        catch (Throwable throwable)
+        catch (SOAPException se)
         {
-            throwable.printStackTrace(System.err);
-            throw new ProtocolException(throwable);
+            se.printStackTrace(System.err);
+            throw new ProtocolException(se);
         }
     }
 }

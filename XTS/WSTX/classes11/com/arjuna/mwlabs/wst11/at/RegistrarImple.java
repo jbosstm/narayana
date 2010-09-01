@@ -12,10 +12,12 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateA
 import com.arjuna.mwlabs.wst11.at.participants.CompletionCoordinatorImple;
 import com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant;
 import com.arjuna.mwlabs.wst.at.participants.VolatileTwoPhaseCommitParticipant;
+import com.arjuna.mwlabs.wst11.at.participants.CompletionCoordinatorRPCImple;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorRPCProcessor;
 import com.arjuna.wsc.*;
 import com.arjuna.wst11.CompletionCoordinatorParticipant;
 import com.arjuna.wst11.stub.Durable2PCStub;
@@ -39,7 +41,8 @@ public class RegistrarImple implements Registrar
 
 		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC, this);
 		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC, this);
-		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION, this);
+        mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION, this);
+        mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION_RPC, this);
 	}
 
 	/**
@@ -173,6 +176,24 @@ public class RegistrarImple implements Registrar
 				throw new InvalidStateException(ex.toString());
 			}
 		}
+        else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION_RPC.equals(protocolIdentifier))
+        {
+            try
+            {
+                final CompletionCoordinatorParticipant participant = new CompletionCoordinatorRPCImple(_coordManager, hier, true, participantProtocolService) ;
+                CompletionCoordinatorRPCProcessor.getProcessor().activateParticipant(participant, instanceIdentifier.getInstanceIdentifier()) ;
+
+                _coordManager.suspend();
+
+                return getCompletionCoordinatorRPC(instanceIdentifier, isSecure) ;
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+
+                throw new InvalidStateException(ex.toString());
+            }
+        }
 		else {
             wstxLogger.i18NLogger.warn_mwlabs_wst_at_Registrar11Imple_1(AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier);
 
@@ -274,6 +295,17 @@ public class RegistrarImple implements Registrar
         String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, isSecure);
         builder.serviceName(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_QNAME);
         builder.endpointName(AtomicTransactionConstants.COMPLETION_COORDINATOR_PORT_QNAME);
+        builder.address(address);
+        InstanceIdentifier.setEndpointInstanceIdentifier(builder, instanceIdentifier);
+        return builder.build();
+    }
+
+    private W3CEndpointReference getCompletionCoordinatorRPC(final InstanceIdentifier instanceIdentifier, final boolean isSecure)
+    {
+        W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
+        String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_SERVICE_NAME, isSecure);
+        builder.serviceName(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_SERVICE_QNAME);
+        builder.endpointName(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_PORT_QNAME);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, instanceIdentifier);
         return builder.build();

@@ -168,6 +168,10 @@
         The WST environment properties are used to identify and load the classes which implement the
         WSAT and WSBA client and web service APIs. They need only be specified in a container which will
         be running XTS clients or web services.
+
+	    Note that in the client container you must define both the UserXX and XXManager classes.
+	    In the participant container you do not have to define the UserXXX class unless you also
+	    want it to operate as a client container
     -->
     <bean name="XTS:WSTEnvironmentBean" class="org.jboss.jbossts.xts.environment.WSTEnvironmentBean">
         <constructor factoryClass="org.jboss.jbossts.xts.environment.XTSPropertyManager"
