@@ -3,31 +3,10 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Installation_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaCore_Installation_Guide-Test_Chapter">
-	<title>Test Chapter</title>
-	<para>
-		This is a test paragraph
-	</para>
-	<section id="sect-ArjunaCore_Installation_Guide-Test_Chapter-Test_Section_1">
-		<title>Test Section 1</title>
-		<para>
-			This is a test paragraph in a section
-		</para>
-	</section>
-	
-	<section id="sect-ArjunaCore_Installation_Guide-Test_Chapter-Test_Section_2">
-		<title>Test Section 2</title>
-		<para>
-			This is a test paragraph in Section 2
-			<orderedlist>
-				<listitem>
-					<para>
-						listitem text
-					</para>
-				</listitem>
-			</orderedlist>
-		</para>
-	</section>
-
+<chapter>
+  <title>Additional JAR Requirements</title>
+  <para>
+    To use all of the facilities available within ArjunaCore, you need to add all of the JAR files contained in the <filename>lib/</filename> directory of the distribution to the <varname>CLASSPATH</varname>.
+  </para>
 </chapter>
 

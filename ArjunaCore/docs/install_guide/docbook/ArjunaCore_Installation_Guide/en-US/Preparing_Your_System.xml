@@ -12,6 +12,9 @@
     </para>
     <step>
       <title>Install the distribution into the required location.</title>
+      <para>
+	Typically, the distribution is extracted from a <filename>.ZIP</filename> file.
+      </para>
     </step>
     <step>
       <title>Specify the Location for the Object Store</title>

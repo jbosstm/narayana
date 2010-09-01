@@ -3,31 +3,31 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Installation_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaCore_Installation_Guide-Test_Chapter">
-	<title>Test Chapter</title>
+<chapter>
+  <title>Logging</title>
+  <para>
+    The recovery manager and the transaction server services produce log files which are located in the <filename>services/logs/</filename> directory.  Two log files are created per service.
+  </para>
+  <variablelist>
+    <varlistentry>
+      <term><filename><replaceable>service-name</replaceable>-service.log</filename></term>
+      <listitem>
 	<para>
-		This is a test paragraph
+	  Contains information regarding whether the service is stopped, started, restarted, or in another state.
 	</para>
-	<section id="sect-ArjunaCore_Installation_Guide-Test_Chapter-Test_Section_1">
-		<title>Test Section 1</title>
-		<para>
-			This is a test paragraph in a section
-		</para>
-	</section>
-	
-	<section id="sect-ArjunaCore_Installation_Guide-Test_Chapter-Test_Section_2">
-		<title>Test Section 2</title>
-		<para>
-			This is a test paragraph in Section 2
-			<orderedlist>
-				<listitem>
-					<para>
-						listitem text
-					</para>
-				</listitem>
-			</orderedlist>
-		</para>
-	</section>
-
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><filename><replaceable>service-name</replaceable>.log</filename></term>
+      <listitem>
+	<para>
+	  Contains information logged from the actual service.
+	</para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+  <para>
+    To configure what information is logged in these files, edit the appropriate LOG4J configuration files located in <filename>services/config/</filename>.
+  </para>
 </chapter>
 

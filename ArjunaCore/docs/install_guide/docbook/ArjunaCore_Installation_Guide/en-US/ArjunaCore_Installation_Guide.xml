@@ -9,9 +9,6 @@
   <!--	<xi:include href="Chapter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> -->
   <xi:include href="Preparing_Your_System.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Operating_System_Services.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Installing_and_Uninstalling.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Windows.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="UNIX.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Logging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="ObjectStore_Management.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Additional_JAR_Requirements.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
