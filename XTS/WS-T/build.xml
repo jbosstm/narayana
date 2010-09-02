@@ -263,7 +263,9 @@
 
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx.wsdl"/>
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
+        <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-rpc-binding.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-coordinator-rpc-binding.wsdl"/>
         <copy file="${dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
+        <copy file="${dd.dir}/wsarjtx/wsdl/envelope.xsd" tofile="${build.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/envelope.xsd"/>
     </target>
 
     <target name="jars-generic" >

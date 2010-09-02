@@ -83,6 +83,13 @@ public class TerminationCoordinatorClient
         completeAction = ArjunaTXConstants.WSARJTX_ACTION_COMPLETE;
         closeAction = ArjunaTXConstants.WSARJTX_ACTION_CLOSE;
         cancelAction = ArjunaTXConstants.WSARJTX_ACTION_CANCEL;
+        final String terminationParticipantURIString =
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, false);
+        final String secureTerminationParticipantURIString =
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, true);
+
+        terminationParticipant = builder.newEndpoint(terminationParticipantURIString);
+        secureTerminationParticipant = builder.newEndpoint(secureTerminationParticipantURIString);
     }
 
     /**
