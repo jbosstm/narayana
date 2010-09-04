@@ -36,95 +36,91 @@ import com.arjuna.orbportability.*;
 import com.arjuna.ats.jts.logging.*;
 
 /**
- * Manage the default ORB and POA used by the transaction service for
- * the non-recoverable CORBA objects it creates.
+ * Manage the default ORB and POA used by the transaction service for the
+ * non-recoverable CORBA objects it creates.
  */
-
-// TODO error checking
 
 public class ORBManager
 {
     public static final com.arjuna.orbportability.ORB getORB ()
     {
-	if (isInitialised() )
-	    {
-		return getTheORB();
-	    }
-	else
-	    {
+        if (isInitialised())
+        {
+            return getTheORB();
+        }
+        else
+        {
             jtsLogger.i18NLogger.fatal_ORBManager();
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError();
-	    }
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError();
+        }
     }
 
-    
-    private static final com.arjuna.orbportability.ORB getTheORB () 
+    private static final com.arjuna.orbportability.ORB getTheORB ()
     {
-	if (_theOrb == null)
-	    _theOrb = ORB.getInstance(ORB_NAME);
-	
-	return _theOrb;
+        if (_theOrb == null)
+            _theOrb = ORB.getInstance(ORB_NAME);
+
+        return _theOrb;
     }
-    
+
     public static final boolean setORB (com.arjuna.orbportability.ORB theOrb)
     {
-	if (_theOrb == null)
-	{
-	    _theOrb = theOrb;
-	    
-	    return true;
-	}
-	
-	return false;
+        if (_theOrb == null)
+        {
+            _theOrb = theOrb;
+
+            return true;
+        }
+
+        return false;
     }
 
     public static final com.arjuna.orbportability.OA getPOA ()
     {
-	if (isInitialised() )
-	    {
-		return getThePOA();
-	    }
-	else
-	    {
+        if (isInitialised())
+        {
+            return getThePOA();
+        }
+        else
+        {
             jtsLogger.i18NLogger.fatal_ORBManager();
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError();
-	    }
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError();
+        }
     }
 
     private static final com.arjuna.orbportability.OA getThePOA ()
     {
-	if (_thePoa == null)
-	    _thePoa = RootOA.getRootOA(_theOrb);
-	
-	return _thePoa;
+        if (_thePoa == null)
+            _thePoa = RootOA.getRootOA(_theOrb);
+
+        return _thePoa;
     }
 
     public static final boolean setPOA (com.arjuna.orbportability.OA thePoa)
     {
-	if (_thePoa == null)
-	{
-	    _thePoa = thePoa;
-	    
-	    return true;
-	}
-	
-	return false;
+        if (_thePoa == null)
+        {
+            _thePoa = thePoa;
+
+            return true;
+        }
+
+        return false;
     }
 
     public static final com.arjuna.orbportability.Services getServices ()
     {
-	return new com.arjuna.orbportability.Services(_theOrb);
+        return new com.arjuna.orbportability.Services(_theOrb);
     }
 
-    public static final boolean isInitialised()
+    public static final boolean isInitialised ()
     {
-        return( _theOrb != null || _thePoa != null );
+        return (_theOrb != null || _thePoa != null);
     }
 
     private static com.arjuna.orbportability.ORB _theOrb = null;
-    private static com.arjuna.orbportability.OA  _thePoa = null;
+
+    private static com.arjuna.orbportability.OA _thePoa = null;
 
     private static final String ORB_NAME = "TransactionORB";
-    private static final String POA_NAME = "TransactionPOA";
-
 }
