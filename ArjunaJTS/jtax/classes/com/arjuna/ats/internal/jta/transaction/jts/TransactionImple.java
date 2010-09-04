@@ -59,6 +59,7 @@ import com.arjuna.ats.internal.jta.xa.TxInfo;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 import javax.transaction.xa.*;
 

@@ -33,10 +33,6 @@ package com.arjuna.ats.internal.jta.resources.jts;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 
-import com.arjuna.ats.jta.utils.JTAHelper;
-
-import javax.transaction.xa.*;
-
 /**
  * This synchronization is responsible for removing the JTA transaction
  * from the internal table. We don't need one for the purely local JTA

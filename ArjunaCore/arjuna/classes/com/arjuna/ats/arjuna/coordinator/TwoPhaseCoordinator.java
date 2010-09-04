@@ -213,109 +213,123 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		super(u, at);
 	}
 
+	/**
+	 * Drive beforeCompletion participants.
+	 * 
+	 * @return true if successful, false otherwise.
+	 */
+	
 	protected boolean beforeCompletion ()
 	{
-		boolean problem = false;
+	    boolean problem = false;
 
-		synchronized (_syncLock)
-		{
-		    if (!_beforeCalled)
-		    {
-		        _beforeCalled = true;
+	    synchronized (_syncLock)
+	    {
+	        if (!_beforeCalled)
+	        {
+	            _beforeCalled = true;
 
-		        /*
-		         * If we have a synchronization list then we must be top-level.
-		         */
+	            /*
+	             * If we have a synchronization list then we must be top-level.
+	             */
 
-		        if (_synchs != null)
-		        {
-		            /*
-		             * We must always call afterCompletion() methods, so just catch (and
-		             * log) any exceptions/errors from beforeCompletion() methods.
-		             *
-		             * If one of the Syncs throws an error the Record wrapper returns false
-		             * and we will rollback. Hence we don't then bother to call beforeCompletion
-		             * on the remaining records (it's not done for rollabcks anyhow).
-		             *
-		             * Since Synchronizations may add register other Synchronizations, we can't simply
-		             * iterate the collection. Instead we work from an ordered copy, which we periodically
-		             * check for freshness. The addSynchronization method uses _currentRecord to disallow
-		             * adding records in the part of the array we have already traversed, thus all
-		             * Synchronization will be called and the (jta only) rules on ordering of interposed
-		             * Synchronization will be respected.
-		             */
+	            if (_synchs != null)
+	            {
+	                /*
+	                 * We must always call afterCompletion() methods, so just catch (and
+	                 * log) any exceptions/errors from beforeCompletion() methods.
+	                 *
+	                 * If one of the Syncs throws an error the Record wrapper returns false
+	                 * and we will rollback. Hence we don't then bother to call beforeCompletion
+	                 * on the remaining records (it's not done for rollabcks anyhow).
+	                 *
+	                 * Since Synchronizations may register other Synchronizations, we can't simply
+	                 * iterate the collection. Instead we work from an ordered copy, which we periodically
+	                 * check for freshness. The addSynchronization method uses _currentRecord to disallow
+	                 * adding records in the part of the array we have already traversed, thus all
+	                 * Synchronization will be called and the (jta only) rules on ordering of interposed
+	                 * Synchronization will be respected.
+	                 */
 
-		            int lastIndexProcessed = -1;
-		            SynchronizationRecord[] copiedSynchs;
-		            // need to guard against synchs being added while we are performing beforeCompletion processing
-		            synchronized (_synchs) {
-		                copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-		            }
-		            while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+	                int lastIndexProcessed = -1;
+	                SynchronizationRecord[] copiedSynchs;
+	                // need to guard against synchs being added while we are performing beforeCompletion processing
+	                synchronized (_synchs) {
+	                    copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+	                }
+	                while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
 
-		                synchronized (_synchs) {
-		                    // if new Synchronization have been registered, refresh our copy of the collection:
-		                    if(copiedSynchs.length != _synchs.size()) {
-		                        copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-		                    }
-		                }
+	                    synchronized (_synchs) {
+	                        // if new Synchronization have been registered, refresh our copy of the collection:
+	                        if(copiedSynchs.length != _synchs.size()) {
+	                            copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+	                        }
+	                    }
 
-		                lastIndexProcessed = lastIndexProcessed+1;
-		                _currentRecord = copiedSynchs[lastIndexProcessed];
+	                    lastIndexProcessed = lastIndexProcessed+1;
+	                    _currentRecord = copiedSynchs[lastIndexProcessed];
 
-		                try
-		                {
-		                    problem = !_currentRecord.beforeCompletion();
+	                    try
+	                    {
+	                        problem = !_currentRecord.beforeCompletion();
 
-		                    // if something goes wrong, we can't just throw the exception, we need to continue to
-		                    // complete the transaction. However, the exception may have interesting information that
-		                    // we want later, so we keep a reference to it as well as logging it.
+	                        // if something goes wrong, we can't just throw the exception, we need to continue to
+	                        // complete the transaction. However, the exception may have interesting information that
+	                        // we want later, so we keep a reference to it as well as logging it.
 
-		                }
-		                catch (Exception ex) {
-                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), ex);
-                            if (_deferredThrowable == null) {
-                                _deferredThrowable = ex;
-                            }
-                            problem = true;
-                        }
-		                catch (Error er) {
-                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), er);
-                            if (_deferredThrowable == null) {
-                                _deferredThrowable = er;
-                            }
-                            problem = true;
-                        }
-		            }
+	                    }
+	                    catch (Exception ex) {
+	                        tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), ex);
+	                        if (_deferredThrowable == null) {
+	                            _deferredThrowable = ex;
+	                        }
+	                        problem = true;
+	                    }
+	                    catch (Error er) {
+	                        tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_2(_currentRecord.toString(), er);
+	                        if (_deferredThrowable == null) {
+	                            _deferredThrowable = er;
+	                        }
+	                        problem = true;
+	                    }
+	                }
 
-		            if (problem)
-		            {
-		                if (!preventCommit()) {
-                            /*
-                                    * This should not happen. If it does, continue with commit
-                                    * to tidy-up.
-                                    */
+	                if (problem)
+	                {
+	                    if (!preventCommit()) {
+	                        /*
+	                         * This should not happen. If it does, continue with commit
+	                         * to tidy-up.
+	                         */
 
-                            tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_1();
-                        }
-		            }
-		        }
-		    }
-		    else
-		    {
-		        /*
-		         * beforeCompletions already called. Assume everything is alright
-		         * to proceed to commit. The TM instance will flag the outcome. If
-		         * it's rolling back, then we'll get an exception. If it's committing
-		         * then we'll be blocked until the commit (assuming we're still the
-		         * slower thread).
-		         */
-		    }
-		}
+	                        tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_1();
+	                    }
+	                }
+	            }
+	        }
+	        else
+	        {
+	            /*
+	             * beforeCompletions already called. Assume everything is alright
+	             * to proceed to commit. The TM instance will flag the outcome. If
+	             * it's rolling back, then we'll get an exception. If it's committing
+	             * then we'll be blocked until the commit (assuming we're still the
+	             * slower thread).
+	             */
+	        }
+	    }
 
-		return !problem;
+	    return !problem;
 	}
 
+	/**
+	 * Drive afterCompletion participants.
+	 * 
+	 * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
+	 * 
+	 * @return true if successful, false otherwise.
+	 */
+	
 	protected boolean afterCompletion (int myStatus)
 	{
 		if (myStatus == ActionStatus.RUNNING) {
