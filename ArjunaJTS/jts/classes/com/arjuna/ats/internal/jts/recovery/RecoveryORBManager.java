@@ -31,72 +31,55 @@
 
 package com.arjuna.ats.internal.jts.recovery;
 
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.*;
 
 /**
- * Manage the default ORB and POA used by the transaction service for
- * the non-recoverable CORBA objects it creates.
- */
-
-// TODO error checking
+ * Manage the recovery POA.
+ */ 
 
 public class RecoveryORBManager
 {
 
     public static final com.arjuna.orbportability.ORB getORB ()
     {
-	if (_theOrb == null)
-	    _theOrb = ORB.getInstance(ORB_NAME);
-	
-	return _theOrb;
+       return ORBManager.getORB();
     }
-    
+
     public static final boolean setORB (com.arjuna.orbportability.ORB theOrb)
     {
-	if (_theOrb == null)
-	{
-	    _theOrb = theOrb;
-	    
-	    return true;
-	}
-	
-	return false;
+        return ORBManager.setORB(theOrb);
     }
 
     public static final com.arjuna.orbportability.OA getPOA ()
     {
-	if (_thePoa == null)
-	    _thePoa = RootOA.getRootOA(_theOrb);
-	
-	return _thePoa;
+        if (_thePoa == null)
+            _thePoa = RootOA.getRootOA(ORBManager.getORB());
+
+        return _thePoa;
     }
 
     public static final boolean setPOA (com.arjuna.orbportability.OA thePoa)
     {
-	if (_thePoa == null)
-	{
-	    _thePoa = thePoa;
-	    
-	    return true;
-	}
-	
-	return false;
+        if (_thePoa == null)
+        {
+            _thePoa = thePoa;
+
+            return true;
+        }
+
+        return false;
     }
 
     public static final com.arjuna.orbportability.Services getServices ()
     {
-	return new com.arjuna.orbportability.Services(_theOrb);
+        return ORBManager.getServices();
     }
 
-    public static final boolean isInitialised()
+    public static final boolean isInitialised ()
     {
-        return( _theOrb != null || _thePoa != null );
+        return (ORBManager.isInitialised() || _thePoa != null);
     }
 
-    private static com.arjuna.orbportability.ORB _theOrb = null;
-    private static com.arjuna.orbportability.OA  _thePoa = null;
-
-    private static final String ORB_NAME = "RecoveryORB";
-    private static final String POA_NAME = "RecoveryPOA";
-
+    private static com.arjuna.orbportability.OA _thePoa = null;
 }
