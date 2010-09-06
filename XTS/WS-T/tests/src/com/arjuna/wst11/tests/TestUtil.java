@@ -26,7 +26,6 @@
 
 package com.arjuna.wst11.tests;
 
-import com.arjuna.webservices11.soapfault.SoapFaultConstants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
