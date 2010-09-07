@@ -42,16 +42,16 @@ public class arjPropertyManager
 {
     public static CoreEnvironmentBean getCoreEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(CoreEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class);
     }
 
     public static CoordinatorEnvironmentBean getCoordinatorEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(CoordinatorEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(CoordinatorEnvironmentBean.class);
     }
 
     public static ObjectStoreEnvironmentBean getObjectStoreEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(ObjectStoreEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
     }
 }

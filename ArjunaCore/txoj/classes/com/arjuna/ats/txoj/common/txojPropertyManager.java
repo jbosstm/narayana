@@ -42,6 +42,6 @@ public class txojPropertyManager
 {
     public static TxojEnvironmentBean getTxojEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(TxojEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(TxojEnvironmentBean.class);
     }
 }

@@ -30,6 +30,6 @@ public class recoveryPropertyManager
 {
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class);
     }
 }

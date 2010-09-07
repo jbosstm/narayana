@@ -40,6 +40,6 @@ public class jtsPropertyManager
 {
     public static JTSEnvironmentBean getJTSEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(JTSEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(JTSEnvironmentBean.class);
     }
 }

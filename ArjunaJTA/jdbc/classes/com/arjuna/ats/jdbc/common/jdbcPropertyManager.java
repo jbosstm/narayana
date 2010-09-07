@@ -32,8 +32,6 @@ package com.arjuna.ats.jdbc.common;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Property manager wrapper for the JDBC module.
  */
@@ -41,6 +39,6 @@ public class jdbcPropertyManager
 {
     public static JDBCEnvironmentBean getJDBCEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(JDBCEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(JDBCEnvironmentBean.class);
     }
 }

@@ -36,32 +36,51 @@ import com.arjuna.common.util.propertyservice.PropertiesFactory;
  */
 public class BeanPopulator
 {
-    private static final ConcurrentMap<Class, Object> singletonBeanInstances = new ConcurrentHashMap<Class, Object>();
+    private static final ConcurrentMap<String, Object> beanInstances = new ConcurrentHashMap<String, Object>();
+    private static final String DEFAULT_NAME = "default";
 
-    public static <T> T getSingletonInstance(Class<T> beanClass) throws RuntimeException {
-        return getSingletonInstance(beanClass, null);
+    public static <T> T getDefaultInstance(Class<T> beanClass) throws RuntimeException {
+        return getNamedInstance(beanClass, DEFAULT_NAME, null);
     }
-    public static <T> T getSingletonInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
+
+    public static <T> T getDefaultInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
+        return getNamedInstance(beanClass, DEFAULT_NAME, properties);
+    }
+
+    public static <T> T getNamedInstance(Class<T> beanClass, String name) throws RuntimeException {
+        return getNamedInstance(beanClass, name, null);
+    }
+
+    public static <T> T getNamedInstance(Class<T> beanClass, String name, Properties properties) throws RuntimeException {
+
+        if(name == null) {
+            name = DEFAULT_NAME;
+        }
+        String key = beanClass.getCanonicalName()+":"+name;
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
-        if(!singletonBeanInstances.containsKey(beanClass)) {
+        if(!beanInstances.containsKey(key)) {
             T bean = null;
             try {
                 bean = beanClass.newInstance();
                 if (properties != null) {
-                    configureFromProperties(bean, properties);
+                    configureFromProperties(bean, name, properties);
                 } else {
                     Properties defaultProperties = PropertiesFactory.getDefaultProperties();
-                    configureFromProperties(bean, defaultProperties);
+                    configureFromProperties(bean, name, defaultProperties);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            singletonBeanInstances.putIfAbsent(beanClass, bean);
+            beanInstances.putIfAbsent(key, bean);
         }
 
-        return (T)singletonBeanInstances.get(beanClass);
+        return (T) beanInstances.get(key);
+    }
+
+    public static void configureFromProperties(Object bean, Properties properties) throws Exception {
+        configureFromProperties(bean, DEFAULT_NAME, properties);
     }
 
     /**
@@ -74,13 +93,16 @@ public class BeanPopulator
      * matching according to the JavaBeans naming conventions, determine the corresponding property key.
      *
      * Several key names are tried, with the first match being used:
-     * For scalar properties: The FQN of the bean followed by the field name,
-     *   the short name of the bean followed by the field name, and finally the bean classes' PropertyPrefix annotation
+     * For scalar properties: The FQN of the bean class, optionally followed by the bean name, followed by the field name,
+     *  e.g. com.arjuna.FooBean.theField or com.arjuna.FooBean.theName.theField
+     *   the short class name of the bean, optionally followed by the bean name, followed by the field name,
+     *  e.g. FooBean.theField or FooBean.theName.theField
+     *  and finally the bean classes' PropertyPrefix annotation
      *   value followed by the name of the field, the last being except in cases where the field has a FullPropertyName
      *   annotation, in which case its value is used instead.
      * For vector (in the math sense - the type is actually normally List/Map) properties, a single property key matched
      *   according to the prior rules will be treated as having a compound value which will be tokenized into
-     *   elements based on whitespace and inserted into the list in token order or further tokenised on = for Map key/value.
+     *   elements based on whitespace and inserted into the list in token order or further tokenized on = for Map key/value.
      * If no such key is found, the value of the field's ConcatenationPrefix annotation
      * is treated as a name prefix and the list elements are assembled from the values of any properties having
      * key values starting with the prefix. These are inserted into the list in order of the key's name sort position.
@@ -94,10 +116,11 @@ public class BeanPopulator
      * from the value read from the Properties, use the setter to update the bean.
      *
      * @param bean a JavaBean, the target of the property updates and source for defaults.
+     * @param instanceName the (optional, use null for default) name for the bean instance.
      * @param properties a Properties object, the source of the configuration overrides.
      * @throws Exception if the configuration of the bean fails.
      */
-    public static void configureFromProperties(Object bean, Properties properties) throws Exception {
+    public static void configureFromProperties(Object bean, String instanceName, Properties properties) throws Exception {
 
         if(!bean.getClass().isAnnotationPresent(PropertyPrefix.class)) {
             throw new Exception("no PropertyPrefix found on "+bean.getClass().getName());
@@ -129,9 +152,9 @@ public class BeanPopulator
             }
 
             if(field.isAnnotationPresent(ConcatenationPrefix.class) || field.getType().getName().startsWith("java.util")) {
-                handleGroupProperty(bean, properties, field, setter, getter);
+                handleGroupProperty(bean, instanceName, properties, field, setter, getter);
             } else {
-                handleSimpleProperty(bean, properties, field, setter, getter);
+                handleSimpleProperty(bean, instanceName, properties, field, setter, getter);
             }
         }
     }
@@ -147,18 +170,18 @@ public class BeanPopulator
      */
     public static String printState() {
         StringBuffer buffer = new StringBuffer();
-        for(Object bean : singletonBeanInstances.values()) {
+        for(Object bean : beanInstances.values()) {
             printBean(bean, buffer);
         }
         return buffer.toString();
     }
 
-    private static void handleGroupProperty(Object bean, Properties properties, Field field, Method setter, Method getter)
+    private static void handleGroupProperty(Object bean, String instanceName, Properties properties, Field field, Method setter, Method getter)
         throws Exception
     {
         List<String> lines = new LinkedList<String>();
 
-        String valueFromProperties = getValueFromProperties(bean, properties, field, bean.getClass().getSimpleName());
+        String valueFromProperties = getValueFromProperties(bean, instanceName, properties, field, bean.getClass().getSimpleName());
 
         if(valueFromProperties != null)
         {
@@ -229,13 +252,13 @@ public class BeanPopulator
         }
     }
 
-    private static void handleSimpleProperty(Object bean, Properties properties, Field field, Method setter, Method getter)
+    private static void handleSimpleProperty(Object bean, String instanceName, Properties properties, Field field, Method setter, Method getter)
             throws Exception
     {
         PropertyPrefix prefixAnnotation = bean.getClass().getAnnotation(PropertyPrefix.class);
         String prefix = prefixAnnotation.prefix();
 
-        String valueFromProperties = getValueFromProperties(bean, properties, field, prefix);
+        String valueFromProperties = getValueFromProperties(bean, instanceName, properties, field, prefix);
 
         if(valueFromProperties != null) {
 
@@ -279,21 +302,41 @@ public class BeanPopulator
         }
     }
 
-    private static String getValueFromProperties(Object bean, Properties properties, Field field, String prefix)
+    private static String getValueFromProperties(Object bean, String instanceName, Properties properties, Field field, String prefix)
     {
         String propertyFileKey;
         String valueFromProperties = null;
 
-        if(valueFromProperties == null) {
-            propertyFileKey = bean.getClass().getCanonicalName()+"."+field.getName();
-            valueFromProperties = properties.getProperty(propertyFileKey);
+        if(instanceName == null) {
+            instanceName = DEFAULT_NAME;
         }
 
         if(valueFromProperties == null) {
-            propertyFileKey = bean.getClass().getSimpleName()+"."+field.getName();
-            valueFromProperties = properties.getProperty(propertyFileKey);
+
+            if(DEFAULT_NAME.equals(instanceName)) {
+                propertyFileKey = bean.getClass().getCanonicalName()+"."+field.getName();
+                valueFromProperties = properties.getProperty(propertyFileKey);
+            }
+
+            if(valueFromProperties == null) {
+                propertyFileKey = bean.getClass().getCanonicalName()+"."+instanceName+"."+field.getName();
+                valueFromProperties = properties.getProperty(propertyFileKey);
+            }
         }
 
+        if(valueFromProperties == null) {
+
+            if(DEFAULT_NAME.equals(instanceName)) {
+                propertyFileKey = bean.getClass().getSimpleName()+"."+field.getName();
+                valueFromProperties = properties.getProperty(propertyFileKey);
+            }
+
+            if(valueFromProperties == null) {
+                propertyFileKey = bean.getClass().getSimpleName()+"."+instanceName+"."+field.getName();
+                valueFromProperties = properties.getProperty(propertyFileKey);
+            }
+        }
+        
         if (valueFromProperties == null) {
             propertyFileKey = prefix+field.getName();
 

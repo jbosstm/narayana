@@ -39,6 +39,6 @@ public class jtaPropertyManager
 {
     public static JTAEnvironmentBean getJTAEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(JTAEnvironmentBean.class);
+        return BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
     }
 }

@@ -2,8 +2,6 @@ package org.jboss.jbossts.xts.environment;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -15,27 +13,27 @@ public class XTSPropertyManager
 {
     public static  WSCEnvironmentBean getWSCEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(WSCEnvironmentBean.class, xtsProperties);
+        return BeanPopulator.getDefaultInstance(WSCEnvironmentBean.class, xtsProperties);
     }
 
     public static WSCFEnvironmentBean getWSCFEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(WSCFEnvironmentBean.class, xtsProperties);
+        return BeanPopulator.getDefaultInstance(WSCFEnvironmentBean.class, xtsProperties);
     }
 
     public static WSTEnvironmentBean getWSTEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(WSTEnvironmentBean.class, xtsProperties);
+        return BeanPopulator.getDefaultInstance(WSTEnvironmentBean.class, xtsProperties);
     }
 
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class, xtsProperties);
+        return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class, xtsProperties);
     }
 
     public static XTSEnvironmentBean getXTSEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(XTSEnvironmentBean.class, xtsProperties);
+        return BeanPopulator.getDefaultInstance(XTSEnvironmentBean.class, xtsProperties);
     }
 
     private static Properties mergeSystemProperties(Properties properties)
