@@ -31,6 +31,7 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: ObjectStoreTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -58,14 +59,9 @@ import java.io.IOException;
 
 class DummyOS extends FileLockingStore
 {
-    public DummyOS ()
+    public DummyOS(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(null, 0);
-    }
-    
-    public DummyOS(String locationOfStore, int ss)
-    {
-        super(locationOfStore, ss);
+        super(objectStoreEnvironmentBean);
     }
 
     public boolean lock ()
@@ -136,50 +132,13 @@ class DummyOS extends FileLockingStore
 
 public class ObjectStoreTest
 {
-    @SuppressWarnings("unchecked")
-    @Test
-    public void test() throws IOException
-    {
-        String localOSRoot = "foo";
-        String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
-        String oldOSRoot = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
-        String oldStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
-        
-        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(localOSRoot);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(objectStoreDir);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
-
-        // check with a known valid implementation
-
-        ObjectStore objStore = null;
-        
-        try
-        {
-            Class cn = Class.forName(ObjectStoreType.getDefaultStoreType());
-            objStore = (ObjectStore) cn.newInstance();
-        }
-        catch (final Exception ex)
-        {
-            ex.printStackTrace();
-            
-            objStore = null;
-        }
-        
-        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(oldOSRoot);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(oldStoreDir);
-        
-        assertTrue(validate(objStore));
-    }
-
     @Test
     public void testActionStore () throws Exception
     {
-        ActionStore as = new ActionStore();
-        
-        as = new ActionStore(System.getProperty("java.io.tmpdir"));
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        ActionStore as = new ActionStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -211,24 +170,15 @@ public class ObjectStoreTest
             
             assertTrue(!as.reveal_state(u, tn));
         }
-        
-        final OutputObjectState os = new OutputObjectState();
-        
-        as.packInto(os);
-        
-        final InputObjectState is = new InputObjectState(os);
-        
-        as.unpackFrom(is);
     }
     
     @Test
     public void testShadowNoFileLockStore () throws Exception
     {
-        ShadowNoFileLockStore as = new ShadowNoFileLockStore();
-        
-        as = new ShadowNoFileLockStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        ShadowNoFileLockStore as = new ShadowNoFileLockStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -265,11 +215,10 @@ public class ObjectStoreTest
     @Test
     public void testHashedStore () throws Exception
     {
-        HashedStore as = new HashedStore();
-        
-        as = new HashedStore(System.getProperty("java.io.tmpdir"));
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        HashedStore as = new HashedStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -306,11 +255,10 @@ public class ObjectStoreTest
     //@Test
     public void testCacheStore () throws Exception
     {
-        CacheStore as = new CacheStore();
-        
-        as = new CacheStore(System.getProperty("java.io.tmpdir"));
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        CacheStore as = new CacheStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -347,11 +295,10 @@ public class ObjectStoreTest
     @Test
     public void testHashedActionStore () throws Exception
     {
-        HashedActionStore as = new HashedActionStore();
-        
-        as = new HashedActionStore(System.getProperty("java.io.tmpdir"));
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        HashedActionStore as = new HashedActionStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -388,11 +335,10 @@ public class ObjectStoreTest
     @Test
     public void testShadowingStore () throws Exception
     {
-        ShadowingStore as = new ShadowingStore();
-        
-        as = new ShadowingStore(System.getProperty("java.io.tmpdir"));
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        ShadowingStore as = new ShadowingStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -429,11 +375,10 @@ public class ObjectStoreTest
     @Test
     public void testNullActionStore () throws Exception
     {
-        NullActionStore as = new NullActionStore();
-        
-        as = new NullActionStore(System.getProperty("java.io.tmpdir"), StateType.OS_SHARED);
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        NullActionStore as = new NullActionStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -465,22 +410,15 @@ public class ObjectStoreTest
             
             assertTrue(!as.reveal_state(u, tn));
         }
-        
-        assertTrue(as.storeValid());
-        
-        as.makeInvalid();
-        
-        assertFalse(as.storeValid());
-        
-        new NullActionStore("foo");
     }
 
     @Test
     public void testVolatileStore () throws Exception
     {
-        VolatileStore as = new VolatileStore();
-        
-        assertTrue(as.typeIs() != -1);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        VolatileStore as = new VolatileStore(objectStoreEnvironmentBean);
         
         final OutputObjectState buff = new OutputObjectState();
         final String tn = "/StateManager/junit";
@@ -552,7 +490,10 @@ public class ObjectStoreTest
     @Test
     public void testFileLockingStore () throws Exception
     {
-        DummyOS as = new DummyOS();
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+
+        DummyOS as = new DummyOS(objectStoreEnvironmentBean);
         
         assertTrue(as.typeIs() != -1);
         
@@ -570,12 +511,17 @@ public class ObjectStoreTest
         StoreManager.getTxLog().write_committed(u2, "foo", new OutputObjectState());
         
         ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), "foo");
+
+        // iteration ordering is not guaranteed.
+
         Uid x = iter.iterate();
-        
         assertTrue(x.notEquals(Uid.nullUid()));
-        assertTrue(x.equals(u1));
-        
-        assertTrue(iter.iterate().notEquals(Uid.nullUid()));
+        assertTrue(x.equals(u1) || x.equals(u2));
+
+        Uid y = iter.iterate();
+        assertTrue(y.notEquals(Uid.nullUid()));
+        assertTrue(y.equals(u1) || y.equals(u2));
+
         assertTrue(iter.iterate().equals(Uid.nullUid()));
     }
 
@@ -607,6 +553,5 @@ public class ObjectStoreTest
     private static String imple = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
     private static String localOSRoot = "foo";
     private static String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
-    private static String shareStatus = "OS_SHARED";
 
 }

@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.txoj.lockstore;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.txoj.lockstore.LockStore;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
@@ -61,13 +62,11 @@ public class BasicPersistentLockStore extends LockStore
      * of store. Really only need it for shared memory.
      */
 
-    public BasicPersistentLockStore(String key)
+    public BasicPersistentLockStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
         if (txojLogger.logger.isTraceEnabled()) {
-            txojLogger.logger.trace("BasicPersistentLockStore.BasicPersistentLockStore(" + key + ")");
+            txojLogger.logger.trace("BasicPersistentLockStore.BasicPersistentLockStore()");
         }
-
-        _key = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
 
         /*
          * Use the ShadowingStore since it has file-level locking which we
@@ -75,7 +74,7 @@ public class BasicPersistentLockStore extends LockStore
          * entirely by the object.
          */
 
-        _lockStore = new ShadowingStore(_key);
+        _lockStore = new ShadowingStore(objectStoreEnvironmentBean);
     }
 
     public InputObjectState read_state (Uid u, String tName)
@@ -126,8 +125,6 @@ public class BasicPersistentLockStore extends LockStore
             return false;
         }
     }
-
-    private String _key;
 
     private ParticipantStore _lockStore;
 }

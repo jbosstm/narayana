@@ -930,10 +930,13 @@ public class LockManager extends StateManager
                     {
                         try
                         {
-                            if (lockStoreType.equals(BasicLockStore.class.getName()))
-                                lockStore = new BasicLockStore(systemKey);
-                            else
-                                lockStore = new BasicPersistentLockStore(systemKey);
+                            if (lockStoreType.equals(BasicLockStore.class.getName())) {
+                                lockStore = new BasicLockStore();
+                            } else {
+                                ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+                                objectStoreEnvironmentBean.setLocalOSRoot(systemKey);
+                                lockStore = new BasicPersistentLockStore(objectStoreEnvironmentBean);
+                            }
                         }
                         catch (final Exception ex)
                         {

@@ -808,15 +808,15 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 	}
 
 	public void warn_common_ClassloadingUtility_4(String arg0, Throwable arg1) {
-		logger.logv(WARN, arg1, "ARJUNA-12218 can't create new instance of {0}", arg0);
+		logger.logv(WARN, arg1, "ARJUNA-12218 can''t create new instance of {0}", arg0);
 	}
 
 	public void warn_common_ClassloadingUtility_5(String arg0, Throwable arg1) {
-		logger.logv(WARN, arg1, "ARJUNA-12219 can't access {0}", arg0);
+		logger.logv(WARN, arg1, "ARJUNA-12219 can''t access {0}", arg0);
 	}
 
 	public void warn_common_ClassloadingUtility_6(String arg0, Throwable arg1) {
-		logger.logv(WARN, arg1, "ARJUNA-12220 can't initialize from string {0}", arg0);
+		logger.logv(WARN, arg1, "ARJUNA-12220 can''t initialize from string {0}", arg0);
 	}
 
 	public void warn_objectstore_CacheStore_1(Uid arg0, String arg1) {
@@ -835,8 +835,8 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 		logger.logv(WARN, "ARJUNA-12224 Unknown work type {0}", arg0);
 	}
 
-	public void warn_objectstore_FileSystemStore_1(String arg0) {
-		logger.logv(WARN, "ARJUNA-12225 FileSystemStore::setupStore - cannot access root of object store: {0}", arg0);
+	public String get_objectstore_FileSystemStore_1(String arg0) {
+		return MessageFormat.format("ARJUNA-12225 FileSystemStore::setupStore - cannot access root of object store: {0}", arg0);
 	}
 
 	public void warn_objectstore_FileSystemStore_2(String arg0) {

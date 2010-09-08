@@ -31,10 +31,8 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.objectstore.StateType;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import java.io.File;
 
@@ -50,37 +48,9 @@ import java.io.File;
 
 public class ShadowNoFileLockStore extends ShadowingStore
 {
-
-    public int typeIs ()
+    public ShadowNoFileLockStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        return ObjectStoreType.SHADOWNOFILELOCK;
-    }
-
-    public ShadowNoFileLockStore(String locationOfStore)
-    {
-        this(locationOfStore, StateType.OS_SHARED);
-    }
-
-    public ShadowNoFileLockStore(String locationOfStore, int shareStatus)
-    {
-        super(locationOfStore, shareStatus);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("ShadowNoFileLockStore.ShadowNoFileLockStore("
-                    + locationOfStore + ")");
-        }
-    }
-
-    public ShadowNoFileLockStore()
-    {
-        this(StateType.OS_SHARED);
-    }
-
-    public ShadowNoFileLockStore(int shareStatus)
-    {
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("ShadowNoFileLockStore.ShadowNoFileLockStore(" + shareStatus + ")");
-        }
+        super(objectStoreEnvironmentBean);
     }
 
     /**

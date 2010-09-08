@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
@@ -69,12 +68,6 @@ import java.lang.NumberFormatException;
 
 public class HashedStore extends ShadowNoFileLockStore
 {
-
-    public int typeIs ()
-    {
-        return ObjectStoreType.HASHED;
-    }
-
     /**
      * Given a type name initialise <code>state</code> to contains all of the
      * Uids of objects of that type
@@ -180,58 +173,9 @@ public class HashedStore extends ShadowNoFileLockStore
         return true;
     }
 
-    /*
-     * Protected constructors and destructor
-     */
-
-    public HashedStore ()
+    public HashedStore (ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(StateType.OS_SHARED);
-    }
-
-    public HashedStore (int shareStatus)
-    {
-        super(shareStatus);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HashedStore.HashedStore( " + shareStatus + " )");
-        }
-        
-        try
-        {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
-        }
-        catch (ObjectStoreException e)
-        {
-            tsLogger.logger.warn(e);
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
-        }
-    }
-
-    public HashedStore (String locationOfStore)
-    {
-        this(locationOfStore, StateType.OS_SHARED);
-    }
-
-    public HashedStore (String locationOfStore, int shareStatus)
-    {
-        super(shareStatus);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HashedStore.HashedStore(" + locationOfStore + ")");
-        }
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e)
-        {
-            tsLogger.logger.warn(e);
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
-        }
+        super(objectStoreEnvironmentBean);
     }
 
     protected String truncate (String value)

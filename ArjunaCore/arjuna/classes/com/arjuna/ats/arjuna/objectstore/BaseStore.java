@@ -42,16 +42,6 @@ package com.arjuna.ats.arjuna.objectstore;
 public interface BaseStore
 {
     /**
-     * The type of the object store. This is used to order the
-     * instances in the intentions list.
-     *
-     * @return the type of the record.
-     * @see com.arjuna.ats.arjuna.coordinator.RecordType
-     */
-
-    public int typeIs ();
-
-    /**
      * @return the "name" of the object store. Where in the hierarchy it appears, e.g., /ObjectStore/MyName/...
      */
 

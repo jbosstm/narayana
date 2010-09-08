@@ -31,16 +31,11 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * The basic transaction log implementation. Uses the no file-level locking
@@ -54,12 +49,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class NullActionStore extends ShadowNoFileLockStore
 {
-
-    public int typeIs ()
-    {
-        return ObjectStoreType.NULL_ACTION;
-    }
-
     /**
      * @return current state of object. Assumes that genPathName allocates
      *         enough extra space to allow extra chars to be added. Action
@@ -130,68 +119,8 @@ public class NullActionStore extends ShadowNoFileLockStore
         return false;
     }
     
-    public NullActionStore(String locationOfStore)
+    public NullActionStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(locationOfStore, StateType.OS_SHARED);
-        
-        try
-        {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
-        }
-        catch (ObjectStoreException e) {
-            tsLogger.logger.warn(e);
-
-            super.makeInvalid();
-
-            throw new FatalError(e.toString(),
-                    e);
-        }
+        super(objectStoreEnvironmentBean);
     }
-
-    public NullActionStore(String locationOfStore, int shareStatus)
-    {
-        super(shareStatus);
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e) {
-            tsLogger.logger.warn(e);
-
-            super.makeInvalid();
-
-            throw new FatalError(e.toString(),
-                    e);
-        }
-    }
-
-    public NullActionStore()
-    {
-        this(StateType.OS_SHARED);
-    }
-
-    public NullActionStore(int shareStatus)
-    {
-        super(shareStatus);
-    }
-
-    protected synchronized boolean setupStore (String location)
-            throws ObjectStoreException
-    {
-        try
-        {
-            super.setupStore(location);
-        }
-        catch (ObjectStoreException e) {
-            tsLogger.logger.warn(e);
-
-            super.makeInvalid();
-
-            throw new FatalError(e.toString(), e);
-        }
-        
-        return true;
-    }
-
 }

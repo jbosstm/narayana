@@ -56,10 +56,10 @@ public class BasicLockStore extends LockStore
      * the key.
      */
 
-    public BasicLockStore(String key)
+    public BasicLockStore()
     {
         if (txojLogger.logger.isTraceEnabled()) {
-            txojLogger.logger.trace("BasicLockStore.BasicLockStore(" + key + ")");
+            txojLogger.logger.trace("BasicLockStore.BasicLockStore()");
         }
     }
 

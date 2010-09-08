@@ -71,43 +71,17 @@ public abstract class FileSystemStore extends ObjectStore
         public boolean accept (File dir, String name)
         {
             File f = new File(name);
-            
+
             if (f.isDirectory())
                 return false;
             else
                 return true;
-        }       
-    }
-    
-    public FileSystemStore (String locationOfStore, int ss)
-    {
-        super(ss);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("FileSystemStore.FileSystemStore(" + locationOfStore + ")");
-        }
-
-        fullStoreName = null;
-        localStoreRoot = null;
-        isValid = true;
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e)
-        {
-            isValid = false;
-
-            tsLogger.logger.warn(e);
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
         }
     }
 
     public String getStoreName ()
     {
-        return localStoreRoot;
+        return _objectStoreRoot;
     }
 
     /*
@@ -169,21 +143,6 @@ public abstract class FileSystemStore extends ObjectStore
         return write_state(storeUid, tName, state, StateType.OS_SHADOW);
     }
 
-    public final synchronized boolean storeValid ()
-    {
-        return isValid;
-    }
-
-    public final synchronized void makeInvalid ()
-    {
-        isValid = false;
-    }
-
-    public final synchronized void makeValid ()
-    {
-        isValid = true;
-    }
-
     /**
      * Given a type name initialise the <code>state</code> to contains all of
      * the Uids of objects of that type
@@ -236,7 +195,7 @@ public abstract class FileSystemStore extends ObjectStore
                     if ((aUid != null) && (aUid.valid()))
                     {
                         if ((aUid.notEquals(Uid.nullUid())) && ((match == StateStatus.OS_UNKNOWN) ||
-                                                                (isType(aUid, tName, match))))
+                                (isType(aUid, tName, match))))
                         {
                             UidHelper.packInto(aUid, store);
                         }
@@ -325,49 +284,9 @@ public abstract class FileSystemStore extends ObjectStore
         return result;
     }
 
-    public synchronized void packInto (OutputBuffer buff) throws IOException
-    {
-        if (localStoreRoot != null)
-        {
-            if (localStoreRoot.compareTo("") == 0)
-            {
-                buff.packString(null);
-                return;
-            }
-        }
-
-        buff.packString(localStoreRoot);
-    }
-
-    public synchronized void unpackFrom (InputBuffer buff) throws IOException
-    {
-        try
-        {
-            setupStore(buff.unpackString());
-        }
-        catch (ObjectStoreException e)
-        {
-            throw new IOException(tsLogger.i18NLogger.get_objectstore_FileSystemStore_6());
-        }
-    }
-
     protected abstract InputObjectState read_state (Uid u, String tn, int s) throws ObjectStoreException;
     protected abstract boolean remove_state (Uid u, String tn, int s) throws ObjectStoreException;
     protected abstract boolean write_state (Uid u, String tn, OutputObjectState buff, int s) throws ObjectStoreException;
-
-    /**
-     * Turn file sync on and off.
-     */
-
-    protected synchronized final void syncOn ()
-    {
-        FileSystemStore.doSync = true;
-    }
-
-    protected synchronized final void syncOff ()
-    {
-        FileSystemStore.doSync = false;
-    }
 
     /**
      * Are synchronous write enabled?
@@ -375,7 +294,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected synchronized final boolean synchronousWrites ()
     {
-        return FileSystemStore.doSync && syncWrites;
+        return doSync && syncWrites;
     }
 
     /**
@@ -545,23 +464,18 @@ public abstract class FileSystemStore extends ObjectStore
         }
     }
 
-    public FileSystemStore (int ss)
+    public FileSystemStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        super(ss);
+        super(objectStoreEnvironmentBean);
 
-        fullStoreName = null;
-        localStoreRoot = null;
-        isValid = true;
-        
-        try
-        {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
-        }
-        catch (ObjectStoreException e)
-        {
-            isValid = false;
+        fullStoreName = locateStore(_objectStoreRoot);
 
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+        doSync = objectStoreEnvironmentBean.isObjectStoreSync();
+
+        /* The root of the objectstore must exist and be writable */
+
+        if ((fullStoreName == null) || !createHierarchy(fullStoreName)) {
+            throw new ObjectStoreException( tsLogger.i18NLogger.get_objectstore_FileSystemStore_1(fullStoreName) );
         }
     }
 
@@ -590,12 +504,12 @@ public abstract class FileSystemStore extends ObjectStore
                         {
                             String pack = truncate(entry[i]);
 
-                if ( pack.length() > 0 )
-                {
+                            if ( pack.length() > 0 )
+                            {
                                 foundTypes.packString(root+File.separator+pack);
 
                                 result = allTypes(foundTypes, root+File.separator+pack);
-                }
+                            }
                         }
 
                         tmpFile = null;
@@ -668,31 +582,6 @@ public abstract class FileSystemStore extends ObjectStore
             fname = fname.substring(0, fname.length() -2);
 
         return fname;
-    }
-
-    protected synchronized boolean setupStore (String localOSRoot) throws ObjectStoreException
-    {
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("FileSystemStore.setupStore(" + localOSRoot + ")");
-        }
-
-        isValid = true;
-
-        if (localOSRoot == null)
-            localOSRoot = "";
-
-        localStoreRoot = localOSRoot;
-        fullStoreName = locateStore(localStoreRoot);
-
-        /* The root of the objectstore must exist and be writable */
-
-        if ((fullStoreName == null) || !createHierarchy(fullStoreName)) {
-            tsLogger.i18NLogger.warn_objectstore_FileSystemStore_1(fullStoreName);
-
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     protected boolean supressEntry (String name)
@@ -868,29 +757,17 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected boolean syncWrites = true;
 
-    private String  fullStoreName;
-    private String  localStoreRoot;
-    private boolean isValid;
-
-    /*
-     * These values should be determined via something like pathconf
-     */
-
-    private static final int MAXPNAMELEN = 255;
-    private static final int MAXNAMELENGTH = 255;
-    private static final int SLOP = 9;
+    private final String fullStoreName;
+    protected volatile boolean doSync = true;
 
     // global values (some of which may be reset on a per instance basis).
-
-    private static boolean   doSync = true;
+    
     private static Hashtable fileCache = new Hashtable();
     private static int       createRetry = 100;
     private static int       createTimeout = 100;
 
     static
     {
-        FileSystemStore.doSync = arjPropertyManager.getObjectStoreEnvironmentBean().isObjectStoreSync();
-
         if (File.separatorChar != FileSystemStore.unixSeparator)
             rewriteSeparator = true;
 

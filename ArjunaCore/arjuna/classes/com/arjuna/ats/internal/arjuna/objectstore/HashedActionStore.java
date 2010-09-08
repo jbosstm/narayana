@@ -32,10 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.objectstore.StateType;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -56,102 +52,11 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 public class HashedActionStore extends HashedStore
 {
-
-    public int typeIs ()
+    public HashedActionStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        return ObjectStoreType.HASHED_ACTION;
+        super(objectStoreEnvironmentBean);
+
+        // overrides parents use of isObjectStoreSync
+        doSync = objectStoreEnvironmentBean.isTransactionSync();
     }
-
-    /*
-     * Protected constructors and destructor
-     */
-
-    public HashedActionStore()
-    {
-        this(StateType.OS_SHARED);
-    }
-
-    public HashedActionStore(int shareStatus)
-    {
-        super(shareStatus);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HashedStore.HashedActionStore( " + shareStatus + " )");
-        }
-        
-        try
-        {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
-        }
-        catch (ObjectStoreException e)
-        {
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
-                    e);
-        }
-    }
-
-    public HashedActionStore(String locationOfStore)
-    {
-        this(locationOfStore, StateType.OS_SHARED);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HashedStore.HashedActionStore(" + locationOfStore + ")");
-        }
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e)
-        {
-            tsLogger.logger.warn(e);
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-        }
-    }
-
-    public HashedActionStore(String locationOfStore, int shareStatus)
-    {
-        super(shareStatus);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("HashedStore.HashedActionStore(" + locationOfStore + ")");
-        }
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e)
-        {
-            tsLogger.logger.warn(e);
-
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
-                    e);
-        }
-    }
-
-    protected synchronized boolean setupStore (String location)
-            throws ObjectStoreException
-    {
-        if (!checkSync)
-        {
-            if (arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .isTransactionSync())
-            {
-                syncOn();
-            }
-            else
-            {
-                syncOff();
-            }
-        }
-
-        checkSync = true;
-
-        return super.setupStore(location);
-    }
-
-    private static boolean checkSync = false;
-
 }

@@ -55,14 +55,16 @@ public class PersistenceTest
         boolean threaded = false;
         long stime = Calendar.getInstance().getTime().getTime();
 
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+
         for (int i = 0; i < 1000; i++) {
             try {
                 ParticipantStore store = null;
 
                 if (!threaded)
-                    store = new ShadowingStore();
+                    store = new ShadowingStore(objectStoreEnvironmentBean);
                 else
-                    store = new CacheStore();
+                    store = new CacheStore(objectStoreEnvironmentBean);
 
                 byte[] data = new byte[10240];
                 OutputObjectState state = new OutputObjectState();

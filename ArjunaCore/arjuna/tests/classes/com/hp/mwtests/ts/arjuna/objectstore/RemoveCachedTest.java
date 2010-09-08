@@ -50,7 +50,7 @@ public class RemoveCachedTest
     public void test() throws IOException, ObjectStoreException
     {
         boolean passed = true;
-        RecoveryStore store = new CacheStore();
+        RecoveryStore store = new CacheStore(new ObjectStoreEnvironmentBean());
         String type = "ArjunaMS/Destinations/a3d6227_dc656_3b77ce7e_2/Messages";
         InputObjectState buff = new InputObjectState();
 

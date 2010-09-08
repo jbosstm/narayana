@@ -215,30 +215,6 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Returns true if the transaction log should be distinct from the action store.
-     * 
-     * Default: false
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.transactionLog
-     *
-     * @return true for separate transaction log, false otherwise.
-     */
-    public boolean isTransactionLog()
-    {
-        return transactionLog;
-    }
-
-    /**
-     * Sets if the transaction log should be distinct from the action store.
-     *
-     * @param transactionLog true for sepatate store, false to disable.
-     */
-    public void setTransactionLog(boolean transactionLog)
-    {
-        this.transactionLog = transactionLog;
-    }
-
-
-    /**
      * Returns true if write optimisation protocol should be used for PersistenceRecord.
      *
      * Default: false
@@ -614,7 +590,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
         {
             synchronized (this) {
                 if(checkedActionFactory == null && checkedActionFactoryClassName != null) {
-                    CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName);
+                    CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName, null);
                     checkedActionFactory = instance;
                 }
             }

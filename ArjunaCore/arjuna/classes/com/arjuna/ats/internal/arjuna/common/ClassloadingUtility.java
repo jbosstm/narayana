@@ -22,6 +22,8 @@ package com.arjuna.ats.internal.arjuna.common;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +46,10 @@ public class ClassloadingUtility
      *
      * @param iface the expected interface type.
      * @param className the name of the class to load and instantiate.
-     * @param <T>
+     * @param constructorArgs optional set of arguments to pass to the class constructor. null for default ctor.
      * @return an instantiate of the specified class, or null.
      */
-    public static <T> T loadAndInstantiateClass(Class<T> iface, String className)
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, Object[] constructorArgs)
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("Loading class " + className);
@@ -72,7 +74,16 @@ public class ClassloadingUtility
 
         try {
             Class<? extends T> clazz2 = clazz.asSubclass(iface);
-            instance = (T)clazz2.newInstance();
+            if(constructorArgs == null) {
+                instance = (T)clazz2.newInstance();
+            } else {
+                Class[] paramTypes = new Class[constructorArgs.length];
+                for(int i = 0; i < constructorArgs.length; i++) {
+                    paramTypes[i] = constructorArgs[i].getClass();
+                }
+                Constructor ctor = clazz2.getConstructor(paramTypes);
+                instance = (T)ctor.newInstance(constructorArgs);
+            }
         } catch (ClassCastException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
         }
@@ -80,6 +91,10 @@ public class ClassloadingUtility
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch (IllegalAccessException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
+        } catch(NoSuchMethodException e) {
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
+        } catch(InvocationTargetException e) {
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         }
 
         return instance;
@@ -108,7 +123,7 @@ public class ClassloadingUtility
                 theClass = theClassAndParameter;
             }
 
-            T instance = loadAndInstantiateClass(iface, theClass);
+            T instance = loadAndInstantiateClass(iface, theClass, null);
 
 
             if (theClass != null && theParameter != null)

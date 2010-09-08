@@ -46,7 +46,7 @@ public class PersistenceTest
     @Test
     public void test () throws ObjectStoreException
     {
-        ParticipantStore store = new ShadowingStore();
+        ParticipantStore store = new ShadowingStore(new ObjectStoreEnvironmentBean());
         OutputObjectState state = new OutputObjectState();
         Uid u = new Uid();
 

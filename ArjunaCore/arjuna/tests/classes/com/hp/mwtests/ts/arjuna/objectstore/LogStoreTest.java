@@ -49,7 +49,6 @@ public class LogStoreTest
     public void test()
     {
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
-        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
 
         RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         final int numberOfTransactions = 1000;

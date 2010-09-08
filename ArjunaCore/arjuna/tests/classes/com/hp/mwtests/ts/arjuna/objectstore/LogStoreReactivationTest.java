@@ -49,7 +49,6 @@ public class LogStoreReactivationTest
     {
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
-        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         arjPropertyManager.getObjectStoreEnvironmentBean().setSynchronousRemoval(false);
         // the byteman script will enforce this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite

@@ -33,17 +33,10 @@ import com.arjuna.ats.arjuna.coordinator.ActionType;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.internal.arjuna.abstractrecords.ActivationRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
-import com.arjuna.ats.internal.arjuna.objectstore.ActionStore;
-import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
-import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCStore;
-import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import static org.junit.Assert.*;
 
@@ -166,38 +159,6 @@ public class TypesUnitTest
         
         for (int i = 0; i < ActionStatus.NO_ACTION; i++)
             assertTrue(ActionStatus.stringForm(i) != null);
-    }
-    
-    @Test
-    public void testObjectStoreType ()
-    {
-        PrintWriter pw = new PrintWriter(new StringWriter());
-        
-        ObjectStoreType.print(pw, ObjectStoreType.ACTION);
-        
-        assertEquals(ObjectStoreType.typeToClass(ObjectStoreType.ACTION), ActionStore.class);
-        assertEquals(ObjectStoreType.typeToClass(ObjectStoreType.JDBC), JDBCStore.class);
-        assertEquals(ObjectStoreType.typeToClass(ObjectStoreType.ACTIONLOG), LogStore.class);
-        assertEquals(ObjectStoreType.typeToClass(ObjectStoreType.CACHED), CacheStore.class);
-        assertEquals(ObjectStoreType.typeToClass(ObjectStoreType.HASHED), HashedStore.class);
-        
-        assertEquals(ObjectStoreType.typeToClass(30), null);
-
-        assertEquals(ObjectStoreType.classToType(ActionStore.class), ObjectStoreType.ACTION);
-        assertEquals(ObjectStoreType.classToType(JDBCStore.class), ObjectStoreType.JDBC);
-        assertEquals(ObjectStoreType.classToType(LogStore.class), ObjectStoreType.ACTIONLOG);
-        assertEquals(ObjectStoreType.classToType(CacheStore.class), ObjectStoreType.CACHED);
-        assertEquals(ObjectStoreType.classToType(HashedStore.class), ObjectStoreType.HASHED);
-        
-        try
-        {
-            ObjectStoreType.classToType(RecordType.class);
-            
-            fail();
-        }
-        catch (final FatalError ex)
-        {
-        }        
     }
 
     @Test

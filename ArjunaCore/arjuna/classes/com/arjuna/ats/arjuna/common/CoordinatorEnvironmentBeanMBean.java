@@ -39,8 +39,6 @@ public interface CoordinatorEnvironmentBeanMBean
 
     boolean isMaintainHeuristics();
 
-    boolean isTransactionLog();
-
     boolean isWriteOptimisation();
 
     boolean isReadonlyOptimisation();

@@ -151,12 +151,7 @@ private static final String rcvcoRepositoryId = RecoveryCoordinatorHelper.id();
 	    {
 		try
 		{
-		    //Retrieve from Object Store
-		    if (participantStore == null)
-		    {
-			participantStore = StoreManager.getParticipantStore();
-		    }
-
+		    ParticipantStore participantStore = StoreManager.getCommunicationStore();
 		    InputObjectState iState = participantStore.read_committed(new Uid( JacOrbRCServiceInit.uid4Recovery), JacOrbRCServiceInit.type());
 
             if (iState != null)
@@ -183,7 +178,7 @@ private POA _ourPOA;
     private static boolean _runWithoutDaemon = false;
     private static boolean _initialised = false;
 
-    private ParticipantStore participantStore;
+
 
     static
     {

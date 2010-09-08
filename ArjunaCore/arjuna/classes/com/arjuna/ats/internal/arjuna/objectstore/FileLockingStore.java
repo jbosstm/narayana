@@ -61,14 +61,9 @@ public abstract class FileLockingStore extends FileSystemStore
     protected abstract boolean write_state (Uid u, String tn,
             OutputObjectState buff, int s) throws ObjectStoreException;
 
-    public FileLockingStore(String locationOfStore, int ss)
+    public FileLockingStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        super(locationOfStore, ss);
-
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("FileLockingStore.FileLockingStore(" + locationOfStore
-                    + ")");
-        }
+        super(objectStoreEnvironmentBean);
     }
 
     /**

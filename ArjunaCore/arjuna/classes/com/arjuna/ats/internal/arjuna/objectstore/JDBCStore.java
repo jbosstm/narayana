@@ -36,7 +36,6 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
@@ -46,7 +45,6 @@ import java.sql.*;
 import java.util.HashMap;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreError;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 import java.io.IOException;
@@ -62,595 +60,581 @@ import java.io.IOException;
 public class JDBCStore extends ObjectStore
 {
 
-        public String getStoreName()
-        {
-                if (storeValid())
-                        return getAccessClassName() + ":" + getTableName();
-                else
-                        return "Invalid";
+    public String getStoreName()
+    {
+        if (storeValid())
+            return getAccessClassName() + ":" + getTableName();
+        else
+            return "Invalid";
+    }
+
+    public boolean commit_state(Uid objUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
         }
 
-        public int typeIs()
-        {
-                return ObjectStoreType.JDBC;
+        /* Bail out if the object store is not set up */
+
+        if (!storeValid())
+            return false;
+        else
+            return _theImple.commit_state(objUid, tName, getTableName());
+    }
+
+    public boolean hide_state(Uid objUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
         }
 
-        public boolean commit_state(Uid objUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
-                }
+        /* Bail out if the object store is not set up */
 
-                /* Bail out if the object store is not set up */
+        if (storeValid())
+            return _theImple.hide_state(objUid, tName, getTableName());
+        else
+            return false;
+    }
 
-                if (!storeValid())
-                        return false;
-                else
-                        return _theImple.commit_state(objUid, tName, getTableName());
+    public boolean reveal_state(Uid objUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("ShadowingStore.reveal_state(" + objUid + ", " + tName
+                    + ")");
         }
 
-        public boolean hide_state(Uid objUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("ShadowingStore.hide_state(" + objUid + ", " + tName + ")");
-                }
+        if (storeValid())
+            return _theImple.reveal_state(objUid, tName, getTableName());
+        else
+            return false;
+    }
 
-                /* Bail out if the object store is not set up */
+    /*
+    * Determine current state of object. State search is ordered
+    * OS_UNCOMMITTED, OS_UNCOMMITTED_HIDDEN, OS_COMMITTED, OS_COMMITTED_HIDDEN
+    */
 
-                if (storeValid())
-                        return _theImple.hide_state(objUid, tName, getTableName());
-                else
-                        return false;
+    public int currentState(Uid objUid, String tName)
+            throws ObjectStoreException
+    {
+        if (storeValid())
+            return _theImple.currentState(objUid, tName, getTableName());
+        else
+            return StateStatus.OS_UNKNOWN;
+    }
+
+    /**
+     * Read an uncommitted instance of State out of the object store. The
+     * instance is identified by the unique id and type
+     */
+
+    public InputObjectState read_committed(Uid storeUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.read_committed(" + storeUid + ", "
+                    + tName + ")");
         }
 
-        public boolean reveal_state(Uid objUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("ShadowingStore.reveal_state(" + objUid + ", " + tName
-                            + ")");
-                }
+        return read_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    }
 
-                if (storeValid())
-                        return _theImple.reveal_state(objUid, tName, getTableName());
-                else
-                        return false;
+    public InputObjectState read_uncommitted(Uid storeUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.read_uncommitted(" + storeUid + ", " + tName
+                    + ")");
         }
 
-        /*
-         * Determine current state of object. State search is ordered
-         * OS_UNCOMMITTED, OS_UNCOMMITTED_HIDDEN, OS_COMMITTED, OS_COMMITTED_HIDDEN
-         */
+        return read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    }
 
-        public int currentState(Uid objUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (storeValid())
-                        return _theImple.currentState(objUid, tName, getTableName());
-                else
-                        return StateStatus.OS_UNKNOWN;
+    public boolean remove_committed(Uid storeUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.remove_committed(" + storeUid + ", " + tName
+                    + ")");
         }
 
-        /**
-         * Read an uncommitted instance of State out of the object store. The
-         * instance is identified by the unique id and type
-         */
+        return remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    }
 
-        public InputObjectState read_committed(Uid storeUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.read_committed(" + storeUid + ", "
-                            + tName + ")");
-                }
-
-                return read_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    public boolean remove_uncommitted(Uid storeUid, String tName)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
+                    + ")");
         }
 
-        public InputObjectState read_uncommitted(Uid storeUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.read_uncommitted(" + storeUid + ", " + tName
-                            + ")");
-                }
+        return remove_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    }
 
-                return read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    public boolean write_committed(Uid storeUid, String tName,
+                                   OutputObjectState state) throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.write_committed(" + storeUid + ", " + tName
+                    + ")");
         }
 
-        public boolean remove_committed(Uid storeUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.remove_committed(" + storeUid + ", " + tName
-                            + ")");
-                }
+        return write_state(storeUid, tName, state, StateStatus.OS_COMMITTED);
+    }
 
-                return remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    public boolean write_uncommitted(Uid storeUid, String tName,
+                                     OutputObjectState state) throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.write_uncommitted(" + storeUid + ", " + tName
+                    + ", " + state + ")");
         }
 
-        public boolean remove_uncommitted(Uid storeUid, String tName)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.remove_uncommitted(" + storeUid + ", " + tName
-                            + ")");
-                }
+        return write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
+    }
 
-                return remove_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    public final boolean storeValid()
+    {
+        return _isValid;
+    }
+
+    /*
+    * Given a type name return an ObjectState that contains all of the uids of
+    * objects of that type
+    */
+
+    public boolean allObjUids(String tName, InputObjectState state, int match)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.allObjUids(" + tName + ", " + state + ", "
+                    + match + ")");
         }
 
-        public boolean write_committed(Uid storeUid, String tName,
-                        OutputObjectState state) throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.write_committed(" + storeUid + ", " + tName
-                            + ")");
-                }
+        if (storeValid())
+            return _theImple.allObjUids(tName, state, match, getTableName());
+        else
+            return false;
+    }
 
-                return write_state(storeUid, tName, state, StateStatus.OS_COMMITTED);
+    public boolean allTypes(InputObjectState foundTypes)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.allTypes(" + foundTypes + ")");
         }
 
-        public boolean write_uncommitted(Uid storeUid, String tName,
-                        OutputObjectState state) throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.write_uncommitted(" + storeUid + ", " + tName
-                            + ", " + state + ")");
-                }
+        if (storeValid())
+            return _theImple.allTypes(foundTypes, getTableName());
+        else
+            return false;
+    }
 
-                return write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
+    public synchronized void packInto(OutputBuffer buff) throws IOException
+    {
+        buff.packString(getAccessClassName());
+        buff.packString(getTableName());
+    }
+
+    public synchronized void unpackFrom(InputBuffer buff) throws IOException
+    {
+        setAccessClassName(buff.unpackString());
+        setTableName(buff.unpackString());
+    }
+
+    protected InputObjectState read_state(Uid objUid, String tName, int ft)
+            throws ObjectStoreException
+    {
+        if (!storeValid())
+            return null;
+        else
+            return _theImple.read_state(objUid, tName, ft, getTableName());
+    }
+
+    /**
+     * We don't actually delete the state entry, only change its type.
+     */
+
+    protected boolean remove_state(Uid objUid, String name, int ft)
+            throws ObjectStoreException
+    {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("JDBCStore.remove_state("
+                    + objUid + ", " + name + ", "
+                    + StateType.stateTypeString(ft) + ")");
         }
 
-        public final boolean storeValid()
-        {
-                return _isValid;
+        if (!storeValid())
+            return false;
+        else
+            return _theImple.remove_state(objUid, name, ft, getTableName());
+    }
+
+    protected boolean write_state(Uid objUid, String tName,
+                                  OutputObjectState state, int s) throws ObjectStoreException
+    {
+        if (!storeValid())
+            return false;
+        else
+            return _theImple.write_state(objUid, tName, state, s,
+                    getTableName());
+    }
+
+    protected JDBCStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
+    {
+        super(objectStoreEnvironmentBean);
+
+         _jdbcAccessClassName = objectStoreEnvironmentBean.getJdbcUserDbAccess();
+
+        if(_jdbcAccessClassName == null) {
+            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
         }
 
-        /*
-         * Given a type name return an ObjectState that contains all of the uids of
-         * objects of that type
-         */
+        setTableName(_defaultTableName);
 
-        public boolean allObjUids(String tName, InputObjectState state, int match)
-                        throws ObjectStoreException
+        try
         {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.allObjUids(" + tName + ", " + state + ", "
-                            + match + ")");
-                }
-
-                if (storeValid())
-                        return _theImple.allObjUids(tName, state, match, getTableName());
-                else
-                        return false;
+            setupStore(_jdbcAccessClassName, getTableName());
+        }
+        catch (Exception e)
+        {
+            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
+            throw new ObjectStoreException(e);
         }
 
-        public boolean allTypes(InputObjectState foundTypes)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.allTypes(" + foundTypes + ")");
-                }
+        _isValid = true;
+    }
 
-                if (storeValid())
-                        return _theImple.allTypes(foundTypes, getTableName());
-                else
-                        return false;
+    /**
+     * Get the JDBC access class name.
+     *
+     * @return The access class name.
+     */
+    protected String getAccessClassName()
+    {
+        return _jdbcAccessClassName;
+    }
+
+    /**
+     * Set the JDBC access class name.
+     *
+     * @param jdbcAccessClassName access class name.
+     */
+    protected void setAccessClassName(String jdbcAccessClassName)
+    {
+        _jdbcAccessClassName = jdbcAccessClassName;
+    }
+
+    /**
+     * Get the JDBC default table name.
+     *
+     * @return The default table name.
+     */
+    protected String getDefaultTableName()
+    {
+        return _defaultTableName;
+    }
+
+    /**
+     * Get the JDBC access class.
+     *
+     * @return The jdbc access variable.
+     */
+    protected JDBCAccess getJDBCAccess()
+    {
+        return _jdbcAccess;
+    }
+
+    /**
+     * Set the JDBC access class.
+     *
+     * @param jdbcAccess
+     *            The jdbc access variable.
+     */
+    protected void setJDBCAccess(JDBCAccess jdbcAccess)
+    {
+        _jdbcAccess = jdbcAccess;
+    }
+
+    /**
+     * Get the JDBC table name.
+     *
+     * @return The table name.
+     */
+    protected String getTableName()
+    {
+        return _jdbcTableName;
+    }
+
+    /**
+     * Set the JDBC table name.
+     *
+     * @param tableName
+     *            The table name.
+     */
+    protected void setTableName(String tableName)
+    {
+        _jdbcTableName = tableName;
+    }
+
+    protected void initialise(String tableName) throws Exception
+    {
+        String jdbcAccessClassName = getAccessClassName();
+
+        if (jdbcAccessClassName == null)
+        {
+            throw new FatalError(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
         }
 
-        public synchronized void packInto(OutputBuffer buff) throws IOException
+        try
         {
-                buff.packString(getAccessClassName());
-                buff.packString(getTableName());
+            setupStore(jdbcAccessClassName, tableName);
+        }
+        catch (Exception e)
+        {
+            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
+            throw e;
         }
 
-        public synchronized void unpackFrom(InputBuffer buff) throws IOException
+        _isValid = true;
+    }
+
+    /*
+    * Try to create the original and shadow/hidden tables. If this fails, then
+    * we will exit.
+    */
+    @SuppressWarnings("unchecked")
+    protected void setupStore(String jdbcAccessClassName, String tableName)
+            throws Exception
+    {
+        if (jdbcAccessClassName == null || jdbcAccessClassName.length() == 0)
+            throw new ObjectStoreException();
+
+        final JDBCAccess jdbcAccess;
+        synchronized (_theAccesses)
         {
-                setAccessClassName(buff.unpackString());
-                setTableName(buff.unpackString());
-        }
-
-        protected InputObjectState read_state(Uid objUid, String tName, int ft)
-                        throws ObjectStoreException
-        {
-                if (!storeValid())
-                        return null;
-                else
-                        return _theImple.read_state(objUid, tName, ft, getTableName());
-        }
-
-        /**
-         * We don't actually delete the state entry, only change its type.
-         */
-
-        protected boolean remove_state(Uid objUid, String name, int ft)
-                        throws ObjectStoreException
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace("JDBCStore.remove_state("
-                            + objUid + ", " + name + ", "
-                            + StateType.stateTypeString(ft) + ")");
-                }
-
-                if (!storeValid())
-                        return false;
-                else
-                        return _theImple.remove_state(objUid, name, ft, getTableName());
-        }
-
-        protected boolean write_state(Uid objUid, String tName,
-                        OutputObjectState state, int s) throws ObjectStoreException
-        {
-                if (!storeValid())
-                        return false;
-                else
-                        return _theImple.write_state(objUid, tName, state, s,
-                                        getTableName());
-        }
-        
-        protected JDBCStore()
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace(getClass().getName() + "()");
-                }
-
+            final Object jdbcAccessObject = _theAccesses
+                    .get(jdbcAccessClassName);
+            if (jdbcAccessObject != null)
+            {
+                jdbcAccess = (JDBCAccess) jdbcAccessObject;
+            }
+            else
+            {
                 try
                 {
-                        initialise("");
+                    final Class jdbcAccessClass = Thread.currentThread()
+                            .getContextClassLoader().loadClass(
+                                    jdbcAccessClassName);
+                    jdbcAccess = (JDBCAccess) jdbcAccessClass.newInstance();
+                }
+                catch (final Exception ex)
+                {
+                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(jdbcAccessClassName, ex);
+                    throw ex;
+                }
+                _theAccesses.put(jdbcAccessClassName, jdbcAccess);
+            }
+        }
+        setJDBCAccess(jdbcAccess);
+
+        final String impleTableName;
+        if ((tableName != null) && (tableName.length() > 0))
+        {
+            impleTableName = tableName;
+        }
+        else
+        {
+            final String jdbcAccessTableName = jdbcAccess.tableName();
+            if ((jdbcAccessTableName != null)
+                    && (jdbcAccessTableName.length() > 0))
+            {
+                impleTableName = jdbcAccessTableName;
+            }
+            else
+            {
+                impleTableName = getDefaultTableName();
+            }
+        }
+
+        setTableName(impleTableName);
+
+        final String impleKey = jdbcAccessClassName + ":" + impleTableName;
+
+        synchronized (_theImples)
+        {
+            final Object currentImple = _theImples.get(impleKey);
+            if (currentImple != null)
+            {
+                _theImple = (JDBCImple) currentImple;
+            }
+            else
+            {
+                try
+                {
+                    /*
+                    * This had better not be an Arjuna jdbc connection!
+                    */
+                    final Connection connection;
+
+                    try
+                    {
+                        connection = jdbcAccess.getConnection();
+                    }
+                    catch (final SQLException sqle)
+                    {
+                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2("getConnection()", sqle);
+                        throw sqle;
+                    }
+
+                    if (connection == null)
+                    {
+                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
+                        throw new SQLException("getConnection returned null");
+                    }
+                    boolean success = false;
+                    try
+                    {
+                        connection.setAutoCommit(true);
+                        final JDBCImple jdbcImple;
+                        try
+                        {
+                            final Class jdbcImpleClass = getJDBCClass(connection);
+                            jdbcImple = (JDBCImple) jdbcImpleClass
+                                    .newInstance();
+                            jdbcImple.setShareStatus(shareStatus);
+                        }
+                        catch (final Exception ex)
+                        {
+                            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(getJDBCAccess().toString(), ex);
+                            throw ex;
+                        }
+
+                        if (!jdbcImple.initialise(connection, jdbcAccess,
+                                impleTableName)) {
+                            tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
+                            throw new ObjectStoreException();
+                        }
+                        else
+                        {
+                            _theImples.put(impleKey, jdbcImple);
+                            _theImple = jdbcImple;
+                            success = true;
+                        }
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            try
+                            {
+                                connection.close();
+                            }
+                            catch (final SQLException sqle)
+                            {
+                            } // Ignore exception
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
-                        throw new ObjectStoreError(e.toString(), e);
-                }
-        }
-
-        protected JDBCStore(String tableName)
-        {
-                if (tsLogger.logger.isTraceEnabled()) {
-                    tsLogger.logger.trace(getClass().getName() + "(" + tableName + ")");
-                }
-
-                try
-                {
-                        initialise(tableName);
-                }
-                catch (Exception e)
-                {
-                        throw new ObjectStoreError(e.toString(), e);
-                }
-        }
-
-        /**
-         * Get the JDBC access class name.
-         *
-         * @return The access class name.
-         */
-        protected String getAccessClassName()
-        {
-                if (_jdbcAccessClassName == null)
-                        _jdbcAccessClassName = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcUserDbAccess();
-                return _jdbcAccessClassName;
-        }
-
-        /**
-         * Set the JDBC access class name.
-         *
-         * @param jdbcAccessClassName access class name.
-         */
-        protected void setAccessClassName(String jdbcAccessClassName)
-        {
-                _jdbcAccessClassName = jdbcAccessClassName;
-        }
-
-        /**
-         * Get the JDBC default table name.
-         *
-         * @return The default table name.
-         */
-        protected String getDefaultTableName()
-        {
-                return _defaultTableName;
-        }
-
-        /**
-         * Get the JDBC access class.
-         *
-         * @return The jdbc access variable.
-         */
-        protected JDBCAccess getJDBCAccess()
-        {
-                return _jdbcAccess;
-        }
-
-        /**
-         * Set the JDBC access class.
-         *
-         * @param jdbcAccess
-         *            The jdbc access variable.
-         */
-        protected void setJDBCAccess(JDBCAccess jdbcAccess)
-        {
-                _jdbcAccess = jdbcAccess;
-        }
-
-        /**
-         * Get the JDBC table name.
-         *
-         * @return The table name.
-         */
-        protected String getTableName()
-        {
-                return _jdbcTableName;
-        }
-
-        /**
-         * Set the JDBC table name.
-         *
-         * @param tableName
-         *            The table name.
-         */
-        protected void setTableName(String tableName)
-        {
-                _jdbcTableName = tableName;
-        }
-
-        protected void initialise(String tableName) throws Exception
-        {
-                String jdbcAccessClassName = getAccessClassName();
-
-                if (jdbcAccessClassName == null)
-                {
-                        throw new FatalError(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
-                }
-
-                try
-                {
-                        setupStore(jdbcAccessClassName, tableName);
-                }
-                catch (Exception e)
-                {
-                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
+                    tsLogger.logger.warn(e);
                     throw e;
                 }
-
-                _isValid = true;
+            }
+            _isValid = true;
         }
-        
-        /*
-         * Try to create the original and shadow/hidden tables. If this fails, then
-         * we will exit.
-         */
-        @SuppressWarnings("unchecked")
-    protected void setupStore(String jdbcAccessClassName, String tableName)
-                        throws Exception
-        {
-                if (jdbcAccessClassName == null || jdbcAccessClassName.length() == 0)
-                        throw new ObjectStoreException();
+    }
 
-                final JDBCAccess jdbcAccess;
-                synchronized (_theAccesses)
-                {
-                        final Object jdbcAccessObject = _theAccesses
-                                        .get(jdbcAccessClassName);
-                        if (jdbcAccessObject != null)
-                        {
-                                jdbcAccess = (JDBCAccess) jdbcAccessObject;
-                        }
-                        else
-                        {
-                                try
-                                {
-                                        final Class jdbcAccessClass = Thread.currentThread()
-                                                        .getContextClassLoader().loadClass(
-                                                                        jdbcAccessClassName);
-                                        jdbcAccess = (JDBCAccess) jdbcAccessClass.newInstance();
-                                }
-                                catch (final Exception ex)
-                                {
-                                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(jdbcAccessClassName, ex);
-                                        throw ex;
-                                }
-                                _theAccesses.put(jdbcAccessClassName, jdbcAccess);
-                        }
-                }
-                setJDBCAccess(jdbcAccess);
-
-                final String impleTableName;
-                if ((tableName != null) && (tableName.length() > 0))
-                {
-                        impleTableName = tableName;
-                }
-                else
-                {
-                        final String jdbcAccessTableName = jdbcAccess.tableName();
-                        if ((jdbcAccessTableName != null)
-                                        && (jdbcAccessTableName.length() > 0))
-                        {
-                                impleTableName = jdbcAccessTableName;
-                        }
-                        else
-                        {
-                                impleTableName = getDefaultTableName();
-                        }
-                }
-
-                setTableName(impleTableName);
-
-                final String impleKey = jdbcAccessClassName + ":" + impleTableName;
-
-                synchronized (_theImples)
-                {
-                        final Object currentImple = _theImples.get(impleKey);
-                        if (currentImple != null)
-                        {
-                                _theImple = (JDBCImple) currentImple;
-                        }
-                        else
-                        {
-                                try
-                                {
-                                        /*
-                                         * This had better not be an Arjuna jdbc connection!
-                                         */
-                                        final Connection connection;
-
-                                        try
-                                        {
-                                                connection = jdbcAccess.getConnection();
-                                        }
-                                        catch (final SQLException sqle)
-                                        {
-                                                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2("getConnection()", sqle);
-                                                throw sqle;
-                                        }
-
-                                        if (connection == null)
-                                        {
-                                                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
-                                                throw new SQLException("getConnection returned null");
-                                        }
-                                        boolean success = false;
-                                        try
-                                        {
-                                                connection.setAutoCommit(true);
-                                                final JDBCImple jdbcImple;
-                                                try
-                                                {
-                                                        final Class jdbcImpleClass = getJDBCClass(connection);
-                                                        jdbcImple = (JDBCImple) jdbcImpleClass
-                                                                        .newInstance();
-                                                        jdbcImple.setShareStatus(shareStatus);
-                                                }
-                                                catch (final Exception ex)
-                                                {
-                                                        tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(getJDBCAccess().toString(), ex);
-                                                        throw ex;
-                                                }
-
-                                                if (!jdbcImple.initialise(connection, jdbcAccess,
-                                                                impleTableName)) {
-                                                    tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
-                                                    throw new ObjectStoreException();
-                                                }
-                                                else
-                                                {
-                                                        _theImples.put(impleKey, jdbcImple);
-                                                        _theImple = jdbcImple;
-                                                        success = true;
-                                                }
-                                        }
-                                        finally
-                                        {
-                                                if (!success)
-                                                {
-                                                        try
-                                                        {
-                                                                connection.close();
-                                                        }
-                                                        catch (final SQLException sqle)
-                                                        {
-                                                        } // Ignore exception
-                                                }
-                                        }
-                                }
-                                catch (Exception e)
-                                {
-                                        tsLogger.logger.warn(e);
-                                        throw e;
-                                }
-                        }
-                        _isValid = true;
-                }
-        }
-
-        /**
-         * Attempt to load the database class. &nbsp;This method searches for a
-         * class called <name>_<major>_<minor>, then <name>_<major> and finally
-         * <dbName>
-         *
-         * @param conn
-         *            A database connection.
-         * @return The database class.
-         * @throws ClassNotFoundException
-         *             If no database class can be found.
-         * @throws SQLException
-         *             If the database connection cannot be interrogated.
-         */
-        @SuppressWarnings("unchecked")
+    /**
+     * Attempt to load the database class. &nbsp;This method searches for a
+     * class called <name>_<major>_<minor>, then <name>_<major> and finally
+     * <dbName>
+     *
+     * @param conn
+     *            A database connection.
+     * @return The database class.
+     * @throws ClassNotFoundException
+     *             If no database class can be found.
+     * @throws SQLException
+     *             If the database connection cannot be interrogated.
+     */
+    @SuppressWarnings("unchecked")
     protected Class getJDBCClass(Connection conn)
-                        throws ClassNotFoundException, SQLException
-        {
-                DatabaseMetaData md = conn.getMetaData();
+            throws ClassNotFoundException, SQLException
+    {
+        DatabaseMetaData md = conn.getMetaData();
 
-                String name = md.getDriverName();
-                int major = md.getDriverMajorVersion();
-                int minor = md.getDriverMinorVersion();
+        String name = md.getDriverName();
+        int major = md.getDriverMajorVersion();
+        int minor = md.getDriverMinorVersion();
 
-                /*
-                 * Check for spaces in the name - our implementation classes are always
-                 * just the first part of such names.
-                 */
+        /*
+        * Check for spaces in the name - our implementation classes are always
+        * just the first part of such names.
+        */
 
-                int index = name.indexOf(' ');
+        int index = name.indexOf(' ');
 
-                if (index != -1)
-                        name = name.substring(0, index);
+        if (index != -1)
+            name = name.substring(0, index);
 
         name = name.replaceAll("-", "_");
 
-                name = name.toLowerCase();
+        name = name.toLowerCase();
 
-                final ClassLoader classLoader = Thread.currentThread()
-                                .getContextClassLoader();
-                final String packageName = getClass().getPackage().getName() + ".jdbc.";
-                try
-                {
-                        return classLoader.loadClass(packageName + name + "_" + major + "_"
-                                        + minor + "_driver");
-                }
-                catch (final ClassNotFoundException cnfe)
-                {
-                }
-                try
-                {
-                        return classLoader.loadClass(packageName + name + "_" + major
-                                        + "_driver");
-                }
-                catch (final ClassNotFoundException cnfe)
-                {
-                }
-                return classLoader.loadClass(packageName + name + "_driver");
-        }
-
-        protected boolean supressEntry(String name)
+        final ClassLoader classLoader = Thread.currentThread()
+                .getContextClassLoader();
+        final String packageName = getClass().getPackage().getName() + ".jdbc.";
+        try
         {
-                return true;
+            return classLoader.loadClass(packageName + name + "_" + major + "_"
+                    + minor + "_driver");
         }
+        catch (final ClassNotFoundException cnfe)
+        {
+        }
+        try
+        {
+            return classLoader.loadClass(packageName + name + "_" + major
+                    + "_driver");
+        }
+        catch (final ClassNotFoundException cnfe)
+        {
+        }
+        return classLoader.loadClass(packageName + name + "_driver");
+    }
 
-        /*
-         * Instance specific data.
-         */
+    protected boolean supressEntry(String name)
+    {
+        return true;
+    }
 
-        protected boolean _isValid;
+    /*
+    * Instance specific data.
+    */
 
-        protected JDBCImple _theImple;
+    protected boolean _isValid;
 
-        private JDBCAccess _jdbcAccess;
+    protected JDBCImple _theImple;
 
-        private String _jdbcAccessClassName;
+    private JDBCAccess _jdbcAccess;
 
-        private String _jdbcTableName;
+    private String _jdbcAccessClassName;
 
-        private static String _defaultTableName = "JBossTSTable";
+    private String _jdbcTableName;
 
-        /*
-         * Class data.
-         */
+    private static String _defaultTableName = "JBossTSTable";
 
-        protected static final HashMap _theImples = new HashMap();
+    /*
+    * Class data.
+    */
 
-        protected static final HashMap _theAccesses = new HashMap();
+    protected static final HashMap _theImples = new HashMap();
+
+    protected static final HashMap _theAccesses = new HashMap();
 }

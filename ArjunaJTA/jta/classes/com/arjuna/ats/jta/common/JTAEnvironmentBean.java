@@ -153,7 +153,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         {
             synchronized(this) {
                 if(transactionManager == null && transactionManagerClassName != null) {
-                    TransactionManager instance = ClassloadingUtility.loadAndInstantiateClass(TransactionManager.class,  transactionManagerClassName);
+                    TransactionManager instance = ClassloadingUtility.loadAndInstantiateClass(TransactionManager.class,  transactionManagerClassName, null);
                     transactionManager = instance;
                 }
             }
@@ -234,7 +234,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         {
             synchronized (this) {
                 if(userTransaction == null && userTransactionClassName != null) {
-                    UserTransaction instance = ClassloadingUtility.loadAndInstantiateClass(UserTransaction.class, userTransactionClassName);
+                    UserTransaction instance = ClassloadingUtility.loadAndInstantiateClass(UserTransaction.class, userTransactionClassName, null);
                     userTransaction = instance;
                 }
             }
@@ -315,7 +315,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         {
             synchronized (this) {
                 if(transactionSynchronizationRegistry == null && transactionSynchronizationRegistryClassName != null) {
-                    TransactionSynchronizationRegistry instance = ClassloadingUtility.loadAndInstantiateClass(TransactionSynchronizationRegistry.class, transactionSynchronizationRegistryClassName);
+                    TransactionSynchronizationRegistry instance = ClassloadingUtility.loadAndInstantiateClass(TransactionSynchronizationRegistry.class, transactionSynchronizationRegistryClassName, null);
                     transactionSynchronizationRegistry = instance;
                 }
             }

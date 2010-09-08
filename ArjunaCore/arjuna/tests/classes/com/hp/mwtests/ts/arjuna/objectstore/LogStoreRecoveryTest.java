@@ -52,7 +52,6 @@ public class LogStoreRecoveryTest extends TestBase
     public void setUp()
         {
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
-        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         
         super.setUp();
         }

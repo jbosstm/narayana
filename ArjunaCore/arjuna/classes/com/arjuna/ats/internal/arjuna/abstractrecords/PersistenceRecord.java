@@ -153,7 +153,7 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			if (targetParticipantStore != null) {
                 tsLogger.logger.trace(", store = "
-                        + targetParticipantStore + "(" + targetParticipantStore.typeIs() + ")");
+                        + targetParticipantStore + "(" + targetParticipantStore.getClass().getCanonicalName() + ")");
             }
 			else {
                 tsLogger.logger.trace("");

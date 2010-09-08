@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.common.*;
@@ -48,11 +47,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 public class JDBCActionStore extends JDBCStore
 {
-    public int typeIs ()
-    {
-        return ObjectStoreType.JDBC_ACTION;
-    }
-    
     /**
      * The following operation commits a previous write_state operation which
      * was made with the SHADOW StateType argument. This is achieved by
@@ -151,14 +145,9 @@ public class JDBCActionStore extends JDBCStore
         return false;
     }
 
-    public JDBCActionStore()
+    public JDBCActionStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        super() ;
-    }
-
-    public JDBCActionStore(final String tableName)
-    {
-        super(tableName) ;
+        super(objectStoreEnvironmentBean);
     }
 
     protected String getAccessClassName()

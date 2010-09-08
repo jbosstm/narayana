@@ -96,9 +96,11 @@ public class CachedTest
         int threads = 100;
         Thread[] t = new Thread[threads];
 
-        arjPropertyManager.getObjectStoreEnvironmentBean().setCacheStoreSize(cacheSize);
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = arjPropertyManager.getObjectStoreEnvironmentBean();
 
-        ParticipantStore store = new CacheStore();
+        objectStoreEnvironmentBean.setCacheStoreSize(cacheSize);
+
+        ParticipantStore store = new CacheStore(objectStoreEnvironmentBean);
         
         long stime = Calendar.getInstance().getTime().getTime();
 

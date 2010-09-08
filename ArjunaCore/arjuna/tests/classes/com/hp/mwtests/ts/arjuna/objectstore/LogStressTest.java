@@ -99,8 +99,7 @@ public class LogStressTest
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
-        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
-        
+
         // the byteman script will manage this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 

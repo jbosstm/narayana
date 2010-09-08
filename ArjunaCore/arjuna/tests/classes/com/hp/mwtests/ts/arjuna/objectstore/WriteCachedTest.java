@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
@@ -83,7 +84,7 @@ class WriterThread extends Thread
 public class WriteCachedTest
 {
     @Test
-    public void test()
+    public void test() throws ObjectStoreException
     {
         boolean passed = true;
         String cacheSize = "20480";
@@ -93,7 +94,7 @@ public class WriteCachedTest
 
         System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
 
-        ParticipantStore store = new CacheStore();
+        ParticipantStore store = new CacheStore(new ObjectStoreEnvironmentBean());
         long stime = Calendar.getInstance().getTime().getTime();
 
         for (int i = 0; (i < threads) && passed; i++) {

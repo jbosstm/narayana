@@ -903,7 +903,7 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12225, value = "FileSystemStore::setupStore - cannot access root of object store: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_objectstore_FileSystemStore_1(String arg0);
+	public String get_objectstore_FileSystemStore_1(String arg0);
 
 	@Message(id = 12226, value = "FileSystemStore.removeFromCache - no entry for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1047,9 +1047,9 @@ public interface arjunaI18NLogger {
 	@Message(id = 12263, value = "No JDBCAccess implementation provided!", format = MESSAGE_FORMAT)
 	public String get_objectstore_JDBCStore_5();
 
-	@Message(id = 12264, value = "ShadowingStore.commit_state - store invalid!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_objectstore_ShadowingStore_1();
+//	@Message(id = 12264, value = "ShadowingStore.commit_state - store invalid!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_objectstore_ShadowingStore_1();
 
 	@Message(id = 12265, value = "ShadowingStore::remove_state() - state {0} does not exist for type {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1115,9 +1115,9 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_objectstore_ShadowingStore_5(String arg0);
 
-	@Message(id = 12281, value = "ShadowingStore.read_state - store invalid!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_objectstore_ShadowingStore_6();
+//	@Message(id = 12281, value = "ShadowingStore.read_state - store invalid!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_objectstore_ShadowingStore_6();
 
 	@Message(id = 12282, value = "ShadowingStore::read_state() failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

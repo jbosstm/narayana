@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
@@ -65,11 +64,6 @@ public class CacheStore extends HashedStore
             ObjectStoreException
     {
         CacheStore._storeManager.flush();
-    }
-
-    public int typeIs ()
-    {
-        return ObjectStoreType.CACHED;
     }
 
     protected boolean remove_state (Uid objUid, String name, int ft)
@@ -161,53 +155,14 @@ public class CacheStore extends HashedStore
         return super.write_state(objUid, tName, state, ft);
     }
 
-    public CacheStore(String locationOfStore)
+    public CacheStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(locationOfStore, StateType.OS_SHARED);
+        super(objectStoreEnvironmentBean);
+
+        super.syncWrites = objectStoreEnvironmentBean.isCacheStoreSync();
     }
-
-    public CacheStore(String locationOfStore, int shareStatus)
-    {
-        super(locationOfStore, shareStatus);
-
-      if (tsLogger.logger.isTraceEnabled()) {
-          tsLogger.logger.trace("CacheStore.CacheStore(" + locationOfStore + ")");
-      }
-
-        /*
-         * Since this is a cached store, there is not a lot of point in doing
-         * synchronous writes. Disable them.
-         */
-
-        super.syncWrites = _cacheSync;
-    }
-
-   public CacheStore ()
-   {
-      this(StateType.OS_UNSHARED);
-   }
-
-   public CacheStore (int shareStatus)
-   {
-      super(shareStatus);
-
-      if (tsLogger.logger.isTraceEnabled()) {
-          tsLogger.logger.trace("CacheStore.CacheStore( " + shareStatus + " )");
-      }
-
-      this.syncWrites = false;
-   }
 
     static AsyncStore _storeManager = new AsyncStore();
-
-    private static boolean _cacheSync = false;
-
-    static
-    {
-        _cacheSync = arjPropertyManager.getObjectStoreEnvironmentBean()
-                .isCacheStoreSync();
-    }
-
 }
 
 class StoreElement

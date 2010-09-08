@@ -43,7 +43,7 @@ import java.io.IOException;
  * The object store interface is the application's route to using
  * a specific object store implementation. The interface dynamically
  * binds to an implementation of the right type.
- * 
+ *
  * This is the base class from which all object store types are derived.
  * Note that because object store instances are stateless, to improve
  * efficiency we try to only create one instance of each type per process.
@@ -89,26 +89,6 @@ public abstract class ObjectStore implements ObjectStoreAPI
 
     public String locateStore (String localOSRoot) throws ObjectStoreException
     {
-        if (_objectStoreRoot == null)
-            _objectStoreRoot = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
-
-        if (_objectStoreDir == null)
-        {
-            _objectStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
-            if (_objectStoreDir == null || _objectStoreDir.length() == 0)
-                throw new ObjectStoreException("object store location property not set.");
-
-            if (!_objectStoreDir.endsWith(File.separator))
-                _objectStoreDir = _objectStoreDir + File.separator;
-
-            /*
-             * We use the classname of the object store implementation to
-             * specify the directory for the object store.
-             */
-
-            _objectStoreDir = _objectStoreDir + this.getClass().getSimpleName();
-        }
-
         String toReturn = null;
 
         if ((localOSRoot == null) || (localOSRoot.length() == 0))
@@ -180,14 +160,31 @@ public abstract class ObjectStore implements ObjectStoreAPI
         return _objectStoreRoot;
     }
 
-    protected ObjectStore ()
+    protected ObjectStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(StateType.OS_SHARED);
-    }
+        shareStatus = objectStoreEnvironmentBean.getShare();
 
-    protected ObjectStore (int ss)
-    {
-        shareStatus = ss;
+        if (objectStoreEnvironmentBean.getObjectStoreDir() == null || objectStoreEnvironmentBean.getObjectStoreDir().length() == 0) {
+            throw new ObjectStoreException("object store location property not set."); // TODO i18n
+        }
+
+        if (objectStoreEnvironmentBean.getLocalOSRoot() == null) {
+            _objectStoreRoot = "";
+        } else {
+            _objectStoreRoot = objectStoreEnvironmentBean.getLocalOSRoot();
+        }
+
+        String storeDir = objectStoreEnvironmentBean.getObjectStoreDir();
+        if (!storeDir.endsWith(File.separator)) {
+            storeDir = storeDir + File.separator;
+        }
+
+        /*
+        * We use the classname of the object store implementation to
+        * specify the directory for the object store.
+        */
+
+        _objectStoreDir = storeDir + this.getClass().getSimpleName();
     }
 
     /**
@@ -207,9 +204,9 @@ public abstract class ObjectStore implements ObjectStoreAPI
         return name;
     }
 
-    protected int shareStatus = arjPropertyManager.getObjectStoreEnvironmentBean().getShare(); // is the implementation sharing states between VMs?
+    protected final int shareStatus; // is the implementation sharing states between VMs?
 
-    private String _objectStoreRoot = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
-    private String _objectStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
+    protected final String _objectStoreRoot;
+    private final String _objectStoreDir;
 }
 

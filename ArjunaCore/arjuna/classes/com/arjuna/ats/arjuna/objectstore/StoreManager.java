@@ -20,10 +20,14 @@
  */
 package com.arjuna.ats.arjuna.objectstore;
 
+import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * Single point of control for the management of storage instances.
@@ -73,45 +77,20 @@ public class StoreManager
     }
 
     public static final ParticipantStore getCommunicationStore() {
-        return getCommunicationStoreInternal();
-    }
-
-    private static final ObjectStoreAPI getCommunicationStoreInternal()
-    {
         if(communicationStore != null) {
             return communicationStore;
         }
 
         synchronized(StoreManager.class) {
-
             if(communicationStore != null) {
                 return communicationStore;
             }
 
-            String communicationStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getCommunicationStore();
-
-            try
-            {
-                Class osc = Class.forName(communicationStoreType);
-
-                communicationStore = (ObjectStoreAPI) osc.newInstance();
-            }
-            catch (final Throwable ex)
-            {
-                throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + communicationStoreType, ex);
-            }
-
-            communicationStore.start();
+            communicationStore = initStore("communicationStore");
         }
 
         return communicationStore;
     }
-
-    /**
-     * @return the <code>ObjectStore</code> implementation which the
-     *         transaction coordinator will use.
-     * @see ObjectStore
-     */
 
     private static final ObjectStoreAPI getActionStore()
     {
@@ -120,49 +99,16 @@ public class StoreManager
         }
 
         synchronized(StoreManager.class) {
-
             if(actionStore != null) {
                 return actionStore;
             }
-
-            /*
-            * Check for action store once per application. The second parameter is
-            * the default value, which is returned if no other value is specified.
-            */
-
-            String actionStoreType = null;
-
-            if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog()) {
-                actionStoreType = LogStore.class.getName();
-            } else {
-                actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
-            }
-
-            // Defaults to ObjectStore.OS_UNSHARED
-
-            if (arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog()) {
-                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
-            }
-
-            try
-            {
-                Class osc = Class.forName(actionStoreType);
-
-                actionStore = (ObjectStoreAPI) osc.newInstance();
-            }
-            catch (final Throwable ex)
-            {
-                throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + actionStoreType, ex);
-            }
-
-            actionStore.start();
+            
+            actionStore = initStore(null); // default
         }
 
-        return actionStore;
-    }
+        //arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog()
 
-    public static ObjectStoreAPI getTxOJStore() {
-        return (ObjectStoreAPI) setupStore(null, StateType.OS_UNSHARED);
+        return actionStore;
     }
 
     public static ParticipantStore setupStore (String rootName, int sharedStatus)
@@ -172,34 +118,39 @@ public class StoreManager
         }
 
         synchronized(StoreManager.class) {
-
             if(stateStore != null) {
                 return stateStore;
             }
 
-            if(sharedStatus != arjPropertyManager.getObjectStoreEnvironmentBean().getShare()) {
-                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(sharedStatus);
-            }
-
-            if(rootName != null && !rootName.equals(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot())) {
-                throw new IllegalArgumentException(tsLogger.i18NLogger.get_StoreManager_invalidroot(
-                        arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot(), rootName));
-            }
-
-            String storeType = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
-
-            try {
-                Class osc = Class.forName(storeType);
-
-                stateStore = (ObjectStoreAPI) osc.newInstance();
-
-            } catch (final Throwable ex)
-            {
-                throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
-            }
-
-            stateStore.start();
+            stateStore = initStore("stateStore");
         }
+
+        // arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot()
+
         return stateStore;
+    }
+
+    private static final ObjectStoreAPI initStore(String name)
+    {
+        ObjectStoreEnvironmentBean storeEnvBean = BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, name);
+        String storeType = storeEnvBean.getObjectStoreType();
+        ObjectStoreAPI store;
+
+        try
+        {
+            store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, new Object[] {storeEnvBean});
+        }
+        catch (final Throwable ex)
+        {
+            throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
+        }
+
+        store.start();
+
+        return store;
+    }
+
+    public static ObjectStoreAPI getTxOJStore() {
+        return (ObjectStoreAPI) setupStore(null, StateType.OS_UNSHARED);
     }
 }

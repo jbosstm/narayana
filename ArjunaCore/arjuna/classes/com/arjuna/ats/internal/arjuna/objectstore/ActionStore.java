@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
@@ -46,7 +44,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * The basic transaction log implementation. Uses the no file-level locking
  * implementation of the file system store since only a single user (the
  * coordinator) can ever be manipulating the action's state.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ActionStore.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
@@ -54,12 +52,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class ActionStore extends ShadowNoFileLockStore
 {
-
-    public int typeIs ()
-    {
-        return ObjectStoreType.ACTION;
-    }
-
     /**
      * @return current state of object. Assumes that genPathName allocates
      *         enough extra space to allow extra chars to be added. Action
@@ -71,15 +63,12 @@ public class ActionStore extends ShadowNoFileLockStore
     {
         int theState = StateStatus.OS_UNKNOWN;
 
-        if (storeValid())
-        {
-            String path = genPathName(objUid, tName, StateType.OS_ORIGINAL);
+        String path = genPathName(objUid, tName, StateType.OS_ORIGINAL);
 
-            if (exists(path))
-                theState = StateStatus.OS_COMMITTED;
+        if (exists(path))
+            theState = StateStatus.OS_COMMITTED;
 
-            path = null;
-        }
+        path = null;
 
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("ActionStore.currentState("+objUid+", "+tName+") - returning "+
@@ -103,11 +92,6 @@ public class ActionStore extends ShadowNoFileLockStore
         }
 
         boolean result = false;
-
-        /* Bail out if the object store is not set up */
-
-        if (!storeValid())
-            return false;
 
         if (currentState(objUid, tName) == StateStatus.OS_COMMITTED)
             result = true;
@@ -176,7 +160,7 @@ public class ActionStore extends ShadowNoFileLockStore
     }
 
     public boolean write_committed (Uid storeUid, String tName,
-            OutputObjectState state) throws ObjectStoreException
+                                    OutputObjectState state) throws ObjectStoreException
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("ActionStore.write_committed(" + storeUid + ", " + tName
@@ -197,61 +181,11 @@ public class ActionStore extends ShadowNoFileLockStore
         return false;
     }
 
-    public ActionStore(String locationOfStore)
+    public ActionStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException
     {
-        this(locationOfStore, StateType.OS_SHARED);
+        super(objectStoreEnvironmentBean);
+
+        // overrides parents use of isObjectStoreSync
+        doSync = objectStoreEnvironmentBean.isTransactionSync();
     }
-
-    public ActionStore(String locationOfStore, int shareStatus)
-    {
-        super(shareStatus);
-
-        try
-        {
-            setupStore(locationOfStore);
-        }
-        catch (ObjectStoreException e) {
-            tsLogger.logger.warn(e);
-
-            super.makeInvalid();
-
-            throw new FatalError(e.toString(),
-                    e);
-        }
-    }
-
-    public ActionStore()
-    {
-        this(StateType.OS_SHARED);
-    }
-
-    public ActionStore(int shareStatus)
-    {
-        this(arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .getLocalOSRoot(), shareStatus);
-    }
-
-    protected synchronized boolean setupStore (String location)
-            throws ObjectStoreException
-    {
-        if (!checkSync)
-        {
-            if (arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .isTransactionSync())
-            {
-                syncOn();
-            }
-            else
-            {
-                syncOff();
-            }
-        }
-
-        checkSync = true;
-
-        return super.setupStore(location);
-    }
-
-    private static boolean checkSync = false;
-
 }

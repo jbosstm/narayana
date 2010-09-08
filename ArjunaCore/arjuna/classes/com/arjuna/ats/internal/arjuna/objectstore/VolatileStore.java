@@ -20,8 +20,8 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -41,17 +41,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class VolatileStore extends ObjectStore
 {
-    /**
-     * The type of the object store. This is used to order the
-     * instances in the intentions list.
-     *
-     * @return the type of the record.
-     * @see com.arjuna.ats.arjuna.coordinator.RecordType
-     */
-
-    public int typeIs()
-    {
-        return ObjectStoreType.VOLATILE;
+    public VolatileStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException {
+        super(objectStoreEnvironmentBean);
     }
 
     /**

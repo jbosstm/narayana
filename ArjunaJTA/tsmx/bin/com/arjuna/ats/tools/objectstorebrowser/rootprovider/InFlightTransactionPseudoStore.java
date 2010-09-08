@@ -20,7 +20,7 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.rootprovider;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -47,6 +47,10 @@ public class InFlightTransactionPseudoStore extends ObjectStore
     private static final String TX_TYPE_WS = "Transaction/";
     private static TransactionLister transactionLister;
 
+    public InFlightTransactionPseudoStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException {
+        super(objectStoreEnvironmentBean);
+    }
+
     /**
      * Abstract the mechanism used to discover which transactions are currently in existence
      *
@@ -55,11 +59,6 @@ public class InFlightTransactionPseudoStore extends ObjectStore
     public static void setTransactionLister(TransactionLister transactionLister)
     {
         InFlightTransactionPseudoStore.transactionLister = transactionLister;
-    }
-
-    public int typeIs()
-    {
-        return ObjectStoreType.USER_DEF_0;
     }
 
     /*
