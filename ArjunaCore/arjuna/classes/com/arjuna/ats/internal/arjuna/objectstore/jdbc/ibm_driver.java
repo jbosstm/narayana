@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
-
 import java.sql.Statement;
 import java.sql.SQLException;
 
@@ -29,7 +27,7 @@ import java.sql.SQLException;
  * JDBC store implementation driver-specific code.
  * This version for IBM DB2 Universal JDBC Drivers.
  */
-public class ibm_driver extends JDBCImple
+public class ibm_driver extends com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple
 {
     protected void createTable (Statement stmt, String tableName) throws SQLException
 	{

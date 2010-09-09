@@ -138,7 +138,7 @@ public class StoreManager
 
         try
         {
-            store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, new Object[] {storeEnvBean});
+            store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name);
         }
         catch (final Throwable ex)
         {

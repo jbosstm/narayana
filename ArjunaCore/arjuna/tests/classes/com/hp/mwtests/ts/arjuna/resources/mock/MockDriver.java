@@ -38,35 +38,35 @@ import java.sql.Statement;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.ibm_driver;
 
 public class MockDriver extends ibm_driver
 {   
-    public boolean initialise(Connection conn, JDBCAccess jdbcAccess, String tableName) throws SQLException
+    public boolean initialise(Connection conn, JDBCAccess jdbcAccess, String tableName,
+                              JDBCStoreEnvironmentBean jdbcStoreEnvironmentBean) throws SQLException
     {
-        super.initialise(conn, jdbcAccess, tableName);
+        super.initialise(conn, jdbcAccess, tableName, jdbcStoreEnvironmentBean);
         
         super._poolSizeInit = 1;
         super._inUse = new boolean[1];
         super._theConnection = new Connection[1];
         super._preparedStatements = new PreparedStatement[1][];
         
-        super._preparedStatements[0] = new PreparedStatement[JDBCImple.STATEMENT_SIZE];
+        super._preparedStatements[0] = new PreparedStatement[com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.STATEMENT_SIZE];
         
-        super._preparedStatements[0][JDBCImple.READ_STATE] = new MockPreparedStatement(false);
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.READ_STATE] = new MockPreparedStatement(false);
         super._preparedStatements[0][JDBCImple.READ_WRITE_SHORTCUT] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.WRITE_STATE_NEW] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.SELECT_FOR_WRITE_STATE] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.PRECOMMIT_CLEANUP] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.COMMIT_STATE] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.CURRENT_STATE] = new MockPreparedStatement(false);
-        super._preparedStatements[0][JDBCImple.HIDE_STATE] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.WRITE_STATE_NEW] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.SELECT_FOR_WRITE_STATE] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.PRECOMMIT_CLEANUP] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.COMMIT_STATE] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.CURRENT_STATE] = new MockPreparedStatement(false);
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.HIDE_STATE] = new MockPreparedStatement();
         super._preparedStatements[0][JDBCImple.REVEAL_STATE] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.REMOVE_STATE] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.REMOVE_STATE] = new MockPreparedStatement();
         
         super._inUse[0] = false;
         super._theConnection[0] = new MockConnection();

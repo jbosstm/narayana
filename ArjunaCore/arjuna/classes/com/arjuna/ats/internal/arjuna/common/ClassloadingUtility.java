@@ -21,6 +21,7 @@
 package com.arjuna.ats.internal.arjuna.common;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -46,10 +47,11 @@ public class ClassloadingUtility
      *
      * @param iface the expected interface type.
      * @param className the name of the class to load and instantiate.
-     * @param constructorArgs optional set of arguments to pass to the class constructor. null for default ctor.
+     * @param environmentBeanInstanceName When the class ctor requires a *EnvironmentBean instance, the name of the bean.
+     *   null for default ctor or default bean instance..
      * @return an instantiate of the specified class, or null.
      */
-    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, Object[] constructorArgs)
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName)
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("Loading class " + className);
@@ -74,16 +76,23 @@ public class ClassloadingUtility
 
         try {
             Class<? extends T> clazz2 = clazz.asSubclass(iface);
-            if(constructorArgs == null) {
-                instance = (T)clazz2.newInstance();
-            } else {
-                Class[] paramTypes = new Class[constructorArgs.length];
-                for(int i = 0; i < constructorArgs.length; i++) {
-                    paramTypes[i] = constructorArgs[i].getClass();
+
+            Constructor[] ctors = clazz.getConstructors();
+            Class environmentBeanClass = null;
+            for(Constructor constructor : ctors) {
+                if(constructor.getParameterTypes().length == 1 &&
+                        constructor.getParameterTypes()[0].getCanonicalName().endsWith("EnvironmentBean")) {
+                    environmentBeanClass = constructor.getParameterTypes()[0];
+                    Object envBean = BeanPopulator.getNamedInstance(environmentBeanClass, environmentBeanInstanceName);
+                    instance = (T)constructor.newInstance(envBean);
+                    break;
                 }
-                Constructor ctor = clazz2.getConstructor(paramTypes);
-                instance = (T)ctor.newInstance(constructorArgs);
             }
+            if(environmentBeanClass == null && environmentBeanInstanceName == null) {
+                // no bean ctor, try default ctor
+                instance = (T)clazz2.newInstance();
+            }
+
         } catch (ClassCastException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
         }
@@ -91,8 +100,6 @@ public class ClassloadingUtility
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch (IllegalAccessException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
-        } catch(NoSuchMethodException e) {
-            tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch(InvocationTargetException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         }

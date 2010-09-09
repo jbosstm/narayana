@@ -51,7 +51,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 

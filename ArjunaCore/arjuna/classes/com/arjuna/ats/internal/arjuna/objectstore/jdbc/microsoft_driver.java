@@ -40,8 +40,6 @@ package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
-
 /**
  * JDBC store implementation driver-specific code.
  * This version for MS SQL Server JDBC Drivers 2 (server 2005/2008).

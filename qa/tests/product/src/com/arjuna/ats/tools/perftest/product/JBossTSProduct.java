@@ -38,10 +38,6 @@ public class JBossTSProduct extends Product
 
     protected String getStoreType()
     {
-        if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog()) {
-            return "LogStore";
-        }
-        
         String st = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
 
         int ind = st.lastIndexOf('.') + 1;

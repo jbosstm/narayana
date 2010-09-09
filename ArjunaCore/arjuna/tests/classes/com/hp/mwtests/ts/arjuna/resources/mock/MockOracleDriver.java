@@ -36,7 +36,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple;
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_driver;
 
 
@@ -51,8 +51,8 @@ public class MockOracleDriver extends oracle_driver
         super._preparedStatements[0] = new PreparedStatement[JDBCImple.STATEMENT_SIZE];
         
         super._preparedStatements[0][JDBCImple.READ_STATE] = new MockPreparedStatement(false);
-        super._preparedStatements[0][JDBCImple.READ_WRITE_SHORTCUT] = new MockPreparedStatement();
-        super._preparedStatements[0][JDBCImple.WRITE_STATE_NEW] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.READ_WRITE_SHORTCUT] = new MockPreparedStatement();
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.WRITE_STATE_NEW] = new MockPreparedStatement();
         super._preparedStatements[0][JDBCImple.SELECT_FOR_WRITE_STATE] = new MockPreparedStatement();
         
         super._inUse[0] = false;
@@ -68,7 +68,7 @@ public class MockOracleDriver extends oracle_driver
     
     public void resetReadState ()
     {
-        super._preparedStatements[0][JDBCImple.READ_STATE] = new MockPreparedStatement(true);
+        super._preparedStatements[0][com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple.READ_STATE] = new MockPreparedStatement(true);
     }
     
     public void resetReadWriteShortcut ()

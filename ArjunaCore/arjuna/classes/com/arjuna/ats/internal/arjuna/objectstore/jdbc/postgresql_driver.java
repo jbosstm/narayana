@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
-
 import java.sql.Statement;
 import java.sql.SQLException;
 

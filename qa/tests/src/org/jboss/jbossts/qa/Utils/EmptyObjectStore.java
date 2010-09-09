@@ -33,6 +33,7 @@ package org.jboss.jbossts.qa.Utils;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStoreEnvironmentBean;
 
 import java.io.File;
 import java.sql.Connection;
@@ -68,7 +69,7 @@ public class EmptyObjectStore
 			if (arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType() != null &&
 					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().startsWith("JDBCStore"))
 			{
-				JDBCAccess mJDBC = (JDBCAccess) Class.forName(arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcUserDbAccess()).newInstance();
+				JDBCAccess mJDBC = (JDBCAccess) Class.forName(new JDBCStoreEnvironmentBean().getJdbcUserDbAccess()).newInstance();
 				String tableName = mJDBC.tableName();
 				if (tableName == "")
 					/* from arjuna.internal.JDBCStore */
