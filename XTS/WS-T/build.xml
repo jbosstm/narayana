@@ -86,7 +86,8 @@
         org/jboss/jbossts/xts/recovery/participant/ba/XTSBARecoveryModule.class
         org/jboss/jbossts/xts/recovery/participant/ba/XTSBARecoveryManager.class"/>
     <property name="ws-t10.api.classes" value="com/arjuna/wst/BAParticipantManager.class"/>
-    <property name="ws-t11.api.classes" value="com/arjuna/wst11/BAParticipantManager.class"/>
+    <property name="ws-t11.api.classes" value="com/arjuna/wst11/BAParticipantManager.class
+        com/arjuna/wst11/ConfirmCompletedParticipant.class"/>
 
     <!--sibling module directories and jars -->
 

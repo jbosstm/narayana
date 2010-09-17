@@ -55,4 +55,12 @@ public class XTSBASubordinateRecoveryModule implements XTSBARecoveryModule
         }
         return null;
     }
+
+    /**
+     * we don't need to use this because the BA recovery manager tracks whether a recovery scan has happened
+     */
+    public void endScan()
+    {
+        // do nothing
+    }
 }

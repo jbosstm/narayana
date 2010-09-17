@@ -24,6 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -608,6 +609,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         State current ;
         boolean failRequired  = false;
         boolean deleteRequired  = false;
+        boolean confirm = (participant instanceof ConfirmCompletedParticipant);
         synchronized(this)
         {
             current = state ;
@@ -636,6 +638,12 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                     // record the fact that we have persisted this object so later operations will delete
                     // the log record
                     persisted = true;
+                    // if necessary notify the client now. n.b. this has to be done synchronized because
+                    // if we release the lock then a resent COMPLETE may result in a COMPLETED being
+                    // sent back and we cannot allow that until after the confirm
+                    if (confirm) {
+                        ((ConfirmCompletedParticipant) participant).confirmCompleted(true);
+                    }
                 } else {
                     // we must force a fail but we don't have a log record to delete
                     changeState(State.STATE_FAILING_COMPLETING);
@@ -651,10 +659,18 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
 
         if (failRequired) {
             current = fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
+            // we can safely do this now
+            if (confirm) {
+                ((ConfirmCompletedParticipant) participant).confirmCompleted(false);
+            }
         } else if (deleteRequired) {
             if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                 // hmm, could not delete entry log warning
                 WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_completed_2(id);
+            }
+            // we can safely do this now
+            if (confirm) {
+                ((ConfirmCompletedParticipant) participant).confirmCompleted(false);
             }
         } else if ((current == State.STATE_COMPLETING) || (current == State.STATE_COMPLETED)) {
             sendCompleted() ;
@@ -1313,6 +1329,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         State current ;
         boolean failRequired  = false;
         boolean deleteRequired  = false;
+        boolean confirm = (participant instanceof ConfirmCompletedParticipant);
         synchronized (this)
         {
             current = state ;
@@ -1343,6 +1360,12 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                     // record the fact that we have persisted this object so later operations will delete
                     // the log record
                     persisted = true;
+                    // if necessary notify the client now. n.b. this has to be done synchronized because
+                    // if we release the lock then a resent COMPLETE may result in a COMPLETED being
+                    // sent back and we cannot allow that until after the confirm
+                    if (confirm) {
+                        ((ConfirmCompletedParticipant) participant).confirmCompleted(true);
+                    }
                 } else {
                     // we must force a fail but we don't have a log record to delete
                     changeState(State.STATE_FAILING_COMPLETING);
@@ -1359,10 +1382,17 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
 
         if (failRequired) {
             current = fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
+            // we can safely do this now
+            if (confirm) {
+                ((ConfirmCompletedParticipant) participant).confirmCompleted(false);
+            }
         } else if (deleteRequired) {
             if (!XTSBARecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
                 // hmm, could not delete entry log warning
                 WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_completed_2(id);
+            }
+            if (confirm) {
+                ((ConfirmCompletedParticipant) participant).confirmCompleted(false);
             }
         } else if (current == State.STATE_COMPLETING) {
             sendCompleted() ;

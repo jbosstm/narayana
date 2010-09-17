@@ -24,6 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -533,6 +534,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         State current ;
         boolean failRequired  = false;
         boolean deleteRequired  = false;
+        boolean confirm = (participant instanceof ConfirmCompletedParticipant);
         synchronized(this)
         {
             current = state ;
@@ -546,6 +548,12 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 if (XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
                     changeState(State.STATE_COMPLETED);
                     persisted = true;
+                    // if necessary notify the client now. n.b. this has to be done synchronized because
+                    // if we release the lock then a resent COMPLETE may result in a COMPLETED being
+                    // sent back and we cannot allow that until after the confirm
+                    if (confirm) {
+                        ((ConfirmCompletedParticipant) participant).confirmCompleted(true);
+                    }
                 } else {
                     // hmm, could not write entry log warning
                     WSTLogger.i18NLogger.warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_completed_1(id);
@@ -559,6 +567,10 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
 
         if (failRequired) {
             current = fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
+            // we can safely do this now
+            if (confirm) {
+                ((ConfirmCompletedParticipant) participant).confirmCompleted(false);
+            }
         } else if ((current == State.STATE_ACTIVE) || (current == State.STATE_COMPLETED)) {
             sendCompleted() ;
         }

@@ -71,4 +71,12 @@ public interface XTSBARecoveryModule
      */
     public BusinessAgreementWithCoordinatorCompletionParticipant
     recreateCoordinatorCompletionParticipant(String id, byte[] recoveryState) throws Exception;
+
+    /**
+     * participant recovery modules may need to perform special processing when the a recovery scan has
+     * completed. in particular it is only after the first recovery scan has completed they can identify
+     * whether locally prepared changes are accompanied by a recreated participant and roll back changes
+     * for those with no such participant.
+     */
+    public void endScan();
 }

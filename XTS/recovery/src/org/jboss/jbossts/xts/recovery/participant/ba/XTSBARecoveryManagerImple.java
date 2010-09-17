@@ -228,6 +228,15 @@ public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
             }
         }
 
+        // now let all the recovery modules know that we have completed a scan
+
+        Iterator<XTSBARecoveryModule> moduleIterator = recoveryModulesCopy.iterator();
+
+        while (moduleIterator.hasNext()) {
+            XTSBARecoveryModule recoveryModule = moduleIterator.next();
+            recoveryModule.endScan();
+        }
+
         // ok, see if we are now in a position to cull any prepared subordinate transactions
 
         cullOrphanedSubordinates();

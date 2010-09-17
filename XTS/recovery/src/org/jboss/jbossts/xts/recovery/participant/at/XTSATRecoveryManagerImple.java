@@ -232,6 +232,15 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
             }
         }
 
+        // now let all the recovery modules know that we have completed a scan
+
+        Iterator<XTSATRecoveryModule> moduleIterator = recoveryModulesCopy.iterator();
+
+        while (moduleIterator.hasNext()) {
+            XTSATRecoveryModule recoveryModule = moduleIterator.next();
+            recoveryModule.endScan();
+        }
+
         // ok, see if we are now in a position to cull any prepared subordinate transactions
 
         cullOrphanedSubordinates();

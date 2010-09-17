@@ -33,4 +33,12 @@ public class XTSATSubordinateRecoveryModule implements XTSATRecoveryModule
         }
         return null;
     }
+
+    /**
+     * we don't need to use this because the AT recovery manager tracks whether a subordinate AT scan has happened
+     */
+    public void endScan()
+    {
+        // do nothing
+    }
 }
