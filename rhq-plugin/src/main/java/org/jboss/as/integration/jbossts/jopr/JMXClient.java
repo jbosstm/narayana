@@ -70,7 +70,7 @@ public class JMXClient extends TxnBaseComponent
 	 * the returned Configuration object with the managed resource's
 	 * configuration property values.
 	 *
-	 * @see //ConfigurationFacet#loadResourceConfiguration()
+	 * @see org.rhq.core.pluginapi.configuration.ConfigurationFacet#loadResourceConfiguration()
 	 */
 	@Override
 	public Configuration loadResourceConfiguration()
@@ -114,7 +114,7 @@ public class JMXClient extends TxnBaseComponent
 	 * the managed resource in your own custom way, setting its configuration
 	 * based on the new values of the given configuration.
 	 *
-	 * @see //ConfigurationFacet#updateResourceConfiguration(ConfigurationUpdateReport)
+	 * @see org.rhq.core.pluginapi.configuration.ConfigurationFacet#updateResourceConfiguration(ConfigurationUpdateReport)
 	 */
 	@Override
 	public void updateResourceConfiguration(ConfigurationUpdateReport report)

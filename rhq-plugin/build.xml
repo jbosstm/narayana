@@ -4,11 +4,15 @@
 
 	<property name="modulename" value="jbossts-jopr-plugin"/>
 	<property name="component-module-list" value="${modulename}"/>
+	<property name="install.jar.dir" value="../install/bin"/>
+	<property name="install.doc.dir" value="../install/docs/rhq"/>
 	<import file="../sharedbuild.xml"/>
 
 	<property name="version" value="1.0.0.SNAPSHOT"/>
-	<property name="maven.project.build.directory" value="target"/>
-	<property name="pluginjar" value="${basedir}/${maven.project.build.directory}/${modulename}.jar"/>
+	<property name="maven.project.build.directory" value="${basedir}/target"/>
+	<property name="pluginjar" value="${modulename}.jar"/>
+	<property name="pluginsrcjar" value="${modulename}-sources.jar"/>
+	<property name="plugindocjar" value="${modulename}-javadoc.jar"/>
 
 	<target name="maven:package" depends="clean">
 		<exec executable="mvn" dir="${basedir}">
@@ -19,7 +23,9 @@
 	</target>
 
 	<target name="dist" depends="maven:package">
-		<copy file="${pluginjar}" todir="../install/bin"/>
+		<copy file="${maven.project.build.directory}/${pluginjar}" todir="${install.jar.dir}"/>
+		<copy file="${maven.project.build.directory}/${pluginsrcjar}" todir="${install.jar.dir}"/>
+		<copy file="${maven.project.build.directory}/${plugindocjar}" todir="${install.doc.dir}"/>
 	</target>
 
 	<target name="clean">
@@ -27,5 +33,9 @@
 			<arg value="clean"/>
 		</exec>
 		<delete dir="build"/>
+		<delete dir="${install.doc.dir}"/>
+		<echo message="deleting ${install.jar.dir}/${pluginjar} and ${install.jar.dir}/${pluginsrcjar}"/>
+		<delete file="${install.jar.dir}/${pluginjar}"/>
+		<delete file="${install.jar.dir}/${pluginsrcjar}"/>
 	</target>
 </project> 
