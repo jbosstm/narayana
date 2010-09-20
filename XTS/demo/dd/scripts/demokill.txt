@@ -11,8 +11,11 @@
 # 3 just before the theatre service commits local changes
 # 4 just after the theatre service commits local changes
 #
-# At each point may be a participant record for each service (PR, PT)
-# and/or a shadow state file for each service (SR, ST) as follows
+# At each point there  may be a participant record for each service (PR, PT)
+# and/or a shadow state file for each service (SR, ST) (n.b. this assumes the
+# restaurant is booked and enlisted before the theatre and that the coordinator
+# processes the participants in this order). The files should be present as
+# follows
 #
 # AT 1 SR, PR
 # AT 2 SR, PR, ST
