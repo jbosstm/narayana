@@ -93,55 +93,77 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
         restaurantView.addPrepareMessage("id:" + transactionId + ". Received a booking request for one table of " + how_many + " people");
         restaurantView.updateFields();
 
+        if (restaurantManager.knowsAbout(transactionId)) {
+            // hmm, this means we have already completed changes in this transaction and are awaiting a close
+            //or compensate request. this service does not support repeated requests in the same activity so
+            // we fail this request.
+
+            restaurantView.addMessage("id:" + transactionId + ". Participant already enrolled!");
+            restaurantView.updateFields();
+            System.err.println("bookSeats: request failed");
+            return false;
+        }
+
+        RestaurantParticipantBA restaurantParticipant = new RestaurantParticipantBA(transactionId, how_many);
+
+        BAParticipantManager participantManager;
+
+        // enlist the Participant for this service:
+        try
+        {
+            participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
+        }
+        catch (Exception e)
+        {
+            restaurantView.addMessage("id:" + transactionId + ". Participant enrolement failed");
+            restaurantManager.rollbackSeats(transactionId);
+            System.err.println("bookSeats: Participant enlistment failed");
+            e.printStackTrace(System.err);
+            return false;
+        }
+
         // invoke the backend business logic:
         restaurantManager.bookSeats(transactionId, how_many);
 
-        // attempt to finalise the booking
-        // (it will be compensated later if necessary)
+        // this service employs the participant completion protocol which means it decides when it wants to
+        // commit local changes. so we prepare and commit those changes now. if any other participant fails
+        // or the client decides to cancel we can rely upon being told to compensate.
+
         if (restaurantManager.prepareSeats(transactionId))
         {
             restaurantView.addMessage("id:" + transactionId + ". Seats prepared, trying to commit and enlist compensation Participant");
             restaurantView.updateFields();
 
-            // it worked, so now we need a participant enlisted in case of compensation:
-
-            RestaurantParticipantBA restaurantParticipant = new RestaurantParticipantBA(transactionId, how_many);
-            // enlist the Participant for this service:
-            BAParticipantManager participantManager = null;
             try
             {
-                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
-            }
-            catch (Exception e)
-            {
-                restaurantView.addMessage("id:" + transactionId + ". Participant enrolement failed");
-                restaurantManager.cancelSeats(transactionId);
-                System.err.println("bookSeats: Participant enlistment failed");
-                e.printStackTrace(System.err);
-                return false;
-            }
-
-            // finish the booking in the backend ensuring it is compensatable:
-            restaurantManager.commitSeats(transactionId, true);
-
-            try
-            {
-                // tell the manager we have finished our work:
+                // tell the participant manager we have finished our work
+                // this will call back to the participant once a compensation recovery record has been written
+                // allowing it to commit or roll back the restaurant manager
                 participantManager.completed();
             }
             catch (Exception e)
             {
                 System.err.println("bookSeats: 'completed' callback failed");
-                restaurantManager.cancelSeats(transactionId);
+                restaurantManager.rollbackSeats(transactionId);
                 e.printStackTrace(System.err);
                 return false;
             }
         }
         else
         {
-            restaurantView.addMessage("id:" + transactionId + ". Failed to reserve seats. Cancelling.");
-            restaurantManager.cancelSeats(transactionId);
+            restaurantView.addMessage("id:" + transactionId + ". Failed to reserve seats.");
             restaurantView.updateFields();
+            try
+            {
+                // tell the participant manager we cannot complete. this will force the activity to fail
+                participantManager.cannotComplete();
+            }
+            catch (Exception e)
+            {
+                System.err.println("bookSeats: 'cannotComplete' callback failed");
+                e.printStackTrace(System.err);
+                return false;
+            }
             return false;
         }
 

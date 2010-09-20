@@ -32,7 +32,6 @@ package com.jboss.jbosstm.xts.demo.services.restaurant;
 import com.arjuna.wst.*;
 
 import java.io.Serializable;
-import java.io.IOException;
 
 /**
  * An adapter class that exposes the RestaurantManager transaction lifecycle
@@ -44,6 +43,9 @@ import java.io.IOException;
  */
 public class RestaurantParticipantAT implements Durable2PCParticipant, Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to transaction instances
      * in a one to one manner.
@@ -57,6 +59,9 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         this.txID = txID;
     }
 
+    /************************************************************************/
+    /* Durable2PCParticipant methods                                        */
+    /************************************************************************/
     /**
      * Invokes the prepare step of the business logic,
      * reporting activity and outcome.
@@ -87,7 +92,6 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         }
         else
         {
-            getRestaurantManager().cancelSeats(txID) ;
             getRestaurantView().addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
             getRestaurantView().updateFields();
             return new Aborted();
@@ -110,18 +114,11 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
         getRestaurantView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = getRestaurantManager().commitSeats(txID);
+        getRestaurantManager().commitSeats(txID);
 
         // Log the outcome
 
-        if (success)
-        {
-            getRestaurantView().addMessage("Seats committed\n");
-        }
-        else
-        {
-            getRestaurantView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
+        getRestaurantView().addMessage("Seats committed\n");
 
         getRestaurantView().updateFields();
     }
@@ -142,33 +139,11 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
         getRestaurantView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = getRestaurantManager().cancelSeats(txID);
+        getRestaurantManager().rollbackSeats(txID);
 
-        // Log the outcome
-
-        if (success)
-        {
-            getRestaurantView().addMessage("Seats booking cancelled\n");
-        }
-        else
-        {
-            getRestaurantView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
-
+        getRestaurantView().addMessage("Seats booking cancelled\n");
+        
         getRestaurantView().updateFields();
-    }
-
-    /**
-     * Shortcut method which combines the prepare
-     * and commit steps in a single operation.
-     *
-     * @throws WrongStateException
-     * @throws SystemException
-     */
-    public void commitOnePhase() throws WrongStateException, SystemException
-    {
-        prepare();
-        commit();
     }
 
     public void unknown() throws SystemException
@@ -181,6 +156,9 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         // used for calbacks during crash recovery. This impl is not recoverable
     }
 
+    /************************************************************************/
+    /* private implementation                                               */
+    /************************************************************************/
     /**
      * Id for the transaction which this participant instance relates to.
      * Set by the service (via contrtuctor) at enrolment time, this value
@@ -196,4 +174,3 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         return RestaurantManager.getSingletonInstance();
     }
 }
-

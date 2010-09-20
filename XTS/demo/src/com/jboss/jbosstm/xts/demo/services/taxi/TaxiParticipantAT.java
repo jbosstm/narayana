@@ -43,6 +43,9 @@ import java.io.Serializable;
  */
 public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to transaction instances
      * in a one to one manner.
@@ -56,6 +59,9 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
         this.txID = txID;
     }
 
+    /************************************************************************/
+    /* Durable2PCParticipant methods                                        */
+    /************************************************************************/
     /**
      * Invokes the prepare step of the business logic,
      * reporting activity and outcome.
@@ -86,7 +92,6 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
         }
         else
         {
-            getTaxiManager().cancelTaxi(txID) ;
             getTaxiView().addMessage("Prepare failed (not enough Taxis?) Returning 'Aborted'\n");
             getTaxiView().updateFields();
             return new Aborted();
@@ -109,18 +114,9 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
         getTaxiView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = getTaxiManager().commitTaxi(txID);
+        getTaxiManager().commitTaxi(txID);
 
-        // Log the outcome
-
-        if (success)
-        {
-            getTaxiView().addMessage("Taxi committed\n");
-        }
-        else
-        {
-            getTaxiView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
+        getTaxiView().addMessage("Taxi committed\n");
 
         getTaxiView().updateFields();
     }
@@ -141,33 +137,11 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
         getTaxiView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = getTaxiManager().cancelTaxi(txID);
+        getTaxiManager().rollbackTaxi(txID);
 
-        // Log the outcome
-
-        if (success)
-        {
-            getTaxiView().addMessage("Taxi booking cancelled\n");
-        }
-        else
-        {
-            getTaxiView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
+        getTaxiView().addMessage("Taxi booking cancelled\n");
 
         getTaxiView().updateFields();
-    }
-
-    /**
-     * Shortcut method which combines the prepare
-     * and commit steps in a single operation.
-     *
-     * @throws WrongStateException
-     * @throws SystemException
-     */
-    public void commitOnePhase() throws WrongStateException, SystemException
-    {
-        prepare();
-        commit();
     }
 
     public void unknown() throws SystemException

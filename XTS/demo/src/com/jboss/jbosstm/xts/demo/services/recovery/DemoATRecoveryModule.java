@@ -1,5 +1,12 @@
 package com.jboss.jbosstm.xts.demo.services.recovery;
 
+import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantManager;
+import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantParticipantAT;
+import com.jboss.jbosstm.xts.demo.services.state.ServiceStateManager;
+import com.jboss.jbosstm.xts.demo.services.taxi.TaxiManager;
+import com.jboss.jbosstm.xts.demo.services.taxi.TaxiParticipantAT;
+import com.jboss.jbosstm.xts.demo.services.theatre.TheatreManager;
+import com.jboss.jbosstm.xts.demo.services.theatre.TheatreParticipantAT;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 import com.arjuna.wst.Durable2PCParticipant;
@@ -64,13 +71,25 @@ public class DemoATRecoveryModule implements XTSATRecoveryModule
      * @return
      * @throws Exception if an error occurs deserializing the durable participant
      */
-    public Durable2PCParticipant deserialize(String id, ObjectInputStream stream) throws Exception {
-        if (id.startsWith("org.jboss.jbossts.xts-demo:restaurantAT") ||
-                id.startsWith("org.jboss.jbossts.xts-demo:theatreAT") ||
-                id.startsWith("org.jboss.jbossts.xts-demo:taxiAT")) {
-            System.out.println("xts-demo : attempting to deserialize WS-AT participant " + id);
-            Durable2PCParticipant participant = (Durable2PCParticipant)stream.readObject();
-            System.out.println("xts-demo : deserialized WS-AT participant " + id);
+    public Durable2PCParticipant deserialize(String id, ObjectInputStream stream) throws Exception
+    {
+        if (id.startsWith("org.jboss.jbossts.xts-demo:restaurantAT")) {
+            System.out.println("xts-demo : attempting to deserialize RestaurantParticipantAT " + id);
+            RestaurantParticipantAT participant = (RestaurantParticipantAT)stream.readObject();
+            System.out.println("xts-demo : deserialized RestaurantParticipantAT " + id);
+            RestaurantManager.getSingletonInstance().recovered(participant);
+            return participant;
+        } else if (id.startsWith("org.jboss.jbossts.xts-demo:theatreAT")) {
+            System.out.println("xts-demo : attempting to deserialize TheatreParticipantAT " + id);
+            TheatreParticipantAT participant = (TheatreParticipantAT)stream.readObject();
+            System.out.println("xts-demo : deserialized TheatreParticipantAT " + id);
+            TheatreManager.getSingletonInstance().recovered(participant);
+            return participant;
+        } else if (id.startsWith("org.jboss.jbossts.xts-demo:taxiAT")) {
+            System.out.println("xts-demo : attempting to deserialize TaxiParticipantAT " + id);
+            TaxiParticipantAT participant = (TaxiParticipantAT)stream.readObject();
+            System.out.println("xts-demo : deserialized TaxiParticipantAT " + id);
+            TaxiManager.getSingletonInstance().recovered(participant);
             return participant;
         }
 
@@ -99,5 +118,28 @@ public class DemoATRecoveryModule implements XTSATRecoveryModule
             throw new Exception("xts-demo : invalid request to recreate() WS-AT participant " + id);
         }
         return null;
+    }
+
+    /**
+     * flags used to identify the first endScan call.
+     */
+    private boolean isFirst = true;
+
+    /**
+     * participant recovery modules may need to perform special processing when the a recovery scan has
+     * completed. in particular it is only after the first recovery scan has completed they can identify
+     * whether locally prepared changes are accompanied by a recreated participant and roll back changes
+     * for those with no such participant.
+     */
+    public void endScan()
+    {
+        if (isFirst) {
+            // both AT and BA participants update state. so let the state manager know that the
+            // AT log records have all been scanned
+            RestaurantManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
+            TheatreManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
+            TaxiManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
+            isFirst = false;
+        }
     }
 }

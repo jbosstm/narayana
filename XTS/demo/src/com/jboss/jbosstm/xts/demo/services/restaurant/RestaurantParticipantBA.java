@@ -30,6 +30,7 @@
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
 import com.arjuna.wst.*;
+import com.arjuna.wst11.ConfirmCompletedParticipant;
 
 import java.io.Serializable;
 
@@ -41,8 +42,14 @@ import java.io.Serializable;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class RestaurantParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant, Serializable
+public class RestaurantParticipantBA
+        implements BusinessAgreementWithParticipantCompletionParticipant,
+        ConfirmCompletedParticipant,
+        Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to business method calls
      * in a one to one manner.
@@ -54,10 +61,12 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
     {
         // we need to save the txID for later use when logging.
         this.txID = txID;
-        // we also need the business paramater(s) in case of compensation
         this.seatCount = how_many;
     }
 
+    /************************************************************************/
+    /* BusinessAgreementWithParticipantCompletionParticipant methods        */
+    /************************************************************************/
     /**
      * The transaction has completed successfully. The participant previously
      * informed the coordinator that it was ready to complete.
@@ -68,16 +77,9 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
     public void close() throws WrongStateException, SystemException
     {
-        // let the manager know that this activity no longer requires the option of compensation
+        // nothing to do here as the seats are already booked
 
         System.out.println("RestaurantParticipantBA.close");
-
-        if (!getRestaurantManager().closeSeats(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("RestaurantParticipantBA.close : not expecting a close for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected close for BA participant " + txID);
-        }
 
         getRestaurantView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
 
@@ -100,14 +102,10 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
         System.out.println("RestaurantParticipantBA.cancel");
 
-        if (!getRestaurantManager().cancelSeats(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("RestaurantParticipantBA.cancel : not expecting a cancel for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected cancel for BA participant " + txID);
-        }
-
+        getRestaurantManager().rollbackSeats(txID);
+        
         getRestaurantView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
+
         getRestaurantView().updateFields();
     }
 
@@ -128,22 +126,20 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
         getRestaurantView().updateFields();
 
-        // tell the manager to compensate
+        // we perform the compensation by preparing and then committing a change which
+        // decrements the bookings
 
-        try {
-            if (!getRestaurantManager().compensateSeats(txID)) {
-                // throw a WrongStateException to indicate that we were not expecting a close
-                System.out.println("RestaurantParticipantBA.compensate : not expecting a compensate for BA participant " + txID);
+        String compensationTxID = txID + "-compensation";
 
-                throw new WrongStateException("Unexpected compensate for BA participant " + txID);
-            }
-        } catch (FaultedException fe) {
-            getRestaurantView().addMessage("id:" + txID + ". FaultedException when compensating participant: " + this.getClass().toString());
+        getRestaurantManager().bookSeats(compensationTxID, -seatCount);
+        
+        if (!getRestaurantManager().prepareSeats(compensationTxID)) {
+            getRestaurantView().addMessage("id:" + txID + ". Failed to compensate participant: " + this.getClass().toString());
 
-            getRestaurantView().updateFields();
-            throw fe;
+            throw new FaultedException("Failed to compensate participant: " + this.getClass().toString());
         }
-
+        getRestaurantManager().commitSeats(compensationTxID);
+        
         getRestaurantView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
 
         getRestaurantView().updateFields();
@@ -175,9 +171,32 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
         getRestaurantView().updateFields();
     }
 
+    /************************************************************************/
+    /* ConfirmCompletedParticipant methods                                  */
+    /************************************************************************/
+
+    /**
+     * method called to perform commit or rollback of prepared changes to the underlying manager state after
+     * the participant recovery record has been written
+     *
+     * @param confirmed true if the log record has been written and changes should be rolled forward and false
+     * if it has not been written and changes should be rolled back
+     */
+
+    public void confirmCompleted(boolean confirmed) {
+        if (confirmed) {
+            getRestaurantManager().commitSeats(txID);
+        } else {
+            getRestaurantManager().rollbackSeats(txID);
+        }
+    }
+
+    /************************************************************************/
+    /* private implementation                                               */
+    /************************************************************************/
     /**
      * Id for the transaction which this participant instance relates to.
-     * Set by the service (via contrtuctor) at enrolment time, this value
+     * Set by the service (via constructor) at enrolment time, this value
      * is used in informational log messages.
      */
     protected String txID;
@@ -185,13 +204,13 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
     /**
      * Copy of business state information, may be needed during compensation.
      */
-    protected int seatCount;
+    private int seatCount;
 
-    public RestaurantView getRestaurantView() {
+    private RestaurantView getRestaurantView() {
         return RestaurantView.getSingletonInstance();
     }
 
-    public RestaurantManager getRestaurantManager() {
+    private RestaurantManager getRestaurantManager() {
         return RestaurantManager.getSingletonInstance();
     }
 }

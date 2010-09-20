@@ -96,40 +96,57 @@ public class TheatreServiceBA implements ITheatreServiceBA
         theatreView.addPrepareMessage("id:" + transactionId + ". Received a theatre booking request for " + how_many + " seats in area " + which_area);
         theatreView.updateFields();
 
+        if (theatreManager.knowsAbout(transactionId)) {
+            // hmm, this means we have already completed changes in this transaction and are awaiting a close
+            //or compensate request. this service does not support repeated requests in the same activity so
+            // we fail this request.
+
+            theatreView.addMessage("id:" + transactionId + ". Participant already enrolled!");
+            theatreView.updateFields();
+            System.err.println("bookSeats: request failed");
+            return false;
+        }
+
+        TheatreParticipantBA theatreParticipant = new TheatreParticipantBA(transactionId, how_many, which_area);
+        BAParticipantManager participantManager;
+
+        // enlist the Participant for this service:
+        try
+        {
+            participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(theatreParticipant, "org.jboss.jbossts.xts-demo:theatreBA:" + new Uid().toString());
+        }
+        catch (Exception e)
+        {
+            theatreView.addMessage("id:" + transactionId + ". Participant enrolement failed");
+            theatreManager.rollbackSeats(transactionId);
+            System.err.println("bookSeats: Participant enrolement failed");
+            e.printStackTrace(System.err);
+            return false;
+        }
+
+        // invoke the backend business logic:
         theatreManager.bookSeats(transactionId, how_many, which_area);
+
+        // this service employs the participant completion protocol which means it decides when it wants to
+        // commit local changes. so we prepare and commit those changes now. if any other participant fails
+        // or the client decides to cancel we can rely upon being told to compensate.
 
         if (theatreManager.prepareSeats(transactionId))
         {
             theatreView.addMessage("id:" + transactionId + ". Seats prepared, trying to commit and enlist compensation Participant");
             theatreView.updateFields();
 
-            TheatreParticipantBA theatreParticipant = new TheatreParticipantBA(transactionId, how_many, which_area);
-            // enlist the Participant for this service:
-            BAParticipantManager participantManager = null;
             try
             {
-                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(theatreParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
-            }
-            catch (Exception e)
-            {
-                theatreView.addMessage("id:" + transactionId + ". Participant enrolement failed");
-                theatreManager.cancelSeats(transactionId);
-                System.err.println("bookSeats: Participant enrolement failed");
-                e.printStackTrace(System.err);
-                return false;
-            }
-
-            // finish the booking in the backend ensuring it is compensatable:
-            theatreManager.commitSeats(transactionId, true);
-
-            try
-            {
+                // tell the participant manager we have finished our work
+                // this will call back to the participant once a compensation recovery record has been written
+                // allowing it to commit or roll back the theatre manager
                 participantManager.completed();
             }
             catch (Exception e)
             {
                 System.err.println("bookSeats: 'completed' callback failed");
-                theatreManager.cancelSeats(transactionId);
+                theatreManager.rollbackSeats(transactionId);
                 e.printStackTrace(System.err);
                 return false;
             }
@@ -137,8 +154,18 @@ public class TheatreServiceBA implements ITheatreServiceBA
         else
         {
             theatreView.addMessage("id:" + transactionId + ". Failed to reserve seats. Cancelling.");
-            theatreManager.cancelSeats(transactionId);
             theatreView.updateFields();
+            try
+            {
+                // tell the participant manager we cannot complete. this will force the activity to fail
+                participantManager.cannotComplete();
+            }
+            catch (Exception e)
+            {
+                System.err.println("bookSeats: 'cannotComplete' callback failed");
+                e.printStackTrace(System.err);
+                return false;
+            }
             return false;
         }
 

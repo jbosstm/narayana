@@ -123,7 +123,7 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
         jLabel2.setText("Prepared,    ");
         jPanel2.add(jLabel2);
 
-        jLabelNConfirmedSeats.setText(Integer.toString(restManager.getNCommittedSeats()));
+        jLabelNConfirmedSeats.setText(Integer.toString(0));
         jLabelNConfirmedSeats.setForeground(new java.awt.Color(0, 51, 204));
         jLabelNConfirmedSeats.setFont(new java.awt.Font("Dialog", 1, 18));
         jPanel2.add(jLabelNConfirmedSeats);
@@ -263,7 +263,7 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
      */
     private void jButtonResetFieldsActionPerformed(java.awt.event.ActionEvent evt)
     {//GEN-FIRST:event_jButtonResetFieldsActionPerformed
-        restManager.setToDefault();
+        restManager.reset();
         updateFields();
     }//GEN-LAST:event_jButtonResetFieldsActionPerformed
 
@@ -336,7 +336,7 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
     {//GEN-FIRST:event_jButtonSetNTotalSeatsActionPerformed
         String strNSeats = jTextFieldNewNTotalSeats.getText();
 
-        restManager.newCapacity(Integer.parseInt(strNSeats));
+        restManager.reset();
         int nFreeSeats = restManager.getNFreeSeats();
 
         jLabelNTotalSeats.setText(strNSeats);
@@ -386,7 +386,7 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
         jLabelNTotalSeats.setText(Integer.toString(restManager.getNTotalSeats()));
         jTextFieldNewNTotalSeats.setText(Integer.toString(restManager.getNTotalSeats()));
         jLabelNPreparedSeats.setText(Integer.toString(restManager.getNPreparedSeats()));
-        jLabelNConfirmedSeats.setText(Integer.toString(restManager.getNCommittedSeats()));
+        jLabelNConfirmedSeats.setText(Integer.toString(0));
         jLabelNFreeSeats.setText(Integer.toString(restManager.getNFreeSeats()));
         jLabelNBookedSeats.setText(Integer.toString(restManager.getNBookedSeats()));
 

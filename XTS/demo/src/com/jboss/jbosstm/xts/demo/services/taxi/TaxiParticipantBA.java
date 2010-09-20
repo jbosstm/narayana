@@ -41,8 +41,13 @@ import java.io.Serializable;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.2 $
  */
-public class TaxiParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant, Serializable
+public class TaxiParticipantBA
+        implements BusinessAgreementWithParticipantCompletionParticipant,
+        Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to business method calls
      * in a one to one manner.
@@ -55,6 +60,9 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
         this.txID = txID;
     }
 
+    /************************************************************************/
+    /* BusinessAgreementWithParticipantCompletionParticipant methods        */
+    /************************************************************************/
     /**
      * The transaction has completed successfully. The participant previously
      * informed the coordinator that it was ready to complete.
@@ -65,18 +73,13 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
 
     public void close() throws WrongStateException, SystemException
     {
-        // let the manager know that this activity no longer requires the option of compensation
+        // nothing to do here as the taxi is already booked
+
 
         System.out.println("TaxiParticipantBA.close");
 
-        if (!getTaxiManager().closeTaxi(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("TaxiParticipantBA.close : not expecting a close for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected close for BA participant " + txID);
-        }
-
         getTaxiView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
+
         getTaxiView().updateFields();
     }
 
@@ -91,18 +94,14 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
 
     public void cancel() throws WrongStateException, SystemException
     {
-        // let the manager know that this activity is being cancelled
+        // let the manager know that this activity has been cancelled
 
         System.out.println("TaxiParticipantBA.cancel");
 
-        if (!getTaxiManager().cancelTaxi(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("TaxiParticipantBA.cancel : not expecting a cancel for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected cancel for BA participant " + txID);
-        }
+        getTaxiManager().rollbackTaxi(txID);
 
         getTaxiView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
+
         getTaxiView().updateFields();
     }
 
@@ -123,25 +122,8 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
 
         getTaxiView().updateFields();
 
-        // tell the manager to compensate
-
-        try {
-            if (!getTaxiManager().compensateTaxi(txID)) {
-                // throw a WrongStateException to indicate that we were not expecting a close
-                System.out.println("RestaurantParticipantBA.compensate : not expecting a compensate for BA participant " + txID);
-
-                getTaxiView().addMessage("id:" + txID + ". Failed to compensate participant: " + this.getClass().toString());
-                getTaxiView().updateFields();
-
-                throw new WrongStateException("Unexpected compensate for BA participant " + txID);
-            }
-        } catch (FaultedException fe) {
-            getTaxiView().addMessage("id:" + txID + ". FaultedException when compensating participant: " + this.getClass().toString());
-
-            getTaxiView().updateFields();
-            throw fe;
-        }
-
+        // there is no need to compensate a completed taxi booking as the taxi will just pick up another punter
+        
         getTaxiView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
         getTaxiView().updateFields();
     }
@@ -173,6 +155,9 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
         getTaxiView().updateFields();
     }
 
+    /************************************************************************/
+    /* private implementation                                               */
+    /************************************************************************/
     /**
      * Id for the transaction which this participant instance relates to.
      * Set by the service (via contrtuctor) at enrolment time, this value

@@ -29,38 +29,39 @@
 
 package com.jboss.jbosstm.xts.demo.services.taxi;
 
-import com.arjuna.wst.FaultedException;
-
 import java.util.Hashtable;
-import java.util.Enumeration;
 import java.io.*;
 
 /**
  * The transactional application logic for the Taxi Service
  * <p/>
- * Stores and manages taxi reservations. Knows nothing about Web Services.
- * Understands transactional booking lifecycle: unprepared, prepared, finished.
- * </p>
- * Extended to include support for BA compensation based rollback
- * </p>
- * The manager now maintains an extra list compensatableList
- * </p>
- * changes to preparedList and compensatableList are
- * always shadowed in persistent storage before returning control to clients.
- * </p>
+ * Manages taxi reservations. Knows nothing about Web Services.
+ * <p/>
+ * Taxis are an unlimited resource so this manager does not maintain any
+ * persistent state.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
 public class TaxiManager implements Serializable
 {
+    /*****************************************************************************/
+    /* Support for the Web Service API                                           */
+    /*****************************************************************************/
+
     /**
-     * Create and initialise a new TaxiManager instance.
+     * Accessor to obtain the singleton taxi manager instance.
+     *
+     * @return the singleton TaxiManager instance.
      */
-    private TaxiManager()
+    public synchronized static TaxiManager getSingletonInstance()
     {
-        setToDefault(false);
-        restoreState();
+        if (singletonInstance == null)
+        {
+            singletonInstance = new TaxiManager();
+        }
+
+        return singletonInstance;
     }
 
     /**
@@ -71,7 +72,7 @@ public class TaxiManager implements Serializable
     public synchronized void bookTaxi(Object txID)
     {
         // locate any pre-existing request for the same transaction
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = (Integer) transactions.get(txID);
         if (request == null)
         {
             // this is the first request for this
@@ -80,12 +81,24 @@ public class TaxiManager implements Serializable
         }
 
         // record the request, keyed to its transaction scope
-        unpreparedTransactions.put(txID, new Integer(request.intValue()));
-        // we don't actually need to update until prepare
+        transactions.put(txID, new Integer(request.intValue()));
     }
 
     /**
-     * Attempt to ensure availability of the requested taxi.
+     * check whether we have already seen a web service request in a given transaction
+     */
+
+    public synchronized boolean knowsAbout(Object txID)
+    {
+        return transactions.get(txID) != null;
+    }
+
+    /*****************************************************************************/
+    /* Support for the AT and BA Participant API implementation                  */
+    /*****************************************************************************/
+
+    /**
+     * Prepare local state changes for the supplied transaction
      *
      * @param txID The transaction identifier
      * @return true on success, false otherwise
@@ -93,288 +106,78 @@ public class TaxiManager implements Serializable
     public synchronized boolean prepareTaxi(Object txID)
     {
         // ensure that we have seen this transaction before
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = (Integer) transactions.get(txID);
         if (request == null)
         {
-            return false; // error: transaction not registered
+            return false;
         }
         else
         {
-            if (autoCommitMode)
-            {
-                // record the prepared transaction
-                preparedTransactions.put(txID, request);
-                unpreparedTransactions.remove(txID);
-                updateState();
-                return true;
-            }
-            else
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-                    if (isCommit)
-                    {
-                        // record the prepared transaction
-                        preparedTransactions.put(txID, request);
-                        unpreparedTransactions.remove(txID);
-                        updateState();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
+            // see if we need user confirmation
 
+            if (!autoCommitMode) {
+                // need to wait for the user to decide whether to go ahead or not with this participant
+                isPreparationWaiting = true;
+                synchronized (preparation) {
+                    try {
+                        preparation.wait();
+                    } catch (InterruptedException e) {
+                        // ignore
                     }
                 }
-                catch (Exception e)
-                {
-                    System.err.println("TaxiManager.prepareTaxi(): Unable to stop preparation.");
+                isPreparationWaiting = false;
+
+                // process the user decision
+                if (!isCommit) {
                     return false;
                 }
             }
+            return true;
         }
     }
 
     /**
-     * Release a booked or prepared taxi.
+     * commit local state changes for the supplied transaction
      *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * @param txID
      */
-    public synchronized boolean cancelTaxi(Object txID)
+    public synchronized void commitTaxi(Object txID)
     {
-        boolean success = false;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-            // undo the prepare operations
-            preparedTransactions.remove(txID);
-            updateState();
-            success = true;
-        }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            // undo the booking operations
-            unpreparedTransactions.remove(txID);
-            // we don't need to update state
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
+        // just need to remove the transaction from the hash map
+        transactions.remove(txID);
     }
 
     /**
-     * Compensate a committed booking.
+     * roll back local state changes for the supplied transaction
      *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * @param txID
      */
-    public synchronized boolean compensateTaxi(Object txID)
-            throws FaultedException
+    public synchronized void rollbackTaxi(Object txID)
     {
-        boolean success = false;
-
-        // the transaction must be compensatable
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // see if the user wants to report a compensation fault
-
-            if (!autoCommitMode)
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    if (!isCommit)
-                    {
-                        throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println("TaxiManager.compensateTaxi(): Unexpected error during compensation.");
-                    throw new FaultedException("TaxiManager.compensateTaxi(): compensation fault");
-                }
-            }
-
-            // compensate the committed operation
-            compensatableTransactions.remove(txID);
-            updateState();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
+        // just need to remove the transaction from the hash map
+        transactions.remove(txID);
     }
 
     /**
-     * Commit taxi booking.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * handle a recovery error by rolling back the changes associated with the transaction
+     * @param txID
      */
-    public synchronized boolean commitTaxi(Object txID)
+    public void error(String txID)
     {
-        return commitTaxi(txID, false);
+        rollbackTaxi(txID);
     }
 
-    /**
-     * Commit taxi booking, possibly allowing subsequent compensation.
-     *
-     * @param txID The transaction identifier
-     * @param compensatable true if it may be necessary to compensate this commit laer
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean commitTaxi(Object txID, boolean compensatable)
-    {
-        boolean success = false;
-        hasCommitted = true;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-            // complete the prepared transaction
-            Integer request =  (Integer)preparedTransactions.remove(txID);
-            if (compensatable) {
-                compensatableTransactions.put(txID, request);
-            }
-            updateState();
-            success = true;
-        }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            Integer request = (Integer)unpreparedTransactions.remove(txID);
-            boolean doCommit;
-            // check we are ok to go ahead and if so
-            // use one phase commit optimisation, skipping prepare
-
-            if (autoCommitMode)
-            {
-                doCommit = true;
-            }
-            else
-            {
-                try
-                {
-                    // wait for a user decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    doCommit = isCommit;
-                } catch (Exception e) {
-                    System.err.println("RestaurantManager.commitSeats(): Unable to perform commit.");
-                    doCommit = false;
-                }
-            }
-
-            if (doCommit) {
-                if (compensatable) {
-                    compensatableTransactions.put(txID, request);
-                    // we have to update state in this case
-                    updateState();
-                    success = true;
-                } else {
-                    // we don't have to update anything
-                    success = true;
-                }
-            } else {
-                // we don't have to update anything
-                success = false;
-            }
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
-    }
+    /*****************************************************************************/
+    /* Accessors for the GUI to view and reset the service state                 */
+    /*****************************************************************************/
 
     /**
-     * Close taxi bookings, removing possibility for compensation.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * Reset to the initial state.
      */
-    public synchronized boolean closeTaxi(Object txID)
+    public synchronized void reset()
     {
-        boolean success;
-
-        // the transaction may be compensatable or unknown
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // complete the prepared transaction
-            compensatableTransactions.remove(txID);
-            updateState();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered for compensation
-        }
-
-        return success;
-    }
-
-    /**
-     * Handle BA error for a specific booking.
-     *
-     * @param txID The transaction identifier
-     */
-    public synchronized void error(Object txID)
-    {
-        // undo any provisional or actual changes associated wiht the booking
-
-        Integer request = (Integer) unpreparedTransactions.remove(txID);
-        if (request != null) {
-        } else if ((request = (Integer)preparedTransactions.remove(txID)) != null) {
-            updateState();
-        } else if ((request = (Integer)compensatableTransactions.remove(txID)) != null) {
-            updateState();
-        }
-    }
-
-    /**
-     * Determine if a specific transaction is known to the business logic.
-     *
-     * @param txID The uniq id for the transaction
-     * @return true if the business logic is holding state related to the given txID,
-     *         false otherwise.
-     */
-    public boolean knowsAbout(Object txID)
-    {
-        return (unpreparedTransactions.containsKey(txID) || preparedTransactions.containsKey(txID));
+        // clear the hash map
+        transactions.clear();
     }
 
     /**
@@ -435,63 +238,34 @@ public class TaxiManager implements Serializable
         isCommit = commit;
     }
 
-    /**
-     * (re-)initialise the instance data structures deleting any previously saved
-     * transaction state.
-     */
-    public void setToDefault()
-    {
-        setToDefault(true);
-    }
+    /*****************************************************************************/
+    /* Recovery methods maintaining consistency of local and  WSAT/WSBA state    */
+    /*****************************************************************************/
 
     /**
-     * (re-)initialise the instance data structures, potentially committing any saved state
-     * to disk
-     * @param deleteSavedState true if any cached transaction state should be deleted otherwise false
+     * called by the AT recovery module when an AT participant is recovered from a log record
      */
-    public void setToDefault(boolean deleteSavedState)
+    public void recovered(TaxiParticipantAT participant)
     {
-        compensatableTransactions = new Hashtable();
-        preparedTransactions = new Hashtable();
-        unpreparedTransactions = new Hashtable();
-        autoCommitMode = true;
-        preparation = new Object();
-        isPreparationWaiting = false;
-        isCommit = false;
-        hasCommitted = false;
-        if (deleteSavedState) {
-            // just write the current state.
-            updateState();
-        }
+        // nothing needed here
     }
 
     /**
-     * Allow use of a singleton model for web services demo.
+     * called by the BA recovery module when an AT participant is recovered from a log record
      */
-    public synchronized static TaxiManager getSingletonInstance()
+    public void recovered(TaxiParticipantBA participant)
     {
-        if (singletonInstance == null)
-        {
-            singletonInstance = new TaxiManager();
-        }
-
-        return singletonInstance;
+        // nothing needed here
     }
 
-    public boolean hasBeenCommitted()
+    public void recoveryScanCompleted(int txType)
     {
-        return hasCommitted;
+        // nothing needed here
     }
 
-    public Hashtable getPreparedTransactions()
-    {
-        return preparedTransactions;
-    }
-
-    public Hashtable getUnpreparedTransactions()
-    {
-        return unpreparedTransactions;
-    }
+    /*****************************************************************************/
+    /* Private implementation                                                    */
+    /*****************************************************************************/
 
     /**
      * A singleton instance of this class.
@@ -501,17 +275,7 @@ public class TaxiManager implements Serializable
     /**
      * The transactions we know about but which have not been prepared.
      */
-    private Hashtable unpreparedTransactions;
-
-    /**
-     * The transactions we know about and are prepared to commit.
-     */
-    private Hashtable preparedTransactions;
-
-    /**
-     * The transactions we know about and are prepared to commit.
-     */
-    private Hashtable compensatableTransactions;
+    private Hashtable transactions;
 
     /**
      * The auto commit mode.
@@ -526,11 +290,6 @@ public class TaxiManager implements Serializable
     private boolean isCommit;
 
     /**
-     * If the participant has already been commmitted or not.
-     */
-    private boolean hasCommitted = false;
-
-    /**
      * The object used for wait/notify in manual commit mode.
      */
     private Object preparation;
@@ -541,125 +300,15 @@ public class TaxiManager implements Serializable
     private boolean isPreparationWaiting;
 
     /**
-     * the name of the file used to store the restaurant manager state
+     * Create and initialise a new TaxiManager instance.
      */
-    final static private String STATE_FILENAME = "taxiManagerState";
-
-    /**
-     * the name of the file used to store the restaurant manager shadow state
-     */
-    final static private String SHADOW_STATE_FILENAME = "taxiManagerShadowState";
-
-    /**
-     * load any previously saved manager state.
-     *
-     * n.b. can only be called once from the singleton constructor before save can be called
-     * so there is no need for any synchronization here
-     */
-
-    private synchronized void restoreState()
+    private TaxiManager()
     {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-        if (file.exists()) {
-            if (shadowFile.exists()) {
-                // crashed during shadow file write == just trash it
-                shadowFile.delete();
-            }
-        } else if (shadowFile.exists()) {
-            // crashed afetr successful write - promote shadow file to real file
-            shadowFile.renameTo(file);
-            file = new File(STATE_FILENAME);
-        }
-        if (file.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                readState(ois);
-            } catch (Exception e) {
-                System.out.println("error : could not restore restaurant manager state" + e);
-            }
-        } else {
-            System.out.println("Starting with default restaurant manager state");
-        }
-    }
+        transactions = new Hashtable();
+        preparation = new Object();
 
-    /**
-     * write the current manager state to a shadow disk file then commit it as the latest state
-     * by relinking it to the current file
-     *
-     * n.b. must always called synchronized since the caller must always atomically check the
-     * current state, modify it and write it.
-     */
-    private void updateState()
-    {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-
-        if (shadowFile.exists()) {
-            // previous write must have barfed
-            shadowFile.delete();
-        }
-
-        try {
-            FileOutputStream fos = new FileOutputStream(shadowFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            writeState(oos);
-        } catch (Exception e) {
-            System.out.println("error : could not restore restaurant manager state" + e);
-        }
-
-        shadowFile.renameTo(file);
-    }
-
-    /**
-     * does the actual work of reading in the saved manager state
-     *
-     * @param ois
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
-    {
-        compensatableTransactions = new Hashtable();
-        String name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            int count = ois.readInt();
-            compensatableTransactions.put(name, new Integer(count));
-            name = (String)ois.readObject();
-        }
-        preparedTransactions = new Hashtable();
-        name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            int count = ois.readInt();
-            preparedTransactions.put(name, new Integer(count));
-            name = (String)ois.readObject();
-        }
-        unpreparedTransactions = new Hashtable();
-    }
-
-    /**
-     * does the actual work of writing out the saved manager state
-     * @param oos
-     * @throws IOException
-     */
-    private void writeState(ObjectOutputStream oos) throws IOException
-    {
-        Enumeration keys = compensatableTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            int count = ((Integer)compensatableTransactions.get(name)).intValue();
-            oos.writeObject(name);
-            oos.writeInt(count);
-        }
-        oos.writeObject("");
-        keys = preparedTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            int count = ((Integer)preparedTransactions.get(name)).intValue();
-            oos.writeObject(name);
-            oos.writeInt(count);
-        }
-        oos.writeObject("");
+        isCommit = true;
+        autoCommitMode = true;
+        isPreparationWaiting = false;
     }
 }

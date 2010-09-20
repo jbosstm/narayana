@@ -29,6 +29,7 @@
 
 package com.jboss.jbosstm.xts.demo.services.theatre;
 
+import static com.jboss.jbosstm.xts.demo.services.theatre.TheatreConstants.*;
 import java.io.Serializable;
 
 /**
@@ -138,17 +139,17 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel25.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel1.add(jLabel25);
 
-        jLabelNBookedSeatsCircle.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.CIRCLE)));
+        jLabelNBookedSeatsCircle.setText(Integer.toString(theatreManager.getNBookedSeats(CIRCLE)));
         jLabelNBookedSeatsCircle.setForeground(java.awt.Color.gray);
         jLabelNBookedSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsCircle);
 
-        jLabelNConfirmedSeatsCircle.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.CIRCLE)));
+        jLabelNConfirmedSeatsCircle.setText(Integer.toString(0));
         jLabelNConfirmedSeatsCircle.setForeground(new java.awt.Color(0, 51, 204));
         jLabelNConfirmedSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNConfirmedSeatsCircle);
 
-        jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.CIRCLE)));
+        jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(CIRCLE)));
         jLabelNFreeSeatsCircle.setForeground(new java.awt.Color(0, 153, 0));
         jLabelNFreeSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNFreeSeatsCircle);
@@ -157,17 +158,17 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel35.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel1.add(jLabel35);
 
-        jLabelNBookedSeatsStalls.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.STALLS)));
+        jLabelNBookedSeatsStalls.setText(Integer.toString(theatreManager.getNBookedSeats(STALLS)));
         jLabelNBookedSeatsStalls.setForeground(java.awt.Color.gray);
         jLabelNBookedSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsStalls);
 
-        jLabelNConfirmedSeatsStalls.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.STALLS)));
+        jLabelNConfirmedSeatsStalls.setText(Integer.toString(0));
         jLabelNConfirmedSeatsStalls.setForeground(new java.awt.Color(0, 51, 204));
         jLabelNConfirmedSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNConfirmedSeatsStalls);
 
-        jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.STALLS)));
+        jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(STALLS)));
         jLabelNFreeSeatsStalls.setForeground(new java.awt.Color(0, 153, 0));
         jLabelNFreeSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNFreeSeatsStalls);
@@ -176,17 +177,17 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel28.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel1.add(jLabel28);
 
-        jLabelNBookedSeatsBalcony.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.BALCONY)));
+        jLabelNBookedSeatsBalcony.setText(Integer.toString(theatreManager.getNBookedSeats(BALCONY)));
         jLabelNBookedSeatsBalcony.setForeground(java.awt.Color.gray);
         jLabelNBookedSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsBalcony);
 
-        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.BALCONY)));
+        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(0));
         jLabelNConfirmedSeatsBalcony.setForeground(new java.awt.Color(51, 0, 204));
         jLabelNConfirmedSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNConfirmedSeatsBalcony);
 
-        jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.BALCONY)));
+        jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(BALCONY)));
         jLabelNFreeSeatsBalcony.setForeground(new java.awt.Color(0, 153, 0));
         jLabelNFreeSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNFreeSeatsBalcony);
@@ -223,7 +224,7 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel18.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel2.add(jLabel18);
 
-        jLabelNTotalSeatsCircle.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.CIRCLE)));
+        jLabelNTotalSeatsCircle.setText(Integer.toString(theatreManager.getNTotalSeats(CIRCLE)));
         jLabelNTotalSeatsCircle.setForeground(java.awt.Color.darkGray);
         jLabelNTotalSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel2.add(jLabelNTotalSeatsCircle);
@@ -232,7 +233,7 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel19.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel2.add(jLabel19);
 
-        jLabelNTotalSeatsStalls.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.STALLS)));
+        jLabelNTotalSeatsStalls.setText(Integer.toString(theatreManager.getNTotalSeats(STALLS)));
         jLabelNTotalSeatsStalls.setForeground(java.awt.Color.darkGray);
         jLabelNTotalSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel2.add(jLabelNTotalSeatsStalls);
@@ -241,13 +242,13 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel20.setFont(new java.awt.Font("Dialog", 1, 14));
         jPanel2.add(jLabel20);
 
-        jLabelNTotalSeatsBalcony.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.BALCONY)));
+        jLabelNTotalSeatsBalcony.setText(Integer.toString(theatreManager.getNTotalSeats(BALCONY)));
         jLabelNTotalSeatsBalcony.setForeground(java.awt.Color.darkGray);
         jLabelNTotalSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel2.add(jLabelNTotalSeatsBalcony);
 
         jTextFieldNewNTotalSeats.setFont(new java.awt.Font("Dialog", 0, 18));
-        jTextFieldNewNTotalSeats.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.CIRCLE)));
+        jTextFieldNewNTotalSeats.setText(Integer.toString(theatreManager.getNTotalSeats(CIRCLE)));
         jPanel2.add(jTextFieldNewNTotalSeats);
 
         jButtonSetCircle.setFont(new java.awt.Font("Dialog", 0, 14));
@@ -358,7 +359,7 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
      */
     private void jButtonResetFieldsActionPerformed(java.awt.event.ActionEvent evt)
     {//GEN-FIRST:event_jButtonResetFieldsActionPerformed
-        theatreManager.setToDefault();
+        theatreManager.reset();
         updateFields();
     }//GEN-LAST:event_jButtonResetFieldsActionPerformed
 
@@ -427,8 +428,8 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
     {//GEN-FIRST:event_jButtonSetCircleActionPerformed
         String strNSeats = jTextFieldNewNTotalSeats.getText();
 
-        theatreManager.newCapacity(theatreManager.CIRCLE, Integer.parseInt(strNSeats));
-        int nFreeSeats = theatreManager.getNFreeSeats(theatreManager.CIRCLE);
+        theatreManager.reset();
+        int nFreeSeats = theatreManager.getNFreeSeats(CIRCLE);
 
         jLabelNTotalSeatsCircle.setText(strNSeats);
         jLabelNFreeSeatsCircle.setText(Integer.toString(nFreeSeats));
@@ -441,8 +442,8 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
     {//GEN-FIRST:event_jButtonSetSallsActionPerformed
         String strNSeats = jTextFieldNewNTotalSeats.getText();
 
-        theatreManager.newCapacity(theatreManager.STALLS, Integer.parseInt(strNSeats));
-        int nFreeSeats = theatreManager.getNFreeSeats(theatreManager.STALLS);
+        theatreManager.reset();
+        int nFreeSeats = theatreManager.getNFreeSeats(STALLS);
 
         jLabelNTotalSeatsStalls.setText(strNSeats);
         jLabelNFreeSeatsStalls.setText(Integer.toString(nFreeSeats));
@@ -455,8 +456,8 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
     {//GEN-FIRST:event_jButtonSetBalconyActionPerformed
         String strNSeats = jTextFieldNewNTotalSeats.getText();
 
-        theatreManager.newCapacity(theatreManager.BALCONY, Integer.parseInt(strNSeats));
-        int nFreeSeats = theatreManager.getNFreeSeats(theatreManager.BALCONY);
+        theatreManager.reset();
+        int nFreeSeats = theatreManager.getNFreeSeats(BALCONY);
 
         jLabelNTotalSeatsBalcony.setText(strNSeats);
         jLabelNFreeSeatsBalcony.setText(Integer.toString(nFreeSeats));
@@ -501,19 +502,19 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
      */
     public void updateFields()
     {
-        jLabelNTotalSeatsCircle.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.CIRCLE)));
-        jLabelNTotalSeatsStalls.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.STALLS)));
-        jLabelNTotalSeatsBalcony.setText(Integer.toString(theatreManager.getNTotalSeats(theatreManager.BALCONY)));
+        jLabelNTotalSeatsCircle.setText(Integer.toString(theatreManager.getNTotalSeats(CIRCLE)));
+        jLabelNTotalSeatsStalls.setText(Integer.toString(theatreManager.getNTotalSeats(STALLS)));
+        jLabelNTotalSeatsBalcony.setText(Integer.toString(theatreManager.getNTotalSeats(BALCONY)));
         jTextFieldNewNTotalSeats.setText(jLabelNTotalSeatsCircle.getText());
-        jLabelNBookedSeatsCircle.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.CIRCLE)));
-        jLabelNBookedSeatsStalls.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.STALLS)));
-        jLabelNBookedSeatsBalcony.setText(Integer.toString(theatreManager.getNBookedSeats(theatreManager.BALCONY)));
-        jLabelNConfirmedSeatsCircle.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.CIRCLE)));
-        jLabelNConfirmedSeatsStalls.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.STALLS)));
-        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(theatreManager.getNCommittedSeats(theatreManager.BALCONY)));
-        jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.CIRCLE)));
-        jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.STALLS)));
-        jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(theatreManager.BALCONY)));
+        jLabelNBookedSeatsCircle.setText(Integer.toString(theatreManager.getNBookedSeats(CIRCLE)));
+        jLabelNBookedSeatsStalls.setText(Integer.toString(theatreManager.getNBookedSeats(STALLS)));
+        jLabelNBookedSeatsBalcony.setText(Integer.toString(theatreManager.getNBookedSeats(BALCONY)));
+        jLabelNConfirmedSeatsCircle.setText(Integer.toString(0));
+        jLabelNConfirmedSeatsStalls.setText(Integer.toString(0));
+        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(0));
+        jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(CIRCLE)));
+        jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(STALLS)));
+        jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(BALCONY)));
 
 
         //update fields related to interactive mode

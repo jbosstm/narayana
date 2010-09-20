@@ -29,47 +29,57 @@
 
 package com.jboss.jbosstm.xts.demo.services.theatre;
 
-import com.arjuna.wst.FaultedException;
+import com.jboss.jbosstm.xts.demo.services.state.ServiceStateManager;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
+import javax.xml.ws.WebServiceException;
+
+import static com.jboss.jbosstm.xts.demo.services.theatre.TheatreConstants.*;
+
 import java.io.*;
 
 /**
  * The transactional application logic for the Theatre Service.
  * <p/>
- * Stores and manages seating reservations. Knows nothing about Web Services.
- * Understands transactional booking lifecycle: unprepared, prepared, finished.
+ * Stores and manages seating reservations.
+ * <p/>
+ * The manager extends class ServiceStateManager which implements a very simple
+ * transactional resource manager. It gives the theatre manager the ability to
+ * persist the web service state in a local disk file and to make transactional
+ * updates to that persistent state. The unit of locking is the whole of the
+ * service state so although bookings can be attempted by concurrent transactions
+ * only one such booking will commit, forcing other concurrent transactions to
+ * roll back. Conflict detection is implemented using a simple versioning scheme.
  *
- * </p>The manager maintains the following invariants regarding seating capacity:
- * <ul>
- * <li>nBooked[area] == sum(unpreparedList.seatCount[area]) + sum(preparedList.seatCount[area])
+ * The theatre manager provides a book method allowing the web service endpoint to book
+ * or unbook seats. It also exposes prepare, commit and rollback operations used by both
+ * WSAT and WSBA participants to drive prepare, commit and rollback of changes to the
+ * persistent state. Finally it exposes recovery logic used by the WSAT and WSBA recovery
+ * modules to tie recovery of WSAT and WSBA participants to recovery and rollback of the
+ * local service state.
  *
- * <li>nPrepared[area] = sum(prepared.seatCount[area])
- *
- * <li>nTotal[area] == nFree[area] + nPrepared[area] + nCommitted[area]
- * </ul>
- * Extended to include support for BA compensation based rollback
- * </p>
- * The manager now maintains an extra list compensatableList:
- *  <ul>
- * <li>nCompensatable[area] == sum(compensatableList.seatCount[area])
- * </ul>
- * changes to nPrepared, nFree, nCommitted, nCompensatable, nTotal, preparedList and compensatableList are
- * always shadowed in persistent storage before returning control to clients.
- * </p>
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
+ * @author Andrew Dinn (adinn@redhat.com)
  * @version $Revision: 1.4 $
  */
-public class TheatreManager implements Serializable
+public class TheatreManager extends ServiceStateManager<TheatreState>
 {
+    /*****************************************************************************/
+    /* Support for the Web Service API                                           */
+    /*****************************************************************************/
+
     /**
-     * Create and initialise a new TheatreManager instance.
+     * Accessor to obtain the singleton theatre manager instance.
+     *
+     * @return the singleton TheatreManager instance.
      */
-    public TheatreManager()
+    public synchronized static TheatreManager getSingletonInstance()
     {
-        setToDefault(false);
-        restoreState();
+        if (singletonInstance == null)
+        {
+            singletonInstance = new TheatreManager();
+        }
+
+        return singletonInstance;
     }
 
     /**
@@ -81,367 +91,159 @@ public class TheatreManager implements Serializable
      */
     public synchronized void bookSeats(Object txID, int nSeats, int area)
     {
-        // locate any pre-existing request for the same transaction
-        Integer[] requests = (Integer[]) unpreparedTransactions.get(txID);
-        if (requests == null)
-        {
-            // this is the first request for this transaction
-            // setup the data structure to record it
-            requests = new Integer[NUM_SEAT_AREAS];
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                requests[i] = new Integer(0);
+        // we cannot proceed while a prepare is in progress
+
+        while (isLocked()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // ignore
             }
         }
 
-        // record the request, keyed to its transaction scope
-        requests[area] = new Integer(requests[area].intValue() + nSeats);
-        unpreparedTransactions.put(txID, requests);
+        if (theatreState.freeSeats[area] < nSeats ||
+                theatreState.bookedSeats[area] + nSeats > theatreState.totalSeats[area]) {
+            throw new WebServiceException("requested number of seats (" + nSeats + ") not available");
+        }
 
-        // record the increased commitment to provide seating
-        nBookedSeats[area] += nSeats;
-        // we don't actually need to update until prepare
+        // create a state derived from the current state which reflects the new booking count
+
+        TheatreState childState =  theatreState.derivedState();
+
+        // update the number of booked and free seats in the derived state
+
+        childState.freeSeats[area] -= nSeats;
+        childState.bookedSeats[area] += nSeats;
+
+        // install this as the current transaction state
+        
+        putState(txID, childState);
     }
 
     /**
-     * Attempt to ensure availability of the requested seating.
+     * check whether we have already seen a web service request in a given transaction
+     */
+
+    public boolean knowsAbout(Object txID)
+    {
+        return getState(txID) != null;
+    }
+
+    /*****************************************************************************/
+    /* Support for the AT and BA Participant API implementation                  */
+    /*****************************************************************************/
+
+    /**
+     * Prepare local state changes for the supplied transaction
      *
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public synchronized boolean prepareSeats(Object txID)
+    public boolean prepareSeats(Object txID)
     {
-        int[] nSeats = new int[NUM_SEAT_AREAS];
-
         // ensure that we have seen this transaction before
-        Integer[] requests = (Integer[]) unpreparedTransactions.get(txID);
-        if (requests == null)
-        {
-            return false; // error: transaction not registered
+        TheatreState childState = getState(txID);
+        if (childState == null) {
+            return false;
         }
-        else
-        {
-            // determine the number of seats available
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                nSeats[i] = nFreeSeats[i];
-                nSeats[i] -= requests[i].intValue();
-            }
-            if (autoCommitMode)
-            {
-                boolean success = true;
-                // check we have enough seats avaiable
-                for (int i = 0; i < NUM_SEAT_AREAS; i++)
-                {
-                    if (nSeats[i] < 0)
-                    {
-                        success = false; // error: not enough seats
-                    }
+        // we have a single monolithic state element which means that only one transaction can prepare
+        // at any given time. we lock this state at prepare by providing the txId as a locking id. it only
+        // gets unlocked when we reach commit or rollback. the equivalent to the lock in memory is the
+        // shadow state file on disk.
+        synchronized (this) {
+            while (isLocked()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-                if (success)
-                {
-                    // record the prepared transaction
-                    preparedTransactions.put(txID, requests);
-                    unpreparedTransactions.remove(txID);
-                    // mark the prepared seats as unavailable
-                    for (int i = 0; i < NUM_SEAT_AREAS; i++)
-                    {
-                        nFreeSeats[i] = nSeats[i];
-                        nPreparedSeats[i] += requests[i].intValue();
-                    }
-                    updateState();
-                }
-                return success;
             }
-            else
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
 
-                    // process the user decision
-                    if (isCommit)
-                    {
-                        // record the prepared transaction
-                        preparedTransactions.put(txID, requests);
-                        unpreparedTransactions.remove(txID);
-                        // mark the prepared seats as unavailable
-                        for (int i = 0; i < NUM_SEAT_AREAS; i++)
-                        {
-                            nFreeSeats[i] = nSeats[i];
-                            nPreparedSeats[i] += requests[i].intValue();
-                        }
-                        updateState();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
+            // check no other bookings have been committed
+
+            if (!theatreState.isParentOf(childState)) {
+                removeState(txID);
+                return false;
+            }
+
+            // see if we need user confirmation
+
+            if (!autoCommitMode) {
+                // need to wait for the user to decide whether to go ahead or not with this participant
+                isPreparationWaiting = true;
+                synchronized (preparation) {
+                    try {
+                        preparation.wait();
+                    } catch (InterruptedException e) {
+                        // ignore
                     }
                 }
-                catch (Exception e)
-                {
-                    System.err.println("TheatreManager.prepareSeats(): Unable to stop preparation.");
+                isPreparationWaiting = false;
+
+                // process the user decision
+                if (!isCommit) {
+                    removeState(txID);
                     return false;
                 }
             }
+
+            // ok, so lock the state against other prepare/commits
+
+            lock(txID);
+        }
+        // if we got here then no other changes have invalidated our booking and we have locked out
+        // further changes until commit or rollback occurs. we write the derived child state to the
+        // shadow state file before returning. if we crash after the write we will detect the shadow
+        // state at reboot and restore the lock.
+        try {
+            writeShadowState(txID, childState);
+            return true;
+        } catch (Exception e) {
+            clearShadowState(txID);
+            synchronized (this) {
+                removeState(txID);
+                unlock();
+            }
+            System.err.println("RestaurantManager.prepareSeats(): Error attempting to prepare transaction: " + e);
+            return false;
         }
     }
 
     /**
-     * Release booked or prepared seats.
+     * commit local state changes for the supplied transaction
      *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * @param txID
      */
-    public boolean cancelSeats(Object txID)
+    public void commitSeats(Object txID)
     {
-        boolean success = false;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-            // undo the prepare operations
-            Integer[] requests = (Integer[]) preparedTransactions.remove(txID);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                nFreeSeats[i] += requests[i].intValue();
-                nPreparedSeats[i] -= requests[i].intValue();
-                nBookedSeats[i] -= requests[i].intValue();
+        synchronized (this) {
+            // if there is a shadow state with this id then we need to copy the shadow state file over to the
+            // real state file. it may be that there is no shadow state because this is a repeated commit
+            // request. if so then we must have committed earlier so there is no harm done.
+            if (isLockID(txID)) {
+                commitShadowState(txID);
+                // update the current state with the prepared state.
+                theatreState = getPreparedState();
+                unlock();
             }
-            updateState();
-            success = true;
+            removeState(txID);
         }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            // undo the booking operations
-            Integer[] requests = (Integer[]) unpreparedTransactions.remove(txID);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                nBookedSeats[i] -= requests[i].intValue();
-            }
-            // we don't need to update state
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
     }
 
     /**
-     * Compensate a booking.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * roll back local state changes for the supplied transaction
+     * @param txID
      */
-    public boolean compensateSeats(Object txID)
-            throws FaultedException
+    public void rollbackSeats(Object txID)
     {
-        boolean success = false;
-
-        // the transaction must be compensatable
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // see if the user wants to report a compensation fault
-
-            if (!autoCommitMode)
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    if (!isCommit)
-                    {
-                        throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println("TheatreManager.compensateSeats(): Unexpected error during compensation.");
-                    throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
-                }
+        synchronized (this) {
+            removeState(txID);
+            if (isLockID(txID)) {
+                clearShadowState(txID);
+                unlock();
             }
-
-            // compensate the prepared transaction
-            Integer[] requests = (Integer[]) compensatableTransactions.remove(txID);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                nCompensatableSeats[i] -= requests[i].intValue();
-                nCommittedSeats[i] -= requests[i].intValue();
-                nFreeSeats[i] += requests[i].intValue();
-            }
-            updateState();
-            success = true;
+            this.notifyAll();
         }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
-    }
-
-    /**
-     * Commit seat bookings.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean commitSeats(Object txID)
-    {
-        return commitSeats(txID, false);
-    }
-
-    /**
-     * Commit seat bookings, possibly allowing subsequent compensation.
-     *
-     * @param txID The transaction identifier
-     * @param compensatable true if it may be necessary to compensate this commit laer
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean commitSeats(Object txID, boolean compensatable)
-    {
-        boolean success = false;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-
-            // complete the prepared transaction
-            Integer[] requests = (Integer[]) preparedTransactions.remove(txID);
-            if (compensatable)
-            {
-                compensatableTransactions.put(txID, requests);
-            }
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
-            {
-                if (compensatable) {
-                    nCompensatableSeats[i] += requests[i].intValue();
-                }
-                nCommittedSeats[i] += requests[i].intValue();
-                nPreparedSeats[i] -= requests[i].intValue();
-                nBookedSeats[i] -= requests[i].intValue();
-            }
-            updateState();
-            success = true;
-        }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            // use one phase commit optimisation, skipping prepare
-            Integer[] requests = (Integer[]) unpreparedTransactions.remove(txID);
-            boolean doCommit = true;
-            // check we have enough seats and if so
-            // use one phase commit optimisation, skipping prepare
-
-            if (autoCommitMode)
-            {
-                for (int i = 0; doCommit && i < NUM_SEAT_AREAS; i++)
-                {
-                    if (requests[i].intValue() > nFreeSeats[i])
-                    {
-                        doCommit = false;
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    // wait for a user decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    doCommit = isCommit;
-                } catch (Exception e) {
-                    System.err.println("TheatreManager.commitSeats(): Unable to perform commit.");
-                    doCommit = false;
-                }
-            }
-
-            if (doCommit) {
-                if (compensatable) {
-                    compensatableTransactions.put(txID, requests);
-                }
-                for (int i = 0; i < NUM_SEAT_AREAS; i++)
-                {
-                    if (compensatable) {
-                        nCompensatableSeats[i] += requests[i].intValue();
-                    }
-                    nCommittedSeats[i] += requests[i].intValue();
-                    nFreeSeats[i] -= requests[i].intValue();
-                    nBookedSeats[i] -= requests[i].intValue();
-                }
-                updateState();
-                success = true;
-            } else {
-                // get rid of the commitment to keep these seats
-                for (int i = 0; i < NUM_SEAT_AREAS; i++)
-                {
-                    nBookedSeats[i] -= requests[i].intValue();
-                }
-                success = false;
-            }
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-
-        return success;
-    }
-
-    /**
-     * Close seat bookings, removing possibility for compensation.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean closeSeats(Object txID)
-    {
-        boolean success;
-
-        // the transaction may be compensatable or unknown
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // complete the prepared transaction
-            Integer[] requests = (Integer[]) compensatableTransactions.remove(txID);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                nCompensatableSeats[i] -= requests[i].intValue();
-            }
-            updateState();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered for compensation
-        }
-
-        return success;
     }
 
     /**
@@ -451,55 +253,55 @@ public class TheatreManager implements Serializable
      */
     public synchronized void error(Object txID)
     {
-        // undo any provisional or actual changes associated wiht the booking
+        rollbackSeats(txID);
+    }
 
-        Integer[] request = (Integer[]) unpreparedTransactions.remove(txID);
-        if (request != null) {
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                nBookedSeats[i] -= request[i].intValue();
-            }
-        } else if ((request = (Integer[])preparedTransactions.remove(txID)) != null) {
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                nFreeSeats[i] += request[i].intValue();
-                nPreparedSeats[i] -= request[i].intValue();
-                nBookedSeats[i] -= request[i].intValue();
-            }
-            updateState();
-        } else if ((request = (Integer[])compensatableTransactions.remove(txID)) != null) {
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                nCompensatableSeats[i] -= request[i].intValue();
+    /*****************************************************************************/
+    /* Accessors for the GUI to view and reset the service state                 */
+    /*****************************************************************************/
 
-                nCommittedSeats[i] -= request[i].intValue();
-                nFreeSeats[i] += request[i].intValue();
+    /**
+     * Reset to the initial state.
+     *
+     * @param txID   The transaction identifier
+     * @param nSeats The number of seats requested
+     */
+    public synchronized void reset()
+    {
+        // we cannot proceed while a prepare is in progress
+
+        while (isLocked()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // ignore
             }
-            updateState();
         }
-    }
 
-    /**
-     * Determine if a specific transaction is known to the business logic.
-     *
-     * @param txID The uniq id for the transaction
-     * @return true if the business logic is holding state related to the given txID,
-     *         false otherwise.
-     */
-    public boolean knowsAbout(Object txID)
-    {
-        return (unpreparedTransactions.containsKey(txID) || preparedTransactions.containsKey(txID));
-    }
+        // undo all existing bookings
 
-    /**
-     * Change the capacity of a given seating area.
-     *
-     * @param area   The seating area to change
-     * @param nSeats The new capacity for the area
-     */
-    public void newCapacity(int area, int nSeats)
-    {
-        nFreeSeats[area] += nSeats - nTotalSeats[area];
-        nTotalSeats[area] = nSeats;
-    }
+        TheatreState resetState = theatreState.derivedState();
 
+        for (int area = 0; area < NUM_SEAT_AREAS; area++) {
+            resetState.totalSeats[area] = DEFAULT_SEATING_CAPACITY;
+            resetState.bookedSeats[area] = 0;
+            resetState.freeSeats[area] = DEFAULT_SEATING_CAPACITY;
+        }
+
+        Object txId = "reset-transaction";
+        try {
+            writeShadowState(txId, resetState);
+            commitShadowState(txId);
+        } catch (IOException e) {
+            clearShadowState(txId);
+             System.out.println("error : unable to reset theatre manager state " + e);
+        }
+        // remove any in-progress transactions
+
+        clearTransactions();
+
+        theatreState = resetState;
+    }
     /**
      * Get the number of free seats in the given area.
      *
@@ -508,7 +310,7 @@ public class TheatreManager implements Serializable
      */
     public int getNFreeSeats(int area)
     {
-        return nFreeSeats[area];
+        return theatreState.freeSeats[area];
     }
 
     /**
@@ -519,7 +321,7 @@ public class TheatreManager implements Serializable
      */
     public int getNTotalSeats(int area)
     {
-        return nTotalSeats[area];
+        return theatreState.totalSeats[area];
     }
 
     /**
@@ -530,7 +332,7 @@ public class TheatreManager implements Serializable
      */
     public int getNBookedSeats(int area)
     {
-        return nBookedSeats[area];
+        return theatreState.bookedSeats[area];
     }
 
     /**
@@ -541,28 +343,12 @@ public class TheatreManager implements Serializable
      */
     public int getNPreparedSeats(int area)
     {
-        return nPreparedSeats[area];
-    }
-
-    /**
-     * Get the number of committed seats in the given area.
-     *
-     * @param area The area of interest
-     * @return The number of committed seats
-     */
-    public int getNCommittedSeats(int area)
-    {
-        return nCommittedSeats[area];
-    }
-
-    /**
-     * Get the number of compensatable seats in the given area.
-     *
-     * @return The number of compensatable seats
-     */
-    public int getNCompensatableSeats(int area)
-    {
-        return nCompensatableSeats[area];
+        if (isLocked()) {
+            TheatreState childState = getPreparedState();
+            return childState.bookedSeats[area] - theatreState.bookedSeats[area];
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -623,104 +409,71 @@ public class TheatreManager implements Serializable
         isCommit = commit;
     }
 
+    /*****************************************************************************/
+    /* Implementation of inherited abstract sate management API                  */
+    /*****************************************************************************/
+
     /**
-     * (re-)initialise the instance data structures deleting any previously saved
-     * transaction state.
+     * identify the name of file used to store the current service state
+      * @return the name of the file used to store the current service state
      */
-    public void setToDefault()
-    {
-        setToDefault(true);
+    public String getStateFilename() {
+        return STATE_FILENAME;
     }
+
     /**
-     * (re-)initialise the instance data structures, potentially committing any saved state
-     * to disk
-     * @param deleteSavedState true if any cached transaction state should be deleted otherwise false
+     * identify the name of file used to store the shadow service state
+      * @return the name of the file used to store the shadow service state
      */
-    public void setToDefault(boolean deleteSavedState)
+    public String getShadowStateFilename() {
+        return SHADOW_STATE_FILENAME;
+    }
+
+    /*****************************************************************************/
+    /* Recovery methods maintaining consistency of local and  WSAT/WSBA state    */
+    /*****************************************************************************/
+
+    /**
+     * called by the AT recovery module when an AT participant is recovered from a log record
+     */
+    public void recovered(TheatreParticipantAT participant)
     {
-        nTotalSeats = new int[NUM_SEAT_AREAS];
-        nFreeSeats = new int[NUM_SEAT_AREAS];
-        nBookedSeats = new int[NUM_SEAT_AREAS];
-        nPreparedSeats = new int[NUM_SEAT_AREAS];
-        nCommittedSeats = new int[NUM_SEAT_AREAS];
-        nCompensatableSeats = new int[NUM_SEAT_AREAS];
-        for (int i = 0; i < NUM_SEAT_AREAS; i++)
-        {
-            nTotalSeats[i] = DEFAULT_SEATING_CAPACITY;
-            nFreeSeats[i] = nTotalSeats[i];
-            nBookedSeats[i] = 0;
-            nPreparedSeats[i] = 0;
-            nCommittedSeats[i] = 0;
-            nCompensatableSeats[i] = 0;
-        }
-        compensatableTransactions = new Hashtable();
-        preparedTransactions = new Hashtable();
-        unpreparedTransactions = new Hashtable();
-        autoCommitMode = true;
-        preparation = new Object();
-        isPreparationWaiting = false;
-        isCommit = true;
-        if (deleteSavedState) {
-            // just write the current state.
-            updateState();
+        // if this AT participant matches the prepared TX id then we need to leave it prepared and locked
+        // at the end of scanning so it can be completed at commit time
+        if (isLockID(participant.txID)) {
+            rollbackPreparedTx = false;
         }
     }
 
     /**
-     * Allow use of a singleton model for web services demo.
+     * called by the BA recovery module when an AT participant is recovered from a log record
      */
-    public synchronized static TheatreManager getSingletonInstance()
+    public void recovered(TheatreParticipantBA participant)
     {
-        if (singletonInstance == null)
-        {
-            singletonInstance = new TheatreManager();
+        // if this AT participant matches the prepared TX id then we roll it forward here by calling
+        // confirmCompleted so once again we don't need to roll back the prepared state
+        if (isLockID(participant.txID)) {
+            participant.confirmCompleted(true);
+            rollbackPreparedTx = false;
         }
-
-        return singletonInstance;
     }
+
+    public void recoveryScanCompleted(int txType)
+    {
+        super.recoveryScanCompleted(txType);
+        if (completedScans == TX_TYPE_BOTH && rollbackPreparedTx) {
+            rollbackSeats(getLockID());
+        }
+    }
+
+    /*****************************************************************************/
+    /* Private implementation                                                    */
+    /*****************************************************************************/
 
     /**
      * A singleton instance of this class.
      */
     private static TheatreManager singletonInstance;
-
-    /*
-     * The following arrays are indexed by seating type.
-     *
-     * nTotalSeats = ( nFreeSeats + nBookedSeats + nPreparedSeats )
-     */
-
-    /**
-     * The total seating capacity of each area.
-     */
-    private int[] nTotalSeats;
-
-    /**
-     * The number of free seats in each area.
-     */
-    private int[] nFreeSeats;
-
-    /**
-     * The number of booked seats in each area.
-     * <p/>
-     * Note: This may exceed the total size of the area
-     */
-    private int[] nBookedSeats;
-
-    /**
-     * The number of prepared (promised) seats in each area.
-     */
-    private int[] nPreparedSeats;
-
-    /**
-     * The number of committed seats in each area.
-     */
-    private int[] nCommittedSeats;
-
-    /**
-     * The number of compensatable seats in each area.
-     */
-    private int[] nCompensatableSeats;
 
     /**
      * The auto commit mode.
@@ -745,199 +498,48 @@ public class TheatreManager implements Serializable
     private boolean isCommit;
 
     /**
-     * The transactions we know about but which have not been prepared.
+     * Flag which determines whether we have to roll back any prepared changes to the server. We roll back
+     * changes for an AT or BA participant if there is no associated log record because the participant never
+     * prepared or completed, respectvely.. If we see a log record for an AT participant we leave the prepared
+     * state behind since it will
      */
-    private Hashtable unpreparedTransactions;
+    private boolean rollbackPreparedTx;
 
     /**
-     * The transactions we know about and are prepared to commit.
+     * the latest version of the theatre state which includes a version id
+     * this state object is always stored on disk in the theatre state file
+     * a prepared version of a derived child state may also exist on disk in the
+     * theatre shadow state file
      */
-    private Hashtable preparedTransactions;
+    private TheatreState theatreState;
 
     /**
-     * The transactions we know about and are prepared to compensate.
+     * Create and initialise a new TheatreManager instance.
      */
-    private Hashtable compensatableTransactions;
-
-    /**
-     * Constant (array index) used for the seating area CIRCLE.
-     */
-    public static final int CIRCLE = 0;
-
-    /**
-     * Constant (array index) used for the seating area STALLS.
-     */
-    public static final int STALLS = 1;
-
-    /**
-     * Constant (array index) used for the seating area BALCONY.
-     */
-    public static final int BALCONY = 2;
-
-    /**
-     * The total number (array size) of seating areas.
-     */
-    public static final int NUM_SEAT_AREAS = 3;
-
-    /**
-     * The default initial capacity of each seating area.
-     */
-    public static final int DEFAULT_SEATING_CAPACITY = 100;
-
-    /**
-     * the name of the file used to store the restaurant manager state
-     */
-    final static private String STATE_FILENAME = "theatreManagerState";
-
-    /**
-     * the name of the file used to store the restaurant manager shadow state
-     */
-    final static private String SHADOW_STATE_FILENAME = "theatreManagerShadowState";
-
-    /**
-     * load any previously saved manager state
-     *
-     * n.b. can only be called once from the singleton constructor before save can be called
-     * so there is no need for any synchronization here
-     */
-
-    private void restoreState()
+    private TheatreManager()
     {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-        if (file.exists()) {
-            if (shadowFile.exists()) {
-                // crashed during shadow file write == just trash it
-                shadowFile.delete();
-            }
-        } else if (shadowFile.exists()) {
-            // crashed afetr successful write - promote shadow file to real file
-            shadowFile.renameTo(file);
-            file = new File(STATE_FILENAME);
-        }
-        if (file.exists()) {
+        TheatreState restoredState = restoreState();
+        if (restoredState == null) {
+            // we need to create a new initial state and persist it to disk
+            restoredState = TheatreState.initialState();
+            Object txId = "initialisation-transaction-" + System.currentTimeMillis();
             try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                readState(ois);
-            } catch (Exception e) {
-                System.out.println("error : could not restore restaurant manager state" + e);
-            }
-        } else {
-            System.out.println("Starting with default restaurant manager state");
-        }
-    }
-
-    /**
-     * write the current manager state to a shadow disk file then commit it as the latest state
-     * by relinking it to the current file
-     *
-     * n.b. must always called synchronized since the caller must always atomically check the
-     * current state, modify it and write it.
-     */
-    private void updateState()
-    {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-
-        if (shadowFile.exists()) {
-            // previous write must have barfed
-            shadowFile.delete();
-        }
-
-        try {
-            FileOutputStream fos = new FileOutputStream(shadowFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            writeState(oos);
-        } catch (Exception e) {
-            System.out.println("error : could not restore restaurant manager state" + e);
-        }
-
-        shadowFile.renameTo(file);
-    }
-
-    /**
-     * does the actual work of reading in the saved manager state
-     *
-     * @param ois
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
-    {
-        for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-            nTotalSeats[i] = ois.readInt();
-            nFreeSeats[i] = ois.readInt();
-            nPreparedSeats[i] = ois.readInt();
-            nCommittedSeats[i] = ois.readInt();
-            nCompensatableSeats[i] = ois.readInt();
-        }
-        compensatableTransactions = new Hashtable();
-        String name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            Integer[] counts = new Integer[NUM_SEAT_AREAS];
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                int count = ois.readInt();
-                counts[i] = new Integer(count);
-            }
-            compensatableTransactions.put(name, counts);
-            name = (String)ois.readObject();
-        }
-        preparedTransactions = new Hashtable();
-        name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            Integer[] counts = new Integer[NUM_SEAT_AREAS];
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                int count = ois.readInt();
-                counts[i] = new Integer(count);
-            }
-            preparedTransactions.put(name, counts);
-            name = (String)ois.readObject();
-        }
-        unpreparedTransactions = new Hashtable();
-        for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-            // derive nBookedSeats from invariant
-            nBookedSeats[i] = nPreparedSeats[i];
-            // assert invariant for total seats
-            assert nTotalSeats[i] == nFreeSeats[i] + nPreparedSeats[i] + nCommittedSeats[i];
-        }
-    }
-
-    /**
-     * does the actual work of writing out the saved manager state
-     * @param oos
-     * @throws IOException
-     */
-    private void writeState(ObjectOutputStream oos) throws IOException
-    {
-        for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-            // assert invariant for total seats
-            assert nTotalSeats[i] == nFreeSeats[i] + nPreparedSeats[i] + nCommittedSeats[i];
-            oos.writeInt(nTotalSeats[i]);
-            oos.writeInt(nFreeSeats[i]);
-            oos.writeInt(nPreparedSeats[i]);
-            oos.writeInt(nCommittedSeats[i]);
-            oos.writeInt(nCompensatableSeats[i]);
-        }
-        Enumeration keys = compensatableTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            Integer[] counts = (Integer[]) compensatableTransactions.get(name);
-            oos.writeObject(name);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                oos.writeInt(counts[i].intValue());
+                writeShadowState(txId, restoredState);
+                commitShadowState(txId);
+            } catch (IOException e) {
+                clearShadowState(txId);
+                System.out.println("error : unable to initialise theatre manager state " + e);
             }
         }
-        oos.writeObject("");
-        keys = preparedTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            Integer[] counts = (Integer[]) preparedTransactions.get(name);
-            oos.writeObject(name);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
-                oos.writeInt(counts[i].intValue());
-            }
-        }
-        oos.writeObject("");
+        theatreState = restoredState;
+
+        preparation = new Object();
+        // we will roll back any locally prepared changes to web service state unless we discover that
+        // they are needed during recovery
+        rollbackPreparedTx = isLocked();
+
+        isCommit = true;
+        autoCommitMode = true;
+        isPreparationWaiting = false;
     }
 }

@@ -43,6 +43,9 @@ import java.io.Serializable;
  */
 public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to transaction instances
      * in a one to one manner.
@@ -56,6 +59,9 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
         this.txID = txID;
     }
 
+    /************************************************************************/
+    /* Durable2PCParticipant methods                                        */
+    /************************************************************************/
     /**
      * Invokes the prepare step of the business logic,
      * reporting activity and outcome.
@@ -87,7 +93,6 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
         }
         else
         {
-            getTheatreManager().cancelSeats(txID) ;
             getTheatreView().addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
             getTheatreView().updateFields();
             return new Aborted();
@@ -110,18 +115,9 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
         getTheatreView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = getTheatreManager().commitSeats(txID);
+        getTheatreManager().commitSeats(txID);
 
-        // Log the outcome
-
-        if (success)
-        {
-            getTheatreView().addMessage("Theatre tickets committed\n");
-        }
-        else
-        {
-            getTheatreView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
+        getTheatreView().addMessage("Theatre tickets committed\n");
 
         getTheatreView().updateFields();
     }
@@ -142,33 +138,11 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
         getTheatreView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = getTheatreManager().cancelSeats(txID);
+        getTheatreManager().rollbackSeats(txID);
 
-        // Log the outcome
-
-        if (success)
-        {
-            getTheatreView().addMessage("Theatre booking cancelled\n");
-        }
-        else
-        {
-            getTheatreView().addMessage("Something went wrong (Transaction not registered?)\n");
-        }
+        getTheatreView().addMessage("Theatre booking cancelled\n");
 
         getTheatreView().updateFields();
-    }
-
-    /**
-     * Shortcut method which combines the prepare
-     * and commit steps in a single operation.
-     *
-     * @throws WrongStateException
-     * @throws SystemException
-     */
-    public void commitOnePhase() throws WrongStateException, SystemException
-    {
-        prepare();
-        commit();
     }
 
     public void unknown() throws SystemException
@@ -181,6 +155,9 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
         // used for calbacks during crash recovery. This impl is not recoverable
     }
 
+    /************************************************************************/
+    /* private implementation                                               */
+    /************************************************************************/
     /**
      * Id for the transaction which this participant instance relates to.
      * Set by the service (via contrtuctor) at enrolment time, this value

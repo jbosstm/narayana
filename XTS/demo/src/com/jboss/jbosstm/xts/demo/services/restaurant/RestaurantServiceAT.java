@@ -60,26 +60,6 @@ import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 public class RestaurantServiceAT implements IRestaurantServiceAT
 {
     /**
-     * ensure that the recovery module for the dmeo is installed
-     */
-    @PostConstruct
-    void postConstruct()
-    {
-        // ensure that the xts-demo AT recovery helper module is registered
-        DemoATRecoveryModule.register();
-    }
-
-    /**
-     * ensure that the recovery module for the dmeo is deinstalled
-     */
-    @PreDestroy
-    void preDestroy()
-    {
-        // ensure that the xts-demo AT recovery helper module is registered
-        DemoATRecoveryModule.unregister();
-    }
-
-    /**
      * Book a number of seats in the restaurant
      * Enrols a Participant if necessary, then passes
      * the call through to the business logic.
@@ -120,6 +100,7 @@ public class RestaurantServiceAT implements IRestaurantServiceAT
 
         restaurantView.addMessage("id:" + transactionId + ". Received a booking request for one table of " + how_many + " people");
 
+        // invoke the backend business logic:
         restaurantManager.bookSeats(transactionId, how_many);
 
         restaurantView.addMessage("Request complete\n");

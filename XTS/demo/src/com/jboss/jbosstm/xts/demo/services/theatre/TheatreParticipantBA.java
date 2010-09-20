@@ -30,7 +30,7 @@
 package com.jboss.jbosstm.xts.demo.services.theatre;
 
 import com.arjuna.wst.*;
-import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.wst11.ConfirmCompletedParticipant;
 
 import java.io.Serializable;
 
@@ -42,21 +42,24 @@ import java.io.Serializable;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TheatreParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant, Serializable
+public class TheatreParticipantBA implements
+        BusinessAgreementWithParticipantCompletionParticipant,
+        ConfirmCompletedParticipant,
+        Serializable
 {
+    /************************************************************************/
+    /* public methods                                                       */
+    /************************************************************************/
     /**
      * Participant instances are related to business method calls
      * in a one to one manner.
      *
      * @param txID       uniq id String for the transaction instance.
-     * @param how_many   seats to book/compensate.
-     * @param which_area of the theatre the seats are in.
      */
     public TheatreParticipantBA(String txID, int how_many, int which_area)
     {
         // we need to save the txID for later use when logging
         this.txID = txID;
-        // we also need the business paramater(s) in case of compensation
         this.seatCount = how_many;
         this.seatingArea = which_area;
     }
@@ -69,20 +72,17 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
      * @throws SystemException never in this implementation.
      */
 
+    /************************************************************************/
+    /* BusinessAgreementWithParticipantCompletionParticipant methods        */
+    /************************************************************************/
     public void close() throws WrongStateException, SystemException
     {
-        // let the manager know that this activity no longer requires the option of compensation
+        // nothing to do here as the seats are already booked
 
         System.out.println("TheatreParticipantBA.close");
 
-        if (!getTheatreManager().closeSeats(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("TheatreParticipantBA.close : not expecting a close for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected close for BA participant " + txID);
-        }
-
         getTheatreView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
+
         getTheatreView().updateFields();
     }
 
@@ -101,14 +101,10 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
         System.out.println("TheatreParticipantBA.cancel");
 
-        if (!getTheatreManager().cancelSeats(txID)) {
-            // throw a WrongStateException to indicate that we were not expecting a close
-            System.out.println("TheatreParticipantBA.cancel : not expecting a cancel for BA participant " + txID);
-
-            throw new WrongStateException("Unexpected cancel for BA participant " + txID);
-        }
+        getTheatreManager().rollbackSeats(txID);
 
         getTheatreView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
+
         getTheatreView().updateFields();
     }
 
@@ -129,21 +125,19 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
         getTheatreView().updateFields();
 
-        // tell the manager to compensate
+        // we perform the compensation by preparing and then committing a change which
+        // decrements the bookings
 
-        try {
-            if (!getTheatreManager().compensateSeats(txID)) {
-                // throw a WrongStateException to indicate that we were not expecting a close
-                System.out.println("TheatreParticipantBA.compensate : not expecting a compensate for BA participant " + txID);
+        String compensationTxID = txID + "-compensation";
 
-                throw new WrongStateException("Unexpected compensate for BA participant " + txID);
-            }
-        } catch (FaultedException fe) {
-            getTheatreView().addMessage("id:" + txID + ". FaultedException when compensating participant: " + this.getClass().toString());
+        getTheatreManager().bookSeats(compensationTxID, -seatCount, seatingArea);
 
-            getTheatreView().updateFields();
-            throw fe;
+        if (!getTheatreManager().prepareSeats(compensationTxID)) {
+            getTheatreView().addMessage("id:" + txID + ". Failed to compensate participant: " + this.getClass().toString());
+
+            throw new FaultedException("Failed to compensate participant " + txID);
         }
+        getTheatreManager().commitSeats(compensationTxID);
 
         getTheatreView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
 
@@ -177,7 +171,29 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
         getTheatreView().updateFields();
     }
 
+    /************************************************************************/
+    /* ConfirmCompletedParticipant methods                                  */
+    /************************************************************************/
 
+    /**
+     * method called to perform commit or rollback of prepared changes to the underlying manager state after
+     * the participant recovery record has been written
+     *
+     * @param confirmed true if the log record has been written and changes should be rolled forward and false
+     * if it has not been written and changes should be rolled back
+     */
+
+    public void confirmCompleted(boolean confirmed) {
+        if (confirmed) {
+            getTheatreManager().commitSeats(txID);
+        } else {
+            getTheatreManager().rollbackSeats(txID);
+        }
+    }
+
+    /************************************************************************/
+    /* private implementation                                               */
+    /************************************************************************/
     /**
      * Id for the transaction which this participant instance relates to.
      * Set by the service (via contrtuctor) at enrolment time, this value
@@ -202,4 +218,5 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
     public TheatreManager getTheatreManager() {
         return TheatreManager.getSingletonInstance();
     }
+
 }

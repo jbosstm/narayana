@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2005-2010, Red Hat, and individual contributors
  * as indicated by the @author tags. 
  * See the copyright.txt in the distribution for a full listing 
  * of individual contributors.
@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
  * @author JBoss Inc.
  */
 /*
@@ -29,49 +28,55 @@
 
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
-import com.arjuna.wst.FaultedException;
+import com.jboss.jbosstm.xts.demo.services.state.ServiceStateManager;
+import static com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantConstants.*;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
+import javax.xml.ws.WebServiceException;
 import java.io.*;
 
 /**
  * The transactional application logic for the Restaurant Service.
  * <p/>
- * Stores and manages seating reservations. Knows nothing about Web Services.
- * Understands transactional booking lifecycle: unprepared, prepared, finished.
+ * Stores and manages seating reservations.
+ * <p/>
+ * The manager extends class ServiceStateManager which implements a very simple
+ * transactional resource manager. It gives the restaurant manager the ability to
+ * persist the web service state in a local disk file and to make transactional
+ * updates to that persistent state. The unit of locking is the whole of the
+ * service state so although bookings can be attempted by concurrent transactions
+ * only one such booking will commit, forcing other concurrent transactions to
+ * roll back. Conflict detection is implemented using a simple versioning scheme.
  *
- * </p>The manager maintains the following invariants regarding seating capacity:
- * <ul>
- * <li>nBooked == sum(unpreparedList.seatCount) + sum(preparedList.seatCount)
- *
- * <li>nPrepared = sum(prepared.seatCount)
- *
- * <li>nTotal == nFree + nPrepared + nCommitted
- * </ul>
- * Extended to include support for BA compensation based rollback
- * </p>
- * The manager now maintains an extra list compensatableList:
- *  <ul>
- * <li>nCompensatable == sum(compensatableList.seatCount)
- * </ul>
- * changes to nPrepared, nFree, nCommitted, nCompensatable, nTotal, preparedList and compensatableList are
- * always shadowed in persistent storage before returning control to clients.
- * </p>
+ * The restaurant manager provides a book method allowing the web service endpoint to book
+ * or unbook seats. It also exposes prepare, commit and rollback operations used by both
+ * WSAT and WSBA participants to drive prepare, commit and rollback of changes to the
+ * persistent state. Finally it exposes recovery logic used by the WSAT and WSBA recovery
+ * modules to tie recovery of WSAT and WSBA participants to recovery and rollback of the
+ * local service state.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
- * @version $Revision: 1.3 $
+ * @author Andrew Dinn (adinn@redhat.com)
+ * @version $Revision:$
  */
-public class RestaurantManager implements Serializable
-{
+public class RestaurantManager extends ServiceStateManager<RestaurantState> {
+
+    /*****************************************************************************/
+    /* Support for the Web Service API                                           */
+    /*****************************************************************************/
+
     /**
-     * Create and initialise a new RestaurantManager instance.
+     * Accessor to obtain the singleton restaurant manager instance.
+     *
+     * @return the singleton RestaurantManager instance.
      */
-    private RestaurantManager()
+    public synchronized static RestaurantManager getSingletonInstance()
     {
-        setToDefault(false);
-        // restore any state saved by a previous installation of this web service
-        restoreState();
+        if (singletonInstance == null)
+        {
+            singletonInstance = new RestaurantManager();
+        }
+
+        return singletonInstance;
     }
 
     /**
@@ -82,366 +87,211 @@ public class RestaurantManager implements Serializable
      */
     public synchronized void bookSeats(Object txID, int nSeats)
     {
-        // locate any pre-existing request for the same transaction
-        Integer request = (Integer) unpreparedTransactions.get(txID);
-        if (request == null)
-        {
-            // this is the first request for this transaction
-            // setup the data structure to record it
-            request = new Integer(0);
+        // we cannot proceed while a prepare is in progress
+
+        while (isLocked()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
 
-        // record the request, keyed to its transaction scope
-        request = new Integer(request.intValue() + nSeats);
-        unpreparedTransactions.put(txID, request);
+        if (restaurantState.freeSeats < nSeats ||
+                restaurantState.bookedSeats + nSeats > restaurantState.totalSeats) {
+            throw new WebServiceException("requested number of seats (" + nSeats + ") not available");
+        }
 
-        // record the increased commitment to provide seating
-        nBookedSeats += nSeats;
-        // we don't actually need to update until prepare
+        // create a state derived from the current state which reflects the new booking count
+
+        RestaurantState childState = restaurantState.derivedState();
+
+        // update the number of booked and free seats in the derived state
+
+        childState.freeSeats -= nSeats;
+        childState.bookedSeats += nSeats;
+
+        // install this as the current transaction state
+
+        putState(txID, childState);
+
     }
 
     /**
-     * Attempt to ensure availability of the requested seating.
+     * check whether we have already seen a web service request in a given transaction
+     */
+
+    public synchronized boolean knowsAbout(Object txID)
+    {
+        return getState(txID) != null;
+    }
+
+    /*****************************************************************************/
+    /* Support for the AT and BA Participant API implementation                  */
+    /*****************************************************************************/
+
+    /**
+     * Prepare local state changes for the supplied transaction
      *
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public synchronized boolean prepareSeats(Object txID)
+    public boolean prepareSeats(Object txID)
     {
         // ensure that we have seen this transaction before
-        Integer request = (Integer) unpreparedTransactions.get(txID);
-        if (request == null)
-        {
-            return false; // error: transaction not registered
+        RestaurantState childState = getState(txID);
+        if (childState == null) {
+            return false;
         }
-        else
-        {
-            if (autoCommitMode)
-            {
-                if (request.intValue() <= nFreeSeats)
-                {
-                    // record the prepared transaction
-                    preparedTransactions.put(txID, request);
-                    unpreparedTransactions.remove(txID);
-                    // mark the prepared seats as unavailable
-                    nFreeSeats -= request.intValue();
-                    nPreparedSeats += request.intValue();
-                    updateState();
-
-                    return true;
+        // we have a single monolithic state element which means that only one transaction can prepare
+        // at any given time. we lock this state at prepare by providing the txId as a locking id. it only
+        // gets unlocked when we reach commit or rollback. the equivalent to the lock in memory is the
+        // shadow state file on disk.
+        synchronized (this) {
+            while (isLocked()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-                else
-                {
-                    // we don't have enough seats available
+            }
+
+            // check no other bookings have been committed
+
+            if (!restaurantState.isParentOf(childState)) {
+                removeState(txID);
+                return false;
+            }
+
+            // see if we need user confirmation
+
+            if (!autoCommitMode) {
+                // need to wait for the user to decide whether to go ahead or not with this participant
+                isPreparationWaiting = true;
+                synchronized (preparation) {
+                    try {
+                        preparation.wait();
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                }
+                isPreparationWaiting = false;
+
+                // process the user decision
+                if (!isCommit) {
+                    removeState(txID);
                     return false;
                 }
             }
-            else
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
 
-                    // process the user decision
-                    if (isCommit)
-                    {
-                        // record the prepared transaction
-                        preparedTransactions.put(txID, request);
-                        unpreparedTransactions.remove(txID);
-                        // mark the prepared seats as unavailable
-                        nFreeSeats -= request.intValue();
-                        nPreparedSeats += request.intValue();
-                        updateState();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println("RestaurantManager.prepareSeats(): Unable to stop preparation.");
-                    return false;
-                }
+            // ok, so lock the state against other prepare/commits
+
+            lock(txID);
+        }
+        // if we got here then no other changes have invalidated our booking and we have locked out
+        // further changes until commit or rollback occurs. we write the derived child state to the
+        // shadow state file before returning. if we crash after the write we will detect the shadow
+        // state at reboot and restore the lock.
+        try {
+            writeShadowState(txID, childState);
+            return true;
+        } catch (Exception e) {
+            clearShadowState(txID);
+            synchronized (this) {
+                removeState(txID);
+                unlock();
+            }
+            System.err.println("RestaurantManager.prepareSeats(): Error attempting to prepare transaction: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * commit local state changes for the supplied transaction
+     *
+     * @param txID
+     */
+    public void commitSeats(Object txID)
+    {
+        synchronized (this) {
+            // if there is a shadow state with this id then we need to copy the shadow state file over to the
+            // real state file. it may be that there is no shadow state because this is a repeated commit
+            // request. if so then we must have committed earlier so there is no harm done.
+            if (isLockID(txID)) {
+                commitShadowState(txID);
+                // update the current state with the prepared state.
+                restaurantState = getPreparedState();
+                unlock();
+            }
+            removeState(txID);
+        }
+    }
+
+    /**
+     * roll back local state changes for the supplied transaction
+     * @param txID
+     */
+    public void rollbackSeats(Object txID)
+    {
+        synchronized (this) {
+            removeState(txID);
+            if (isLockID(txID)) {
+                clearShadowState(txID);
+                unlock();
             }
         }
     }
 
     /**
-     * Release booked or prepared seats.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * handle a recovery error by rolling back the changes associated with the transaction
+     * @param txID
      */
-    public synchronized boolean cancelSeats(Object txID)
+    public void error(String txID)
     {
-        boolean success = false;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-            // undo the prepare operations
-            Integer request = (Integer) preparedTransactions.remove(txID);
-            nFreeSeats += request.intValue();
-            nPreparedSeats -= request.intValue();
-            nBookedSeats -= request.intValue();
-            updateState();
-            success = true;
-        }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            // undo the booking operations
-            Integer request = (Integer) unpreparedTransactions.remove(txID);
-            nBookedSeats -= request.intValue();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-        return success;
+        rollbackSeats(txID);
     }
 
-    /**
-     * Compensate a committed booking.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean compensateSeats(Object txID)
-            throws FaultedException
-    {
-        boolean success = false;
-
-        // the transaction must be compensatable
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // see if the user wants to report a compensation fault
-            
-            if (!autoCommitMode)
-            {
-                try
-                {
-                    // wait for a user commit/rollback decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    if (!isCommit)
-                    {
-                        throw new FaultedException("RestaurantManager.compensateSeats(): compensation fault");
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println("RestaurantManager.compensateSeats(): Unexpected error during compensation.");
-                    throw new FaultedException("RestaurantManager.compensateSeats(): compensation fault");
-                }
-            }
-
-            // compensate the committed transaction
-            Integer request = (Integer) compensatableTransactions.remove(txID);
-            nCompensatableSeats -= request.intValue();
-
-            nCommittedSeats -= request.intValue();
-            nFreeSeats += request.intValue();
-            updateState();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered
-        }
-        return success;
-    }
+    /*****************************************************************************/
+    /* Accessors for the GUI to view and reset the service state                 */
+    /*****************************************************************************/
 
     /**
-     * Commit seat bookings.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
+     * Reset to the initial state.
      */
-    public synchronized boolean commitSeats(Object txID)
+    public synchronized void reset()
     {
-        return commitSeats(txID, false);
-    }
+        // we cannot proceed while a prepare is in progress
 
-    /**
-     * Commit seat bookings, possibly allowing subsequent compensation.
-     *
-     * @param txID The transaction identifier
-     * @param compensatable true if it may be necessary to compensate this commit laer
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean commitSeats(Object txID, boolean compensatable)
-    {
-        boolean success;
-
-        // the transaction may be prepared, unprepared or unknown
-
-        if (preparedTransactions.containsKey(txID))
-        {
-            // complete the prepared transaction
-            Integer request = (Integer) preparedTransactions.remove(txID);
-            if (compensatable) {
-                nCompensatableSeats += request.intValue();
-                compensatableTransactions.put(txID, request);
-            }
-            nCommittedSeats += request.intValue();
-            nPreparedSeats -= request.intValue();
-            nBookedSeats -= request.intValue();
-            updateState();
-            success = true;
-        }
-        else if (unpreparedTransactions.containsKey(txID))
-        {
-            Integer request = (Integer) unpreparedTransactions.remove(txID);
-            boolean doCommit;
-            // check we have enough seats and if so
-            // use one phase commit optimisation, skipping prepare
-
-            if (autoCommitMode)
-            {
-                if (request.intValue() <= nFreeSeats)
-                {
-                    doCommit = true;
-                } else {
-                    doCommit = false;
-                }
-            }
-            else
-            {
-                try
-                {
-                    // wait for a user decision
-                    isPreparationWaiting = true;
-                    synchronized (preparation)
-                    {
-                        preparation.wait();
-                    }
-                    isPreparationWaiting = false;
-
-                    // process the user decision
-                    doCommit = isCommit;
-                } catch (Exception e) {
-                    System.err.println("RestaurantManager.commitSeats(): Unable to perform commit.");
-                    doCommit = false;
-                }
-            }
-
-            if (doCommit) {
-                if (compensatable) {
-                    nCompensatableSeats += request.intValue();
-                    compensatableTransactions.put(txID, request);
-                }
-                nCommittedSeats += request.intValue();
-                nFreeSeats -= request.intValue();
-                nBookedSeats -= request.intValue();
-                updateState();
-                success = true;
-            } else {
-                // get rid of the commitment to keep these seats
-                nBookedSeats -= request.intValue();
-                success = false;
+        while (isLocked()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // ignore
             }
         }
-        else
-        {
-            success = false; // error: transaction not registered
+
+        // undo all existing bookings
+
+        RestaurantState resetState = restaurantState.derivedState();
+
+        resetState.totalSeats = DEFAULT_SEATING_CAPACITY;
+        resetState.bookedSeats = 0;
+        resetState.freeSeats = resetState.totalSeats;
+
+        Object txId = "reset-transaction";
+        try {
+            writeShadowState(txId, resetState);
+            commitShadowState(txId);
+        } catch (IOException e) {
+            clearShadowState(txId);
+             System.out.println("error : unable to reset restaurant manager state " + e);
         }
 
-        return success;
-    }
+        restaurantState = resetState;
+        
+        // remove any in-progress transactions
 
-    /**
-     * Close seat bookings, removing possibility for compensation.
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
-     */
-    public synchronized boolean closeSeats(Object txID)
-    {
-        boolean success;
-
-        // the transaction may be compensatable or unknown
-
-        if (compensatableTransactions.containsKey(txID))
-        {
-            // complete the prepared transaction
-            Integer request = (Integer) compensatableTransactions.remove(txID);
-
-            nCompensatableSeats -= request.intValue();
-            updateState();
-            success = true;
-        }
-        else
-        {
-            success = false; // error: transaction not registered for compensation
-        }
-
-        return success;
-    }
-
-    /**
-     * Handle BA error for a specific booking.
-     *
-     * @param txID The transaction identifier
-     */
-    public synchronized void error(Object txID)
-    {
-        // undo any provisional or actual changes associated wiht the booking
-
-        Integer request = (Integer) unpreparedTransactions.remove(txID);
-        if (request != null) {
-            nBookedSeats -= request.intValue();
-        } else if ((request = (Integer)preparedTransactions.remove(txID)) != null) {
-            nFreeSeats += request.intValue();
-            nPreparedSeats -= request.intValue();
-            nBookedSeats -= request.intValue();
-            updateState();
-        } else if ((request = (Integer)compensatableTransactions.remove(txID)) != null) {
-            nCompensatableSeats -= request.intValue();
-
-            nCommittedSeats -= request.intValue();
-            nFreeSeats += request.intValue();
-            updateState();
-        }
-    }
-
-    /**
-     * Determine if a specific transaction is known to the business logic.
-     *
-     * @param txID The uniq id for the transaction
-     * @return true if the business logic is holding state related to the given txID,
-     *         false otherwise.
-     */
-    public boolean knowsAbout(Object txID)
-    {
-        return (unpreparedTransactions.containsKey(txID) || preparedTransactions.containsKey(txID));
-    }
-
-    /**
-     * Change the capacity of the Resaurant.
-     *
-     * @param nSeats The new capacity
-     */
-    public void newCapacity(int nSeats)
-    {
-        nFreeSeats += nSeats - nTotalSeats;
-        nTotalSeats = nSeats;
+        clearTransactions();
     }
 
     /**
@@ -451,7 +301,7 @@ public class RestaurantManager implements Serializable
      */
     public int getNFreeSeats()
     {
-        return nFreeSeats;
+        return restaurantState.freeSeats;
     }
 
     /**
@@ -461,7 +311,7 @@ public class RestaurantManager implements Serializable
      */
     public int getNTotalSeats()
     {
-        return nTotalSeats;
+        return restaurantState.totalSeats;
     }
 
     /**
@@ -471,37 +321,22 @@ public class RestaurantManager implements Serializable
      */
     public int getNBookedSeats()
     {
-        return nBookedSeats;
+        return restaurantState.bookedSeats;
     }
 
     /**
-     * Get the number of prepared seats.
+     * Get the number of prepared seats in the given area.
      *
-     * @return The number of prepared seats
+     * @return The number of booked seats
      */
-    public int getNPreparedSeats()
+    public synchronized int getNPreparedSeats()
     {
-        return nPreparedSeats;
-    }
-
-    /**
-     * Get the number of committed seats in the given area.
-     *
-     * @return The number of committed seats
-     */
-    public int getNCommittedSeats()
-    {
-        return nCommittedSeats;
-    }
-
-    /**
-     * Get the number of compensatable seats in the given area.
-     *
-     * @return The number of compensatable seats
-     */
-    public int getNCompensatableSeats()
-    {
-        return nCompensatableSeats;
+        if (isLocked()) {
+            RestaurantState childState = getPreparedState();
+            return childState.bookedSeats - restaurantState.bookedSeats;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -564,91 +399,73 @@ public class RestaurantManager implements Serializable
         isCommit = commit;
     }
 
+    /*****************************************************************************/
+    /* Implementation of inherited abstract sate management API                  */
+    /*****************************************************************************/
+
     /**
-     * (re-)initialise the instance data structures deleting any previously saved
-     * transaction state.
+     * identify the name of file used to store the current service state
+      * @return the name of the file used to store the current service state
      */
-    public void setToDefault()
-    {
-        setToDefault(true);
+    @Override
+    public String getStateFilename() {
+        return STATE_FILENAME;
     }
 
     /**
-     * (re-)initialise the instance data structures, potentially committing any saved state
-     * to disk
-     * @param deleteSavedState true if any cached transaction state should be deleted otherwise false
+     * identify the name of file used to store the shadow service state
+      * @return the name of the file used to store the shadow service state
      */
-    public void setToDefault(boolean deleteSavedState)
+    @Override
+    public String getShadowStateFilename() {
+        return SHADOW_STATE_FILENAME;
+    }
+
+    /*****************************************************************************/
+    /* Recovery methods maintaining consistency of local and  WSAT/WSBA state    */
+    /*****************************************************************************/
+
+    /**
+     * called by the AT recovery module when an AT participant is recovered from a log record
+     */
+    public void recovered(RestaurantParticipantAT participant)
     {
-        nTotalSeats = DEFAULT_SEATING_CAPACITY;
-        nFreeSeats = nTotalSeats;
-        nBookedSeats = 0;
-        nPreparedSeats = 0;
-        nCommittedSeats = 0;
-        nCompensatableSeats = 0;
-        compensatableTransactions = new Hashtable();
-        preparedTransactions = new Hashtable();
-        unpreparedTransactions = new Hashtable();
-        autoCommitMode = true;
-        preparation = new Object();
-        isPreparationWaiting = false;
-        isCommit = true;
-        if (deleteSavedState) {
-            // just write the current state.
-            updateState();
+        // if this AT participant matches the prepared TX id then we need to leave it prepared and locked
+        // at the end of scanning so it can be completed at commit time
+        if (isLockID(participant.txID)) {
+            rollbackPreparedTx = false;
         }
     }
 
     /**
-     * Allow use of a singleton model for web services demo.
-     *
-     * @return the singleton RestaurantManager instance.
+     * called by the BA recovery module when an AT participant is recovered from a log record
      */
-    public synchronized static RestaurantManager getSingletonInstance()
+    public void recovered(RestaurantParticipantBA participant)
     {
-        if (singletonInstance == null)
-        {
-            singletonInstance = new RestaurantManager();
+        // if this AT participant matches the prepared TX id then we roll it forward here by calling
+        // confirmCompleted so once again we don't need to roll back the prepared state
+        if (isLockID(participant.txID)) {
+            participant.confirmCompleted(true);
+            rollbackPreparedTx = false;
         }
-
-        return singletonInstance;
     }
 
+    public void recoveryScanCompleted(int txType)
+    {
+        super.recoveryScanCompleted(txType);
+        if (completedScans == TX_TYPE_BOTH && rollbackPreparedTx) {
+            rollbackSeats(getLockID());
+        }
+    }
+
+    /*****************************************************************************/
+    /* Private implementation                                                    */
+    /*****************************************************************************/
+
     /**
-     * A singleton instance of this class.
+     * The singleton instance of this class.
      */
     private static RestaurantManager singletonInstance;
-
-    /**
-     * The total seating capacity.
-     */
-    private int nTotalSeats;
-
-    /**
-     * The number of free seats.
-     */
-    private int nFreeSeats;
-
-    /**
-     * The number of booked seats.
-     * <p/>
-     * Note: This may exceed the total seating capacity
-     */
-    private int nBookedSeats;
-
-    /**
-     * The number of prepared (promised) seats.
-     */
-    private int nPreparedSeats;
-    /**
-     * The number of committed seats in each area.
-     */
-    private int nCommittedSeats;
-
-    /**
-     * The number of compensatable seats in each area.
-     */
-    private int nCompensatableSeats;
 
     /**
      * The auto commit mode.
@@ -673,161 +490,54 @@ public class RestaurantManager implements Serializable
     private boolean isCommit;
 
     /**
-     * The transactions we know about but which have not been prepared.
+     * Flag which determines whether we have to roll back any prepared changes to the server. We roll back
+     * changes for an AT or BA participant if there is no associated log record because the participant never
+     * prepared or completed, respectively. If we see a log record for an AT participant we leave the prepared
+     * state behind since the AT participant has prepared and may still commit.
      */
-    private Hashtable unpreparedTransactions;
+    private boolean rollbackPreparedTx;
 
     /**
-     * The transactions we know about and are prepared to commit.
+     * the latest version of the restaurant state which includes a version id.
+     * this state object is always stored on disk in the restaurant state file
+     * a prepared version of a single derived child state may also exist on disk
+     * in the restaurant shadow state file.
      */
-    private Hashtable preparedTransactions;
+    private RestaurantState restaurantState;
 
     /**
-     * The transactions we know about and are prepared to compensate.
+     * Create and initialise a new RestaurantManager instance either restoring any
+     * existing service state from disk or else installing and committing to disk
+     * a new initial state. If a prepared version of a derived child state (shadow state)
+     * is found on disk then the shadow state  is also loaded and the current state is
+     * locked awaiting recovery. recovery will either roll forward the shadow state, using
+     * it to replace the current state or roll it back.
      */
-    private Hashtable compensatableTransactions;
-
-    /**
-     * The default initial capacity of each seating area.
-     */
-    public static final int DEFAULT_SEATING_CAPACITY = 100;
-
-    /**
-     * the name of the file used to store the restaurant manager state
-     */
-    final static private String STATE_FILENAME = "restaurantManagerState";
-
-    /**
-     * the name of the file used to store the restaurant manager shadow state
-     */
-    final static private String SHADOW_STATE_FILENAME = "restaurantManagerShadowState";
-
-    /**
-     * load any previously saved manager state
-     *
-     * n.b. can only be called once from the singleton constructor before save can be called
-     * so there is no need for any synchronization here
-     */
-
-    private void restoreState()
+    private RestaurantManager()
     {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-        if (file.exists()) {
-            if (shadowFile.exists()) {
-                // crashed during shadow file write == just trash it
-                shadowFile.delete();
-            }
-        } else if (shadowFile.exists()) {
-            // crashed afetr successful write - promote shadow file to real file
-            shadowFile.renameTo(file);
-            file = new File(STATE_FILENAME);
-        }
-        if (file.exists()) {
+        RestaurantState restoredState = restoreState();
+        if (restoredState == null) {
+            // we need to create a new initial state and persist it to disk
+            restoredState = RestaurantState.initialState();
+            Object txId = "initialisation-transaction-" + System.currentTimeMillis();
             try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                readState(ois);
-            } catch (Exception e) {
-                System.out.println("error : could not restore restaurant manager state" + e);
+                writeShadowState(txId, restoredState);
+                commitShadowState(txId);
+            } catch (IOException e) {
+                clearShadowState(txId);
+                System.out.println("error : unable to initialise restaurant manager state " + e);
             }
-        } else {
-            System.out.println("Starting with default restaurant manager state");
-        }
-    }
-
-    /**
-     * write the current manager state to a shadow disk file then commit it as the latest state
-     * by relinking it to the current file
-     *
-     * n.b. must always called synchronized since the caller must always atomically check the
-     * current state, modify it and write it.
-     */
-    private void updateState()
-    {
-        File file = new File(STATE_FILENAME);
-        File shadowFile = new File(SHADOW_STATE_FILENAME);
-
-        if (shadowFile.exists()) {
-            // previous write must have barfed
-            shadowFile.delete();
         }
 
-        try {
-            FileOutputStream fos = new FileOutputStream(shadowFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            writeState(oos);
-        } catch (Exception e) {
-            System.out.println("error : could not restore restaurant manager state" + e);
-        }
+        restaurantState = restoredState;
+        
+        preparation = new Object();
+        // we will roll back any locally prepared changes to web service state unless we discover that
+        // they are needed during recovery
+        rollbackPreparedTx = isLocked();
 
-        shadowFile.renameTo(file);
-    }
-
-    /**
-     * does the actual work of reading in the saved manager state
-     *
-     * @param ois
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
-    {
-        nTotalSeats = ois.readInt();
-        nFreeSeats = ois.readInt();
-        nPreparedSeats = ois.readInt();
-        nCommittedSeats = ois.readInt();
-        nCompensatableSeats = ois.readInt();
-        compensatableTransactions = new Hashtable();
-        String name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            int count = ois.readInt();
-            compensatableTransactions.put(name, new Integer(count));
-            name = (String)ois.readObject();
-        }
-        preparedTransactions = new Hashtable();
-        name = (String)ois.readObject();
-        while (!"".equals(name)) {
-            int count = ois.readInt();
-            preparedTransactions.put(name, new Integer(count));
-            name = (String)ois.readObject();
-        }
-        unpreparedTransactions = new Hashtable();
-        // derive nBookedSeats from invariant
-        nBookedSeats = nPreparedSeats;
-        // assert invariant for total seats
-        assert nTotalSeats == nFreeSeats + nPreparedSeats + nCommittedSeats;
-    }
-
-    /**
-     * does the actual work of writing out the saved manager state
-     * @param oos
-     * @throws IOException
-     */
-    private void writeState(ObjectOutputStream oos) throws IOException
-    {
-        // assert invariant for total seats
-        assert nTotalSeats == nFreeSeats + nPreparedSeats + nCommittedSeats;
-        oos.writeInt(nTotalSeats);
-        oos.writeInt(nFreeSeats);
-        oos.writeInt(nPreparedSeats);
-        oos.writeInt(nCommittedSeats);
-        oos.writeInt(nCompensatableSeats);
-        Enumeration keys = compensatableTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            int count = ((Integer)compensatableTransactions.get(name)).intValue();
-            oos.writeObject(name);
-            oos.writeInt(count);
-        }
-        oos.writeObject("");
-        keys = preparedTransactions.keys();
-        while (keys.hasMoreElements()) {
-            String name = (String)keys.nextElement();
-            int count = ((Integer)preparedTransactions.get(name)).intValue();
-            oos.writeObject(name);
-            oos.writeInt(count);
-        }
-        oos.writeObject("");
+        isCommit = true;
+        autoCommitMode = true;
+        isPreparationWaiting = false;
     }
 }
