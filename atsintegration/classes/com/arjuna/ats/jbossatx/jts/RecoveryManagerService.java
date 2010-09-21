@@ -20,9 +20,9 @@
  */
 package com.arjuna.ats.jbossatx.jts;
 
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
-import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 
 /**
@@ -46,7 +46,7 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
         OA oa = OA.getRootOA(orb);
         oa.setPOA(rootPOA);
 
-        RecoveryORBManager.setORB(orb);
-        RecoveryORBManager.setPOA(oa);
+        ORBManager.setORB(orb);
+        ORBManager.setPOA(oa);
     }
 }
