@@ -337,13 +337,13 @@ public class jtsI18NLoggerImpl implements jtsI18NLogger {
         logger.logv(INFO, "ARJUNA-22086 Starting RecoveryServer ORB on port {0} and address {1}", arg0, arg1);
     }
 
-    public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a(String arg0) {
-        logger.logv(WARN, "ARJUNA-22087 Sharing RecoveryServer ORB on port {0}", arg0);
+    public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a() {
+        logger.logv(INFO, "ARJUNA-22087 RecoveryServer using existing ORB");
     }
 
-    public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(Throwable arg0) {
-        logger.logv(WARN, arg0, "ARJUNA-22088 Failed to create orb and poa for transactional objects", (Object)null);
-    }
+//    public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(Throwable arg0) {
+//        logger.logv(WARN, arg0, "ARJUNA-22088 Failed to create orb and poa for transactional objects", (Object)null);
+//    }
 
     public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_8() {
         logger.logv(WARN, "ARJUNA-22089 RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.", (Object)null);

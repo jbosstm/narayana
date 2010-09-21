@@ -144,8 +144,8 @@ public interface orbportabilityI18NLogger {
 	public void warn_internal_utils_InitLoader_initfailed(String arg0, String arg1);
 
 	@Message(id = 21027, value = "Loading {0} class - {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_internal_utils_InitLoader_loading(String arg0, String arg1);
+	@LogMessage(level = INFO)
+	public void info_internal_utils_InitLoader_loading(String arg0, String arg1);
 
 //	@Message(id = 21028, value = "OA ORB specific class creation failed with: {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

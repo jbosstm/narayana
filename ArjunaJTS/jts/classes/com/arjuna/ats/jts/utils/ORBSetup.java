@@ -35,9 +35,7 @@ import com.arjuna.orbportability.utils.InitClassInterface;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.RootOA;
-import com.arjuna.orbportability.internal.InternalORB;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -57,7 +55,7 @@ public class ORBSetup implements InitClassInterface
      */
     public void invoke(Object obj)
     {
-	if ( !ORBManager.isInitialised() )
+        if ( !ORBManager.isInitialised() )
         {
             if (jtsLogger.logger.isTraceEnabled()) {
                 jtsLogger.logger.trace("The ORBSetup.invoke method has been invoked");
@@ -71,19 +69,16 @@ public class ORBSetup implements InitClassInterface
             {
                 ORB orb = (ORB)obj;
 
-                if ( !( orb instanceof InternalORB ) )
-                {
-                    if (jtsLogger.logger.isTraceEnabled()) {
-                        jtsLogger.logger.trace("The JTS ORB has been set to " + orb);
-                    }
-
-                    /**
-                     * Set the orb manager and then set the POA to be the root POA for
-                     * that ORB.  If another POA is then initialised this will be overridden.
-                     */
-                    ORBManager.setORB(orb);
-                    ORBManager.setPOA(RootOA.getRootOA(orb));
+                if (jtsLogger.logger.isTraceEnabled()) {
+                    jtsLogger.logger.trace("The JTS ORB has been set to " + orb);
                 }
+
+                /**
+                 * Set the orb manager and then set the POA to be the root POA for
+                 * that ORB.  If another POA is then initialised this will be overridden.
+                 */
+                ORBManager.setORB(orb);
+                ORBManager.setPOA(RootOA.getRootOA(orb));
             }
 
             /**
@@ -94,13 +89,10 @@ public class ORBSetup implements InitClassInterface
             {
                 OA oa = (OA)obj;
 
-                if ( ( oa != null ) && ( !( oa.getAssociatedORB() instanceof InternalORB ) ) )
-                {
-                    if (jtsLogger.logger.isTraceEnabled()) {
-                        jtsLogger.logger.trace("The JTS OA has been set " + oa);
-                    }
-                    ORBManager.setPOA(oa);
+                if (jtsLogger.logger.isTraceEnabled()) {
+                    jtsLogger.logger.trace("The JTS OA has been set " + oa);
                 }
+                ORBManager.setPOA(oa);
             }
         }
         else

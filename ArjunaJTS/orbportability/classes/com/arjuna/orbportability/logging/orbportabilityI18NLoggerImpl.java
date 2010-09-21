@@ -117,7 +117,7 @@ public class orbportabilityI18NLoggerImpl implements orbportabilityI18NLogger {
 		logger.logv(WARN, "ARJUNA-21026 {0} - attempt to initialise {1} with null class name!", arg0, arg1);
 	}
 
-	public void warn_internal_utils_InitLoader_loading(String arg0, String arg1) {
-		logger.logv(WARN, "ARJUNA-21027 Loading {0} class - {1}", arg0, arg1);
+	public void info_internal_utils_InitLoader_loading(String arg0, String arg1) {
+		logger.logv(INFO, "ARJUNA-21027 Loading {0} class - {1}", arg0, arg1);
 	}
 }

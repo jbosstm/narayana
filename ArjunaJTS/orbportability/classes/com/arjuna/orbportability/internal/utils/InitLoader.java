@@ -35,8 +35,6 @@ import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.utils.InitClassInterface;
 
-import java.util.Properties;
-import java.util.Enumeration;
 import java.util.Map;
 
 import java.lang.ClassNotFoundException;
@@ -83,7 +81,7 @@ private void createInstance (String attrName, String className)
 	{
 	    try
 	    {
-            opLogger.i18NLogger.warn_internal_utils_InitLoader_loading(initName, className);
+            opLogger.i18NLogger.info_internal_utils_InitLoader_loading(initName, className);
 
 		Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
 

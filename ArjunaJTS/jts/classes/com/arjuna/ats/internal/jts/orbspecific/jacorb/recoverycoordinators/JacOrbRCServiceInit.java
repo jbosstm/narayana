@@ -33,7 +33,6 @@
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.objectstore.TxLog;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
@@ -44,20 +43,16 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
 
 import com.arjuna.orbportability.*;
 
-import java.io.InputStream;
-
 import org.omg.CORBA.*;
+import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.PortableServer.*;
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.*;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -82,110 +77,21 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
      * but the policies are usable by the JacOrbRCManager to create the IOR's in
      * TS-using processes.
      */
-
-    static POA getRCPOA (String domainName)
+    private static POA getRCPOA ()
     {
         String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
-        
+
         if (jtsLogger.logger.isDebugEnabled()) {
             jtsLogger.logger.debug("JacOrbRCServiceInit.getRCPOA " + rcServiceName);
         }
 
         if (_poa == null)
         {
+            String domainName = "recovery_coordinator";
             String poaName = POA_NAME_PREFIX + rcServiceName+domainName;
-            boolean oaInit = true;
-            String oaPort = "OAPort";
-        String oaAddr = "OAIAddr";
-        String oldPort = System.getProperty(oaPort, "");
-        String oldAddr = System.getProperty(oaAddr, "");
-
-        /** If the ORB Manager hasn't been initialised then create our own ORB **/
-
-            if ( !RecoveryORBManager.isInitialised() )
-            {
-                _orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
-                String[] params = null;
-                String recoveryManagerPort = ""+jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
-                String recoveryManagerAddr = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerAddress();
-
-                if (recoveryManagerAddr == null)
-                    recoveryManagerAddr = "";
-
-                jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(recoveryManagerPort, recoveryManagerAddr);
-
-                final Properties p = new Properties();
-                // Try to preload jacorb.properties
-                final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader() ;
-                if (contextClassLoader != null)
-                {
-                    final InputStream is = contextClassLoader.getResourceAsStream("jacorb.properties") ;
-                    if (is != null)
-                    {
-                        try
-                        {
-                            p.load(is) ;
-                        }
-                        catch (final IOException ioe)
-                        {
-                            p.clear() ;
-                        }
-                    }
-                }
-                p.setProperty(oaPort, recoveryManagerPort);
-
-                if (recoveryManagerAddr.length() != 0)
-                {
-                    p.setProperty(oaAddr, recoveryManagerAddr);
-                    System.setProperty(oaAddr, oldAddr);
-                }
-
-                _orb.initORB(params, p);
-                _oa = OA.getRootOA(_orb);
-
-                if (oldPort == null)
-                    oldPort = "";
-
-                System.setProperty(oaPort, oldPort);    // Remove property that JacORB added so future ORB's work.
-
-                RecoveryORBManager.setORB(_orb);
-                RecoveryORBManager.setPOA(_oa);
-            }
-            else
-            {
-                /** Otherwise use the ORB already registered with the ORB Manager **/
-                _orb = RecoveryORBManager.getORB();
-                _oa = (RootOA) RecoveryORBManager.getPOA();
-                
-                oaInit = false;
-
-                jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a(oldPort);
-            }
 
             try
             {
-                /*
-                 * Only initialise the object adapter if we created it.
-                 * Otherwise we assume the ORB and the POA have been
-                 * initialised already.
-                 */
-
-                if (oaInit)
-                    _oa.initOA();
-
-                if (domainName.equals("recovery_coordinator") && !ORBManager.isInitialised())
-                {
-                    try
-                    {
-                        ORBManager.setORB(_orb);
-                        ORBManager.setPOA(_oa);
-                    }
-                    catch (Exception ex) {
-                        jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(ex);
-                    }
-                }
-
-                org.omg.CORBA.ORB theORB = _orb.orb();
                 org.omg.PortableServer.POA rootPOA = _oa.rootPoa();
 
                 if (rootPOA == null) {
@@ -193,19 +99,19 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
                     return null;
                 }
-                    
+
                 // create direct persistent POA
                 // make the policy lists, with standard policies
                 org.omg.CORBA.Policy[] policies = null;
 
                 policies = new Policy []
-                {
-                    rootPOA.create_lifespan_policy(LifespanPolicyValue.PERSISTENT),
-                    rootPOA.create_servant_retention_policy(ServantRetentionPolicyValue.NON_RETAIN),
-                    rootPOA.create_id_assignment_policy(IdAssignmentPolicyValue.USER_ID),
-                    rootPOA.create_id_uniqueness_policy(IdUniquenessPolicyValue.MULTIPLE_ID),
-                    rootPOA.create_request_processing_policy(RequestProcessingPolicyValue.USE_DEFAULT_SERVANT)
-                };
+                        {
+                                rootPOA.create_lifespan_policy(LifespanPolicyValue.PERSISTENT),
+                                rootPOA.create_servant_retention_policy(ServantRetentionPolicyValue.NON_RETAIN),
+                                rootPOA.create_id_assignment_policy(IdAssignmentPolicyValue.USER_ID),
+                                rootPOA.create_id_uniqueness_policy(IdUniquenessPolicyValue.MULTIPLE_ID),
+                                rootPOA.create_request_processing_policy(RequestProcessingPolicyValue.USE_DEFAULT_SERVANT)
+                        };
 
                 _poa = rootPOA.create_POA(poaName, rootPOA.the_POAManager(), policies);
             }
@@ -217,21 +123,63 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
         return _poa;
     }
 
+    private static void initORBandOA() throws InvalidName
+    {
+        if ( !ORBManager.isInitialised() )
+        {
+            // If the ORB Manager hasn't been initialised then create our own ORB
+
+            _orb = com.arjuna.orbportability.ORB.getInstance("RecoveryServer");
+
+            String recoveryManagerPort = ""+ jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
+            String recoveryManagerAddr = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerAddress();
+
+            jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(recoveryManagerPort, recoveryManagerAddr);
+
+            final Properties p = new Properties();
+            p.setProperty("OAPort", recoveryManagerPort);
+
+            if (recoveryManagerAddr != null && recoveryManagerAddr.length() > 0)
+            {
+                p.setProperty("OAIAddr", recoveryManagerAddr);
+            }
+
+            _orb.initORB((String[])null, p);
+            _oa = OA.getRootOA(_orb);
+            _oa.initOA();
+
+            ORBManager.setORB(_orb);
+            ORBManager.setPOA(_oa);
+        }
+        else
+        {
+            // Otherwise use the ORB already registered with the ORB Manager
+
+            _orb = ORBManager.getORB();
+            _oa = (RootOA) ORBManager.getPOA();
+
+            jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a();
+        }
+    }
+
     /**
      * This starts the service in the RecoveryManager.
      */
 
     public  boolean startRCservice ()
     {
-        POA ourPOA = getRCPOA("recovery_coordinator");
-
-        if (ourPOA == null)  // shortcut
-            return false;
-        
-        Implementations.initialise();
-        
         try
             {
+                initORBandOA();
+
+                POA ourPOA = getRCPOA();
+
+                if (ourPOA == null)  // shortcut
+                    return false;
+
+                Implementations.initialise();
+
+
                 // get the orb, so we can pass it to the default servant
 
                 // make the default servant
@@ -296,12 +244,6 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
     protected static com.arjuna.orbportability.ORB _orb = null;
     protected static com.arjuna.orbportability.RootOA _oa = null;
-
-    protected static String RecoveryIdStore = "RecoveryCoordinatorIdStore";
-    protected static String RecoveryCoordStore = "RecoveryCoordinator";
-
-    private static final String orbNamePrefix = "ots_";
-    private static final String orbName = "arjuna.portable_interceptor.";
 
     static protected String uid4Recovery = "0:ffff52e38d0c:c91:4140398c:0";
 

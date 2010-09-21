@@ -372,13 +372,13 @@ public interface jtsI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(String arg0, String arg1);
 
-	@Message(id = 22087, value = "Sharing RecoveryServer ORB on port {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a(String arg0);
+	@Message(id = 22087, value = "RecoveryServer using existing ORB", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a();
 
-	@Message(id = 22088, value = "Failed to create orb and poa for transactional objects", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(@Cause() Throwable arg0);
+//	@Message(id = 22088, value = "Failed to create orb and poa for transactional objects", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_7(@Cause() Throwable arg0);
 
 	@Message(id = 22089, value = "RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
