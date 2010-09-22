@@ -438,19 +438,30 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         synchronized(this)
         {
             current = state ;
-            if ((current == State.STATE_ACTIVE) || (current == State.STATE_CANCELING_ACTIVE) ||
-        	(current == State.STATE_CANCELING_COMPLETING) || (current == State.STATE_COMPLETING))
+            if ((current == State.STATE_ACTIVE) ||
+                    (current == State.STATE_CANCELING_ACTIVE) ||
+                    (current == State.STATE_CANCELING_COMPLETING))
             {
                 changeState(State.STATE_NOT_COMPLETING) ;
             }
+            else if (current == State.STATE_COMPLETING)
+            {
+                // ending now avoids a race condition similar to the one for a fail message
+                // we set a failure state which ensures that any waiting coordinator detects
+                // that the complete has failed
+                failureState = State.STATE_NOT_COMPLETING;
+                ended();
+            }
         }
 
-        if ((current == State.STATE_ACTIVE) || (current == State.STATE_CANCELING_ACTIVE) ||
-            (current == State.STATE_CANCELING_COMPLETING) || (current == State.STATE_COMPLETING))
+        if ((current == State.STATE_ACTIVE) ||
+                (current == State.STATE_CANCELING_ACTIVE) ||
+                (current == State.STATE_CANCELING_COMPLETING))
         {
+            // we need to make sure the coordinator marks the participant as not completing
             executeCannotComplete() ;
         }
-        else if (current == State.STATE_ENDED)
+        else if ((current == State.STATE_COMPLETING) || (current == State.STATE_ENDED))
         {
             sendNotCompleted() ;
         }
@@ -642,9 +653,16 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (current == State.STATE_ACTIVE)
         {
             sendComplete() ;
-            return waitForState(State.STATE_COMPLETING, TransportTimer.getTransportTimeout()) ;
+            waitForState(State.STATE_COMPLETING, TransportTimer.getTransportTimeout()) ;
         }
-        return current ;
+
+        synchronized(this) {
+            if (state == State.STATE_ENDED && failureState != null) {
+                return failureState;
+            }
+
+            return state;
+        }
     }
 
     /**
