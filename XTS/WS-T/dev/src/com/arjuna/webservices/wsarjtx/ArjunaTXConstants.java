@@ -150,7 +150,7 @@ public interface ArjunaTXConstants
     /**
      * The SOAP Fault Action.
      */
-    public String WSARJTX_ACTION_SOAP_FAULT = WSARJTX_NAMESPACE + "/soapFault" ;
+    public String WSARJTX_ACTION_SOAP_FAULT = WSARJTX_NAMESPACE + "/Fault" ;
 
     
     /**
