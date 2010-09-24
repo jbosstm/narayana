@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter lang="en-US">
+	<title>Using TxCore</title>
+	 <para>
+
+	</para>
+	 <section>
+		<title>State management</title>
+		 <para>
+
+		</para>
+		 <section>
+			<title>Object states</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+		 <section>
+			<title>The object store</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+		 <section>
+			<title>Selecting an object store implementation</title>
+			 <para>
+
+			</para>
+			 <section>
+				<title>StateManager</title>
+				 <para>
+
+				</para>
+
+			</section>
+			
+			 <section>
+				<title>Object models</title>
+				 <para>
+
+				</para>
+
+			</section>
+			
+			 <section>
+				<title>Summary</title>
+				 <para>
+
+				</para>
+
+			</section>
+			
+			 <section>
+				<title>Example</title>
+				 <para>
+
+				</para>
+
+			</section>
+			
+
+		</section>
+		
+
+	</section>
+	
+	 <section>
+		<title>Lock management and concurrency control</title>
+		 <para>
+
+		</para>
+		 <section>
+			<title>Selecting a lock store implementation</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+		 <section>
+			<title>LockManager</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+		 <section>
+			<title>Locking policy</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+		 <section>
+			<title>Object constructor and destructor</title>
+			 <para>
+
+			</para>
+
+		</section>
+		
+
+	</section>
+	
+
+</chapter>
+

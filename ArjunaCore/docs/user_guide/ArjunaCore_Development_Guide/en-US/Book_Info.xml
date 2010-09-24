@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<bookinfo id="book-ArjunaCore_Development_Guide-ArjunaCore_Development_Guide">
+  <title>Development Guide</title>
+  <subtitle>Building Applications with JBoss Transactions</subtitle>
+  <productname>ArjunaCore</productname>
+  <productnumber>4.12.0</productnumber>
+  <edition>0</edition>
+  <pubsnumber>0</pubsnumber>
+  <abstract>
+    <para>
+      This guide is most relevant to engineers who are responsible for administering JBoss Transactions
+      installations. Although this guide is specifically intended for service developers, it will be useful to anyone
+      who would like to gain an understanding of transactions and how they function.
+    </para>
+  </abstract>
+  <corpauthor>
+    <inlinemediaobject>
+      <imageobject>
+        <imagedata fileref="Common_Content/images/title_logo.svg" format="SVG" />
+      </imageobject>
+    </inlinemediaobject>
+  </corpauthor>
+  <xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>
+
