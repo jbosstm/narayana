@@ -35,7 +35,7 @@ import javax.xml.ws.WebServiceException;
 import java.io.*;
 
 /**
- * The transactional application logic for the Restaurant Service.
+ * The application logic for the Restaurant Service.
  * <p/>
  * Stores and manages seating reservations.
  * <p/>
@@ -48,12 +48,9 @@ import java.io.*;
  * roll back. Conflict detection is implemented using a simple versioning scheme.
  *
  * The restaurant manager provides a book method allowing the web service endpoint to book
- * or unbook seats. It also exposes prepare, commit and rollback operations used by both
- * WSAT and WSBA participants to drive prepare, commit and rollback of changes to the
- * persistent state. Finally it exposes recovery logic used by the WSAT and WSBA recovery
- * modules to tie recovery of WSAT and WSBA participants to recovery and rollback of the
- * local service state.
- *
+ * or unbook seats. It also provides getters which allow the GUI to  monitor the state
+ * of the service while transactions are in progress.
+ * 
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @author Andrew Dinn (adinn@redhat.com)
  * @version $Revision:$
@@ -61,7 +58,7 @@ import java.io.*;
 public class RestaurantManager extends ServiceStateManager<RestaurantState> {
 
     /*****************************************************************************/
-    /* Support for the Web Service API                                           */
+    /* Support for the Web Services                                              */
     /*****************************************************************************/
 
     /**
@@ -97,14 +94,14 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
             }
         }
 
-        if (restaurantState.freeSeats < nSeats ||
-                restaurantState.bookedSeats + nSeats > restaurantState.totalSeats) {
+        if (currentState.freeSeats < nSeats ||
+                currentState.bookedSeats + nSeats > currentState.totalSeats) {
             throw new WebServiceException("requested number of seats (" + nSeats + ") not available");
         }
 
         // create a state derived from the current state which reflects the new booking count
 
-        RestaurantState childState = restaurantState.derivedState();
+        RestaurantState childState = currentState.derivedState();
 
         // update the number of booked and free seats in the derived state
 
@@ -117,138 +114,50 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
 
     }
 
-    /**
-     * check whether we have already seen a web service request in a given transaction
-     */
-
-    public synchronized boolean knowsAbout(Object txID)
-    {
-        return getState(txID) != null;
-    }
-
     /*****************************************************************************/
-    /* Support for the AT and BA Participant API implementation                  */
+    /* Implementation of inherited abstract state management API                 */
     /*****************************************************************************/
 
     /**
-     * Prepare local state changes for the supplied transaction
-     *
-     * @param txID The transaction identifier
-     * @return true on success, false otherwise
-     */
-    public boolean prepareSeats(Object txID)
+     * method called during prepare of local state changes allowing the user to force a prepare failure
+     * @return true if the prepare should succeed and false if it should fail
+    */
+    public boolean confirmPrepare()
     {
-        // ensure that we have seen this transaction before
-        RestaurantState childState = getState(txID);
-        if (childState == null) {
-            return false;
-        }
-        // we have a single monolithic state element which means that only one transaction can prepare
-        // at any given time. we lock this state at prepare by providing the txId as a locking id. it only
-        // gets unlocked when we reach commit or rollback. the equivalent to the lock in memory is the
-        // shadow state file on disk.
-        synchronized (this) {
-            while (isLocked()) {
+        if (autoCommitMode) {
+            return true;
+        } else {
+            // need to wait for the user to decide whether to go ahead or not with this participant
+            isPreparationWaiting = true;
+            synchronized (preparation) {
                 try {
-                    wait();
+                    preparation.wait();
                 } catch (InterruptedException e) {
                     // ignore
                 }
             }
+            isPreparationWaiting = false;
 
-            // check no other bookings have been committed
-
-            if (!restaurantState.isParentOf(childState)) {
-                removeState(txID);
-                return false;
-            }
-
-            // see if we need user confirmation
-
-            if (!autoCommitMode) {
-                // need to wait for the user to decide whether to go ahead or not with this participant
-                isPreparationWaiting = true;
-                synchronized (preparation) {
-                    try {
-                        preparation.wait();
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                }
-                isPreparationWaiting = false;
-
-                // process the user decision
-                if (!isCommit) {
-                    removeState(txID);
-                    return false;
-                }
-            }
-
-            // ok, so lock the state against other prepare/commits
-
-            lock(txID);
-        }
-        // if we got here then no other changes have invalidated our booking and we have locked out
-        // further changes until commit or rollback occurs. we write the derived child state to the
-        // shadow state file before returning. if we crash after the write we will detect the shadow
-        // state at reboot and restore the lock.
-        try {
-            writeShadowState(txID, childState);
-            return true;
-        } catch (Exception e) {
-            clearShadowState(txID);
-            synchronized (this) {
-                removeState(txID);
-                unlock();
-            }
-            System.err.println("RestaurantManager.prepareSeats(): Error attempting to prepare transaction: " + e);
-            return false;
+            return isCommit;
         }
     }
 
     /**
-     * commit local state changes for the supplied transaction
-     *
-     * @param txID
+     * identify the name of file used to store the current service state
+      * @return the name of the file used to store the current service state
      */
-    public void commitSeats(Object txID)
-    {
-        synchronized (this) {
-            // if there is a shadow state with this id then we need to copy the shadow state file over to the
-            // real state file. it may be that there is no shadow state because this is a repeated commit
-            // request. if so then we must have committed earlier so there is no harm done.
-            if (isLockID(txID)) {
-                commitShadowState(txID);
-                // update the current state with the prepared state.
-                restaurantState = getPreparedState();
-                unlock();
-            }
-            removeState(txID);
-        }
+    @Override
+    public String getStateFilename() {
+        return STATE_FILENAME;
     }
 
     /**
-     * roll back local state changes for the supplied transaction
-     * @param txID
+     * identify the name of file used to store the shadow service state
+      * @return the name of the file used to store the shadow service state
      */
-    public void rollbackSeats(Object txID)
-    {
-        synchronized (this) {
-            removeState(txID);
-            if (isLockID(txID)) {
-                clearShadowState(txID);
-                unlock();
-            }
-        }
-    }
-
-    /**
-     * handle a recovery error by rolling back the changes associated with the transaction
-     * @param txID
-     */
-    public void error(String txID)
-    {
-        rollbackSeats(txID);
+    @Override
+    public String getShadowStateFilename() {
+        return SHADOW_STATE_FILENAME;
     }
 
     /*****************************************************************************/
@@ -272,7 +181,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
 
         // undo all existing bookings
 
-        RestaurantState resetState = restaurantState.derivedState();
+        RestaurantState resetState = currentState.derivedState();
 
         resetState.totalSeats = DEFAULT_SEATING_CAPACITY;
         resetState.bookedSeats = 0;
@@ -287,7 +196,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
              System.out.println("error : unable to reset restaurant manager state " + e);
         }
 
-        restaurantState = resetState;
+        currentState = resetState;
         
         // remove any in-progress transactions
 
@@ -301,7 +210,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
      */
     public int getNFreeSeats()
     {
-        return restaurantState.freeSeats;
+        return currentState.freeSeats;
     }
 
     /**
@@ -311,7 +220,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
      */
     public int getNTotalSeats()
     {
-        return restaurantState.totalSeats;
+        return currentState.totalSeats;
     }
 
     /**
@@ -321,7 +230,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
      */
     public int getNBookedSeats()
     {
-        return restaurantState.bookedSeats;
+        return currentState.bookedSeats;
     }
 
     /**
@@ -333,7 +242,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
     {
         if (isLocked()) {
             RestaurantState childState = getPreparedState();
-            return childState.bookedSeats - restaurantState.bookedSeats;
+            return childState.bookedSeats - currentState.bookedSeats;
         } else {
             return 0;
         }
@@ -400,65 +309,6 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
     }
 
     /*****************************************************************************/
-    /* Implementation of inherited abstract sate management API                  */
-    /*****************************************************************************/
-
-    /**
-     * identify the name of file used to store the current service state
-      * @return the name of the file used to store the current service state
-     */
-    @Override
-    public String getStateFilename() {
-        return STATE_FILENAME;
-    }
-
-    /**
-     * identify the name of file used to store the shadow service state
-      * @return the name of the file used to store the shadow service state
-     */
-    @Override
-    public String getShadowStateFilename() {
-        return SHADOW_STATE_FILENAME;
-    }
-
-    /*****************************************************************************/
-    /* Recovery methods maintaining consistency of local and  WSAT/WSBA state    */
-    /*****************************************************************************/
-
-    /**
-     * called by the AT recovery module when an AT participant is recovered from a log record
-     */
-    public void recovered(RestaurantParticipantAT participant)
-    {
-        // if this AT participant matches the prepared TX id then we need to leave it prepared and locked
-        // at the end of scanning so it can be completed at commit time
-        if (isLockID(participant.txID)) {
-            rollbackPreparedTx = false;
-        }
-    }
-
-    /**
-     * called by the BA recovery module when an AT participant is recovered from a log record
-     */
-    public void recovered(RestaurantParticipantBA participant)
-    {
-        // if this AT participant matches the prepared TX id then we roll it forward here by calling
-        // confirmCompleted so once again we don't need to roll back the prepared state
-        if (isLockID(participant.txID)) {
-            participant.confirmCompleted(true);
-            rollbackPreparedTx = false;
-        }
-    }
-
-    public void recoveryScanCompleted(int txType)
-    {
-        super.recoveryScanCompleted(txType);
-        if (completedScans == TX_TYPE_BOTH && rollbackPreparedTx) {
-            rollbackSeats(getLockID());
-        }
-    }
-
-    /*****************************************************************************/
     /* Private implementation                                                    */
     /*****************************************************************************/
 
@@ -490,22 +340,6 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
     private boolean isCommit;
 
     /**
-     * Flag which determines whether we have to roll back any prepared changes to the server. We roll back
-     * changes for an AT or BA participant if there is no associated log record because the participant never
-     * prepared or completed, respectively. If we see a log record for an AT participant we leave the prepared
-     * state behind since the AT participant has prepared and may still commit.
-     */
-    private boolean rollbackPreparedTx;
-
-    /**
-     * the latest version of the restaurant state which includes a version id.
-     * this state object is always stored on disk in the restaurant state file
-     * a prepared version of a single derived child state may also exist on disk
-     * in the restaurant shadow state file.
-     */
-    private RestaurantState restaurantState;
-
-    /**
      * Create and initialise a new RestaurantManager instance either restoring any
      * existing service state from disk or else installing and committing to disk
      * a new initial state. If a prepared version of a derived child state (shadow state)
@@ -515,13 +349,13 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
      */
     private RestaurantManager()
     {
-        RestaurantState restoredState = restoreState();
-        if (restoredState == null) {
+        super();
+        if (currentState == null) {
             // we need to create a new initial state and persist it to disk
-            restoredState = RestaurantState.initialState();
+            currentState = RestaurantState.initialState();
             Object txId = "initialisation-transaction-" + System.currentTimeMillis();
             try {
-                writeShadowState(txId, restoredState);
+                writeShadowState(txId, currentState);
                 commitShadowState(txId);
             } catch (IOException e) {
                 clearShadowState(txId);
@@ -529,12 +363,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
             }
         }
 
-        restaurantState = restoredState;
-        
         preparation = new Object();
-        // we will roll back any locally prepared changes to web service state unless we discover that
-        // they are needed during recovery
-        rollbackPreparedTx = isLocked();
 
         isCommit = true;
         autoCommitMode = true;

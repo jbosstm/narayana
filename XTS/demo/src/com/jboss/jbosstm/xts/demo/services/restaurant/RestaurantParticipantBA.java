@@ -33,11 +33,16 @@ import com.arjuna.wst.*;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * An adapter class that exposes the RestaurantManager transaction lifecycle
- * API as a WS-T Business Activity participant.
+ * API as a WS-T Participant Completion Business Activity participant.
  * Also logs events to a RestaurantView object.
+ *
+ * The Restaurant Service only allows a single booking in any given transaction. So, this
+ * means it can complete at the end of the booking call. Hence it uses a participant which
+ * implements the participant completion protocol.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
@@ -59,9 +64,18 @@ public class RestaurantParticipantBA
      */
     public RestaurantParticipantBA(String txID, int how_many)
     {
-        // we need to save the txID for later use when logging.
+        // we need to save the txID for later use when logging
+        // and the seat count for use during compensation
         this.txID = txID;
         this.seatCount = how_many;
+    }
+
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
     }
 
     /************************************************************************/
@@ -84,6 +98,8 @@ public class RestaurantParticipantBA
         getRestaurantView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
 
         getRestaurantView().updateFields();
+
+        removeParticipant(txID);
     }
 
 
@@ -102,11 +118,13 @@ public class RestaurantParticipantBA
 
         System.out.println("RestaurantParticipantBA.cancel");
 
-        getRestaurantManager().rollbackSeats(txID);
+        getRestaurantManager().rollback(txID);
         
         getRestaurantView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
 
         getRestaurantView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /**
@@ -126,23 +144,27 @@ public class RestaurantParticipantBA
 
         getRestaurantView().updateFields();
 
-        // we perform the compensation by preparing and then committing a change which
+        // we perform the compensation by preparing and then committing a local change which
         // decrements the bookings
 
         String compensationTxID = txID + "-compensation";
 
         getRestaurantManager().bookSeats(compensationTxID, -seatCount);
         
-        if (!getRestaurantManager().prepareSeats(compensationTxID)) {
+        if (!getRestaurantManager().prepare(compensationTxID)) {
             getRestaurantView().addMessage("id:" + txID + ". Failed to compensate participant: " + this.getClass().toString());
+
+            removeParticipant(txID);
 
             throw new FaultedException("Failed to compensate participant: " + this.getClass().toString());
         }
-        getRestaurantManager().commitSeats(compensationTxID);
+        getRestaurantManager().commit(compensationTxID);
         
         getRestaurantView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
 
         getRestaurantView().updateFields();
+
+        removeParticipant(txID);
     }
 
     public String status()
@@ -162,13 +184,15 @@ public class RestaurantParticipantBA
 
         getRestaurantView().updateFields();
 
-        // tell the manager we had an error
+        // ensure local prepared state is rolled back
 
-        getRestaurantManager().error(txID);
+        getRestaurantManager().rollback(txID);
 
         getRestaurantView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
 
         getRestaurantView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /************************************************************************/
@@ -185,10 +209,47 @@ public class RestaurantParticipantBA
 
     public void confirmCompleted(boolean confirmed) {
         if (confirmed) {
-            getRestaurantManager().commitSeats(txID);
+            getRestaurantManager().commit(txID);
+            getRestaurantView().addMessage("id:" + txID + ". Seats committed");
+            getRestaurantView().updateFields();
         } else {
-            getRestaurantManager().rollbackSeats(txID);
+            getRestaurantManager().rollback(txID);
+            getRestaurantView().addMessage("id:" + txID + ". Seats rolled back");
+            getRestaurantView().updateFields();
         }
+    }
+
+    /************************************************************************/
+    /* tracking active participants                                         */
+    /************************************************************************/
+    /**
+     * keep track of a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized void recordParticipant(String txID, RestaurantParticipantBA participant)
+    {
+        participants.put(txID, participant);
+    }
+
+    /**
+     * forget about a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized RestaurantParticipantBA removeParticipant(String txID)
+    {
+        return participants.remove(txID);
+    }
+
+    /**
+     * lookup a participant
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized RestaurantParticipantBA getParticipant(String txID)
+    {
+        return participants.get(txID);
     }
 
     /************************************************************************/
@@ -213,5 +274,10 @@ public class RestaurantParticipantBA
     private RestaurantManager getRestaurantManager() {
         return RestaurantManager.getSingletonInstance();
     }
+
+    /**
+     * table of currently active participants
+     */
+    private static HashMap<String, RestaurantParticipantBA> participants = new HashMap<String,  RestaurantParticipantBA>();
 }
 

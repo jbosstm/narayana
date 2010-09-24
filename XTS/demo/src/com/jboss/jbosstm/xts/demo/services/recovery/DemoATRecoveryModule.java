@@ -2,8 +2,7 @@ package com.jboss.jbosstm.xts.demo.services.recovery;
 
 import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantManager;
 import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantParticipantAT;
-import com.jboss.jbosstm.xts.demo.services.state.ServiceStateManager;
-import com.jboss.jbosstm.xts.demo.services.taxi.TaxiManager;
+import static com.jboss.jbosstm.xts.demo.services.state.ServiceStateConstants.*;
 import com.jboss.jbosstm.xts.demo.services.taxi.TaxiParticipantAT;
 import com.jboss.jbosstm.xts.demo.services.theatre.TheatreManager;
 import com.jboss.jbosstm.xts.demo.services.theatre.TheatreParticipantAT;
@@ -77,19 +76,18 @@ public class DemoATRecoveryModule implements XTSATRecoveryModule
             System.out.println("xts-demo : attempting to deserialize RestaurantParticipantAT " + id);
             RestaurantParticipantAT participant = (RestaurantParticipantAT)stream.readObject();
             System.out.println("xts-demo : deserialized RestaurantParticipantAT " + id);
-            RestaurantManager.getSingletonInstance().recovered(participant);
+            RestaurantManager.getSingletonInstance().recovered(participant.getTxID(), TX_TYPE_AT);
             return participant;
         } else if (id.startsWith("org.jboss.jbossts.xts-demo:theatreAT")) {
             System.out.println("xts-demo : attempting to deserialize TheatreParticipantAT " + id);
             TheatreParticipantAT participant = (TheatreParticipantAT)stream.readObject();
             System.out.println("xts-demo : deserialized TheatreParticipantAT " + id);
-            TheatreManager.getSingletonInstance().recovered(participant);
+            TheatreManager.getSingletonInstance().recovered(participant.getTxID(), TX_TYPE_AT);
             return participant;
         } else if (id.startsWith("org.jboss.jbossts.xts-demo:taxiAT")) {
             System.out.println("xts-demo : attempting to deserialize TaxiParticipantAT " + id);
             TaxiParticipantAT participant = (TaxiParticipantAT)stream.readObject();
             System.out.println("xts-demo : deserialized TaxiParticipantAT " + id);
-            TaxiManager.getSingletonInstance().recovered(participant);
             return participant;
         }
 
@@ -134,11 +132,9 @@ public class DemoATRecoveryModule implements XTSATRecoveryModule
     public void endScan()
     {
         if (isFirst) {
-            // both AT and BA participants update state. so let the state manager know that the
-            // AT log records have all been scanned
-            RestaurantManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
-            TheatreManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
-            TaxiManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_AT);
+            // let the restaurant and theatre state manager know that the AT log records have all been scanned
+            RestaurantManager.getSingletonInstance().recoveryScanCompleted(TX_TYPE_AT);
+            TheatreManager.getSingletonInstance().recoveryScanCompleted(TX_TYPE_AT);
             isFirst = false;
         }
     }

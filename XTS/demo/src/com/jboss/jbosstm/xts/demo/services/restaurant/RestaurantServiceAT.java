@@ -33,17 +33,12 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceAT;
-import com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryModule;
 
 import javax.jws.HandlerChain;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.soap.SOAPBinding;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 /**
  * An adapter class that exposes the RestaurantManager business API as a
@@ -81,13 +76,27 @@ public class RestaurantServiceAT implements IRestaurantServiceAT
             transactionId = UserTransactionFactory.userTransaction().toString();
             System.out.println("RestaurantServiceAT transaction id =" + transactionId);
 
-            if (!restaurantManager.knowsAbout(transactionId))
+            RestaurantParticipantAT restaurantParticipant = RestaurantParticipantAT.getParticipant(transactionId);
+
+            if (restaurantParticipant != null)
             {
-                System.out.println("RestaurantServiceAT - enrolling...");
-                // enlist the Participant for this service:
-                RestaurantParticipantAT restaurantParticipant = new RestaurantParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantAT:" + new Uid().toString());
+                // this service does not support repeated bookings in the same transaction
+                // so mark the participant as invalid
+                restaurantView.addMessage("id:" + transactionId + ". Participant already enrolled!");
+                restaurantView.updateFields();
+                System.err.println("bookSeats: request failed");
+                // this ensures we do not try later to prepare the participant
+                restaurantParticipant.invalidate();
+                // throw away any local changes previously made on behalf of the participant
+                restaurantManager.rollback(transactionId);
+                return;
             }
+
+            System.out.println("RestaurantServiceAT - enrolling...");
+            // enlist the Participant for this service:
+            restaurantParticipant = new RestaurantParticipantAT(transactionId);
+            TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantAT:" + new Uid().toString());
+            RestaurantParticipantAT.recordParticipant(transactionId, restaurantParticipant);
         }
         catch (Exception e)
         {

@@ -64,47 +64,56 @@ IF openTrace("log", "trace.out")
 DO traceln("log", "started logging kill  -- point = " + System.getProperty("demo.kill.point"))
 ENDRULE
 
+# identify the theatre manager
+RULE identify theatre manager
+CLASS TheatreManager
+METHOD <init>
+AT EXIT
+IF TRUE
+DO flag($0)
+ENDRULE
+
 # kill the demo just before the theatre service prepares local changes
 RULE kill at kill point 1
-CLASS TheatreManager
-METHOD prepareSeats
+CLASS ServiceStateManager
+METHOD prepare
 AT CALL writeShadowState
 BIND killPoint =  System.getProperty("demo.kill.point")
-IF killPoint == "1"
+IF flagged($0) && killPoint == "1"
 DO traceln("killing JVM at point " + killPoint),
    killJVM()
 ENDRULE
 
 # kill the demo just before XTS logs the recovery record
 RULE kill at kill point 2
-CLASS TheatreManager
-METHOD prepareSeats
+CLASS ServiceStateManager
+METHOD prepare
 AT RETURN
 BIND killPoint =  System.getProperty("demo.kill.point")
-IF killPoint == "2"
+IF flagged($0) && killPoint == "2"
 DO traceln("killing JVM at point " + killPoint),
    killJVM()
 ENDRULE
 
 # kill the demo just before the theatre service commits local changes
 RULE kill at kill point 3
-CLASS TheatreManager
-METHOD commitSeats
+CLASS ServiceStateManager
+METHOD commit
 AT ENTRY
 BIND killPoint =  System.getProperty("demo.kill.point"),
      nullValue : Object = null
-IF killPoint == "3" || killPoint == nullValue
+IF flagged($0) && (killPoint == "3" || killPoint == nullValue)
 DO traceln("killing JVM at point " + killPoint),
    killJVM()
 ENDRULE
 
 # kill the demo just before XTS notifies COMPLETED
 RULE kill at kill point 4
-CLASS TheatreManager
-METHOD commitSeats
+CLASS ServiceStateManager
+METHOD commit
 AT RETURN
 BIND killPoint =  System.getProperty("demo.kill.point")
-IF killPoint == "4"
+IF flagged($0) && killPoint == "4"
 DO traceln("killing JVM at point " + killPoint),
    killJVM()
 ENDRULE

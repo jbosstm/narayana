@@ -90,10 +90,12 @@ public class TaxiServiceBA implements ITaxiServiceBA
 
         taxiView.addMessage("******************************");
 
-        taxiView.addPrepareMessage("id:" + transactionId.toString() + ". Received a taxi booking request");
+        taxiView.addMessage("id:" + transactionId.toString() + ". Received a taxi booking request");
         taxiView.updateFields();
 
-        if (taxiManager.knowsAbout(transactionId)) {
+        TaxiParticipantBA taxiParticipant = TaxiParticipantBA.getParticipant(transactionId);
+        BAParticipantManager participantManager;
+        if (taxiParticipant != null) {
             // hmm, this means we have already completed changes in this transaction and are awaiting a close
             //or compensate request. this service does not support repeated requests in the same activity so
             // we fail this request.
@@ -104,69 +106,26 @@ public class TaxiServiceBA implements ITaxiServiceBA
             return false;
         }
 
-        TaxiParticipantBA taxiParticipant = new TaxiParticipantBA(transactionId);
-        BAParticipantManager participantManager;
+        taxiParticipant = new TaxiParticipantBA(transactionId);
 
         // enlist the Participant for this service:
         try
         {
-            participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(taxiParticipant, "org.jboss.jbossts.xts-demo:taxiBA:" + new Uid().toString());
+            participantManager = activityManager.enlistForBusinessAgreementWithCoordinatorCompletion(taxiParticipant, "org.jboss.jbossts.xts-demo:taxiBA:" + new Uid().toString());
         }
         catch (Exception e)
         {
             taxiView.addMessage("id:" + transactionId + ". Participant enrolement failed");
-            taxiManager.rollbackTaxi(transactionId);
+            taxiManager.rollback(transactionId);
             System.err.println("bookTaxi: Participant enrolment failed");
             e.printStackTrace(System.err);
             return false;
         }
 
+        TaxiParticipantBA.recordParticipant(transactionId, taxiParticipant, participantManager);
+
         // invoke the backend business logic:
         taxiManager.bookTaxi(transactionId);
-
-        // this service employs the participant completion protocol which means it decides when it wants to
-        // commit local changes. so we prepare and commit those changes now. if any other participant fails
-        // or the client decides to cancel we can rely upon being told to compensate.
-
-        if (taxiManager.prepareTaxi(transactionId))
-        {
-            taxiView.addMessage("id:" + transactionId + ". Seats prepared, trying to commit and enlist compensation Participant");
-            taxiView.updateFields();
-
-            // it worked, so now we need a participant enlisted in case of compensation:
-
-            try
-            {
-                // tell the participant manager we have finished our work
-                // this will call back to the participant once the recovery record has been written
-                // allowing it to commit or roll back the restaurant manager
-                participantManager.completed();
-            }
-            catch (Exception e)
-            {
-                System.err.println("bookTaxi: 'completed' callback failed");
-                taxiManager.rollbackTaxi(transactionId);
-                e.printStackTrace(System.err);
-                return false;
-            }
-        }
-        else
-        {
-            taxiView.addMessage("id:" + transactionId + ". Failed to reserve taxi. Cancelling.");
-            taxiView.updateFields();
-            try
-            {
-                // tell the participant manager we cannot complete. this will force the activity to fail
-                participantManager.cannotComplete();
-            }
-            catch (Exception e)
-            {
-                System.err.println("bookSeats: 'cannotComplete' callback failed");
-                e.printStackTrace(System.err);
-                return false;
-            }
-            return false;
-        }
 
         taxiView.addMessage("Request complete\n");
         taxiView.updateFields();

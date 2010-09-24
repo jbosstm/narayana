@@ -30,19 +30,29 @@
 package com.jboss.jbosstm.xts.demo.services.taxi;
 
 import com.arjuna.wst.*;
+import com.arjuna.wst11.BAParticipantManager;
+import com.arjuna.wst11.ConfirmCompletedParticipant;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * An adapter class that exposes the TaxiManager transaction lifecycle
- * API as a WS-T Business Activity participant.
+ * API as a WS-T Coordinator CompletionBusiness Activity participant.
  * Also logs events to a TaxiView object.
+ *
+ * The Taxi Service does not actually manage any persistent local state since
+ * it does not really matter if a taxi or the clients fail to turn up (there
+ * will always be another taxi or another client round the corner). It uses
+ * a participant which employs the coordinator completion protocol but only
+ * because this makes the demo more interesting.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.2 $
  */
 public class TaxiParticipantBA
-        implements BusinessAgreementWithParticipantCompletionParticipant,
+        implements BusinessAgreementWithCoordinatorCompletionParticipant,
+        ConfirmCompletedParticipant,
         Serializable
 {
     /************************************************************************/
@@ -60,12 +70,52 @@ public class TaxiParticipantBA
         this.txID = txID;
     }
 
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
+    }
+
     /************************************************************************/
     /* BusinessAgreementWithParticipantCompletionParticipant methods        */
     /************************************************************************/
+
+    
+    public void complete() throws WrongStateException, SystemException {
+        // prepare and then complete all local changes
+        getTaxiView().addPrepareMessage("id:" + txID + ". Attempting to prepare taxi.");
+        getTaxiView().updateFields();
+        if (!getTaxiManager().prepare(txID))
+        {
+            // tell the participant manager we cannot complete. this will force the activity to fail
+            getTaxiView().addMessage("id:" + txID + ". Failed to prepare taxi. Cancelling.");
+            getTaxiView().updateFields();
+            BAParticipantManager participantManager = getManager(txID);
+            try
+            {
+                participantManager.cannotComplete();
+            }
+            catch (Exception e)
+            {
+                System.err.println("bookTaxi: 'cannotComplete' callback failed");
+                e.printStackTrace(System.err);
+            }
+            removeParticipant(txID);
+        }
+        else
+        {
+            // we just need to return here. the XTS implementation will call confirmComplete
+            // identifying whether or not to roll forward or roll back these prepared changes
+
+            getTaxiView().addMessage("id:" + txID + ". Taxi prepared");
+            getTaxiView().updateFields();
+        }
+    }
     /**
-     * The transaction has completed successfully. The participant previously
-     * informed the coordinator that it was ready to complete.
+     * The activity has ended successfully. The participant previously
+     * completed its local changes.
      *
      * @throws WrongStateException never in this implementation.
      * @throws SystemException never in this implementation.
@@ -81,6 +131,8 @@ public class TaxiParticipantBA
         getTaxiView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
 
         getTaxiView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /**
@@ -98,11 +150,13 @@ public class TaxiParticipantBA
 
         System.out.println("TaxiParticipantBA.cancel");
 
-        getTaxiManager().rollbackTaxi(txID);
+        getTaxiManager().rollback(txID);
 
         getTaxiView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
 
         getTaxiView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /**
@@ -126,6 +180,8 @@ public class TaxiParticipantBA
         
         getTaxiView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
         getTaxiView().updateFields();
+
+        removeParticipant(txID);
     }
 
     public String status () throws SystemException
@@ -146,13 +202,85 @@ public class TaxiParticipantBA
 
         getTaxiView().updateFields();
 
-        // tell the manager we had an error
+        // roll back any prepared local state
 
-        getTaxiManager().error(txID);
+        getTaxiManager().rollback(txID);
 
         getTaxiView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
 
         getTaxiView().updateFields();
+
+        removeParticipant(txID);
+    }
+
+
+    /************************************************************************/
+    /* ConfirmCompletedParticipant methods                                  */
+    /************************************************************************/
+
+    /**
+     * method called to perform commit or rollback of prepared changes to the underlying manager state after
+     * the participant recovery record has been written
+     *
+     * @param confirmed true if the log record has been written and changes should be rolled forward and false
+     * if it has not been written and changes should be rolled back
+     */
+
+    public void confirmCompleted(boolean confirmed) {
+        if (confirmed) {
+            getTaxiView().addMessage("id:" + txID + ". Taxi committed");
+            getTaxiView().updateFields();
+            getTaxiManager().commit(txID);
+        } else {
+            getTaxiView().addMessage("id:" + txID + ". Taxi rolled back");
+            getTaxiView().updateFields();
+            getTaxiManager().rollback(txID);
+        }
+    }
+
+    /************************************************************************/
+    /* tracking active participants                                         */
+    /************************************************************************/
+    /**
+     * keep track of a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized void recordParticipant(String txID, TaxiParticipantBA participant, com.arjuna.wst11.BAParticipantManager manager)
+    {
+        participants.put(txID, participant);
+        managers.put(txID, manager);
+    }
+
+    /**
+     * forget about a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized TaxiParticipantBA removeParticipant(String txID)
+    {
+        managers.remove(txID);
+        return participants.remove(txID);
+    }
+
+    /**
+     * lookup a participant
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized TaxiParticipantBA getParticipant(String txID)
+    {
+        return participants.get(txID);
+    }
+
+    /**
+     * lookup a participant manager
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized com.arjuna.wst11.BAParticipantManager getManager(String txID)
+    {
+        return managers.get(txID);
     }
 
     /************************************************************************/
@@ -165,11 +293,20 @@ public class TaxiParticipantBA
      */
     protected String txID;
 
-    public TaxiView getTaxiView() {
+    private TaxiView getTaxiView() {
         return TaxiView.getSingletonInstance();
     }
 
-    public TaxiManager getTaxiManager() {
+    private TaxiManager getTaxiManager() {
         return TaxiManager.getSingletonInstance();
     }
+
+    /**
+     * table of currently active participants
+     */
+    private static HashMap<String, TaxiParticipantBA> participants = new HashMap<String, TaxiParticipantBA>();
+    /**
+     * table of currently active participant managers
+     */
+    private static HashMap<String, com.arjuna.wst11.BAParticipantManager> managers = new HashMap<String, com.arjuna.wst11.BAParticipantManager>();
 }

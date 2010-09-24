@@ -165,7 +165,8 @@ people.
 <div>
 <p>
 Book
-<SELECT NAME="theatrecount">
+<SELECT NAME="theatrecirclecount">
+<OPTION>0
 <OPTION>1
 <OPTION>2
 <OPTION>3
@@ -177,12 +178,41 @@ Book
 <OPTION>9
 <OPTION>10
 </SELECT>
-seats in the
-<select name="theatrearea">
-<option value="0">Circle
-<option value="1">Stalls
-<option value="2">Balcony
-</select>
+seats in the Circle
+</p>
+<p>
+Book
+<SELECT NAME="theatrestallscount">
+<OPTION>0
+<OPTION>1
+<OPTION>2
+<OPTION>3
+<OPTION>4
+<OPTION>5
+<OPTION>6
+<OPTION>7
+<OPTION>8
+<OPTION>9
+<OPTION>10
+</SELECT>
+seats in the Stalls
+</p>
+<p>
+Book
+<SELECT NAME="theatrebalconycount">
+<OPTION>0
+<OPTION>1
+<OPTION>2
+<OPTION>3
+<OPTION>4
+<OPTION>5
+<OPTION>6
+<OPTION>7
+<OPTION>8
+<OPTION>9
+<OPTION>10
+</SELECT>
+seats in the Balcony
 </p>
 </FONT></TD>
 <TD width="10" bgcolor="#e3e3e3">&nbsp;</TD>

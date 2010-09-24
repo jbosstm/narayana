@@ -32,6 +32,7 @@ package com.jboss.jbosstm.xts.demo.services.theatre;
 import com.arjuna.wst.*;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * An adapter class that exposes the TheatreManager transaction lifecycle
@@ -52,11 +53,23 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
      *
      * @param txID uniq id String for the transaction instance.
      */
-    public TheatreParticipantAT(String txID)
+    public TheatreParticipantAT(String txID, int[] bookings)
     {
         // we need to save the txID for later use when calling
         // business logic methods in the theatreManger.
         this.txID = txID;
+        // we need to remember which seating areas have already been booked
+        this.bookings = bookings;
+        // we may invalidate the participant later if something goes wrong
+        this.valid = true;
+    }
+
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
     }
 
     /************************************************************************/
@@ -79,7 +92,7 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
         getTheatreView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = getTheatreManager().prepareSeats(txID);
+        boolean success = getTheatreManager().prepare(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
@@ -115,7 +128,7 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
         getTheatreView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        getTheatreManager().commitSeats(txID);
+        getTheatreManager().commit(txID);
 
         getTheatreView().addMessage("Theatre tickets committed\n");
 
@@ -138,7 +151,7 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
         getTheatreView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        getTheatreManager().rollbackSeats(txID);
+        getTheatreManager().rollback(txID);
 
         getTheatreView().addMessage("Theatre booking cancelled\n");
 
@@ -156,6 +169,57 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
     }
 
     /************************************************************************/
+    /* tracking active participants                                         */
+    /************************************************************************/
+    /**
+     * keep track of a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized void recordParticipant(String txID, TheatreParticipantAT participant)
+    {
+        participants.put(txID, participant);
+    }
+
+    /**
+     * forget about a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized TheatreParticipantAT removeParticipant(String txID)
+    {
+        return participants.remove(txID);
+    }
+
+    /**
+     * lookup a participant
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized TheatreParticipantAT getParticipant(String txID)
+    {
+        return participants.get(txID);
+    }
+
+    /**
+     * mark a participant as invalid
+     */
+    public void invalidate()
+    {
+        valid = false;
+    }
+
+    /**
+     * check if a participant is invalid
+     *
+     * @return
+     */
+    public boolean isValid()
+    {
+        return valid;
+    }
+
+    /************************************************************************/
     /* private implementation                                               */
     /************************************************************************/
     /**
@@ -165,11 +229,27 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
      */
     protected String txID;
 
-    public TheatreView getTheatreView() {
+    /**
+     * array containing bookings for each of the seating areas. each area is booked in its own
+     * service request but we need this info in order to be able to detect repeated bookings.
+     */
+    protected int[] bookings;
+    
+    /**
+     * this is true by default but we invalidate the participant if the client makes invalid requests
+     */
+    protected boolean valid;
+    
+    private TheatreView getTheatreView() {
         return TheatreView.getSingletonInstance();
     }
 
-    public TheatreManager getTheatreManager() {
+    private TheatreManager getTheatreManager() {
         return TheatreManager.getSingletonInstance();
     }
+
+    /**
+     * table of currently active participants
+     */
+    private static HashMap<String, TheatreParticipantAT> participants = new HashMap<String,  TheatreParticipantAT>();
 }

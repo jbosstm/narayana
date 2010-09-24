@@ -43,6 +43,14 @@ import javax.jws.soap.SOAPBinding;
  * An adapter class that exposes the RestaurantManager business API as a
  * transactional Web Service. Also logs events to a RestaurantView object.
  *
+ * The BA Restaurant Service only allows the client to make one booking in any given transaction.
+ * So, this means that it can complete its changes as soon as the booking has been made. Hence
+ * it uses a participant which implements the participant completion protocol. When the client
+ * closes the activity the coordinator will ensure that the participant has completed then
+ * it only has to send a CLOSE message. This means that if the client cancels the activity after
+ * booking the restaurant then the coordinator cannot just CANCEL the participant. It will have to
+ * send a COMPENSATE message in order to make sure that the committed booking is undone.
+ *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.5 $
  */
@@ -90,10 +98,12 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
 
         restaurantView.addMessage("******************************");
 
-        restaurantView.addPrepareMessage("id:" + transactionId + ". Received a booking request for one table of " + how_many + " people");
+        restaurantView.addMessage("id:" + transactionId + ". Received a booking request for one table of " + how_many + " people");
         restaurantView.updateFields();
 
-        if (restaurantManager.knowsAbout(transactionId)) {
+        RestaurantParticipantBA restaurantParticipant = RestaurantParticipantBA.getParticipant(transactionId);
+
+        if (restaurantParticipant != null) {
             // hmm, this means we have already completed changes in this transaction and are awaiting a close
             //or compensate request. this service does not support repeated requests in the same activity so
             // we fail this request.
@@ -104,24 +114,25 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
             return false;
         }
 
-        RestaurantParticipantBA restaurantParticipant = new RestaurantParticipantBA(transactionId, how_many);
-
         BAParticipantManager participantManager;
 
         // enlist the Participant for this service:
         try
         {
+            restaurantParticipant = new RestaurantParticipantBA(transactionId, how_many);
             participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
+            RestaurantParticipantBA.recordParticipant(transactionId, restaurantParticipant);
         }
         catch (Exception e)
         {
             restaurantView.addMessage("id:" + transactionId + ". Participant enrolement failed");
-            restaurantManager.rollbackSeats(transactionId);
             System.err.println("bookSeats: Participant enlistment failed");
             e.printStackTrace(System.err);
             return false;
         }
 
+        restaurantView.addPrepareMessage("id:" + transactionId + ". Attempting to prepare seats");
+        restaurantView.updateFields();
         // invoke the backend business logic:
         restaurantManager.bookSeats(transactionId, how_many);
 
@@ -129,9 +140,9 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
         // commit local changes. so we prepare and commit those changes now. if any other participant fails
         // or the client decides to cancel we can rely upon being told to compensate.
 
-        if (restaurantManager.prepareSeats(transactionId))
+        if (restaurantManager.prepare(transactionId))
         {
-            restaurantView.addMessage("id:" + transactionId + ". Seats prepared, trying to commit and enlist compensation Participant");
+            restaurantView.addMessage("id:" + transactionId + ". Seats prepared, trying to commit");
             restaurantView.updateFields();
 
             try
@@ -144,8 +155,9 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
             catch (Exception e)
             {
                 System.err.println("bookSeats: 'completed' callback failed");
-                restaurantManager.rollbackSeats(transactionId);
+                restaurantManager.rollback(transactionId);
                 e.printStackTrace(System.err);
+                RestaurantParticipantBA.removeParticipant(transactionId);
                 return false;
             }
         }
@@ -164,6 +176,7 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
                 e.printStackTrace(System.err);
                 return false;
             }
+            RestaurantParticipantBA.removeParticipant(transactionId);
             return false;
         }
 

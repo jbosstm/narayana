@@ -32,6 +32,7 @@ package com.jboss.jbosstm.xts.demo.services.restaurant;
 import com.arjuna.wst.*;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * An adapter class that exposes the RestaurantManager transaction lifecycle
@@ -57,6 +58,16 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         // we need to save the txID for later use when calling
         // business logic methods in the restaurantManger.
         this.txID = txID;
+        // we may invalidate the participant later if something goes wrong
+        this.valid = true;
+    }
+
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
     }
 
     /************************************************************************/
@@ -79,7 +90,7 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
         getRestaurantView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = getRestaurantManager().prepareSeats(txID);
+        boolean success = getRestaurantManager().prepare(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
@@ -94,6 +105,8 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
         {
             getRestaurantView().addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
             getRestaurantView().updateFields();
+            // forget about the participant
+            removeParticipant(txID);
             return new Aborted();
         }
     }
@@ -114,13 +127,16 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
         getRestaurantView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        getRestaurantManager().commitSeats(txID);
+        getRestaurantManager().commit(txID);
 
         // Log the outcome
 
         getRestaurantView().addMessage("Seats committed\n");
 
         getRestaurantView().updateFields();
+
+        // forget about the participant
+        removeParticipant(txID);
     }
 
     /**
@@ -139,21 +155,76 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
         getRestaurantView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        getRestaurantManager().rollbackSeats(txID);
+        getRestaurantManager().rollback(txID);
 
         getRestaurantView().addMessage("Seats booking cancelled\n");
         
         getRestaurantView().updateFields();
+        // forget about the participant
+        removeParticipant(txID);
     }
 
     public void unknown() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        // forget about the participant
+        participants.put(txID, null);
     }
 
     public void error() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        // forget about the participant
+        participants.put(txID, null);
+    }
+
+    /************************************************************************/
+    /* tracking active participants                                         */
+    /************************************************************************/
+    /**
+     * keep track of a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized void recordParticipant(String txID, RestaurantParticipantAT participant)
+    {
+        participants.put(txID, participant);
+    }
+
+    /**
+     * forget about a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized RestaurantParticipantAT removeParticipant(String txID)
+    {
+        return participants.remove(txID);
+    }
+
+    /**
+     * lookup a participant
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized RestaurantParticipantAT getParticipant(String txID)
+    {
+        return participants.get(txID);
+    }
+
+    /**
+     * mark a participant as invalid
+     */
+    public void invalidate()
+    {
+        valid = false;
+    }
+
+    /**
+     * check if a participant is invalid
+     *
+     * @return
+     */
+    public boolean isValid()
+    {
+        return valid;
     }
 
     /************************************************************************/
@@ -165,12 +236,22 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
      * is passed to the backend business logic methods.
      */
     protected String txID;
+    /**
+     * this is true by default but we invalidate the participant if the client makes invalid requests
+     */
+    protected boolean valid;
 
-    public RestaurantView getRestaurantView() {
+    private RestaurantView getRestaurantView() {
         return RestaurantView.getSingletonInstance();
     }
 
-    public RestaurantManager getRestaurantManager() {
+    private RestaurantManager getRestaurantManager() {
         return RestaurantManager.getSingletonInstance();
     }
+
+    /**
+     * table of currently active participants
+     */
+    private static HashMap<String, RestaurantParticipantAT> participants = new HashMap<String,  RestaurantParticipantAT>();
+
 }

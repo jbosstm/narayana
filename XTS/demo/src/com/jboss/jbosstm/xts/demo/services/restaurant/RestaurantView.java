@@ -69,8 +69,6 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
         jLabel9 = new javax.swing.JLabel();
         jLabelNPreparedSeats = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabelNConfirmedSeats = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jLabelNFreeSeats = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jButtonResetFields = new javax.swing.JButton();
@@ -122,14 +120,6 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
 
         jLabel2.setText("Prepared,    ");
         jPanel2.add(jLabel2);
-
-        jLabelNConfirmedSeats.setText(Integer.toString(0));
-        jLabelNConfirmedSeats.setForeground(new java.awt.Color(0, 51, 204));
-        jLabelNConfirmedSeats.setFont(new java.awt.Font("Dialog", 1, 18));
-        jPanel2.add(jLabelNConfirmedSeats);
-
-        jLabel6.setText("Confirmed,    ");
-        jPanel2.add(jLabel6);
 
         jLabelNFreeSeats.setText(Integer.toString(restManager.getNFreeSeats()));
         jLabelNFreeSeats.setForeground(new java.awt.Color(0, 153, 0));
@@ -386,7 +376,6 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
         jLabelNTotalSeats.setText(Integer.toString(restManager.getNTotalSeats()));
         jTextFieldNewNTotalSeats.setText(Integer.toString(restManager.getNTotalSeats()));
         jLabelNPreparedSeats.setText(Integer.toString(restManager.getNPreparedSeats()));
-        jLabelNConfirmedSeats.setText(Integer.toString(0));
         jLabelNFreeSeats.setText(Integer.toString(restManager.getNFreeSeats()));
         jLabelNBookedSeats.setText(Integer.toString(restManager.getNBookedSeats()));
 
@@ -435,8 +424,6 @@ public class RestaurantView extends javax.swing.JFrame implements Serializable
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelNPreparedSeats;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabelNConfirmedSeats;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelNFreeSeats;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JButton jButtonResetFields;

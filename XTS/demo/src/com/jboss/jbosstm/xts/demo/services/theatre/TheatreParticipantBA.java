@@ -30,25 +30,27 @@
 package com.jboss.jbosstm.xts.demo.services.theatre;
 
 import com.arjuna.wst.*;
+import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-
+import static com.jboss.jbosstm.xts.demo.services.theatre.TheatreConstants.*;
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * An adapter class that exposes the TheatreManager transaction lifecycle
- * API as a WS-T Business Activity participant.
+ * API as a WS-T Coordinator Completion Business Activity participant.
  * Also logs events to a TheatreView object.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
 public class TheatreParticipantBA implements
-        BusinessAgreementWithParticipantCompletionParticipant,
+        BusinessAgreementWithCoordinatorCompletionParticipant,
         ConfirmCompletedParticipant,
         Serializable
 {
     /************************************************************************/
-    /* public methods                                                       */
+    /* public methods                                                   */
     /************************************************************************/
     /**
      * Participant instances are related to business method calls
@@ -56,14 +58,25 @@ public class TheatreParticipantBA implements
      *
      * @param txID       uniq id String for the transaction instance.
      */
-    public TheatreParticipantBA(String txID, int how_many, int which_area)
+    public TheatreParticipantBA(String txID, int[] bookings)
     {
         // we need to save the txID for later use when logging
+        // and the seat count and seat area for use during compensation
         this.txID = txID;
-        this.seatCount = how_many;
-        this.seatingArea = which_area;
+        this.bookings = bookings;
     }
 
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
+    }
+
+    /************************************************************************/
+    /* BusinessAgreementWithCoordinatorCompletionParticipant methods        */
+    /************************************************************************/
     /**
      * The transaction has completed successfully. The participant previously
      * informed the coordinator that it was ready to complete.
@@ -72,9 +85,37 @@ public class TheatreParticipantBA implements
      * @throws SystemException never in this implementation.
      */
 
-    /************************************************************************/
-    /* BusinessAgreementWithParticipantCompletionParticipant methods        */
-    /************************************************************************/
+    public void complete() throws WrongStateException, SystemException
+    {
+        BAParticipantManager participantManager = managers.get(txID);
+        getTheatreView().addPrepareMessage("id:" + txID + ". Attempting to prepare seats.");
+        getTheatreView().updateFields();
+        if (!getTheatreManager().prepare(txID))
+        {
+            // tell the participant manager we cannot complete. this will force the activity to fail
+            getTheatreView().addMessage("id:" + txID + ". Failed to reserve seats. Cancelling.");
+            getTheatreView().updateFields();
+            try
+            {
+                participantManager.cannotComplete();
+            }
+            catch (Exception e)
+            {
+                System.err.println("bookSeats: 'cannotComplete' callback failed");
+                e.printStackTrace(System.err);
+            }
+            removeParticipant(txID);
+        }
+        else
+        {
+            // we just need to return here. the XTS implementation will call confirmComplete
+            // identifying whether or not to roll forward or roll back these prepared changes
+
+            getTheatreView().addMessage("id:" + txID + ". Seats prepared");
+            getTheatreView().updateFields();
+        }
+    }
+
     public void close() throws WrongStateException, SystemException
     {
         // nothing to do here as the seats are already booked
@@ -84,6 +125,8 @@ public class TheatreParticipantBA implements
         getTheatreView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
 
         getTheatreView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /**
@@ -101,11 +144,13 @@ public class TheatreParticipantBA implements
 
         System.out.println("TheatreParticipantBA.cancel");
 
-        getTheatreManager().rollbackSeats(txID);
+        getTheatreManager().rollback(txID);
 
         getTheatreView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
 
         getTheatreView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /**
@@ -125,23 +170,31 @@ public class TheatreParticipantBA implements
 
         getTheatreView().updateFields();
 
-        // we perform the compensation by preparing and then committing a change which
-        // decrements the bookings
+        // we perform the compensation by preparing and then committing local changes which
+        // decrement the booked seat counts
 
         String compensationTxID = txID + "-compensation";
 
-        getTheatreManager().bookSeats(compensationTxID, -seatCount, seatingArea);
+        for (int seatingArea = 0; seatingArea < NUM_SEAT_AREAS; seatingArea++) {
+            if (bookings[seatingArea] != 0) {
+                getTheatreManager().bookSeats(compensationTxID, -bookings[seatingArea], seatingArea);
+            }
+        }
 
-        if (!getTheatreManager().prepareSeats(compensationTxID)) {
+        if (!getTheatreManager().prepare(compensationTxID)) {
             getTheatreView().addMessage("id:" + txID + ". Failed to compensate participant: " + this.getClass().toString());
+
+            removeParticipant(txID);
 
             throw new FaultedException("Failed to compensate participant " + txID);
         }
-        getTheatreManager().commitSeats(compensationTxID);
+        getTheatreManager().commit(compensationTxID);
 
         getTheatreView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
 
         getTheatreView().updateFields();
+
+        removeParticipant(txID);
     }
     
     public String status()
@@ -151,7 +204,8 @@ public class TheatreParticipantBA implements
 
     public void unknown() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+
+        removeParticipant(txID);
     }
 
     public void error() throws SystemException
@@ -162,13 +216,15 @@ public class TheatreParticipantBA implements
 
         getTheatreView().updateFields();
 
-        // tell the manager we had an error
+        // roll back any prepared local state
 
-        getTheatreManager().error(txID);
+        getTheatreManager().rollback(txID);
 
         getTheatreView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
 
         getTheatreView().updateFields();
+
+        removeParticipant(txID);
     }
 
     /************************************************************************/
@@ -185,10 +241,59 @@ public class TheatreParticipantBA implements
 
     public void confirmCompleted(boolean confirmed) {
         if (confirmed) {
-            getTheatreManager().commitSeats(txID);
+            getTheatreManager().commit(txID);
+            getTheatreView().addMessage("id:" + txID + ". Seats committed");
+            getTheatreView().updateFields();
         } else {
-            getTheatreManager().rollbackSeats(txID);
+            getTheatreManager().rollback(txID);
+            getTheatreView().addMessage("id:" + txID + ". Seats rolled back");
+            getTheatreView().updateFields();
         }
+    }
+
+    /************************************************************************/
+    /* tracking active participants                                         */
+    /************************************************************************/
+    /**
+     * keep track of a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized void recordParticipant(String txID, TheatreParticipantBA participant, BAParticipantManager manager)
+    {
+        participants.put(txID, participant);
+        managers.put(txID, manager);
+    }
+
+    /**
+     * forget about a participant
+     * @param txID
+     * @param participant
+     */
+    public static synchronized TheatreParticipantBA removeParticipant(String txID)
+    {
+        managers.remove(txID);
+        return participants.remove(txID);
+    }
+
+    /**
+     * lookup a participant
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized TheatreParticipantBA getParticipant(String txID)
+    {
+        return participants.get(txID);
+    }
+
+    /**
+     * lookup a participant manager
+     * @param txID
+     * @return the participant
+     */
+    public static synchronized BAParticipantManager getManager(String txID)
+    {
+        return managers.get(txID);
     }
 
     /************************************************************************/
@@ -202,21 +307,25 @@ public class TheatreParticipantBA implements
     protected String txID;
 
     /**
-     * Copy of business state information, may be needed during compensation.
+     * array containing bookings for each of the seating areas. each area is booked in its own
+     * service request but we need this info in order to be able to detect repeated bookings.
      */
-    protected int seatCount;
+    protected int[] bookings;
 
-    /**
-     * Copy of business state information, may be needed during compensation.
-     */
-    protected int seatingArea;
-
-    public TheatreView getTheatreView() {
+    private TheatreView getTheatreView() {
         return TheatreView.getSingletonInstance();
     }
 
-    public TheatreManager getTheatreManager() {
+    private TheatreManager getTheatreManager() {
         return TheatreManager.getSingletonInstance();
     }
 
+    /**
+     * table of currently active participants
+     */
+    private static HashMap<String, TheatreParticipantBA> participants = new HashMap<String, TheatreParticipantBA>();
+    /**
+     * table of currently active participant managers
+     */
+    private static HashMap<String, BAParticipantManager> managers = new HashMap<String, BAParticipantManager>();
 }

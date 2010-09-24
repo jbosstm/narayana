@@ -59,6 +59,14 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
         this.txID = txID;
     }
 
+    /**
+     * accessor for participant transaction id
+     * @return the participant transaction id
+     */
+    public String getTxID() {
+        return txID;
+    }
+
     /************************************************************************/
     /* Durable2PCParticipant methods                                        */
     /************************************************************************/
@@ -79,7 +87,7 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
         getTaxiView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = getTaxiManager().prepareTaxi(txID);
+        boolean success = getTaxiManager().prepare(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
@@ -114,7 +122,7 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
         getTaxiView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        getTaxiManager().commitTaxi(txID);
+        getTaxiManager().commit(txID);
 
         getTaxiView().addMessage("Taxi committed\n");
 
@@ -137,7 +145,7 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
         getTaxiView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        getTaxiManager().rollbackTaxi(txID);
+        getTaxiManager().rollback(txID);
 
         getTaxiView().addMessage("Taxi booking cancelled\n");
 

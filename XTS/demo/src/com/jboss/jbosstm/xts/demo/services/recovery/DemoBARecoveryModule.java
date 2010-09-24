@@ -2,8 +2,7 @@ package com.jboss.jbosstm.xts.demo.services.recovery;
 
 import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantManager;
 import com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantParticipantBA;
-import com.jboss.jbosstm.xts.demo.services.state.ServiceStateManager;
-import com.jboss.jbosstm.xts.demo.services.taxi.TaxiManager;
+import static com.jboss.jbosstm.xts.demo.services.state.ServiceStateConstants.*;
 import com.jboss.jbosstm.xts.demo.services.taxi.TaxiParticipantBA;
 import com.jboss.jbosstm.xts.demo.services.theatre.TheatreManager;
 import com.jboss.jbosstm.xts.demo.services.theatre.TheatreParticipantBA;
@@ -79,21 +78,14 @@ public class DemoBARecoveryModule implements XTSBARecoveryModule
             RestaurantParticipantBA participant = (RestaurantParticipantBA)stream.readObject();
             // ensure that the participant has completed any changes to local service state.
             System.out.println("xts-demo : deserialized RestaurantParticipantBA " + id);
-            RestaurantManager.getSingletonInstance().recovered(participant);
+            if (RestaurantManager.getSingletonInstance().recovered(participant.getTxID(), TX_TYPE_BA)) {
+                participant.confirmCompleted(true);
+            }
             return participant;
-        } else if (id.startsWith("org.jboss.jbossts.xts-demo:theatreBA")) {
-            System.out.println("xts-demo : attempting to deserialize TheatreParticipantBA " + id);
-            TheatreParticipantBA participant = (TheatreParticipantBA)stream.readObject();
-            // ensure that the participant has completed any changes to local service state.
-            System.out.println("xts-demo : deserialized TheatreParticipantBA " + id);
-            TheatreManager.getSingletonInstance().recovered(participant);
-            return participant;
-        } else if (id.startsWith("org.jboss.jbossts.xts-demo:taxiBA")) {
-            System.out.println("xts-demo : attempting to deserialize TaxiParticipantBA " + id);
-            TaxiParticipantBA participant = (TaxiParticipantBA)stream.readObject();
-            System.out.println("xts-demo : deserialized TaxiParticipantBA " + id);
-            TaxiManager.getSingletonInstance().recovered(participant);
-            return participant;
+        } else if (id.startsWith("org.jboss.jbossts.xts-demo:theatreBA") ||
+                id.startsWith("org.jboss.jbossts.xts-demo:taxiBA")) {
+            // this should not get called -- xts-demo WS-BA theatre and taxi participants employ the CoordinatorCompletion protocol
+            throw new Exception("xts-demo : invalid request to deserialize as WS-BA ParticipantCompletion participant " + id);
         }
         return null;
     }
@@ -137,11 +129,24 @@ public class DemoBARecoveryModule implements XTSBARecoveryModule
      * @throws Exception if an error occurs deserializing the CoordinatorCompletion participant
      */
     public BusinessAgreementWithCoordinatorCompletionParticipant deserializeCoordinatorCompletionParticipant(String id, ObjectInputStream stream) throws Exception {
-        if (id.startsWith("org.jboss.jbossts.xts-demo:restauarantBA") ||
-                id.startsWith("org.jboss.jbossts.xts-demo:theatreBA") ||
-                id.startsWith("org.jboss.jbossts.xts-demo:taxiBA")) {
-            // this should not get called -- xts-demo WS-BA participants employ the ParticipantCompletion protocol
-            throw new Exception("xts-demo : invalid request to deserialize WS-BA CoordinatorCompletion participant " + id);
+        if (id.startsWith("org.jboss.jbossts.xts-demo:restauarantBA")) {
+            // this should not get called -- xts-demo WS-BA restaurant participants employ the ParticipantCompletion protocol
+            throw new Exception("xts-demo : invalid request to deserialize as WS-BA CoordinatorCompletion participant " + id);
+        } else if (id.startsWith("org.jboss.jbossts.xts-demo:theatreBA")) {
+            System.out.println("xts-demo : attempting to deserialize TheatreParticipantBA " + id);
+            TheatreParticipantBA participant = (TheatreParticipantBA)stream.readObject();
+            // ensure that the participant has completed any changes to local service state.
+            System.out.println("xts-demo : deserialized TheatreParticipantBA " + id);
+            if (TheatreManager.getSingletonInstance().recovered(participant.getTxID(), TX_TYPE_BA)) {
+                participant.confirmCompleted(true);
+            }
+            return participant;
+        } else if (id.startsWith("org.jboss.jbossts.xts-demo:taxiBA")) {
+            System.out.println("xts-demo : attempting to deserialize TaxiParticipantBA " + id);
+            TaxiParticipantBA participant = (TaxiParticipantBA)stream.readObject();
+            System.out.println("xts-demo : deserialized TaxiParticipantBA " + id);
+            participant.confirmCompleted(true);
+            return participant;
         }
         return null;
     }
@@ -186,11 +191,9 @@ public class DemoBARecoveryModule implements XTSBARecoveryModule
     public void endScan()
     {
         if (isFirst) {
-            // both AT and BA participants update state. so let the state manager know that the
-            // BA log records have all been scanned
-            RestaurantManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_BA);
-            TheatreManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_BA);
-            TaxiManager.getSingletonInstance().recoveryScanCompleted(ServiceStateManager.TX_TYPE_BA);
+            // let the restaurant and theatre state manager know that the BA log records have all been scanned
+            RestaurantManager.getSingletonInstance().recoveryScanCompleted(TX_TYPE_BA);
+            TheatreManager.getSingletonInstance().recoveryScanCompleted(TX_TYPE_BA);
             isFirst = false;
         }
     }

@@ -33,7 +33,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.theatre.ITheatreServiceAT;
-import com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryModule;
+import static com.jboss.jbosstm.xts.demo.services.theatre.TheatreConstants.*;
 
 import javax.jws.WebService;
 import javax.jws.WebParam;
@@ -80,12 +80,31 @@ public class TheatreServiceAT implements ITheatreServiceAT
             transactionId = UserTransactionFactory.userTransaction().toString();
             System.out.println("TheatreServiceAT transaction id =" + transactionId);
 
-            if (!theatreManager.knowsAbout(transactionId))
+            TheatreParticipantAT theatreParticipant = TheatreParticipantAT.getParticipant(transactionId);
+            if (theatreParticipant == null)
             {
                 System.out.println("theatreService - enrolling...");
                 // enlist the Participant for this service:
-                TheatreParticipantAT theatreParticipant = new TheatreParticipantAT(transactionId);
+                int[] bookings = new int[NUM_SEAT_AREAS];
+                bookings[which_area] = how_many;
+                theatreParticipant = new TheatreParticipantAT(transactionId, bookings);
                 TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(theatreParticipant, "org.jboss.jbossts.xts-demo:theatreAT:" + new Uid().toString());
+                TheatreParticipantAT.recordParticipant(transactionId, theatreParticipant);
+            }
+            else if (theatreParticipant.isValid() && theatreParticipant.bookings[which_area] == 0)
+            {
+                theatreParticipant.bookings[which_area] = how_many;
+            } else {
+                // this service does not support repeated bookings in the same transaction
+                // so mark the participant as invalid
+                theatreView.addMessage("id:" + transactionId + ". Participant seats already booked!");
+                theatreView.updateFields();
+                System.err.println("bookSeats: request failed");
+                // this ensures we do not try later to prepare the participant
+                theatreParticipant.invalidate();
+                // throw away any local changes previously made on behalf of the participant
+                theatreManager.rollback(transactionId);
+                return;
             }
         }
         catch (Exception e)

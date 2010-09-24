@@ -73,15 +73,15 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel30 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         jLabelNBookedSeatsCircle = new javax.swing.JLabel();
-        jLabelNConfirmedSeatsCircle = new javax.swing.JLabel();
+        jLabelNPreparedSeatsCircle = new javax.swing.JLabel();
         jLabelNFreeSeatsCircle = new javax.swing.JLabel();
         jLabel35 = new javax.swing.JLabel();
         jLabelNBookedSeatsStalls = new javax.swing.JLabel();
-        jLabelNConfirmedSeatsStalls = new javax.swing.JLabel();
+        jLabelNPreparedSeatsStalls = new javax.swing.JLabel();
         jLabelNFreeSeatsStalls = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabelNBookedSeatsBalcony = new javax.swing.JLabel();
-        jLabelNConfirmedSeatsBalcony = new javax.swing.JLabel();
+        jLabelNPreparedSeatsBalcony = new javax.swing.JLabel();
         jLabelNFreeSeatsBalcony = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
         jButtonResetFields = new javax.swing.JButton();
@@ -127,7 +127,7 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabel3.setForeground(java.awt.Color.gray);
         jPanel1.add(jLabel3);
 
-        jLabel29.setText("confirmed, ");
+        jLabel29.setText("prepared, ");
         jLabel29.setForeground(new java.awt.Color(0, 51, 204));
         jPanel1.add(jLabel29);
 
@@ -144,10 +144,10 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabelNBookedSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsCircle);
 
-        jLabelNConfirmedSeatsCircle.setText(Integer.toString(0));
-        jLabelNConfirmedSeatsCircle.setForeground(new java.awt.Color(0, 51, 204));
-        jLabelNConfirmedSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
-        jPanel1.add(jLabelNConfirmedSeatsCircle);
+        jLabelNPreparedSeatsCircle.setText(Integer.toString(theatreManager.getNPreparedSeats(CIRCLE)));
+        jLabelNPreparedSeatsCircle.setForeground(new java.awt.Color(0, 51, 204));
+        jLabelNPreparedSeatsCircle.setFont(new java.awt.Font("Dialog", 0, 14));
+        jPanel1.add(jLabelNPreparedSeatsCircle);
 
         jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(CIRCLE)));
         jLabelNFreeSeatsCircle.setForeground(new java.awt.Color(0, 153, 0));
@@ -163,10 +163,10 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabelNBookedSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsStalls);
 
-        jLabelNConfirmedSeatsStalls.setText(Integer.toString(0));
-        jLabelNConfirmedSeatsStalls.setForeground(new java.awt.Color(0, 51, 204));
-        jLabelNConfirmedSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
-        jPanel1.add(jLabelNConfirmedSeatsStalls);
+        jLabelNPreparedSeatsStalls.setText(Integer.toString(theatreManager.getNPreparedSeats(STALLS)));
+        jLabelNPreparedSeatsStalls.setForeground(new java.awt.Color(0, 51, 204));
+        jLabelNPreparedSeatsStalls.setFont(new java.awt.Font("Dialog", 0, 14));
+        jPanel1.add(jLabelNPreparedSeatsStalls);
 
         jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(STALLS)));
         jLabelNFreeSeatsStalls.setForeground(new java.awt.Color(0, 153, 0));
@@ -182,10 +182,10 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabelNBookedSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
         jPanel1.add(jLabelNBookedSeatsBalcony);
 
-        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(0));
-        jLabelNConfirmedSeatsBalcony.setForeground(new java.awt.Color(51, 0, 204));
-        jLabelNConfirmedSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
-        jPanel1.add(jLabelNConfirmedSeatsBalcony);
+        jLabelNPreparedSeatsBalcony.setText(Integer.toString(theatreManager.getNPreparedSeats(BALCONY)));
+        jLabelNPreparedSeatsBalcony.setForeground(new java.awt.Color(51, 0, 204));
+        jLabelNPreparedSeatsBalcony.setFont(new java.awt.Font("Dialog", 0, 14));
+        jPanel1.add(jLabelNPreparedSeatsBalcony);
 
         jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(BALCONY)));
         jLabelNFreeSeatsBalcony.setForeground(new java.awt.Color(0, 153, 0));
@@ -509,9 +509,9 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
         jLabelNBookedSeatsCircle.setText(Integer.toString(theatreManager.getNBookedSeats(CIRCLE)));
         jLabelNBookedSeatsStalls.setText(Integer.toString(theatreManager.getNBookedSeats(STALLS)));
         jLabelNBookedSeatsBalcony.setText(Integer.toString(theatreManager.getNBookedSeats(BALCONY)));
-        jLabelNConfirmedSeatsCircle.setText(Integer.toString(0));
-        jLabelNConfirmedSeatsStalls.setText(Integer.toString(0));
-        jLabelNConfirmedSeatsBalcony.setText(Integer.toString(0));
+        jLabelNPreparedSeatsCircle.setText(Integer.toString(theatreManager.getNPreparedSeats(CIRCLE)));
+        jLabelNPreparedSeatsStalls.setText(Integer.toString(theatreManager.getNPreparedSeats(STALLS)));
+        jLabelNPreparedSeatsBalcony.setText(Integer.toString(theatreManager.getNPreparedSeats(BALCONY)));
         jLabelNFreeSeatsCircle.setText(Integer.toString(theatreManager.getNFreeSeats(CIRCLE)));
         jLabelNFreeSeatsStalls.setText(Integer.toString(theatreManager.getNFreeSeats(STALLS)));
         jLabelNFreeSeatsBalcony.setText(Integer.toString(theatreManager.getNFreeSeats(BALCONY)));
@@ -562,15 +562,15 @@ public class TheatreView extends javax.swing.JFrame implements Serializable
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabelNBookedSeatsCircle;
-    private javax.swing.JLabel jLabelNConfirmedSeatsCircle;
+    private javax.swing.JLabel jLabelNPreparedSeatsCircle;
     private javax.swing.JLabel jLabelNFreeSeatsCircle;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabelNBookedSeatsStalls;
-    private javax.swing.JLabel jLabelNConfirmedSeatsStalls;
+    private javax.swing.JLabel jLabelNPreparedSeatsStalls;
     private javax.swing.JLabel jLabelNFreeSeatsStalls;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabelNBookedSeatsBalcony;
-    private javax.swing.JLabel jLabelNConfirmedSeatsBalcony;
+    private javax.swing.JLabel jLabelNPreparedSeatsBalcony;
     private javax.swing.JLabel jLabelNFreeSeatsBalcony;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JButton jButtonResetFields;

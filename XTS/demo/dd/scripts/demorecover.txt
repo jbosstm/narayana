@@ -42,65 +42,38 @@ DO traceln("log", "restore state for " + $0),
    traceln("log", "shadow =  " + $shadow)
 ENDRULE
 
-# track recovery of restaurant participant
-# triggered in 1-4
-RULE trace restaurant recovery
-CLASS RestaurantManager
+# track recovered call to restaurant and theatre managers during recovery
+# for restaurant participant AT triggered in 1,2 with $! == true
+# for restaurant participant BA triggered in 1-4 with $! == false
+# for theatre participant AT triggered in 3 with $! = true
+# and in 4 with $! = false
+# for theatre participant BA triggered in 3 with $! = true
+# and in 4 with $! = false
+RULE trace service state
+CLASS ServiceStateManager
 METHOD recovered
 AT EXIT
 IF TRUE
-DO traceln("log", "recovered restaurant participant " + $1)
-ENDRULE
-
-# track call to confirm completed for recovered restaurant participant
-# which has prepared but not yet committed its local changes
-# never triggered in 1-4
-RULE trace confirm completed for recovered restaurant participant
-CLASS RestaurantManager
-METHOD recovered
-AT CALL confirmCompleted
-IF TRUE
-DO traceln("log", "confirming complete for " + $1 + " " + $*[0])
-ENDRULE
-
-# track recovery of theatre participant
-# triggered in 2-4
-RULE trace theatre recovery
-CLASS TheatreManager
-METHOD recovered
-AT EXIT
-IF TRUE
-DO traceln("log", "recovered theatre participant " + $1)
-ENDRULE
-
-# track call to confirm completed for recovered theatre participant
-# which has prepared but not yet committed its local changes
-# triggered in 3
-RULE trace confirm completed for recovered theatre participant
-CLASS TheatreManager
-METHOD recovered
-AT CALL confirmCompleted
-IF TRUE
-DO traceln("log", "confirming complete for " + $1 + " " + $*[0])
+DO traceln("log", "recovered tx " + $1 + " type " + $2 + " ==> " + $!)
 ENDRULE
 
 # track call to commitSeats in theatre
 # triggered in 3 for BA
 RULE trace commit seats under local recovery in theatre participant
-CLASS TheatreManager
-METHOD commitSeats
+CLASS ServiceStateManager
+METHOD commit
 IF callerEquals("confirmCompleted")
 AT CALL commitShadowState
-DO traceln("log", "committing shadow theatre state in " + $1)
+DO traceln("log", "committing shadow state for " + $0 + " in " + $1)
 ENDRULE
 
 # track call to rollbackSeats in theatre
 # triggered in 2 for AT and BA
 RULE trace rollback seats under local recovery in theatre participant
-CLASS TheatreManager
-METHOD rollbackSeats
+CLASS ServiceStateManager
+METHOD rollback
 AT CALL clearShadowState
 IF callerEquals("recoveryScanCompleted") OR
    callerEquals("confirmCompleted")
-DO traceln("log", "rolling back shadow theatre state in " + $1)
+DO traceln("log", "rolling back shadow state for " + $0 + " in " + $1)
 ENDRULE

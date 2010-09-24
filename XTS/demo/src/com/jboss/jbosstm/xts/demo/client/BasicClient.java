@@ -393,8 +393,9 @@ public class BasicClient extends HttpServlet
 
         // get business logic params from the form submission.
         int restaurantSeats = Integer.parseInt(request.getParameter("restaurant"));
-        int theatreSeats = Integer.parseInt(request.getParameter("theatrecount"));
-        int theatreArea = Integer.parseInt(request.getParameter("theatrearea"));
+        int theatreCircleSeats = Integer.parseInt(request.getParameter("theatrecirclecount"));
+        int theatreStallsSeats = Integer.parseInt(request.getParameter("theatrestallscount"));
+        int theatreBalconySeats = Integer.parseInt(request.getParameter("theatrebalconycount"));
         int taxiCount = Integer.parseInt(request.getParameter("taxi"));
         boolean bookTaxi = (taxiCount >= 1 ? true : false);
 
@@ -405,11 +406,11 @@ public class BasicClient extends HttpServlet
         {
             if ("AtomicTransaction".equals(txType))
             {
-                testAtomicTransaction(restaurantSeats, theatreSeats, theatreArea, bookTaxi);
+                testAtomicTransaction(restaurantSeats, theatreCircleSeats, theatreStallsSeats, theatreBalconySeats, bookTaxi);
             }
             else if ("BusinessActivity".equals(txType))
             {
-                if (!testBusinessActivity(restaurantSeats, theatreSeats, theatreArea, bookTaxi))
+                if (!testBusinessActivity(restaurantSeats, theatreCircleSeats, theatreStallsSeats, theatreBalconySeats, bookTaxi))
                 {
                     result = "Transaction cancelled/compensated.";
                 }
@@ -445,7 +446,7 @@ public class BasicClient extends HttpServlet
      *
      * @throws Exception for any unexpected errors, such as a failure to commit.
      */
-    private void testAtomicTransaction(int restaurantSeats, int theatreSeats, int theatreArea, boolean bookTaxi) throws Exception
+    private void testAtomicTransaction(int restaurantSeats, int theatreCircleSeats, int theatreStallsSeats, int theatreBalconySeats, boolean bookTaxi) throws Exception
     {
         System.out.println("CLIENT: obtaining userTransaction...");
 
@@ -460,7 +461,15 @@ public class BasicClient extends HttpServlet
         System.out.println("CLIENT: calling business Web Services...");
 
         restaurantAT.bookSeats(restaurantSeats);
-        theatreAT.bookSeats(theatreSeats, theatreArea);
+        if (theatreCircleSeats != 0) {
+            theatreAT.bookSeats(theatreCircleSeats, 0);
+        }
+        if (theatreStallsSeats != 0) {
+            theatreAT.bookSeats(theatreStallsSeats, 1);
+        }
+        if (theatreBalconySeats != 0) {
+            theatreAT.bookSeats(theatreBalconySeats, 2);
+        }
         if (bookTaxi)
         {
             taxiAT.bookTaxi();
@@ -484,7 +493,7 @@ public class BasicClient extends HttpServlet
      *
      * @throws Exception for any unexpected errors, such as a failure to commit.
      */
-    private boolean testBusinessActivity(int restaurantSeats, int theatreSeats, int theatreArea, boolean bookTaxi) throws Exception
+    private boolean testBusinessActivity(int restaurantSeats, int theatreCircleSeats, int theatreStallsSeats, int theatreBalconySeats, boolean bookTaxi) throws Exception
     {
         System.out.println("CLIENT: obtaining userBusinessActivity...");
 
@@ -498,34 +507,57 @@ public class BasicClient extends HttpServlet
 
         System.out.println("CLIENT: calling business Web Services...");
 
-        boolean isOK = false ;
+        boolean isOK = true ;
         try
         {
-            if (restaurantBA.bookSeats(restaurantSeats) && theatreBA.bookSeats(theatreSeats, theatreArea))
+            isOK = restaurantBA.bookSeats(restaurantSeats);
+
+            if (isOK && theatreCircleSeats != 0)
             {
-                isOK = !bookTaxi || taxiBA.bookTaxi() ;
+                isOK = theatreBA.bookSeats(theatreCircleSeats, 0);
+            }
+            if (isOK && theatreStallsSeats != 0)
+            {
+                isOK = theatreBA.bookSeats(theatreStallsSeats, 1);
+            }
+            if (isOK && theatreBalconySeats != 0)
+            {
+                isOK = theatreBA.bookSeats(theatreBalconySeats, 2);
+            }
+            if (isOK && bookTaxi)
+            {
+                isOK = taxiBA.bookTaxi();
             }
         }
         catch (final Throwable th)
         {
-            System.out.println("CLIENT: caught exception processing bookings, cancelling (" + th.getMessage() + ")") ;
+            System.out.println("CLIENT: caught exception processing bookings, cancelling (" + th + ")") ;
+            try {
+                uba.cancel();
+            } catch (Throwable th2) {
+                System.out.println("CLIENT: caught exception cancelling transaction (" + th2 + ")") ;
+            }
+            return false;
         }
 
-        if (isOK)
-        {
-            System.out.println("CLIENT: all OK");
-            System.out.println("CLIENT: calling close on the transaction...");
-            uba.close();
+        if (isOK) {
+            try {
+                System.out.println("CLIENT: calling close on the transaction...");
+                uba.close();
+            } catch (Throwable th) {
+                System.out.println("CLIENT: caught exception  closing transaction (" + th + ")") ;
+                return false;
+            }
+        } else {
+            try {
+                System.out.println("CLIENT: calling cancel on the transaction...");
+                uba.cancel();
+            } catch (Throwable th) {
+                System.out.println("CLIENT: caught exception cancelling transaction (" + th + ")") ;
+                return false;
+            }
         }
-        else
-        {
-            System.out.println("CLIENT: one or more services failed, calling cancel.");
-            uba.cancel();
-        }
-
-        System.out.println("CLIENT: done.");
-        System.out.flush();
-
+        
         return isOK;
     }
 

@@ -33,7 +33,7 @@ import java.util.Hashtable;
 import java.io.*;
 
 /**
- * The transactional application logic for the Taxi Service
+ * The application logic for the Taxi Service
  * <p/>
  * Manages taxi reservations. Knows nothing about Web Services.
  * <p/>
@@ -46,7 +46,7 @@ import java.io.*;
 public class TaxiManager implements Serializable
 {
     /*****************************************************************************/
-    /* Support for the Web Service API                                           */
+    /* Support for the Web Services                                              */
     /*****************************************************************************/
 
     /**
@@ -103,36 +103,25 @@ public class TaxiManager implements Serializable
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public synchronized boolean prepareTaxi(Object txID)
+    public synchronized boolean prepare(Object txID)
     {
         // ensure that we have seen this transaction before
         Integer request = (Integer) transactions.get(txID);
         if (request == null)
         {
+            transactions.remove(txID);
             return false;
         }
         else
         {
             // see if we need user confirmation
 
-            if (!autoCommitMode) {
-                // need to wait for the user to decide whether to go ahead or not with this participant
-                isPreparationWaiting = true;
-                synchronized (preparation) {
-                    try {
-                        preparation.wait();
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                }
-                isPreparationWaiting = false;
-
-                // process the user decision
-                if (!isCommit) {
-                    return false;
-                }
+            if (!confirmPrepare()) {
+                transactions.remove(txID);
+                return false;
+            } else {
+                return true;
             }
-            return true;
         }
     }
 
@@ -141,7 +130,7 @@ public class TaxiManager implements Serializable
      *
      * @param txID
      */
-    public synchronized void commitTaxi(Object txID)
+    public synchronized void commit(Object txID)
     {
         // just need to remove the transaction from the hash map
         transactions.remove(txID);
@@ -152,19 +141,34 @@ public class TaxiManager implements Serializable
      *
      * @param txID
      */
-    public synchronized void rollbackTaxi(Object txID)
+    public synchronized void rollback(Object txID)
     {
         // just need to remove the transaction from the hash map
         transactions.remove(txID);
     }
 
     /**
-     * handle a recovery error by rolling back the changes associated with the transaction
-     * @param txID
+     * method called during prepare of local state changes allowing the user to force a prepare failue
+     * @return true if the prepare shoudl succeed and false if it should fail
      */
-    public void error(String txID)
+    public boolean confirmPrepare()
     {
-        rollbackTaxi(txID);
+        if (autoCommitMode) {
+            return true;
+        } else {
+            // need to wait for the user to decide whether to go ahead or not with this participant
+            isPreparationWaiting = true;
+            synchronized (preparation) {
+                try {
+                    preparation.wait();
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            isPreparationWaiting = false;
+
+            return isCommit;
+        }
     }
 
     /*****************************************************************************/
@@ -236,31 +240,6 @@ public class TaxiManager implements Serializable
     public void setCommit(boolean commit)
     {
         isCommit = commit;
-    }
-
-    /*****************************************************************************/
-    /* Recovery methods maintaining consistency of local and  WSAT/WSBA state    */
-    /*****************************************************************************/
-
-    /**
-     * called by the AT recovery module when an AT participant is recovered from a log record
-     */
-    public void recovered(TaxiParticipantAT participant)
-    {
-        // nothing needed here
-    }
-
-    /**
-     * called by the BA recovery module when an AT participant is recovered from a log record
-     */
-    public void recovered(TaxiParticipantBA participant)
-    {
-        // nothing needed here
-    }
-
-    public void recoveryScanCompleted(int txType)
-    {
-        // nothing needed here
     }
 
     /*****************************************************************************/
