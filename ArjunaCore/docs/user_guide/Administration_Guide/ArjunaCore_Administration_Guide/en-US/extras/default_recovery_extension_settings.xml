@@ -1,0 +1,4 @@
+e<entry key="RecoveryEnvironmentBean.recoveryExtensions">
+    com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+    com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
+</entry>
