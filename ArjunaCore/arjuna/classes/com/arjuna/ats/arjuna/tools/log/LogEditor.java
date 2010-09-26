@@ -21,81 +21,8 @@
 
 package com.arjuna.ats.arjuna.tools.log;
 
-import java.util.HashMap;
-
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
 import com.arjuna.ats.internal.arjuna.tools.log.EditableTransaction;
-
-/**
- * Only allows the movement of heuristic participants to the prepared list.
- * Maybe allow general editing of both lists, including bidirectional movement (point?)
- * and deletion.
- */
-
-interface TransactionTypeMap
-{
-    public EditableTransaction getTransaction (final Uid u);
-    public String getType ();
-}
-
-class AtomicActionTypeMap implements TransactionTypeMap
-{
-    public EditableTransaction getTransaction (final Uid u)
-    {
-        return new EditableAtomicAction(u);
-    }
-    
-    public String getType ()
-    {
-        return "AtomicAction";  // why not Class name?
-    }
-}
-
-class TransactionTypeManager
-{
-    public EditableTransaction getTransaction (final String type, final Uid u)
-    {
-        if (type == null)
-            throw new IllegalArgumentException();
-        
-        TransactionTypeMap map = _maps.get(type);
-        
-        if (map != null)
-            return map.getTransaction(u);
-        else
-            return null;
-    }
-    
-    public void addTransaction (TransactionTypeMap map)
-    {
-        if (map == null)
-            throw new IllegalArgumentException();
-        
-        _maps.put(map.getType(), map);
-    }
-    
-    public void removeTransaction (String type)
-    {
-        if (type == null)
-            throw new IllegalArgumentException();
-        
-        _maps.remove(type);
-    }
-    
-    public static TransactionTypeManager getInstance ()
-    {
-        return _manager;
-    }
-    
-    private TransactionTypeManager ()
-    {
-    }
-    
-    private HashMap<String, TransactionTypeMap> _maps = new HashMap<String, TransactionTypeMap>();
-    
-    private static final TransactionTypeManager _manager = new TransactionTypeManager();
-}
 
 
 public class LogEditor
@@ -140,8 +67,7 @@ public class LogEditor
             
             return;
         }
-        
-        TransactionTypeManager.getInstance().addTransaction(new AtomicActionTypeMap());
+
         EditableTransaction act = TransactionTypeManager.getInstance().getTransaction(type, new Uid(txId));
         
         System.err.println("Recreated transaction.");

@@ -23,15 +23,13 @@ package com.arjuna.ats.arjuna.tools.log;
 
 import java.io.IOException;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
+import com.arjuna.ats.internal.arjuna.tools.log.EditableTransaction;
 
 /**
  * Commands:
@@ -50,15 +48,10 @@ import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
  * @author marklittle
  */
 
-/*
- * WARNING: this currently only supports AtomicActions.
- * TODO make it support all other transaction types!
- */
-
 class LogConsole
 {
     public static final int MAX_COMMAND_LEN = 1024; // bytes
-    public static final String DEFAULT_TYPE = new AtomicAction().type();
+    public static final String DEFAULT_TYPE = "AtomicAction";
 
     private enum Command
     {
@@ -167,7 +160,7 @@ class LogConsole
                         System.err.println("Not attached.");
                     
                     Uid u = new Uid(_currentLog);
-                    EditableAtomicAction act = new EditableAtomicAction(u);
+                    EditableTransaction act = TransactionTypeManager.getInstance().getTransaction(_transactionType, u);
                     
                     try
                     {
@@ -185,7 +178,7 @@ class LogConsole
                         System.err.println("Not attached.");
                     
                     Uid uid = new Uid(_currentLog);
-                    EditableAtomicAction ract = new EditableAtomicAction(uid);
+                    EditableTransaction ract = TransactionTypeManager.getInstance().getTransaction(_transactionType, uid);
                     
                     try
                     {
@@ -217,19 +210,12 @@ class LogConsole
     
     private void dumpLog (final Uid u)
     {
-        EditableAtomicAction act = new EditableAtomicAction(u);
+        EditableTransaction act = TransactionTypeManager.getInstance().getTransaction(_transactionType, u);
         
-        System.out.println(act.toString());
-    }
-
-    // should accept AtomicAction instead of /StateManager/../AtomicAction
-    
-    private boolean supportedType (String type)  // need more supported types!
-    {
-        if (DEFAULT_TYPE.endsWith(type))
-            return true;
+        if (act == null)
+            System.out.println("Dump failed! Unknown type "+_transactionType);
         else
-            return false;
+            System.out.println(act.toString());
     }
     
     private void printSupportedTypes ()
@@ -298,8 +284,12 @@ class LogConsole
         else
             _transactionType = DEFAULT_TYPE;
         
-        if (!supportedType(_transactionType))
+        if (!TransactionTypeManager.getInstance().present(_transactionType))
+        {
+            System.err.println("Transaction log type "+_transactionType+" not supported.");            
+
             _transactionType = "";
+        }
     }
     
     private final void setLogId (String command)
@@ -338,6 +328,10 @@ class LogConsole
             return -1;
     }
 
+    /*
+     * Go through the log and print out all of the instances.
+     */
+    
     private final void listLogs (String type) throws IOException
     {
         InputObjectState buff = new InputObjectState();
@@ -366,9 +360,13 @@ class LogConsole
         }
     }
     
-    private final boolean supportedLog (String log)
+    /*
+     * Is this a type/instance in the log that we support?
+     */
+    
+    private final boolean supportedLog (String logID)
     {
-        Uid id = new Uid(log);
+        Uid id = new Uid(logID);
         
         if (id.equals(Uid.nullUid()))
             return false;
