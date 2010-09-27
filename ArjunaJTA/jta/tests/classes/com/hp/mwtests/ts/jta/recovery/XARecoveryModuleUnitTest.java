@@ -81,6 +81,8 @@ public class XARecoveryModuleUnitTest
         
         XARecoveryModule xarm = new XARecoveryModule();
         
+        assertNull(xarm.getNewXAResource(new XidImple()));
+        
         for (int i = 0; i < 11; i++)
         {
             xarm.periodicWorkFirstPass();
@@ -176,15 +178,50 @@ public class XARecoveryModuleUnitTest
 
         xaRecoveryModule.addXAResourceOrphanFilter(xaResourceOrphanFilter);
         xaRecoveryModule.removeXAResourceOrphanFilter(xaResourceOrphanFilter);
-
+    }
+    
+    @Test
+    public void testXAResourceOrphanFilter () throws Exception
+    {
+        XAResourceOrphanFilter xaResourceOrphanFilter = new DummyXAResourceOrphanFilter(XAResourceOrphanFilter.Vote.ROLLBACK);
+    
+        XARecoveryModule xarm = new XARecoveryModule();
+        
+        xarm.addXAResourceOrphanFilter(xaResourceOrphanFilter);
+        
+        Class[] parameterTypes = new Class[2];
+        
+        parameterTypes[0] = XAResource.class;
+        parameterTypes[1] = Xid.class;
+        
+        Method m = xarm.getClass().getDeclaredMethod("handleOrphan", parameterTypes);
+        m.setAccessible(true);
+        
+        Object[] parameters = new Object[2];
+        parameters[0] = new RecoveryXAResource();
+        parameters[1] = new XidImple();
+        
+        m.invoke(xarm, parameters);
     }
 
     class DummyXAResourceOrphanFilter implements XAResourceOrphanFilter
     {
+        public DummyXAResourceOrphanFilter ()
+        {
+            _vote = null;
+        }
+        
+        public DummyXAResourceOrphanFilter (Vote v)
+        {
+            _vote = v;
+        }
+        
         @Override
         public Vote checkXid(Xid xid)
         {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return _vote;
         }
+        
+        private Vote _vote;
     }
 }
