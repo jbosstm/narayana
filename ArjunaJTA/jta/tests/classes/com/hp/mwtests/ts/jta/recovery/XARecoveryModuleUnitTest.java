@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
@@ -60,6 +61,8 @@ public class XARecoveryModuleUnitTest
         
         xarm.periodicWorkFirstPass();
         xarm.periodicWorkSecondPass();
+        
+        assertNotNull(xarm.id());
     }
     
     @Test
@@ -85,6 +88,60 @@ public class XARecoveryModuleUnitTest
         }
         
         assertTrue(xarm.getNewXAResource(new XidImple(new Uid())) == null);
+        
+        assertNull(xarm.getNewXAResource(new XidImple()));
+    }
+    
+    @Test
+    public void testFailures () throws Exception
+    {
+        XARecoveryModule xarm = new XARecoveryModule();       
+        Class[] parameterTypes = new Class[2];
+        Uid u = new Uid();
+        Xid x = new XidImple();
+        
+        parameterTypes[0] = Xid.class;
+        parameterTypes[1] = Uid.class;
+      
+        Method m = xarm.getClass().getDeclaredMethod("addFailure", parameterTypes);
+        m.setAccessible(true);
+      
+        Object[] parameters = new Object[2];
+        parameters[0] = x;
+        parameters[1] = u;
+      
+        m.invoke(xarm, parameters);
+        
+        parameterTypes = new Class[1];
+        parameterTypes[0] = Xid.class;
+        
+        parameters = new Object[1];
+        parameters[0] = x;
+        
+        m = xarm.getClass().getDeclaredMethod("previousFailure", parameterTypes);
+        m.setAccessible(true);
+        
+        Uid ret = (Uid) m.invoke(xarm, parameters);
+        
+        assertEquals(ret, u);
+        
+        parameterTypes = new Class[2];
+        parameterTypes[0] = Xid.class;
+        parameterTypes[1] = Uid.class;
+        
+        parameters = new Object[2];
+        parameters[0] = x;
+        parameters[1] = u;
+        
+        m = xarm.getClass().getDeclaredMethod("removeFailure", parameterTypes);
+        m.setAccessible(true);
+        
+        m.invoke(xarm, parameters);
+               
+        m = xarm.getClass().getDeclaredMethod("clearAllFailures", (Class[]) null);
+        m.setAccessible(true);
+        
+        m.invoke(xarm, (Object[]) null);
     }
 
     @Test
