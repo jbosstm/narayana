@@ -323,7 +323,29 @@
         </ear>
     </target>
 
-    <target name="build" depends="jboss-ear"/>
+    <target  name="docs">
+        <javadoc packagenames="com.jboss.jbosstm.xts.demo.*" destdir="docs">
+            <classpath>
+                <path refid="compile.path"/>
+            </classpath>
+            <sourcefiles>
+                <fileset dir="${src.dir}" includes="**/*.java"/>
+            </sourcefiles>
+        </javadoc>
+    </target>
+
+    <target  name="docsrpc">
+        <javadoc packagenames="com.jboss.jbosstm.xts.demo.*" destdir="docsrpc">
+            <classpath>
+                <path refid="compile.path"/>
+            </classpath>
+            <sourcefiles>
+                <fileset dir="${src.dir}" includes="**/*.java"/>
+            </sourcefiles>
+        </javadoc>
+    </target>
+
+    <target name="build" depends="jboss-ear, docs"/>
 
     <target name="buildrpc" depends="jboss-earrpc"/>
 

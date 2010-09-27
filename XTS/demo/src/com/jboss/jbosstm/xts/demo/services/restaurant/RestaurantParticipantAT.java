@@ -35,8 +35,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * An adapter class that exposes the RestaurantManager transaction lifecycle
- * API as a WS-T Atomic Transaction participant.
+ * An adapter class that exposes the RestaurantManager as a WS-T Atomic Transaction participant.
  * Also logs events to a RestaurantView object.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
@@ -181,8 +180,8 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
     /************************************************************************/
     /**
      * keep track of a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction id
+     * @param participant the participant
      */
     public static synchronized void recordParticipant(String txID, RestaurantParticipantAT participant)
     {
@@ -191,8 +190,7 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
     /**
      * forget about a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction id
      */
     public static synchronized RestaurantParticipantAT removeParticipant(String txID)
     {
@@ -201,8 +199,8 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
 
     /**
      * lookup a participant
-     * @param txID
-     * @return the participant
+     * @param txID the participant's transaction id
+     * @param participant the participant
      */
     public static synchronized RestaurantParticipantAT getParticipant(String txID)
     {
@@ -220,7 +218,7 @@ public class RestaurantParticipantAT implements Durable2PCParticipant, Serializa
     /**
      * check if a participant is invalid
      *
-     * @return
+     * @return true if the participant is still valid otherwise false
      */
     public boolean isValid()
     {

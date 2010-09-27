@@ -37,9 +37,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * An adapter class that exposes the TheatreManager transaction lifecycle
- * API as a WS-T Coordinator Completion Business Activity participant.
- * Also logs events to a TheatreView object.
+ * An adapter class that exposes the TheatreManager as a WS-T Coordinator Completion
+ * Business Activity participant. Also logs events to a TheatreView object.
+ *
+ * The Theatre Service allows up to three bookings in any given transaction, one for
+ * each seating area. This means that teh service cannot decide when to complete.
+ * After the first or, possibly, second booking request the service cannot determine
+ * whether the client still wants to send another request. Hence it uses a participant
+ * which implements the coordinator completion protocol. WHen the client asks the
+ * coordinator to close the transaction the coordinator will tell the participant
+ * to complete.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
@@ -56,12 +63,13 @@ public class TheatreParticipantBA implements
      * Participant instances are related to business method calls
      * in a one to one manner.
      *
-     * @param txID       uniq id String for the transaction instance.
+     * @param txID  uniq id String for the transaction instance.
+     * @param bookings holds counts of the seats booked in each of the three seating areas
      */
     public TheatreParticipantBA(String txID, int[] bookings)
     {
         // we need to save the txID for later use when logging
-        // and the seat count and seat area for use during compensation
+        // and the seat counts for use during compensation
         this.txID = txID;
         this.bookings = bookings;
     }
@@ -78,13 +86,9 @@ public class TheatreParticipantBA implements
     /* BusinessAgreementWithCoordinatorCompletionParticipant methods        */
     /************************************************************************/
     /**
-     * The transaction has completed successfully. The participant previously
-     * informed the coordinator that it was ready to complete.
-     *
-     * @throws WrongStateException never in this implementation.
-     * @throws SystemException never in this implementation.
+     * The coordinator is informing the participant that all work it needs to
+     * do within the scope of this business activity has been received.
      */
-
     public void complete() throws WrongStateException, SystemException
     {
         BAParticipantManager participantManager = managers.get(txID);
@@ -116,6 +120,10 @@ public class TheatreParticipantBA implements
         }
     }
 
+    /**
+     * The transaction has completed successfully. The participant previously
+     * informed the coordinator that it was ready to complete.
+     */
     public void close() throws WrongStateException, SystemException
     {
         // nothing to do here as the seats are already booked
@@ -130,14 +138,10 @@ public class TheatreParticipantBA implements
     }
 
     /**
-     * The transaction has cancelled, and the participant should undo any work.
-     * The participant cannot have informed the coordinator that it has
-     * completed.
-     *
-     * @throws WrongStateException never in this implementation.
-     * @throws SystemException never in this implementation.
+     * The transaction has cancelled. The participant previously
+     * informed the coordinator that it had finished work but could compensate
+     * later if required, so it is now requested to do so.
      */
-
     public void cancel() throws WrongStateException, SystemException
     {
         // let the manager know that this activity has been cancelled
@@ -157,9 +161,6 @@ public class TheatreParticipantBA implements
      * The transaction has cancelled. The participant previously
      * informed the coordinator that it had finished work but could compensate
      * later if required, so it is now requested to do so.
-     *
-     * @throws WrongStateException never in this implementation.
-     * @throws SystemException if unable to perform the compensating transaction.
      */
 
     public void compensate() throws FaultedException, WrongStateException, SystemException
@@ -204,10 +205,14 @@ public class TheatreParticipantBA implements
 
     public void unknown() throws SystemException
     {
-
         removeParticipant(txID);
     }
 
+    /**
+     * If the participant enquired as to the status of the transaction it was
+     * registered with and an unrecoverable error occurs then this operation will be
+     * invoked.
+     */
     public void error() throws SystemException
     {
         System.out.println("TheatreParticipantBA.error");
@@ -238,7 +243,6 @@ public class TheatreParticipantBA implements
      * @param confirmed true if the log record has been written and changes should be rolled forward and false
      * if it has not been written and changes should be rolled back
      */
-
     public void confirmCompleted(boolean confirmed) {
         if (confirmed) {
             getTheatreManager().commit(txID);
@@ -255,9 +259,10 @@ public class TheatreParticipantBA implements
     /* tracking active participants                                         */
     /************************************************************************/
     /**
-     * keep track of a participant
-     * @param txID
-     * @param participant
+     * keep track of a participant and its participant manager
+     * @param txID the participant's transaction identifier
+     * @param participant the participant to be recorded
+     * @param manager the participant manager to be recorded
      */
     public static synchronized void recordParticipant(String txID, TheatreParticipantBA participant, BAParticipantManager manager)
     {
@@ -266,9 +271,9 @@ public class TheatreParticipantBA implements
     }
 
     /**
-     * forget about a participant
-     * @param txID
-     * @param participant
+     * forget about a participant and its participant manager
+     * @param txID the participant's transaction identifier
+     * @return the removed participant
      */
     public static synchronized TheatreParticipantBA removeParticipant(String txID)
     {
@@ -278,7 +283,7 @@ public class TheatreParticipantBA implements
 
     /**
      * lookup a participant
-     * @param txID
+     * @param txID the participant's transaction identifier
      * @return the participant
      */
     public static synchronized TheatreParticipantBA getParticipant(String txID)
@@ -288,8 +293,8 @@ public class TheatreParticipantBA implements
 
     /**
      * lookup a participant manager
-     * @param txID
-     * @return the participant
+     * @param txID the participant's transaction identifier
+     * @return the participant's manager
      */
     public static synchronized BAParticipantManager getManager(String txID)
     {

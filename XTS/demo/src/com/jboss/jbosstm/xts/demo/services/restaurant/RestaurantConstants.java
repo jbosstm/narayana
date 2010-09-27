@@ -10,8 +10,14 @@ public class RestaurantConstants
      */
     public static final int DEFAULT_SEATING_CAPACITY = 100;
 
+    /**
+     * the name of the file used to persist the current restaurant state
+     */
     public final static String STATE_FILENAME = "restaurantManagerState";
 
+    /**
+     * the name of the file used to persist the shadow restaurant state
+     */
     public final static String SHADOW_STATE_FILENAME = "restaurantManagerShadowState";
 
 }

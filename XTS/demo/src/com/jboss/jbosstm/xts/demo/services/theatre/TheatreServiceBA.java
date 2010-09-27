@@ -44,15 +44,6 @@ import javax.jws.soap.SOAPBinding;
  * An adapter class that exposes the TheatreManager business API as a
  * transactional Web Service. Also logs events to a TheatreView object.
  *
- * The BA Theatre Service allows the client to make up to three bookings in any given transaction,
- * one for each seating area. So, this means that it cannot know when the client has finished
- * making service requests. Hence it uses a participant which implements the coordinator
- * completion protocol. When the client closes the activity the coordinator sends a COMPLETED
- * message to the BA participant before sending the CLOSE message. If the client cancels the
- * activity then the coordinator only has to send a CANCEL message. The service may still be told
- * to COMPENSATE if it successfully completes and then some other service (e.g. the Taxi service)
- * fails to complete.
- *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.5 $
  */

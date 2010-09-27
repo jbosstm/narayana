@@ -36,9 +36,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * An adapter class that exposes the RestaurantManager transaction lifecycle
- * API as a WS-T Participant Completion Business Activity participant.
- * Also logs events to a RestaurantView object.
+ * An adapter class that exposes the RestaurantManager as a WS-T Participant Completion
+ * Business Activity participant. Also logs events to a RestaurantView object.
  *
  * The Restaurant Service only allows a single booking in any given transaction. So, this
  * means it can complete at the end of the booking call. Hence it uses a participant which
@@ -224,8 +223,8 @@ public class RestaurantParticipantBA
     /************************************************************************/
     /**
      * keep track of a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction id
+     * @param participant the participant
      */
     public static synchronized void recordParticipant(String txID, RestaurantParticipantBA participant)
     {
@@ -234,8 +233,7 @@ public class RestaurantParticipantBA
 
     /**
      * forget about a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction id
      */
     public static synchronized RestaurantParticipantBA removeParticipant(String txID)
     {
@@ -244,8 +242,8 @@ public class RestaurantParticipantBA
 
     /**
      * lookup a participant
-     * @param txID
-     * @return the participant
+     * @param txID the participant's transaction id
+     * @param participant the participant
      */
     public static synchronized RestaurantParticipantBA getParticipant(String txID)
     {

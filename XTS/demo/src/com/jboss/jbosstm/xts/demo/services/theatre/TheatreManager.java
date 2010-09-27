@@ -173,9 +173,6 @@ public class TheatreManager extends ServiceStateManager<TheatreState>
 
     /**
      * Reset to the initial state.
-     *
-     * @param txID   The transaction identifier
-     * @param nSeats The number of seats requested
      */
     public synchronized void reset()
     {

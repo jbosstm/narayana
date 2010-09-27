@@ -35,10 +35,12 @@ import java.io.*;
 /**
  * The application logic for the Taxi Service
  * <p/>
- * Manages taxi reservations. Knows nothing about Web Services.
- * <p/>
- * Taxis are an unlimited resource so this manager does not maintain any
- * persistent state.
+ * Manages taxi reservations, providing prepare, commit and rollback calls for
+ * modifying taxi bookings in memory. Taxis are an unlimited resource and it does
+ * not really matter if a taxi does not turn up (there's always another one round the
+ * corner) nor does it matter of the clients don't appear (someone else will take
+ * the ride). so this manager does not maintain any persistent state and any bookings
+ * made are not resilient to crashes.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
@@ -148,8 +150,8 @@ public class TaxiManager implements Serializable
     }
 
     /**
-     * method called during prepare of local state changes allowing the user to force a prepare failue
-     * @return true if the prepare shoudl succeed and false if it should fail
+     * method called during prepare of local state changes allowing the user to force a prepare failure
+     * @return true if the prepare should succeed and false if it should fail
      */
     public boolean confirmPrepare()
     {

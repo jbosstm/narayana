@@ -43,14 +43,6 @@ import javax.jws.soap.SOAPBinding;
  * An adapter class that exposes the RestaurantManager business API as a
  * transactional Web Service. Also logs events to a RestaurantView object.
  *
- * The BA Restaurant Service only allows the client to make one booking in any given transaction.
- * So, this means that it can complete its changes as soon as the booking has been made. Hence
- * it uses a participant which implements the participant completion protocol. When the client
- * closes the activity the coordinator will ensure that the participant has completed then
- * it only has to send a CLOSE message. This means that if the client cancels the activity after
- * booking the restaurant then the coordinator cannot just CANCEL the participant. It will have to
- * send a COMPENSATE message in order to make sure that the committed booking is undone.
- *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.5 $
  */

@@ -113,7 +113,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
      * lock the current state so the specified transaction can begin prepare. this method must only be
      * called when synchronized on the method call recipient and when the current lock id is null. also,
      * the derived state associated with the prepared transaction id must be a child of the current state.
-     * @param txId the id of the transaction which will become the locking transaction.
+     * @param preparedTxID the id of the transaction which will become the locking transaction.
      */
     protected void lock(Object preparedTxID)
     {
@@ -146,11 +146,12 @@ public abstract class ServiceStateManager<T extends ServiceState> {
 
     /**
      * persist the prepared state for a transaction including the transaction id and the derived state
-     * containing the modified booking information blah blah blah. this is normally only called by {@link #prepare}.
+     * containing the modified booking information. this is normally only called by {@link #prepare}.
      * however it is also exposed to subclasses so they can install the initial current state or reset
      * the current state to the default settings.
-     * @param txId
-     * @param childState
+     * @param txId the id of the transaction which created the child state
+     * @param childState a derived state storing any new state values written by
+     * the transaction.
      * @throws java.io.IOException
      */
     protected void writeShadowState(Object txId, T childState) throws IOException
@@ -176,8 +177,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
      * {@link #rollback}. however it is also exposed to subclasses so they can deal wiht any
      * errors which happen when they try to install the initial current state or reset
      * the current state to the default settings.
-     * @param txId
-     * @param childState
+     * @param txId the id of the transaction which persisted the shadow state
      * @throws java.io.IOException
      */
     protected void clearShadowState(Object txId)
@@ -193,6 +193,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
      * install the persisted prepared state as the persisted current state. this is normally
      * only called by {@link #commit}. however it is also exposed to subclasses so they can install
      * the initial current state or reset the current state to the default settings.
+     * @param txId the id of the transaction which persisted the shadow state
      */
     protected void commitShadowState(Object txId)
     {
@@ -315,8 +316,8 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     /**
      * called by the AT and BA recovery modules to notify the manager that a participant associated with
      * a specific AT or BA transaction has been recovered from a participant log record.
-     * @param txID
-     * @param txType
+     * @param txID the id of the recovered transaction
+     * @param txType identifies whether the recovered transaction is an AT or a BA transaction
      * @return true if there is prepared local state for this transaction which needs to be committed or
      * rolled  back otherwise false
      */
@@ -359,7 +360,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
      * more AT or BA participant recovery records to process. this allows the manager to automatically
      * roll back local prepared state if it is not needed for subsequent recovery
      *
-     * @param txType
+     * @param txType identifies whether the completed scan was for AT or BA transactions
      */
     public void recoveryScanCompleted(int txType)
     {
@@ -440,7 +441,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     /**
      * commit local state changes for the supplied transaction
      *
-     * @param txID
+     * @param txID The transaction identifier
      */
     public void commit(Object txID)
     {
@@ -460,7 +461,8 @@ public abstract class ServiceStateManager<T extends ServiceState> {
 
     /**
      * roll back local state changes for the supplied transaction
-     * @param txID
+
+     * @param txID The transaction identifier
      */
     public void rollback(Object txID)
     {

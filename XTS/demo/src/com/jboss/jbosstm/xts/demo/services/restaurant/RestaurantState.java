@@ -14,7 +14,7 @@ public class RestaurantState extends ServiceState {
 
     /**
      * create a new initial restaurant state
-     * @return
+     * @return an initial restaurant state containing no booked seats
      */
     public static RestaurantState initialState()
     {
@@ -23,7 +23,8 @@ public class RestaurantState extends ServiceState {
 
     /**
      * derive a child restaurant state from this state
-     * @return
+     * @return a derived restaurant state containing the same data as this state
+     * but having a version id one greater
      */
     public RestaurantState derivedState()
     {
@@ -46,8 +47,6 @@ public class RestaurantState extends ServiceState {
     }
     /**
      * create a new initial restaurant state
-     *
-     * @param totalSeats
      */
     private RestaurantState()
     {
@@ -58,11 +57,10 @@ public class RestaurantState extends ServiceState {
     }
 
     /**
-     * create a derived restaurant state with a given number of bookings and a specific version
+     * create a restaurant state derived from a parent state
      *
-     * @param totalSeats
-     * @param bookedSeats
-     * @param version
+     * @param parent the parent state whose data should be copied into this state
+     * and whose version should be incremented by 1 and then installed in this state.
      */
     private RestaurantState(RestaurantState parent)
     {

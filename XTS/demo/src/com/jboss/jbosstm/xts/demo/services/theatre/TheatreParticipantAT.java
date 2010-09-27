@@ -35,8 +35,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * An adapter class that exposes the TheatreManager transaction lifecycle
- * API as a WS-T Atomic Transaction participant.
+ * An adapter class that exposes the TheatreManager as a WS-T Atomic Transaction participant.
  * Also logs events to a TheatreView object.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
@@ -173,8 +172,8 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
     /************************************************************************/
     /**
      * keep track of a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction identifier
+     * @param participant the participant to be recorded
      */
     public static synchronized void recordParticipant(String txID, TheatreParticipantAT participant)
     {
@@ -183,8 +182,8 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
     /**
      * forget about a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction identifier
+     * @return the removed participant
      */
     public static synchronized TheatreParticipantAT removeParticipant(String txID)
     {
@@ -193,7 +192,7 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 
     /**
      * lookup a participant
-     * @param txID
+     * @param txID the participant's transaction identifier
      * @return the participant
      */
     public static synchronized TheatreParticipantAT getParticipant(String txID)
@@ -212,7 +211,7 @@ public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
     /**
      * check if a participant is invalid
      *
-     * @return
+     * @return true if the participant is still valid otherwise false
      */
     public boolean isValid()
     {

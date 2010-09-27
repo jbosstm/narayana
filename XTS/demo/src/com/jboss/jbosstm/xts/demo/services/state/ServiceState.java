@@ -23,18 +23,18 @@ public class ServiceState implements Serializable {
     }
 
     /**
-     * construct a new state from an existing state bumping up the version number by one
-      * @param parent
+     * construct a new state derived from this state bumping up the version number by one
+      * @param parent the state from which the new state is to be derived
      */
     public ServiceState(ServiceState parent) {
         this.version = parent.version + 1;
     }
 
     /**
-     * test whether the child state was immediately derived from this state by checking the version numbers
+     * test whether the child state was derived from this state by checking the version numbers
      *
      * @param child the child state to be tested
-     * @return true if the child state was immediately derived from this state otherwise false
+     * @return true if the child state was derived from this state otherwise false
      */
     public boolean isParentOf(ServiceState child)
     {

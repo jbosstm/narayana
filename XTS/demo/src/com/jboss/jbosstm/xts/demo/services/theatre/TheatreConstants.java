@@ -31,12 +31,12 @@ public class TheatreConstants
     public static final int DEFAULT_SEATING_CAPACITY = 100;
 
     /**
-     * the name of the file used to store the restaurant manager state
+     * the name of the file used to store the current theatre manager state
      */
     final static public String STATE_FILENAME = "theatreManagerState";
 
     /**
-     * the name of the file used to store the restaurant manager shadow state
+     * the name of the file used to store the shadow theatre manager state
      */
     final static public String SHADOW_STATE_FILENAME = "theatreManagerShadowState";
 }

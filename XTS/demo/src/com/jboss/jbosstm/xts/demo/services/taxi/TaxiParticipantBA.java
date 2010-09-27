@@ -243,7 +243,7 @@ public class TaxiParticipantBA
     /************************************************************************/
     /**
      * keep track of a participant
-     * @param txID
+     * @param txID the participant's transaction id
      * @param participant
      */
     public static synchronized void recordParticipant(String txID, TaxiParticipantBA participant, com.arjuna.wst11.BAParticipantManager manager)
@@ -254,8 +254,7 @@ public class TaxiParticipantBA
 
     /**
      * forget about a participant
-     * @param txID
-     * @param participant
+     * @param txID the participant's transaction id
      */
     public static synchronized TaxiParticipantBA removeParticipant(String txID)
     {
@@ -265,7 +264,7 @@ public class TaxiParticipantBA
 
     /**
      * lookup a participant
-     * @param txID
+     * @param txID the participant's transaction id
      * @return the participant
      */
     public static synchronized TaxiParticipantBA getParticipant(String txID)
@@ -275,8 +274,8 @@ public class TaxiParticipantBA
 
     /**
      * lookup a participant manager
-     * @param txID
-     * @return the participant
+     * @param txID the participant's transaction id
+     * @return the participant's manager
      */
     public static synchronized com.arjuna.wst11.BAParticipantManager getManager(String txID)
     {

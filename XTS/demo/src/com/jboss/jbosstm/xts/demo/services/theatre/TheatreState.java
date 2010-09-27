@@ -17,8 +17,7 @@ public class TheatreState extends ServiceState {
 
     /**
      * create a new initial theatre state
-     * @param count
-     * @return
+     * @return an initial theatre state containing no booked seats
      */
     public static TheatreState initialState()
     {
@@ -26,7 +25,8 @@ public class TheatreState extends ServiceState {
     }
     /**
      * derive a child theatre state from this state
-     * @return
+     * @return a derived theatre state containing the same data as this state
+     * but having a version id one greater 
      */
     public TheatreState derivedState()
     {
@@ -61,8 +61,6 @@ public class TheatreState extends ServiceState {
     }
     /**
      * create a new initial restaurant state
-     *
-     * @param totalSeats
      */
     private TheatreState()
     {
@@ -77,11 +75,10 @@ public class TheatreState extends ServiceState {
     }
 
     /**
-     * create a restaurant state with a given number of bookings and a specific version
+     * create a theatre state derived from a parent state
      *
-     * @param totalSeats
-     * @param bookedSeats
-     * @param version
+     * @param parent the parent state whose data should be copied into this state
+     * and whose version should be incremented by 1 and then installed in this state.
      */
     private TheatreState(TheatreState parent)
     {
