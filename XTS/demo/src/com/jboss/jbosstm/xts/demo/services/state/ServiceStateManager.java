@@ -1,54 +1,105 @@
 package com.jboss.jbosstm.xts.demo.services.state;
 
-import com.jboss.jbosstm.xts.demo.services.theatre.TheatreState;
-
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import static com.jboss.jbosstm.xts.demo.services.state.ServiceStateConstants.*;
 
 /**
- * An abstract class extended by the web service manager classes which provides a simple capability
- * for persistent state management.
+ * An abstract class extended by the web service manager classes, providing a simple capability
+ * for persistent state management. Services need to maintain a copy of the current service state on
+ * the local disk. They also need to be able to update the service state by first persisting a copy
+ * of their modified state and then either using it to replace the current version (commit) or throwing
+ * it away (roll back). In either case the updates are driven by the web service participants under
+ * the control of the web service transaction coordinator. Effectively, a service manager derived from
+ * this class has the ability to operate like a simple transactional resource manager for the local web
+ * service state.
  *
- * The web services need to maintain a copy of the current service state on the local disk. They also need
- * to be able to update the service state by first persisting a copy of the new state and then either
- * using it to replace the current version (commit) or throwing it away. In either case the updates
- * have to be done under the control of the web service transaction coordinator. Effectively, a service
- * manager derived from this class has the ability to operate like a simple transactional resource.
+ * The unit of locking is the whole of the service state so although concurrent local state updates can be
+ * attempted by multiple transactions only one update will commit, forcing the other transactions to
+ * roll back. conflict detection is implemented using a simple versioning scheme provided by class
+ * ServiceState.  When enlisting in a transaction the manager creates a child state derived from the
+ * current (parent) state then applies all its changes to the derived state:
+ *
+ * <ul>
+ * <li>Preparation requires locking the service, establishing that the current state is still the parent of
+ * the child state and then persisting the child state as a shadow state.
+ *
+ * <li>Commit requires overwriting the persisted current state with the persisted shadow state, installing the
+ * derived state as the current state and then unlocking the service.
+ *
+ * <li>Roll back merely requires deleting the  persisted shadow state then unlocking the service.
+ * </ul>
  */
 public abstract class ServiceStateManager<T extends ServiceState> {
+    /**
+     * create a new manager and call the restoreState method to restore the current
+     * web service state and any prepared but uncommitted web service shadow state
+     * from the local disk.
+     */
     protected ServiceStateManager()
     {
         transactions = new Hashtable<Object, T>();
         restoreState();
     }
 
-    protected void putState(Object txId, T state)
+    /**
+     * store a derived state using the transaction id as a lookup key
+     * @param txId the id of the transaction which created the derived state
+     * @param state a derived state storing any new state values written by
+     * the transaction.
+     */
+    protected void putDerivedState(Object txId, T state)
     {
         transactions.put(txId, state);
     }
 
-    protected T getState(Object txId)
+    /**
+     * looking  a derived state using the transaction id as a lookup key
+     * @param txId the id of the transaction which created the derived state
+     * @return the derived state storing any new state values written by
+     * the transaction.
+     */
+    protected T getDerivedState(Object txId)
     {
         return transactions.get(txId);
     }
 
+    /**
+     * release a derived state previously stored using the transaction id as a lookup key
+     * @param txId the id of the transaction which created the derived state
+     */
     protected void removeState(Object txId)
     {
         transactions.remove(txId);
     }
 
+    /**
+     * test whether the current state is locked by a transaction which is either preparing or
+     * prepared. this method must only be called when synchronized on the method call recipient.
+     * @return true if the current state is locked otherwise false
+     */
     protected boolean isLocked()
     {
         return (preparedTxID != null);
     }
 
+    /**
+     * fetch the id of the locking transaction which is currently preparing or preparing. this method
+     * must only be called when synchronized on the method call recipient.
+     * @return the id of the locking transaction or null if the current state is not locked.
+     */
     protected Object getLockID()
     {
         return preparedTxID;
     }
 
+    /**
+     * test whether the current state is locked by the specified transaction. this method must only be
+     * called when synchronized on the method call recipient.
+     * @param txId the id of the transaction which is being compared against the locking transaction.
+     * @return true if the current state is locked by the specified transaction otherwise false
+     */
     protected boolean isLockID(Object txId)
     {
         if (preparedTxID != null) {
@@ -58,17 +109,32 @@ public abstract class ServiceStateManager<T extends ServiceState> {
         }
     }
 
+    /**
+     * lock the current state so the specified transaction can begin prepare. this method must only be
+     * called when synchronized on the method call recipient and when the current lock id is null. also,
+     * the derived state associated with the prepared transaction id must be a child of the current state.
+     * @param txId the id of the transaction which will become the locking transaction.
+     */
     protected void lock(Object preparedTxID)
     {
         this.preparedTxID = preparedTxID;
     }
 
+    /**
+     * unlock the current state as part of commit or rollback of the current locking transaction.
+     * this method must only be called when synchronized on the method call recipient.
+     */
     protected void unlock()
     {
         this.preparedTxID = null;
         this.notifyAll();
     }
 
+    /**
+     * fetch the derived state associated with the current prepared transaction
+     * @return the derived state associated with the current prepared transaction or null if no
+     * transaction is currently prepared
+     */
     protected T getPreparedState()
     {
         if (preparedTxID != null) {
@@ -77,14 +143,17 @@ public abstract class ServiceStateManager<T extends ServiceState> {
         
         return null;
     }
+
     /**
      * persist the prepared state for a transaction including the transaction id and the derived state
-     * containing the modified booking information
+     * containing the modified booking information blah blah blah. this is normally only called by {@link #prepare}.
+     * however it is also exposed to subclasses so they can install the initial current state or reset
+     * the current state to the default settings.
      * @param txId
      * @param childState
      * @throws java.io.IOException
      */
-    public void writeShadowState(Object txId, T childState) throws IOException
+    protected void writeShadowState(Object txId, T childState) throws IOException
     {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
@@ -103,9 +172,15 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     }
 
     /**
-     * delete any persisted prepared state
+     * delete any persisted prepared state for a transaction. this is normally only called by
+     * {@link #rollback}. however it is also exposed to subclasses so they can deal wiht any
+     * errors which happen when they try to install the initial current state or reset
+     * the current state to the default settings.
+     * @param txId
+     * @param childState
+     * @throws java.io.IOException
      */
-    public void clearShadowState(Object txId)
+    protected void clearShadowState(Object txId)
     {
         File shadowFile = new File(getShadowStateFilename());
 
@@ -115,9 +190,11 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     }
 
     /**
-     * install the persisted prepared state as the persisted current state
+     * install the persisted prepared state as the persisted current state. this is normally
+     * only called by {@link #commit}. however it is also exposed to subclasses so they can install
+     * the initial current state or reset the current state to the default settings.
      */
-    public void commitShadowState(Object txId)
+    protected void commitShadowState(Object txId)
     {
         File stateFile = new File(getStateFilename());
         File shadowFile = new File(getShadowStateFilename());
@@ -209,7 +286,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
                 // reestablish lock which means we cannot proceed with any transactions until recovery kicks
                 // in either to roll us forward or back
                 assert current.isParentOf(shadow);
-                putState(shadowTxId, shadow);
+                putDerivedState(shadowTxId, shadow);
                 preparedTxID = shadowTxId;
             } else {
                 // no locking required
@@ -306,14 +383,15 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     public boolean prepare(Object txID)
     {
         // ensure that we have seen this transaction before
-        T childState = getState(txID);
+        T childState = getDerivedState(txID);
         if (childState == null) {
             return false;
         }
         // we have a single monolithic state element which means that only one transaction can prepare
-        // at any given time. we lock this state at prepare by providing the txId as a locking id. it only
-        // gets unlocked when we reach commit or rollback. the equivalent to the lock in memory is the
-        // shadow state file on disk.
+        // at any given time. we lock this state at prepare by assigning the txId as a locking id. it only
+        // gets unlocked when we reach commit or rollback. the presence of a shadow state file on disk
+        // is the equivalent to the locking id in memory
+        
         synchronized (this) {
             while (isLocked()) {
                 try {
@@ -330,7 +408,7 @@ public abstract class ServiceStateManager<T extends ServiceState> {
                 return false;
             }
 
-            // see if we need user confirmation
+            // give the service a chance to ask for user confirmation of the prepare
 
             if (!confirmPrepare()) {
                 removeState(txID);
@@ -343,8 +421,8 @@ public abstract class ServiceStateManager<T extends ServiceState> {
         }
         // if we got here then no other changes have invalidated our booking and we have locked out
         // further changes until commit or rollback occurs. we write the derived child state to the
-        // shadow state file before returning. if we crash after the write we will detect the shadow
-        // state at reboot and restore the lock.
+        // shadow state file before returning. if we crash after this write we will detect the shadow
+        // state at reboot and restore the locking id.
         try {
             writeShadowState(txID, childState);
             return true;
@@ -409,8 +487,8 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     public abstract String getShadowStateFilename();
 
     /**
-     * method called during prepare of local state changes allowing the user to force a prepare failue
-     * @return true if the prepare shoudl succeed and false if it should fail
+     * method called during prepare of local state changes allowing the user to force a prepare failure
+     * @return true if the prepare should succeed and false if it should fail
      */
     public abstract boolean confirmPrepare();
 
@@ -423,15 +501,14 @@ public abstract class ServiceStateManager<T extends ServiceState> {
     protected T currentState;
 
     /**
-     * flag used to indicate that a prepare is in progress. updates to restaurantState may not proceed
-     * until this is false and even then only if the updated value for the restaurant state is derived
-     * from the current state. changes to this field must be guarded by synchronizing on the manager instance.
+     * a locking id used to indicate that a prepare is in progress. this field is set and cleared using the
+     * {@link #lock} and {@link #unlock} methods and tested using the {@link #isLockId} method.
      */
 
     private Object preparedTxID;
 
     /**
-     * The transactions we know about and their associated derived states.
+     * The transactions this service knows about and their associated derived states.
      */
     private Hashtable<Object, T> transactions;
 
@@ -444,9 +521,9 @@ public abstract class ServiceStateManager<T extends ServiceState> {
 
     /**
      * Flag which determines whether we have to roll back any prepared changes to the server. We roll back
-     * changes for an AT or BA participant if there is no associated log record because the participant never
-     * prepared or completed, respectively. If we see a log record for an AT participant we leave the prepared
-     * state behind since the AT participant has prepared and may still commit.
+     * changes for an AT or BA participant if there is no associated partiicpant log record because the
+     * participant never prepared or completed, respectively. If we see a log record for an AT participant
+     * we leave the prepared state behind since the AT participant has prepared and may still commit.
      */
     private boolean rollbackPreparedTx;
 }

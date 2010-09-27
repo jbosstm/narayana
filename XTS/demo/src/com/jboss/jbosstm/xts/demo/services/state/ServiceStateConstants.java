@@ -1,5 +1,8 @@
 package com.jboss.jbosstm.xts.demo.services.state;
 
+/**
+ * constant values used by ServiceStateManager and its subclasses
+ */
 public class ServiceStateConstants {
     /**
      * bit mask identifying no tx

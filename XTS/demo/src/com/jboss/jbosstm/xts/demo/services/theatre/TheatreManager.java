@@ -40,21 +40,10 @@ import java.io.*;
 /**
  * The application logic for the Theatre Service.
  * <p/>
- * Stores and manages seating reservations.
- * <p/>
- * The manager extends class ServiceStateManager which implements a very simple
- * transactional resource manager. It gives the theatre manager the ability to
- * persist the web service state in a local disk file, to make transactional
- * updates to that persistent state and to reload the saved state when the server
- * is restarted, including loading a prepared but not yet committed shadow state
- * left behind because of a server crash. The unit of locking is the whole of the
- * service state so although bookings can be attempted by concurrent transactions
- * only one such booking will commit, forcing other concurrent transactions to
- * roll back. Conflict detection is implemented using a simple versioning scheme.
- *
- * The theatre manager provides a book method allowing the web service endpoint to book
- * or unbook seats. It also provides getters which allow the GUI to  monitor the state
- * of the service while transactions are in progress.
+ * Stores and manages seating reservations. The theatre manager provides a book method
+ * allowing the web service endpoint to book or unbook seats. It also provides getters
+ * which allow the GUI to  monitor the state of the service while transactions are in
+ * progress.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @author Andrew Dinn (adinn@redhat.com)
@@ -102,7 +91,7 @@ public class TheatreManager extends ServiceStateManager<TheatreState>
 
         // see if we already have a derived state from booking a previous area
 
-        TheatreState childState = getState(txID);
+        TheatreState childState = getDerivedState(txID);
 
         if (childState != null) {
             // see if we can extend the booking for this new area
@@ -125,7 +114,7 @@ public class TheatreManager extends ServiceStateManager<TheatreState>
             childState = currentState.derivedState();
 
             // install this as the current transaction state
-            putState(txID, childState);
+            putDerivedState(txID, childState);
 
             // update the number of booked and free seats in the derived state to reflect this request
 
@@ -363,7 +352,9 @@ public class TheatreManager extends ServiceStateManager<TheatreState>
     private boolean isCommit;
 
     /**
-     * Create and initialise a new TheatreManager instance.
+     * Create and initialise a new TheatreManager instance. If the super constructor does
+     * not restore a previously persisted current state then create and persist an initial state
+     * using appropriate default values.
      */
     private TheatreManager()
     {

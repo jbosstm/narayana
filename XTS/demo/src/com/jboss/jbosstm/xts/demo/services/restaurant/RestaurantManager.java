@@ -37,19 +37,10 @@ import java.io.*;
 /**
  * The application logic for the Restaurant Service.
  * <p/>
- * Stores and manages seating reservations.
- * <p/>
- * The manager extends class ServiceStateManager which implements a very simple
- * transactional resource manager. It gives the restaurant manager the ability to
- * persist the web service state in a local disk file and to make transactional
- * updates to that persistent state. The unit of locking is the whole of the
- * service state so although bookings can be attempted by concurrent transactions
- * only one such booking will commit, forcing other concurrent transactions to
- * roll back. Conflict detection is implemented using a simple versioning scheme.
- *
- * The restaurant manager provides a book method allowing the web service endpoint to book
- * or unbook seats. It also provides getters which allow the GUI to  monitor the state
- * of the service while transactions are in progress.
+ * Stores and manages seating reservations. The restaurant manager provides a book method
+ * allowing the web service endpoint to book or unbook seats. It also provides getters
+ * which allow the GUI to  monitor the state of the service while transactions are in
+ * progress.
  * 
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @author Andrew Dinn (adinn@redhat.com)
@@ -110,7 +101,7 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
 
         // install this as the current transaction state
 
-        putState(txID, childState);
+        putDerivedState(txID, childState);
 
     }
 
@@ -340,12 +331,9 @@ public class RestaurantManager extends ServiceStateManager<RestaurantState> {
     private boolean isCommit;
 
     /**
-     * Create and initialise a new RestaurantManager instance either restoring any
-     * existing service state from disk or else installing and committing to disk
-     * a new initial state. If a prepared version of a derived child state (shadow state)
-     * is found on disk then the shadow state  is also loaded and the current state is
-     * locked awaiting recovery. recovery will either roll forward the shadow state, using
-     * it to replace the current state or roll it back.
+     * Create and initialise a new RestaurantManager instance. If the super constructor does
+     * not restore a previously persisted current state then create and persist an initial state
+     * using appropriate default values.
      */
     private RestaurantManager()
     {
