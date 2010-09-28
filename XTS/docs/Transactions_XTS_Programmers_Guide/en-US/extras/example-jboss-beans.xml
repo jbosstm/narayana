@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- example jboss-beans.xml file declaring dependency on XTS service -->
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+  xmlns="urn:jboss:bean-deployer">
+   <!-- bean class should implement start() and stop() methods -->
+   <bean name="MyService" class="org.my.ServiceBean">
+       <depends>jboss:service=XTSService</depends>
+   </bean>
+</deployment>
