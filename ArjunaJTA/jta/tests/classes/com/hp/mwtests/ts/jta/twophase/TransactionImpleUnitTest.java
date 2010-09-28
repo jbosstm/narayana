@@ -31,12 +31,15 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import java.lang.reflect.Method;
+
 import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
@@ -44,8 +47,10 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.utils.JTAHelper;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
+import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
 import com.hp.mwtests.ts.jta.common.Synchronization;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 
@@ -86,7 +91,12 @@ public class TransactionImpleUnitTest
         
         tx.delistResource(res, XAResource.TMSUSPEND);
         
-        tx.commit();
+        tx.commit();  
+        
+        assertTrue(tx.getRemainingTimeoutMills() != -1);
+        assertTrue(tx.getTimeout() != -1);
+        assertEquals(tx.getSynchronizations().size(), 0);
+        assertEquals(tx.getResources().size(), 1);
         
         TxImpleOverride.remove(tx);
         
@@ -103,6 +113,25 @@ public class TransactionImpleUnitTest
         catch (final Throwable ex)
         {
         }
+    }
+    
+    @Test
+    public void testThreadIsActive () throws Exception
+    {
+        Class[] parameterTypes = new Class[1];
+        TransactionImple tx = new TransactionImple(0);
+        
+        parameterTypes[0] = XAResource.class;
+        
+        Method m = tx.getClass().getDeclaredMethod("threadIsActive", parameterTypes);
+        m.setAccessible(true);
+        
+        Object[] parameters = new Object[1];
+        parameters[0] = new RecoveryXAResource();
+        
+        Boolean res = (Boolean) m.invoke(tx, parameters);
+        
+        assertFalse(res.booleanValue());
     }
     
     @Test
