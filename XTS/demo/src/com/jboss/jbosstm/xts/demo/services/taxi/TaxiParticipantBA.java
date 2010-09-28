@@ -29,7 +29,11 @@
 
 package com.jboss.jbosstm.xts.demo.services.taxi;
 
-import com.arjuna.wst.*;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.FaultedException;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.WrongStateException;
+
 import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
 
@@ -191,7 +195,7 @@ public class TaxiParticipantBA
 
     public void unknown() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        // used for callbacks during crash recovery. This impl is not recoverable
     }
 
     public void error() throws SystemException
@@ -246,7 +250,7 @@ public class TaxiParticipantBA
      * @param txID the participant's transaction id
      * @param participant
      */
-    public static synchronized void recordParticipant(String txID, TaxiParticipantBA participant, com.arjuna.wst11.BAParticipantManager manager)
+    public static synchronized void recordParticipant(String txID, TaxiParticipantBA participant, BAParticipantManager manager)
     {
         participants.put(txID, participant);
         managers.put(txID, manager);
@@ -277,7 +281,7 @@ public class TaxiParticipantBA
      * @param txID the participant's transaction id
      * @return the participant's manager
      */
-    public static synchronized com.arjuna.wst11.BAParticipantManager getManager(String txID)
+    public static synchronized BAParticipantManager getManager(String txID)
     {
         return managers.get(txID);
     }
@@ -307,5 +311,5 @@ public class TaxiParticipantBA
     /**
      * table of currently active participant managers
      */
-    private static HashMap<String, com.arjuna.wst11.BAParticipantManager> managers = new HashMap<String, com.arjuna.wst11.BAParticipantManager>();
+    private static HashMap<String, BAParticipantManager> managers = new HashMap<String, BAParticipantManager>();
 }

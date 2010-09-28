@@ -154,12 +154,12 @@ public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 
     public void unknown() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        // used for callbacks during crash recovery. This impl is not recoverable
     }
 
     public void error() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        // used for callbacks during crash recovery. This impl is not recoverable
     }
 
     /**

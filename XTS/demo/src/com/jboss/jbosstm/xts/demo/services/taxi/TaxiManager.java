@@ -36,14 +36,15 @@ import java.io.*;
  * The application logic for the Taxi Service
  * <p/>
  * Manages taxi reservations, providing prepare, commit and rollback calls for
- * modifying taxi bookings in memory. Taxis are an unlimited resource and it does
+ * modifying bookings <em>in memory only</em>. Taxis are an unlimited resource and it does
  * not really matter if a taxi does not turn up (there's always another one round the
  * corner) nor does it matter of the clients don't appear (someone else will take
- * the ride). so this manager does not maintain any persistent state and any bookings
- * made are not resilient to crashes.
+ * the ride). so this manager does not maintain any persistent state and the bookings
+ * it makes are not resilient to crashes.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
- * @version $Revision: 1.3 $
+ * @author Andrew Dinn (adinn@redhat.com)
+ * @version $Revision: 1.3$
  */
 public class TaxiManager implements Serializable
 {
@@ -68,7 +69,6 @@ public class TaxiManager implements Serializable
 
     /**
      * Book a taxi.
-     *
      * @param txID The transaction identifier
      */
     public synchronized void bookTaxi(Object txID)
@@ -88,6 +88,7 @@ public class TaxiManager implements Serializable
 
     /**
      * check whether we have already seen a web service request in a given transaction
+     * @param txID The transaction identifier
      */
 
     public synchronized boolean knowsAbout(Object txID)
@@ -111,7 +112,6 @@ public class TaxiManager implements Serializable
         Integer request = (Integer) transactions.get(txID);
         if (request == null)
         {
-            transactions.remove(txID);
             return false;
         }
         else
@@ -130,7 +130,7 @@ public class TaxiManager implements Serializable
     /**
      * commit local state changes for the supplied transaction
      *
-     * @param txID
+     * @param txID The transaction identifier
      */
     public synchronized void commit(Object txID)
     {
@@ -141,7 +141,7 @@ public class TaxiManager implements Serializable
     /**
      * roll back local state changes for the supplied transaction
      *
-     * @param txID
+     * @param txID The transaction identifier
      */
     public synchronized void rollback(Object txID)
     {
