@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jta.twophase;
 
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 
 import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
@@ -46,7 +47,9 @@ import org.junit.Test;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.TransactionManager;
+import com.arjuna.ats.jta.exceptions.NotImplementedException;
 import com.arjuna.ats.jta.utils.JTAHelper;
+import com.arjuna.ats.jta.xa.XAModifier;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
@@ -74,6 +77,23 @@ class TxImpleOverride extends TransactionImple
     }
 }
 
+class DummyXAModifier implements XAModifier
+{
+    @Override
+    public Xid createXid (Xid xid) throws SQLException, NotImplementedException
+    {
+        return xid;
+    }
+
+    @Override
+    public int xaStartParameters (int level) throws SQLException,
+            NotImplementedException
+    {
+        return 0;
+    }
+    
+}
+
 public class TransactionImpleUnitTest
 {
     @Test
@@ -90,6 +110,8 @@ public class TransactionImpleUnitTest
         tx.enlistResource(res);
         
         tx.delistResource(res, XAResource.TMSUSPEND);
+        
+        assertTrue(tx.isAlive());
         
         tx.commit();  
         
@@ -113,13 +135,19 @@ public class TransactionImpleUnitTest
         catch (final Throwable ex)
         {
         }
+        
+        assertNull(TransactionImple.getTransaction(null));
     }
     
     @Test
     public void testThreadIsActive () throws Exception
     {
+        ThreadActionData.purgeActions();
+        
         Class[] parameterTypes = new Class[1];
         TransactionImple tx = new TransactionImple(0);
+
+        tx.enlistResource(new RecoveryXAResource());
         
         parameterTypes[0] = XAResource.class;
         
@@ -132,6 +160,32 @@ public class TransactionImpleUnitTest
         Boolean res = (Boolean) m.invoke(tx, parameters);
         
         assertFalse(res.booleanValue());
+        
+        tx.rollback();
+    }
+    
+    @Test
+    public void testXidCreation () throws Exception
+    {
+        Class[] parameterTypes = new Class[2];
+        TransactionImple tx = new TransactionImple(0);
+        
+        parameterTypes[0] = boolean.class;
+        parameterTypes[1] = XAModifier.class;
+        
+        Method m = tx.getClass().getDeclaredMethod("createXid", parameterTypes);
+        m.setAccessible(true);
+        
+        Object[] parameters = new Object[2];
+        
+        parameters[0] = false;
+        parameters[1] = new DummyXAModifier();
+        
+        Xid res = (Xid) m.invoke(tx, parameters);
+        
+        assertTrue(res != null);
+        
+        tx.rollback();
     }
     
     @Test

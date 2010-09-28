@@ -21,8 +21,6 @@
 
 package com.hp.mwtests.ts.jta.utils;
 
-import javax.naming.InitialContext;
-
 import org.junit.Test;
 
 import com.arjuna.ats.jta.utils.JNDIManager;
@@ -46,7 +44,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.bindJTAImplementations(new InitialContext());
+            JNDIManager.bindJTAImplementations(null);
             
             fail();
         }
@@ -66,7 +64,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.bindJTATransactionManagerImplementation(new InitialContext());
+            JNDIManager.bindJTATransactionManagerImplementation(null);
             
             fail();
         }
@@ -86,7 +84,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.bindJTATransactionSynchronizationRegistryImplementation(new InitialContext());
+            JNDIManager.bindJTATransactionSynchronizationRegistryImplementation(null);
             
             fail();
         }
@@ -106,7 +104,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.bindJTAUserTransactionImplementation(new InitialContext());
+            JNDIManager.bindJTAUserTransactionImplementation(null);
             
             fail();
         }
@@ -130,7 +128,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.unbindJTATransactionManagerImplementation(new InitialContext());
+            JNDIManager.unbindJTATransactionManagerImplementation(null);
             
             fail();
         }
@@ -150,7 +148,7 @@ public class JNDIManagerUnitTest
         
         try
         {
-            JNDIManager.unbindJTATransactionSynchronizationRegistryImplementation(new InitialContext());
+            JNDIManager.unbindJTATransactionSynchronizationRegistryImplementation(null);
             
             fail();
         }
