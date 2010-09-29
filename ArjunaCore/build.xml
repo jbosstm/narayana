@@ -86,6 +86,22 @@
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
             <fileset dir="docs" includes="**/*.pdf"/>
         </copy>
+
+        <exec dir="docs/ArjunaCore_Administration_Guide" command="publican">
+            <arg value="build"/>
+            <arg value="--langs=en-US"/>
+            <arg value="--formats=pdf,html"/>
+        </exec>
+        <exec dir="docs/ArjunaCore_Installation_Guide" command="publican">
+            <arg value="build"/>
+            <arg value="--langs=en-US"/>
+            <arg value="--formats=pdf,html"/>
+        </exec>
+
+        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
+            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+        </copy>
+        
     </target>
 
     <target name="install.services">
