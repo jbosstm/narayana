@@ -334,7 +334,7 @@
           state, the <varname>highestIndex</varname> variable is used to keep track of the highest element of the array
           that has a non-zero value.
         </para>
-        <example>
+        <example id="array-example">
           <title><classname>Array</classname> Class</title>
           <programlisting language="Java" role="JAVA"><xi:include href="extras/Array_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         </example>

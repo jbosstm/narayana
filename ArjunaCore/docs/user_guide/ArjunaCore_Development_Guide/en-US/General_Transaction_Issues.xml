@@ -6,48 +6,226 @@
 <chapter>
   <title>Advanced transaction issues with TxCore</title>
   <para>
+    Atomic actions (transactions) can be used by both application programmers and class developers. Thus entire
+    operations (or parts of operations) can be made atomic as required by the semantics of a particular operation. This
+    chapter will describe some of the more subtle issues involved with using transactions in general and TxCore in
+    particular.
 
   </para>
 
   <section>
     <title>Checking transactions</title>
     <para>
-
+      In a multi-threaded application, multiple threads may be associated with a transaction during its lifetime,
+      sharing the context. In addition, it is possible that if one thread terminates a transaction, other threads may
+      still be active within it. In a distributed environment, it can be difficult to guarantee that all threads have
+      finished with a transaction when it is terminated. By default, TxCore will issue a warning if a thread terminates
+      a transaction when other threads are still active within it. However, it will allow the transaction termination to
+      continue.
     </para>
+    <para>
+      Other solutions to this problem are possible. One example would be to block the thread which is terminating the
+      transaction until all other threads have disassociated themselves from the transaction context. Therefore, TxCore
+      provides the <classname>com.arjuna.ats.arjuna.coordinator.CheckedAction</classname> class, which allows the thread
+      or transaction termination policy to be overridden. Each transaction has an instance of this class associated with
+      it, and application programmers can provide their own implementations on a per transaction basis.
+    </para>
+    <example>
+      <title>Class <classname>CheckedAction</classname></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/CheckedAction.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      When a thread attempts to terminate the transaction and there are active threads within it, the system will invoke
+      the <methodname>check</methodname> method on the transaction’s <systemitem>CheckedAction</systemitem> object. The
+      parameters to the check method are:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>isCommit</term>
+        <listitem>
+          <para>
+            Indicates whether the transaction is in the process of committing or rolling back.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>actUid</term>
+        <listitem>
+          <para>
+            The transaction identifier.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>list</term>
+        <listitem>
+          <para>
+            A list of all of the threads currently marked as active within this transaction.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      When <methodname>check</methodname> returns, the transaction termination will continue. Obviously the state of the
+      transaction at this point may be different from that when <methodname>check</methodname> was called, e.g., the
+      transaction may subsequently have been committed.
+    </para>
+    <para>
+      A <classname>CheckedAction</classname> instance is created for each transaction. As mentioned above, the default
+      implementation simply issues warnings in the presence of multiple threads active on the transaction when it is
+      terminated. However, a different instance can be provided to each transaction in one of the following ways:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Use the <methodname>setCheckedAction</methodname> method on the <classname>BasicAction</classname> instance.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Define an implementation of the <interfacename>CheckedActionFactory</interfacename> interface, which has a
+          single method <methodname>getCheckedAction</methodname>(<type>final Uid</type> <varname>txId</varname>,
+          <type>final String</type> <varname>actionType</varname>) that returns a
+          <classname>CheckedAction</classname>. The factory class name can then be provided to the Transaction Service
+          at runtime by setting the <varname>CoordinatorEnvironmentBean.checkedActionFactory</varname> property.
+        </para>
+      </listitem>
+    </itemizedlist>
   </section>
 
   <section>
     <title>Gathering statistics</title>
     <para>
-
+      By default, the Transaction Service does not maintain any history information about transactions. However, by
+      setting the <varname>CoordinatorEnvironmentBean.enableStatistics</varname> property variable to
+      <literal>YES</literal>, the transaction service will maintain information about the number of transactions
+      created, and their outcomes. This information can be obtained during the execution of a transactional application
+      via the <classname>com.arjuna.ats.arjuna.coordinator.TxStats</classname> class.
+    </para>
+    <example>
+      <title>Class <classname>TxStats</classname></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/TxStats.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      The class <classname>ActionManager</classname> gives further information about specific active transactions
+      through the classes <classname>getTimeAdded</classname>, which returns the time (in milliseconds) when the
+      transaction was created, and <classname>inflightTransactions</classname>, which returns the list of currently
+      active transactions.
     </para>
   </section>
 
   <section>
     <title>Last resource commit optimization (LRCO)</title>
     <para>
-
+      In some cases it may be necessary to enlist participants that are not two-phase commit aware into a two-phase
+      commit transaction. If there is only a single resource then there is no need for two-phase commit. However, if
+      there are multiple resources in the transaction, the <firstterm>Last Resource Commit optimization
+      (LRCO)</firstterm> comes into play. It is possible for a single resource that is one-phase aware (i.e., can only
+      commit or roll back, with no prepare), to be enlisted in a transaction with two-phase commit aware resources. The
+      coordinator treats the one-phase aware resource slightly differently, in that it executes the prepare phase on all
+      other resource first, and if it then intends to commit the transaction it passes control to the one-phase aware
+      resource. If it commits, then the coordinator logs the decision to commit and attempts to commit the other
+      resources as well.
     </para>
+    <para>
+      In order to utilise the LRCO, your participant must implement the
+      <interfacename>com.arjuna.ats.arjuna.coordinator.OnePhase</interfacename> interface and be registered with the
+      transaction through the <methodname>BasicAction.add</methodname> operation. Since this operation expects instances
+      of <classname>AbstractRecord</classname>, you must create an instance of
+      <classname>com.arjuna.ats.arjuna.LastResourceRecord</classname> and give your participant as the constructor
+      parameter.
+    </para>
+    <example>
+      <title>Class <classname>com.arjuna.ats.arjuna.LastResourceRecord</classname></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/LastResourceRecord.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
   </section>
 
   <section>
     <title>Nested transactions</title>
     <para>
-
+      There are no special constructs for nesting of transactions. If an action is begun while another action is running
+      then it is automatically nested. This allows for a modular structure to applications, whereby objects can be
+      implemented using atomic actions within their operations without the application programmer having to worry about
+      the applications which use them, and whether or not the applications will use atomic actions as well. Thus, in
+      some applications actions may be top-level, whereas in others they may be nested. Objects written in this way can
+      then be shared between application programmers, and TxCore will guarantee their consistency.
+    </para>
+    <para>
+      If a nested action is aborted, all of its work will be undone, although strict two-phase locking means that
+      any locks it may have obtained will be retained until the top-level action commits or aborts. If a nested action
+      commits then the work it has performed will only be committed by the system if the top-level action commits. If
+      the top-level action aborts then all of the work will be undone.
+    </para>
+    <para>
+      The committing or aborting of a nested action does not automatically affect the outcome of the action within which
+      it is nested. This is application dependant, and allows a programmer to structure atomic actions to contain
+      faults, undo work, etc.
     </para>
   </section>
 
   <section>
     <title>Asynchronously committing a transaction</title>
     <para>
-
+      By default, the Transaction Service executes the <methodname>commit</methodname> protocol of a top-level
+      transaction in a synchronous manner. All registered resources will be told to prepare in order by a single thread,
+      and then they will be told to commit or rollback. This has several possible disadvantages:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          In the case of many registered resources, the <methodname>prepare</methodname> operating can logically be
+          invoked in parallel on each resource. The disadvantage is that if an “early” resource in the list of
+          registered resource forces a rollback during <methodname>prepare</methodname>, possibly many prepare
+          operations will have been made needlessly.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          In the case where heuristic reporting is not required by the application, the second phase of the commit
+          protocol can be done asynchronously, since its success or failure is not important.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      Therefore, JBoss Transaction Service provides runtime options to enable possible threading optimizations. By
+      setting the <varname>CoordinatorEnvironmentBean.asyncPrepare</varname> environment variable to
+      <literal>YES</literal>, during the <methodname>prepare</methodname> phase a separate thread will be created for
+      each registered participant within the transaction. By setting
+      <varname>CoordinatorEnvironmentBean.asyncCommit</varname> to <literal>YES</literal>, a separate thread will be
+      created to complete the second phase of the transaction if knowledge about heuristics outcomes is not required.
     </para>
   </section>
 
   <section>
     <title>Independent top-level transactions</title>
     <para>
-
+      In addition to normal top-level and nested atomic actions, TxCore also supports independent top-level actions,
+      which can be used to relax strict serialisability in a controlled manner. An independent top-level action can be
+      executed from anywhere within another atomic action and behaves exactly like a normal top-level action. Its
+      results are made permanent when it commits and will not be undone if any of the actions within which it was
+      originally nested abort.
+    </para>
+    <figure>
+      <title>Independent Top-Level Action</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/independent_top_level_action.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>
+            a typical nesting of atomic actions, where action B is nested within action A. Although atomic action C is
+            logically nested within action B (it had its Begin operation invoked while B was active) because it is an
+            independent top-level action, it will commit or abort independently of the other actions within the
+            structure. Because of the nature of independent top-level actions they should be used with caution and only
+            in situations where their use has been carefully examined.
+          </para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <para>
+      Top-level actions can be used within an application by declaring and using instances of the class
+      <classname>TopLevelTransaction</classname>. They are used in exactly the same way as other transactions.
     </para>
   </section>
 
@@ -55,22 +233,113 @@
     <title>Transactions within <methodname>save_state</methodname> and <methodname>restore_state</methodname>
     methods</title>
     <para>
-
+      Exercise caution when writing the <methodname>save_state</methodname> and <methodname>restore_state</methodname>
+      operations to ensure that no atomic actions are started, either explicitly in the operation or implicitly through
+      use of some other operation. This restriction arises due to the fact that TxCore may invoke
+      <methodname>restore_state</methodname> as part of its commit processing resulting in the attempt to execute an
+      atomic action during the commit or abort phase of another action. This might violate the atomicity properties of
+      the action being committed or aborted and is thus discouraged.
     </para>
+
+    <example>
+      <title></title>
+      <para>
+        If we consider the <xref linkend="array-example" /> given previously, the <methodname>set</methodname> and
+        <methodname>get</methodname> operations could be implemented as shown below.
+      </para>
+      <para>
+        This is a simplification of the code, ignoring error conditions and exceptions.
+      </para>
+
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/array_set_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/array_get_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
   </section>
 
   <section>
     <title>Garbage collecting objects</title>
     <para>
-
+      Java objects are deleted when the garbage collector determines that they are no longer required. Deleting an
+      object that is currently under the control of a transaction must be approached with caution since if the object is
+      being manipulated within a transaction its fate is effectively determined by the transaction. Therefore,
+      regardless of the references to a transactional object maintained by an application, TxCore will always retain its
+      own references to ensure that the object is not garbage collected until after any transaction has terminated.
     </para>
   </section>
 
   <section>
     <title>Transaction timeouts</title>
     <para>
-
+      By default, transactions live until they are terminated by the application that created them or a failure
+      occurs. However, it is possible to set a timeout (in seconds) on a per-transaction basis such that if the
+      transaction has not terminated before the timeout expires it will be automatically rolled back.
     </para>
+    <para>
+      In TxCore, the timeout value is provided as a parameter to the <methodname>AtomicAction</methodname>
+      constructor. If a value of <literal>AtomicAction.NO_TIMEOUT</literal> is provided (the default) then the
+      transaction will not be automatically timed out. Any other positive value is assumed to be the timeout for the
+      transaction (in seconds). A value of zero is taken to be a global default timeout, which can be provided by the
+      property <varname>CoordinatorEnvironmentBean.defaultTimeout</varname>, which has a default value of 60 seconds.
+    </para>
+    <note>
+      <para>
+        Default timeout values for other JBossTS components, such as JTS, may be different and you should consult the
+        relevant documentation to be sure.
+      </para>
+    </note>
+    <para>
+      When a top-level transaction is created with a non-zero timeout, it is subject to being rolled back if it has not
+      completed within the specified number of seconds. JBoss Transaction Service uses a separate reaper thread which
+      monitors all locally created transactions, and forces them to roll back if their timeouts elapse. If the
+      transaction cannot be rolled back at that point, the reaper will force it into a rollback-only state so that it
+      will eventually be rolled back.
+    </para>
+    <para>
+      By default this thread is dynamically scheduled to awake according to the timeout values for any transactions
+      created, ensuring the most timely termination of transactions. It may alternatively be configured to awake at a
+      fixed interval, which can reduce overhead at the cost of less accurate rollback timing. For periodic operation,
+      change the <varname>CoordinatorEnvironmentBean.txReaperMode</varname> property from its default value of
+      <literal>DYNAMIC</literal> to <literal>PERIODIC</literal> and set the interval between runs, in milliseconds,
+      using the property <varname>CoordinatorEnvironmentBean.txReaperTimeout</varname>. The default interval in
+      <literal>PERIODIC</literal> mode is 120000 milliseconds.
+    </para>
+    <warning>
+      <para>
+        In earlier versions the <literal>PERIODIC</literal> mode was known as <literal>NORMAL</literal> and was the
+        default behavior. The use of the configuration value <literal>NORMAL</literal> is deprecated and
+        <literal>PERIODIC</literal> should be used instead if the old scheduling behavior is still required.
+      </para>
+    </warning>
+    <para>
+      If a value of <literal>0</literal> is specified for the timeout of a top-level transaction, or no timeout is
+      specified, then JBoss Transaction Service will not impose any timeout on the transaction, and the transaction will
+      be allowed to run indefinitely. This default timeout can be overridden by setting the
+      <varname>CoordinatorEnvironmentBean.defaultTimeout</varname> property variable when using to the required timeout
+      value in seconds, when using ArjunaCore, ArjunaJTA or ArjunaJTS.
+    </para>
+    <note>
+      <para>
+        As of JBoss Transaction Service 4.5, transaction timeouts have been unified across all transaction components
+        and are controlled by ArjunaCore.
+      </para>
+    </note>
+    <section>
+      <title>Monitoring transaction timeouts</title>
+      <para>
+        If you want to be informed when a transaction is rolled back or forced into a rollback-only mode by the reaper,
+        you can create a class that inherits from class
+        <classname>com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor</classname> and overrides the
+        <methodname>rolledBack</methodname> and <methodname>markedRollbackOnly</methodname> methods. When registered
+        with the reaper via the <methodname>TransactionReaper.addListener</methodname> method, the reaper will invoke
+        one of these methods depending upon how it tries to terminate the transaction.
+      </para>
+      <note>
+        <para>
+          The reaper will not inform you if the transaction is terminated (committed or rolled back) outside of its
+          control, such as by the application.
+        </para>
+      </note>
+    </section>
   </section>
 </chapter>
 
