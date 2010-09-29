@@ -151,7 +151,7 @@
         <term>Neither Recoverable nor Persistent</term>
         <listitem>
           <para>
-            Bo recovery information is ever kept, nor is object activation or deactivation ever automatically attempted.
+            No recovery information is ever kept, nor is object activation or deactivation ever automatically attempted.
           </para>
         </listitem>
       </varlistentry>
@@ -167,7 +167,8 @@
       efficiency.)-->This gives the programmer the ability to decide which parts of an object’s state should be made
       persistent. For example, for a spreadsheet it may not be necessary to save all entries if some values can simply
       be recomputed. The <methodname>save_state</methodname> implementation for a class <classname>Example</classname>
-      that has integer member variables called A, B and C might be implemented as in <xref linkend="example-save_state" />.
+      that has integer member variables called A, B and C might be implemented as in <xref linkend="example-save_state"
+      />.
     </para>
     <example id="example-save_state">
       <title><methodname>save_state</methodname> Implementation</title>
@@ -185,8 +186,8 @@
   <section>
     <title>The life cycle of a Transactional Object for Java</title>
     <para>
-      A persistent object not in use is assumed to be held in a passive state, with its state residing in an object store
-      and activated on demand. The fundamental life cycle of a persistent object in TXOJ is shown in <xref
+      A persistent object not in use is assumed to be held in a passive state, with its state residing in an object
+      store and activated on demand. The fundamental life cycle of a persistent object in TXOJ is shown in <xref
       linkend="txoj-lifecycle" />.
     </para>
     <figure id="txoj-lifecycle">
