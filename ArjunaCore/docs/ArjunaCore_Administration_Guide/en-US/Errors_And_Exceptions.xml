@@ -45,16 +45,6 @@
           </entry>
         </row>
         <row>
-          <entry><para><literal>com.arjuna.ats.arjuna.exceptions.LicenceError</literal></para></entry><!-- Can this one
-          still happen? -->
-          <entry>
-            <para>
-              An attempt has been made to use the transaction service in a manner inconsistent with the current
-              licence. The transaction service will not allow further forward progress for existing or new transactions.
-            </para>
-          </entry>
-        </row>
-        <row>
           <entry><para><literal>com.arjuna.ats.arjuna.exceptions.ObjectStoreError</literal></para></entry>
           <entry>
             <para>

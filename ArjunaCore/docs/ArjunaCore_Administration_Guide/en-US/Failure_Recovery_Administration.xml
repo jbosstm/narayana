@@ -53,17 +53,12 @@
   <section>
     <title>Configuring the Recovery Manager</title>
     <para>
-      The RecoveryManager reads the properties defined in the <filename>arjuna.properties</filename> file and then also
-      reads the property file <filename>RecoveryManager.properties</filename>, from the same directory as it found the
-      <filename>arjuna.properties</filename> file. An entry for a property in the RecoveryManager properties file will
-      override an entry for the same property in the main TransactionService properties file. Most of the entries are
-      specific to the Recovery Manager.
+      The RecoveryManager reads the properties defined in the <filename>jbossts-properties.xml</filename> file.
     </para>
     <para>
-      A default version of <filename>RecoveryManager.properties</filename> is supplied with the distribution. This can
+      A default version of <filename>jbossts-properties.xml</filename> is supplied with the distribution. This can
       be used without modification, except possibly the debug tracing fields, as shown in <xref
-      linkend="recovery-manager-output" />. The rest of this section discusses the issues relevant in setting the
-      properties to other values, in the order of their appearance in the default version of the file.
+      linkend="recovery-manager-output" />.
     </para>
   </section>
 
@@ -72,19 +67,19 @@
 
     <para>
       It is likely that installations will want to have some form of output from the RecoveryManager, to provide a
-      record of what recovery activity has taken place. RecoveryManager uses the logging tracing mechanism provided by
-      the <application>Arjuna Common Logging Framework (CLF)</application>, which provides a high level interface that
-      hides differences that exist between existing logging APIs such Jakarta log4j or JDK 1.4 <!-- Should this be
-      updated to 1.5? 1.6?-->logging API. CLF indirects all logging via the <application>Apache Commons Logging
-      framework</application> and configuration is assumed to occur through that framework.
+      record of what recovery activity has taken place. RecoveryManager uses the logging mechanism provided by
+      <application>jboss logging</application>, which provides a high level interface that
+      hides differences that exist between existing logging APIs such Jakarta log4j or JDK logging API.
     </para>
     <para>
-      With the CLF, applications make logging calls on <interfacename>logger</interfacename> objects. Loggers use
-      logging Levels to decide if they are interested in a particular log message. Each log message has an associated
+        The configuration of <application>jboss logging</application> depends on the underlying logging framework
+        that is used, which is determined by the availability and ordering of alternatives on the classpath. Please
+        consult the jboss logging documentation for details. Each log message has an associated
       log Level, that gives the importance and urgency of a log message.  The set of possible Log Levels, in order of
       least severity, and highest verbosity, is:
     </para>
     <orderedlist>
+      <listitem><para><literal>TRACE</literal></para></listitem>
       <listitem><para><literal>DEBUG</literal></para></listitem>
       <listitem><para><literal>INFO</literal></para></listitem>
       <listitem><para><literal>WARN</literal></para></listitem>
@@ -93,7 +88,7 @@
     </orderedlist>
     <para>
       Messages describing the start and the periodical behavior made by the RecoveryManager are output using the
-      <literal>INFO</literal> level. If other debug tracing is wanted, the finer debugging level should be set
+      <literal>INFO</literal> level. If other debug tracing is wanted, the finer debug or trace levels should be set
       appropriately.
     </para>
     <para>
