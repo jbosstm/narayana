@@ -1087,8 +1087,8 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 		logger.logv(WARN, "ARJUNA-12294 Loading expiry scanner: could not find class {0}", arg0);
 	}
 
-	public void warn_recovery_ExpiredEntryMonitor_12(String arg0) {
-		logger.logv(WARN, "ARJUNA-12296 ExpiredEntryMonitor running at {0}", arg0);
+	public void info_recovery_ExpiredEntryMonitor_12(String arg0) {
+		logger.logv(INFO, "ARJUNA-12296 ExpiredEntryMonitor running at {0}", arg0);
 	}
 
 	public void info_recovery_ExpiredEntryMonitor_5() {

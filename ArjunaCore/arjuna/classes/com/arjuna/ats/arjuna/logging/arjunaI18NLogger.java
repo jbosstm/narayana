@@ -1174,8 +1174,8 @@ public interface arjunaI18NLogger {
 //	public void warn_recovery_ExpiredEntryMonitor_11(String arg0, String arg1);
 
 	@Message(id = 12296, value = "ExpiredEntryMonitor running at {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_ExpiredEntryMonitor_12(String arg0);
+	@LogMessage(level = INFO)
+	public void info_recovery_ExpiredEntryMonitor_12(String arg0);
 
 	@Message(id = 12297, value = "ExpiredEntryMonitor - no scans on first iteration", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
