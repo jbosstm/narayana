@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge.demo.bistro;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import java.io.Serializable;
 

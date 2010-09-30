@@ -95,4 +95,16 @@ public class TestRecoveryModule implements XTSATRecoveryModule
     {
         throw new Exception("recreation not supported - should use deserialization instead.");
     }
+
+    /**
+     * participant recovery modules may need to perform special processing when the a recovery scan has
+     * completed. in particular it is only after the first recovery scan has completed they can identify
+     * whether locally prepared changes are accompanied by a recreated participant and roll back changes
+     * for those with no such participant.
+     */
+    @Override
+    public void endScan()
+    {
+        // unused
+    }
 }

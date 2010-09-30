@@ -23,7 +23,7 @@
  */
 package org.jboss.jbossts.txbridge.demo.bistro;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.ejb.*;
 import javax.persistence.*;
