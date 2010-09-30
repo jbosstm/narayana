@@ -12,61 +12,75 @@
   <indexterm><primary>participant recovery</primary></indexterm>
 
   <para>
-    A key requirement of a transaction service is to be resilient to a system crash by a host running a participant, as well as the host running the transaction coordination services. Crashes which happen before a transaction terminates or before a business activity completes are relatively easy to accommodate. The transaction service and participants can adopt a <firstterm>presumed abort</firstterm> policy.
+    A key requirement of a transaction service is to be resilient to a system crash by a host running a participant, as
+    well as the host running the transaction coordination services. Crashes which happen before a transaction terminates
+    or before a business activity completes are relatively easy to accommodate. The transaction service and participants
+    can adopt a <firstterm>presumed abort</firstterm> policy.
   </para>
 
   <procedure>
     <title>Presumed Abort Policy</title>
     <step>
       <para>
-	If the coordinator crashes, it can assume that any transaction it does not know about is invalid, and reject a participant request which refers to such a transaction.
+        If the coordinator crashes, it can assume that any transaction it does not know about is invalid, and reject a
+        participant request which refers to such a transaction.
       </para>
     </step>
     <step>
       <para>
-	If the participant crashes, it can forget any provisional changes it has made, and reject any request from the coordinator service to prepare a transaction or complete a business activity.
+        If the participant crashes, it can forget any provisional changes it has made, and reject any request from the
+        coordinator service to prepare a transaction or complete a business activity.
       </para>
     </step>
   </procedure>
   
   <para>
-    Crash recovery is more complex if the crash happens during a transaction commit operation, or between completing and closing a business activity. The transaction service must ensure as far as possible that participants arrive at a consistent outcome for the transaction.
+    Crash recovery is more complex if the crash happens during a transaction commit operation, or between completing and
+    closing a business activity. The transaction service must ensure as far as possible that participants arrive at a
+    consistent outcome for the transaction.
   </para>
   <variablelist>
     <varlistentry>
       <term>WS-AT Transaction</term>
       <listitem>
-	<para>
-	  The transaction needs to commit all provisional changes or roll them all back to the state before the transaction started.
-	</para>
+        <para>
+          The transaction needs to commit all provisional changes or roll them all back to the state before the
+          transaction started.
+        </para>
       </listitem>
     </varlistentry>
     <varlistentry>
       <term>WS-Business Activity Transaction</term>
       <listitem>
-	<para>
-	  All participants need to close the activity or cancel the activity, and run any required compensating actions. </para>
+        <para>
+        All participants need to close the activity or cancel the activity, and run any required compensating
+        actions. </para>
       </listitem>
     </varlistentry>
   </variablelist>
 
   <para>
-    On the rare occasions where such a consensus cannot be reached, the transaction service must log and report transaction failures.
+    On the rare occasions where such a consensus cannot be reached, the transaction service must log and report
+    transaction failures.
 
   </para>
   
   <para>
-    XTS includes support for automatic recovery of WS-AT and WS-BA transactions, if either or both of the coordinator and participant hosts crashes. The XTS recovery manager begins execution on coordinator and participant hosts when the XTS service restarts. On a coordinator host, the recovery manager detects any WS-AT transactions which have prepared but not committed, as well as any WS-BA transactions which have completed but not yet closed. It ensures that all their participants are rolled forward in the first case, or closed in the second.
+    XTS includes support for automatic recovery of WS-AT and WS-BA transactions, if either or both of the coordinator
+    and participant hosts crashes. The XTS recovery manager begins execution on coordinator and participant hosts when
+    the XTS service restarts. On a coordinator host, the recovery manager detects any WS-AT transactions which have
+    prepared but not committed, as well as any WS-BA transactions which have completed but not yet closed. It ensures
+    that all their participants are rolled forward in the first case, or closed in the second.
   </para>
   <para>
-    On a participant host, the recovery manager detects any prepared WS-AT participants which have not responded to a transaction rollback, and any completed WS-BA participants which have not yet responded to an activity cancel request, and ensures that the former are  rolled back and the latter are compensated. The recovery service also allows for recovery of subordinate WS-AT transactions and their participants if a crash occurs on a host where an interposed WS-AT coordinator has been employed.
+    On a participant host, the recovery manager detects any prepared WS-AT participants which have not responded to a
+    transaction rollback, and any completed WS-BA participants which have not yet responded to an activity cancel
+    request, and ensures that the former are rolled back and the latter are compensated. The recovery service also
+    allows for recovery of subordinate WS-AT transactions and their participants if a crash occurs on a host where an
+    interposed WS-AT coordinator has been employed.
   </para>
-  <!-- Community version only
-  <note>
-    <para>
-      Crash recovery is implemented for both the 1.0 and 1.1 implementations of the WS-AT and WS-BA protocols.
-    </para>
-  </note>
+  <!-- Community version only <note> <para> Crash recovery is implemented for both the 1.0 and 1.1 implementations of
+       the WS-AT and WS-BA protocols.  </para> </note>
   -->
   <section>
     <title>WS-AT Recovery</title>
@@ -74,16 +88,44 @@
     <section>
       <title>WS-AT Coordinator Crash Recovery</title>
       <para>
-	The WS-AT coordination service tracks the status of each participant in a transaction as the transaction progresses through its two-phase commit. When all participants have been sent a <systemitem>prepare</systemitem> message and have responded with a <systemitem>prepared</systemitem> message, the coordinator writes a log record storing each participant's details, indicating that the transaction is ready to complete. If the coordinator service crashes after this point has been reached, completion of the two-phase commit protocol is still guaranteed, by reading the log file after reboot and sending a <systemitem>commit</systemitem> message to each participant. Once all participants have responded to the <systemitem>commit</systemitem> with a <systemitem>committed</systemitem> message, the coordinator can safely delete the log entry.
+        The WS-AT coordination service tracks the status of each participant in a transaction as the transaction
+        progresses through its two-phase commit. When all participants have been sent a <systemitem>prepare</systemitem>
+        message and have responded with a <systemitem>prepared</systemitem> message, the coordinator writes a log record
+        storing each participant's details, indicating that the transaction is ready to complete. If the coordinator
+        service crashes after this point has been reached, completion of the two-phase commit protocol is still
+        guaranteed, by reading the log file after reboot and sending a <systemitem>commit</systemitem> message to each
+        participant. Once all participants have responded to the <systemitem>commit</systemitem> with a
+        <systemitem>committed</systemitem> message, the coordinator can safely delete the log entry.
       </para>
       <para>
-	Since the <systemitem>prepared</systemitem> messages returned by the participants imply that they are ready to commit their provisional changes and make them permanent, this type of recovery is safe. Additionally, the coordinator does not need to account for any commit messages which may have been sent before the crash, or resend messages if it crashes several times. The XTS participant implementation is resilient to redelivery of the <systemitem>commit</systemitem> messages. If the participant has implemented the recovery functions described in <xref linkend="ws-at-recovery-api" />, the coordinator can guarantee delivery of <systemitem>commit</systemitem> messages if both it crashes, and one or more of the participant service hosts also crash, at the same time.
+        Since the <systemitem>prepared</systemitem> messages returned by the participants imply that they are ready to
+        commit their provisional changes and make them permanent, this type of recovery is safe. Additionally, the
+        coordinator does not need to account for any commit messages which may have been sent before the crash, or
+        resend messages if it crashes several times. The XTS participant implementation is resilient to redelivery of
+        the <systemitem>commit</systemitem> messages. If the participant has implemented the recovery functions
+        described in <xref linkend="ws-at-recovery-api" />, the coordinator can guarantee delivery of
+        <systemitem>commit</systemitem> messages if both it crashes, and one or more of the participant service hosts
+        also crash, at the same time.
       </para>
       <para>
-	If the coordination service crashes before the <systemitem>prepare</systemitem> phase completes, the presumed abort protocol ensures that participants are rolled back. After system restart, the coordination service has the information about about all the transactions which could have entered the <systemitem>commit</systemitem> phase before the reboot, since they have entries in the log. It also knows about any active transactions started after the reboot. If a participant is waiting for a response, after sending its <systemitem>prepared</systemitem> message, it automatically re sends the <systemitem>prepared</systemitem> message at regular intervals. When the coordinator detects a transaction which is not active and has no entry in the log file after the reboot, it instructs the participant to abort, ensuring that the web service gets a chance to roll back any provisional state changes it made on behalf of the transaction.
+        If the coordination service crashes before the <systemitem>prepare</systemitem> phase completes, the presumed
+        abort protocol ensures that participants are rolled back. After system restart, the coordination service has the
+        information about about all the transactions which could have entered the <systemitem>commit</systemitem> phase
+        before the reboot, since they have entries in the log. It also knows about any active transactions started after
+        the reboot. If a participant is waiting for a response, after sending its <systemitem>prepared</systemitem>
+        message, it automatically re sends the <systemitem>prepared</systemitem> message at regular intervals. When the
+        coordinator detects a transaction which is not active and has no entry in the log file after the reboot, it
+        instructs the participant to abort, ensuring that the web service gets a chance to roll back any provisional
+        state changes it made on behalf of the transaction.
       </para>
       <para>
-	A web service may decide to unilaterally commit or roll back provisional changes associated with a given participant, if configured to time out after a specified length of time without a response. In this situation, the the web service should record this action and log a message to persistent storage. When the participant receives a request to commit or roll back, it should throw an exception if its unilateral decision action does not match the requested action. The coordinator detects the exception and logs a message marking the outcome as heuristic. It also saves the state of the transaction permanently in the transaction log, to be inspected and reconciled by an administrator.
+        A web service may decide to unilaterally commit or roll back provisional changes associated with a given
+        participant, if configured to time out after a specified length of time without a response. In this situation,
+        the the web service should record this action and log a message to persistent storage. When the participant
+        receives a request to commit or roll back, it should throw an exception if its unilateral decision action does
+        not match the requested action. The coordinator detects the exception and logs a message marking the outcome as
+        heuristic. It also saves the state of the transaction permanently in the transaction log, to be inspected and
+        reconciled by an administrator.
       </para>
       
     </section>
@@ -91,85 +133,161 @@
     <section>
       <title>WS-AT Participant Crash Recovery</title>
       <para>
-	WS-AT participants associated with a transactional web service do not need to be involved in crash recovery if the Web service's host machine crashes before the participant is told to prepare. The coordinator will assume that the transaction has aborted, and the Web service can discard any information associated with unprepared transactions when it reboots.
+        WS-AT participants associated with a transactional web service do not need to be involved in crash recovery if
+        the Web service's host machine crashes before the participant is told to prepare. The coordinator will assume
+        that the transaction has aborted, and the Web service can discard any information associated with unprepared
+        transactions when it reboots.
       </para>
       <para>
-	When a participant is told to <systemitem>prepare</systemitem>, the Web service is expected to save to persistent storage the transactional state it needs to commit or roll back the transaction. The specific information it needs to save is dependent on the implementation and business logic of the Web Service. However, the participant must save this state before returning a <systemitem>Prepared</systemitem> vote from the <methodname>prepare</methodname> call. If the participant cannot save the required state, or there is some other problem servicing the request made by the client, it must return an <systemitem>Aborted</systemitem> vote.
+        When a participant is told to <systemitem>prepare</systemitem>, the Web service is expected to save to
+        persistent storage the transactional state it needs to commit or roll back the transaction. The specific
+        information it needs to save is dependent on the implementation and business logic of the Web Service. However,
+        the participant must save this state before returning a <systemitem>Prepared</systemitem> vote from the
+        <methodname>prepare</methodname> call. If the participant cannot save the required state, or there is some other
+        problem servicing the request made by the client, it must return an <systemitem>Aborted</systemitem> vote.
       </para>
       <para>
-	The XTS participant services running on a Web Service's host machine cooperate with the Web service implementation to facilitate participant crash recovery. These participant services are responsible for calling the participant's <methodname>prepare</methodname>, <methodname>commit</methodname>, and <systemitem>rollback</systemitem> methods. The XTS implementation tracks the local state of every enlisted participant. If the <systemitem>prepare</systemitem> call returns a <systemitem>Prepared</systemitem> vote, the XTS implementation ensures that the participant state is logged to the local transaction log before forwarding a <systemitem>prepared</systemitem> message to the coordinator.
+        The XTS participant services running on a Web Service's host machine cooperate with the Web service
+        implementation to facilitate participant crash recovery. These participant services are responsible for calling
+        the participant's <methodname>prepare</methodname>, <methodname>commit</methodname>, and
+        <systemitem>rollback</systemitem> methods. The XTS implementation tracks the local state of every enlisted
+        participant. If the <systemitem>prepare</systemitem> call returns a <systemitem>Prepared</systemitem> vote, the
+        XTS implementation ensures that the participant state is logged to the local transaction log before forwarding a
+        <systemitem>prepared</systemitem> message to the coordinator.
       </para>
       <para>
-	A participant log record contains information identifying the participant, its transaction, and its coordinator. This is enough information to allow the rebooted XTS implementation to reinstate the participant as active and to continue communication with the coordinator, as though the participant had been enlisted and driven to the prepared state. However, a participant instance is still necessary for the commit or rollback process to continue.
+        A participant log record contains information identifying the participant, its transaction, and its
+        coordinator. This is enough information to allow the rebooted XTS implementation to reinstate the participant as
+        active and to continue communication with the coordinator, as though the participant had been enlisted and
+        driven to the prepared state. However, a participant instance is still necessary for the commit or rollback
+        process to continue.
       </para>
       <para>
-	Full recovery requires the log record to contain information needed by the Web service which enlisted the participant. This information must allow it to recreate an equivalent participant instance, which can continue the <systemitem>commit</systemitem> process to completion, or roll it back if some other Web Service fails to <systemitem>prepare</systemitem>. This information might be as simple as a String key which the participant can use to locate the data it made persistent before returning its Prepared vote. It may be as complex as a serialized object tree containing the original participant instance and other objects created by the Web service.
+        Full recovery requires the log record to contain information needed by the Web service which enlisted the
+        participant. This information must allow it to recreate an equivalent participant instance, which can continue
+        the <systemitem>commit</systemitem> process to completion, or roll it back if some other Web Service fails to
+        <systemitem>prepare</systemitem>. This information might be as simple as a String key which the participant can
+        use to locate the data it made persistent before returning its Prepared vote. It may be as complex as a
+        serialized object tree containing the original participant instance and other objects created by the Web
+        service.
       </para>
       <para>
-	If a participant instance implements the relevant interface, the XTS implementation will append this participant recovery state to its log record before writing it to persistent storage. In the event of a crash, the participant recovery state is retrieved from the log and passed to the Web Service which created it. The Web Service uses this state to create a new participant, which the XTS implementation uses to drive the transaction to completion. Log records are only deleted after the participant's <methodname>commit</methodname> or <methodname>rollback</methodname> method is called.
+        If a participant instance implements the relevant interface, the XTS implementation will append this participant
+        recovery state to its log record before writing it to persistent storage. In the event of a crash, the
+        participant recovery state is retrieved from the log and passed to the Web Service which created it. The Web
+        Service uses this state to create a new participant, which the XTS implementation uses to drive the transaction
+        to completion. Log records are only deleted after the participant's <methodname>commit</methodname> or
+        <methodname>rollback</methodname> method is called.
       </para>
       <warning>
-	<para>
-	  If a crash happens just before or just after a <methodname>commit</methodname> method is called, a <methodname>commit</methodname> or <methodname>rollback</methodname> method may be called twice.
-	</para>
+        <para>
+          If a crash happens just before or just after a <methodname>commit</methodname> method is called, a
+          <methodname>commit</methodname> or <methodname>rollback</methodname> method may be called twice.
+        </para>
       </warning>
 
       
       <section id="ws-at-recovery-api">
-	<title>WS-AT Participant Crash Recovery APIs</title>
+        <title>WS-AT Participant Crash Recovery APIs</title>
 
-	
-	<section>
-	  <title>Saving Participant Recovery State</title>
-	  <para>
-	    To signal that it is capable of performing recovery processing, a participant can implement the <interfacename>java.lang.Serializable</interfacename> interface. Alternatively it may implement <xref linkend="example-PersistableATParticipant" />.	  
-	  </para>
-	  
-	  <example id="example-PersistableATParticipant">
-	    <title>The <interfacename>PersistableATParticipant</interfacename> Interface</title>
-	    <programlisting role="JAVA" language="Java">
-	      public interface PersistableATParticipant
-	      {
-	        byte[] getRecoveryState() throws Exception;
-	      }
-	    </programlisting>
-	  </example>
-	  <para>
-	    If a participant implements the <interfacename>Serializable</interfacename> interface, the XTS participant services implementation uses the serialization API to create a version of the participant which can be appended to the participant log entry. If it implements the  <interfacename>PersistableATParticipant</interfacename> interface, the XTS participant services implementation call the <methodname>getRecoveryState</methodname> method to obtain the state to be appended to the participant log entry.
-	  </para>
-	  <para>
-	    If neither of these APIs is implemented, the XTS implementation logs a warning message and proceeds without saving any recovery state. In the event of a crash on the host machine for the Web service during commit, the transaction cannot be recovered and a heuristic outcome may occur. This outcome is logged on the host running the coordinator services.
-	  </para>
-	</section>
-	
-	<section>
-	  <title>Recovering Participants at Reboot</title>
-	  <para>
-	    A Web service must register with the XTS implementation when it is deployed, and unregister when it is undeployed,  in order to participate in recovery processing. Registration is performed using class <classname>XTSATRecoveryManager</classname> defined in package <package>org.jboss.jbossts.xts.recovery.participant.at</package>.
-	  </para>
-	  <example>
-	    <title>Registering for Recovery</title>
-	    <programlisting language="Java" role="JAVA"><xi:include href="extras/example-register-for-recovery.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-	  </example>
+        
+        <section>
+          <title>Saving Participant Recovery State</title>
+          <para>
+            When a Business Activity participant web service completes its work, it may want to save the information
+            which will be required later to close or compensate actions performed during the activity.  The XTS
+            implementation automatically acquires this information from the participant as part of the completion
+            process and writes it to a participant log record. This ensures that the information can be restored and
+            used to recreate a copy of the participant even if the web service container crashes between the
+            <methodname>complete</methodname> and <methodname>close</methodname> or <methodname>compensate</methodname>
+            operations
+          </para>
+          <para>
+            For a Participant Completion participant this information is acquired when the web service invokes the
+            <methodname>completed</methodname> method of the <classname>BAParticipantManager</classname> instance
+            returned from the call which enlisted the participant. For a Coordinator Completion participant this occurs
+            immediately after the call to it's <methodname>completed</methodname> method returns, assuming, of course,
+            that the <methodname>completed</methodname> method does not throw an exception or call the participant
+            manager's <methodname>cannotComplete</methodname> or <methodname>fail</methodname> method
+          </para>
+          <para>
+            A participant may signal that it is capable of performing recovery processing, by implementing the
+            <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref
+            linkend="example-PersistableBAParticipant" />.
+          </para>
+          <example id="example-PersistableBAParticipant">
+            <title><interfacename>PersistableBAParticipant</interfacename> 
+            Interface</title>
+            <programlisting role="JAVA" language="Java"><xi:include href="extras/example-PersistanbleBAParticipant.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+          </example>
+          <para>
+            If a participant implements the <interfacename>Serializable</interfacename> interface, the XTS participant
+            services implementation uses the serialization API to create a version of the participant which can be
+            appended to the participant log entry. If it implements the
+            <interfacename>PersistableATParticipant</interfacename> interface, the XTS participant services
+            implementation call the <methodname>getRecoveryState</methodname> method to obtain the state to be appended
+            to the participant log entry.
+          </para>
+          <para>
+            If neither of these APIs is implemented, the XTS implementation logs a warning message and proceeds without
+            saving any recovery state. In the event of a crash on the host machine for the Web service during commit,
+            the transaction cannot be recovered and a heuristic outcome may occur. This outcome is logged on the host
+            running the coordinator services.
+          </para>
+        </section>
+        
+        <section>
+          <title>Recovering Participants at Reboot</title>
+          <para>
+            A Web service must register with the XTS implementation when it is deployed, and unregister when it is
+            undeployed, in order to participate in recovery processing. Registration is performed using class
+            <classname>XTSATRecoveryManager</classname> defined in package
+            <package>org.jboss.jbossts.xts.recovery.participant.at</package>.
+          </para>
+          <example>
+            <title>Registering for Recovery</title>
+            <programlisting language="Java" role="JAVA"><xi:include href="extras/example-register-for-recovery.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+          </example>
 
-	  <para>
-	    The Web service must provide an implementation of the <interfacename>XTSATRecoveryModule</interfacename>, located in the <package>org.jboss.jbossts.xts.recovery.participant.at</package>, as argument to both the <methodname>register</methodname> and <methodname>unregister</methodname> calls. This instance is responsible for identifying saved participant recovery records and recreating new, recovered participant instances.
-	  </para>
-	  <example>
-	    <title><interfacename>XTSATRecoveryModule</interfacename> Implementation</title>
-	    <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSATRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-	  </example>
+          <para>
+            The Web service must provide an implementation of interface <classname>XTSBARecoveryModule</classname> in
+            package <package> org.jboss.jbossts.xts.recovery.participant.ba</package>, as an argument to the
+            <methodname>register</methodname> and <methodname>unregister</methodname> calls. This instance identifies
+            saved participant recovery records and recreates new, recovered participant instances:
+          </para>
+          <example>
+            <title><interfacename>XTSATRecoveryModule</interfacename> Implementation</title>
+            <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSATRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+          </example>
 
-	  <para>
-	    If a participant's recovery state was saved using serialization, the recovery module's <methodname>deserialize</methodname> method is called to recreate the participant. Normally, the recovery module is required to read, cast, and return an object from the supplied input stream. If a participant's recovery state was saved using the <interfacename>PersistableATParticipant</interfacename> interface, the recovery module's <methodname>recreate</methodname> method is called to recreate the participant from the byte array it provided when the state was saved.
-	  </para>
-	  <para>
-	    The XTS implementation cannot identify which participants belong to which recovery modules. A module only needs to return a participant instance if the recovery state belongs to the module's Web service. If the participant was created by another Web service, the module should return <literal>null</literal>. The participant identifier, which is supplied as argument to the <methodname>deserialize</methodname> or <methodname>recreate</methodname> method, is the identifier used by the Web service when the original participant was enlisted in the transaction. Web Services participating in recovery processing should ensure that participant identifiers are unique per service. If a module recognizes that a participant identifier belongs to its Web service, but cannot recreate the participant, it should throw an exception. This situation might arise if the service cannot associate the participant with any transactional information which is specific to the business logic.
-	  </para>
-	  <para>
-	    Even if a module relies on serialization to create the participant recovery state saved by the XTS implementation, it still must be registered by the application. The <methodname>deserialization</methodname> operation must employ a class loader capable of loading classes specific to the Web service. XTS fulfills this requirement by devolving responsibility for the <methodname>deserialize</methodname> operation to the recovery module.
-	  </para>
-	</section>
+          <para>
+            If a participant's recovery state was saved using serialization, the recovery module's
+            <methodname>deserialize</methodname> method is called to recreate the participant. Normally, the recovery
+            module is required to read, cast, and return an object from the supplied input stream. If a participant's
+            recovery state was saved using the <interfacename>PersistableATParticipant</interfacename> interface, the
+            recovery module's <methodname>recreate</methodname> method is called to recreate the participant from the
+            byte array it provided when the state was saved.
+          </para>
+          <para>
+            The XTS implementation cannot identify which participants belong to which recovery modules. A module only
+            needs to return a participant instance if the recovery state belongs to the module's Web service. If the
+            participant was created by another Web service, the module should return <literal>null</literal>. The
+            participant identifier, which is supplied as argument to the <methodname>deserialize</methodname> or
+            <methodname>recreate</methodname> method, is the identifier used by the Web service when the original
+            participant was enlisted in the transaction. Web Services participating in recovery processing should ensure
+            that participant identifiers are unique per service. If a module recognizes that a participant identifier
+            belongs to its Web service, but cannot recreate the participant, it should throw an exception. This
+            situation might arise if the service cannot associate the participant with any transactional information
+            which is specific to the business logic.
+          </para>
+          <para>
+            Even if a module relies on serialization to create the participant recovery state saved by the XTS
+            implementation, it still must be registered by the application. The <methodname>deserialization</methodname>
+            operation must employ a class loader capable of loading classes specific to the Web service. XTS fulfills
+            this requirement by devolving responsibility for the <methodname>deserialize</methodname> operation to the
+            recovery module.
+          </para>
+        </section>
       </section>
     </section>
   </section>
@@ -182,85 +300,210 @@
       <title>WS-BA Coordinator Crash Recovery</title>
 
       <para>
-	The WS-BA coordination service implementation tracks the status of each participant in an activity as the activity progresses through completion and closure. A transition point occurs during closure, once all <systemitem>CoordinatorCompletion</systemitem> participants receive a <systemitem>complete</systemitem> message and respond with a <systemitem>completed</systemitem> message. At this point, all <systemitem>ParticipantCompletion</systemitem> participants should have sent a <systemitem>completed</systemitem> message. The coordinator writes a log record storing the details of each participant, and indicating that the transaction is ready to close. If the coordinator service crashes after the log record is written, the <methodname>close</methodname> operation is still guaranteed to be successful. The coordinator checks the log after the system reboots and re sends a <systemitem>close</systemitem> message to all participants. After all participants respond to the <systemitem>close</systemitem> with a <systemitem>closed</systemitem> message, the coordinator can safely delete the log entry.
+        The WS-BA coordination service implementation tracks the status of each participant in an activity as the
+        activity progresses through completion and closure. A transition point occurs during closure, once all
+        <systemitem>CoordinatorCompletion</systemitem> participants receive a <systemitem>complete</systemitem> message
+        and respond with a <systemitem>completed</systemitem> message. At this point, all
+        <systemitem>ParticipantCompletion</systemitem> participants should have sent a
+        <systemitem>completed</systemitem> message. The coordinator writes a log record storing the details of each
+        participant, and indicating that the transaction is ready to close. If the coordinator service crashes after the
+        log record is written, the <methodname>close</methodname> operation is still guaranteed to be successful. The
+        coordinator checks the log after the system reboots and re sends a <systemitem>close</systemitem> message to all
+        participants. After all participants respond to the <systemitem>close</systemitem> with a
+        <systemitem>closed</systemitem> message, the coordinator can safely delete the log entry.
       </para>
       <para>
-	The coordinator does not need to account for any <systemitem>close</systemitem> messages sent before the crash, nor resend messages if it crashes several times. The XTS participant implementation is resilient to redelivery of <systemitem>close</systemitem> messages. Assuming that the participant has implemented the recovery functions described below, the coordinator can even guarantee delivery of <systemitem>close</systemitem> messages if both it, and one or more of the participant service hosts, crash simultaneously.
+        The coordinator does not need to account for any <systemitem>close</systemitem> messages sent before the crash,
+        nor resend messages if it crashes several times. The XTS participant implementation is resilient to redelivery
+        of <systemitem>close</systemitem> messages. Assuming that the participant has implemented the recovery functions
+        described below, the coordinator can even guarantee delivery of <systemitem>close</systemitem> messages if both
+        it, and one or more of the participant service hosts, crash simultaneously.
       </para>
       <para>
-	If the coordination service crashes before it has written the log record, it does not need to explicitly compensate any completed participants. The <phrase>presumed abort protocol</phrase> ensures that all completed participants are eventually sent a <systemitem>compensate</systemitem> message. Recovery must be initiated from the participant side.
+        If the coordination service crashes before it has written the log record, it does not need to explicitly
+        compensate any completed participants. The <phrase>presumed abort protocol</phrase> ensures that all completed
+        participants are eventually sent a <systemitem>compensate</systemitem> message. Recovery must be initiated from
+        the participant side.
       </para>
       <para>
-	A log record does not need to be written when an activity is being canceled. If a participant does not respond to a <systemitem>cancel</systemitem> or <systemitem>compensate</systemitem> request, the coordinator logs a warning and continues. The combination of the <phrase>presumed abort protocol</phrase> and participant-led recovery ensures that all participants eventually get canceled or compensated, as appropriate, even if the participant host crashes.      
+        A log record does not need to be written when an activity is being canceled. If a participant does not respond
+        to a <systemitem>cancel</systemitem> or <systemitem>compensate</systemitem> request, the coordinator logs a
+        warning and continues. The combination of the <phrase>presumed abort protocol</phrase> and participant-led
+        recovery ensures that all participants eventually get canceled or compensated, as appropriate, even if the
+        participant host crashes.
       </para>
       <para>
-	If a completed participant does not detect a response from its coordinator after resending its <systemitem>completed</systemitem> response a suitable number of times, it switches to sending <systemitem>getstatus</systemitem> messages, to determine whether the coordinator still knows about it. If a crash occurs before writing the log record, the coordinator has no record of the participant when the coordinator restarts, and the <systemitem>getstatus</systemitem> request returns a fault. The participant recovery manager automatically compensates the participant in this situation, just as if the activity had been canceled by the client.
+        If a completed participant does not detect a response from its coordinator after resending its
+        <systemitem>completed</systemitem> response a suitable number of times, it switches to sending
+        <systemitem>getstatus</systemitem> messages, to determine whether the coordinator still knows about it. If a
+        crash occurs before writing the log record, the coordinator has no record of the participant when the
+        coordinator restarts, and the <systemitem>getstatus</systemitem> request returns a fault. The participant
+        recovery manager automatically compensates the participant in this situation, just as if the activity had been
+        canceled by the client.
       </para>
       <para>
-	After a participant crash, the participant recovery manager detects the log entries for each completed participant. It sends <systemitem>getstatus</systemitem> messages to each participant's coordinator host, to determine whether the activity still exists. If the coordinator has not crashed and the activity is still running, the participant switches back to resending <systemitem>completed</systemitem> messages, and waits for a <systemitem>close</systemitem> or <systemitem>compensate</systemitem> response. If the coordinator has also crashed or the activity has been canceled, the participant is automatically canceled.
+        After a participant crash, the participant recovery manager detects the log entries for each completed
+        participant. It sends <systemitem>getstatus</systemitem> messages to each participant's coordinator host, to
+        determine whether the activity still exists. If the coordinator has not crashed and the activity is still
+        running, the participant switches back to resending <systemitem>completed</systemitem> messages, and waits for a
+        <systemitem>close</systemitem> or <systemitem>compensate</systemitem> response. If the coordinator has also
+        crashed or the activity has been canceled, the participant is automatically canceled.
       </para>
       
     </section>
 
     <!--    
-    <section>
-      <title>WS-BA Participant Crash Recovery</title>
-      <para>
-      </para>
-    </section>
+         <section> <title>WS-BA Participant Crash Recovery</title> <para> </para> </section>
     -->
     
     <section>
       <title>WS-BA Participant Crash Recovery APIs</title>
 
       <section>
-	<title>Saving Participant Recovery State</title>
-	<para>
-	  A participant may signal that it is capable of performing recovery processing, by implementing the <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref linkend="example-PersistableBAParticipant" />.
-	</para>
-	<example id="example-PersistableBAParticipant">
-	  <title><interfacename>PersistableBAParticipant</interfacename> Interface</title>
-	  <programlisting language="Java" role="JAVA"><xi:include href="extras/example-PersistableBAParticipant.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-	</example>
-	<para>
-	  If a participant implements the <interfacename>Serializable</interfacename> interface, the XTS participant services implementation uses the serialization API to create a version of the participant which can be appended to the participant log entry. If the participant implements the <interfacename>PersistableBAParticipant</interfacename>, the XTS participant services implementation call the <methodname>getRecoveryState</methodname> method to obtain the state, which is appended to the participant log entry.
-	</para>
-	<para>
-	  If neither of these APIs is implemented, the XTS implementation logs a warning message and proceeds without saving any recovery state. If the Web service's host machine crashes while the activity is being closed, the activity cannot be recovered and a heuristic outcome will probably be logged on the coordinator's host machine. If the activity is canceled, the participant is not compensated and the coordinator host machine may log a heuristic outcome for the activity.
-	</para>
+        <title>Saving Participant Recovery State</title>
+        <para>
+          A participant may signal that it is capable of performing recovery processing, by implementing the
+          <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref
+          linkend="example-PersistableBAParticipant" />.
+        </para>
+        <example id="example-PersistableBAParticipant">
+          <title><interfacename>PersistableBAParticipant</interfacename> Interface</title>
+          <programlisting language="Java" role="JAVA"><xi:include href="extras/example-PersistableBAParticipant.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+        <para>
+          If a participant implements the <interfacename>Serializable</interfacename> interface, the XTS participant
+          services implementation uses the serialization API to create a version of the participant which can be
+          appended to the participant log entry. If the participant implements the
+          <interfacename>PersistableBAParticipant</interfacename>, the XTS participant services implementation call the
+          <methodname>getRecoveryState</methodname> method to obtain the state, which is appended to the participant log
+          entry.
+        </para>
+        <para>
+          If neither of these APIs is implemented, the XTS implementation logs a warning message and proceeds without
+          saving any recovery state. If the Web service's host machine crashes while the activity is being closed, the
+          activity cannot be recovered and a heuristic outcome will probably be logged on the coordinator's host
+          machine. If the activity is canceled, the participant is not compensated and the coordinator host machine may
+          log a heuristic outcome for the activity.
+        </para>
       </section>
 
       
       <section>
-	<title>Recovering Participants at Reboot</title>
-	<para>
-	  A Web service must register with the XTS implementation when it is deployed, and unregister when it is undeployed, so it can take part in recovery processing.
-	</para>
-	<para>
-	  Registration is performed using the <classname>XTSBARecoveryManager</classname>, defined in the <package>org.jboss.jbossts.xts.recovery.participant.ba</package> package. 
-	</para>
-	<example>
-	  <title><classname>XTSBARecoveryManager</classname> Class</title>
-	  <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSBARecoveryManager.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-	</example>
-	<para>
-	  The Web service must provide an implementation of the <classname>XTSBARecoveryModule</classname> in the <package> org.jboss.jbossts.xts.recovery.participant.ba</package>, as an argument to the <methodname>register</methodname> and <methodname>unregister</methodname> calls. This instance identifies saved participant recovery records and recreates new, recovered participant instances:
-	</para>
-	<example>
-	  <title><interfacename>XTSBARecoveryModule</interfacename> Interface</title>
-	  <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSBARecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-	</example>
-	<para>
-	  If a participant's recovery state was saved using serialization, one of the recovery module's <methodname>deserialize</methodname> methods is called, so that it can recreate the participant. Which method to use depends on whether the saved participant implemented the <classname>ParticipantCompletion</classname> protocol or the <classname>CoordinatorCompletion</classname> protocol. Normally, the recovery module reads, casts and returns an object from the supplied input stream. If a participant's recovery state was saved using the <interfacename>PersistableBAParticipant</interfacename> interface, one of the recovery module's <methodname>recreate</methodname> methods is called, so that it can recreate the participant from the byte array provided when the state was saved. The method to use depends on which protocol the saved participant implemented.
-	</para>
-	<para>
-	  The XTS implementation does not track which participants belong to which recovery modules. A module is only expected to return a participant instance if it can identify that the recovery state belongs to its Web service. If the participant was created by some other Web service, the module should return <literal>null</literal>. The participant identifier supplied as an argument to the <methodname>deserialize</methodname> or <methodname>recreate</methodname> calls is the identifier used by the Web service when the original participant was enlisted in the transaction. Web Services which participate in recovery processing should ensure that the participant identifiers they employ are unique per service. If a module recognizes a participant identifier as belonging to its Web service, but cannot recreate the participant, it throws an exception. This situation might arise if the service cannot associate the participant with any transactional information specific to business logic.
-	</para>
-	<para>
-	  A module must be registered by the application, even when it relies upon serialization to create the participant recovery state saved by the XTS implementation. The <methodname>deserialization</methodname> operation must employ a class loader capable of loading Web service-specific classes. The XTS implementation achieves this by delegating responsibility for the <methodname>deserialize</methodname> operation to the recovery module.
-	</para>
+        <title>Recovering Participants at Reboot</title>
+        <para>
+          A Web service must register with the XTS implementation when it is deployed, and unregister when it is
+          undeployed, so it can take part in recovery processing.
+        </para>
+        <para>
+          Registration is performed using the <classname>XTSBARecoveryManager</classname>, defined in the
+          <package>org.jboss.jbossts.xts.recovery.participant.ba</package> package.
+        </para>
+        <example>
+          <title><classname>XTSBARecoveryManager</classname> Class</title>
+          <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSBARecoveryManager.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+        <para>
+          The Web service must provide an implementation of the <classname>XTSBARecoveryModule</classname> in the
+          <package> org.jboss.jbossts.xts.recovery.participant.ba</package>, as an argument to the
+          <methodname>register</methodname> and <methodname>unregister</methodname> calls. This instance identifies
+          saved participant recovery records and recreates new, recovered participant instances:
+        </para>
+        <example>
+          <title><interfacename>XTSBARecoveryModule</interfacename> Interface</title>
+          <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSBARecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+        <para>
+          If a participant's recovery state was saved using serialization, one of the recovery module's
+          <methodname>deserialize</methodname> methods is called, so that it can recreate the participant. Which method
+          to use depends on whether the saved participant implemented the <classname>ParticipantCompletion</classname>
+          protocol or the <classname>CoordinatorCompletion</classname> protocol. Normally, the recovery module reads,
+          casts and returns an object from the supplied input stream. If a participant's recovery state was saved using
+          the <interfacename>PersistableBAParticipant</interfacename> interface, one of the recovery module's
+          <methodname>recreate</methodname> methods is called, so that it can recreate the participant from the byte
+          array provided when the state was saved. The method to use depends on which protocol the saved participant
+          implemented.
+        </para>
+        <para>
+          The XTS implementation does not track which participants belong to which recovery modules. A module is only
+          expected to return a participant instance if it can identify that the recovery state belongs to its Web
+          service. If the participant was created by some other Web service, the module should return
+          <literal>null</literal>. The participant identifier supplied as an argument to the
+          <methodname>deserialize</methodname> or <methodname>recreate</methodname> calls is the identifier used by the
+          Web service when the original participant was enlisted in the transaction. Web Services which participate in
+          recovery processing should ensure that the participant identifiers they employ are unique per service. If a
+          module recognizes a participant identifier as belonging to its Web service, but cannot recreate the
+          participant, it throws an exception. This situation might arise if the service cannot associate the
+          participant with any transactional information specific to business logic.
+        </para>
+        <para>
+          A module must be registered by the application, even when it relies upon serialization to create the
+          participant recovery state saved by the XTS implementation. The <methodname>deserialization</methodname>
+          operation must employ a class loader capable of loading Web service-specific classes. The XTS implementation
+          achieves this by delegating responsibility for the <methodname>deserialize</methodname> operation to the
+          recovery module.
+        </para>
+      </section>
+      <section>
+        <title>Securing Web Service State Changes</title>
+        <para>
+          When a BA participant completes, it is expected to commit changes to the web service state made during the
+          activity. The web service usually also needs to persist these changes to a local storage device. This leaves
+          open a window where the persisted changes may not be guarded with the necessary compensation information. The
+          web service container may crash after the changes to the service state have been written but before the XTS
+          implementation is able to acquire the recovery state and write a recovery log record for the participant.
+          Participants may close this window by employing a two-phase update to the local store used to persist the web
+          service state.
+        </para>
+        <para>
+          A participant which needs to persist changes to local web service state should implement interface
+          <interfacename>ConfirmCompletedParticipant</interfacename> in package
+          <package>com.arjuna.wst11</package>. This signals to the XTS implementation that it expects confirmation after
+          a successful write of the participant recovery record, allowing it to roll forward provisionally persisted
+          changes to the web service state. Delivery of this confirmation can be guaranteed even if the web service
+          container crashes after writing the participant log record. Conversely, if a recovery record cannot be written
+          because of a fault or a crash prior to writing then the provisional changes can be guaranteed to be rolled
+          back.
+        </para>
+        <example>
+          <title><interfacename>ConfirmCompletedParticipant</interfacename> 
+          Interface</title>
+          <programlisting language="Java" role="JAVA"><xi:include 
+          href="extras/example-ConfirmCompletedParticipant.java" 
+          xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+        <para>
+          When the participant is ready to complete, it should prepare its persistent changes by temporarily locking
+          access to the relevant state in the local store and writing the changed data to disk, retaining both the old
+          and new versions of the service state. For a Participant Completion participant, this
+          <methodname>prepare</methodname> operation should be done just before calling the participant manager's
+          <methodname>completed</methodname> method. For a Coordinator Completion participant it should be done just
+          before returning from the call to the participant's <methodname>completed</methodname> method. Once the
+          participant log record has been successfully written, the XTS implementation calls the participant's
+          <methodname>confirmCompleted</methodname> method, supplying value <literal>true</literal> as argument. The
+          participant should respond by installing the provisional state changes and releasing any locks. If for some
+          reason the log record cannot be written the XTS implementation calls the participant's
+          <methodname>confirmCompleted</methodname> method, supplying value <literal>false</literal> as the
+          argument. The participant should respond by restoring the original state values and releasing any locks.
+        </para>
+        <para>
+          If a crash occurs before the call to <methodname>confirmCompleted</methodname>, then the application's
+          recovery module can make sure that the provisional changes to the web service state are rolled forward or
+          rolled back as appropriate. The web service must identify all provisional writes to persistent state before it
+          starts serving new requests or processing recovered participants. It must reobtain any locks required to
+          ensure that the state is not changed by new transactions. When the recovery module recovers a participant from
+          the log this means that it's compensation information is available.  If the participant still has prepared
+          changes, the recovery code should call method <methodname>confirmCompleted</methodname>, passing value
+          <literal>true</literal>. This allows the participant to finish the complete operation.  The XTS implementation
+          then forwards a <systemitem>completed</systemitem> message to the coordinator, ensuring that the participant
+          is subsequently notified either to close or to compensate. At the end of the first recovery scan the recovery
+          module may find that there are still some prepared changes on disk which are unaccounted for. This means that
+          the participant recovery record is not available. The recovery module should restore the original state values
+          and release any locks. The XTS implementation responds to coordinator requests regarding the participant with
+          an <systemitem>unknown participant</systemitem> fault, forcing the activity as a whole to be rolled back.
+        </para>
       </section>
 
+      
     </section>
 
   </section>
