@@ -681,7 +681,7 @@
 	    <variablelist>
 	      <title>Exceptions</title>
 	      <varlistentry>
-		<term>>UnknownTransactionException</term>
+		<term>UnknownTransactionException</term>
 		<listitem>
 		  <para>
 		    No transaction is associated with the invoking thread.
