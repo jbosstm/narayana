@@ -541,9 +541,9 @@
         linkend="example-jboss-beans.xml" /> shows one way of declaring this dependency.
       </para>
       <para>
-        After the XTS service starts, you create an instance of the application class
+        After the XTS service starts, it creates an instance of the application class
         <classname>org.my.ServiceBean</classname> by calling its <methodname>start</methodname>
-        method. During &APPSERVER; shutdown, you can stop the same instance by calling its <methodname>stop</methodname>
+        method. During &APPSERVER; shutdown, XTS stops the same instance by calling its <methodname>stop</methodname>
         method, prior to shutting down the XTS Service.
       </para>
         <example id="example-jboss-beans.xml">
