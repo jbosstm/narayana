@@ -212,10 +212,10 @@
           <para>
              A participant may signal that it is capable of performing recovery processing, by implementing the
              <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref
-             linkend="example-PersistableBAParticipant" />.
+             linkend="example-PersistableATParticipant" />.
           </para>
-          <example id="example-PersistableBAParticipant">
-            <title><interfacename>PersistableBAParticipant</interfacename> 
+          <example id="example-PersistableATParticipant">
+            <title><interfacename>PersistableATParticipant</interfacename> 
 Interface</title>
             <programlisting role="JAVA" language="Java"><xi:include href="extras/example-PersistableATParticipant.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
           </example>
