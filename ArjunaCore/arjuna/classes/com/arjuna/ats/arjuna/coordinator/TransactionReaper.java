@@ -134,7 +134,9 @@ public class TransactionReaper
                     nextDynamicCheckTime.set(Long.MAX_VALUE);
                     return;
                 } else {
-                    if (reaperElement.getAbsoluteTimeout() > now) {
+                    final long nextTimeout = reaperElement.getAbsoluteTimeout();
+                    if(nextTimeout > now) {
+                        nextDynamicCheckTime.set(nextTimeout);
                         return; // nothing to do yet.
                     }
                 }
