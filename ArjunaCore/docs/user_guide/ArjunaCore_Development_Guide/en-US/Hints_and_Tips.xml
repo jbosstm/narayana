@@ -117,7 +117,7 @@
     </para>
     <example>
       <title><methodname>activate</methodname></title>
-      <programlisting language="Java" role="JAVA"> <xi:include href="extras/StateManager_activate_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/StateManager_activate_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       <para>
         Activate loads an object from the object store. The object’s UID must already have been set via the constructor
         and the object must exist in the store. If the object is successfully read then restore_state is called to build
@@ -128,7 +128,7 @@
     </example>
     <example>
       <title><methodname>deactivate</methodname></title>
-      <programlisting language="Java" role="JAVA"> <xi:include href="extras/StateManager_deactivate_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>  
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/StateManager_deactivate_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>  
       <para>
         The inverse of activate. First calls save_state to build the compacted image of the object which is then saved
         in the object store. Objects are only saved if they have been modified since they were activated. The parameter
@@ -138,7 +138,8 @@
     </example>
     <example>
       <title><methodname>modified</methodname></title>
-      <programlisting language="Java" role="JAVA"><xi:include href="extras/StateManager_modified_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" /></programlisting>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/StateManager_modified_method.java"
+      xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       <para>
         Must be called prior to modifying the object in memory. If it is not called, the object will not be saved in the
         object store by <methodname>deactivate</methodname>.
