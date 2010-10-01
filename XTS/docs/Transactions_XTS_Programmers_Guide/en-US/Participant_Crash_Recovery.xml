@@ -198,26 +198,25 @@
             which will be required later to close or compensate actions performed during the activity.  The XTS
             implementation automatically acquires this information from the participant as part of the completion
             process and writes it to a participant log record. This ensures that the information can be restored and
-            used to recreate a copy of the participant even if the web service container crashes between the
-            <methodname>complete</methodname> and <methodname>close</methodname> or <methodname>compensate</methodname>
-            operations
+            used to recreate a copy of the participant even if the web service container crashes between the complete
+            and close or compensate operations.
           </para>
           <para>
-            For a Participant Completion participant this information is acquired when the web service invokes the
+            For a Participant Completion participant, this information is acquired when the web service invokes the
             <methodname>completed</methodname> method of the <classname>BAParticipantManager</classname> instance
             returned from the call which enlisted the participant. For a Coordinator Completion participant this occurs
-            immediately after the call to it's <methodname>completed</methodname> method returns, assuming, of course,
-            that the <methodname>completed</methodname> method does not throw an exception or call the participant
-            manager's <methodname>cannotComplete</methodname> or <methodname>fail</methodname> method
+            immediately after the call to it's <methodname>completed</methodname> method returns. This assumes that the
+            <methodname>completed</methodname> method does not throw an exception or call the participant manager's
+            <methodname>cannotComplete</methodname> or <methodname>fail</methodname> method.
           </para>
           <para>
-            A participant may signal that it is capable of performing recovery processing, by implementing the
-            <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref
-            linkend="example-PersistableATParticipant" />.
+             A participant may signal that it is capable of performing recovery processing, by implementing the
+             <interfacename>java.lang.Serializable</interfacename> interface. An alternative is to implement the <xref
+             linkend="example-PersistableBAParticipant" />.
           </para>
-          <example id="example-PersistableATParticipant">
-            <title><interfacename>PersistableATParticipant</interfacename> 
-            Interface</title>
+          <example id="example-PersistableBAParticipant">
+            <title><interfacename>PersistableBAParticipant</interfacename> 
+Interface</title>
             <programlisting role="JAVA" language="Java"><xi:include href="extras/example-PersistableATParticipant.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
           </example>
           <para>
@@ -250,13 +249,15 @@
           </example>
 
           <para>
-            The Web service must provide an implementation of interface <classname>XTSBARecoveryModule</classname> in
-            package <package> org.jboss.jbossts.xts.recovery.participant.ba</package>, as an argument to the
+            The Web service must provide an implementation of interface
+            <interfacename>XTSBARecoveryModule</interfacename> in package <package>
+            org.jboss.jbossts.xts.recovery.participant.ba</package>, as an argument to the
             <methodname>register</methodname> and <methodname>unregister</methodname> calls. This instance identifies
             saved participant recovery records and recreates new, recovered participant instances:
           </para>
           <example>
-            <title><interfacename>XTSATRecoveryModule</interfacename> Implementation</title>
+            <title><interfacename>XTSBARecoveryModule</interfacename> 
+Interface</title>
             <programlisting language="Java" role="JAVA"><xi:include href="extras/example-XTSATRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
           </example>
 
@@ -451,55 +452,52 @@
           open a window where the persisted changes may not be guarded with the necessary compensation information. The
           web service container may crash after the changes to the service state have been written but before the XTS
           implementation is able to acquire the recovery state and write a recovery log record for the participant.
-          Participants may close this window by employing a two-phase update to the local store used to persist the web
+          Participants may close this window by employing a two phase update to the local store used to persist the web
           service state.
         </para>
         <para>
-          A participant which needs to persist changes to local web service state should implement interface
-          <interfacename>ConfirmCompletedParticipant</interfacename> in package
-          <package>com.arjuna.wst11</package>. This signals to the XTS implementation that it expects confirmation after
-          a successful write of the participant recovery record, allowing it to roll forward provisionally persisted
-          changes to the web service state. Delivery of this confirmation can be guaranteed even if the web service
-          container crashes after writing the participant log record. Conversely, if a recovery record cannot be written
-          because of a fault or a crash prior to writing then the provisional changes can be guaranteed to be rolled
-          back.
+           A participant which needs to persist changes to local web service state should implement interface
+           <classname>ConfirmCompletedParticipant</classname> in package <package>com.arjuna.wst11</package>. This
+           signals to the XTS implementation that it expects confirmation after a successful write of the participant
+           recovery record, allowing it to roll forward provisionally persisted changes to the web service
+           state. Delivery of this confirmation can be guaranteed even if the web service container crashes after
+           writing the participant log record. Conversely, if a recovery record cannot be written because of a fault or
+           a crash prior to writing, the provisional changes can be guaranteed to be rolled back.
         </para>
-        <example>
-          <title><interfacename>ConfirmCompletedParticipant</interfacename> 
-          Interface</title>
-          <programlisting language="Java" role="JAVA"><xi:include 
-          href="extras/example-ConfirmCompletedParticipant.java" 
-          xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+         <example>
+           <title><interfacename>ConfirmCompletedParticipant</interfacename> 
+Interface</title>
+          <programlisting language="Java" role="JAVA"><xi:include href="extras/example-ConfirmCompletedParticipant.java" 
+xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         </example>
         <para>
           When the participant is ready to complete, it should prepare its persistent changes by temporarily locking
           access to the relevant state in the local store and writing the changed data to disk, retaining both the old
-          and new versions of the service state. For a Participant Completion participant, this
-          <methodname>prepare</methodname> operation should be done just before calling the participant manager's
-          <methodname>completed</methodname> method. For a Coordinator Completion participant it should be done just
-          before returning from the call to the participant's <methodname>completed</methodname> method. Once the
-          participant log record has been successfully written, the XTS implementation calls the participant's
-          <methodname>confirmCompleted</methodname> method, supplying value <literal>true</literal> as argument. The
-          participant should respond by installing the provisional state changes and releasing any locks. If for some
-          reason the log record cannot be written the XTS implementation calls the participant's
-          <methodname>confirmCompleted</methodname> method, supplying value <literal>false</literal> as the
-          argument. The participant should respond by restoring the original state values and releasing any locks.
+          and new versions of the service state. For a Participant Completion participant, this prepare operation should
+          be done just before calling the participant manager's <methodname>completed</methodname> method. For a
+          Coordinator Completion participant, it should be done just before returning from the call to the participant's
+          <methodname>completed</methodname> method. After writing the participant log record, the XTS implementation
+          calls the participant's <methodname>confirmCompleted</methodname> method, providing value
+          <literal>true</literal> as the argument. The participant should respond by installing the provisional state
+          changes and releasing any locks. If the log record cannot be written, the XTS implementation calls the
+          participant's <methodname>confirmCompleted</methodname> method, providing value <literal>false</literal> as
+          the argument. The participant should respond by restoring the original state values and releasing any locks.
         </para>
         <para>
-          If a crash occurs before the call to <methodname>confirmCompleted</methodname>, then the application's
-          recovery module can make sure that the provisional changes to the web service state are rolled forward or
-          rolled back as appropriate. The web service must identify all provisional writes to persistent state before it
-          starts serving new requests or processing recovered participants. It must reobtain any locks required to
-          ensure that the state is not changed by new transactions. When the recovery module recovers a participant from
-          the log this means that it's compensation information is available.  If the participant still has prepared
-          changes, the recovery code should call method <methodname>confirmCompleted</methodname>, passing value
-          <literal>true</literal>. This allows the participant to finish the complete operation.  The XTS implementation
-          then forwards a <systemitem>completed</systemitem> message to the coordinator, ensuring that the participant
-          is subsequently notified either to close or to compensate. At the end of the first recovery scan the recovery
-          module may find that there are still some prepared changes on disk which are unaccounted for. This means that
-          the participant recovery record is not available. The recovery module should restore the original state values
-          and release any locks. The XTS implementation responds to coordinator requests regarding the participant with
-          an <systemitem>unknown participant</systemitem> fault, forcing the activity as a whole to be rolled back.
+          If a crash occurs before the call to <methodname>confirmCompleted</methodname>, the application's recovery
+          module can make sure that the provisional changes to the web service state are rolled forward or rolled back
+          as appropriate. The web service must identify all provisional writes to persistent state before it starts
+          serving new requests or processing recovered participants. It must reobtain any locks required to ensure that
+          the state is not changed by new transactions. When the recovery module recovers a participant from the log,
+          its compensation information is available.  If the participant still has prepared changes, the recovery code
+          must call <methodname>confirmCompleted</methodname>, passing value true. This allows the participant to finish
+          the <methodname>complete</methodname> operation.  The XTS implementation then forwards a
+          <systemitem>completed</systemitem> message to the coordinator, ensuring that the participant is subsequently
+          notified either to close or to compensate. At the end of the first recovery scan, the recovery module may find
+          some prepared changes on disk which are still unaccounted for. This means that the participant recovery record
+          is not available. The recovery module should restore the original state values and release any locks. The XTS
+          implementation responds to coordinator requests regarding the participant with an <systemitem>unknown
+          participant</systemitem> fault, forcing the activity as a whole to be rolled back.
         </para>
       </section>
 
