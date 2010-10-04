@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-configuration-options">
+  <title>Configuration options</title>
+
+  <section>
+    <title>Loading a configuration</title>
+    <para>
+      Each module of the system contains a <classname><replaceable>module</replaceable>propertyManager</classname>
+      class., which provides static getter methods for one or more
+      <classname><replaceable>name</replaceable>EnvironmentBean</classname> classes. An example is
+      <classname>com.arjuna.ats.arjuna.commmon.arjPropertyManager</classname>.  These environment beans are standard
+      javabeans containing properties for each configuration option in the system. Typical usage is of the form:
+    </para>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/defaultTimeout.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    <para>
+      These beans are singletons, instantiated upon first access, using the following algorithm.
+    </para>
+    <procedure>
+      <title>Algorithm for environment bean instantiation</title>
+      <step>
+        <para>
+          The properties are loaded and populated from a properties file named and located as follows:
+        </para>
+        <substeps>
+          <step>
+            <para>
+              If the properties file name property is set, its value is used as the file name.
+            </para>
+          </step>
+          <step>
+            <para>
+              If not, the default filename for the product is used.
+            </para>
+          </step>
+        </substeps>
+      </step>
+      <step>
+        <para>
+          The file thus named is searched for by, in order
+        </para>
+        <orderedlist>
+          <listitem>
+            <para>
+              absolute path
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              user.dir
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              user.home
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              java.home
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              directories contained on the classpath
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              a default file embedded in the product .jar file.
+            </para>
+          </listitem>
+        </orderedlist>
+      </step>
+      <step>
+        <para>
+          The file is treated as being of standard java.util.Properties xml format and loaded accordingly. The entry
+          names are of the form EnvironmentBeanClass.propertyName:<code>&lt;entry
+          key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>. Valid values for boolean
+          properties are case-insensitive, and may be one of:
+        </para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              NO
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              YES
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              FALSE
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              TRUE
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              OFF
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              ON
+            </para>
+          </listitem>
+        </itemizedlist>
+        <para>
+          In the case of properties that take multiple values, they are whitespace-delimited.
+        </para>
+        <example>
+          <title>Example Environment Bean</title>
+          <programlisting language="XML" role="XML"> <xi:include href="extras/EnvironmentBeans.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+      </step>
+      <step>
+        <para>
+          After the file is loaded, it is cached and is not re-read until the JVM is restarted. Changes to the
+          properties file require a restart in order to take effect.
+        </para>
+      </step>
+    <step>
+      <para>
+        After the properties are loaded, the EnvironmentBean is then inspected and, for each field, if the properties
+        contains a matching key in the search order as follows, the <methodname>setter</methodname> method for that field is invoked with the
+        value from the properties, or the system properties if different.
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Fully.Qualified.NameEnvironmentBean.propertyName
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            NameEnvironmentBean.propertyName (this is the preferred form used in the properties file)
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            the old com.arjuna... properties key (deprecated, for backwards compatibility only).
+          </para>
+        </listitem>
+      </itemizedlist>
+    </step>
+    <step>
+      <para>
+        The bean is then returned to the caller, which may further override values by calling setter methods.
+      </para>
+    </step>
+    </procedure>
+    <para>
+      The implementation reads most bean properties only once, as the consuming component or class is instantiated. This
+      usually happens the first time a transaction is run. As a result, calling <methodname>setter</methodname> methods
+      to change the value of bean properties while the system is running typically has no effect, unless it is done
+      prior to any use of the transaction system. Altered bean properties are not persisted back to the properties file.
+    </para>
+    <para>
+      You can configure the system using a bean wiring system such as JBoss Microcontainer or Spring. Take care when
+      instantiating beans, to obtain the singleton via the static getter (factory) method on the module property
+      manager. Using a new bean instantiated with the default constructor is ineffective, since it is not possible to
+      pass this configured bean back to the property management system.
+    </para>
+  </section>
+
+  
+  <section>
+    <title>Options</title>
+    <para>
+      The canonical reference for configuration options is the Javadoc of the various
+      <classname>EnvironmentBean</classname> classes, For ArjunaCore these are:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <classname>com.arjuna.common.internal.util.logging.LoggingEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.txoj.common.TxojEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.arjuna.common.CoreEnvironmentBean.java </classname>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      Additional modules built on ArjunaCore may include further beans containing module-specific configuration
+      options. Refer to the documentation for the specific modules for more information.
+    </para>
+  </section>
+
+</chapter>
+
