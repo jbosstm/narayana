@@ -7,12 +7,12 @@
 	<title>ArjunaCore Installation Guide</title>
 	<subtitle>Installation Instructions for UNIX and Microsoft Windows</subtitle>
 	<productname>ArjunaCore</productname>
-	<productnumber>4.12</productnumber>
+	<productnumber>4.13.0</productnumber>
 	<edition>1</edition>
 	<pubsnumber>0</pubsnumber>
 	<abstract>
 		<para>
-		  The Installation Guide contains information on how to use ArjunaCore 4.12.0.
+		  The Installation Guide contains information on how to use ArjunaCore 4.13.0.
 		</para>
 	</abstract>
 	<corpauthor>

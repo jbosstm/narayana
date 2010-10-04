@@ -50,24 +50,24 @@
 
         <mkdir dir="${scripts.dest.dir}"/>
 
-		<copy todir="${scripts.dest.dir}" filtering="true" overwrite="true" >
-			<fileset dir="scripts">
-				<include name="start-recovery-manager.bat"/>
-				<include name="start-recovery-manager.sh"/>
-				<include name="run-tools.bat"/>
-				<include name="run-tools.sh"/>
+        <copy todir="${scripts.dest.dir}" filtering="true" overwrite="true" >
+            <fileset dir="scripts">
+                <include name="start-recovery-manager.bat"/>
+                <include name="start-recovery-manager.sh"/>
+                <include name="run-tools.bat"/>
+                <include name="run-tools.sh"/>
                 <include name="${extra_scripts}"/>
-			</fileset>
+            </fileset>
             <filterset>
                 <filter token="PRODUCT_NAME" value="${product_name}"/>
                 <filter token="HOME_DIRECTORY" value="${home_directory}"/>
             </filterset>
-		</copy>
+        </copy>
 
         <copy todir="${scripts.dest.dir}" filtering="true" overwrite="true" >
             <fileset dir="scripts">
-				<include name="${orbprefix}orb-setup-env.*"/>
-			</fileset>
+                <include name="${orbprefix}orb-setup-env.*"/>
+            </fileset>
 
             <globmapper from="${orbprefix}orb-*" to="*"/>
 
@@ -87,21 +87,31 @@
             <fileset dir="docs" includes="**/*.pdf"/>
         </copy>
 
-        <exec dir="docs/ArjunaCore_Administration_Guide" command="publican">
-            <arg value="build"/>
-            <arg value="--langs=en-US"/>
-            <arg value="--formats=pdf,html"/>
-        </exec>
-        <exec dir="docs/ArjunaCore_Installation_Guide" command="publican">
-            <arg value="build"/>
-            <arg value="--langs=en-US"/>
-            <arg value="--formats=pdf,html"/>
-        </exec>
+        <if>
+            <istrue value="${publican}" />
+            <then>
+                <exec dir="docs/ArjunaCore_Administration_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+                <exec dir="docs/ArjunaCore_Development_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+                <exec dir="docs/ArjunaCore_Installation_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+            </then>
+        </if>
 
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
             <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
         </copy>
-        
+
     </target>
 
     <target name="install.services">
