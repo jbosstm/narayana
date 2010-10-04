@@ -134,7 +134,7 @@
       <note>
         <para>
           The <methodname>setValue</methodname> method is not implemented here, but is similar in structure to <xref
-          linkend="example-queue-inspectValue" />.
+          linkend="example_queue-inspectValue" />.
         </para>
       </note>
       <example id="example_queue-inspectValue">

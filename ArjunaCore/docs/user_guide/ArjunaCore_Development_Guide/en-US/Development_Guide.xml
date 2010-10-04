@@ -14,6 +14,7 @@
   <xi:include href="Hints_and_Tips.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Constructing_A_Transactional_Objects_For_Java_Application.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Configuration_Options.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Appendix_Object_Store_Implementations.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Appendix_Class_Definitions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
