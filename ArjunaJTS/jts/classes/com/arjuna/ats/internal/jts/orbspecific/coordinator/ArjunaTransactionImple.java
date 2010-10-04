@@ -1647,8 +1647,7 @@ public class ArjunaTransactionImple extends
              * If there's no problem so far then call afterCompletion on the underlying TwoPhaseCoordinator.
              */
 
-            if (!problem)
-                problem = !super.afterCompletion(myStatus == Status.StatusCommitted ? ActionStatus.COMMITTED : ActionStatus.ABORTED);
+            problem = !super.afterCompletion(myStatus == Status.StatusCommitted ? ActionStatus.COMMITTED : ActionStatus.ABORTED);
             
 	    if (problem)
 	    {
