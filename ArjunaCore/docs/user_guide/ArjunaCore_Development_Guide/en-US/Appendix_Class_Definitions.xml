@@ -6,64 +6,40 @@
 <appendix>
   <title>Class definitions</title>
   <para>
-
+    This appendix contains an overview of those classes that the application programmer will typically use. The aim of
+    this appendix is to provide a quick reference guide to these classes for use when writing applications in
+    TxCore. For clarity only the public and protected interfaces of the classes will be given.
   </para>
-  <section>
-    <title><classname>LockManager</classname></title>
-    <para>
 
-    </para>
-  </section>
+  <example>
+    <title>Class <classname>LockManager</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/LockManager_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
 
-  
-  <section>
-    <title><classname>StateManager</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>InputObjectState</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>OutputObjectState</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>InputBuffer</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>OutputBuffer</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>Uid</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
-  <section>
-    <title><classname>AtomicAction</classname></title>
-    <para>
-      
-    </para>
-    
-  </section>
+    <example>
+    <title>Class <classname>StateManager</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/StateManager_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+
+    <example>
+      <title>Classes <classname>OutputObjectState</classname> and <classname>InputObjectState</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/OutputObjectState_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+
+    <example>
+      <title>Classes <classname>OutputBuffer</classname> and <classname>InputBuffer</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/OutputBuffer_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+
+    <example>
+    <title>Class <classname>Uid</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/Uid_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+
+    <example>
+    <title>Class <classname>AtomicAction</classname></title>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/AtomicAction_class.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+  </example>
+
 </appendix>
 
