@@ -27,6 +27,9 @@
     <!-- remember to turn emma off for prdn builds or it will be a runtime dep! -->
     <property name="emma.enabled" value="false"/>
 
+    <!-- override to disable publican use -->
+    <property  name="publican" value="true"/>
+
     <property name="debug" value="true"/>
     <property name="deprecation" value="true"/>
 
