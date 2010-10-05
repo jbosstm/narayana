@@ -107,7 +107,7 @@
     </section>
     
     <section>
-      <title><methodname>enque</methodname> and <methodname>dequeue</methodname> methods</title>
+      <title><methodname>enqueue</methodname> and <methodname>dequeue</methodname> methods</title>
       <para>
         If the operations of the <classname>queue</classname> class are to be coded as atomic actions, then the enqueue
         operation might have the structure given below. The <methodname>dequeue</methodname> operation is similarly

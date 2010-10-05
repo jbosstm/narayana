@@ -123,7 +123,7 @@
       <programlisting language="Java" role="JAVA"> <xi:include href="extras/StateManager-signature.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>
-      Objects are assumed to be of three possible flavours.
+      Objects are assumed to be of three possible flavors.
     </para>
     <variablelist>
       <title>Three Flavors of Objects</title>
@@ -191,7 +191,7 @@
       linkend="txoj-lifecycle" />.
     </para>
     <figure id="txoj-lifecycle">
-      <title>Lifecycle of a persistent Object in TXOJ</title>
+      <title>Life cycle of a persistent Object in TXOJ</title>
       <mediaobject>
         <imageobject>
           <imagedata fileref="images/txoj-lifecycle.png" format="PNG"/>
@@ -303,7 +303,7 @@
       <classname>StateManager</classname> to record sufficient information for crash recovery mechanisms to complete the
       transaction in the event of failures. It has methods for starting and terminating the transaction, and, for those
       situations where programmers need to implement their own resources, methods for registering them with the current
-      transaction. Because TxCore supports subtransactions, if a transaction is begun within the scope of an already
+      transaction. Because TxCore supports sub-transactions, if a transaction is begun within the scope of an already
       executing transaction it will automatically be nested.
     </para>
     <para>
@@ -435,7 +435,7 @@
     </para>
     <para>
       The class <classname>LockManager</classname> uses the facilities of <classname>StateManager</classname> and
-      <classname>Lock</classname> to provide the concurrency control required for implementing the serialisability
+      <classname>Lock</classname> to provide the concurrency control required for implementing the serializability
       property of atomic actions. The concurrency control consists of two-phase locking in the current implementation.
       The implementation of atomic action facilities is supported by <classname>AtomicAction</classname> and
       <classname>TopLevelTransaction</classname>.
@@ -490,7 +490,7 @@
       <classname>O</classname>.
     </para>
     <para>
-      It is important to realise that all of the above work is automatically being performed by TxCore on behalf of the
+      It is important to realize that all of the above work is automatically being performed by TxCore on behalf of the
       application programmer. The programmer need only start the transaction and set an appropriate lock; TxCore and
       <application>TXOJ</application> take care of participant registration, persistence, concurrency control and
       recovery.

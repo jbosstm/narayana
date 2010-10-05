@@ -13,7 +13,7 @@
       class., which provides static getter methods for one or more
       <classname><replaceable>name</replaceable>EnvironmentBean</classname> classes. An example is
       <classname>com.arjuna.ats.arjuna.commmon.arjPropertyManager</classname>.  These environment beans are standard
-      javabeans containing properties for each configuration option in the system. Typical usage is of the form:
+      JavaBean containing properties for each configuration option in the system. Typical usage is of the form:
     </para>
     <programlisting language="Java" role="JAVA"><xi:include href="extras/defaultTimeout.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     <para>
@@ -33,7 +33,7 @@
           </step>
           <step>
             <para>
-              If not, the default filename for the product is used.
+              If not, the default file name for the product is used.
             </para>
           </step>
         </substeps>
@@ -79,7 +79,7 @@
         <para>
           The file is treated as being of standard java.util.Properties xml format and loaded accordingly. The entry
           names are of the form EnvironmentBeanClass.propertyName:<code>&lt;entry
-          key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>. Valid values for boolean
+          key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>. Valid values for Boolean
           properties are case-insensitive, and may be one of:
         </para>
         <itemizedlist>
@@ -115,7 +115,7 @@
           </listitem>
         </itemizedlist>
         <para>
-          In the case of properties that take multiple values, they are whitespace-delimited.
+          In the case of properties that take multiple values, they are white-space-delimited.
         </para>
         <example>
           <title>Example Environment Bean</title>

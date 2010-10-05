@@ -114,7 +114,7 @@
           their parents at commit time.
         </para>
         <para> <!-- This is the exact same stuff that is in the Recovery & Persistence chapter of Overview.xml -->
-          Objects are assumed to be of three possible flavours.
+          Objects are assumed to be of three possible flavors.
         </para>
         <variablelist>
           <title>Three Flavors of Objects</title>
@@ -277,7 +277,7 @@
             <term><type>boolean</type> <methodname>save_state</methodname>(<type>OutputObjectState</type> <varname>state</varname>, <type>int</type><varname>ObjectType</varname>)</term>
             <listitem>
               <para>
-                Invoked whenever the state of an object might need to be saved for future use, priqmarily for recovery
+                Invoked whenever the state of an object might need to be saved for future use, primarily for recovery
                 or persistence purposes. The <parameter>ObjectType</parameter> parameter indicates the reason that
                 <methodname>save_state</methodname> was invoked by TxCore. This enables the programmer to save different
                 pieces of information into the <classname>OutputObjectState</classname> supplied as the first parameter
@@ -412,7 +412,7 @@
       <title>LockManager</title>
       <para>
         The concurrency controller is implemented by the class <classname>LockManager</classname>, which provides
-        sensible default behaviour, while allowing the programmer to override it if deemed necessary by the particular
+        sensible default behavior, while allowing the programmer to override it if deemed necessary by the particular
         semantics of the class being programmed. The primary programmer interface to the concurrency controller is via
         the <methodname>setlock</methodname> operation. By default, the TxCore runtime system enforces strict two-phase
         locking following a multiple reader, single writer policy on a per object basis. Lock acquisition is under
@@ -445,7 +445,7 @@
         xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
       <para>
-        The <methodname>setlock</methodname> operation must be parameterised with the type of lock required (READ or
+        The <methodname>setlock</methodname> operation must be parametrized with the type of lock required (READ or
         WRITE), and the number of retries to acquire the lock before giving up. If a lock conflict occurs, one of the
         following scenarios will take place:
       </para>
@@ -486,7 +486,7 @@
         ensure that the locks are released at the correct time. This frees the programmer from the burden of explicitly
         freeing any acquired locks if they were acquired within atomic actions. However, if locks are acquired on an
         object outside of the scope of an atomic action, it is the programmer's responsibility to release the locks when
-        required, using the corresponding releaselock operation.
+        required, using the corresponding <methodname>releaselock</methodname> operation.
       </para>
     </section>
 
@@ -523,7 +523,7 @@
         Recall that TxCore objects can be recoverable, recoverable and persistent, or neither. Additionally each object
         possesses a unique internal name. These attributes can only be set when that object is constructed. Thus
         <classname>LockManager</classname> provides two protected constructors for use by derived classes, each of which
-        fulfils a distinct purpose
+        fulfills a distinct purpose
       </para>
       <variablelist>
         <title>Protected Constructors Provided by <classname>LockManager</classname></title>
@@ -546,7 +546,7 @@
               <literal>ANDPERSISTENT</literal>), or neither (indicated by <literal>NEITHER</literal>). If an object is
               marked as being persistent then the state of the object will be stored in one of the object stores. The
               shared parameter only has meaning if it is <literal>RECOVERABLE</literal>. If the object model is
-              <literal>SINGLE</literal> (the default behaviour) then the recoverable state of the object is maintained
+              <literal>SINGLE</literal> (the default behavior) then the recoverable state of the object is maintained
               within the object itself, and has no external representation). Otherwise an in-memory (volatile) object
               store is used to store the state of the object between atomic actions.
             </para>
@@ -577,7 +577,7 @@
               As above, this constructor allows access to an existing persistent object, whose internal name is given by
               the <varname>objUid</varname> parameter. Objects constructed using this operation will normally have their
               prior state (identified by <varname>objUid</varname>) loaded from an object store automatically by the
-              system. If the object model is <literal>SINGLE</literal> (the default behaviour), then the object will not
+              system. If the object model is <literal>SINGLE</literal> (the default behavior), then the object will not
               be reactivated at the start of each top-level transaction.
             </para>
           </listitem>

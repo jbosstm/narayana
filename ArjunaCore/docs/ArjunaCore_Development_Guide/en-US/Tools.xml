@@ -11,7 +11,7 @@
   <section>
     <title>Starting the Transaction Service tools</title>
     <para>
-      The transaction service tools are started differently, depending on your perating system.
+      The transaction service tools are started differently, depending on your operating system.
     </para>
 
     <procedure id="starting-tools">
@@ -207,7 +207,7 @@
     </itemizedlist>
     <para>
       Click the <guilabel>View</guilabel> link to display and operate on the attributes and operations exposed by this
-      MBean. You can view readable attributes, alter writeable attributes, and invoke operations.
+      MBean. You can view readable attributes, alter writable attributes, and invoke operations.
     </para>
 
     <section>
@@ -215,7 +215,7 @@
       <para>
         When you click the <guilabel>View</guilabel> link, the <guilabel>View JMX Attributes and Operations</guilabel>
         window appears.  You can view all readable attributes exposed by the selected MBean.  You can also alter
-        writeable attributes.  If an attribute is read-only then you cannot alter an attribute's value.  To alter an
+        writable attributes.  If an attribute is read-only then you cannot alter an attribute's value.  To alter an
         attribute's value, just double-click the current value and enter the new value.  If the
         <guibutton>Edit</guibutton> button is enabled, then you can click it to open an advanced editor.  If the
         attribute type is a <systemitem>JMX object name</systemitem>, clicking this button displays the JMX attributes
@@ -304,22 +304,22 @@
       <section>
         <title>Writing an OSV</title>
         <para>
-          Writing an OSV plugin allows you to extend the capabilities of the Object Store browser to show the state of
+          Writing an OSV plug-in allows you to extend the capabilities of the Object Store browser to show the state of
           user-defined abstract records.  An OSV plug-in is a class which implements the interface
           <interfacename>com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewerInterface </interfacename>.
           Package it in a JAR within the <filename>plugins</filename> directory. This example shows how to create an OSV
-          plugin for an abstract record subclass which looks as follows:
+          plug-in for an abstract record subclass which looks as follows:
         </para>
         <programlisting language="Java" role="JAVA"><xi:include href="extras/abstract_record_subclass.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         <para>
           When this abstract record is viewed in the object store browser, showing the current value is simple.  You can
           read the state into an instance of the abstract record and call <methodname>getValue()</methodname>.  The
-          following is the object store browser plugin source code:
+          following is the object store browser plug-in source code:
         </para>
         <programlisting language="Java" role="JAVA"><xi:include href="extras/osv_plugin.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         <para>
-          The method <methodname>uidNodeExpanded</methodname> is invoked when a UID representing the given type is
-          expanded in the object store hierarchy tree. This is not required by this plugin as this abstract record is
+          The method <methodname>uidNodeExpanded</methodname> is invoked when a Uid representing the given type is
+          expanded in the object store hierarchy tree. This is not required by this plug-in as this abstract record is
           not visible in the object store directly, but only via one of the lists in an atomic action.  The method
           <methodname>entrySelected</methodname> is invoked when an entry is selected from the object view which
           represents an object with the given type.  In both methods the State Panel is used to display information
@@ -362,7 +362,7 @@
         </para>
         <para>
           To add this plug-in to the object store browser, package it into a JAR file with a name that is prefixed with
-          <filename>osbv-</filename>. The JAR file must contain certain information within the manifest file so that the
+          <filename>osv-</filename>. The JAR file must contain certain information within the manifest file so that the
           object store browser knows which classes are plug-ins.  See <xref linkend="osv-plugin-ant" /> for how to do
           this using Apache Ant.
         </para>

@@ -128,7 +128,7 @@
       resources as well.
     </para>
     <para>
-      In order to utilise the LRCO, your participant must implement the
+      In order to utilize the LRCO, your participant must implement the
       <interfacename>com.arjuna.ats.arjuna.coordinator.OnePhase</interfacename> interface and be registered with the
       transaction through the <methodname>BasicAction.add</methodname> operation. Since this operation expects instances
       of <classname>AbstractRecord</classname>, you must create an instance of
@@ -159,7 +159,7 @@
     </para>
     <para>
       The committing or aborting of a nested action does not automatically affect the outcome of the action within which
-      it is nested. This is application dependant, and allows a programmer to structure atomic actions to contain
+      it is nested. This is application dependent, and allows a programmer to structure atomic actions to contain
       faults, undo work, etc.
     </para>
   </section>
@@ -201,7 +201,7 @@
     <title>Independent top-level transactions</title>
     <para>
       In addition to normal top-level and nested atomic actions, TxCore also supports independent top-level actions,
-      which can be used to relax strict serialisability in a controlled manner. An independent top-level action can be
+      which can be used to relax strict serializability in a controlled manner. An independent top-level action can be
       executed from anywhere within another atomic action and behaves exactly like a normal top-level action. Its
       results are made permanent when it commits and will not be undone if any of the actions within which it was
       originally nested abort.
@@ -283,7 +283,7 @@
     </para>
     <note>
       <para>
-        Default timeout values for other JBossTS components, such as JTS, may be different and you should consult the
+        Default timeout values for other JBoss Transaction Service components, such as JTS, may be different and you should consult the
         relevant documentation to be sure.
       </para>
     </note>
