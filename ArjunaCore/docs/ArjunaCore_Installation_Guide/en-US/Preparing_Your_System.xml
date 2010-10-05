@@ -25,9 +25,9 @@
       <screen><command>java –DObjectStoreEnvironmentBean.objectStoreDir =C:\temp foo.</command></screen>
     </step>
     <step>
-      <title>Optional: Specify the subdirectory within the Object Store root.</title>
+      <title>Optional: Specify the sub-directory within the Object Store root.</title>
       <para>
-	By default, all object states will be stored within the <filename>defaultStore/</filename> subdirectory of the object store root. For instance, if the object store root is <filename>/usr/local/Arjuna/TransactionService/ObjectStore</filename>, the subdirectory <filename>/usr/local/Arjuna/TransactionService/ObjectStore/defaultStore/</filename> is used.
+	By default, all object states will be stored within the <filename>defaultStore/</filename> sub-directory of the object store root. For instance, if the object store root is <filename>/usr/local/Arjuna/TransactionService/ObjectStore</filename>, the subdirectory <filename>/usr/local/Arjuna/TransactionService/ObjectStore/defaultStore/</filename> is used.
       </para>
       <para>
 	To change this subdirectory, set the <property>ObjectStoreEnvironmentBean.localOSRoot</property> or <property>com.arjuna.ats.arjuna.objectstore.localOSRoot</property> property variable accordingly.
