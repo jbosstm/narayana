@@ -406,6 +406,12 @@ public class RecoveryManager
 
             try
             {
+                if(testMode) {
+                    // vicious kludge to sidestep ORB init issue.
+                    // TODO: replace with something less cringeworthy.
+                    Thread.sleep(2000);
+                }
+
                 manager = manager();
             }
             catch(java.lang.Error e)
