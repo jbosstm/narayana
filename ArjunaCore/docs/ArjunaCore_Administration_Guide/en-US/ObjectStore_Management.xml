@@ -15,7 +15,7 @@
     However, if failures occur, transaction logs may remain in the object store until crash recovery facilities have
     resolved the transactions they represent. As such it is very important that the contents of the object store are not
     deleted without due care and attention, as this will make it impossible to resolve in doubt transactions. In
-    addition, if multiple users share the same object store it is important that they realise this and do not simply
+    addition, if multiple users share the same object store it is important that they realize this and do not simply
     delete the contents of the object store assuming it is an exclusive resource.
   </para>
 </chapter>

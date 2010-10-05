@@ -26,7 +26,7 @@
     reaper (see the Programmers Guide for information about what the reaper does.) In order to do this you may want to
     first prevent the creation of new transactions (if you are not creating transactions with timeouts then this step is
     not necessary) using method <methodname>TxControl.disable</methodname>. Then you should call method
-    <methodname>TransactionReaper.terminate</methodname>. This method takes a boolean parameter: if
+    <methodname>TransactionReaper.terminate</methodname>. This method takes a Boolean parameter: if
     <literal>true</literal> then the method will wait for the normal timeout periods associated with any transactions to
     expire before terminating the transactions; if <methodname>false</methodname> then transactions will be forced to
     terminate (rollback or have their outcome set such that they can only ever rollback) immediately.

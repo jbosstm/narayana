@@ -43,7 +43,7 @@
     </screen>
     <para>
       If the <parameter>-test</parameter> flag is used with the Recovery Manager then it will display a
-      <literal>Ready</literal> message when initialised, i.e.,
+      <literal>Ready</literal> message when initialized, i.e.,
     </para>
     <screen>
       <command>java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</command>
@@ -143,7 +143,7 @@
     </para>
     <note>
       <para>
-        In previous versions of <application>ArjunaCore</application>, there was no contact mechanism, and the backoff
+        In previous versions of <application>ArjunaCore</application>, there was no contact mechanism, and the back-off
         period needed to be long enough to avoid catching transactions in flight at all. From 3.0, there is no such
         risk.
       </para>
