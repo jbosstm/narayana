@@ -167,12 +167,12 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <copy todir="${xts.installationdirectory}/docs" flatten="true">
+                    <fileset dir="${publican.build.dir}" includes="*/en-US/pdf/*.pdf"/>
+                </copy>
             </then>
         </if>
 
-		<copy todir="${xts.installationdirectory}/docs" flatten="true">
-            <fileset dir="${publican.build.dir}" includes="*/en-US/pdf/*.pdf"/>
-		</copy>
 
 		<echo message="Installing licences"/>
         <mkdir dir="${xts.installationdirectory}/lib/ext"/>
