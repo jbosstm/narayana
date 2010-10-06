@@ -1,6 +1,6 @@
 <!ENTITY PRODUCT "JBoss Transactions">
 <!ENTITY BOOKID "XTS_Development_Guide">
-<!ENTITY VERSION "TRUNK">
+<!ENTITY VERSION "4.13">
 <!ENTITY YEAR "2010">
 <!ENTITY HOLDER "JBoss.org">
 <!ENTITY APPSERVER "JBoss Application Server">

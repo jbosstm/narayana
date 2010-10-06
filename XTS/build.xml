@@ -157,8 +157,21 @@
 		<copy todir="${xts.installationdirectory}/docs/api">
 			<fileset dir="${xts.htdocs.dest}"/>
 		</copy>
-		<copy todir="${xts.installationdirectory}/docs">
-			<fileset dir="docs" includes="*.pdf"/>
+
+        <if>
+            <istrue value="${publican}" />
+            <then>
+                <delete dir="${publican.build.dir}" failonerror="false"/>
+                <exec dir="docs/Transactions_XTS_Programmers_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+            </then>
+        </if>
+
+		<copy todir="${xts.installationdirectory}/docs" flatten="true">
+            <fileset dir="${publican.build.dir}" includes="*/en-US/pdf/*.pdf"/>
 		</copy>
 
 		<echo message="Installing licences"/>

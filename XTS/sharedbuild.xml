@@ -71,6 +71,10 @@
         <isset property="cxf.build"/>
     </condition>
 
+    <!-- override to disable publican use -->
+    <property name="publican" value="true"/>
+    <property name="publican.build.dir" value="docs/build"/>
+
     <!-- by default we build 1.0 and 1.1 for ease of testing,
         but release bundles should use -Dsartype=sar-11 so that
         they contain only the supported version. -->
@@ -128,7 +132,7 @@
     <!-- enable ant contrib tasks -->
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="${jbossts.buildsystem.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
+            <pathelement location="${jbossts.buildsystem.dir}/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
 

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Programmers_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-Transactions_XTS_Programmers_Guide-Transactions_XTS_Programmers_Guide">
+<bookinfo id="book-Transactions_XTS_Development_Guide-Transactions_XTS_Development_Guide">
 	<title>Transactions XTS Development Guide</title>
 	<subtitle>Using the XTS Module of &PRODUCT; to provide Web Services Transactions</subtitle>
-	<productname>&PRODUCT;</productname>
-	<productnumber>&VERSION;</productnumber>
+	<productname>JBoss Transactions</productname>
+	<productnumber>4.13</productnumber>
 	<edition>0</edition>
 	<pubsnumber>0</pubsnumber>
 	<abstract>
