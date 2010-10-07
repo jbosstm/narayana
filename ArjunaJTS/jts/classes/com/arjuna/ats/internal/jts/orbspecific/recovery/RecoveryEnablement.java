@@ -103,38 +103,36 @@ public class RecoveryEnablement implements RecoveryActivator
 
     public boolean startRCservice()
     {
-	int orbType = ORBInfo.getOrbEnumValue();
-	boolean result = false;
-	RecoveryServiceInit recoveryService = null;
+        int orbType = ORBInfo.getOrbEnumValue();
+        RecoveryServiceInit recoveryService = null;
+        boolean outcome = false;
+        String theClassName = null;
 
-	String theClassName = null;
-
-	// The class that should start the service shall not be called directly. An intermediate class shall be used
-	try
-	{
-	    switch (orbType)
-	    {
-	    case ORBType.JACORB:
-		{
-		    theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
-		    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
-		    recoveryService.startRCservice();
-
-		    result = true;
-		}
-		break;
-	    default: {
-            jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_1();
+        // The class that should start the service shall not be called directly. An intermediate class shall be used
+        try
+        {
+            switch (orbType)
+            {
+                case ORBType.JACORB:
+                {
+                    theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
+                    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
+                    outcome = recoveryService.startRCservice();
+                }
+                break;
+                default: {
+                    jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_1();
+                    outcome = false;
+                }
+                break;
+            }
         }
-		break;
-	    }
-	}
-	catch (Exception e)
-	{
-        jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_6(e);
-	}
+        catch (Exception e)
+        {
+            jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_6(e);
+        }
 
-	return result;
+        return outcome;
     }
 
     /**

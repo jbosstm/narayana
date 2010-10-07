@@ -118,6 +118,11 @@ public class ORBManager
         return (_theOrb != null || _thePoa != null);
     }
 
+    public static void reset() {
+        _theOrb = null;
+        _thePoa = null;
+    }
+
     private static com.arjuna.orbportability.ORB _theOrb = null;
 
     private static com.arjuna.orbportability.OA _thePoa = null;

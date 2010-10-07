@@ -38,12 +38,8 @@ public interface RecoveryActivator
     /**
      * Called to create appropriate instance(s), specific to a standard transaction protocol,
      * able to receive inquiries for recovery
+     *
+     * @return true on success, false on failure
      */
     public boolean startRCservice();
-    /*
-     * For the moment let's say that this operation doesn't take any arguments.
-     * If let without arguments we should obtain the Recoverymanager Tag within the class that 
-     * load the RecoveryActivators
-     */
-
 }

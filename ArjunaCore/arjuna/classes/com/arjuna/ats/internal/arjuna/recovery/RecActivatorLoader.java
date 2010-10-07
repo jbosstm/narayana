@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryActivator ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 /**
  * RecoveryActivators are dynamically loaded. The recoveryActivator to load
@@ -34,103 +35,43 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * <P>
  * @author Malik Saheb
  * @since ArjunaTS 3.0
-*/
+ */
 
 public class RecActivatorLoader
 {
-
-   public RecActivatorLoader()
-   {
-       initialise();
-
-       // Load the Recovery Activators
-       loadRecoveryActivators();
-
-       startRecoveryActivators();
-
-   }
-
-  /**
-   * Start the RecoveryActivator
-   */
-
-  public void startRecoveryActivators()
-      //public void run()
-  {
-      tsLogger.i18NLogger.info_recovery_RecActivatorLoader_6();
-
-      Enumeration activators = _recoveryActivators.elements();
-
-      while (activators.hasMoreElements())
-	  {
-	      RecoveryActivator acti = (RecoveryActivator) activators.nextElement();
-	      acti.startRCservice();
-	  }
-
-      return;
-
-  }
+    public RecActivatorLoader()
+    {
+        loadRecoveryActivators();
+    }
 
     // These are loaded in list iteration order.
-    private static void loadRecoveryActivators ()
+    private void loadRecoveryActivators ()
     {
-        Vector<String> activatorNames = new Vector<String>(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryActivators());
+        List<String> activatorNames = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryActivators();
 
         for(String activatorName : activatorNames) {
-            loadActivator(activatorName);
+            RecoveryActivator recoveryActivator = ClassloadingUtility.loadAndInstantiateClass(RecoveryActivator.class, activatorName, null);
+            if(recoveryActivator != null) {
+                _recoveryActivators.add(recoveryActivator);
+            }
         }
     }
 
-  private static void loadActivator (String className)
-  {
-      if (tsLogger.logger.isDebugEnabled()) {
-          tsLogger.logger.debug("Loading recovery activator " +
-                  className);
-      }
+    public void startRecoveryActivators() throws RuntimeException
+    {
+        tsLogger.i18NLogger.info_recovery_RecActivatorLoader_6();
 
-      if (className == null) {
-          tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_1();
-
-          return;
-      }
-      else
-	  {
-	      try
-		  {
-		      Class c = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
-
-		      try
-			  {
-			      RecoveryActivator ra = (RecoveryActivator) c.newInstance() ;
-			      _recoveryActivators.add( ra );
-			  }
-		      catch (ClassCastException e) {
-                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_2(className);
-              }
-		      catch (IllegalAccessException iae) {
-                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_3(iae);
-              }
-		      catch (InstantiationException ie) {
-                  tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_4(ie);
-              }
-
-		      c = null;
-		  }
-	      catch ( ClassNotFoundException cnfe ) {
-              tsLogger.i18NLogger.warn_recovery_RecActivatorLoader_5(className);
-          }
-      }
-  }
-
-    private final void initialise ()
-   {
-       _recoveryActivators = new Vector();
-   }
+        for(RecoveryActivator recoveryActivator : _recoveryActivators)
+        {
+            if(!recoveryActivator.startRCservice()) {
+                throw new RuntimeException( tsLogger.i18NLogger.get_recovery_RecActivatorLoader_initfailed(recoveryActivator.getClass().getCanonicalName()));
+            }
+        }
+    }
 
     // this refers to the recovery activators specified in the recovery manager
     // property file which are dynamically loaded.
-    private static Vector _recoveryActivators = null ;
-
+    private final List<RecoveryActivator> _recoveryActivators = new ArrayList<RecoveryActivator>();
 }
 
 

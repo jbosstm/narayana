@@ -144,9 +144,15 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 p.setProperty("OAIAddr", recoveryManagerAddr);
             }
 
-            _orb.initORB((String[])null, p);
-            _oa = OA.getRootOA(_orb);
-            _oa.initOA();
+            try {
+                _orb.initORB((String[])null, p);
+                _oa = OA.getRootOA(_orb);
+                _oa.initOA();
+            } catch(RuntimeException e) {
+                ORBManager.reset();
+                _orb.shutdown();
+                throw e;
+            }
 
             ORBManager.setORB(_orb);
             ORBManager.setPOA(_oa);

@@ -48,73 +48,74 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class RecoveryManagerImple
 {
-        private PeriodicRecovery _periodicRecovery = null;
+    private PeriodicRecovery _periodicRecovery = null;
 
-        private RecActivatorLoader _recActivatorLoader = null;
+    private RecActivatorLoader _recActivatorLoader = null;
 
-        /**
-         * Does the work of setting up crash recovery.
-         *
-         * @param threaded
-         *            if <code>true</code> then the manager will start a separate
-         *            thread to run recovery periodically.
-         */
+    /**
+     * Does the work of setting up crash recovery.
+     *
+     * @param threaded
+     *            if <code>true</code> then the manager will start a separate
+     *            thread to run recovery periodically.
+     */
 
-        public RecoveryManagerImple (boolean threaded)
-        {
+    public RecoveryManagerImple (boolean threaded)
+    {
         // by default we use a socket based listener, but it can be turned off if not required.
         boolean useListener = recoveryPropertyManager.getRecoveryEnvironmentBean().isRecoveryListener();
-        
+
         /*
-                 * Check whether there is a recovery daemon running - only allow one per
-                 * object store
-                 *
-                 * Note: this does not actually check if a recovery manager is running for the same ObjectStore,
-                 * only if one is on the same port as our configuration. Thus it's not particularly robust.
-                 * TODO: add a lock file to the ObjectStore as a belt and braces approach?
-                 *
-                 * This check works by trying to bind the server socket, so don't do it if we are running local only
-                 * (yup, that means there is a greater chance of winding up with more than one recovery manager if
-                 * we are running without a listener. See comment on robustness and file locking.)
-                 */
+        * Check whether there is a recovery daemon running - only allow one per
+        * object store
+        *
+        * Note: this does not actually check if a recovery manager is running for the same ObjectStore,
+        * only if one is on the same port as our configuration. Thus it's not particularly robust.
+        * TODO: add a lock file to the ObjectStore as a belt and braces approach?
+        *
+        * This check works by trying to bind the server socket, so don't do it if we are running local only
+        * (yup, that means there is a greater chance of winding up with more than one recovery manager if
+        * we are running without a listener. See comment on robustness and file locking.)
+        */
 
-                if (useListener && isRecoveryManagerEndPointInUse())
-                {
+        if (useListener && isRecoveryManagerEndPointInUse())
+        {
 
-                try
-                {
-                    tsLogger.i18NLogger.fatal_recovery_fail(RecoveryManager.getRecoveryManagerHost().getHostAddress(),
-                            Integer.toString(RecoveryManager.getRecoveryManagerPort()));
-                }
-                catch (Throwable t)
-                {
-                    tsLogger.i18NLogger.fatal_recovery_fail("unknown", "unknown");
-                }
+            try
+            {
+                tsLogger.i18NLogger.fatal_recovery_fail(RecoveryManager.getRecoveryManagerHost().getHostAddress(),
+                        Integer.toString(RecoveryManager.getRecoveryManagerPort()));
+            }
+            catch (Throwable t)
+            {
+                tsLogger.i18NLogger.fatal_recovery_fail("unknown", "unknown");
+            }
 
 
             throw new FatalError("Recovery manager already active (or recovery port and address are in use)!");
-                }
+        }
 
-                // start the expiry scanners
+        // start the expiry scanners
 
-                // start the activator recovery loader
+        // start the activator recovery loader
 
-                _recActivatorLoader = new RecActivatorLoader();
+        _recActivatorLoader = new RecActivatorLoader();
+        _recActivatorLoader.startRecoveryActivators();
 
-                // start the expiry scanners
+        // start the expiry scanners
 
-                ExpiredEntryMonitor.startUp();
+        ExpiredEntryMonitor.startUp();
 
-                // start the periodic recovery thread
-                // (don't start this until just about to go on to the other stuff)
+        // start the periodic recovery thread
+        // (don't start this until just about to go on to the other stuff)
 
-                _periodicRecovery = new PeriodicRecovery(threaded, useListener);
+        _periodicRecovery = new PeriodicRecovery(threaded, useListener);
 
-                try
-                {
-                        if (tsLogger.logger.isInfoEnabled())
-                        {
-                                if(useListener)
+        try
+        {
+            if (tsLogger.logger.isInfoEnabled())
+            {
+                if(useListener)
                 {
                     tsLogger.i18NLogger.info_recovery_socketready( Integer.toString(_periodicRecovery.getServerSocket().getLocalPort()));
                 }
@@ -123,21 +124,21 @@ public class RecoveryManagerImple
                     tsLogger.i18NLogger.info_recovery_localready();
                 }
             }
-                }
-                catch (IOException ex) {
-                    tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
-                }
         }
+        catch (IOException ex) {
+            tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
+        }
+    }
 
-        public final void scan ()
-        {
-                _periodicRecovery.doWork();
-        }
+    public final void scan ()
+    {
+        _periodicRecovery.doWork();
+    }
 
-        public final void addModule (RecoveryModule module)
-        {
-                _periodicRecovery.addModule(module);
-        }
+    public final void addModule (RecoveryModule module)
+    {
+        _periodicRecovery.addModule(module);
+    }
 
     public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
@@ -148,64 +149,64 @@ public class RecoveryManagerImple
     {
         _periodicRecovery.removeAllModules(waitOnScan);
     }
-    
-        public final Vector getModules ()
-        {
-                return _periodicRecovery.getModules();
-        }
 
-        public void start ()
+    public final Vector getModules ()
+    {
+        return _periodicRecovery.getModules();
+    }
+
+    public void start ()
+    {
+        if (!_periodicRecovery.isAlive())
         {
-                if (!_periodicRecovery.isAlive())
-                {
-                        _periodicRecovery.start();
-                }
+            _periodicRecovery.start();
         }
+    }
 
     /**
      * stop the recovery manager
      * @param async false means wait for any recovery scan in progress to complete
      */
-        public void stop (boolean async)
+    public void stop (boolean async)
+    {
+        // must ensure we clean up dependent threads
+
+        ExpiredEntryMonitor.shutdown();
+
+        _periodicRecovery.shutdown(async);
+    }
+
+    /**
+     * Suspend the recovery manager. If the recovery manager is in the process of
+     * doing recovery scans then it will be suspended afterwards, in order to
+     * preserve data integrity.
+     *
+     * @param async false means wait for the recovery manager to finish any scans before returning.
+     */
+
+    public void suspendScan (boolean async)
+    {
+        _periodicRecovery.suspendScan(async);
+    }
+
+    public void resumeScan ()
+    {
+        _periodicRecovery.resumeScan();
+    }
+
+    /**
+     * wait for the recovery implementation to be shut down.
+     */
+    public void waitForTermination ()
+    {
+        try
         {
-            // must ensure we clean up dependent threads
-
-                ExpiredEntryMonitor.shutdown();
-
-                _periodicRecovery.shutdown(async);
+            _periodicRecovery.join();
         }
-
-        /**
-         * Suspend the recovery manager. If the recovery manager is in the process of
-         * doing recovery scans then it will be suspended afterwards, in order to
-         * preserve data integrity.
-         *
-         * @param async false means wait for the recovery manager to finish any scans before returning.
-         */
-
-        public void suspendScan (boolean async)
+        catch (final Exception ex)
         {
-            _periodicRecovery.suspendScan(async);
         }
-
-        public void resumeScan ()
-        {
-            _periodicRecovery.resumeScan();
-        }
-
-       /**
-        * wait for the recovery implementation to be shut down.
-        */
-        public void waitForTermination ()
-        {
-            try
-            {
-                _periodicRecovery.join();
-            }
-            catch (final Exception ex)
-            {
-            }
-        }
+    }
 
     /**
      * Test whether the recovery manager (RM) port and address are available - if not assume that another

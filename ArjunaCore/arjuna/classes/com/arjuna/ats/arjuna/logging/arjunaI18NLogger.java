@@ -1265,25 +1265,25 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_PeriodicRecovery_9(@Cause() Throwable arg0);
 
-	@Message(id = 12319, value = "Attempt to load recovery activator with null class name!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_1();
+//	@Message(id = 12319, value = "Attempt to load recovery activator with null class name!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_RecActivatorLoader_1();
 
-	@Message(id = 12320, value = "Recovery module {0} does not conform to RecoveryActivator interface", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_2(String arg0);
+//	@Message(id = 12320, value = "Recovery module {0} does not conform to RecoveryActivator interface", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_RecActivatorLoader_2(String arg0);
 
-	@Message(id = 12321, value = "Loading recovery activator", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_3(@Cause() Throwable arg0);
+//	@Message(id = 12321, value = "Loading recovery activator", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_RecActivatorLoader_3(@Cause() Throwable arg0);
 
-	@Message(id = 12322, value = "Loading recovery activator", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_4(@Cause() Throwable arg0);
+//	@Message(id = 12322, value = "Loading recovery activator", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_RecActivatorLoader_4(@Cause() Throwable arg0);
 
-	@Message(id = 12323, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_RecActivatorLoader_5(String arg0);
+//	@Message(id = 12323, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_RecActivatorLoader_5(String arg0);
 
 	@Message(id = 12324, value = "Start RecoveryActivators", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -1433,6 +1433,9 @@ public interface arjunaI18NLogger {
 
     @Message(id = 12363, value = "Invalid rootName. Expected {0} but was {1}", format = MESSAGE_FORMAT)
     public String get_StoreManager_invalidroot(String arg0, String arg1);
+
+    @Message(id = 12364, value = "RecoveryActivator init failed for {0}", format = MESSAGE_FORMAT)
+	public String get_recovery_RecActivatorLoader_initfailed(String arg0);
 
     /*
         Allocate new messages directly above this notice.
