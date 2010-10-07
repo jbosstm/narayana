@@ -1311,4 +1311,7 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
         return MessageFormat.format("Invalid rootName. Expected {0} but was {1}", arg0, arg1);
     }
 
+    public String get_recovery_RecActivatorLoader_initfailed(String arg0) {
+        return MessageFormat.format("RecoveryActivator init failed for {0}", arg0);
+    }
 }
