@@ -22,35 +22,4 @@
         <servlet-name>Resteasy</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-
-<!--
-   <context-param>
-      <param-name>javax.ws.rs.Application</param-name>
-      <param-value>org.jboss.jbossts.star.service.TMApplication</param-value>
-   </context-param>
-
-   <context-param>
-      <param-name>resteasy.servlet.mapping.prefix</param-name>
-      <param-value>/resteasy</param-value>
-   </context-param>
-
-   <listener>
-      <listener-class>
-         org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-      </listener-class>
-   </listener>
-
-   <servlet>
-      <servlet-name>Resteasy</servlet-name>
-      <servlet-class>
-         org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
-      </servlet-class>
-   </servlet>
-
-   <servlet-mapping>
-      <servlet-name>Resteasy</servlet-name>
-      <url-pattern>/*</url-pattern>
-   </servlet-mapping>
-   -->
-
 </web-app>
