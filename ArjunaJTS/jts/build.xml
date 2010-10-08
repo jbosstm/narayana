@@ -100,6 +100,20 @@
                     <exclude name="**/remote/**"/>
 
                     <exclude name="**/DefaultTimeout.java"/>
+
+                    <exclude name="**/RecoveryEnablementUnitTest.java"/>
+                </fileset>
+            </tests>
+        </run.tests.macro>
+
+        <run.tests.macro>
+            <additional.classpath>
+                <path refid="jacorb.classpath"/>
+            </additional.classpath>
+            <tests>
+                <fileset dir="tests/classes">
+                    <!-- on its own as needs custom orb config -->
+                    <include name="**/RecoveryEnablementUnitTest.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
