@@ -98,12 +98,12 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		client0.start("prepare", "CR12_05.log");
 		client0.waitFor();
-		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
-		server1.start("-test");
+//		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
+//		server1.start("-test");
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		outcome0.start("CR12_05.log", "no");
 		outcome0.waitFor();
-		server1.terminate();
+//		server1.terminate();
 	}
 
 	@Test public void CrashRecovery12_Test06()
@@ -112,12 +112,12 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		client0.start("commit", "CR12_06.log");
 		client0.waitFor();
-		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
-		server1.start("-test");
+//		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
+//		server1.start("-test");
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		outcome0.start("CR12_06.log", "yes");
 		outcome0.waitFor();
-		server1.terminate();
+//		server1.terminate();
 	}
 
 	@Test public void CrashRecovery12_Test07()
@@ -126,12 +126,12 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		client0.start("rollback", "CR12_07.log");
 		client0.waitFor();
-		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
-		server1.start("-test");
+//		Task server1 = createTask("server1", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
+//		server1.start("-test");
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		outcome0.start("CR12_07.log", "no");
 		outcome0.waitFor();
-		server1.terminate();
+//		server1.terminate();
 	}
 
 }
