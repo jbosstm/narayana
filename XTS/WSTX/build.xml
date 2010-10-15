@@ -254,8 +254,6 @@
     <!-- Jar targets -->
     <target name="jar-generic">
         <jar jarfile="${build.lib.dir}/${modulename}.jar">
-            <fileset dir="${wsc.build.dd.dir}" includes="wsdl/*"/>
-            <fileset dir="${wst.build.dd.dir}" includes="wsdl/*"/>
             <fileset dir="${build.classes.dir}" excludes="${wstx.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/${modulename}-api.jar">
