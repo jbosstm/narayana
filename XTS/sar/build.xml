@@ -162,6 +162,13 @@
     
     <target name="api-jar" depends="compile, api-both-jar, api11-jar"/>
 
+    <target name="service-jar" depends="compile">
+        <jar jarfile="${build.dir}/service.jar">
+            <!-- include sar boot and shutdown codes -->
+	        <fileset dir="${build.classes.dir}" includes="**/*"/>
+        </jar>
+    </target>
+
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
     <target name="sar-both" if="build10">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
@@ -202,8 +209,8 @@
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown codes -->
-	        <fileset dir="${build.classes.dir}" includes="**/*"/>
+            <!-- include service implementation jar -->
+            <fileset dir="${build.dir}" includes="service.jar"/>
         </jar>
     </target>
 
@@ -242,12 +249,12 @@
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown code -->
-	        <fileset dir="${build.classes.dir}" includes="**/*" />
+            <!-- include service implementation jar -->
+            <fileset dir="${build.dir}" includes="service.jar"/>
         </jar>
     </target>
 
-    <target name="sar" depends="api-jar, sar-both, sar-11"/>
+    <target name="sar" depends="api-jar, service-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>
