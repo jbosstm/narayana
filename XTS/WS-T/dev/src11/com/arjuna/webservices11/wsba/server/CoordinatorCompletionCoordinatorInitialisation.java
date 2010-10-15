@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wsba.server;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
@@ -38,6 +39,11 @@ public class CoordinatorCompletionCoordinatorInitialisation
         String bindAddress = wscEnvironmentBean.getBindAddress11();
         int bindPort = wscEnvironmentBean.getBindPort11();
         int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        WSTEnvironmentBean wstEnvironmentBean = XTSPropertyManager.getWSTEnvironmentBean();
+        String coordinatorServiceURLPath = wstEnvironmentBean.getCoordinatorServiceURLPath();
+        if (coordinatorServiceURLPath == null) {
+            coordinatorServiceURLPath = "/ws-t11-coordinator";
+        }
 
 
         if (bindAddress == null) {
@@ -52,10 +58,10 @@ public class CoordinatorCompletionCoordinatorInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-coordinator/";
-        final String uri = baseUri + BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME;
-        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-coordinator/";
-        final String secureUri = secureBaseUri + BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME;
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + coordinatorServiceURLPath;
+        final String uri = baseUri + "/" + BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME;
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + coordinatorServiceURLPath;
+        final String secureUri = secureBaseUri + "/" + BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME;
 
         serviceRegistry.registerServiceProvider(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, uri) ;
         serviceRegistry.registerSecureServiceProvider(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, secureUri) ;

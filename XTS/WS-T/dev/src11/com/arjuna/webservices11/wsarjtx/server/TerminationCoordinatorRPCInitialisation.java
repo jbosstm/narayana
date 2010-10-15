@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wsarjtx.server;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
@@ -38,6 +39,11 @@ public class TerminationCoordinatorRPCInitialisation
         String bindAddress = wscEnvironmentBean.getBindAddress11();
         int bindPort = wscEnvironmentBean.getBindPort11();
         int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        WSTEnvironmentBean wstEnvironmentBean = XTSPropertyManager.getWSTEnvironmentBean();
+        String coordinatorServiceURLPath = wstEnvironmentBean.getCoordinatorServiceURLPath();
+        if (coordinatorServiceURLPath == null) {
+            coordinatorServiceURLPath = "/ws-t11-coordinator";
+        }
 
         if (bindAddress == null) {
             bindAddress = "127.0.0.1";
@@ -51,10 +57,10 @@ public class TerminationCoordinatorRPCInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-coordinator/";
-        final String uri = baseUri + ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME;
-        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-coordinator/";
-        final String secureUri = secureBaseUri + ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME;
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + coordinatorServiceURLPath;
+        final String uri = baseUri + "/" + ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME;
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + coordinatorServiceURLPath;
+        final String secureUri = secureBaseUri + "/" + ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME;
 
         serviceRegistry.registerServiceProvider(ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME, uri) ;
         serviceRegistry.registerSecureServiceProvider(ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME, secureUri) ;

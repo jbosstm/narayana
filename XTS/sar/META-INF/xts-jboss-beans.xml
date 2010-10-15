@@ -172,7 +172,27 @@
            <value>9191</value>
         </property>
         <property name="coordinatorPath10">
-           <value>ws-c11/soap/ActivationCoordinator</value>
+           <value>ws-c10/soap/ActivationCoordinator</value>
+        </property>
+        -->
+
+        <!-- if you are trying to deploy XTS 1.1 outside of JBoss AS then your JaxWS implementation may not
+            allow you to deploy the WS-C services with the same URL path as that configured by JBossWS.
+            this means the WS-C services (Activation Coordinator and Registration Coordinator services) will
+            not be able to identify the URLs at which their endpoints have been published. This is important
+            because services need to be able to include their own endpoints and other service endpoints
+            in protocol messages.
+
+            The property below may be set to specify the URL path component of the WS-C service URLs. If this
+            property is left unset the path component will default to JBossWS format (this is derived from
+            the name of the war file in which the service is deployed i.e. in the case of the 1.1 service the
+            URL path element is ws-c11). So, for example the normal URL for the Registration Coordinator
+            service is http://<webhost>:<webport>/ws-c11/RegistrationService. However, the following
+            example configuration setting lets the registration service know that it is mapped at URL
+            http://<webhost>:<webport>/xts-coord/services/RegistrationService
+            
+        <property name="serviceURLPath">
+            <value>/xts-coord/services</value>
         </property>
         -->
 
@@ -255,6 +275,39 @@
         <property name="businessActivityManager10">
             <value>com.arjuna.mwlabs.wst.ba.remote.BusinessActivityManagerImple</value>
         </property>
+
+        <!-- if you are trying to deploy XTS 1.1 outside of JBoss AS then your JaxWS implementation may not
+            allow you to deploy the WS-T services with the same URL path as that configured by JBossWS.
+            this means the WS-T services will not be able to identify the URLs at which their endpoints have
+            been published. This is important because services need to be able to include their own endpoints
+            and other service endpoints in protocol messages.
+
+            The properties below may be set to specify the URL path component of the WS-T service URLs for
+            each of the 3 groups of services deployed on the coordinator host, the client host and
+            the participant web service host. If these properties are left unset the path component will
+            default to JBossWS format (this is derived from the name of the war file in which the service
+            is deployed i.e. in the case of the 1.1 services the URL path elements are ws-t11-coordinator,
+            ws-t11-client and ws-t11-participant). So, for example the URL for the (WSAT) Participant service
+            deployed on a participant host is http://<webhost>:<webport>/ws-t11-participant/ParticipantService.
+            Thew example configuration setting below let this service know that it is mapped at URL
+            http://<webhost>:<webport>/xts-participant/services/ParticipantService.
+
+        <property name="participantServiceURLPath">
+            <value>/xts-participant/services</value>
+        </property>
+
+        The following example configuration settings show how you would identify the mappings for the WS-T client
+        and coordinator service endpoints
+
+        <property name="coordinatorServiceURLPath">
+            <value>/xts-coordinator/services</value>
+        </property>
+
+        <property name="clientServiceURLPath">
+            <value>/xts-client/services</value>
+        </property>
+
+        -->
     </bean>
 
     <bean name="XTS:RecoveryEnvironmentBean" class="org.jboss.jbossts.xts.environment.RecoveryEnvironmentBean">

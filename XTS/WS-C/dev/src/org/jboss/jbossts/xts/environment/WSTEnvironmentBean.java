@@ -57,6 +57,27 @@ public class WSTEnvironmentBean
     @FullPropertyName(name = "org.jboss.jbossts.xts.wsba.BusinessActivityManager")
     private volatile String businessActivityManager10 = "com.arjuna.mwlabs.wst.ba.remote.BusinessActivityManagerImple";
 
+    /**
+     * the URL path component of the URL at which 1.1 WS-T coordinator services have been mapped. if this is null
+     * then the path is defaulted to "ws-t11-coordinator"
+     */
+    @FullPropertyName(name = "org.jboss.jbossts.xts11.wst.coordinatorServiceURLPath")
+    private volatile String coordinatorServiceURLPath = null;
+
+    /**
+     * the URL path component of the URL at which 1.1 WS-T client services have been mapped. if this is null
+     * then the path is defaulted to "ws-t11-client"
+     */
+    @FullPropertyName(name = "org.jboss.jbossts.xts11.wst.clientServiceURLPath")
+    private volatile String clientServiceURLPath = null;
+
+    /**
+     * the URL path component of the URL at which 1.1 WS-T participant services have been mapped. if this is null
+     * then the path is defaulted to "ws-t11-participant"
+     */
+    @FullPropertyName(name = "org.jboss.jbossts.xts11.wst.participantServiceURLPath")
+    private volatile String participantServiceURLPath = null;
+
     public String getUserTransaction11() {
         return userTransaction11;
     }
@@ -119,5 +140,29 @@ public class WSTEnvironmentBean
 
     public void setBusinessActivityManager10(String businessActivityManager10) {
         this.businessActivityManager10 = businessActivityManager10;
+    }
+
+    public String getCoordinatorServiceURLPath() {
+        return coordinatorServiceURLPath;
+    }
+
+    public void setCoordinatorServiceURLPath(String coordinatorServiceURLPath) {
+        this.coordinatorServiceURLPath = coordinatorServiceURLPath;
+    }
+
+    public String getClientServiceURLPath() {
+        return clientServiceURLPath;
+    }
+
+    public void setClientServiceURLPath(String clientServiceURLPath) {
+        this.clientServiceURLPath = clientServiceURLPath;
+    }
+
+    public String getParticipantServiceURLPath() {
+        return participantServiceURLPath;
+    }
+
+    public void setParticipantServiceURLPath(String participantServiceURLPath) {
+        this.participantServiceURLPath = participantServiceURLPath;
     }
 }

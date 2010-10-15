@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wsat.server;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
@@ -38,6 +39,11 @@ public class ParticipantInitialisation
                String bindAddress = wscEnvironmentBean.getBindAddress11();
                int bindPort = wscEnvironmentBean.getBindPort11();
                int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        WSTEnvironmentBean wstEnvironmentBean = XTSPropertyManager.getWSTEnvironmentBean();
+        String participantServiceURLPath = wstEnvironmentBean.getParticipantServiceURLPath();
+        if (participantServiceURLPath == null) {
+            participantServiceURLPath = "/ws-t11-participant";
+        }
 
 
                if (bindAddress == null) {
@@ -52,10 +58,10 @@ public class ParticipantInitialisation
                    secureBindPort = 8443;
                }
 
-               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-participant/";
-               final String uri = baseUri + AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
-               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-participant/";
-               final String secureUri = secureBaseUri + AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
+               final String baseUri = "http://" +  bindAddress + ":" + bindPort + participantServiceURLPath;
+               final String uri = baseUri + "/" + AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
+               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + participantServiceURLPath;
+               final String secureUri = secureBaseUri + "/" +  AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME;
 
                serviceRegistry.registerServiceProvider(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, uri) ;
                serviceRegistry.registerSecureServiceProvider(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, secureUri) ;

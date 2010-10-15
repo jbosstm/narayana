@@ -137,6 +137,13 @@ public class WSCEnvironmentBean
     @FullPropertyName(name = "org.jboss.jbossts.xts.coordinator.path")
     private volatile String coordinatorPath10 = "ws-c10/soap/ActivationCoordinator";
 
+    /**
+     * the URL path component of the URL at which 1.1 WS-C services have been mapped. if this is null
+     * then the path is defaulted to "ws-c11"
+     */
+    @FullPropertyName(name = "org.jboss.jbossts.xts.wsc11.serviceURLPath")
+    private volatile String serviceURLPath = null;
+
     public int getInitialTransportPeriod() {
         return initialTransportPeriod;
     }
@@ -335,5 +342,13 @@ public class WSCEnvironmentBean
 
     public void setCoordinatorPath10(String coordinatorPath10) {
         this.coordinatorPath10 = coordinatorPath10;
+    }
+
+    public String getServiceURLPath() {
+        return serviceURLPath;
+    }
+
+    public void setServiceURLPath(String serviceURLPath) {
+        this.serviceURLPath = serviceURLPath;
     }
 }

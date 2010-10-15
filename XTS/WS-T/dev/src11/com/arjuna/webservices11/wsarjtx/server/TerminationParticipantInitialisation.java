@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wsarjtx.server;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.WSTEnvironmentBean;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
@@ -38,6 +39,11 @@ public class TerminationParticipantInitialisation
         String bindAddress = wscEnvironmentBean.getBindAddress11();
         int bindPort = wscEnvironmentBean.getBindPort11();
         int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        WSTEnvironmentBean wstEnvironmentBean = XTSPropertyManager.getWSTEnvironmentBean();
+        String clientServiceURLPath = wstEnvironmentBean.getClientServiceURLPath();
+        if (clientServiceURLPath == null) {
+            clientServiceURLPath = "/ws-t11-client";
+        }
 
 
         if (bindAddress == null) {
@@ -52,10 +58,10 @@ public class TerminationParticipantInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11-client/";
-        final String uri = baseUri + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
-        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11-client/";
-        final String secureUri = secureBaseUri + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + clientServiceURLPath;
+        final String uri = baseUri + "/" + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
+        final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + clientServiceURLPath;
+        final String secureUri = secureBaseUri + "/" + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
 
         serviceRegistry.registerServiceProvider(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, uri) ;
         serviceRegistry.registerSecureServiceProvider(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, secureUri) ;

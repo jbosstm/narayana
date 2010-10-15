@@ -211,4 +211,20 @@
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_1">org.jboss.jbossts.xts.initialisation.CoordinatorSideInitialisation</entry>
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_2">org.jboss.jbossts.xts.initialisation.ParticipantSideInitialisation</entry>
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_3">org.jboss.jbossts.xts.initialisation.ClientSideInitialisation</entry>
+
+    <!--
+     if you are deploying XTS outside of JBoss then you may not be able to map the WS-C and WS-T service
+     endpoints to the same URLs as those employed by JBossWS. The services need to know where the endpoints
+     have been mapped because they need to insert their endpoint URLs into protocol messages. The following
+     properties can be set to identify the URL path element of the service. So, for example, with these
+     configuration settings the default URL for the WS-T Participant service
+     http://<webhost>:<webport>/ws-t11-participant/ParticipantService would be remapped to
+     http://<webhost>:<webport>/participant/services/ParticipantService. These properties are normally
+     left unset so that the JBoss default URLs are employed.
+    <entry key="org.jboss.jbossts.xts11.wsc.serviceURLPath.">/coord/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.coordinatorServiceURLPath.">/coord/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.clientServiceURLPath.">/client/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.participantServiceURLPath.">/participant/services</entry>
+    -->
+
 </properties>

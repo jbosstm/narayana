@@ -38,6 +38,10 @@ public class ActivationCoordinatorInitialisation
         String bindAddress = wscEnvironmentBean.getBindAddress11();
         int bindPort = wscEnvironmentBean.getBindPort11();
         int secureBindPort = wscEnvironmentBean.getBindPortSecure11();
+        String serviceURLPath = wscEnvironmentBean.getServiceURLPath();
+        if (serviceURLPath == null) {
+            serviceURLPath = "/ws-c11";
+        }
 
 
         if (bindAddress == null) {
@@ -52,10 +56,10 @@ public class ActivationCoordinatorInitialisation
             secureBindPort = 8443;
         }
 
-        final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-c11/";
-        final String uri = baseUri + "ActivationService";
-        final String secureBaseUri = "https://" + bindAddress + ":" + secureBindPort + "/ws-c11/";
-        final String secureUri = secureBaseUri + "ActivationService";
+        final String baseUri = "http://" +  bindAddress + ":" + bindPort + serviceURLPath;
+        final String uri = baseUri + "/ActivationService";
+        final String secureBaseUri = "https://" + bindAddress + ":" + secureBindPort + serviceURLPath;
+        final String secureUri = secureBaseUri + "/ActivationService";
 
         serviceRegistry.registerServiceProvider(CoordinationConstants.ACTIVATION_SERVICE_NAME, uri) ;
         serviceRegistry.registerSecureServiceProvider(CoordinationConstants.ACTIVATION_SERVICE_NAME, secureUri) ;
