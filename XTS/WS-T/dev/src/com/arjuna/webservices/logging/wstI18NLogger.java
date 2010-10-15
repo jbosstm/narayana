@@ -314,7 +314,7 @@ public interface wstI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_soapFault_1(String arg0);
 
-	@Message(id = 43077, value = "Cancelling participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 43077, value = "Compensating participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_soapFault_2(String arg0);
 
@@ -781,7 +781,7 @@ public interface wstI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_soapFault_1(String arg0);
 
-	@Message(id = 43200, value = "Cancelling participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 43200, value = "Compensating participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_wst11_messaging_engines_ParticipantCompletionParticipantEngine_soapFault_2(String arg0);
 
