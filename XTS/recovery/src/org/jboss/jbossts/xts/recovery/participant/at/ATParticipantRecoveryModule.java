@@ -67,12 +67,20 @@ public class ATParticipantRecoveryModule implements XTSRecoveryModule
      */
     public void install()
     {
-        XTSATRecoveryManager.setRecoveryManager(new XTSATRecoveryManagerImple(_recoveryStore));
+        // the manager is needed by both the participant or the coordinator recovery modules so whichever
+        // one gets there first creates it. No synchronization is needed as modules are only ever
+        // installed in a single thread
+        XTSATRecoveryManager atRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
+        if (atRecoveryManager == null) {
+            atRecoveryManager = new XTSATRecoveryManagerImple(_recoveryStore);
+            XTSATRecoveryManager.setRecoveryManager(atRecoveryManager);
+        }
         // Subordinate Coordinators register durable participants with their parent transaction so
         // we need to add an XTSATRecoveryModule which knows about the registered participants
 
         subordinateRecoveryModule = new XTSATSubordinateRecoveryModule();
-         XTSATRecoveryManager.getRecoveryManager().registerRecoveryModule(subordinateRecoveryModule);
+        
+        atRecoveryManager.registerRecoveryModule(subordinateRecoveryModule);
     }
 
     /**

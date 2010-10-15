@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManagerImple;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -69,6 +70,15 @@ public class ATCoordinatorRecoveryModule implements XTSRecoveryModule
      */
     public void install()
     {
+        // the manager is needed by both the participant or the coordinator recovery modules so whichever
+        // one gets there first creates it. No synchronization is needed as modules are only ever
+        // installed in a single thread
+        XTSATRecoveryManager atRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
+        if (atRecoveryManager == null) {
+            atRecoveryManager = new XTSATRecoveryManagerImple(_recoveryStore);
+            XTSATRecoveryManager.setRecoveryManager(atRecoveryManager);
+        }
+        
         Implementations.install();
     }
 

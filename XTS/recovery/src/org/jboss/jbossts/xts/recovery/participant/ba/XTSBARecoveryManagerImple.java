@@ -17,10 +17,10 @@ import java.io.IOException;
  */
 public class XTSBARecoveryManagerImple extends XTSBARecoveryManager {
     /**
-     * constructor for use by BAParticipantRecoveryModule
+     * constructor for use by BAParticipantRecoveryModule and BACoordinatorRecoveryModule
      * @param txLog
      */
-    XTSBARecoveryManagerImple(TxLog txLog)
+    public XTSBARecoveryManagerImple(TxLog txLog)
     {
         this.txLog = txLog;
     }

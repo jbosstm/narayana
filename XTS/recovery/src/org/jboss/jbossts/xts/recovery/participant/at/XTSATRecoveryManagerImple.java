@@ -17,10 +17,10 @@ import java.io.IOException;
  */
 public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     /**
-     * constructor for use by ATParticipantRecoveryModule
+     * constructor for use by ATParticipantRecoveryModule and ATCoordinatorRecoveryModule
      * @param txLog
      */
-    XTSATRecoveryManagerImple(TxLog txLog)
+    public XTSATRecoveryManagerImple(TxLog txLog)
     {
         this.txLog = txLog;
     }

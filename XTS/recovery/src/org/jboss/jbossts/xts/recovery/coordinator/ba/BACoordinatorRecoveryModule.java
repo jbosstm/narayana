@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
+import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManagerImple;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -69,6 +70,15 @@ public class BACoordinatorRecoveryModule implements XTSRecoveryModule
      */
     public void install()
     {
+        // the manager is needed by both the participant or the coordinator recovery modules so whichever
+        // one gets there first creates it. No synchronization is needed as modules are only ever
+        // installed in a single thread
+        XTSBARecoveryManager baRecoveryManager = XTSBARecoveryManager.getRecoveryManager();
+        if (baRecoveryManager == null) {
+            baRecoveryManager = new XTSBARecoveryManagerImple(_recoveryStore);
+            XTSBARecoveryManager.setRecoveryManager(baRecoveryManager);
+        }
+        
         Implementations.install();
     }
 
