@@ -3,9 +3,9 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-ArjunaCore_Administration_Guide-ArjunaCore_Administration_Guide">
-   <title>ArjunaCore Administration Guide</title>
-   <subtitle>Administration of the ArjunaCore Transaction Service</subtitle>
+<bookinfo id="book-ArjunaCore_Installation_And_Administration_Guide">
+   <title>ArjunaCore Installation And Administration Guide</title>
+   <subtitle>Installation and Administration of the ArjunaCore Transaction Service</subtitle>
    <productname>ArjunaCore</productname>
    <productnumber>4.13.0</productnumber>
    <edition>1</edition>
