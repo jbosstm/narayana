@@ -149,4 +149,8 @@ public class DemoRPCBARecoveryModule implements XTSBARecoveryModule
         }
         return null;
     }
+
+    public void endScan()
+    {
+    }
 }

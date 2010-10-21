@@ -100,4 +100,8 @@ public class DemoRPCATRecoveryModule implements XTSATRecoveryModule
         }
         return null;
     }
+
+    public void endScan()
+    {
+    }
 }
