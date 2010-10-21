@@ -9,7 +9,7 @@ import com.arjuna.wst.Durable2PCParticipant;
 import java.io.ObjectInputStream;
 
 /**
- * Application-specific WS-AT participant recovery manager for demo application, This class
+ * Application-specific WS-AT participant recovery manager for service test application, This class
  * is responsible for recreating application-specific durable participants from records
  * logged at prepare time.
  */
@@ -21,13 +21,13 @@ public class TestATRecoveryModule implements XTSATRecoveryModule
     private static TestATRecoveryModule theRecoveryModule = null;
 
     /**
-     * a count of how many xts demo services are currently installed
+     * a count of how many xts test services are currently installed
      */
     private static int serviceCount = 0;
 
     /**
-     * called during deployment of an xts-demo web service to ensure the recovery module for the
-     * demo is installed whenever any of the services is active
+     * called during deployment of a test service to ensure the recovery module for the
+     * test service is installed whenever any of the services is active
      */
     public static void register()
     {
@@ -41,8 +41,8 @@ public class TestATRecoveryModule implements XTSATRecoveryModule
     }
 
     /**
-     * called during undeployment of an xts-demo web service to ensure the recovery module for
-     * the demo is deinstalled once none of the services is active
+     * called during undeployment of a test service to ensure the recovery module for
+     * the test is deinstalled once none of the services is active
      */
     public static void unregister()
     {
@@ -97,5 +97,9 @@ public class TestATRecoveryModule implements XTSATRecoveryModule
             throw new Exception("xts service test : invalid request to recreate() WS-AT participant " + id);
         }
         return null;
+    }
+
+    public void endScan()
+    {
     }
 }
