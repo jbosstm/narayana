@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>Selecting the JTA implementation</title>
+  <para>
+    Two variants of the JTA implementation are now provided and accessible through the same interface. These are:
+  </para>
+  <informaltable>
+    <tgroup cols="2">
+      <tbody>
+        <row>
+          <entry>Purely local JTA</entry>
+          <entry>
+            <para>
+              Only non-distributed JTA transactions are executed. This is the only version available with the ArjunaTA
+              product.
+            </para>
+          </entry>
+        </row>
+        <row>
+          <entry>Remote, CORBA-based JTA</entry>
+          <entry>
+            <para>
+              Executes distributed JTA transactions. This functionality is provided by the ArjunaTA product and requires
+              a supported CORBA ORB. Consult the ArjunaJTS Installation and Administration Guide for more information.
+            </para>
+          </entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <para>
+    Both of these implementations are fully compatible with the transactional JDBC driver provided with ArjunaTA.
+  </para>
+  <procedure>
+    <title>Selecting the local JTA implementation</title>
+    <step>
+      <para>
+        Set the property <varname>JTAEnvironmentBean.jtaTMImplementation</varname> to value
+        <literal>com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</literal>.
+      </para>
+    </step>
+    <step>
+      <para>
+        Set the property <varname>JTAEnvironmentBean.jtaUTImplementation</varname> to value
+        <literal>com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</literal>.
+      </para>
+    </step>
+  </procedure>
+  <note>
+    <para>
+      These settings are the default values for the properties, so nothing needs to be changed to use the local
+      implementation.
+    </para>
+  </note>
+</chapter>
