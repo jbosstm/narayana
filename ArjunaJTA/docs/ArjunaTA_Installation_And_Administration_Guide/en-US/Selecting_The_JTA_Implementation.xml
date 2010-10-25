@@ -6,7 +6,7 @@
 <chapter>
   <title>Selecting the JTA implementation</title>
   <para>
-    Two variants of the JTA implementation are now provided and accessible through the same interface. These are:
+    Two variants of the JTA implementation are accessible through the same interface. These are:
   </para>
   <informaltable>
     <tgroup cols="2">
@@ -16,7 +16,7 @@
           <entry>
             <para>
               Only non-distributed JTA transactions are executed. This is the only version available with the ArjunaTA
-              product.
+              distribution.
             </para>
           </entry>
         </row>
@@ -24,7 +24,7 @@
           <entry>Remote, CORBA-based JTA</entry>
           <entry>
             <para>
-              Executes distributed JTA transactions. This functionality is provided by the ArjunaTA product and requires
+              Executes distributed JTA transactions. This functionality is provided by the ArjunaJTS distribution and requires
               a supported CORBA ORB. Consult the ArjunaJTS Installation and Administration Guide for more information.
             </para>
           </entry>
