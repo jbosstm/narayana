@@ -125,8 +125,8 @@ public interface jdbcI18NLogger {
 	@Message(id = 17025, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
 	public String get_jndierror();
 
-	@Message(id = 17026, value = "Can't load ConnectionImple class {0}", format = MESSAGE_FORMAT)
-	public String get_nojdbcimple(String arg0);
+//	@Message(id = 17026, value = "Can't load ConnectionImple class {0}", format = MESSAGE_FORMAT)
+//	public String get_nojdbcimple(String arg0);
 
 	@Message(id = 17027, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

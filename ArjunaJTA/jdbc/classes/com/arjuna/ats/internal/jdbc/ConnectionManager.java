@@ -107,36 +107,7 @@ public class ConnectionManager
             }
         }
 
-        // the ConnectionImple subclass is loaded dynamically because we only have one or the
-        // other available at build time, so we can't reference either directly in the code.
-        // See ConnectionImple javadoc.
-
-        String connectionImpleClassName = "com.arjuna.ats.internal.jdbc.ConnectionImpleJDBC4";
-        ConnectionImple conn;
-        try
-        {
-            Class clazz = Class.forName(connectionImpleClassName);
-            Constructor ctor = clazz.getConstructor(new Class[] { String.class, Properties.class} );
-            conn =  (ConnectionImple)ctor.newInstance(new Object[] { dbUrl, info });
-        }
-        catch(Exception exception)
-        {
-            // not necessarily an error, we may have a JDK5 build that does not include the JDBC4 driver.
-            // try to fallback to the older driver
-            connectionImpleClassName = "com.arjuna.ats.internal.jdbc.ConnectionImpleJDBC3";
-            try
-            {
-                Class clazz = Class.forName(connectionImpleClassName);
-                Constructor ctor = clazz.getConstructor(new Class[] { String.class, Properties.class} );
-                conn =  (ConnectionImple)ctor.newInstance(new Object[] { dbUrl, info });
-            }
-            catch(Exception e)
-            {
-                SQLException sqlException = new SQLException(jdbcLogger.i18NLogger.get_nojdbcimple(connectionImpleClassName));
-                sqlException.initCause(e);
-                throw sqlException;
-            }
-        }
+        ConnectionImple conn = new ConnectionImple(dbUrl, info);
 
         /*
        * Will replace any old (closed) connection which had the

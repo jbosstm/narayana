@@ -65,9 +65,5 @@ https://fedorahosted.org/releases/p/u/publican/
 
 Note: publican is optional. If you can live without documentation then build with ant -Dpublican=false
 
-Although it's no longer tried and tested, it may remain possible for a time to build on Java 5 by editing
-ArjunaJTA/jdbc/build.xml and changing the excluded **/*JDBC3.java pattern
-to **/*JDBC4.java instead. This is required as the JDBC3 and 4 APIs are not compatible.
-
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
