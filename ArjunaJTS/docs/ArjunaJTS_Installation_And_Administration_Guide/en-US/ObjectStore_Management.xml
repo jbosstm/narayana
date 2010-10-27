@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Installation_And_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>ObjectStore Management</title>
+  <para><!-- This is duplicate content from the Installation Guide --> Within the transaction service installation, the
+  object store is updated regularly whenever transactions are created, or when <application>Transactional Objects for
+  Java</application> is used. In a failure-free environment, the only object states which should reside within the
+  object store are those representing objects created with the <application>Transactional Objects for Java</application>
+  API.
+  </para>
+  <para>
+    However, if failures occur, transaction logs may remain in the object store until crash recovery facilities have
+    resolved the transactions they represent. As such it is very important that the contents of the object store are not
+    deleted without due care and attention, as this will make it impossible to resolve in doubt transactions. In
+    addition, if multiple users share the same object store it is important that they realize this and do not simply
+    delete the contents of the object store assuming it is an exclusive resource.
+  </para>
+  
+  <section>
+    <title>Specifying the ORB to use</title>
+    <para>
+      JDK releases from 1.2.2 onwards include a minimum ORB implementation from Sun. If you use such a JDK in conjunction
+      with another ORB, you must inform the JVM which ORB to use. Specify the
+      <varname>org.omg.CORBA.ORBClass</varname> and <varname>org.omg.CORBA.ORBSingletonClass</varname> properties. In
+      earlier versions of the Transaction Manager, you needed to specify these properties explicitly, either on the command line of in the properties file. However, the ORB Portability classes ensure that these properties are
+      automatically set when required. If needed, you can still specify the values explitly. This may be necessary if
+      you are not using the ORB initialization methods.
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>The interface repository</title>
+    <para>
+      The transaction manager ships with two <systemitem>idl</systemitem> files, which are required to build and run
+      applications. These files are <filename>CosTransactions.idl</filename> and <filename>ArjunaOTS.idl</filename>. You
+      can register them with your interface repository before running any applications. Refer to the manual for your ORB
+      for instructions on how to register the interfaces.
+    </para>
+  </section>
+  
+  <section>
+    <title>Installing into a non-default location</title>
+    <procedure>
+      <title>Installing into a non-default location</title>
+      <step>
+        <para>
+          Specify the location of the OTS server configuration file, using the
+          <varname>OrbPortabilityEnvironmentBean.initialReferencesRoot</varname> property variable. See the Orb
+          Portability manual for further details.
+        </para>
+      </step>
+      <step>
+        <para>
+          Specify the location of the object store, using the
+          <varname>ObjectStoreEnvironmentBean.objectStoreDir</varname> property variable.
+        </para>
+      </step>
+      <step>
+        <para>
+          Update your <varname>CLASSPATH</varname> to reflect the location of the various JBossTS jars in
+          <filename><replaceable>JBTS_ROOT</replaceable>/lib</filename> and
+          <filename><replaceable>JBTS_ROOT</replaceable>/lib/ext</filename>.
+        </para>
+      </step>
+    </procedure>
+  </section>
+
+</chapter>
+

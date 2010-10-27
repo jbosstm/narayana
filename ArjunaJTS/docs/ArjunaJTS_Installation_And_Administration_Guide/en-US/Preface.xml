@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Installation_And_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<preface id="pref-ArjunaCore_Administration_Guide-Preface">
+   <title>Preface</title>
+   
+   <section>
+     <title>Prerequisities</title>
+     <para>
+       ArjunaJTS is the implementation of the JTS API provided for use with JBoss Transaction Manager. For more details
+       about the Transaction Manager, refer to the ArjunaCore Installation and Administration Guide, which is also
+       available from the JBoss Transactions website, <ulink url="http://www.jboss.org/jbosstm" />.
+     </para>
+     
+   </section>
+
+   <xi:include href="Common_Content/Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude"><xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="Common_Content/Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   </xi:fallback>
+   </xi:include>
+</preface>
+
