@@ -6,8 +6,8 @@
 <book>
    <xi:include href="Book_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Preface.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="Chapter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="Introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+<!--   <xi:include href="Chapter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />-->
+   <xi:include href="Java_Transaction_API.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Transactions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="The_Resource_Manager.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Transaction_Recovery.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
