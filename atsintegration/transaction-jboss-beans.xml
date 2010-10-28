@@ -100,19 +100,47 @@
         <property name="defaultTimeout">300</property>
     </bean>
 
-    <bean name="ObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+    <bean name="ActionStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
 
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=ObjectStoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=ActionStoreObjectStoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
 
-        <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getObjectStoreEnvironmentBean"/>
+        <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
+            <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
+            <parameter>default</parameter>
+        </constructor>
 
         <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
     </bean>
 
+    <bean name="StateStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=StateStoreObjectStoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
+            <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
+            <parameter>stateStore</parameter>
+        </constructor>
+
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+    </bean>
+
+    <bean name="CommunicationStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=CommunicationStoreObjectStoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
+            <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
+            <parameter>communicationStore</parameter>
+        </constructor>
+
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+    </bean>
+
+
     <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser">
 
-        <demand state="Create">ObjectStoreEnvironmentBean</demand>
-        
+        <demand state="Create">ActionStoreObjectStoreEnvironmentBean</demand>
+
         <property name="types" preinstantiate="false">
             <map keyClass="java.lang.String" valueClass="java.lang.String">
                 <entry>
@@ -125,7 +153,8 @@
     </bean>
 
     <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
-<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=JTAEnvironmentBean", exposedInterface=com.arjuna.ats.jta.common.JTAEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=JTAEnvironmentBean", exposedInterface=com.arjuna.ats.jta.common.JTAEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
 
         <constructor factoryClass="com.arjuna.ats.jta.common.jtaPropertyManager" factoryMethod="getJTAEnvironmentBean"/>
 
@@ -147,12 +176,15 @@
                 <value>com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter</value>
             </list>
         </property>
-        
+
     </bean>
 
     <bean name="RecoveryManager" class="com.arjuna.ats.jbossatx.jta.RecoveryManagerService">
 
         <demand state="Create">RecoveryEnvironmentBean</demand>
+        <demand state="Create">ActionStoreObjectStoreEnvironmentBean</demand>
+        <demand state="Create">StateStoreObjectStoreEnvironmentBean</demand>
+        <demand state="Create">CommunicationStoreObjectStoreEnvironmentBean</demand>
 
     </bean>
 
@@ -170,7 +202,9 @@
         <demand state="Create">RecoveryEnvironmentBean</demand>
         <demand state="Create">CoreEnvironmentBean</demand>
         <demand state="Create">CoordinatorEnvironmentBean</demand>
-        <demand state="Create">ObjectStoreEnvironmentBean</demand>
+        <demand state="Create">ActionStoreObjectStoreEnvironmentBean</demand>
+        <demand state="Create">StateStoreObjectStoreEnvironmentBean</demand>
+        <demand state="Create">CommunicationStoreObjectStoreEnvironmentBean</demand>
         <demand state="Create">JTAEnvironmentBean</demand>
         <demand>RecoveryManager</demand>
 
