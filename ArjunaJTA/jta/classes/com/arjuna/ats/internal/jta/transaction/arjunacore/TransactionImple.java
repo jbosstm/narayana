@@ -1153,6 +1153,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						return;
 				}
 
+                final Throwable preexistingRollbackOnlyCallerStacktrace = _rollbackOnlyCallerStacktrace;
+
 				switch (_theTransaction.commit(true))
 				{
 					case ActionStatus.COMMITTED:
@@ -1166,14 +1168,25 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
                         RollbackException rollbackException = new RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_commitwhenaborted() );
-                        if(_rollbackOnlyCallerStacktrace != null) {
-                            // we rolled back beacuse the user explicitly told us not to commit. Attach the trace of who did that for debug:
-                            rollbackException.initCause(_rollbackOnlyCallerStacktrace);
+
+                        // Don't mess with the following flow until you've read JBTM-575 in its entirety.
+
+                        if(preexistingRollbackOnlyCallerStacktrace != null) {
+                            // we rolled back because the user (note: NOT a beforeCompletion) explicitly told us not to commit.
+                            // beforeCompletions should not be called in such case anyhow, so getDeferredThrowable is irrelevant.
+                            // Attach the trace of who did that for debug:
+                            rollbackException.initCause(preexistingRollbackOnlyCallerStacktrace);
+                        } else if(_theTransaction.getDeferredThrowable() != null) {
+                            // problems occurring during beforeCompletion (the only place deferredThrowable is set) take priority
+                            // over 'immediately prior' (i.e. after the commit call - likely from within beforeCompletion) calls to setRollbackOnly
+                            // despite the small chance that the causal relationship is not infact valid
+                            rollbackException.initCause(_theTransaction.getDeferredThrowable());
+						} else if(_rollbackOnlyCallerStacktrace != null) {
+                            // we tried to commit but it went wrong, resulting in a call to setRollbackOnly from within a
+                            // beforeCompletion. The beforeCompletion did not then throw an exception as that would be handled above
+							rollbackException.initCause(_rollbackOnlyCallerStacktrace);
                         }
-                        else if(_theTransaction.getDeferredThrowable() != null) {
-                            // we tried to commit but it went wrong - attach the reason for debug:
-							rollbackException.initCause(_theTransaction.getDeferredThrowable());
-						}
+
 						throw rollbackException;
 					default:
 						throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
