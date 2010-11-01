@@ -26,16 +26,20 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
 
 
-
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.spi.ObjectFactory;
 import javax.transaction.*;
 import java.io.Serializable;
- 
+import java.util.Hashtable;
+
 /**
  * Implementation of the TransactionSynchronizationRegistry interface, in line with the JTA 1.1 specification.
  *
  * @author jonathan.halliday@jboss.com
  */
-public class TransactionSynchronizationRegistryImple implements TransactionSynchronizationRegistry, Serializable {
+public class TransactionSynchronizationRegistryImple implements TransactionSynchronizationRegistry, Serializable, ObjectFactory
+{
     // This Imple is stateless and just delegates the work down to the transaction manager.
     // It's Serilizable so it can be shoved into the app server JNDI.
 
@@ -45,6 +49,11 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
      */
 
     private static final long serialVersionUID = 1L;
+
+	public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable environment) throws Exception
+	{
+		return this;
+	}
 
     // Return an opaque object to represent the transaction bound to the current thread at the time this method is called.
         public Object getTransactionKey()
