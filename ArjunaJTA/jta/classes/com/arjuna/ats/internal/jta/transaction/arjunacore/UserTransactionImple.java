@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import javax.naming.*;
 
 public class UserTransactionImple extends BaseTransaction
-		implements javax.transaction.UserTransaction, javax.naming.spi.ObjectFactory
-{
+		implements javax.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable {
     
     public UserTransactionImple ()
     {
@@ -47,4 +47,10 @@ public class UserTransactionImple extends BaseTransaction
 	{
 		return this;
 	}
+
+    @Override
+    public Reference getReference() throws NamingException
+    {
+        return new Reference(this.getClass().getCanonicalName(), this.getClass().getCanonicalName(), null);
+    }
 }
