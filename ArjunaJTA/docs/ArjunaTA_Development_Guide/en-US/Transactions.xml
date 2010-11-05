@@ -5,5 +5,370 @@
 ]>
 <chapter>
   <title></title>
-</chapter>
+  
+  <section>
+    <title>Introducing the API</title>
+    <para>
+      The Java Transaction API consists of three elements:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          a high-level application transaction demarcation interface
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          a high-level transaction manager interface intended for application server
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          a standard Java mapping of the X/Open XA protocol intended for a transactional resource manager.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      All of the JTA classes and interfaces exist within the <package>javax.transaction</package> package, and the
+      corresponding JBossJTA implementations within the <package>com.arjuna.ats.jta</package> package.
+    </para>
+    <para>
+      Each Xid created by JBossTS needs a unique node identifier encoded within it, because JBossTS can only recover
+      transactions and states that match a specified node identifier. The node identifier to use should be provided to
+      JBossTS via the <varname>CoreEnvironmentBean.nodeIdentifier</varname> property. This value must be unique across your
+      JBossTS instances. The identifier is alphanumeric and limited to 10 bytes in length. If you do not
+      provide a value, then JBossTS generates one and reports the value via the logging infrastructure.
+    </para>
 
+  </section>
+  
+  <section id="UserTransaction_Definition">
+    <title>UserTransaction</title>
+    <para>
+      The <interfacename>UserTransaction</interfacename> interface provides applications with the ability to control
+      transaction boundaries. It provides methods <methodname>begin</methodname>, <methodname>commit</methodname>, and
+      <methodname>rollback</methodname> to operate on top-level transactions.
+    </para>
+    <para>
+      Nested transactions are not supported, and method <methodname>begin</methodname> throws the exception
+      <systemitem>NotSupportedException</systemitem> if the calling thread is already associated with a
+      transaction. <interfacename>UserTransaction</interfacename> automatically associates newly created transactions
+      with the invoking thread.
+    </para>
+    <para>
+      To obtain a <interfacename>UserTransaction</interfacename>, call the static method
+      <methodname>com.arjuna.ats.jta.UserTransaction.userTransaction()</methodname>.
+    </para>
+    <procedure>
+      <title>Selecting the local JTA Implementation</title>
+      <step>
+        <para>
+          Set property <varname>JTAEnvironmentBean.jtaTMImplementation</varname> to
+          <literal>com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</literal>.
+        </para>
+      </step>
+      <step>
+        <para>
+          Set property <varname>JTAEnvironmentBean.jtaUTImplementation</varname> to
+          <literal>com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</literal>.
+        </para>
+      </step>
+    </procedure>
+  </section>
+  
+  <section>
+    <title>TransactionManager</title>
+    <para>
+      The <interfacename>TransactionManager</interfacename> interface allows the application server to control
+      transaction boundaries on behalf of the application being managed.
+    </para>
+    <para>
+      To obtain a <interfacename>TransactionManager</interfacename>, invoke the static method
+      <methodname>com.arjuna.ats.jta.TransactionManager.transactionManager</methodname>.
+    </para>
+    <para>
+      The <interfacename>TransactionManager</interfacename> maintains the transaction context association with threads
+      as part of its internal data structure. A thread’s transaction context may be <literal>null</literal> or it may
+      refer to a specific global transaction. Multiple threads may be associated with the same global transaction. As
+      noted in <xref linkend="UserTransaction_definition" />, nested transactions are not supported.
+    </para>
+    <para>
+      Each transaction context is encapsulated by a Transaction object, which can be used to perform operations which
+      are specific to the target transaction, regardless of the calling thread’s transaction context.
+    </para>
+    <table>
+      <title><interfacename>TransactionManager</interfacename> Methods</title>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry><para><methodname>begin</methodname></para></entry>
+            <entry>
+              <para>
+                Starts a new top-level transaction and associates the transaction context with the calling thread. If
+                the calling thread is already associated with a transaction, exception
+                <systemitem>NotSupportedException</systemitem> is thrown.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><methodname>getTransaction</methodname></para></entry>
+            <entry>
+              <para>
+                Returns the Transaction object representing the transaction context which is currently associated with
+                the calling thread. You can use this object to perform various operations on the target transaction.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><methodname>commit</methodname></para></entry>
+            <entry>
+              <para>
+                Completes the transaction currently associated with the calling thread. After it returns, the calling
+                thread is associated with no transaction. If <methodname>commit</methodname> is called when the thread
+                is not associated with any transaction context, an exception is thrown. In some implementations, the
+                <methodname>commit</methodname> operation is restricted to the transaction originator only. If the
+                calling thread is not allowed to commit the transaction, an exception is thrown. JBossTA does not
+                currently impose any restriction on the ability of threads to terminate transactions.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><methodname>rollback</methodname></para></entry>
+            <entry>
+              <para>
+                Rolls back the transaction associated with the current thread. After the
+                <methodname>rollback</methodname> method completes, the thread is associated with no transaction.
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <para>
+      In a multi-threaded environment, multiple threads may be active within the same transaction. If checked
+      transaction semantics have been disabled, or the transaction times out, a transaction may terminated by a thread
+      other than the one that created it. In this case, the creator usually needs to be notified. JBossTS notifies the
+      creator during operations <methodname>commit</methodname> or <methodname>rollback</methodname> by throwing
+      exception <systemitem>IllegalStateException</systemitem>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Suspend and resuming a transaction</title>
+    <para>
+      The JTA supports the concept of a thread temporarily suspending and resuming transactions in order to perform
+      non-transactional work. Call the <methodname>suspend</methodname> method to temporarily suspend the current
+      transaction that is associated with the calling thread. The thread then operates outside of the scope of the
+      transaction. If the thread is not associated with any transaction, a <type>null</type> object reference is
+      returned. Otherwise, a valid <type>Transaction</type> object is returned. Pass the <type>Transaction</type> object
+      to the <methodname>resume</methodname> method to reinstate the transaction context.
+    </para>
+    <para>
+      The <methodname>resume</methodname> method associates the specified transaction context with the calling
+      thread. If the transaction specified is not a valid transaction, , the thread is associated with no transaction.
+      if <methodname>resume</methodname> is invoked when the calling thread is already associated with another
+      transaction, the <systemitem>IllegalStateException</systemitem> exception is thrown.
+    </para>
+    <example>
+      <title>Using the <methodname>suspend</methodname> method</title>
+      <programlisting language="Java" role="JAVA"> <xi:include href="extras/using_suspend_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /> </programlisting>
+    </example>
+    <note>
+      <para>
+        JBossJTA allows a suspended transaction to be resumed by a different thread. This feature is not required by
+        JTA, but is an important feature.
+      </para>
+    </note>
+    <para>
+      When a transaction is suspended, the application server must ensure that the resources in use by the application
+      are no longer registered with the suspended transaction. When a resource is de-listed this triggers the
+      Transaction Manager to inform the resource manager to disassociate the transaction from the specified resource
+      object. When the application’s transaction context is resumed, the application server must ensure that the
+      resources in use by the application are again enlisted with the transaction. Enlisting a resource as a result of
+      resuming a transaction triggers the Transaction Manager to inform the resource manager to re-associate the
+      resource object with the resumed transaction.
+    </para>
+  </section>
+
+  <section>
+    <title>The Transaction interface</title>
+    <para>
+      The <interfacename>Transaction</interfacename> interface allows you to perform operations on the transaction
+      associated with the target object. Every top-level transaction is associated with one <type>Transaction</type>
+      object when the transaction is created.
+    </para>
+    <itemizedlist>
+      <title>Uses of the <type>Transaction</type> object</title>
+      <listitem>
+        <para>
+          enlist the transactional resources in use by the application.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          register for transaction synchronization call backs.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          commit or rollback the transaction.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          obtain the status of the transaction.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      The <methodname>commit</methodname> and <methodname>rollback</methodname> methods allow the target object to be
+      committed or rolled back. The calling thread does not need to have the same transaction associated with the
+      thread. If the calling thread is not allowed to commit the transaction, the transaction manager throws an
+      exception. At present JBossJTA does not impose restrictions on threads terminating transactions.
+    </para>
+    <para>
+      The JTA standard does not provide a means to obtain the transaction identifier. However, JBossJTA provides several
+      ways to view the transaction identifier. Call method <methodname>toString</methodname> to print full information
+      about the transaction, including the identifier. Alternatively you can cast the
+      <type>javax.transaction.Transaction</type> instance to a <type>com.arjuna.ats.jta.transaction.Transaction</type>,
+      then call either method <methodname>get_uid</methodname>, which returns an ArjunaCore <type>Uid</type>
+      representation, or <methodname>getTxId</methodname>, which returns an <type>Xid</type> for the global identifier,
+      i.e., no branch qualifier.
+    </para>
+  </section>
+
+  
+  <section>
+    <title>Resource enlistment</title>
+    <para>
+      Typically, an application server manages transactional resources, such as database connections, in conjunction
+      with some resource adapter and optionally with connection pooling optimization. For an external transaction
+      manager to coordinate transactional work performed by the resource managers, the application server must enlist
+      and de-list the resources used in the transaction. These resources, called <firstterm>participants</firstterm>,
+      are enlisted with the transaction so that they can be informed when the transaction terminates, by being driven
+      through the two-phase commit protocol.
+    </para>
+    <para>
+      As stated previously, the JTA is much more closely integrated with the XA concept of resources than the arbitrary
+      objects. For each resource the application is using, the application server invokes the
+      <methodname>enlistResource</methodname> method with an <type>XAResource</type> object which identifies the
+      resource in use.<!-- See for details on how the implementation of the XAResource can affect recovery in the event
+      of a failure.-->
+    </para>
+    <para>
+      The enlistment request causes the transaction manager to inform the resource manager to start associating the
+      transaction with the work performed through the corresponding resource. The transaction manager passes the
+      appropriate flag in its <methodname>XAResource.start</methodname> method call to the resource manager.
+    </para>
+    <para>
+      The <methodname>delistResource</methodname> method disassociates the specified resource from the transaction
+      context in the target object. The application server invokes the method with the two parameters: the
+      <type>XAResource</type> object that represents the resource, and a flag to indicate whether the operation is due
+      to the transaction being suspended (<literal>TMSUSPEND</literal>), a portion of the work has failed
+      (<literal>TMFAIL</literal>), or a normal resource release by the application (<literal>TMSUCCESS</literal>).
+    </para>
+    <para>
+      The de-list request causes the transaction manager to inform the resource manager to end the association of the
+      transaction with the target <type>XAResource</type>. The flag value allows the application server to indicate
+      whether it intends to come back to the same resource whereby the resource states must be kept intact. The
+      transaction manager passes the appropriate flag value in its <methodname>XAResource.end</methodname> method call
+      to the underlying resource manager.
+    </para>
+  </section>
+
+  
+  <section>
+    <title>Transaction synchronization</title>
+    <para>
+      Transaction synchronization allows the application server to be notified before and after the transaction
+      completes. For each transaction started, the application server may optionally register a
+      <type>Synchronization</type> call-back object to be invoked by the transaction manager, which will be one of the following:
+    </para>
+    <informaltable>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>
+              <para><methodname>beforeCompletion</methodname></para>
+            </entry>
+            <entry>
+              <para>
+                Called before the start of the two-phase transaction complete process. This call is executed in the same
+                transaction context of the caller who initiates the <methodname>TransactionManager.commit</methodname>
+                or the call is executed with no transaction context if <methodname>Transaction.commit</methodname> is
+                used.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para><methodname>afterCompletion</methodname></para>
+            </entry>
+            <entry>
+              <para>
+                Called after the transaction completes. The status of the transaction is supplied in the parameter. This
+                method is executed without a transaction context.
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </section>
+  
+  <section>
+    <title>Transaction equality</title>
+    <para>
+      The transaction manager implements the <type>Transaction</type> object’s <methodname>equals</methodname> method to
+      allow comparison between the target object and another <type>Transaction</type> object. The
+      <methodname>equals</methodname> method returns <literal>true</literal> if the target object and the parameter
+      object both refer to the same global transaction.
+    </para>
+    <example>
+      <title>Method <methodname>equals</methodname></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/Transaction_Equality.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+  </section>
+
+  
+  <section>
+    <title>TransactionSynchronizationRegistry</title>
+    <para>
+      The <interfacename>javax.transaction.TransactionSynchronizationRegistry</interfacename> interface, added to the
+      JTA API in version 1.1, provides for registering Synchronizations with special ordering behavior, and for storing
+      key-value pairs in a per-transaction Map. Full details are available from the JTA 1.1 API specification and
+      javadoc. Here we focus on implementation specific behavior.
+    </para>
+    <example>
+      <title>Accessing the TransactionSynchronizationRegistry in standalone environments</title>
+      <programlisting language="Java" role="JAVA"><xi:include
+      href="extras/TransactionSynchronizationRegistry_standalone.java" xmlns:xi="http://www.w3.org/2001/XInclude"
+      parse="text" /></programlisting>
+      <para>
+        This is a stateless object and hence is cheap to instantiate.
+      </para>
+    </example>
+    <formalpara>
+      <title>Accessing the TransactionSynchronizationRegistry via JNDI</title>
+      <para>
+        In application server environments, the standard JNDI name binding is
+        <literal>java:comp/TransactionSynchronizationRegistry</literal>.
+      </para>
+    </formalpara>
+    <para>
+      Ordering of interposed Synchronizations is relative to other local Synchronizations only. In cases where the
+      transaction is distributed over multiple JVMs, global ordering is not guaranteed.
+    </para>
+    <para>
+      The per-transaction data storage provided by the <interfacename>TransactionSynchronizationRegistry</interfacename>
+      methods <methodname>getResource</methodname> and <methodname>putResource</methodname> are non-persistent and thus
+      not available in <interfacename>Transactions</interfacename> during crash recovery. When running integrated with
+      an application server or other container, this storage may be used for system purposes. To avoid collisions, use
+      an application-specific prefix on map keys, such as <command>put(“myapp_”+key, value)</command>.  The behavior of
+      the <type>Map</type> on <type>Thread</type>s that have status <literal>NO_TRANSACTION</literal> or where the
+      transaction they are associated with has been rolled back by another <type>Thread</type>, such as in the case of a
+      timeout, is undefined.  A <type>Transaction</type> can be associated with multiple <type>Thread</type>s. For such
+      cases the <type>Map</type> is synchronized to provide thread safety.
+    </para>
+  </section>
+</chapter>
