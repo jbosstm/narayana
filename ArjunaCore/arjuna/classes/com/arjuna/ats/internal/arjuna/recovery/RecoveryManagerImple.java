@@ -150,7 +150,7 @@ public class RecoveryManagerImple
         _periodicRecovery.removeAllModules(waitOnScan);
     }
 
-    public final Vector getModules ()
+    public final Vector<RecoveryModule> getModules ()
     {
         return _periodicRecovery.getModules();
     }

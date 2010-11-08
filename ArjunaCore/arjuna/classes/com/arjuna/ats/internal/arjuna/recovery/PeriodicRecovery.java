@@ -585,13 +585,13 @@ public class PeriodicRecovery extends Thread
      * @return a copy of the the recovery modules list.
      */
 
-    public final Vector getModules ()
+    public final Vector<RecoveryModule> getModules ()
     {
         // return a copy of the modules list so that clients are not affected by dynamic modifications to the list
         // synchronize so that we don't copy in the middle of an add or remove
 
         synchronized (_recoveryModules) {
-            return new Vector(_recoveryModules);
+            return new Vector<RecoveryModule>(_recoveryModules);
         }
     }
     /*
@@ -916,7 +916,6 @@ public class PeriodicRecovery extends Thread
      */
    private void initialise ()
     {
-        _recoveryModules = new Vector();
         setStatus(Status.INACTIVE);
         setMode(Mode.ENABLED);
 
@@ -941,7 +940,7 @@ public class PeriodicRecovery extends Thread
     * list of instances of RecoiveryModule either loaded during startup as specified in the recovery manager
     * property file or added dynamically by calls to addModule
     */
-   private Vector _recoveryModules = null;
+   private final Vector<RecoveryModule> _recoveryModules = new Vector<RecoveryModule>();
 
    /**
     * time in seconds between the first and second pass in any given scan

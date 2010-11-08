@@ -328,7 +328,7 @@ public class RecoveryManager
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
-    public final Vector getModules ()
+    public final Vector<RecoveryModule> getModules ()
     {
         checkState();
 

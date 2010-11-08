@@ -96,7 +96,7 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         // expose orphan filters directly, as with e.g. [add|remove]XAResourceRecovery.
 
         XARecoveryModule xaRecoveryModule = null;
-        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)acRecoveryManager.getModules())) {
+        for(RecoveryModule recoveryModule : acRecoveryManager.getModules()) {
             if(recoveryModule instanceof XARecoveryModule) {
                 xaRecoveryModule = (XARecoveryModule)recoveryModule;
                 break;
