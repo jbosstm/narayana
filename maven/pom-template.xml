@@ -237,7 +237,14 @@
         <dependency>
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman</artifactId>
-            <version>1.2.2</version>
+            <version>1.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- txbridge uses the dtest addon -->
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-dtest</artifactId>
+            <version>1.4.0</version>
             <scope>test</scope>
         </dependency>
 
