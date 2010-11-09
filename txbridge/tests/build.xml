@@ -44,7 +44,8 @@
             <include name="jboss-server-manager.jar"/>
             <include name="jboss-logging.jar"/>
             <include name="jnp-client.jar"/>
-            <!--<include name="byteman.jar"/>-->
+            <include name="byteman.jar"/>
+            <include name="byteman-dtest.jar"/>
         </fileset>
 
         <fileset dir="${jbossts.home}/install/lib">
@@ -59,9 +60,7 @@
 
         <pathelement location="../build/txbridge.jar"/>
 
-        <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar"/>        
-        <pathelement location="/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar"/>
-        <pathelement location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/client/jboss-system-client.jar"/>
+        <!--<pathelement location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/client/jboss-system-client.jar"/>-->
 
 	</path>
 
@@ -126,7 +125,6 @@
                 <include name="org/jboss/jbossts/txbridge/tests/inbound/junit/*.class"/>
             </fileset>
         </jar>
-
 	</target>
 
     <!-- Note: running tests requires JBossAS to be started and the relevant artifacts

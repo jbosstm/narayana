@@ -93,6 +93,8 @@
         <ant dir="XTS" target="clean"/>
         <ant dir="XTS" target="install"/>
         <ant dir="rhq-plugin" target="dist"/>
+        <ant dir="txbridge" target="clean"/>
+        <ant dir="txbridge" target="dist"/>
     </target>
 
     <target name="antbuildsystem" depends="clean">
@@ -125,6 +127,13 @@
             <available file="rhq-plugin"/>
             <then>
                 <ant dir="rhq-plugin" target="clean"/>
+            </then>
+        </if>
+
+        <if>
+            <available file="txbridge"/>
+            <then>
+                <ant dir="txbridge" target="clean"/>
             </then>
         </if>
 
