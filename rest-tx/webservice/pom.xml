@@ -26,8 +26,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>${artifactId.name}-web</artifactId>
-    <version>${version.artifactId}</version>
+    <artifactId>rest-tx-web</artifactId>
     <packaging>war</packaging>
     <name>RESTful Atomic Transactions War Packaging</name>
     <description>Provides Transactions for web applications</description>
