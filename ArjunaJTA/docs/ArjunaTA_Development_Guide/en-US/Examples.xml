@@ -4,6 +4,58 @@
 %BOOK_ENTITIES;
 ]>
 <chapter>
-  <title></title>
+  <title>Examples</title>
+  
+  <section>
+    <title>JDBC example</title>
+
+    <example>
+      <title>JDBC example</title>
+      <para>
+        This simplified example assumes that you are using the transactional JDBC driver provided with JBossTS. For
+        details about how to configure and use this driver see the previous Chapter.<!-- Link? -->
+      </para>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/jdbc_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+  </section>
+
+  <section>
+    <title>Failure recovery example with BasicXARecovery</title>
+    <para>
+      This class implements the <interfacename>XAResourceRecovery</interfacename> interface for XAResources. The parameter supplied in <varname>setParameters</varname>
+      can contain arbitrary information necessary to initialize the class once created. In this example, it contains the
+      name of the property file in which the database connection information is specified, as well as the number of
+      connections that this file contains information on. Each item is separated by a semicolon.
+    </para>
+    <para>
+      This is only a small example of the sorts of things an XAResourceRecovery implementer could do. This implementation
+      uses a property file that is assumed to contain sufficient information to recreate connections used during the
+      normal run of an application so that recovery can be performed on them. Typically, usernames and passwords should
+      never be presented in raw text on a production system.
+    </para>
+    <example>
+      <title>Database parameter format for the properties file</title>
+      <screen>
+ DB_x_DatabaseURL=
+ DB_x_DatabaseUser=
+ DB_x_DatabasePassword=
+ DB_x_DatabaseDynamicClass=
+      </screen>
+      <para>
+        <replaceable>x</replaceable> is the number of the connection information.
+      </para>
+    </example>
+    <para>
+      Some error-handling code is missing from this example, to make it more readable.
+    </para>
+    <example>
+      <title>Failure recovery example with BasicXARecovery</title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/failure_recovery_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      <para>
+        You can use the class <classname>com.arjuna.ats.internal.jdbc.recovery.JDBC2RecoveryConnection</classname> to
+        create a new connection to the database using the same parameters used to create the initial connection.
+      </para>
+    </example>
+  </section>
 </chapter>
 
