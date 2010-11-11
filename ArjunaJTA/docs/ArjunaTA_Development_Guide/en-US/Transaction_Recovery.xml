@@ -21,7 +21,7 @@
       <interfacename>XAResource</interfacename> objects are not persistent across system failures, so the Transaction
       Manager needs a way to acquire the <interfacename>XAResource</interfacename> objects representing the resource
       managers which might have participated in the transactions before a system failure. For example, a Transaction
-      Manager might use the JNDI lookup mechanism to acquire a connection from each of the transactional resource
+      Manager might use the JNDI look-up mechanism to acquire a connection from each of the transactional resource
       factories, before obtaining the corresponding <interfacename>XAResource</interfacename> object for each
       connection. The Transaction Manager then invokes the <methodname>XAResource.recover</methodname> method, which
       requests each resource manager to return the transactions that are currently in a
@@ -168,7 +168,8 @@
       manage state, which adds complexity. Starting with JBossTS 4.4, you can provide an implementation of public
       interface <interfacename>XAResourceRecoveryHelper</interfacename>:
     </para>
-    <programlisting language="Java" role="JAVA"><xi:include href="extras/XAResourceRecoveryHelper.java" xmlns:xi="http://www.w3.org/2001/XInclude" /></programlisting>
+    <programlisting language="Java" role="JAVA"><xi:include href="extras/XAResourceRecoveryHelper.java"
+    xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
 
     <para>
       During each recovery sweep, method <methodname>getXAResources</methodname> is called and recovery is attempted on
@@ -194,7 +195,7 @@
     <para>
       The ability to dynamically add and remove instances of <interfacename>XAResourceRecoveryHelper</interfacename>
       while the system is running is an attractive option for environments where datasources may be deployed or
-      undeployed, such as application servers.  Take care with classloading behaviour in such cases.
+      undeployed, such as application servers.  Take care with classloading behavior in such cases.
     </para>
   </section>
 
@@ -207,8 +208,8 @@
     </para>
     <para>
       These <interfacename>XAResourceRecovery</interfacename> instances are primarily intended for when running JBossTS
-      outside of a container such as JBossAS or another application server. This is because they rely upon
-      <interfacename>XADataSources</interfacename> as the primary handle to drive recovery. If you are runing JBossTS
+      outside of a container such as JBoss Application Server or another application server. This is because they rely upon
+      <interfacename>XADataSources</interfacename> as the primary handle to drive recovery. If you are running JBossTS
       inside an application server or other container, consult the relevant integration documentation, to be sure to use
       the right recovery modules.
     </para>
@@ -217,7 +218,7 @@
       <title>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</title>
       <para>
         <interfacename>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</interfacename> expects you to specify an
-        XML property file upon creation. It uses this file to read the configuration properties for the datasouce.
+        XML property file upon creation. It uses this file to read the configuration properties for the datasource.
       </para>
       <example>
         <title>Example</title>
@@ -230,7 +231,7 @@
       <para>
         <interfacename>com.arjuna.ats.internal.jdbc.recovery.JDBCXARecovery</interfacename> should work on any
         datasource that is exposed via JNDI. It expects an XML property file to be specified upon creation, and uses the
-        file to read the database JNDI name, username and password.
+        file to read the database JNDI name, user-name and password.
       </para>
       <example>
         <title>Example</title>

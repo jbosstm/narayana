@@ -30,7 +30,7 @@
     <para>
       This is only a small example of the sorts of things an XAResourceRecovery implementer could do. This implementation
       uses a property file that is assumed to contain sufficient information to recreate connections used during the
-      normal run of an application so that recovery can be performed on them. Typically, usernames and passwords should
+      normal run of an application so that recovery can be performed on them. Typically, user-names and passwords should
       never be presented in raw text on a production system.
     </para>
     <example>

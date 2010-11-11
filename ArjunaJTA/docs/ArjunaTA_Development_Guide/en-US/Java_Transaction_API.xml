@@ -50,7 +50,7 @@
               recovery.
             </para>
             <para>
-              A resource adaptor is used by an application server or client to connect to a Resource Manager. JDBC
+              A resource adapter is used by an application server or client to connect to a Resource Manager. JDBC
               drivers which are used to connect to relational databases are examples of Resource Adapters.
             </para>
           </entry>

@@ -42,7 +42,7 @@
     <itemizedlist>
       <listitem>
         <para>
-          The resource adaptor implicitly initializes the <interfacename>ResourceManager</interfacename> when the
+          The resource adapter implicitly initializes the <interfacename>ResourceManager</interfacename> when the
           resource (the connection) is acquired. There is no equivalent to the <methodname>xa_open</methodname> method
           of the interface <interfacename>XA</interfacename>.
         </para>
@@ -109,7 +109,7 @@
       </para>
       <para>
         By default an attempt to enlist more than one instance of a LastResourceCommitOptimisation class will fail and
-        false will be returned from Transaction.enlistResource. This behaviour can be overridden by setting the
+        false will be returned from Transaction.enlistResource. This behavior can be overridden by setting the
         com.arjuna.ats.jta.allowMultipleLastResources to true. However, before doing so you should read the section on
         enlisting multiple one-phase aware resources.
       </para>
@@ -122,7 +122,7 @@
       <section>
         <title>Enlisting multiple one-phase-aware resources</title>
         <para>
-          One-phase commit is used to process a single one-phase aware resource, which does not comform to the
+          One-phase commit is used to process a single one-phase aware resource, which does not conform to the
           two-phase commit protocol. You can still achieve an atomic outcome across resources, by using the LRCO, as
           explained earlier.
         </para>
@@ -131,7 +131,7 @@
           database runs within the same transaction as a legacy JMS implementation. In such a situation, you cannot
           achieve atomicity of transaction outcome across multiple resources, because none of them enter the
           <methodname>prepare</methodname> state. They commit or roll back immediately when instructed by the
-          transaction coordinator, without knowledge of other resource states and without a way to undo if subsdequent
+          transaction coordinator, without knowledge of other resource states and without a way to undo if subsequent
           resources make a different choice. This can result in data corruption or heuristic outcomes.
         </para>
         <para>
@@ -192,7 +192,7 @@
   <section>
     <title>Closing a resource manager</title>
     <para>
-      The resource adaptor closes a resource manager as a result of destroying the transactional resource. A
+      The resource adapter closes a resource manager as a result of destroying the transactional resource. A
       transaction resource at the resource adapter level is comprised of two separate objects:
     </para>
     <itemizedlist>
@@ -297,7 +297,7 @@
     <example id="resource_sharing_example">
       <title>Resource sharing example</title>
       <programlisting language="Java" role="JAVA">
-        <xi:include href="extras/resource_sharing_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" />
+        <xi:include href="extras/resource_sharing_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
       </programlisting>
       <para>
         A transactional resource <systemitem>r1</systemitem>. Global transaction <systemitem>xid1</systemitem> is
@@ -372,7 +372,7 @@
     <title>Dynamic registration</title>
     <para>
       Dynamic registration is not supported in <interfacename>XAResource</interfacename>. There are two reasons this
-      kames sense.
+      makes sense.
     </para>
     <itemizedlist>
       <listitem>

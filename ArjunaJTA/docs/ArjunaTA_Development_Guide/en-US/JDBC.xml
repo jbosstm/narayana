@@ -46,7 +46,7 @@
       JDBC drivers as conduits for all interactions. These drivers intercept all invocations and ensure that they are
       registered with, and driven by, appropriate transactions. The driver
       <classname>com.arjuna.ats.jdbc.TransactionalDriver</classname> handles all JDBC drivers, implementing the
-      <interfacename>java.sql.Driver</interfacename> interface. If the database is not transactiona, ACID properties
+      <interfacename>java.sql.Driver</interfacename> interface. If the database is not transactional, ACID properties
       cannot be guaranteed.
     </para>
     <section>
@@ -62,7 +62,7 @@
         <xi:include href="extras/registering_transactionaldriver_using_jdbc_driver_manager.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         <para>
           The jdbc.drivers property contains a colon-separated list of driver class names, which the JDBC driver manager
-          loads when it is initialized.  After the driver is loaded, you can use it to make a connection wtih a
+          loads when it is initialized.  After the driver is loaded, you can use it to make a connection with a
           database.
         </para>
       </example>
@@ -82,7 +82,7 @@
     <title>Connections</title>
     <para>
       Because JBossJTA provides JDBC connectivity via its own JDBC driver, application code can support transactions
-      witho relatively small code chnges. Typically, the application programmer only needs to start and terminate
+      with relatively small code changes. Typically, the application programmer only needs to start and terminate
       transactions.
     </para>
     <section>
@@ -143,7 +143,7 @@
       </para>
       <para>
         JBossJTA JDBC support can obtain XADataSources through the Java Naming and Directory Interface (JNDI) or dynamic
-        class instnatiation.
+        class instantiation.
       </para>
       <section>
         <title>Java naming and directory interface (JNDI)</title>
@@ -174,7 +174,7 @@
           <xi:include href="extras/passing_connection_url_to_jdbc.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
           <para>
             The JNDI URL must be pre-pended with <literal>jdbc:arjuna:</literal> in order for the TransactionalDriver to
-            recognise that the DataSource must participate within transactions and be driven accordingly.
+            recognize that the DataSource must participate within transactions and be driven accordingly.
           </para>
         </example>
       </section>
@@ -251,7 +251,7 @@
       <para>
         For each user name and password, JBossJTA maintains a single instance of each connection for as long as that
         connection is in use. Subsequent requests for the same connection get a reference to the original connection,
-        rather than a new instance. Yuo can try to close the connection, but the connection will only actually be closed
+        rather than a new instance. You can try to close the connection, but the connection will only actually be closed
         when all users (including transactions) have either finished with the connection, or issued
         <methodname>close</methodname> calls.
       </para>

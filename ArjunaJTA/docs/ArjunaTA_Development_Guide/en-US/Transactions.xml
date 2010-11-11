@@ -90,7 +90,7 @@
       The <interfacename>TransactionManager</interfacename> maintains the transaction context association with threads
       as part of its internal data structure. A thread’s transaction context may be <literal>null</literal> or it may
       refer to a specific global transaction. Multiple threads may be associated with the same global transaction. As
-      noted in <xref linkend="UserTransaction_definition" />, nested transactions are not supported.
+      noted in <xref linkend="UserTransaction_Definition" />, nested transactions are not supported.
     </para>
     <para>
       Each transaction context is encapsulated by a Transaction object, which can be used to perform operations which
@@ -282,7 +282,8 @@
     <para>
       Transaction synchronization allows the application server to be notified before and after the transaction
       completes. For each transaction started, the application server may optionally register a
-      <type>Synchronization</type> call-back object to be invoked by the transaction manager, which will be one of the following:
+      <type>Synchronization</type> call-back object to be invoked by the transaction manager, which will be one of the
+      following:
     </para>
     <informaltable>
       <tgroup cols="2">
