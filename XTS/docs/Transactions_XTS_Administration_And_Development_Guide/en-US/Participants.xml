@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Programmers_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Administration_And_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
@@ -542,9 +542,9 @@
       </para>
       <para>
         After the XTS service starts, it creates an instance of the application class
-        <classname>org.my.ServiceBean</classname> by calling its <methodname>start</methodname>
-        method. During &APPSERVER; shutdown, XTS stops the same instance by calling its <methodname>stop</methodname>
-        method, prior to shutting down the XTS Service.
+        <classname>org.my.ServiceBean</classname> by calling its <methodname>start</methodname> method. During
+        &APPSERVER; shutdown, XTS stops the same instance by calling its <methodname>stop</methodname> method, prior to
+        shutting down the XTS Service.
       </para>
         <example id="example-jboss-beans.xml">
           <title>Example <filename>jboss-beans.xml</filename></title>
