@@ -26,7 +26,14 @@
 		JBossTS Transaction Bridge Test Suite
 	</description>
 
+    <property name="jboss.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT"/>
+    
     <property name="jbossts.home" location="../.."/>
+    <property name="byteman.home" location="${jbossts.home}/build/extlib"/>
+
+    <property name="java.home" location="/usr/local/jdk1.6.0_22/"/>
+
+    <!-- ######################################################################### -->
 
 	<property name="src" location="src"/>
     <property name="dd" location="dd"/>
@@ -40,6 +47,7 @@
             <include name="jboss-ejb-api_3.1_spec.jar"/>
             <include name="junit.jar"/>
             <include name="commons-httpclient.jar"/>
+            <include name="commons-logging.jar"/>
             <include name="commons-codec.jar"/>
             <include name="jboss-server-manager.jar"/>
             <include name="jboss-logging.jar"/>
@@ -59,6 +67,8 @@
         </fileset>
 
         <pathelement location="../build/txbridge.jar"/>
+
+        <pathelement location="${jboss.home}/client/jboss-system-client.jar"/>
 
         <!--<pathelement location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/client/jboss-system-client.jar"/>-->
 
@@ -131,7 +141,7 @@
         (XTS, txbridge, test -client and -service) to be deployted in it. Additionally,
         the AS needs to be running with byteman installed e.g.
 
-        export JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Xmx1024m -javaagent:/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar=port:9091,listener:true -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true"
+        export JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Xmx1024m -javaagent:/home/jhalli/IdeaProjects/jboss/jbossts_trunk/build/extlib/byteman.jar=port:9091,listener:true,sys:/home/jhalli/IdeaProjects/jboss/jbossts_trunk/build/extlib/byteman-dtest.jar -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true -Dorg.jboss.byteman.contrib.dtest.rmiregistry.port=1199"
     -->
 
 
@@ -193,6 +203,10 @@
                 <tests/>
             </batchtest>
 
+            <jvmarg value="-DJAVA_HOME=${java.home}"/>
+            <jvmarg value="-DJBOSS_HOME=${jboss.home}"/>
+            <jvmarg value="-DBYTEMAN_HOME=${byteman.home}"/>
+
             <jvmarg value="-Djava.rmi.server.codebase=file://build/classes/"/>
             <!--<jvmarg value="-Xdebug"/>-->
             <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>-->
@@ -202,34 +216,33 @@
 
     </macrodef>
 
-    <!-- ##################################################################################### -->
+    <!-- ######################################################################### -->
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT"/>
     <property name="jbossas.server" value="default"/>
 
     <target name="deploy-inbound-service" depends="dist" description="deploy EJB to JBossAS">
         <copy file="${build.dir}/txbridge-inbound-tests-service.jar"
-              todir="${jbossas.home}/server/${jbossas.server}/deploy"
+              todir="${jboss.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <!-- http://localhost:8080/txbridge-inbound-tests-client/testclient -->
     <target name="deploy-inbound-client" depends="dist" description="deploy Servlet to JBossAS">
         <copy file="${build.dir}/txbridge-inbound-tests-client.war"
-              todir="${jbossas.home}/server/${jbossas.server}/deploy"
+              todir="${jboss.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <target name="deploy-outbound-service" depends="dist" description="deploy WS to JBossAS">
         <copy file="${build.dir}/txbridge-outbound-tests-service.war"
-              todir="${jbossas.home}/server/${jbossas.server}/deploy"
+              todir="${jboss.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 
     <!-- http://localhost:8080/txbridge-outbound-tests-client/testclient -->
     <target name="deploy-outbound-client" depends="dist" description="deploy Servlet to JBossAS">
         <copy file="${build.dir}/txbridge-outbound-tests-client.war"
-              todir="${jbossas.home}/server/${jbossas.server}/deploy"
+              todir="${jboss.home}/server/${jbossas.server}/deploy"
               overwrite="true"/>
     </target>
 

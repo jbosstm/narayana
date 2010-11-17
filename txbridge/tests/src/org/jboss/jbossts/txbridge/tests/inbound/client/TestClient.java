@@ -64,7 +64,7 @@ public class TestClient extends HttpServlet
         try
         {
             URL wsdlLocation = new URL("http://localhost:8080/txbridge-inbound-tests-service/TestServiceImpl?wsdl");
-            QName serviceName = new QName("http://service.inbound.tests.txbridge.jbossts.jboss.org/", "TestServiceImplService");
+            QName serviceName = new QName("http://client.inbound.tests.txbridge.jbossts.jboss.org/", "TestServiceImplService");
 
             Service service = Service.create(wsdlLocation, serviceName);
             testService = service.getPort(TestService.class);

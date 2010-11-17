@@ -34,4 +34,4 @@ See docs/TransactionBridgingGuide for further details on the demo app.
 Testing:
 --------
 
-See tests/README.txt
+See docs/TransactionBridgingGuide - test framework section in the design notes appendix.

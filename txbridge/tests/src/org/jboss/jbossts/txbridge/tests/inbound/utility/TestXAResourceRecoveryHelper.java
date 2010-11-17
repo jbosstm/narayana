@@ -185,6 +185,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper
         String parentDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
         String childDir = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
         File logDir = new File(parentDir, childDir);
+        logDir.mkdirs();
         File logFile = new File(logDir, "TestXAResource.ser");
         return logFile;        
     }

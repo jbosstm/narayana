@@ -62,9 +62,12 @@ public class CrashRecoveryTests
     private InstrumentedClass instrumentedTestSynchronization;
     private InstrumentedClass instrumentedTestXAResource;
     
-
     private static final ServerManager manager = new ServerManager(); // ASTestConfig.java/ServerTask.java
     private static final Argument bytemanArgument = new Argument();
+
+    private static String jboss_home;
+    private static String java_home;
+    private static String byteman_home;
 
     /*
 -Xdebug
@@ -82,12 +85,36 @@ public class CrashRecoveryTests
     public static void beforeClass() throws Exception {
         instrumentor = new Instrumentor(new Submit(), 1199);
 
-        manager.setJbossHome("/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/");
-        manager.setJavaHome("/usr/local/jdk1.6.0_20/");
+        jboss_home = System.getProperty("JBOSS_HOME");
+        if(jboss_home == null) {
+            throw new IllegalStateException("no JBOSS_HOME defined");
+        }
+        File jbossHomeDirectory = new File(jboss_home);
+        if(!jbossHomeDirectory.exists() || !jbossHomeDirectory.isDirectory()) {
+            throw new IllegalStateException("invalid JBOSS_HOME");
+        }
+        manager.setJbossHome(jboss_home);
 
-//        byteman.jar=script:$SCRIPT_HOME/HeuristicSaveAndRecover.txt
+        java_home = System.getProperty("JAVA_HOME");
+        if(java_home == null) {
+            throw new IllegalStateException("no JAVA_HOME defined");
+        }
+        File javaHomeDir = new File(java_home);
+        if(!javaHomeDir.exists() || !javaHomeDir.isDirectory()) {
+            throw new IllegalStateException("invalid JAVA_HOME");
+        }
+        manager.setJavaHome(java_home);
 
+        byteman_home = System.getProperty("BYTEMAN_HOME");
+        if(byteman_home == null) {
+            throw new IllegalStateException("no BYTEMAN_HOME defined");
+        }
+        File bytemanHomeDir = new File(byteman_home);
+        if(!bytemanHomeDir.exists() || !bytemanHomeDir.isDirectory()) {
+            throw new IllegalStateException("invalid BYTEMAN_HOME");
+        }
 
+        
         Server server = new Server();
         server.setName("default");
 
@@ -102,6 +129,10 @@ public class CrashRecoveryTests
         Argument arg4 = new Argument();
         arg4.setValue("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006");
         server.addJvmArg(arg4);
+
+        Argument arg5 = new Argument();
+        arg5.setValue("-XX:MaxPermSize=256m"); // caution: JVM specific
+        server.addJvmArg(arg5);
 
         Property property1 = new Property();
         property1.setKey("org.jboss.byteman.debug");
@@ -123,8 +154,8 @@ public class CrashRecoveryTests
     @Before
     public void setUp() throws Exception {
 
-        bytemanArgument.setValue("-javaagent:/home/jhalli/IdeaProjects/jboss/byteman_trunk/install/lib/byteman.jar=port:9091,listener:true,sys:/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar");
-        removeContents(new File("/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT/server/default/data/tx-object-store/"));
+        bytemanArgument.setValue("-javaagent:"+byteman_home+"/byteman.jar=port:9091,listener:true,sys:"+byteman_home+"/byteman-dtest.jar");
+        removeContents(new File(jboss_home, "server/default/data/tx-object-store/"));
 
 
         // TODO: fix JMXAdapter leak.

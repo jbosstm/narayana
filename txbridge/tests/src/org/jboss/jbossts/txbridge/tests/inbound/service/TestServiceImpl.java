@@ -42,21 +42,20 @@ import javax.transaction.xa.XAException;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
  */
 @Stateless
-@Remote(TestService.class)
-@WebService()
+@WebService(targetNamespace = "http://client.inbound.tests.txbridge.jbossts.jboss.org/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @HandlerChain(file = "jaxws-handlers-server.xml") // relative path from the class file
 @TransactionAttribute(TransactionAttributeType.MANDATORY) // default is REQUIRED
-public class TestServiceImpl implements TestService
+public class TestServiceImpl
 {
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
 
-    @Override
     @WebMethod
     public void doNothing() {
         log.trace("doNothing()");
     }
 
+    @WebMethod(exclude = true)
     public void enlistSynchronization(int count) {
         TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
         try {
@@ -69,6 +68,7 @@ public class TestServiceImpl implements TestService
         }
     }
 
+    @WebMethod(exclude = true)
     public void enlistXAResource(int count) {
         TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
         try {

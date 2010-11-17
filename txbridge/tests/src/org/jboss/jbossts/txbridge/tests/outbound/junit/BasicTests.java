@@ -52,7 +52,7 @@ public class BasicTests
     @BeforeClass
     public static void beforeClass() throws Exception {
         instrumentor = new Instrumentor(new Submit(), 1199);
-        instrumentor.installHelperJar("/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar");
+        //instrumentor.installHelperJar("/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar");
     }
 
     @Before

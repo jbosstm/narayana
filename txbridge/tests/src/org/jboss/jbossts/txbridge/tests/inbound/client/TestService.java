@@ -22,13 +22,14 @@ package org.jboss.jbossts.txbridge.tests.inbound.client;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.WebServiceClient;
 
 /**
  * Interface for a web service used by txbridge test cases. Client side version.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
  */
-@WebService
+@WebService(name="TestServiceImpl", targetNamespace = "http://client.inbound.tests.txbridge.jbossts.jboss.org/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface TestService
 {
