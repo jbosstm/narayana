@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<preface id="pref-ArjunaJTS_Development_Guide-Preface">
+   <title>Preface</title>
+   
+   <section>
+     <title>Audience</title>
+     <para>
+       This guide is specifically intended for service developers using JBoss Transactions. It is also contains useful
+       information about how transactional applications work in general.
+     </para>
+     
+   </section>
+   
+   <section>
+     <title>Prerequisities</title>
+     <para>
+       To understand this guide, you need a basic familiarity with Java service development and object-oriented
+       programming.
+     </para>
+     <itemizedlist>
+       <title>Other helpful knowledge</title>
+       <listitem>
+         <para>
+           A general understanding of the APIs, components, and objects that are present in Java applications.
+         </para>
+       </listitem>
+       <listitem>
+         <para>
+           A general understanding of Linux, UNIX, or Microsoft Windows server.
+         </para>
+       </listitem>
+     </itemizedlist>
+   </section>
+
+   <xi:include href="Common_Content/Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude"><xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="Common_Content/Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   </xi:fallback>
+   </xi:include>
+</preface>
+
