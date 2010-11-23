@@ -31,8 +31,8 @@ import javax.servlet.ServletContextListener;
 
 /**
  * A service bean used to run XTS service tests at JBoss startup. A specific test is configurerd by setting an
- * environment variable. It will normally execute in a JVM configured to use the TOAST agent and an appropriately
- * defined TOAST rule set.
+ * environment variable. It will normally execute in a JVM configured to use the Byteman agent and an appropriately
+ * defined Byteman rule set.
  */
 
 public class XTSServiceTestRunnerBean

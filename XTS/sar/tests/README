@@ -23,10 +23,10 @@ located in another AS. System properties would be used to specify the
 URL of the client and the URL of the remote coordinator service.
 
 Finally, the test code is expected to be used in conjunction with the
-TOAST test automation tool in order to i) trace subsequent execution
+Byteman test automation tool in order to i) trace subsequent execution
 of the test and ii) force the available standard WSAT or WSBA
 execution scenarios to follow error paths or suffer delays or
-crashes. So, continuing the example above a TOAST script might be used
+crashes. So, continuing the example above a Byteman script might be used
 to crash the coordinator AS at commit. Another script might be used to
 trace execution of the coordinator host at reboot, detecting whether
 or not the recovery code successfully completes the transaction. A
@@ -104,10 +104,10 @@ interface XTSServiceTest. These are located in package
 
   org.jboss.jbossts.xts.servicetests.test
 
-TOAST Scripts
+Byteman Scripts
 -------------
 
-TOAST Scripts which can be used in conjunction with the XTS Service
+Byteman Scripts which can be used in conjunction with the XTS Service
 Tests are located in directory
 
   dd/scripts
@@ -173,24 +173,24 @@ Note also that where the client is colocated with the coordinator or
 participant when testing coordinator or participant crash recovery it
 is usually necessary to *unset* this property when rebooting the
 crashed AS. (Re-)running the client while the recovery code is doing
-its stuff is usually inappropriate, especially if TOAST is still
+its stuff is usually inappropriate, especially if Byteman is still
 configured to cause a crash when the client tries to commit.
 
-The TOAST agent needs to be deployed as a JVM agent supplied with a
+The Byteman agent needs to be deployed as a JVM agent supplied with a
 handle on the relevant script file.  This is done by supplying the
 relevant command line option to teh JVM when starting the AS.
 
-  export JAVA_OPTS="$JAVA_OPTS -javaagent:${TOASTSVN}/workspace/adinn/orchestration/build/lib/orchestration.jar=script:${JBOSSTSSVN}/XTS/trunk/sar/tests/dd/scripts/<script>"
+  export JAVA_OPTS="$JAVA_OPTS -javaagent:${BytemanSVN}/workspace/adinn/orchestration/build/lib/orchestration.jar=script:${JBOSSTSSVN}/XTS/trunk/sar/tests/dd/scripts/<script>"
 
-where ${TOASTSVN} and ${JBOSSTSSVN} identify the directories into
-which the svn tree for the TOAST/jbossts code have been checked out
+where ${BytemanSVN} and ${JBOSSTSSVN} identify the directories into
+which the svn tree for the Byteman/jbossts code have been checked out
 and <script> shoudl be substituted witht the relevant script name.
 
-Other command line properties configuring the operation of TOAST which
+Other command line properties configuring the operation of Byteman which
 may be of use are:
 
  -Dorg.jboss.jbossts.orchestration.dump.generated.classes=yes
  -Dorg.jboss.jbossts.orchestration.dump.generated.classes.directory=<dir>
  -Dorg.jboss.jbossts.orchestration.verbose=<any_value_will_do>
 
-See the TOAST manual for more details.
+See the Byteman manual for more details.
