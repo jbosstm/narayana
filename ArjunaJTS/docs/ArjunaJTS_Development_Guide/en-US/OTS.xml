@@ -4,6 +4,291 @@
 %BOOK_ENTITIES;
 ]>
 <chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
-  <title></title>
+  <title>Introduction to the OTS</title>
+  <para>
+
+  </para>
+
+  
+  <section>
+    <title>Defining the OTS</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
+  <section>
+    <title>Action programming models</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
+  <section>
+    <title>Interfaces</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
+  <section>
+    <title>Transaction factory</title>
+    <para>
+      
+    </para>
+
+    <section>
+      <title>OTS configuration file</title>
+      <para>
+        
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Name service</title>
+      <para>
+        
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>resolve_initial_references</title>
+      <para>
+        
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Overriding the default location mechanisms</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+  
+  <section>
+    <title>Transaction timeouts</title>
+    <para>
+      
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>Transaction contexts</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>Nested transactions</title>
+      <para>
+        
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Transaction propagation</title>
+      <para>
+        
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Examples</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>Transaction controls</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+  
+  <section>
+    <title>The <interfacename>Terminator</interfacename> interface</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>The <interfacename>Coordinator</interfacename> interface</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>Heuristics</title>
+    <para>
+      
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>Current</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>Resource</title>
+    <para>
+      
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>SubtransactionAwareResource</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+  
+  <section>
+    <title>The <interfacename>Synchronization</interfacename> interface</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>Transactions and registered resources</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
+  <section>
+    <title>The <interfacename>TransactionalObject</interfacename> interface</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+  
+  <section>
+    <title>Interposition</title>
+    <para>
+      
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>RecoveryCoordinator</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
+  <section>
+    <title>Checked transaction behavior</title>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title>JBossTS specifics</title>
+      <para>
+        
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section>
+    <title>Summary of JBossTS implementation decisions</title>
+    <para>
+      
+    </para>
+    
+  </section>
+
 </chapter>
 
