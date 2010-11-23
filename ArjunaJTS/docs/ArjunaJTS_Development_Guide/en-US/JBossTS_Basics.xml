@@ -4,6 +4,370 @@
 %BOOK_ENTITIES;
 ]>
 <chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
-  <title></title>
+  <title>JBossTS Basics</title>
+    
+  <section>
+    <title>Introduction</title>
+    <para>
+      JBossTS is based upon the original Arjuna system developed at the University of Newcastle between 1986 and
+      1995. Arjuna predates the OTS specification and includes many features not found in the OTS. JBossTS is a
+      superset of the OTS. Applications written using the standard OTS interfaces are portable across OTS
+      implementations.
+    </para>
+    <itemizedlist>
+      <title>JBossTS features in terms of OTS specifications</title>
+      <listitem>
+        <para>
+          full draft 5 compliance, with support for Synchronization objects and PropagationContexts.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          support for subtransactions.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          implicit context propagation where support from the ORB is available.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          support for multi-threaded applications.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          fully distributed transaction managers, i.e., there is no central transaction manager, and the creator of a
+          top-level transaction is responsible for its termination. Separate transaction manager support is also
+          available, however.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          transaction interposition.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          X/Open compliance, including checked transactions. This checking can optionally be disabled. Note: checked
+          transactions are disabled by default, i.e., any thread can terminate a transaction.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          JDBC support.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Full JTA 1.1 support.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      You can use JBossTS in three different levels, which correspond to the sections in this chapter, and are each
+      explored in their own chapters as well.
+    </para>
+    <para>
+      Because of differences in ORB implementations, JBossTS uses a separate ORB Portability library which acts as an
+      abstraction later. Many of the examples used throughout this manual use this library. Refer to the ORB
+      Portability Manual for more details.
+    </para>
+
+    
+    <section>
+      <title>Raw OTS</title>
+      <para>
+        The OTS is only a protocol engine for driving registered resources through a two-phase commit protocol. You are
+        responsible for building and registering the <interfacename>Resource</interfacename> objects which handle
+        persistence and concurrency control, ensuri ACID properties for transactional application objects. You need to
+        register <interfacename>Resources</interfacename> at appropriate times, and ensure that a given
+        <interfacename>Resource</interfacename> is only registered within a single transaction. Programming at the raw
+        OTS level is extremely basic. You as the programmer are responsible for almost everything to do with
+        transactions, including managing persistence and concurrency control on behalf of every transactional object.
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Enhanced OTS functionality</title>
+      <para>
+        The OTS implementation of nested transactions is extremely limited, and can lead to the generation of heuristic
+        results. An example of such a result is when a subtransaction coordinator discovers part of the way through
+        committing that some resources cannot commit, but being unable to tell the committed resources to abort. JBossTS
+        allows nested transactions to execute a full two-phase commit protocol, which removes the possibility that some
+        resources will comment while others roll back.
+      </para>
+      <para>
+        When resources are registered with a transaction, you have no control over the order in which these resources
+        are invoked during the commit/abort protocol. For example, if previously registered resources are replaced with
+        newly registered resources, resources registered with a subtransaction are merged with the subtraction's
+        parent. JBossTS provides an additional Resource subtype which you this level of control.
+      </para>
+      
+    </section>
+    
+    <section>
+      <title>Advanced API</title>
+      <para>
+        The OTS does not provide any <interfacename>Resource</interfacename> implementations. You are responsible for
+        implementing these interfaces. The interfaces defined within the OTS specification are too low-level for most
+        application programmers. Therefore, JBossTS includes <application>Transactional Objects for Java
+        (TXOJ)</application>, which makes use of the raw Common Object Services interfaces but provides a higher-level
+        API for building transactional applications and frameworks. This API automates much of the activities concerned
+        with participating in an OTS transaction, freeing you to concentrate on application development, rather than
+        transactions.
+      </para>
+      <para>
+        The architecture of the system is shown in Figure 2. The API interacts with the concurrency control and
+        persistence services, and automatically registers appropriate resources for transactional objects. These
+        resources may also use the persistence and concurrency services.
+      </para>
+      <para>
+        JBossTS exploits object-oriented techniques to provide you with a toolkit of Java classes which are inheritable
+        by application classes, to obtain transactional properties. These classes form a hierarchy, illustrated in <xref
+        linkend="jbossts-class-hierarchy" />.
+      </para>
+      <figure id="jbossts-class-hierarchy">
+        <title>JBossTS class hierarchy</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/jbossts-class-hierarchy.png" format="PNG"/>
+          </imageobject>
+          <textobject>
+            <para>JBossTS class hierarchy</para>
+          </textobject>
+        </mediaobject>
+      </figure>
+      <para>
+        Your main responsibilities are specifying the scope of transactions and setting appropriate locks within
+        objects. JBossTS guarantees that transactional objects will be registered with, and be driven by, the
+        appropriate transactions. Crash recovery mechanisms are invoked automatically in the event of failures. When
+        using the provided interfaces, you do not need to create or register <classname>Resource</classname> objects or
+        call services controlling persistence or recovery.  If a transaction is nested, resources are automatically
+        propagated to the transaction’s parent upon commit.
+      </para>
+      <para>
+        The design and implementation goal of JBossTS was to provide a programming system for constructing
+        fault-tolerant distributed applications. Three system properties were considered highly important:
+      </para>
+      <informaltable>
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>Integration of Mechanisms</entry>
+              <entry>
+                <para>
+                  Fault-tolerant distributed systems require a variety of system functions for naming, locating and
+                  invoking operations upon objects, as well as for concurrency control, error detection and recovery from
+                  failures. These mechanisms are integrated in a way that is easy for you to use.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>Flexibility</entry>
+              <entry>
+                <para>
+                  Mechanisms must be flexible, permitting implementation of application-specific enhancements, such as
+                  type-specific concurrency and recovery control, using system defaults.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>Portability</entry>
+              <entry>
+                <para>
+                  You need to be able to run JBossTS on any ORB.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        JBossTS is implemented in Java and extensively uses the type-inheritance facilities provided by the language to
+        provide user-defined objects with characteristics such as persistence and recoverability.
+      </para>
+    </section>
+  </section>
+
+  
+  <section>
+    <title>JBossTS and the OTS implementation</title>
+    <para>
+      The OTS specification is written with flexibility in mind, to cope with different
+      application requirements for transactions. JBossTS supports all optional parts of the OTS specification. In
+      addition, if the specification allows functionality to be implemented in a variety of different ways, JBossTS
+      supports all possible implementations.
+    </para>
+    <table>
+      <title>JBossTS implementation of OTS specifications</title>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>OTS specification</entry>
+            <entry>JBossTS default implementation</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>
+                If the transaction service chooses to restrict the availability of the transaction context, then it
+                should raise the <systemitem>Unavailable</systemitem> exception.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS does not restrict the availability of the transaction context.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                An implementation of the transaction service need not initialize the transaction context for every
+                request.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS only initializes the transaction context if the interface supported by the target object extends
+                the <interfacename>TransactionalObject</interfacename> interface.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                An implementation of the transaction service may restrict the ability for the
+                <classname>Coordinator</classname>, <classname>Terminator</classname>, and
+                <classname>Control</classname> objects to be transmitted or used in other execution environments to
+                enable it to guarantee transaction integrity.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS does not impose restrictions on the propagation of these objects.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                The transaction service may restrict the termination of a transaction to the client that started it.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS allows the termination of a transaction by any client that uses the
+                <interfacename>Terminator</interfacename> interface. In addition, JBossTS does not impose restrictions
+                when clients use the <interfacename>Current</interfacename> interface.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                A <classname>TransactionFactory</classname> is located using the
+                <interfacename>FactoryFinder</interfacename> interface of the life-cycle service.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS provides multiple ways in which the <classname>TransactionFactory</classname> can be located.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                A transaction service implementation may use the Event Service to report heuristic decisions.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS does not use the Event Service to report heuristic decisions.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                An implementation of the transaction service does not need to support nested transactions.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS supports nested transactions.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                <classname>Synchronization</classname> objects must be called whenever the transaction commits.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS allows <classname>Synchronizations</classname> to be called no matter what state the transaction
+                terminates with.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                A transaction service implementation is not required to support interposition.
+              </para>
+            </entry>
+            <entry>
+              <para>
+                JBossTS supports various types of interposition.
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+  
+  <section>
+    <title>Thread class</title>
+    <para>
+      JBossTS is fully multi-threaded and supports the OTS notion of allowing multiple threads to be active within a
+      transaction, and for a thread to execute multiple transactions. A thread can only be active within a single
+      transaction at a time, however. By default, if a thread is created within the scope of a transaction, the new
+      thread is not associated with the transaction. If the thread needs to be associated with the transaction, use the
+      <methodname>resume</methodname> method of either the <classname>AtomicTransaction</classname> class or the
+      <classname>Current</classname> class.
+    </para>
+    <para>
+      However, if newly created threads need to automatically inherit the transaction context of their
+      parent, then they should extend the <classname>OTS_Thread</classname> class.
+    </para>
+    <example>
+      <title>Extending the <classname>OTS_Thread</classname> class</title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/OTS_Thread.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      Call the <methodname>run</methodname> method of <classname>OTS_Thread</classname> at the start of the application
+      thread class's <methodname>run</methodname> method. Call <methodname>terminate</methodname> before you exit the
+      body of the application thread’s <methodname>run</methodname> method.
+    </para>
+  </section>
+  
+  <section>
+    <title>ORB portability issues</title>
+    <para>
+      Although the CORBA specification is a standard, it is written so that an ORB can be implemented in multiple
+      ways. As such, writing portable client and server code can be difficult. Because JBossTS has been ported to most
+      of the widely available ORBs, it includes a series of ORB Portability classes and macros. If you write your
+      application using these classes, it should be mostly portable between different ORBs. These classes are described
+      in the separate ORB Portability Manual.
+    </para>
+  </section>
 </chapter>
 
