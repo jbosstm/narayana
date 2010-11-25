@@ -125,6 +125,7 @@ public class ExpiredEntryMonitor extends Thread
 
   private ExpiredEntryMonitor(boolean skipFirst)
   {
+      super ("Transaction Expired Entry Monitor");
     if (tsLogger.logger.isDebugEnabled()) {
         tsLogger.logger.debug("ExpiredEntryMonitor - constructed");
     }

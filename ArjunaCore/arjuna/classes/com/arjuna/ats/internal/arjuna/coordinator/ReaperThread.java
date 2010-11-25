@@ -50,6 +50,7 @@ public class ReaperThread extends Thread
 
 public ReaperThread (TransactionReaper arg)
     {
+        super("Transaction Reaper");
 	reaperObject = arg;
 	sleepPeriod = reaperObject.checkingPeriod();
 	_shutdown = false;

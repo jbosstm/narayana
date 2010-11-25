@@ -35,9 +35,15 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 public class ReaperWorkerThread extends Thread
 {
+    /**
+     * counter used to number reaper worker threads
+     */
+    private static int counter = 0;
 
     public ReaperWorkerThread (TransactionReaper arg)
     {
+        // no need for synchronization when doing the increment here as worker threads are not created in parallel.
+        super("Transaction Reaper Worker " + counter++);
         _theReaper = arg;
         _shutdown = false;
     }

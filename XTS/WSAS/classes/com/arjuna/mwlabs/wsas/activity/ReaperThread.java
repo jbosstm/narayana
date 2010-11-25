@@ -46,6 +46,7 @@ public class ReaperThread extends Thread
 
     public ReaperThread (ActivityReaper arg)
     {
+        super("XTS Activity Reaper");
 	_reaperObject = arg;
 	_sleepPeriod = 0;
 	_shutdown = false;
