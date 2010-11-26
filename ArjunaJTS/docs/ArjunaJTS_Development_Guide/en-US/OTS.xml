@@ -6,52 +6,300 @@
 <chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
   <title>Introduction to the OTS</title>
   <para>
-
+    Basic JBossTS programming involves using the OTS interfaces provided in the <systemitem>CosTransactions</systemitem>
+    module, which is specified in <filename>CosTransactions.idl</filename>. This chapter is based on the <systemitem>OTS
+    Specification1</systemitem>, specifically with the aspects of OTS that are valuable for developing OTS applications
+    using JBossTS. Where relevant, each section describes JBossTS implementation decisions and runtime choices available
+    to you. These choices are also summarised at the end of this chapter. Subsequent chapters illustrate using these
+    interfaces to construct transactional applications.
   </para>
 
   
   <section>
     <title>Defining the OTS</title>
     <para>
-      
+      The raw <interfacename>CosTransactions</interfacename> interfaces reside in package
+      <package>org.omg.CosTransactions</package>. The JBossTS implementations of these interfaces reside in package
+      <package>com.arjuna.CosTransactions</package> and its sub-packages.
     </para>
-    
+    <para>
+      You can override many run-time decisions of JBossTS Java properties specified at run-time. The property names are
+      mentioned in the <classname>com.arjuna.ats.jts.common.Environment</classname> class.
+    </para>
+    <figure>
+      <title>OTS architecture</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/ots_architecture.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>OTS architecture</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+
   </section>
 
   <section>
     <title>Action programming models</title>
     <para>
-      
+      A client application program can manage a transiction using direct or indirect context management.
     </para>
-    
+    <itemizedlist>
+      <listitem>
+        <para>
+          <firstterm>Indirect context management</firstterm> means that an application uses the pseudo-object
+          <classname>Current</classname>, provided by the Transaction Service, to associate the transaction context with
+          the application thread of control.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          For <firstterm>direct context management</firstterm>, an application manipulates the
+          <classname>Control</classname> object and the other objects associated with the transaction.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      An object may require transactions to be either explicitly or implicitly propagated to its operations.
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <firstterm>Explicit propagation</firstterm> means that an application propagates a transaction context by
+          passing objects defined by the Transaction Service as explicit parameters. Typically the object is the
+          <classname>PropagationContext</classname> structure.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <firstterm>Implicit propagation</firstterm> means that requests are implicitly associated with the client’s
+          transaction, by sharing the client's transaction context. The context is transmitted to the objects without
+          direct client intervention. Implicit propagation depends on indirect context management, since it propagates
+          the transaction context associated with the <classname>Current</classname> pseudo-object. An object that
+          supports implicit propagation should not receive any Transaction Service object as an explicit parameter.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      A client may use one or both forms of context management, and may communicate with objects that use either method
+      of transaction propagation. This results in four ways in which client applications may communicate with
+      transactional objects:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>Direct Context Management/Explicit Propagation</term>
+        <listitem>
+          <para>
+            The client application directly accesses the <classname>Control</classname> object, and the other objects
+            which describe the state of the transaction. To propagate the transaction to an object, the client must
+            include the appropriate Transaction Service object as an explicit parameter of an operation. Typically, the
+            object is the <classname>PropagationContext</classname> structure.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Indirect Context Management/Implicit Propagation</term>
+        <listitem>
+          <para>
+            The client application uses operations on the <classname>Current</classname> pseudo-object to create and
+            control its transactions. When it issues requests on transactional objects, the transaction context
+            associated with the current thread is implicitly propagated to the object.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Indirect Context Management/Explicit Propagation</term>
+        <listitem>
+          <para>
+            for an implicit model application to use explicit propagation, it can get access to the Control using the
+            get_control operation on the Current pseudo object. It can then use a Transaction Service object as an
+            explicit parameter to a transactional object; for efficiency reasons this should be the PropagationContext
+            structure, obtained by calling get_txcontext on the appropriate Coordinator reference. This is explicit
+            propagation.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Direct Context Management/Implicit Propagation</term>
+        <listitem>
+          <para>
+            A client that accesses the Transaction Service objects directly can use the <methodname>resume</methodname>
+            pseudo-object operation to set the implicit transaction context associated with its thread. This way, the
+            client can invoke operations of an object that requires implicit propagation of the transaction context.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      The main difference between direct and indirect context management is the effect on the invoking thread’s
+      transaction context. Indirect context management causes the thread’s transaction context to be modified
+      automatically by the OTS. For instance, if method <methodname>begin</methodname> is called, the thread’s notion of
+      the current transaction is modified to the newly-created transaction. When the transaction is terminated, the
+      transaction previously associated with the thread, if one existed, is restored as the thread’s context. This
+      assumes that subtransactions are supported by the OTS implementation.
+    </para>
+    <para>
+      If you use direct management, no changes to the thread's transaction context are made by the OTS, leaving the
+      responsibility to you.
+    </para>
   </section>
 
   <section>
     <title>Interfaces</title>
-    <para>
-      
-    </para>
-    
+    <table>
+      <title>Interfaces</title>
+      <tgroup cols="4">
+        <thead>
+          <row>
+            <entry>Function</entry>
+            <entry>Used by</entry>
+            <entry>Direct context management</entry>
+            <entry>Indirect1 context management</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>Create a transaction</entry>
+            <entry>Transaction originator</entry>
+            <entry><methodname>Factory::create</methodname><para><methodname>Control::get_terminator</methodname></para> <para><methodname>Control::get_coordinator</methodname></para></entry>
+            <entry>begin,set_timeout</entry>
+          </row>
+          <row>
+            <entry>Terminate a transaction</entry>
+            <entry><para>Transaction originator—implicit</para><para>All—explicit</para></entry>
+            <entry><para><methodname>Terminator::commit</methodname></para><para><methodname>Terminator::rollback</methodname></para></entry>
+            <entry>commit rollback</entry>
+          </row>
+          <row>
+            <entry>Rollback a transaction</entry>
+            <entry>Server</entry>
+            <entry><para><methodname>Terminator::rollback_only</methodname></para></entry>
+            <entry><para><methodname>rollback_only</methodname></para></entry>
+          </row>
+          <row>
+            <entry>Control propagation of transaction to a server</entry>
+            <entry>Server</entry>
+            <entry>Declaration of method parameter</entry>
+            <entry><para><interfacename>TransactionalObject</interfacename> interface</para></entry>
+          </row>
+          <row>
+            <entry>Control by client of transaction propagation to a server</entry>
+            <entry>All</entry>
+            <entry>Request parameters</entry>
+            <entry><para><methodname>get_control</methodname></para><para><methodname>suspend</methodname></para><para><methodname>resume</methodname></para></entry>
+          </row>
+          <row>
+            <entry>Become a participant in a transaction</entry>
+            <entry>Recoverable Server</entry>
+            <entry><para><methodname>Coordinator::register_resource</methodname></para></entry>
+            <entry>Not applicable</entry>
+          </row>
+          <row>
+            <entry>Miscellaneous</entry>
+            <entry>All</entry>
+            <entry><para><methodname>Coordinator::get_status</methodname></para><para><methodname>Coordinator::get_transaction_name</methodname></para><para><methodname>Coordinator::is_same_transaction</methodname></para><para><methodname>Coordinator::hash_transaction</methodname></para></entry>
+            <entry><para><methodname>get_status</methodname></para><para><methodname>get_transaction_name</methodname></para><para><methodname>Not applicable</methodname></para><para><methodname>Not applicable</methodname></para></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <note>
+      <para>
+        For clarity, subtransaction operations are not shown
+      </para>
+    </note>
   </section>
 
   <section>
     <title>Transaction factory</title>
     <para>
-      
+      The <interfacename>TransactionFactory</interfacename> interface allows the transaction originator to begin a
+      top-level transaction. Subtransactions must be created using the <methodname>begin</methodname> method of
+      <classname>Current</classname>, or the <methodname>create_subtransaction</methodname> method of the parent’s
+      Coordinator.) Operations on the factory and <classname>Coordinator</classname> to create new transactions use
+      direct context management, and therefore do not modify the calling thread’s transaction context.
     </para>
-
+    <para>
+      The <methodname>create</methodname> operation creates a new top-level transaction and returns its
+      <classname>Control</classname> object, which you can use to manage or control participation in the new
+      transaction. Method <methodname>create</methodname> takes a parameter that is is an application-specific timeout
+      value, in seconds. If the transaction does not complete before this timeout elapses, it is rolled back. If the
+      parameter is <literal>0</literal>, no application-specific timeout is established. <!--This can be represented in UML
+      as shown below:-->
+    </para>
+    <note>
+      <para>
+        Subtransactions do not have a timeout associated with them.
+      </para>
+    </note>
+    <para>
+      The Transaction Service implementation allows the <classname>TransactionFactory</classname> to be a separate
+      server from the application, shared by transactions clients, and which manages transactions on their
+      behalf. However, the specification also allows the TransactionFactory to be implemented by an object within each
+      transactional client. This is the default implementation used by JBossTS, because it removes the need for a
+      separate service to be available in order for transactional applications to execute, and therefore reduces a point
+      of failure.
+    </para>
+    <para>
+      If your applications require a separate transaction manager, set the <varname>OTS_TRANSACTION_MANAGER</varname>
+      environment variable to the value <literal>YES</literal>. The system locates the transaction manager server in a manner
+      specific to the ORB being used. The server can be located in a number of ways.
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Registration with a name server.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Addition to the ORB’s initial references, using a JBossTSspecific references file.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The ORB’s specific location mechanism, if applicable.
+        </para>
+      </listitem>
+    </itemizedlist>
     <section>
       <title>OTS configuration file</title>
       <para>
-        
+        Similar to the <methodname>resolve_initial_references</methodname>, JBossTS supports an initial reference file
+        where you can store references for
+        specific services, and use these references at runtime. The file, <filename>CosServices.cfg</filename>, consists
+        of two columns, separated by a single space.
       </para>
-      
+      <itemizedlist>
+        <listitem>
+          <para>
+            The service name, which is <literal>TransactionService</literal> in the case of the OTS server.
+        </para>
+        </listitem>
+        <listitem>
+          <para>
+            The IOR
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        <filename>CosServices.cfg</filename> is usually located in the <filename>etc/</filename> directory of the
+        JBossTS installation. The OTS server automatically registers itself in this file, creating it if necessary, if
+        you use the configuration file mechanism. Stale information is also automatically removed. The Transaction
+        Service locates <filename>CosServices.cfg</filename> at runtime, using the
+        <classname>OrbPortabilityEnvironmentBean</classname> properties <varname>initialReferencesRoot</varname> and
+        <varname>InitialReferencesFile</varname>. <varname>initialReferencesRoot</varname> names a directory, and
+        defaults to the current working directory. <varname>initialReferencesFile</varname> refers to a file wthin the
+        <varname>initialReferencesRoot</varname>, and defaults to the name <literal>CosServices.cfg</literal>.
+      </para>
     </section>
     
     <section>
       <title>Name service</title>
       <para>
-        
+        If your ORB supports a name service, and you configure JBossTS to use it, the transaction manager is
+        automatically registered with it.
       </para>
       
     </section>
@@ -59,7 +307,8 @@
     <section>
       <title>resolve_initial_references</title>
       <para>
-        
+        JBossTS does not support <methodname>resolve_initial_references</methodname>.<!-- Why are we talking about it
+        then? -->
       </para>
       
     </section>
@@ -67,49 +316,242 @@
     <section>
       <title>Overriding the default location mechanisms</title>
       <para>
-        
+        You can override the default location mechanism with the <varname>RESOLVE_SERVICE</varname> property variable,
+        which can have any of three possible values.
       </para>
-      
+      <informaltable>
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>CONFIGURATION_FILE</entry>
+              <entry><para>This is the default option, and directs the system to use the
+              <filename>CosServices.cfg</filename> file.</para></entry>
+            </row>
+            <row>
+              <entry>NAME_SERVICE</entry>
+              <entry><para>JBossTS triesto use a name service to locate the transaction
+              factory. If the ORB does not support the name service mechanism, JBossTS throws an
+              exception.</para></entry>
+            </row>
+            <row>
+              <entry>BIND_CONNECT</entry>
+              <entry><para>JBossTS uses the ORB-specific bind mechanism. If the ORB does not support such a mechamism,
+              JBossTS throws an exception.</para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        If <literal>RESOLVE_SERVICE</literal> is specified when running the transaction factory, the factory registers
+        itself with the specified resolution mechanism.
+      </para>
     </section>
-
   </section>
   
   <section>
     <title>Transaction timeouts</title>
     <para>
-      
+      As of JBossTS 4.5, transaction timeouts are unified across all transaction components and are controlled by
+      <application>ArjunaCore</application>. Refer to the <citetitle>ArjunaCore Development Guide</citetitle> for more
+      information.
     </para>
-    
   </section>
   
   <section>
     <title>Transaction contexts</title>
     <para>
-      
+      Transaction contexts are fundamental to the OTS architecture. Each thread is associated with a
+      context in one of three ways.
     </para>
+    <informaltable>
+      <tbody cols="2">
+        <row>
+          <entry>Null</entry>
+          <entry><para>The thread has no associated transaction.</para></entry>
+        </row>
+        <row>
+          <entry>A transaction ID</entry>
+          <entry>Thre thread is associated with a transaction.</entry>
+        </row>
+      </tbody>
+    </informaltable>
+    <para>
+      Contexts may be shared across multiple threads. In the presence of nested transactions, a context remembers the
+      stack of transactions started within the environment, so that the context of the thread can be restored to the
+      state before the nested transaction started, when the nested transaction ends.  Threads most commonly use object
+      <classname>Current</classname> to manipulate transactional information, which is represented by
+      <classname>Control</classname> objects. <classname>Current</classname> is the broker between a transaction and
+      <classname>Control</classname> objects.
+    </para>
+    <para>
+      Your application can manage transaction contexts either directly or indirectly. In the direct approach, the
+      transaction originator issues a request to a <classname>TransactionFactory</classname> to begin a new top-level
+      transaction. The factory returns a <classname>Control</classname> object that enables both a
+      <interfacename>Terminator</interfacename> interface and a <interfacename>Coordinator</interfacename>
+      interface. <interfacename>Terminator</interfacename> ends a
+      transaction. <interfacename>Coordinator</interfacename> associates a thread with a transaction, or begins a
+      nested transaction. You need to pass each interface as an explicit parameter in invocations of operations,
+      because creating a transaction with them does not change a thread's current context. If you use the factory, and
+      need to set the current context for a thread to the context which its control object returns, use the
+      <methodname>resume</methodname> method of interface <interfacename>Current</interfacename>.
+    </para>
+    <example>
+      <title>Interfaces <interfacename>Terminator</interfacename>, <interfacename>Coordinator</interfacename>, and
+      <interfacename>Control</interfacename></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/terminator_coordinator_control.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      When the factory creates a transaction, you can specify a timeout value in seconds. If the transaction times
+      out, it is subject to possible roll-back. Set the timeout to <literal>0</literal> to disable
+      application-specific timeout.
+    </para>
+    <para>
+      The <interfacename>Current</interfacename> interface handles implicit context management. Implicit context
+      management provides simlified transaction management functionality, and automatically creates nested
+      transactions as required. Transactions created using <interfacename>Current</interfacename> do not alter a
+      thread’s current transaction context.
+    </para>
+    <example>
+      <title>Interface <interfacename>Current</interfacename></title>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/Current.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
     
     <section>
       <title>Nested transactions</title>
       <para>
-        
+        Subtransactions are a useful mechanism for two reasons:
       </para>
-      
+      <variablelist>
+        <varlistentry>
+          <term>fault-tolerance</term>
+          <listitem>
+            <para>
+              If a subtransaction rolls back, the enclosing transaction does not also need to roll back. This preserves
+              as much of the work done so far, as possible.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>modularity</term>
+          <listitem>
+            <para>
+              Indirect transaction management does not require special syntax
+              for creating subtransactions. Begin a transaction, and if another transaction is associated with the
+              calling thread, the new transaction is nested wtihin the existing one. If you know that an object requires
+              transactions, you can use them within the object. If the object's methods are invoed without a client
+              transaction, the object's transaction is top-level. Otherwise, it is nested wtihin the client's
+              transaction. A client does not need to know whether an object is transactional.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>
+        The outermost transaction of the hierarchy formed by nested transactions is called the top-level
+        transaction. The inner components are called subtransactions. Unlike top-level transactions, the commits of
+        subtransactions depend upon the commit/rollback of the enclosing transactions. Resources acquired within a
+        subtransaction should be inherited by parent transactions when the top-level transaction completes. If a
+        subtransaction rolls back, it can release its resources and undo any changes to its inherited resources.
+      </para>
+      <para>
+        In the OTS, subtransactions behave differently from top-level transactions at commit time. Top-level
+        transactions undergo a two-phase commit protocol, but nested transactions do not actually perform a commit
+        protocol themselves. When a program commits a nested transaction, it only informs registered resources of its
+        outcome. If a resource cannot commit, an exception is thrown, and the OTS implementation can ignore the
+        exception or roll back the subtransaction. You cannot roll back a subtransaction if any resources have been
+        informed that the transaction committed.
+      </para>
     </section>
     
     <section>
       <title>Transaction propagation</title>
       <para>
-        
+        The OTS supports both implicit and explicit propagation of
+        transactional behavior.
       </para>
-      
+      <itemizedlist>
+        <listitem>
+          <para>
+            Implicit propagation means that an operation signature specifies no transactional behavior, and each
+            invocation automatically sends transaction context associated with the calling thread.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Explicit propagation means that applications must define their own mechanism for propagating
+        transactions. This has the following features:
+          </para>
+          <itemizedlist>
+            <listitem>
+              <para>
+                A client to control if its transaction is propagated with any operation invocation.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                A client can invoke operations on both transactional and non-transactional objects within a transaction.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+      <para>
+        Transaction context management and transaction propagation are different things that may be controlled
+        independently of each other. Mixing of direct and indirect context management with implicit and
+        explicit transaction propagation is supported. Using implicit propagation requires cooperation from the ORB.
+        The client must send current context associated with the thread with any operation invocations, and the server
+        must extract them before calling the targeted operation.
+      </para>
+      <para>
+        If you need implicit context propagation, ensure that JBossTS is correctly
+        initialized before you create objects. Both client and server must agree to use
+        implicit propagation. To use implicit context propagation, your ORB needs to support filters or interceptors, or
+        the <interfacename>CosTSPortability</interfacename> interface.
+      </para>
+      <informaltable>
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>Implicit context propagation</entry>  
+              <entry><para>Property variable <varname>OTS_CONTEXT_PROP_MODE</varname> set to
+              <literal>CONTEXT</literal>.</para></entry>
+            </row>
+            <row>
+              <entry>Interposition</entry>
+              <entry><para>Property variable <varname>OTS_CONTEXT_PROP_MODE</varname> set to
+              <literal>INTERPOSITION</literal>.</para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <important>
+        <para>
+          Interposition is required to use the JBossTS Advanced API.
+        </para>
+      </important>
     </section>
     
     <section>
       <title>Examples</title>
+      <example>
+        <title>Simple transactional client using direct context management and explicit transaction propagation</title>
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/simple_transactional_client.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      </example>
       <para>
-        
+        The next example rewrites the same program to use indirect context management and implicit propagation. This
+        example is considerably simpler, because the application only needs to start and either commit or abort actions.
       </para>
-      
+      <example>
+        <title>Indirect context management and implicit propagation</title>
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/simple_transactional_client_2.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      </example>
+      <para>
+        The last example illustrates the flexibility of OTS by using both direct and indirect context
+        management in conjunction with explicit and implicit transaction propagation.
+      </para>
+      <example>
+        <title>Direct and direct context management with explicity and implicit propagation</title>
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/simple_transactional_client_3.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      </example>
     </section>
 
   </section>
@@ -117,15 +559,51 @@
   <section>
     <title>Transaction controls</title>
     <para>
-      
+      The <interfacename>Control</interfacename> interface allows a program to explicitly manage or propagate a
+      transaction context. An object supporting the <interfacename>Control</interfacename> interface is associated with
+      one specific transaction. The <interfacename>Control</interfacename> interface supports two operations:
+      <methodname>get_terminator</methodname> and
+      <methodname>get_coordinator</methodname>. <methodname>get_terminator</methodname> returns an instance of the
+      <interfacename>Terminator</interfacename> interface.  <methodname>get_coordinator</methodname> returns an instance
+      of the <interfacename>Coordinator</interfacename> interface. Both of these methods throw the
+      <systemitem>Unavailable</systemitem> exception if the <interfacename>Control</interfacename> cannot provide the
+      requested object. The OTS implementation can restrict the ability to use the Terminator and Coordinator in other
+      execution environments or threads. At a minimum, the creator must be able to use them.
+    </para>
+    <para>
+      Obtain the <methodname>Control</methodname> object for a transaction when it is created either by using either the
+      <methodname>TransactionFactory</methodname> or <methodname>create_subtransaction</methodname> methods defined by
+      the <interfacename>Coordinator</interfacename> interface. Obtain a <classname>Control</classname> for the
+      transaction associated with the current thread using the <methodname>get_control</methodname> or
+      <methodname>suspend</methodname> methods defined by the <interfacename>Current</interfacename> interface.
     </para>
     
-    <section>
+    <section id="control-JBossTS-specifics">
       <title>JBossTS specifics</title>
       <para>
-        
+        The transaction creator must be able to use its <interfacename>Control</interfacename>, but the OTS
+        implementation decides whether other threads can use <interfacename>Control</interfacename>. JBossTS places no
+        restrictions the users of the <interfacename>Control</interfacename>.
       </para>
-      
+      <para>
+        The OTS specification does not provide a means to indicate to the transaction system that
+        information and objects associated with a given transaction can be purged from the system. In JBossTS, the
+        <interfacename>Current</interfacename> interface destroys all information about a transaction when it
+        terminates. For that reason, do not use any <interfacename>Control</interfacename> references to the transaction
+        after it commits or rolls back.
+      </para>
+      <para>
+        However, if the transaction is terminated using the Terminator interface, it is up to the programmer to signal
+        that the transaction information is no longer required: this can be done using the destroyControl method of the
+        OTS class in the com.arjuna.CosTransactions package. Once the program has indicated that the transaction
+        information is no longer required, the same restrictions on using Control references apply as described
+        above. If destroyControl is not called then transaction information will persist until garbage collected by the
+        Java runtime.
+      </para>
+      <para>
+        In JBossTS, you can propagate <interfacename>Coordinators</interfacename> and
+        <interfacename>Terminators</interfacename> between execution environments.
+      </para>
     </section>
 
   </section>
@@ -133,15 +611,55 @@
   <section>
     <title>The <interfacename>Terminator</interfacename> interface</title>
     <para>
-      
+      The <interfacename>Terminator</interfacename> interface supports <methodname>commit</methodname> and
+      <methodname>rollback</methodname> operations. Typically, the transaction originator uses these operations.  Each
+      object supporting the Terminator interface is associated with a single transaction. Direct context management via
+      the Terminator interface does not change the client thread’s notion of the current transaction.
+    </para>
+    <para>
+      The <methodname>commit</methodname> operation attempts to commit the transaction. To successfully commit, the
+      transaction must not be marked <literal>rollback only</literal>, and all of its must participants agree to
+      commit. Otherwise, the <systemitem>TRANSACTION_ROLLEDBACK</systemitem> exception is thrown. If the
+      <varname>report_heuristics</varname> parameter is <literal>true</literal>, the Transaction Service reports
+      inconsistent results using the <systemitem>HeuristicMixed</systemitem> and
+      <systemitem>HeuristicHazard</systemitem> exceptions.
+    </para>
+    <para>
+      When a transaction is committed, the coordinator drives any registered <classname>Resources</classname> using
+      their <methodname>prepare</methodname> or <methodname>commit</methodname> methods. These Resources are responsible
+      to ensure that any state changes to recoverable objects are made permanent, to guarantee the ACID properties.
+    </para>
+    <para>
+      When <methodname>rollback</methodname> is called, the registered <classname>Resources</classname> need to
+      guarantee that all changes to recoverable objects made within the scope of the transaction, and its descendants,
+      is undone. All resources locked by the transaction are made available to other transactions, as appropriate to the
+      degree of isolation the resources enforce.
     </para>
     
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        See <xref linkend="control-JBossTS-specifics"/> for how long <interfacename>Terminator</interfacename>
+        references remain valid after a transaction terminates.
       </para>
-      
+      <para>
+        When a transaction is committing, it must make certain state changes persistent, so that it can recover if a
+        failure occurs, and continue to commit, or rollback. To guarantee ACID properties, flush these state changes to
+        the persistence store implementation before the transaction proceeds to commit. Otherwise, the application may
+        assume that the transaction has committed, when the state changes may still volatile storage, and may be lost by
+        a subsequent hardware failure. By default, JBossTS makes sure that such state changes are flushed. However,
+        these flushes can impose a significant performance penalty to the application. To prevent transaction state
+        flushes, set the <varname>TRANSACTION_SYNC</varname> variable to <literal>OFF</literal>. Obviously, do this at
+        your own risk.
+      </para>
+      <para>
+        When a transaction commits, if only a single resource is registered, the transaction manager does not need to
+        perform the two-phase protocol. A single phase commit is possible, and the outcome of the transaction is
+        determined by the resource. In a distributed environment, this optimization represents a significant performance
+        improvement. As such, JBossTS defaults to performing single phase commit in this situation. Override this
+        behavior at runtime by setting the <varname>COMMIT_ONE_PHASE</varname> property variable to
+        <literal>NO</literal>.
+      </para>
     </section>
 
   </section>
@@ -149,15 +667,185 @@
   <section>
     <title>The <interfacename>Coordinator</interfacename> interface</title>
     <para>
-      
+      The Coordinator interface is returned by the <methodname>get_coordinator</methodname> method of the
+      <interfacename>Control</interfacename> interface. It supports the operations resources need to participate in a
+      transaction. These participants are usually either recoverable objects or agents of recoverable objects, such as
+      subordinate coordinators. Each object supporting the <interfacename>Coordinator</interfacename> interface is
+      associated with a single transaction. Direct context management via the Coordinator interface does not change the
+      client thread’s notion of the current transaction. You can terminate transaction directly, through the
+      <interfacename>Terminator</interfacename> interface. In that case, trying to terminate the transaction a second
+      time using <interfacename>Current</interfacename> causes an exception to be thrown for the secondtermination
+      attempt.
     </para>
+    <para>
+      The operations supported by the Coordinator interface of interest to application programmers are:
+    </para>
+    <table>
+      <title>Operations supported by the <interfacename>Coordinator</interfacename> interface</title>
+      <tgroup cols="2">
+        <tgroup>
+          <row>
+            <entry><para><methodname>get_status</methodname></para><para><methodname>get_parent_status</methodname></para><para><methodname>get_top_level_status</methodname></para></entry>
+            <entry><para>Return the status of the associated transaction. At any given time a transaction can have one
+            of the following status values representing its progress:</para>
+            <variablelist>
+              <varlistentry>
+                <term>StatusActive</term>
+                <listitem>
+                  <para>
+                    The transaction is currently running, and has not been asked to prepare or marked for rollback.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusMarkedRollback</term>
+                <listitem>
+                  <para>
+                    The transaction is marked for rollback.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusPrepared</term>
+                <listitem>
+                  <para>
+                    The transaction has been prepared, which means that all subordinates have responded
+                    <classname>VoteCommit</classname>.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusCommitted</term>
+                <listitem>
+                  <para>
+                    The transaction has committed. It is likely that heuristics exist. Otherwise, the transaction would
+                    have been destroyed and <classname>StatusNoTransaction</classname> returned.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusRolledBack</term>
+                <listitem>
+                  <para>
+                    The transaction has rolled back. It is likely that heuristics exist. Otherwise. the transaction would
+                    have been destroyed and StatusNoTransaction returned.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusUnknown</term>
+                <listitem>
+                  <para>
+                    The Transaction Service cannot determine the current status of the transaction. This is a transient
+                    condition, and a subsequent invocation should return a different status.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusNoTransaction</term>
+                <listitem>
+                  <para>
+                    No transaction is currently associated with the target object. This occurs after a transaction
+                    completes.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusPreparing</term>
+                <listitem>
+                  <para>
+                    The transaction is in the process of preparing and the final outcome is not known.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusCommitting</term>
+                <listitem>
+                  <para>
+                    The transaction is in the process of committing.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term>StatusRollingBack</term>
+                <listitem>
+                  <para>
+                    The transaction is in the process of rolling back.
+                  </para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+            </entry>
+          </row>
+          <row>
+            <entry><para><methodname>is_same_transaction</methodname> et al</para></entry>
+            <entry><para>You can use these operations for transaction comparison. Resources may use these various
+            operations to guarantee that they are registered only once with a specific transaction.</para></entry>
+          </row>
+          <row>
+            <entry><para><methodname>hash_transaction</methodname></para><para><methodname>hash_top_level_tran</methodname></para></entry>
+            <entry><para>Rreturns a hash code for the specified transaction.</para></entry>
+          </row>
+          <row>
+            <entry><para><methodname>register_resource</methodname></para>
+            <entry><para>Registers the specified Resource as a participant in the transaction. The
+            <systemitem>Inactive</systemitem> exception is raised if the transaction isalready prepared. The
+            <systemitem>TRANSACTION_ROLLEDBACK</systemitem> exception is raised if the transaction is marked
+            <literal>rollback only</literal>. If the <classname>Resource</classname> is a
+            <classname>SubtransactionAwareResource</classname> and the transaction is a subtransaction, this operation
+            registers the resource with this transaction and indirectly with the top-level transaction when the
+            subtransaction’s ancestors commit. Otherwise, the resource is only registered with the current
+            transaction. This operation returns a <classname>RecoveryCoordinator</classname> which this
+            <classname>Resource</classname> can use during recovery. No ordering of registered Resources is implied by
+            this operation. If <varname>A</varname> is registered after <varname>B</varname>, the OTS can operate on
+            them in any order when the transaction terminates. Therefore, do not assume such an ordering exists in your
+            implementation.</para></entry>
+            </entry>
+          </row>
+          <row>
+            <entry>register_subtran_aware</entry>
+            <entry><para>Registers the specified subtransaction-aware resource with the current transaction, so that it
+            know when the subtransaction commits or rolls back. This method cannot register the resource as a
+            participant in the top-level transaction. The <systemitem>NotSubtransaction</systemitem> exception is raised
+            if the current transaction is not a subtransaction. As with <methodname>register_resource</methodname>, no
+            ordering is implied by this operation.</para></entry>
+          </row>
+          <row>
+            <entry>register_synchronization</entry>
+            <entry><para>Registers the <classname>Synchronization</classname> object with the transaction so that will
+            be invoked before <methodname>prepare</methodname> and after the transaction completes. Synchronizations can
+            only be associated with top-level transactions, and the <systemitem>SynchronizationsUnavailable</systemitem>
+            exception is raised if you try to register a Synchronization with a subtransaction. As with
+            <methodname>register_resource</methodname>, no ordering is implied by this operation.</para></entry>
+          </row>
+          <row>
+            <entry>rollback_only</entry>
+            <entry><para>Marks the transaction so that the only possible outcome is for it to rollback. The Inactive
+            exception is raised if the transaction has already been prepared/completed.</para></entry>
+          </row>
+          <row>
+            <entry>create_subtransaction</entry>
+            <entry><para>A new subtransaction is created. Its parent is the current transaction. The
+            <systemitem>Inactive</systemitem> exception is raised if the current transaction has already been prepared
+            or completed. If you configure the Transaction Service without subtransaction support, the
+            <systemitem>SubtransactionsUnavailable</systemitem> exception is raised.</para></entry>
+          </row>
+        </tgroup>
+      </tgroup>
+    </table>
     
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        See <xref linkend="control-JBossTS-specifics" /> to control how long <interfacename>Coordinator</interfacename>
+        references remain valid after a transaction terminates.
       </para>
-      
+      <note>
+        <para>
+          To disable subtransactions, set set the <varname>OTS_SUPPORT_SUBTRANSACTIONS</varname> property variable to
+          <literal>NO</literal>.
+        </para>
+      </note>
     </section>
 
   </section>
@@ -165,7 +853,43 @@
   <section>
     <title>Heuristics</title>
     <para>
-      
+      The OTS permits individual resources to make heuristic decisions. <firstterm>Heuristic</firstterm> decisions are unilateral
+      decisions made by one or more participants to commit or abort the transaction, without waiting for the consensus
+      decision from the transaction service. Use heuristic decisions with care and only in exceptional
+      circumstances, because they can lead to a loss of integrity in the system. If a participant makes a heuristic decision, 
+      an appropriate exception is raised during commit or abort processing. 
+    </para>
+    <table>
+      <title>Possible heuristic outcomes</title>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>HeuristicRollback</entry>
+            <entry><para>Raised on an attempt to commit, to indicate that the resource already unilaterally rolled back
+            the transaction.</para></entry>
+          </row>
+          <row>
+            <entry>HeuristicCommit</entry>
+            <entry><para>Raised on an attempt to roll back, to indicate that the resource already unilaterally committed
+            the transaction.</para></entry>
+          </row>
+          <row>
+            <entry>HeuristicMixed</entry>
+            <entry><para>Indicates that a heuristic decision has been made. Some updates committed while others rolled
+            back.</para></entry>
+          </row>
+          <row>
+            <entry>HeuristicHazard</entry>
+            <entry><para>Indicates that a heuristic decision may have been made, and the outcome of some of the updates
+            is unknown. For those updates which are known, they either all committed or all rolled back.</para></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <para>
+      HeuristicMixed takes priority over HeuristicHazard. Heuristic decisions are only reported back to the originator
+      if the <parameter>report_heuristics</parameter> argument is set to <literal>true</literal> when you invoke the
+      commit operation.
     </para>
     
   </section>
@@ -283,12 +1007,4 @@
   </section>
 
   <section>
-    <title>Summary of JBossTS implementation decisions</title>
-    <para>
-      
-    </para>
-    
-  </section>
-
-</chapter>
-
+    <title>Summary of JBossTS implementation decisions</title> <para> </para> </section> </chapter>
