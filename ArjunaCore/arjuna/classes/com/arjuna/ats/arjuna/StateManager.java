@@ -134,28 +134,6 @@ public class StateManager
     }
 
     /**
-     * Destructor.
-     */
-
-    public void finalize () throws Throwable
-    {
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("StateManager.finalize() for object-id " + get_uid()
-                    + " type " + type());
-        }
-
-        if (currentStatus == ObjectStatus.ACTIVE_NEW)
-        {
-            BasicAction action = BasicAction.Current();
-
-            if ((action != null) && (action.status() == ActionStatus.RUNNING)) {
-                tsLogger.i18NLogger.warn_StateManager_1();
-                cleanup(false);
-            }
-        }
-    }
-
-    /**
      * This operation activates an object. Activation of an object may entail
      * loading its passive state from the object store and unpacking it into the
      * memory resident form, or it may simply be a no-op. Full activation is
