@@ -32,6 +32,7 @@
 package com.arjuna.ats.arjuna.exceptions;
 
 import java.lang.Exception;
+import java.io.Serializable;
 
 /**
  * Exception that can be thrown when attempting to access
@@ -42,7 +43,7 @@ import java.lang.Exception;
  * @since JTS 1.0.
  */
 
-public class ObjectStoreException extends Exception
+public class ObjectStoreException extends Exception implements Serializable
 {
     static final long serialVersionUID = -1228565199285342890L;
 

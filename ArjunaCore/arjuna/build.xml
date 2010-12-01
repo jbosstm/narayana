@@ -41,6 +41,23 @@
         </compile-tests.macro>
     </target>
     
+	<!--
+		run tests that match a given pattern, for example
+		ant testone -DONECLASS="**/*ObjectStoreAPIJMXTest.java"
+		To run under the debugger pass the following to the run.tests.macro macro:
+            <additional.jvmargs>
+                <jvmarg value="-Xdebug"/>
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
+            </additional.jvmargs>
+	-->
+    <target name="testone">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="tests/classes" includes="${ONECLASS}"/>
+            </tests>
+        </run.tests.macro>
+    </target>
+
     <target name="run.tests">
         <run.tests.macro>
             <tests>
