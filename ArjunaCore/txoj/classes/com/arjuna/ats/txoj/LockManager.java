@@ -34,12 +34,12 @@ package com.arjuna.ats.txoj;
 import com.arjuna.ats.txoj.lockstore.*;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.StateManager;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
 
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.txoj.LockList;
@@ -108,10 +108,26 @@ public class LockManager extends StateManager
 
     public void finalize () throws Throwable
     {
-        if (txojLogger.logger.isTraceEnabled()) {
-            txojLogger.logger.trace("LockManager.finalize()");
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("LockManager.finalize() for object-id " + get_uid()
+                    + " type " + type());
         }
 
+        /*
+         * terminate should have been called. Check and warn/do something about it if this
+         * is not the case!
+         */
+        
+        if (status() == ObjectStatus.ACTIVE_NEW)
+        {
+            BasicAction action = BasicAction.Current();
+
+            if ((action != null) && (action.status() == ActionStatus.RUNNING)) {
+                tsLogger.i18NLogger.warn_StateManager_1();
+                cleanup(false);
+            }
+        }
+        
         boolean doSignal = false;
 
         cleanUp();
