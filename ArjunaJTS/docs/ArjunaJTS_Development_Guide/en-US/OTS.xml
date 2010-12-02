@@ -897,37 +897,361 @@
   <section>
     <title>Current</title>
     <para>
-      
+      The <interfacename>Current</interfacename> interface defines operations that allow a client to explicitly manage
+      the association between threads and transactions, using indirect context management. It defines operations that
+      simplify the use of the Transaction Service.
     </para>
-    
+    <table>
+      <title>Methods of <interfacename>Current</interfacename></title>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>begin</entry>
+            <entry><para>Creates a new transaction and associates it with the current thread. If the client thread is
+            currently associated with a transaction, and the OTS implementation supported nested transactions, the new
+            transaction becomes a subtransaction of that transaction. Otherwise, the new transaction is a top-level
+            transaction. If the OTS implementation does not support nested transactions, the
+            <systemitem>SubtransactionsUnavailable</systemitem> exception is thrown. The thread’s notion of the current
+            context is modified to be this transaction.</para></entry>
+          </row>
+          <row>
+            <entry>commit</entry>
+            <entry><para>Commits the transaction. If the client thread does not have permission to commit the
+            transaction, the standard exception <systemitem>NO_PERMISSION</systemitem> is raised. The effect is the same
+            as performing the <methodname>commit</methodname> operation on the corresponding
+            <classname>Terminator</classname> object. The client thread's transaction context is returned to its state
+            before the <methodname>begin</methodname> request was initiated.</para></entry>
+          </row>
+          <row>
+            <entry>rollback</entry>
+            <entry><para>Rolls back the transaction. If the client thread does not have permission to terminate the
+            transaction, the standard exception <systemitem>NO_PERMISSION</systemitem> is raised. The effect is the same
+            as performing the <methodname>rollback</methodname> operation on the corresponding
+            <classname>Terminator</classname> object. The client thread's transaction context is returned to its state
+            before the <methodname>begin</methodname> request was initiated.</para></entry>
+          </row>
+          <row>
+            <entry>rollback_only</entry>
+            <entry><para>Limits the transaction's outcome to rollback only. If the transaction has already been
+            terminated, or is in the process of terminating, an appropriate exception is thrown.</para></entry>
+          </row>
+          <row>
+            <entry>get_status</entry>
+            <entry><para>Returns the status of the current transaction, or exception
+            <systemitem>StatusNoTransaction</systemitem> if no transaction is associated with the thread.</para></entry>
+          </row>
+          <row>
+            <entry>set_timeout</entry>
+            <entry><para>Modifies the timeout associated with top-level transactions for subsequent
+            <methodname>begin</methodname> requests, for this thread only. Subsequent transactions are subject to being
+            rolled back if they do not complete before the specified number of seconds elapses. Default timeout values
+            for transactions without explicitly-set timeouts are implementation-dependent. JBossTS uses a value of
+            <literal>0</literal>, which results in transactions never timing out. There is no interface in the OTS for
+            obtaining the current timeout associated with a thread. However, JBossTS provides additional support for
+            this. See <xref linkend="current-jboossts-specific" />.</para></entry>
+          </row>
+          <row>
+            <entry>get_control</entry>
+            <entry><para>Obtains a <classname>Control</classname> object representing the current transaction.  If the
+            client thread is not associated with a transaction, a null object reference is returned. The operation is
+            not dependent on the state of the transaction. It does not raise the
+            <systemitem>TRANSACTION_ROLLEDBACK</systemitem> exception.</para></entry>
+          </row>
+          <row>
+            <entry>suspend</entry>
+            <entry><para>Obtains an object representing a transaction's context. If the client thread is not associated
+            with a transaction, a null object reference is returned. You can pass this object to the
+            <methodname>resume</methodname> operation to re-establish this context in a thread. The operation is not
+            dependent on the state of the transaction. It does not raise the
+            <systemitem>TRANSACTION_ROLLEDBACK</systemitem> exception. When this call returns, the current thread has no
+            transaction context associated with it.</para></entry>
+          </row>
+          <row>
+            <entry>resume</entry>
+            <entry><para>Associatese the client thread with a transaction. If the parameter is a null object reference,
+            the client thread becomes associated with no transaction. The thread loses association with any previous
+            transactions.</para></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <figure>
+      <title>Creation of a top-level transaction using <interfacename>Current</interfacename></title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/top_level_transaction_current.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Creation of a top-level transaction using <interfacename>Current</interfacename></para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <figure>
+      <title>Creation of a stransaction using <interfacename>Current</interfacename></title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/subtransaction_current.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Creation of a subtransaction using <interfacename>Current</interfacename></para>
+        </textobject>
+      </mediaobject>
+    </figure>
+
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        Ideally, you should Obtain <interfacename>Current</interfacename> by using the life-cycle service factory
+        finder. However, very few ORBs support this. JBossTS provides method <methodname>get_current</methodname> of
+        <interfacename>Current</interfacename> for this purpose. This class hides any ORB-specific mechanisms required
+        for obtaining <interfacename>Current</interfacename>.
       </para>
-      
+      <para>
+        If no timeout value is associated with <interfacename>Current</interfacename>, JBossTS associates no timeout
+        with the transaction. The current OTS specification does not provide a means whereby the timeout associated with
+        transaction creation can be obtained. However, JBossTS Current supports a get_timeout method.
+      </para>
+      <para>
+        By default, the JBossTS implementation of <interfacename>Current</interfacename> does not use a separate
+        <classname>TransactionFactory</classname> server when creating new top-level transactions. Each transactional
+        client has a <classaname>TransactionFactory</classaname> co-located with it. Override this by setting the
+        <varname>OTS_TRANSACTION_MANAGER</varname> variable to <literal>YES</literal>.
+      </para>
+      <para>
+        The transaction factory is located in the <filename>bin/</filename> directory of the JBossTS distribution. Start
+        it by executing the OTS script. <!--What script?--> <interfacename>Current</interfacename> locates the factory
+        in a manner specific to the ORB: using the name service, through
+        <methodname>resolve_initial_references</methodname>, or via the <filename>CosServices.cfg</filename> file. The
+        <filename>CosServices.cfg</filename> file is similar to <methodname>resolve_initial_references</methodname>, and
+        is automatically updated when the transaction factory is started on a particular machine. Copy the file to each
+        JBossTS instance which needs to share the same transaction factory.
+      </para>
+      <para>
+        If you do not need subtransaction support, set the <varname>OTS_SUPPORT_SUBTRANSACTIONS</varname> property
+        variable to <literal>NO</literal>.  The <methodname>setCheckedAction</methodname> method overrides the
+        <interfacename>CheckedAction</interfacename> implementation associated with each transaction created by the
+        thread.
+      </para>
     </section>
-
   </section>
 
   <section>
     <title>Resource</title>
     <para>
-      
+      The Transaction Service uses a two-phase commit protocol to complete a top-level transaction with each registered
+      resource.
     </para>
-    
+    <example>
+      <title>Completing a top-level transaction</title>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/completing_top_level_transaction.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      The <interfacename>Resource</interfacename> interface defines the operations invoked by the transaction
+      service. Each <interfacename>Resource</interfacename> object is implicitly associated with a single top-level
+      transaction. Do not register a <interfacename>Resource</interfacename> with the same transaction more than
+      once. When you tell a <interfacename>Resource</interfacename> to prepare, commit, or abort, it must do so on
+      behalf of a specific transaction. However, the <interfacename>Resource</interfacename> methods do not specify the
+      transaction identity. It is implicit, since a <interfacename>Resource</interfacename> can only be registered with
+      a single transaction.
+    </para>
+    <para>
+      Transactional objects must use the <methodname>register_resource</methodname> method to register objects
+      supporting the <interfacename>Resource</interfacename> interface with the current transaction. An object
+      supporting the <interfacename>Coordinator</interfacename> interface is either passed as a parameter in the case of
+      explicit propagation, or retrieved using operations on the <interfacename>Current</interfacename> interface in the
+      case of implicit propagation.  If the transaction is nested, the <interfacename>Resource</interfacename> is not
+      informed of the subtransaction’s completion, and is registered with its parent upon commit.
+    </para>
+    <figure>
+      <title><interfacename>Resource</interfacename> and nested transactions</title>
+      <para>
+        This example assumes that transactions are only nested two levels deep, for simplicity.
+      </para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/resource_nested_transactions.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Resource interface and nested transactions</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <para>
+      Do not register a given <interfacename>Resource</interfacename> with the same transaction more than once, or it
+      will receive multiple termination calls. When a <interfacename>Resource</interfacename> is directed to prepare,
+      commit, or abort, it needs to link these actions to a specific transaction. Because
+      <classname>Resource</classname> methods do not specify the transaction identity, but can only be associated with a
+      single transaction, you can infer the identity.
+    </para>
+    <para>
+      A single <interfacename>Resource</interfacename> or group of <interfacename>Resources</interfacename> guarantees
+      the ACID properties for the recoverable object they represent. A Resource's work depends on the phase of its
+      transaction.
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>prepare</term>
+        <listitem>
+          <para>
+            If none of the persistent data associated with the resource is modified by the transaction, the
+            Resource can return <systemitem>VoteReadOnly</systemitem> and forget about the transaction. It does not need
+            to know the outcome of the second phase of the commit protocol, since it hasn't made any changes.
+          </para>
+          <para>
+            If the resource can write, or has already written, all the data needed to commit the transaction to stable
+            storage, as well as an indication that it has prepared the transaction, it can return
+            <systemitem>VoteCommit</systemitem>. After receiving this response, the Transaction Service either commits
+            or rolls back. To support recovery, the resource should store the
+            <systemitem>RecoveryCoordinator</systemitem> reference in stable storage.
+          </para>
+          <para>
+            The resource can return <systemitem>VoteRollback</systemitem> under any circumstances. After returning this
+            response, the resource can forget the transaction.
+          </para>
+          <para>
+            The <interfacename>Resource</interfacename> reports inconsistent outcomes using the
+            <systemitem>HeuristicMixed</systemitem> and <systemitem>HeuristicHazard</systemitem> exceptions. One example
+            is that a <interfacename>Resource</interfacename> reports that it can commit and later decides to roll
+            back. Heuristic decisions must be made persistent and remembered by the
+            <interfacename>Resource</interfacename> until the transaction coordinator issues the
+            <methodname>forget</methodname> method. This method tells the <interfacename>Resource</interfacename> that
+            the heuristic decision has been noted, and possibly resolved.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>rollback</term>
+        <listitem>
+          <para>
+            The resource should undo any changes made as part of the transaction. Heuristic exceptions
+            can be used to report heuristic decisions related to the resource. If a heuristic exception is raised, the
+            resource must remember this outcome until the forget operation is performed so that it can return the same
+            outcome in case rollback is performed again. Otherwise, the resource can forget the transaction.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>commit</term>
+        <listitem>
+          <para>
+            If necessary, the resource should commit all changes made as part of this transaction. As with
+            <methodname>rollback</methodname>, it can raise heuristic exceptions. The
+            <systemitem>NotPrepared</systemitem> exception is raised if the resource has not been prepared.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>commit_one_phase</term>
+        <listitem>
+          <para>
+            Since there can be only a single resource, the <systemitem>HeuristicHazard</systemitem> exception reports
+            heuristic decisions related to that resource. <!-- Link to how to disable -->
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>forget</term>
+        <listitem>
+          <para>
+            Performed after the resource raises a heuristic exception. After the coordinator determines that the
+            heuristic situation is addressed, it issues <methodname>forget</methodname> on the resource. The resource
+            can forget all knowledge of the transaction.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
   </section>
   
   <section>
     <title>SubtransactionAwareResource</title>
     <para>
-      
+      Recoverable objects that need to participate within a nested
+      transaction may support the <interfacename>SubtransactionAwareResource</interfacename> interface, a specialization of the <interfacename>Resource</interfacename> interface.
+    </para>
+    
+    <example>
+      <title>Interface <interfacename>SubtransactionAwareResource</interfacename></title>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/SubtransactionAwareResource.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      A recoverable object is only informed of the completion of a nested transaction if it registers a
+      <interfacename>SubtransactionAwareResource</interfacename>. Register the object with either the
+      <methodname>register_resource</methodname> of the <interfacename>Coordinator</interfacename> interface, or the
+      <methodname>register_subtran_aware</methodname> method of the <interfacename>Current</interfacename> interface.  A
+      recoverable object registers Resources to participate within the completion of top-level transactions, and
+      SubtransactionAwareResources keep track of the completion of subtransactions. The
+      <methodname>commit_subtransaction</methodname> method uses a reference to the parent transaction to allow
+      subtransaction resources to register with these transactions.
+    </para>
+    <para>
+      SubtransactionAwareResources find out about the completion of a transaction after it terminates. They cannot
+      affect the outcome of the transaction. Different OTS implementations deal with exceptions raised by
+      SubtransactionAwareResources in implementation-specific ways.
+    </para>
+    <para>
+      Use method <methodname>register_resource</methodname> or method <methodname>register_subtran_aware</methodname> to register a SubtransactionAwareResource with a transaction using.
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>register_resource</term>
+        <listitem>
+          <para>
+            If the transaction is a subtransaction, the resource is informed of its completion, and
+            automatically registered with the subtransaction’s parent if the parent commits.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>register_subtran_aware</term>
+        <listitem>
+          <para>
+            If the transaction is not a subtransaction, an exception is thrown. Otherwise, the resource is informed when
+            the subtransaction completes. Unlike <methodname>register_resource</methodname>, the resource is not
+            propagated to the subtransaction’s parent if the transaction commits. If you need this propagation,
+            re-register using the supplied parent parameter.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <figure>
+      <title>Method <methodname>register_subtran_aware</methodname></title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/register_subtran_aware.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para><methodname>register_subtran_aware</methodname></para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <figure>
+      <title>Method <methodname>register_resource</methodname></title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/register_resource.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para><methodname>register_resource</methodname></para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <para>
+      In either case, the resource cannot affect the outcome of the transaction completion. It can only act on the
+      transaction's decision, after the decision is made. However, if the resource cannot respond appropriately, it can
+      raise an exception. Thee OTS handles these exceptions in an implementation-specific way.
     </para>
     
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        A <classname>SubtransactionAwareResource</classname> which raises an exception to the commitment of a
+        transaction may create inconsistencies within the transaction if other
+        <classname>SubtransactionAwareResources</classname> think the transaction committed. To prevent this possibility
+        of inconsistency, JBossTS forces the enclosing transaction to abort if an exception is raised.
+      </para>
+      <para>
+        JBossTS also provides extended subtransaction aware resources to overcome this, and other problems. See Section
+        for further details.
       </para>
       
     </section>
@@ -937,17 +1261,74 @@
   <section>
     <title>The <interfacename>Synchronization</interfacename> interface</title>
     <para>
-      
+      If an object needs notification before a transaction commits, it can register an object which is an implements the
+      <interfacename>Synchronization</interfacename> interface, using the
+      <methodname>register_synchronization</methodname> operation of the <interfacename>Coordinator</interfacename>
+      interface. Synchronizations flush volatile state data to a recoverable object or database before the transaction
+      commits. You can only associate Synchronizations with top-level transactions. If you try to associate a
+      Synchronization to a nested transaction, an exception is thrown. Each object supporting the
+      <interfacename>Synchronization</interfacename> interface is associated with a single top-level transaction.
     </para>
+    
+    <example>
+      <title>Synchronization</title>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/synchronization.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+    </example>
+    <para>
+      The method <methodname>before_completion</methodname> is called before the two-phase commit protocol starts, and
+      <methodname>after_completion</methodname> is called after the protocol completes. Tthe final status of the
+      transaction is given as a parameter to <methodname>after_completion</methodname>. If
+      <methodname>before_completion</methodname> raises an exception, the transaction rolls back. Any exceptions thrown
+      by <methodname>after_completion</methodname> do not affect the transaction outcome.
+    </para>
+    <para>
+      The OTS only requires Synchronizations to be invoked if the transaction commits. If it rolls back, registered
+      Synchronizations are not informed.
+    </para>
+    <para>
+      Given the previous description of <interfacename>Control</interfacename>, <interfacename>Resource</interfacename>, <interfacename>SubtransactionAwareResource</interfacename>, and Synchronization, the
+      following UML relationship diagram can be drawn:
+    </para>
+    <figure>
+      <title>Relationship between Control, Resource, SubtransactionAwareResource, and Synchronization</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/interface_relationship.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Relationship between Control, Resource, SubtransactionAwareResource, and Synchronization</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+
     
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        Synchronizations must be called before the top-level transaction commit protocol starts, and after it
+        completes. By default, if the transaction is instructed to roll back, the Synchronizations associated with the
+        transaction is not contacted. To override this, and call Synchronizations regardless of the transaction's
+        outcome, set the <varname>OTS_SUPPORT_ROLLBACK_SYNC</varname> property variable to <literal>YES</literal>.
       </para>
-      
+      <para>
+        If you use distributed transactions and interposition, a local proxy for the top-level transaction coordinator
+        is created for any recipient of the transaction context. The proxy looks like a <classname>Resource</classname>
+        or <classname>SubtransactionAwareResource</classname>, and registers itself as such with the actual top-level
+        transaction coordinator. The local recipient uses it to register <classname>Resources</classname> and
+        <classname>Synchronizations</classname> locally.
+      </para>
+      <para>
+        The local proxy can affect how Synchronizations are invoked during top-level transaction commit. Without the
+        proxy, all Synchronizations are invoked before any Resource or SubtransactionAwareResource objects are
+        processed. However, with interposition, only those Synchronizations registered locally to the transaction
+        coordinator are called. Synchronizations registered with remote participants are only called when the interposed
+        proxy is invoked. The local proxy may only be invoked after locally-registered Resource or
+        SubtransactionAwareResource objects are invoked. With the
+        <varname>OTS_SUPPORT_INTERPOSED_SYNCHRONIZATION</varname> property variable set to <literal>YES</literal>, all
+        Synchronizations are invoked before any Resource or SubtransactionAwareResource, no matter where they are
+        registered.
+      </para>
     </section>
-
   </section>
 
   <section>
