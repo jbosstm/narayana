@@ -1333,59 +1333,447 @@
 
   <section>
     <title>Transactions and registered resources</title>
+    <figure>
+      <title>Relationship between a transaction <interfacename>Control</interfacename> and the resources registered with
+      it</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/control_and_resources.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Relationship between a transaction <interfacename>Control</interfacename> and the resources registered
+          with it</para>
+        </textobject>
+      </mediaobject>
+    </figure>
     <para>
-      
+      In <xref linkend="subtransaction-commit" />, a subtransaction with both <classname>Resource</classname> and
+      <classname>SubtransactionAwareResource</classname> objects commits.  The
+      <classname>SubtransactionAwareResources</classname> were registered using
+      <methodname>register_subtran_aware</methodname>. The <classname>Resources</classname> do not know the
+      subtransaction terminated, but the <classname>SubtransactionAwareResources</classname> do. Only the
+      <classname>Resources</classname> are automatically propagated to the parent transaction.
     </para>
-    
+    <figure id="subtransaction-commit">
+      <title>Subtransaction commit</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/subtransaction-commit.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Subtransaction commit</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <para>
+      <xref linkend="subtransaction-rollback" /> illustrates the impact of a subtransaction rolling back. Any registered
+      resources are discarded, and all <classname>SubtransactionAwareResources</classname> are informed of the
+      transaction outcome.
+    </para>
+    <figure id="subtransaction-rollback">
+      <title>Subtransaction rollback</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/subtransaction-rollback.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Subtransaction rollback</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <para>
+      <xref linkend="top-level-commit" /> shows the activity diagram for committing a top-level
+      transaction. Subtransactions within the top-level transaction which have also successfully committed propagate
+      <classname>SubtransactionAwareResources</classname> to the top-level transaction. These
+      <classname>SubtransactionAwareResources</classname> then participate within the two-phase commit protocol. Any
+      registered <classname>Synchronizations</classname> are contacted before <methodname>prepare</methodname> is
+      called. Because of indirect context management, when the transaction commits, the transaction service changes the
+      invoking thread’s transaction context.
+    </para>
+    <figure id="top-level-commit">
+      <title>Top-level commit</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/top-level-commit.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Top-level commit</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+    <figure>
+      <title>Top-level rollback</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/top-level-rollback.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Top-level rollback</para>
+        </textobject>
+      </mediaobject>
+    </figure>
+
   </section>
 
   <section>
     <title>The <interfacename>TransactionalObject</interfacename> interface</title>
     <para>
-      
+      The <interfacename>TransactionalObject</interfacename> interface indicates to an object that it is
+      transactional. By supporting this interface, an object indicates that it wants to associate the transaction
+      context associated with the client thread with all operations on its interface. The
+      <interfacename>TransactionalObject</interfacename> interface defines no operations.
     </para>
-    
+    <para>
+      OTS specifications do not require an OTS to initialize the transaction context of every request handler. It is
+      only a requirement if the interface supported by the target object is derived from
+      <interfacename>TransactionalObject</interfacename>. Otherwise, the initial transaction context of the thread is
+      undefined. A transaction service implementation can raise the <systemitem>TRANSACTION_REQUIRED</systemitem>
+      exception if a <classname>TransactionalObject</classname> is invoked outside the scope of a transaction.
+    </para>
+    <para>
+      In a single-address space application, transaction contexts are implicitly shared between clients and objects,
+      regardless of whether or not the objects support the <interfacename>TransactionalObject</interfacename>
+      interface. To preserve distribution transparency, where implicit transaction propagation is supported, you can
+      direct JBossTS to always propagate transaction contexts to objects. The default is only to propagate if the object
+      is a <interfacename>TransactionalObject</interfacename>. Set the <varname>OTS_ALWAYS_PROPAGATE_CONTEXT</varname>
+      property variable to <literal>NO</literal> to override this behavior.
+    </para>
+    <para>
+      By default, JBossTS does not require objects which support the <interfacename>TransactionalObject</interfacename>
+      interface to invoked within the scope of a transaction. The object determines whether it should be invoked within
+      a transaction. If so, it must throw the <systemitem>TransactionRequired</systemitem> exception. Override this
+      default by setting the <varname>OTS_NEED_TRAN_CONTEXT</varname> shell environment variable to
+      <literal>YES</literal>.
+    </para>
+    <important>
+      <para>
+        Make sure that the settings for <varname>OTS_ALWAYS_PROPAGATE_CONTEXT</varname> and
+        <varname>OTS_NEED_TRAN_CONTEXT</varname> are identical at the client and the server. If they are not identical
+        at both ends, your application may terminate abnormally.
+      </para>
+    </important>
+    <!-- Removed because the content is already covered just above
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        In a single-address space application (i.e., all objects reside within the same process), transaction contexts
+        are implicitly shared between “clients” and objects, regardless of whether or not the objects support the
+        TransactionalObject interface. Therefore, in order to preserve distribution transparency, where implicit
+        transaction propagation is supported JBossTS will always propagate transaction contexts to objects. The default
+        can be overridden by setting the environment variable OTS_ALWAYS_PROPAGATE_CONTEXT to NO.
       </para>
-      
+      <para>
+        By default, JBossTS does not require that objects supporting the TransactionalObject interface are invoked
+        within the scope of a transaction. Rather, this it is left up to the object to determine whether it should be
+        invoked within a transaction; if so, it should throw the TransactionRequired exception. This can be overridden
+        by setting the OTS_NEED_TRAN_CONTEXT shell environment variable to YES.
+      </para>
     </section>
-
+    -->
   </section>
   
   <section>
     <title>Interposition</title>
     <para>
-      
+      OTS objects supporting interfaces such as the <interfacename>Control</interfacename> interface are standard CORBA
+      objects. When an interface is passed as a parameter in an operation call to a remote server, only an object
+      reference is passed. This ensures that any operations that the remote server performs on the interface are
+      correctly performed on the real object. However, this can have substantial penalties for the application, because
+      of the overhead of remote invocation. For example, when the server registers a <classname>Resource</classname>
+      with the current transaction, the invocation might be remote to the originator of the transaction.
     </para>
-    
+    <para>
+      To avoid this overhead, your OTS may support interposition. This permits a server to create a local control object
+      which acts as a local coordinator, and fields registration requests that would normally be passed back to the
+      originator. This coordinator must register itself with the original coordinator, so that it can correctly
+      participate in the commit protocol. Interposed coordinators form a tree structure with their parent coordinators.
+    </para>
+    <para>
+      To use interposition, ensure that JBossTS is correctly initialized before creating objects. Also, the client and
+      server must both use interposition. Your ORB must support filters or interceptors, or the
+      <interfacename>CosTSPortability</interfacename> interface, since interposition requires the use of implicit
+      transaction propagation. To use interposition, set the <varname>OTS_CONTEXT_PROP_MODE</varname> property variable
+      to <literal>INTERPOSITION</literal>.
+    </para>
+    <note>
+      <para>
+        Interposition is not required if you use the JBossTS advanced API.
+      </para>
+    </note>
   </section>
   
   <section>
     <title>RecoveryCoordinator</title>
     <para>
-      
+      A reference to a <classname>RecoveryCoordinator</classname> is returned as a result of successfully calling
+      <methodname>register_resource</methodname> on the transaction's <classname>Coordinator</classname>. Each
+      <classname>RecoveryCoordinator</classname> is implicitly associated with a single
+      <classname>Resource</classname>. It can drive the <classname>Resource</classname> through recovery procedures in
+      the event of a failure which occurs during the transaction.
     </para>
-    
+    <figure>
+      <title><interfacename>Resource</interfacename> and <interfacename>RecoveryCoordinator</interfacename></title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/resource-and-recoverycoordinator.png" format="PNG"/>
+        </imageobject>
+        <textobject>
+          <para>Resource and RecoveryCoordinator</para>
+        </textobject>
+      </mediaobject>
+    </figure>
   </section>
 
   <section>
     <title>Checked transaction behavior</title>
     <para>
-      
+      The OTS supports both checked and unchecked transaction behaviour.
     </para>
-    
+    <itemizedlist>
+      <title>Integrity constraints of checked transactions</title>
+      <listitem>
+        <para>
+          A transaction will not commit until all transactional objects involved in the transaction have completed
+          their transactional requests.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Only the transaction originator can commit the transaction
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      Checked transactional behavior is typical transaction behavior, and is widely implemented. Checked behavior
+      requires implicit propagation, because explicit propagation prevents the OTS from tracking which objects are
+      involved in the transaction.
+    </para>
+    <para>
+      Unchecked behavior allows you to implement relaxed models of atomicity. Any use of explicit propagation implies
+      the possibility of unchecked behavior, since you as the programmer are in control of the behavior. Even if you
+      use implicit propagation, a server may unilaterally abort or commit the transaction using the
+      <interfacename>Current</interfacename> interface, causing unchecked behavior.
+    </para>
+    <para>
+      Some OTS implementations enforce checked behavior for the transactions they support, to provide an extra level
+      of transaction integrity. The checks ensure that all transactional requests made by the application complete
+      their processing before the transaction is committed. A checked Transaction Service guarantees that commit fails
+      unless all transactional objects involved in the transaction complete the processing of their transactional
+      requests. Rolling back the transaction does not require such as check, since all outstanding transactional
+      activities will eventually roll back if they are not directed to commit.
+    </para>
+    <para>
+      There are many possible implementations of checking in a Transaction Service. One provides equivalent function
+      to that provided by the request amd response inter-process communication models defined by X/Open. The X/Open
+      Transaction Service model of checking widely implemented. It describes the transaction integrity guarantees
+      provided by many existing transaction systems. These transaction systems provide the same level of transaction
+      integrity for object-based applications, by providing a Transaction Service interface that implements the X/Open
+      checks.
+    </para><!-- I do not understand this stuff at all -->
+    <para>
+      In X/Open, completion of the processing of a request means that the object has completed execution of its method
+      and replied to the request. The level of transaction integrity provided by a Transaction Service implementing
+      the X/Open model provides equivalent function to that provided by the XATMI and TxRPC interfaces
+      defined by X/Open for transactional applications. X/Open DTP Transaction Managers are examples of transaction
+      management functions that implement checked transaction behavior.
+    </para><!-- I do not understand this stuff at all -->
+    <para>
+      This implementation of checked behavior depends on implicit transaction propagation. When implicit propagation
+      is used, the objects involved in a transaction at any given time form a tree, called the request tree for the
+      transaction. The beginner of the transaction is the root of the tree. Requests add nodes to the tree, and
+      replies remove the replying node from the tree. Synchronous requests, or the checks described below for deferred
+      synchronous requests, ensure that the tree collapses to a single node before commit is issued.
+    </para>
+    <para>
+      If a transaction uses explicit propagation, the Transaction Service has no way to know which objects are or will
+      be involved in the transaction. Therefore, the use of explicit propagation is not permitted by a Transaction
+      Service implementation that enforces X/Open-style checked behavior.
+    </para>
+    <para>
+      Applications that use synchronous requests exhibit checked behavior. If your application uses deferred
+      synchronous requests, all clients and objects need to be under the control of a checking Transaction Service. In
+      that case, the Transaction Service can enforce checked behavior, by applying a <systemitem>reply</systemitem>
+      check and a <systemitem>committed</systemitem> check. The Transaction Service must also apply a
+      <systemitem>resume</systemitem> check, so that the transaction is only resumed by applications in the correct
+      part of the request tree.
+    </para>
+    <informaltable>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>reply check</entry>
+            <entry>
+              <para>
+                Before an object replies to a transactional request, a check is made to ensure that the object has
+                received replies to all the deferred synchronous requests that propagated the transaction in the
+                original request. If this condition is not met, an exception is raised and the transaction is marked
+                as rollback-only. A Transaction Service may check that a reply is issued within the context of the
+                transaction associated with the request.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>commit check</entry>
+            <entry>
+              <para>
+                Before a commit can proceed, a check is made to ensure that the commit request for the transaction is
+                being issued from the same execution environment that created the transaction, and that the client
+                issuing commit has received replies to all the deferred synchronous requests it made that propagated
+                the transaction.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>resume check</entry>
+            <entry>
+              <para>
+                Before a client or object associates a transaction context with its thread of control, a
+                check is made to ensure that this transaction context was previously associated with the execution
+                environment of the thread. This assocation would exist if the thread either created the transaction or
+                received it in a transactional operation.
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
     <section>
       <title>JBossTS specifics</title>
       <para>
-        
+        Where support from the ORB is available, JBossTS supports X/Open checked transaction behavior. However, unless
+        the <varname>OTS_CHECKED_TRANSACTIONS</varname> property variable is set to <literal>YES</literal>, checked
+        transactions are disabled. This is the default setting.
+      </para>
+      <note>
+        <para>
+          Checked transactions are only possible with a co-located transaction manager.
+        </para>
+      </note>
+      <para>
+        In a multi-threaded application, multiple threads may be associated with a transaction during its lifetime,
+        sharing the context. In addition, if one thread terminates a transaction,
+        other threads may still be active within it. In a distributed environment, it can be difficult to guarantee that
+        all threads have finished with a transaction when it terminates. By default, JBossTS issues a warning if
+        a thread terminates a transaction when other threads are still active within it, but allow the
+        transaction termination to continue. You can choose to block the thread which is terminating the transaction
+        until all other threads have disassociated themselves from its context, or use other methods to solve the
+        problem. JBossTS provides the <classname>com.arjuna.ats.arjuna.coordinator.CheckedAction</classname> class,
+        which allows you to override the thread and transaction termination policy. Each transaction has an instance of this class
+        associated with it, and you can implement the class on a per-transaction basis.
       </para>
       
+      <example>
+        <title><classname>CheckedAction</classname> implementation</title>
+        <programlisting role="JAVA" language="Java"><xi:include href="extras/CheckedAction-implementation.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      </example>
+      <para>
+        When a thread attempts to terminate the transaction and there active threads exist within it, the system
+        invokes the <methodname>check</methodname> method on the transaction’s <classname>CheckedAction</classname> object. The parameters to the check method are:
+      </para>
+      <informaltable>
+        <tgroup cols="3">
+          <tbody>
+            <row>
+              <entry>isCommit</entry>
+              <entry>
+                <para>
+                  Indicates whether the transaction is in the process of committing or rolling back.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>actUid</entry>
+              <entry>
+                <para>
+                  The transaction identifier.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>list</entry>
+              <entry>
+                <para>
+                  A list of all of the threads currently marked as active within this transaction.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        When <methodname>check</methodname> returns, the transaction termination continues. Obviously the state of the
+        transaction at this point may be different from that when check was called.
+      </para>
+      <para>
+        Set the <classname>CheckedAction</classname> instance associated with a given transaction with the
+        <methodname>setCheckedAction</methodname> method of <interfacename>Current</interfacename>.
+      </para>
     </section>
-
   </section>
 
   <section>
-    <title>Summary of JBossTS implementation decisions</title> <para> </para> </section> </chapter>
+    <title>Summary of JBossTS implementation decisions</title>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Any execution environment (thread, process) can use a transaction Control.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <interfacename>Control</interfacename>s, <interfacename>Coordinator</interfacename>s, and
+          <interfacename>Terminator</interfacename>s are valid for use for the duration of the transaction if implicit
+          transaction control is used, via <interfacename>Current</interfacename>. If you use explicit control, via the
+          <classname>TransactionFactory</classname> and <classname>Terminator</classname>, then use the
+          <methodname>destroyControl</methodname> method of the OTS class in
+          <classname>com.arjuna.CosTransactions</classname> to signal when the information can be garbage collected.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          You can propagate <interface>Coordinator</interface>s and <interfacename>Terminator</interfacename>s between
+          execution environments.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          If you try to commit a transaction when there are still active subtransactions within it, JBossTS
+          rolls back the parent and the subtransactions.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          JBossTS includes full support for nested transactions. However, if a resource raises an exception to the
+          commitment of a subtransaction after other resources have previously been told that the transaction committed,
+          JBossTS forces the enclosing transaction to abort. This guarantees that all resources used within the
+          subtransaction are returned to a consistent state. You can disable support for subtransactions by setting the
+          <varname>OTS_SUPPORT_SUBTRANSACTIONS</varname> variable to <literal>NO</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Obtain <interfacename>Current</interfacename> from the <methodname>get_current</methodname> method of the OTS.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          A timeout value of zero seconds is assumed for a transaction if none is specified using
+          <methodname>set_timeout</methodname>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          by default, <interfacename>Current</interfacename> does not use a separate transaction manager server by
+          default. Override this behavior by setting the <varname>OTS_TRANSACTION_MANAGER</varname> environment
+          variable. Location of the transaction manager is ORB-specific.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Checked transactions are disabled by default. To enable them, set the
+          <varname>OTS_CHECKED_TRANSACTIONS</varname> property to <literal>YES</literal>.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</chapter>
