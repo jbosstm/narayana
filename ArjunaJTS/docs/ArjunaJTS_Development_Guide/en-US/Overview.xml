@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
+<chapter>
   <title>Transaction Processing Overview</title>
   
   <section>
@@ -21,13 +21,13 @@
       </para>
     </formalpara>
     <para>
-      This ability to roll back an operation if any part of it fails is what JBoss Transactions is all about. This
-      guide assists you in writing transactional applications to protect your data.
+      This ability to roll back an operation if any part of it fails is what JBoss Transactions is all about. This guide
+      assists you in writing transactional applications to protect your data.
     </para>
     <para>
       "Transactions" in this guide refers to atomic transactions, and embody the "all-or-nothing" concept outlined
-      above. Transactions are used to guarantee te consistency of data in the presence of failures. Transactions
-      fulfill the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
+      above. Transactions are used to guarantee the consistency of data in the presence of failures. Transactions fulfill
+      the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
     </para>
     <variablelist>
       <title>ACID Properties</title>
@@ -67,17 +67,17 @@
       </varlistentry>
     </variablelist>
     <para>
-      A transaction can be terminated in two ways: committed or aborted (rolled back). When a transaction is
-      committed, all changes made within it are made durable (forced on to stable storage, e.g., disk). When a
-      transaction is aborted, all of the changes are undone. Atomic actions can also be nested; the effects of a
-      nested action are provisional upon the commit/abort of the outermost (top-level) atomic action.
+      A transaction can be terminated in two ways: committed or aborted (rolled back). When a transaction is committed,
+      all changes made within it are made durable (forced on to stable storage, e.g., disk). When a transaction is
+      aborted, all of the changes are undone. Atomic actions can also be nested; the effects of a nested action are
+      provisional upon the commit/abort of the outermost (top-level) atomic action.
     </para>
   </section>    
   <section>
     <title>Commit protocol</title>
     <para>
-      A two-phase commit protocol guarantees that all of the transactio participants either commit or abort
-      any changes made. <xref linkend="img-commit-protocol" /> illustrates the main aspects of the commit protocol.
+      A two-phase commit protocol guarantees that all of the transaction participants either commit or abort any changes
+      made. <xref linkend="img-commit-protocol" /> illustrates the main aspects of the commit protocol.
     </para>
     <procedure>
       <title>Two-phase commit protocol</title>
@@ -118,12 +118,14 @@
       </step>
       <step>
         <para>
-          Until they receive this message, these resources are unavailable for use by other actions. If the coordinator fails before delivery of this message, these resources remain blocked. However, if crashed machines eventually recover, crash recovery mechanisms can be employed to unblock the protocol and terminate the action.     
+          Until they receive this message, these resources are unavailable for use by other actions. If the coordinator
+          fails before delivery of this message, these resources remain blocked. However, if crashed machines eventually
+          recover, crash recovery mechanisms can be employed to unblock the protocol and terminate the action.
         </para>
       </step>
     </procedure>
     <figure id="img-commit-protocol">
-      <title>Two-Pase Commit</title>
+      <title>Two-Phase Commit</title>
       <mediaobject>
         <imageobject>
           <imagedata fileref="images/img-2phase.png" format="PNG"/>
@@ -157,21 +159,19 @@
   <section>
     <title>Nested transactions</title>
     <para>
-      Given a system that provides transactions for certain operations, you can combine them to
-      form another operation, which is also required to be a transaction. The resulting transaction’s effects are a
-      combination of the effects of its constituent transactions. This paradigm creates the concept of nested
-      subtransactions, and the resulting combined transaction is called the enclosing transaction. The enclosing transaction is sometimes referred to as the parent of a
-      nested (or child) transaction. It can also be viewed as a hierarchical relationship, with a top-level transaction
-      consisting of several subordinate transactions.
+      Given a system that provides transactions for certain operations, you can combine them to form another operation,
+      which is also required to be a transaction. The resulting transaction’s effects are a combination of the effects
+      of its constituent transactions. This paradigm creates the concept of nested subtransactions, and the resulting
+      combined transaction is called the enclosing transaction. The enclosing transaction is sometimes referred to as
+      the parent of a nested (or child) transaction. It can also be viewed as a hierarchical relationship, with a
+      top-level transaction consisting of several subordinate transactions.
     </para>
     <para>
-      An important difference exists between nested and
-      top-level transactions.
+      An important difference exists between nested and top-level transactions.
     </para>
     <para>
-      The effect of a nested transaction is provisional upon the commit/roll back of its
-      enclosing transactions. The effects are recovered if the enclosing transaction aborts, even if the
-      nested transaction has committed.
+      The effect of a nested transaction is provisional upon the commit/roll back of its enclosing transactions. The
+      effects are recovered if the enclosing transaction aborts, even if the nested transaction has committed.
     </para>
     <para>
       Subtransactions are a useful mechanism for two reasons:
@@ -181,8 +181,8 @@
         <term>fault-isolation</term>
         <listitem>
           <para>
-            If a subtransaction rolls back, perhaps because an object it is using fails, the enclosing transaction
-            does not need to roll back.
+            If a subtransaction rolls back, perhaps because an object it is using fails, the enclosing transaction does
+            not need to roll back.
           </para>
         </listitem>
       </varlistentry>
@@ -192,9 +192,9 @@
           <para>
             If a transaction is already associated with a call when a new transaction begins, the new transaction is
             nested within it. Therefore, if you know that an object requires transactions, you can them within the
-            object. If the object’s methods are invoked without a client transaction, then the object’s transactions
-            are top-level. Otherwise, they are nested within the scope of the client's transactions. Likewise, a
-            client does not need to know whether an object is transactional. It can begin its own transaction.
+            object. If the object’s methods are invoked without a client transaction, then the object’s transactions are
+            top-level. Otherwise, they are nested within the scope of the client's transactions. Likewise, a client does
+            not need to know whether an object is transactional. It can begin its own transaction.
           </para>
         </listitem>
       </varlistentry>
@@ -276,11 +276,13 @@
       protocol used to determine the outcome of the transaction since it maintains no state information of its own.
     </para>
     <para>
-      The OTS is a protocol engine that guarantees obedience to transactional behavior. It does not directly
-      support all of the transaction properties, but relies on some cooperating services:
+      The OTS is a protocol engine that guarantees obedience to transactional behavior. It does not directly support all
+      of the transaction properties, but relies on some cooperating services:
     </para>
     <informaltable>
       <tgroup cols="2">
+        <colspec colwidth="200px" />
+        <colspec colwidth="240px" />
         <tbody>
           <row>
             <entry>Persistence/Recovery Service</entry>

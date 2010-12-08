@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
+<chapter>
   <title>JTA and JTS</title>
   
   <section>

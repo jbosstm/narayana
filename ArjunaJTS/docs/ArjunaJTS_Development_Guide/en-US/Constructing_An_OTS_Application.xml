@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
+<chapter>
   <title>Constructing an OTS application</title>
   
   <section>
@@ -25,7 +25,7 @@
         objects. You can only use implicit context propagation on an ORB which supports filters and interceptors, or the
         <interfacename>CosTSPortability</interfacename> interface. You can set <varname>OTS_CONTEXT_PROP_MODE</varname>
         to <literal>CONTEXT</literal> or <literal>INTERPOSITION</literal>, depending on which functionality you need. If
-        you are using the JBossTSA PI, you need to use interposition.
+        you are using the JBossTS API, you need to use interposition.
       </para>
     </section>
   </section>
@@ -95,8 +95,9 @@
           to start the transaction, which becomes implicitly associated with the originator’s thread of control.
         </para>
         <para>
-          The program commits the transaction associated with the client thread. The <systemitem>report_heuristics</systemitem> argument is set
-          to <literal>false</literal>, so the Transaction Service makes no reports about possible heuristic decisions.
+          The program commits the transaction associated with the client thread. The
+          <systemitem>report_heuristics</systemitem> argument is set to <literal>false</literal>, so the Transaction
+          Service makes no reports about possible heuristic decisions.
         </para>
         <programlisting language="Java" role="JAVA"><xi:include href="extras/indirect_and_implicit_close.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>

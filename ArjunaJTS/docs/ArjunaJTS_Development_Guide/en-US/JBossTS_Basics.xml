@@ -3,16 +3,15 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
+<chapter>
   <title>JBossTS Basics</title>
     
   <section>
     <title>Introduction</title>
     <para>
       JBossTS is based upon the original Arjuna system developed at the University of Newcastle between 1986 and
-      1995. Arjuna predates the OTS specification and includes many features not found in the OTS. JBossTS is a
-      superset of the OTS. Applications written using the standard OTS interfaces are portable across OTS
-      implementations.
+      1995. Arjuna predates the OTS specification and includes many features not found in the OTS. JBossTS is a superset
+      of the OTS. Applications written using the standard OTS interfaces are portable across OTS implementations.
     </para>
     <itemizedlist>
       <title>JBossTS features in terms of OTS specifications</title>
@@ -71,8 +70,8 @@
     </para>
     <para>
       Because of differences in ORB implementations, JBossTS uses a separate ORB Portability library which acts as an
-      abstraction later. Many of the examples used throughout this manual use this library. Refer to the ORB
-      Portability Manual for more details.
+      abstraction later. Many of the examples used throughout this manual use this library. Refer to the ORB Portability
+      Manual for more details.
     </para>
 
     
@@ -81,7 +80,7 @@
       <para>
         The OTS is only a protocol engine for driving registered resources through a two-phase commit protocol. You are
         responsible for building and registering the <interfacename>Resource</interfacename> objects which handle
-        persistence and concurrency control, ensuri ACID properties for transactional application objects. You need to
+        persistence and concurrency control, ensuring ACID properties for transactional application objects. You need to
         register <interfacename>Resources</interfacename> at appropriate times, and ensure that a given
         <interfacename>Resource</interfacename> is only registered within a single transaction. Programming at the raw
         OTS level is extremely basic. You as the programmer are responsible for almost everything to do with
@@ -154,14 +153,16 @@
       </para>
       <informaltable>
         <tgroup cols="2">
+          <colspec colwidth="150px"/>
+          <colspec colwidth="290px"/>
           <tbody>
             <row>
               <entry>Integration of Mechanisms</entry>
               <entry>
                 <para>
                   Fault-tolerant distributed systems require a variety of system functions for naming, locating and
-                  invoking operations upon objects, as well as for concurrency control, error detection and recovery from
-                  failures. These mechanisms are integrated in a way that is easy for you to use.
+                  invoking operations upon objects, as well as for concurrency control, error detection and recovery
+                  from failures. These mechanisms are integrated in a way that is easy for you to use.
                 </para>
               </entry>
             </row>
@@ -196,14 +197,16 @@
   <section>
     <title>JBossTS and the OTS implementation</title>
     <para>
-      The OTS specification is written with flexibility in mind, to cope with different
-      application requirements for transactions. JBossTS supports all optional parts of the OTS specification. In
-      addition, if the specification allows functionality to be implemented in a variety of different ways, JBossTS
-      supports all possible implementations.
+      The OTS specification is written with flexibility in mind, to cope with different application requirements for
+      transactions. JBossTS supports all optional parts of the OTS specification. In addition, if the specification
+      allows functionality to be implemented in a variety of different ways, JBossTS supports all possible
+      implementations.
     </para>
     <table>
       <title>JBossTS implementation of OTS specifications</title>
       <tgroup cols="2">
+        <colspec colwidth="220px"/>
+        <colspec colwidth="220px"/>
         <thead>
           <row>
             <entry>OTS specification</entry>
@@ -345,8 +348,8 @@
       <classname>Current</classname> class.
     </para>
     <para>
-      However, if newly created threads need to automatically inherit the transaction context of their
-      parent, then they should extend the <classname>OTS_Thread</classname> class.
+      However, if newly created threads need to automatically inherit the transaction context of their parent, then they
+      should extend the <classname>OTS_Thread</classname> class.
     </para>
     <example>
       <title>Extending the <classname>OTS_Thread</classname> class</title>

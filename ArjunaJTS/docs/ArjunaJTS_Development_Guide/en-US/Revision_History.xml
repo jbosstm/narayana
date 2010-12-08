@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<appendix id="appe-ArjunaJTS_Development_Guide-Revision_History">
+<appendix>
    <title>Revision History</title>
    <simpara>
       <revhistory>

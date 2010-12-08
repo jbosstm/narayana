@@ -330,7 +330,7 @@ log4j.appender.stdout.layout.ConversionPattern=%d [%t] %-5p %c - %m%n
         because it is loaded dynamically. The interface includes an <methodname>initialise</methodname> method, which
         passes in further information as a <type>string</type>. The content of the string is taken from the property
         value that provides the class name. Everything after the first semi-colon is passed as the value of the
-        string. The <classname>XAResourceRecovery</classname> implementation class determins how to use the string.
+        string. The <classname>XAResourceRecovery</classname> implementation class determines how to use the string.
       </para>
       <para>
         An <classname>XAResourceRecovery</classname> implementation class, <classname>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</classname>, supports resource-initiated recovery for any XADataSource. For this class, the string
@@ -467,14 +467,16 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
         There are two kinds of item that are scanned for expiry:
       </para>
       <informaltable>
-        <tgroup cols="3">
+        <tgroup cols="2">
+          <colspec colwidth="100px"/>
+          <colspec colwidth="350px"/>
           <tbody>
             <row>
               <entry>Contact items</entry>
               <entry>
                 <para>
                   One contact item is created by every application process that uses JBossTS. They contain the
-                  information that allows the <classname>RecoveryManager</classname> to determine if the process that
+                  information that the <classname>RecoveryManager</classname> uses to determine if the process that
                   initiated the transaction is still alive, and what the transaction status is. The expiry time for
                   these is set by the property
                   <varname>RecoveryEnvironmentBean.transactionStatusManagerExpiryTime</varname>, which is expressed in
@@ -491,7 +493,7 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
                 <para>
                   The expiry time is counted from when the transactions were assumed to be complete. A
                   <methodname>replay_completion</methodname> request resets the clock. The risk with removing assumed
-                  complete transactions it that a prolonged communication outage meansthat a remote
+                  complete transactions it that a prolonged communication outage means that a remote
                   <classname>Resource</classname> cannot connect to the <classname>RecoveryManager</classname> for the
                   parent transaction. If the assumed complete transaction entry is expired before the communications are
                   recovered, the eventual <methodname>replay_completion</methodname> will find no information and the

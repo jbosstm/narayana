@@ -398,6 +398,9 @@
         <table>
           <title>LogEditor Options</title>
           <tgroup cols="2">
+            <colspec colwidth="150px"/>
+            <colspec colwidth="290px"/>
+
             <thead>
               <row>
                 <entry>Option</entry>
@@ -441,6 +444,9 @@
         <table>
           <title>LogBrowserOptions</title>
           <tgroup cols="2">
+            <colspec colwidth="150px"/>
+            <colspec colwidth="290px"/>
+
             <thead>
               <row>
                 <entry>Option</entry>

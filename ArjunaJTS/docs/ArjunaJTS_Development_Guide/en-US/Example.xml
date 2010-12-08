@@ -209,7 +209,7 @@
         </para>
         <para>
           The output is identical, regardless of whether implicit context propagation or interposition is used, since
-          interposition is essentially performance aid. Ordinarily, you may need to do a lot of marshalling between a
+          interposition is essentially performance aid. Ordinarily, you may need to do a lot of marshaling between a
           client and server process.
         </para>
         <example>

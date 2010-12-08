@@ -114,6 +114,8 @@
 
     <informaltable>
       <tgroup cols="2">
+        <colspec colwidth="150px"/>
+        <colspec colwidth="290px"/>
         <tbody>
           <row>
             <entry>typeId</entry>
@@ -256,6 +258,8 @@
     <table>
       <title>AtomicTransaction's Methods</title>
       <tgroup cols="2">
+        <colspec colwidth="150px"/>
+        <colspec colwidth="290px"/>
         <tbody>
           <row>
             <entry>begin</entry>

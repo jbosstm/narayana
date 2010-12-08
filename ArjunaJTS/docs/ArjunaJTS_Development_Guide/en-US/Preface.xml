@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<preface id="pref-ArjunaJTS_Development_Guide-Preface">
+<preface>
    <title>Preface</title>
    
    <section>
@@ -16,7 +16,7 @@
    </section>
    
    <section>
-     <title>Prerequisities</title>
+     <title>Prerequisites</title>
      <para>
        To understand this guide, you need a basic familiarity with Java service development and object-oriented
        programming.
