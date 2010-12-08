@@ -1,0 +1,3 @@
+<entry key="RecoveryEnvironmentBean.recoveryActivators">
+  com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement
+</entry>
