@@ -3,7 +3,17 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
-  <title></title>
+<chapter>
+  <title>ORB-specific configuration</title>
+  
+  <section>
+    <title>JacORB</title>
+    <para>
+      Take care to use only the patched version of JacORB shipped with JBossTS. Correct functioning of the transaction
+      system, particularly with regard to crash recovery, is unlikely to work with an unpatched JacORB.  For each
+      deployment of JacORB, ensure that the <varname>jacorb.implname</varname> in the
+      <filename>jacorb.properties</filename> file is unique.
+    </para>
+  </section>
 </chapter>
 
