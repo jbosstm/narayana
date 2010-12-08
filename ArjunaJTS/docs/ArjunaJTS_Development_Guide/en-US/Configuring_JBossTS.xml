@@ -3,7 +3,42 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
-  <title></title>
+<chapter>
+  <title>Configuring JBossTS</title>
+  
+  <section>
+    <title>Configuration loading mechanism</title>
+    <para>
+      The generic configuration system is documented in the corresponding section of the <citetitle>ArjunaCore
+      Development Guide</citetitle>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Options</title>
+    <para>
+      The canonical reference for configuration options is the javadoc of the various
+      <classname>EnvironmentBean</classname> classes, For ArjunaJTS these are:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <classname>com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean.java</classname>
+          </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.jts.common.JTSEnvironmentBean.java</classname>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      Additional <classname>EnvironmentBean</classname> classes are provided by ArjunaCore and ArjunaJTA.  Modules built
+      on ArjunaCore, ArjunaJTA, or ArjunaJTS may add additional beans. Please refer to the relevant
+      <citetitle>Development Guides</citetitle> for details of these.
+    </para>
+    <!-- I left out the deprecated table -->
+  </section>
+
 </chapter>
 
