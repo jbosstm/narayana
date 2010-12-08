@@ -1,9 +1,489 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Development_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter id="chap-ArjunaJTS_Development_Guide-Test_Chapter">
-  <title></title>
-</chapter>
+<chapter>
+  <title>Tools</title>
+  <para>
+    This chapter explains how to start and use the tools framework and what tools are available.
+  </para>
+  <section>
+    <title>Starting the Transaction Service tools</title>
+    <para>
+      The transaction service tools are started differently, depending on your operating system.
+    </para>
 
+    <procedure id="starting-tools">
+      <title>Starting the Transaction Service Tools</title>
+      <step>
+        <title>Microsoft Windows</title>
+        <substeps>
+          <step>
+            <para>
+              Double click on the <guilabel>Start Tools</guilabel> link in the <guilabel>JBoss Transaction
+              Service</guilabel> program group in the <guilabel>Start</guilabel> menu.
+            </para>
+          </step>
+        </substeps>
+      </step>
+      <step>
+        <title>Linux / UNIX</title>
+        <substeps>
+          <step>
+            <para>
+              In a graphical environment, Start a command prompt and change to the directory where JBoss Transaction
+              Service is installed, henceforth referred to as <replaceable>JBOSSTS_INSTALL_DIRECTORY</replaceable>.
+            </para>
+          </step>
+          <step>
+            <para>
+              Run the <command>run-tools.sh</command> command.
+            </para>
+            <screen>[user@localhost bin]$ ./run-tools.sh</screen>
+          </step>
+        </substeps>
+      </step>
+      <step>
+        <title>Result</title>
+        <para>
+          The <guilabel>Tools</guilabel> window appears. This is the launch area for all of the tools shipped
+          with the JBoss Transaction Service.  At the top of the window you will notice a menu bar (see Figure 7).
+        </para>
+      </step>
+    </procedure>
+
+  </section>
+
+  <section>
+    <title>The Tools Window</title>
+    <itemizedlist>
+      <listitem><para>File</para>
+        <variablelist>
+          <varlistentry>
+            <term>Open JMX Browser</term>
+            <listitem>
+              <para>
+                Displays the <xref linkend="jmx-browser-window" />
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Open Object Store Browser</term>
+            <listitem>
+              <para>
+                Displays the <xref linkend="object-store-browser" />.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Settings</term>
+            <listitem>
+              <para>
+                Allows you to configure application settings.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Exit</term>
+            <listitem>
+              <para>
+                Exits the application.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </listitem>
+      <listitem><para>Performance</para>
+        <variablelist>
+          <varlistentry>
+            <term>Open</term>
+            <listitem>
+              <para>
+                Opens a <xref linkend="performance-tool" /> window.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Close All</term>
+            <listitem>
+              <para>
+                Closes all open Performance windows.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </listitem>
+      <listitem><para>Window</para>
+        <variablelist>
+          <varlistentry>
+            <term>Cascade Windows</term>
+            <listitem>
+              <para>
+                Arranges windows diagonally so that you can find a specific one.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Numbered list of open windows</term>
+            <listitem>
+              <para>
+                Allows you to focus a window from the list of all open windows.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </listitem>
+      <listitem><para>Help</para>
+        <variablelist>
+          <varlistentry>
+            <term>About</term>
+            <listitem>
+              <para>
+                Information about the Tools, including version, licensing, and credits.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </listitem>
+    </itemizedlist>
+  </section>
+  
+  <section id="performance-tool">
+    <title>Using the performance tool</title>
+    <para>
+      The performance tool can be used to display performance information about the transaction service.  This
+      information is gathered using the <systemitem>Performance</systemitem> JMX bean, so the transaction service needs
+      to be integrated into an application server, such as JBoss Application Server, to give any performance
+      information.
+    </para>
+    <para>
+      The performance information is displayed via a multi-series graph.  To view this graph, open a performance window
+      by selecting <menuchoice><guimenu>Performance</guimenu><guimenu>Open</guimenu></menuchoice>.
+    </para>
+    <para>
+      The multi-series graph displays a number of items. The items can be turned on or off from the
+      <guimenu>Series</guimenu> menu. When series are enabled, they appear in the legend at the bottom of the graph.
+    </para>
+    <itemizedlist>
+      <listitem><para>Number of transactions.</para></listitem>
+      <listitem><para>Number of committed transactions.</para></listitem>
+      <listitem><para>Number of aborted transactions.</para></listitem>
+      <listitem><para>Number of nested transactions.</para></listitem>
+      <listitem><para>Number of heuristics raised.</para></listitem>
+    </itemizedlist>
+    <para>
+      The data shown is graphed against time.  The <guilabel>Y-axis</guilabel> represents the number of transactions and
+      the <guilabel>X-axis</guilabel> represents time.
+    </para>
+    <para>
+      You can stop and restart the sampling of data at any time using the <guimenu>Sampling</guimenu> menu. You can save
+      the data currently visible in the graph to a Comma Separate Values (CSV) file from the
+      <menuchoice><guimenu>Data</guimenu><guimenu>Save to .csv</guimenu></menuchoice> option.
+    </para>
+  </section>
+
+  <section id="jmx-browser-window">
+    <title>Using the JMX Browser</title>
+    <para>
+      To open the JMX browser window, choose <menuchoice><guimenu>File</guimenu><guimenu>Open JMX
+      Browser</guimenu></menuchoice>. The JMX browser window opens.
+    </para>
+
+    <para>
+      The window has two main sections: the <guilabel>Details</guilabel> panel and the <guilabel>MBean</guilabel> panel.
+      The <guilabel>MBean</guilabel> panel displays the MBeans exposed by the MBean server, grouped by domain name.  The
+      <guilabel>Details</guilabel> panel displays information about the currently selected MBean.  To select an MBean,
+      select its name with the mouse. Information about the MBean appears in the panel.
+    </para>
+    <itemizedlist>
+      <title>MBean Details</title>
+      <listitem><para>The total number of MBeans registered on this server.</para></listitem>
+      <listitem><para>The number of constructors exposed by this MBean.</para></listitem>
+      <listitem><para>The number of attributes exposed by this MBean.</para></listitem>
+      <listitem><para>The number of operations exposed by this MBean.</para></listitem>
+      <listitem><para>The number of notifications exposed by this MBean.</para></listitem>
+      <listitem><para>A brief description of the MBean.</para></listitem>
+    </itemizedlist>
+    <para>
+      Click the <guilabel>View</guilabel> link to display and operate on the attributes and operations exposed by this
+      MBean. You can view readable attributes, alter writable attributes, and invoke operations.
+    </para>
+
+    <section>
+      <title>Attributes and Operations</title>
+      <para>
+        When you click the <guilabel>View</guilabel> link, the <guilabel>View JMX Attributes and Operations</guilabel>
+        window appears.  You can view all readable attributes exposed by the selected MBean.  You can also alter
+        writable attributes.  If an attribute is read-only then you cannot alter an attribute's value.  To alter an
+        attribute's value, just double-click the current value and enter the new value.  If the
+        <guibutton>Edit</guibutton> button is enabled, then you can click it to open an advanced editor.  If the
+        attribute type is a <systemitem>JMX object name</systemitem>, clicking this button displays the JMX attributes
+        and operations for the object.
+      </para>
+      <para>
+        Click the <guibutton>Refresh</guibutton> button to refresh the attribute values.  If an exception occurs while
+        retrieving the value of an attribute, the exception is displayed in place of the attribute's value.
+      </para>
+      <para>
+        You can also invoke operations upon an MBean.  A list of operations exposed by an MBean is displayed below the
+        attributes list.  To invoke an operation, select it from the list and click the <guibutton>Invoke</guibutton>
+        button.  If the operation requires parameters, a window will be displayed, prompting you for the values.  You
+        specify parameter values in the same way as you specify JMX attribute values.  After you have specified a value
+        for each of the parameters, click the <guibutton>Invoke</guibutton> button to perform the invocation.
+      </para>
+      <para>
+        After the method invocation is complete, its return value is displayed.
+      </para>
+    </section>
+
+    
+  </section>
+
+  <section id="object-store-browser">
+    <title>Using the object store browser</title>
+    <para>
+      To open the Object Store browser, select <menuchoice><guimenu>File</guimenu><guimenu>Open Object State
+      Browser</guimenu></menuchoice>.
+    </para>
+    <para>
+      The Object Store Browser window is divided into four sections:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>Object Store Roots</term>
+        <listitem>
+          <para>
+            The currently available object store roots.  Selecting an option from the list repopulate the Object Store
+            Hierarchy with the contents of the selected root.
+          </para>
+        </listitem>
+        
+      </varlistentry>
+      <varlistentry>
+        <term>Object Store Hierarchy</term>
+        <listitem>
+          <para>
+            A tree which shows the current object store hierarchy.  Selecting a node from this tree displays the objects
+            stored in that location.
+          </para>
+        </listitem>
+        
+      </varlistentry>
+      <varlistentry>
+        <term>Objects</term>
+        <listitem>
+          <para>
+            A list of icons which represent the objects stored in the selected location.
+          </para>
+        </listitem>
+        
+      </varlistentry>
+      <varlistentry>
+        <term>Object Details</term>
+        <listitem>
+          <para>
+            Information about the currently selected object, if the object’s type is known to the state viewer
+            repository. See <xref linkend="writing-an-osv" /> for more details.
+          </para>
+        </listitem>
+        
+      </varlistentry>
+
+    </variablelist>
+    <section id="writing-an-osv">
+      <title>Object state viewers (OSV)</title>
+      <para>
+        When an object is selected in the <guilabel>Objects</guilabel> pane of the main window, the registered Object
+        State Viewer (OSV) for that object type is invoked.  An OSV makes information about the selected object
+        available via the user interface.  An OSV for Atomic Actions is distributed with the standard tools. It displays
+        information on the Abstract Records in its various lists, such as heuristic, failed, and read-only.  You can
+        write your own OSVs to display information about object types you have defined.
+      </para>
+
+      <section>
+        <title>Writing an OSV</title>
+        <para>
+          Writing an OSV plug-in allows you to extend the capabilities of the Object Store browser to show the state of
+          user-defined abstract records.  An OSV plug-in is a class which implements the interface
+          <interfacename>com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewerInterface </interfacename>.
+          Package it in a JAR within the <filename>plugins</filename> directory. This example shows how to create an OSV
+          plug-in for an abstract record subclass which looks as follows:
+        </para>
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/abstract_record_subclass.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        <para>
+          When this abstract record is viewed in the object store browser, showing the current value is simple.  You can
+          read the state into an instance of the abstract record and call <methodname>getValue()</methodname>.  The
+          following is the object store browser plug-in source code:
+        </para>
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/osv_plugin.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        <para>
+          The method <methodname>uidNodeExpanded</methodname> is invoked when a Uid representing the given type is
+          expanded in the object store hierarchy tree. This is not required by this plug-in as this abstract record is
+          not visible in the object store directly, but only via one of the lists in an atomic action.  The method
+          <methodname>entrySelected</methodname> is invoked when an entry is selected from the object view which
+          represents an object with the given type.  In both methods the State Panel is used to display information
+          regarding the state of the object.  The State Panel has the following methods that assist in display this
+          information:
+        </para>
+        <variablelist>
+          <title>Methods of <classname>StatePanel</classname></title>
+          <varlistentry>
+            <term><methodname>setInfo</methodname>(<type>String</type> <varname>info</varname>)</term>
+            <listitem>
+              <para>
+                Shows general information.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term><methodname>setData</methodname>(<type>String</type> <varname>name</varname>, <type>String</type> <varname>value</varname>)</term>
+            <listitem>
+              <para>
+                Puts information into the table which is displayed by the object store browser tool.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term><methodname>enableDetailsButton</methodname>(<type>DetailsButtonListener</type> <varname>listener</varname>)</term>
+            <listitem>
+              <para>
+                Enables the <guibutton>Details</guibutton> button.  The listener interface allows a plug-in to be
+                informed when the button is pressed.  It is up to the plug-in developer to decide how to display this
+                further information.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+        <para>
+          This example reads the state from the object store and uses the value returned by
+          <methodname>getValue()</methodname> to put an entry into the state panel table.  The
+          <methodname>getType()</methodname> method returns the type this plug-in is to be registered against.
+        </para>
+        <para>
+          To add this plug-in to the object store browser, package it into a JAR file with a name that is prefixed with
+          <filename>osv-</filename>. The JAR file must contain certain information within the manifest file so that the
+          object store browser knows which classes are plug-ins.  See <xref linkend="osv-plugin-ant" /> for how to do
+          this using Apache Ant.
+        </para>
+
+        <example id="osv-plugin-ant">
+          <title>Packaging an OSV using Apache Ant</title>
+          <programlisting language="XML" role="XML"><xi:include href="extras/osv-plugin-ant.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        </example>
+        <para>
+          After creating the JAR with the correct information in the manifest file, place it in the
+          <filename>bin/tools/plugins</filename> directory.
+        </para>
+      </section>
+    </section>
+
+    
+    <section>
+      <title>ObjectStore command-line editors</title>
+      <para>
+        There are currently two command-line editors for manipulating the ObjectStore. These tools are used to
+        manipulate the lists of heuristic participants maintained by a transaction log. They allow a heuristic
+        participant to be moved from that list back to the list of prepared participants so that transaction recovery
+        may attempt to resolve them automatically.
+      </para>
+
+      
+      <section>
+        <title>LogEditor</title>
+        <para>
+          Started by executing <methodname>com.arjuna.ats.arjuna.tools.log.LogBrowser</methodname>, this tool supports
+          the following options that can be provided on the command-line.
+        </para>
+        <table>
+          <title>LogEditor Options</title>
+          <tgroup cols="2">
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>-tx <replaceable>id</replaceable></entry>
+                <entry><para>Specifies the transaction log to work on.</para></entry>
+              </row>
+              <row>
+                <entry>-type <replaceable>name</replaceable></entry>
+                <entry><para>The transaction type to work on.</para></entry>
+              </row>
+              <row>
+                <entry>-dump</entry>
+                <entry><para>Print out the contents of the log identified by the other options.</para></entry>
+              </row>
+              <row>
+                <entry>-forget <replaceable>index</replaceable></entry>
+                <entry><para>Move the specified target from the heuristic list to the prepared list.</para></entry>
+              </row>
+              <row>
+                <entry>-help</entry>
+                <entry><para>Print out the list of commands and options.</para></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </section>
+      
+      <section>
+        <title>LogBrowser</title>
+        <para>
+          The LogBrowser, invoked by calling <methodname>com.arjuna.ats.arjuna.tools.log.LogBrowser</methodname>, is
+          similar to the LogEditor, but allows multiple log instances to be manipulated. It presents a shell-like
+          interface, with the following options:
+        </para>
+
+        <table>
+          <title>LogBrowserOptions</title>
+          <tgroup cols="2">
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>ls [<replaceable>type</replaceable>]</entry>
+                <entry><para>List the logs for the specified type. If no type is specified, the editor must already be
+                attached to the transaction type.</para></entry>
+              </row>
+              <row>
+                <entry>select [<replaceable>type</replaceable>]</entry>
+                <entry><para>Browse a specific transaction type. If already attached to a transaction type, you are
+                detached from that type first.</para></entry>
+              </row>
+              <row>
+                <entry>attach <replaceable>log</replaceable></entry>
+                <entry><para>Attach the console to the specified transaction log. If you are attached to another log,
+                the command will fail.</para></entry>
+              </row>
+              <row>
+                <entry>detach</entry>
+                <entry><para>Detach the console from the current log.</para></entry>
+              </row>
+              <row>
+                <entry>forget <replaceable>pid</replaceable></entry>
+                <entry><para>Move the specified heuristic participant back to the <systemitem>prepared</systemitem>
+                list. The console must be attached.</para></entry>
+              </row>
+              <row>
+                <entry>delete <replaceable>pid</replaceable></entry>
+                <entry><para>Delete the specified heuristic participant. The console must be attached.</para></entry>
+              </row>
+              <row>
+                <entry>types</entry>
+                <entry><para>List the supported transaction types.</para></entry>
+              </row>
+              <row>
+                <entry>quit</entry>
+                <entry><para>Exit the console tool.</para></entry>
+              </row>
+              <row>
+                <entry>help</entry> <entry><para>Print out the supported commands.</para></entry> </row> </tbody>
+                </tgroup> </table> </section> </section> </section> </chapter>
