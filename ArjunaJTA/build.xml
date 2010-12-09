@@ -63,6 +63,11 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <exec dir="docs/ArjunaTA_Development_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
             </then>
         </if>
 

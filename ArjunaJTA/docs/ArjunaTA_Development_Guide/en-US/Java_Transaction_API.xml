@@ -16,7 +16,7 @@
     capabilities, rather than the more general resources which other transactional APIs allow.
   </para>
   <para>
-    With reference to JTA 99 (<ulink url="http://www.orionserver.com/docs/specifications/jta-spec1_0_1.pdf" />),
+    With reference to JTA 1.1 (<ulink url="http://www.oracle.com/technetwork/java/javaee/tech/jta-138684.html" />),
     distributed transaction services typically involve a number of participants:
   </para>
   <informaltable>
