@@ -112,10 +112,6 @@
             <fileset dir="../ArjunaCore/docs/user_guide" includes="*.pdf" excludes="Admin*"/>
         </copy>
 
-        <copy todir="${build.dir}/install/${dest.dir}/user_guide/jta" overwrite="true">
-            <fileset dir="../ArjunaJTA/docs/user_guide/" includes="*.pdf" excludes="Admin*"/>
-        </copy>
-
     </target>
 
     <target name="install.scripts">

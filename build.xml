@@ -102,6 +102,7 @@
     </target>
 
     <target name="clean">
+        <delete dir="${basedir}/build/extlib" failonerror="false"/>
         <ant dir="maven" target="clean"/>
         <ant dir="antbuildsystem" target="clean"/>
         <ant dir="common" target="clean"/>
