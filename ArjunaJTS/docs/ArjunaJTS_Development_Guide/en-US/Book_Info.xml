@@ -7,7 +7,7 @@
    <title>ArjunaJTS Development Guide</title>
    <subtitle>Developing distributed transactional applications with JBoss Transactions</subtitle>
    <productname>ArjunaJTS</productname>
-   <productnumber>4.14</productnumber>
+   <productnumber>4.14.0</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <!--
