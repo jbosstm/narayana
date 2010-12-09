@@ -74,6 +74,32 @@
 
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
             <fileset dir="docs" includes="**/*.pdf"/>
+        </copy>
+
+        <if>
+            <istrue value="${publican}" />
+            <then>
+                <exec dir="docs/ArjunaJTS_Installation_And_Administration_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+                <exec dir="docs/ArjunaJTS_Development_Guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+            </then>
+        </if>
+
+        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
+            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+        </copy>
+
+
+
+        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
+            <fileset dir="docs" includes="**/*.pdf"/>
             <fileset dir="docs" includes="images/*"/>
             <fileset dir="docs" includes="index.html"/>
         </copy>
@@ -137,7 +163,7 @@
         </ant>
 
         <copy file="jbossts-properties-arjunajts.xml" tofile="${etc.dest.dir}/jbossts-properties.xml" overwrite="true"/>
-        
+
     </target>
 
     <target name="install.jacorb">
@@ -148,15 +174,15 @@
 
     <target name="install.trailmap">
 
-		<!-- build the trail map html pages from xml src -->
-		<ant dir="trailmap" antfile="build_docs.xml" />
+        <!-- build the trail map html pages from xml src -->
+        <ant dir="trailmap" antfile="build_docs.xml" />
 
         <copy todir="${build.dir}/install/trail_map">
             <fileset dir="trailmap">
-				<include name="build.xml"/>
-				<include name="README.txt"/>
-				<include name="html/**"/>
-				<include name="src/**"/>
+                <include name="build.xml"/>
+                <include name="README.txt"/>
+                <include name="html/**"/>
+                <include name="src/**"/>
             </fileset>
         </copy>
     </target>
