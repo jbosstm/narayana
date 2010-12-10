@@ -121,10 +121,10 @@ public class UidWrapper {
 			Class<OSEntryBean> cl = (Class<OSEntryBean>) Class.forName(beantype);
 			Constructor<OSEntryBean> constructor = cl.getConstructor(UidWrapper.class);
 			mbean = constructor.newInstance(this);
-		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
+		} catch (Throwable e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
 			tsLogger.i18NLogger.info_osb_MBeanCtorFail(e);
-			mbean = new OSEntryBean(this);
-		}
+			mbean = new OSEntryBean(this);           
+        }
 
 		mbean.activate();
 
