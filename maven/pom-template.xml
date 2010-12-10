@@ -167,9 +167,18 @@
             <dependency>
                 <groupId>org.jboss.spec</groupId>
                 <artifactId>jboss-javaee6-specs-bom</artifactId>
-                <version>1.0.0.Beta6</version>
+                <version>1.0.0.CR1</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- warning: son of evil maven kludge: the saga continues to work around http://jira.codehaus.org/browse/MNG-3537 -->
+            <dependency>
+                <groupId>org.jboss.managed.beans.depchain</groupId>
+                <artifactId>managed-beans-depchain-as6</artifactId>
+                <version>1.0.0-alpha-1</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <dependency>
