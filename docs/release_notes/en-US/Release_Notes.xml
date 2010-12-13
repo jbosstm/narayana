@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+<article>
+   <xi:include href="Article_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+   
+   <section>
+     <title>ArjunaCore</title>
+
+     <variablelist>
+       <title>New features</title>
+       <varlistentry>
+         <term>JBTM-573 ArjunaCore now includes a command-line tool for manually pruning log files.</term>
+         <listitem>
+           <para>
+             TBD
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-796 All ObjectStore types supported by the ObjectStoreAPI are now supported by MBean
+         <classname>ObjStoreBrowserMBean</classname>.</term>
+         <listitem>
+           <para>
+             Originally, <classname>ObjStoreBrowserMBean</classname> was only known to support file-based
+             ObjectStores. It now implements the ObjectStoreAPI, and works with all types of ObjectStores supported by
+             the API.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+     
+     <variablelist>
+       <title>Resolved issues</title>
+       <varlistentry>
+         <term>JBTM-575 <systemitem>RollbackException</systemitem> now behaves as it did in JBoss Application Server
+         4.3 and earlier, providing debugging information about the cause of the exception.</term>
+         <listitem>
+           <para>
+             In JBoss Application Server 4.2 and previous, when a transaction rolled back, the
+             <systemitem>RollbackException</systemitem> included the root cause of the exception. In JBoss Application
+             Server 5.1, the exception no longer included this information, even though the information can still be
+             found in a different area of the log file. Code which relied on the root cause information included in the
+             exception no longer worked as expected.
+           </para>
+           <para>
+             The debugging information has been put back into the exception, so that it works as it did previously. The
+             following algorithm is used:
+           </para>
+           <orderedlist>
+             <listitem>
+               <para>
+                 If <methodname>setRollbackOnly()</methodname> is called before <methodname>commit()</methodname>, the
+                 <parameter>initCause</parameter> is <literal>setRollbackOnly called from...</literal>, regardless of
+                 anything that may go wrong during the commit. <methodname>beforeCompletion</methodname>s are not
+                 called.
+               </para>
+             </listitem>
+             <listitem>
+               <para>
+                 If <varname>getDeferredThrowable</varname> is not <literal>null</literal>, the
+                 <parameter>initCause</parameter> is the <varname>deferredThrowable</varname>, even if
+                 <classname>setRollbackOnly</classname> is also called before the exception is received.
+               </para>
+             </listitem>
+             <listitem>
+               <para>
+                 If <classname>setRollbackOnly</classname> was called, it is the root cause. This covers the case where
+                 a <classname>beforeCompletion</classname> calls <methodname>setRollbackOnly</methodname> but does not
+                 throw an exception.
+               </para>
+             </listitem>
+           </orderedlist>
+           <para>
+             This fix allows you to code against the root cause of the <systemitem>RollbackException</systemitem>.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-814 TSR implementations now implement <classname>ObjectFactory</classname>.</term>
+         <listitem>
+           <para>
+             TSR implementations have been modified to implement <classname>ObjectFactory</classname>.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-811 The finalizer has been removed from the <classname>StateManager</classname>.</term>
+         <listitem>
+           <para>
+             The <classname>StateManager</classname> no longer includes the finalizer.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-599 A synchronization in CacheStore has been fixed.</term>
+         <listitem>
+           <para>
+             Removing threads operating on AsyncStore did not check to see if the cache was full, and did not notify
+             AsyncCache to wake up. This could cause a stalling condition, if there were more removes than adds to the
+             cache. Removes now check to see if the cache is full, and notify AsyncCache accordingly.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+   
+   <section>
+     <title>ArjunaJTA</title>
+     
+     <variablelist>
+       <title>New features</title>
+       <varlistentry>
+         <term>JBTM-77 <classname>UserTransaction</classname> is now serializable and referencable, in compliance wtih
+         the JTA.</term>
+         <listitem>
+           <para>
+             The Java Transactions API (JTA) specifies that <classname>UserTransaction</classname> needs to be
+             serializable and referenceable. JBossTA now complies with this requirement.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+
+   <section>
+     <title>ArjunaJTS</title>
+     <variablelist>    
+       <title>Resolved issues</title>
+       <varlistentry>
+         <term>JBTM-816 Threads in several components have been given names, for easier profiling.</term>
+         <listitem>
+           <para>
+             The threads in the transaction reaper, reaper worker, action store scanner, and the XTS reaper worker have
+             been given names. This makes them easier to identify during profiling.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+
+   <section>
+     <title>XTS</title>
+     <variablelist>
+       <title>New features</title>
+       <varlistentry>
+         <term>JBTM-798 XTS service and initialization classes are now packaged in a JAR, for easy deployment outside JBossAS.</term>
+         <listitem>
+           <para>
+             XTS service and initialization classes are now packaged into a separate JAR, to make it easier to deploy
+             XTS into other application servers, such as Tomcat.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-799 You can now programmatically configure the WS-C and WS-T service endpoint URLs and paths.</term>
+         <listitem>
+           <para>
+             In the past, WS-C and WS-T service endpoint URLs were hard-coded to conform to the pattern
+             <literal>http://<replaceable>bindAddress</replaceable>:<replaceable>bindPort</replaceable>/<replaceable>war-name</replaceable>/<replaceable>service-name</replaceable></literal>. This
+             made it more difficult to deploy these services in different application servers. The path portion of the
+             URLs of the service endpoints are now configurable.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+
+     <variablelist>
+       <title>Resolved issues</title>
+       <varlistentry>
+         <term>JBTM-518 WST 1.1 support is now included in the default configuration</term>
+         <listitem>
+           <para>
+             WS-BA 0.2.1 only imported the WST 1.0-compliant class libraries, and required a patch to import the WST
+             1.1-compliant class libraries. The BA framework now includes a <filename>libs/</filename> directory that
+             hosts the WST 1.1-compliant libraries, so WST 1.0 and 1.1 are both supported in the default configuration.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-800 Deploying just the Coordinator component of XTS no longer causes an exception to be thrown.</term>
+         <listitem>
+           <para>
+             The configuration instructions for deploying just the Coordinator component of XTS used to cause an
+             exception, because the ATParticipantRecoveryModule was not available on the Participant component. he
+             Participant and Coordinator recovery modules now create and install a manager if one is not already found,
+             and the exception is no longer thrown.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-803 WSDLs ares no longer duplicated in the WS-C and WS-TX JARs.</term>
+         <listitem>
+           <para>
+             The WSDLs have been removed from the WS-TX JAR. Both the WS-C and WS-TX JAR are needed by XTS, and the
+             duplicate information was causing confusion without serving a purpose.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-804 The log of an invalid state SOAP fault now correctly reports that the participant is
+         compensated, not cancelled.</term>
+         <listitem>
+           <para>
+             An invalid state SOAP fault causes the participant to be compensated, but the log message used to report
+             that was cancelled. This has been fixed, so that the log message now agrees with the actual action.
+           </para>
+         </listitem>
+         
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-816 Threads in several components have been given names, for easier profiling.</term>
+         <listitem>
+           <para>
+             The threads in the transaction reaper, reaper worker, action store scanner, and the XTS reaper worker have
+             been given names. This makes them easier to identify during profiling.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+   
+   <section>
+     <title>Recovery</title>
+     <variablelist>
+       <title>Resolved issues</title>
+       <varlistentry>
+         <term>JBTM-797 ORB setup now detects exceptions due to in-use ports.</term>
+         <listitem>
+           <para>
+             If the ORB was unable to bind to the specified port, it would print a warning to standard output and remain
+             in an unusable state. No exception was thrown and there was no mechanism for making the ORB try again to
+             bind to the port. The ORB now throws an exception and the developer can make the ORB try again to bind to
+             the port.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>JBTM-816 Threads in several components have been given names, for easier profiling.</term>
+         <listitem>
+           <para>
+             The threads in the transaction reaper, reaper worker, action store scanner, and the XTS reaper worker have
+             been given names. This makes them easier to identify during profiling.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+   
+   <section>
+     <title>JCA</title>
+     <variablelist>
+       <title>Resolved issues</title>
+       <varlistentry>
+         <term>JBTM-812 JDBC3 code is no longer included.</term>
+         <listitem>
+           <para>
+             JDBC3 code was required for building on JDK 5, but this is no longer needed, and has been removed.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+   </section>
+
+   <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <index />
+</article>
+
