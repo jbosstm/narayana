@@ -20,66 +20,45 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.junit;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.jboss.jbossts.txbridge.tests.common.AbstractBasicTests;
 import org.jboss.jbossts.txbridge.tests.inbound.client.TestClient;
 import org.jboss.jbossts.txbridge.tests.inbound.service.TestServiceImpl;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 
-import org.jboss.byteman.agent.submit.Submit;
 import org.jboss.byteman.contrib.dtest.*;
-
-import com.arjuna.qa.junit.HttpUtils;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-import java.net.URL;
 
 /**
  * Basic (i.e. non-crashrec) test cases for the inbound side of the transaction bridge.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-05
  */
-public class BasicTests
+public class BasicTests extends AbstractBasicTests
 {
     private static final String baseURL = "http://localhost:8080/txbridge-inbound-tests-client/testclient";
 
-    private static Instrumentor instrumentor;
     private InstrumentedClass instrumentedTestSynchronization;
     private InstrumentedClass instrumentedTestXAResource;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        instrumentor = new Instrumentor(new Submit(), 1199);
-        //instrumentor.installHelperJar("/home/jhalli/IdeaProjects/jboss/byteman_trunk/contrib/dtest/build/lib/byteman-dtest.jar");
-    }
-
     @Before
     public void setUp() throws Exception {
+        super.setUp();
+        
         instrumentedTestSynchronization = instrumentor.instrumentClass(TestSynchronization.class);
         instrumentedTestXAResource = instrumentor.instrumentClass(TestXAResource.class);
 
         instrumentor.injectOnCall(TestServiceImpl.class, "doNothing", "$0.enlistSynchronization(1), $0.enlistXAResource(1)");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        instrumentor.removeAllInstrumentation();
-    }
-
-    private void execute() throws Exception {
-        HttpMethodBase request = HttpUtils.accessURL(new URL(baseURL));
-        String response = request.getResponseBodyAsString().trim();
-        assertEquals("finished", response);
-    }
-
     @Test
     public void testRollback() throws Exception {
 
-        execute();
+        execute(baseURL);
 
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodNotCalled("beforeCompletion");
@@ -95,7 +74,7 @@ public class BasicTests
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$2 = true"); // shouldCommit=true
 
-        execute();
+        execute(baseURL);
 
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodCalled("beforeCompletion");
@@ -113,7 +92,7 @@ public class BasicTests
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$2 = true"); // shouldCommit=true
 
-        execute();
+        execute(baseURL);
 
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodCalled("beforeCompletion");
@@ -131,7 +110,7 @@ public class BasicTests
 
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$2 = true"); // shouldCommit=true
 
-        execute();
+        execute(baseURL);
 
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodCalled("beforeCompletion");
@@ -149,7 +128,7 @@ public class BasicTests
         
         instrumentor.injectOnCall(TestClient.class,  "terminateTransaction", "$2 = true"); // shouldCommit=true
 
-        execute();
+        execute(baseURL);
 
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodCalled("beforeCompletion");

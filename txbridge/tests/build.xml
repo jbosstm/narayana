@@ -192,7 +192,7 @@
 
         <mkdir dir="${build.dir}/testresults"/>
         <junit printsummary="yes" fork="yes" dir="${build.dir}" showoutput="@{showoutput}" includeantruntime="true">
-            <formatter type="plain"/>
+            <formatter type="xml"/>
             <classpath>
                 <path refid="build-prereqs"/>
                 <pathelement location="${build.dir}/classes"/>
@@ -206,6 +206,7 @@
             <jvmarg value="-DJAVA_HOME=${java.home}"/>
             <jvmarg value="-DJBOSS_HOME=${jboss.home}"/>
             <jvmarg value="-DBYTEMAN_HOME=${byteman.home}"/>
+            <jvmarg value="-DSERVER_NAME=${jbossas.server}"/>
 
             <jvmarg value="-Djava.rmi.server.codebase=file://build/classes/"/>
             <!--<jvmarg value="-Xdebug"/>-->
