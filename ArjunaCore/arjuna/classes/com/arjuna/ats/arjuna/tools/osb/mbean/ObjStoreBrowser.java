@@ -81,7 +81,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 	public void start()
 	{
 		JMXServer.getAgent().registerMBean(STORE_MBEAN_NAME, this);
-		probe();
 	}
 
     /**
