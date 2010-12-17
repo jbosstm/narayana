@@ -145,7 +145,7 @@
 
     <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser">
 
-        <demand state="Create">ActionStoreObjectStoreEnvironmentBean</demand>
+        <demand state="Create">TransactionManager</demand>
 
         <property name="types" preinstantiate="false">
             <map keyClass="java.lang.String" valueClass="java.lang.String">
