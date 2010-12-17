@@ -107,6 +107,7 @@ public class ObjStoreBrowserTest {
 
 		assertTrue(p.size() == 0);
 		osb.start();
+		osb.probe();
 
 		// there should not be any MBeans
 		assertNull(osb.findUid(Uid.nullUid()));
@@ -169,6 +170,7 @@ public class ObjStoreBrowserTest {
 
 		// generate MBeans representing the atomic action that was just committed
 		osb.start();
+		osb.probe();
 
 		// there should be one MBean corresponding to the AtomicAction A
 		UidWrapper w = osb.findUid(A.get_uid());
@@ -236,6 +238,7 @@ public class ObjStoreBrowserTest {
 		String validName = "jboss.jta:type=TestObjectStore";
 
 		osb.start();
+		osb.probe();
 
 		bean = new OSEntryBean();
 
