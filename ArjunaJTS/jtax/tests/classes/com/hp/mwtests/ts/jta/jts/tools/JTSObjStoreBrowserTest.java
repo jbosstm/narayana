@@ -186,6 +186,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 
 		// there should now be an entry in the object store containing two participants
 		osb.start();
+		osb.probe();
 
 		// there should be one MBean corresponding to the AtomicAction A
 		UidWrapper w = osb.findUid(A.get_uid());

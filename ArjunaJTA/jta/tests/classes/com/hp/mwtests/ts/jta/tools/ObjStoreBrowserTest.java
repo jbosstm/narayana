@@ -85,6 +85,7 @@ public class ObjStoreBrowserTest {
 		}
 
 		osb.start();
+		osb.probe();
 		// there should be one MBean corresponding to the Transaction
 		UidWrapper w = osb.findUid(tx.get_uid());
 		assertNotNull(w);
