@@ -37,12 +37,13 @@
     a definitive reference to all transactional technology.
   </para>
   <para>
-    A classic transaction is a unit of work that either completely succeeds, or fails with all partially completed work
-    being undone. When a transaction is committed, all changes made by the associated requests are made durable,
-    normally by committing the results of the work to a database. If a transaction should fail and is rolled back, all
-    changes made by the associated work are undone. Transactions in distributed systems typically require the use of a
-    transaction manager that is responsible for coordinating all of the participants that are part of the transaction.
+    A transaction is a unit of work that encapsulates multiple database actions such that that either all the
+    encapsulated actions fail or all succeed.
   </para>
+  <para>
+    Transactions ensure data integrity when an application interacts with multiple datasources.
+  </para>
+
   <para>
     The main components involved in using and defining transactional Web Services using XTS are illustrated in <xref
     linkend="fig-web-services-transaction" />.
