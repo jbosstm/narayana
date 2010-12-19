@@ -5,7 +5,13 @@
 ]>
 <chapter>
   <title>Overview</title>
-  
+  <para>
+    A transaction is a unit of work that encapsulates multiple database actions such that that either all the
+    encapsulated actions fail or all succeed.
+  </para>
+  <para>
+    Transactions ensure data integrity when an application interacts with multiple datasources.
+  </para>
   <para>
     This chapter contains a description of the use of the TxCore transaction engine and the <application>Transactional
     Objects for Java (TXOJ)</application> classes and facilities. The classes mentioned in this chapter are the key to
@@ -41,7 +47,8 @@
     <para>
       TxCore exploits object-oriented techniques to present programmers with a toolkit of Java classes from which
       application classes can inherit to obtain desired properties, such as persistence and concurrency control. These
-      classes form a hierarchy, part of which is shown in <xref linkend="txcore_class_hierarchy" /> and which will be described later in this document.
+      classes form a hierarchy, part of which is shown in <xref linkend="txcore_class_hierarchy" /> and which will be
+      described later in this document.
     </para>
     <figure id="txcore_class_hierarchy">
       <title>TxCore Class Hierarchy</title>
@@ -53,9 +60,9 @@
     </figure>
     <para>
       Apart from specifying the scopes of transactions, and setting appropriate locks within objects, the application
-      programmer does not have any other responsibilities: TxCore and <application>TXOJ</application> guarantee
-      that transactional objects will be registered with, and be driven by, the appropriate transactions, and crash
-      recovery mechanisms are invoked automatically in the event of failures.
+      programmer does not have any other responsibilities: TxCore and <application>TXOJ</application> guarantee that
+      transactional objects will be registered with, and be driven by, the appropriate transactions, and crash recovery
+      mechanisms are invoked automatically in the event of failures.
     </para>
   </section>
 
