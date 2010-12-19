@@ -8,6 +8,13 @@
   
   <section>
     <title>Defining a transaction</title>
+    <para>
+      A transaction is a unit of work that encapsulates multiple database actions such that that either all the
+      encapsulated actions fail or all succeed.
+    </para>
+    <para>
+      Transactions ensure data integrity when an application interacts with multiple datasources.
+    </para>
     <formalpara>
       <title>Practical Example</title>
       <para>
@@ -26,8 +33,8 @@
     </para>
     <para>
       "Transactions" in this guide refers to atomic transactions, and embody the "all-or-nothing" concept outlined
-      above. Transactions are used to guarantee the consistency of data in the presence of failures. Transactions fulfill
-      the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
+      above. Transactions are used to guarantee the consistency of data in the presence of failures. Transactions
+      fulfill the requirements of ACID: Atomicity, Consistency, Isolation, Durability.
     </para>
     <variablelist>
       <title>ACID Properties</title>
