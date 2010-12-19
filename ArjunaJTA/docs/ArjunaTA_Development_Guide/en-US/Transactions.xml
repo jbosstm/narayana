@@ -5,7 +5,13 @@
 ]>
 <chapter>
   <title>Transactions</title>
-  
+  <para>
+    A transaction is a unit of work that encapsulates multiple database actions such that that either all the
+    encapsulated actions fail or all succeed.
+  </para>
+  <para>
+    Transactions ensure data integrity when an application interacts with multiple datasources.
+  </para>
   <section>
     <title>Introducing the API</title>
     <para>
@@ -35,9 +41,9 @@
     <para>
       Each Xid created by JBossTS needs a unique node identifier encoded within it, because JBossTS can only recover
       transactions and states that match a specified node identifier. The node identifier to use should be provided to
-      JBossTS via the <varname>CoreEnvironmentBean.nodeIdentifier</varname> property. This value must be unique across your
-      JBossTS instances. The identifier is alphanumeric and limited to 10 bytes in length. If you do not
-      provide a value, then JBossTS generates one and reports the value via the logging infrastructure.
+      JBossTS via the <varname>CoreEnvironmentBean.nodeIdentifier</varname> property. This value must be unique across
+      your JBossTS instances. The identifier is alphanumeric and limited to 10 bytes in length. If you do not provide a
+      value, then JBossTS generates one and reports the value via the logging infrastructure.
     </para>
 
   </section>
