@@ -1,169 +1,45 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss</groupId>
-	<version>1.0.0.SNAPSHOT</version>
-	<artifactId>jbossts-jopr-plugin</artifactId>
-	<packaging>jar</packaging>
-	<!--
-	<version>1.0.0.SNAPSHOT</version>
-	-->
-	<name>JBoss Transaction Management JOPR plugin</name>
-	<url>http://www.jboss.org/jbosstm</url>
-	<description>JBossTS JOPR plugin</description>
+    <modelVersion>4.0.0</modelVersion>
 
-	<licenses>
-		<license>
-			<name>LGPL 2.1</name>
-			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-		</license>
-	</licenses>
+    <parent>
+        <groupId>org.jboss.on</groupId>
+        <!--  Bypass the jopr-plugins-parent which can not have children. It must build after the plugins in order to execute integration tests on them. -->
+        <artifactId>jopr-modules-parent</artifactId>
+        <version>2.3.0.EmbJopr.1.3.0-4</version>
+    </parent>
 
-	<scm>
-		<connection>scm:svn:http://anonsvn.jboss.org/repos/labs/labs/jbosstm/</connection>
-		<developerConnection>scm:svn:https://svn.jboss.org/repos/labs/labs/jbosstm/</developerConnection>
-		<url>http://fisheye.jboss.org/browse/JBossTS/</url>
-	</scm>
+    <groupId>org.jboss.on</groupId>
+    <artifactId>jopr-jbossts-plugin</artifactId>
+    <packaging>jar</packaging>
 
-	<repositories>
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+    <name>Jopr Test Plugin</name>
+    <description>A plugin for managing services</description>
 
-	<build>
-		<finalName>${artifactId}</finalName>
-		<resources>
-			<resource>
-				<directory>src/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>create_javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals> <goal>jar</goal> </goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
-		</plugins>
+    <dependencies>
+        <dependency>
+            <groupId>${rhq.groupId}</groupId>
+            <artifactId>rhq-jmx-plugin</artifactId>
+            <version>${rhq.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    <!--
+        <dependency>
+            <groupId>org.rhq</groupId>
+            <artifactId>rhq-jmx-plugin</artifactId>
+            <version>1.3.0.EmbJopr.1.3.0-4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        -->
 
-	</build>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
-				<groupId>org.jboss.jbossas</groupId>
-				<artifactId>jboss-as-component-matrix</artifactId>
-				<version>6.0.0.20100721-M4</version>
-				<!--<version>6.0.0-SNAPSHOT</version>-->
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<!-- Compile (global dependencies) -->
-		<dependency>
-			<groupId>org.jboss.profileservice</groupId>
-			<artifactId>jboss-profileservice-spi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.man</groupId>
-			<artifactId>jboss-managed</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.rhq</groupId>
-			<artifactId>rhq-core-domain</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.rhq</groupId>
-			<artifactId>rhq-core-plugin-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.rhq</groupId>
-			<artifactId>rhq-jmx-plugin</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!--we dont compile without these, some strange annotation dependency-->
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
-	</dependencies>
+    </dependencies>
 </project>

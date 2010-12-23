@@ -2,7 +2,7 @@
 
 <project name="rhq-plugin" default="maven:package" basedir=".">
 
-	<property name="modulename" value="jbossts-jopr-plugin"/>
+	<property name="modulename" value="jopr-jbossts-plugin-2.3.0.EmbJopr.1.3.0-4.jar"/>
 	<property name="component-module-list" value="${modulename}"/>
 	<property name="install.jar.dir" value="../install/bin"/>
 	<property name="install.doc.dir" value="../install/docs/rhq"/>
