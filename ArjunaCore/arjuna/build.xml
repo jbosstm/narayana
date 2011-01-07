@@ -22,6 +22,8 @@
 
     <property name="modulename" value="arjuna"/>
 
+    <property name="global.ext.libs" value="hornetq-core.jar,jboss-logging.jar"/><!-- jboss-logging-tools.jar -->
+
     <import file="../../sharedbuild.xml"/>
 
     <target name="init" depends="sharedbuild.init">
@@ -40,7 +42,7 @@
             </additional.classpath>
         </compile-tests.macro>
     </target>
-    
+
 	<!--
 		run tests that match a given pattern, for example
 		ant testone -DONECLASS="**/*ObjectStoreAPIJMXTest.java"
