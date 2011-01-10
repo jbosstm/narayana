@@ -1,8 +1,6 @@
 package org.jboss.jbossts.xts.initialisation;
 
 import com.arjuna.mw.wst11.deploy.WSTXInitialisation;
-import com.arjuna.webservices11.wsarjtx.server.TerminationParticipantInitialisation;
-import com.arjuna.webservices11.wsat.server.CompletionInitiatorInitialisation;
 
 /**
  * A class used to perform all 1.1 client side initialisation
