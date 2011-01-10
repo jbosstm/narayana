@@ -28,7 +28,6 @@ import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
-import org.omg.XA.XIDsHelper;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
