@@ -40,12 +40,12 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
+                    <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+                </copy>
             </then>
         </if>
 
-        <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
-            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
-        </copy>
 
     </target>
 

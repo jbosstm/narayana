@@ -142,6 +142,7 @@
         </if>
 
         <ant dir="atsintegration" target="clean"/>
+        <ant dir="docs" target="clean"/>
 
         <delete dir="build"/>
         <delete dir="install"/>
