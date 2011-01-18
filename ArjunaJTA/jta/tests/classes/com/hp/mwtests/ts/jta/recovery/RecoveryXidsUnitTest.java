@@ -70,7 +70,7 @@ public class RecoveryXidsUnitTest
         
         Object[] trans = rxids.toRecover();
         
-        assertEquals(trans.length, 2);
+        assertEquals(2, trans.length);
         assertEquals(trans[0], xids[0]);
         
         assertTrue(rxids.contains(xids[0]));

@@ -115,23 +115,33 @@ public class RecoveryXids
         final int numScanN = (_scanN == null ? 0 : _scanN.length) ;
         final int numScanM = (_scanM == null ? 0 : _scanM.length) ;
         final int numScan = Math.min(numScanN, numScanM) ;
-        
+
         if (numScan == 0)
         {
             return null ;
         }
-        
-        final Vector<Xid> workingVector = new Vector<Xid>() ;
-        
-        for (int count = 0 ; count < numScan ; count++)
+
+        final List<Xid> workingList = new ArrayList<Xid>(numScanN) ;
+
+        for(int i = 0; i < numScanN; i++)
         {
-            if (XAHelper.sameXID(_scanN[count], _scanM[count]))
+            // JBTM-823 / JBPAPP-5195 : don't assume list order/content match.
+            // the list is (hopefully) small and we don't entirely trust 3rd party
+            // Xid hashcode behaviour, so we just do this the brute force way...
+            for(int j = 0; j < numScanM; j++)
             {
-                workingVector.add(_scanN[count]);
+                if (XAHelper.sameXID(_scanN[i], _scanM[j]))
+                {
+                    workingList.add(_scanN[i]);
+                    // any given id should be in _scanN only once, but _scanM may have dupls as
+                    // it's actually a combination of prev runs, per the array copy in nextScan.
+                    // we drop out here as we want each Xid only once in the return set:
+                    break;
+                }
             }
         }
-        
-        return workingVector.toArray(new Xid[workingVector.size()]);
+
+        return workingList.toArray(new Xid[workingList.size()]);
     }
 
     public final boolean isSameRM (XAResource xares)
