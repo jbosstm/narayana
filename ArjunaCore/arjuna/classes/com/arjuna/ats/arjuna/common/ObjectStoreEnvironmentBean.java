@@ -43,6 +43,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile int hashedDirectories = HashedStore.DEFAULT_NUMBER_DIRECTORIES;
     private volatile boolean transactionSync = true;
 
+    private volatile boolean scanZeroLengthFiles = false;
+
     private volatile int share = StateType.OS_UNSHARED;
     private volatile int hierarchyRetry = 100;
     private volatile int hierarchyTimeout = 100;
@@ -349,6 +351,28 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     public void setTransactionSync(boolean transactionSync)
     {
         this.transactionSync = transactionSync;
+    }
+
+    /**
+     * Returns true if zero length files should be returned by a recovery scan.
+     *
+     * Default: false
+     *
+     * @return true if scan results should include zero length files, false if they should be excluded.
+     */
+    public boolean isScanZeroLengthFiles()
+    {
+        return scanZeroLengthFiles;
+    }
+
+    /**
+     * Sets if zero length files should be returned by a recovery scan.
+     *
+     * @param scanZeroLengthFiles true to include zero length files in scan results, false to exclude them.
+     */
+    public void setScanZeroLengthFiles(boolean scanZeroLengthFiles)
+    {
+        this.scanZeroLengthFiles = scanZeroLengthFiles;
     }
 
     /**

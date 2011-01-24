@@ -197,7 +197,9 @@ public abstract class FileSystemStore extends ObjectStore
                         if ((aUid.notEquals(Uid.nullUid())) && ((match == StateStatus.OS_UNKNOWN) ||
                                 (isType(aUid, tName, match))))
                         {
-                            UidHelper.packInto(aUid, store);
+                            if(scanZeroLengthFiles || new File(f, entry[i]).length() > 0) {
+                                UidHelper.packInto(aUid, store);
+                            }
                         }
                     }
                 }
@@ -471,6 +473,8 @@ public abstract class FileSystemStore extends ObjectStore
         fullStoreName = locateStore(_objectStoreRoot);
 
         doSync = objectStoreEnvironmentBean.isObjectStoreSync();
+
+        scanZeroLengthFiles = objectStoreEnvironmentBean.isScanZeroLengthFiles();
 
         /* The root of the objectstore must exist and be writable */
 
@@ -765,6 +769,8 @@ public abstract class FileSystemStore extends ObjectStore
     private static Hashtable fileCache = new Hashtable();
     private static int       createRetry = 100;
     private static int       createTimeout = 100;
+
+    protected boolean scanZeroLengthFiles = false;
 
     static
     {
