@@ -421,7 +421,7 @@ public class RecoveredServerTransaction extends ServerTransaction implements
     {   
         super.unpackHeader(os, hdr);
         
-        super.objectUid = hdr.getTxId();
+        //super.objectUid = hdr.getTxId();
         _originalProcessUid = hdr.getProcessId();
 
         if (jtsLogger.logger.isDebugEnabled()) {
