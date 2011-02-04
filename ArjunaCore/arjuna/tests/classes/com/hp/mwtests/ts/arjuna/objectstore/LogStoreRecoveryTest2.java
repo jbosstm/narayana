@@ -41,7 +41,9 @@ import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-class TestWorker extends Thread
+public class LogStoreRecoveryTest2
+{
+private class TestWorker extends Thread
 {
     public TestWorker(int iters)
     {
@@ -71,8 +73,6 @@ class TestWorker extends Thread
     private int _iters;
 }
 
-public class LogStoreRecoveryTest2
-{
     @Test
     public void test()
     {
