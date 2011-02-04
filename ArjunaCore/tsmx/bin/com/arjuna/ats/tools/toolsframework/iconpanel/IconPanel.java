@@ -30,8 +30,6 @@
  */
 package com.arjuna.ats.tools.toolsframework.iconpanel;
 
-import com.arjuna.ats.tools.jmxbrowser.JMXBrowserFrame;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;

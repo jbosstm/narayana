@@ -30,8 +30,6 @@
  */
 package com.arjuna.ats.tools.toolsframework.iconpanel;
 
-import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectViewEntry;
-
 public interface IconSelectionListener 
 {
 	public void iconSelected(IconPanelEntry icon, boolean selected);
