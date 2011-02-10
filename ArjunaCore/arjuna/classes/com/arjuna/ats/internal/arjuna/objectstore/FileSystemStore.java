@@ -705,7 +705,8 @@ public abstract class FileSystemStore extends ObjectStore
          */
 
         File f = new File(path);
-        boolean doesExist = f.exists();
+        // files created but not yet written are normally considered to not exist yet. JBTM-821
+        boolean doesExist = (f.exists() && (scanZeroLengthFiles || f.length() > 0));
 
         if (doesExist)
             addToCache(path);
