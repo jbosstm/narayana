@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jboss.jbossts</groupId>
+		<artifactId>narayana-build-common</artifactId>
+		<version>5.0.0.M1-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>arjuna</artifactId>
+	<name>ArjunaCore arjuna module</name>
+	<packaging>jar</packaging>
+
+	<build>
+		<sourceDirectory>classes</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>etc</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>etc</directory>
+			</testResource>
+			<testResource>
+				<directory>../</directory>
+				<includes>
+					<include>jbossts-properties.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
+
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/tests</source>
+								<source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<!-- NONE REPEATABLE -->
+						<exclude>**/ObjectStoreTest.java</exclude>
+						<!-- End of NONE REPEATABLE -->
+						<!-- Causes TransactionStatusManagerItemTest to fail -->
+						<exclude>**/TransactionStatusConnectorTest.java</exclude>
+						<!-- Causes TransactionStatusConnectorTest to fail -->
+						<exclude>**/AsyncUnitTest.java</exclude>
+						<!-- Sequencing -->
+						<exclude>**/LogStressTest.java</exclude>
+						<exclude>**/TopLevelActionUnitTest.java</exclude>
+						<!-- End of Sequencing -->
+
+
+						<exclude>**/resources/**</exclude>
+						<exclude>**/DummyCheckedAction.java</exclude>
+						<exclude>**/MyAccess.java</exclude>
+						<exclude>**/Worker.java</exclude>
+						<exclude>**/BasicCrashRecord.java</exclude>
+						<exclude>**/DummyRecoveryModule.java</exclude>
+						<exclude>**/CrashAbstractRecord*.java</exclude>
+						<exclude>**/RecoveryTransaction.java</exclude>
+						<exclude>**/UserDefFirst0Setup.java</exclude>
+						<exclude>**/CachedTest.java</exclude>
+
+						<!-- LogStressTest2 takes too long - needs moving to /qa -->
+						<exclude>**/LogStressTest2.java</exclude>
+						<!-- tests which have been modified to run using byteman scripts -->
+						<exclude>**/reaper/ReaperMonitorTest.java</exclude>
+						<exclude>**/reaper/ReaperTestCase3.java</exclude>
+						<exclude>**/reaper/ReaperTestCase2.java</exclude>
+						<exclude>**/reaper/ReaperTestCase.java</exclude>
+						<exclude>**/objectstore/LogStoreRecoveryTest.java</exclude>
+						<exclude>**/objectstore/LogStoreTest2.java</exclude>
+
+						<exclude>**/recovery/RecoveryManagerStartStopTest.java</exclude>
+						<!-- auxilairy code used by reaper test classes -->
+						<exclude>**/reaper/ReaperTestCaseControl.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.0.0.Beta4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hornetq</groupId>
+			<artifactId>hornetq-core</artifactId>
+			<version>2.1.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.byteman</groupId>
+			<artifactId>byteman</artifactId>
+			<version>1.4.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

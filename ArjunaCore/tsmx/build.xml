@@ -64,15 +64,15 @@
                 includes="com/arjuna/ats/tools/jmxbrowser/**/*.class"
                 excludes="com/arjuna/ats/tools/toolsframework/**/*.class"/>
 			<fileset dir="${etc.dir}/jmxbrowser/" includes="*.gif"/>
-            <metainf dir="${etc.dir}/jmxbrowser/" includes="tools.properties"/>
+            <metainf dir="${etc.dir}/jmxbrowser/META-INF/" includes="tools.properties"/>
         </jar>
 
         <jar jarfile="${install.dir}/${modulename}-objectstorebrowser.jar">
             <fileset dir="${build.dir}/classes"
                 includes="com/arjuna/ats/tools/objectstorebrowser/**/*.class"
-                excludes="com/arjuna/ats/tools/toolsframework/**/*.class,com/arjuna/ats/tools/objecstorebrowser/stateviewers/viewers/**/*.class"/>
+                excludes="com/arjuna/ats/tools/toolsframework/**/*.class,com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**/*.class"/>
 			<fileset dir="${etc.dir}/objectstorebrowser/" includes="*.gif"/>
-            <metainf dir="${etc.dir}/objectstorebrowser/" includes="tools.properties"/>
+            <metainf dir="${etc.dir}/objectstorebrowser/META-INF/" includes="tools.properties"/>
         </jar>
 
         <jar jarfile="${install.dir}/plugins/osbv-defaults.jar">
@@ -100,7 +100,7 @@
                 excludes="com/arjuna/ats/tools/toolsframework/**/*.class"/>
 			<fileset dir="${etc.dir}/perfgraph/"
 			    includes="*.gif"/>
-            <metainf dir="${etc.dir}/perfgraph/" includes="tools.properties"/>
+            <metainf dir="${etc.dir}/perfgraph/META-INF/" includes="tools.properties"/>
         </jar>
 
         <copy file="${etc.dir}/toolsframework.xml" todir="${install.dir}"/>

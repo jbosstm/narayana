@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		JBoss, Home of Professional Open Source Copyright 2008, Red Hat
+		Middleware LLC, and others contributors as indicated by the @authors
+		tag. All rights reserved. See the copyright.txt in the distribution
+		for a full listing of individual contributors. This copyrighted
+		material is made available to anyone wishing to use, modify, copy, or
+		redistribute it subject to the terms and conditions of the GNU Lesser
+		General Public License, v. 2.1. This program is distributed in the
+		hope that it will be useful, but WITHOUT A WARRANTY; without even the
+		implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU Lesser General Public License for more details.
+		You should have received a copy of the GNU Lesser General Public
+		License, v.2.1 along with this distribution; if not, write to the Free
+		Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.narayana</groupId>
+	<artifactId>qa-tests</artifactId>
+	<name>QA tests</name>
+	<version>5.0.0.M1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<developers>
+		<developer>
+			<id>tomjenkinson</id>
+			<name>Thomas Jenkinson</name>
+			<email>tom.jenkinson@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>LGPL 2.1</name>
+			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+		</license>
+	</licenses>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>idlj-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.jacorb</groupId>
+						<artifactId>jacorb-idl-compiler</artifactId>
+						<version>2.2.3</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<compiler>jacorb</compiler>
+					<sourceDirectory>idl/</sourceDirectory>
+					<sources>
+						<source>
+							<includes>								
+								<include>AITResources01.idl</include>
+								<include>AITResources02.idl</include>
+								<include>CrashRecovery01.idl</include>
+								<include>CrashRecovery02.idl</include>
+								<include>CrashRecovery03.idl</include>
+								<include>CrashRecovery04.idl</include>
+								<include>CrashRecovery05.idl</include>
+								<include>CrashRecovery06.idl</include>
+								<include>CrashRecovery07.idl</include>
+								<include>CrashRecovery08.idl</include>
+								<include>CrashRecovery09.idl</include>
+								<include>CrashRecovery10.idl</include>
+								<include>CrashRecovery11.idl</include>
+								<include>EnlistDelistEnlist01.idl</include>
+								<include>Hammer01.idl</include>
+								<include>Hammer02.idl</include>
+								<include>Issues0001.idl</include>
+								<include>JDBCResources01.idl</include>
+								<include>JDBCResources02.idl</include>
+								<include>JDBCResources03.idl</include>
+								<include>JDBCResources04.idl</include>
+								<include>performance.idl</include>
+								<include>PerfProfile01.idl</include>
+								<include>RawResources01.idl</include>
+								<include>RawResources02.idl</include>
+								<include>RawSubtransactionAwareResources01.idl</include>
+								<include>RawSubtransactionAwareResources02.idl</include>
+								<include>SupportTests01.idl</include>
+							</includes>
+							<additionalArguments>
+								<additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
+								<additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>								
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>AITResources01:org.jboss.jbossts.qa.AITResources01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>AITResources02:org.jboss.jbossts.qa.AITResources02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery01:org.jboss.jbossts.qa.CrashRecovery01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery02:org.jboss.jbossts.qa.CrashRecovery02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery03:org.jboss.jbossts.qa.CrashRecovery03</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery04:org.jboss.jbossts.qa.CrashRecovery04</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery05:org.jboss.jbossts.qa.CrashRecovery05</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery06:org.jboss.jbossts.qa.CrashRecovery06</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery07:org.jboss.jbossts.qa.CrashRecovery07</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery08:org.jboss.jbossts.qa.CrashRecovery08</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery09:org.jboss.jbossts.qa.CrashRecovery09</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery10:org.jboss.jbossts.qa.CrashRecovery10</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>CrashRecovery11:org.jboss.jbossts.qa.CrashRecovery11</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>EnlistDelistEnlist01:org.jboss.jbossts.qa.EnlistDelistEnlist01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>Hammer01:org.jboss.jbossts.qa.Hammer01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>Hammer02:org.jboss.jbossts.qa.Hammer02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>Issues0001:org.jboss.jbossts.qa.Issues0001</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>JDBCResources01:org.jboss.jbossts.qa.JDBCResources01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>JDBCResources02:org.jboss.jbossts.qa.JDBCResources02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>JDBCResources03:org.jboss.jbossts.qa.JDBCResources03</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>JDBCResources04:org.jboss.jbossts.qa.JDBCResources04</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>performance:org.jboss.jbossts.qa.performance</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>PerfProfile01:org.jboss.jbossts.qa.PerfProfile01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>RawResources01:org.jboss.jbossts.qa.RawResources01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>RawResources02:org.jboss.jbossts.qa.RawResources02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>RawSubtransactionAwareResources01:org.jboss.jbossts.qa.RawSubtransactionAwareResources01</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>RawSubtransactionAwareResources02:org.jboss.jbossts.qa.RawSubtransactionAwareResources02</additionalArgument>
+								<additionalArgument>-i2jpackage</additionalArgument>
+								<additionalArgument>SupportTests01:org.jboss.jbossts.qa.SupportTests01</additionalArgument>
+							</additionalArguments>
+						</source>
+					</sources>
+					<includeDirs>
+						<includeDir>../../ArjunaJTS/jts/idl/omg</includeDir>
+						<includeDir>../../ArjunaJTS/jts/idl/arjuna</includeDir>
+						<includeDir>../../ArjunaJTS/jts/../jacorb/idl/omg</includeDir>
+					</includeDirs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.narayana</groupId>
+			<artifactId>jts</artifactId>
+			<version>5.0.0.M1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
