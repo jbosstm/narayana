@@ -23,7 +23,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>arjunacore-devguide</artifactId>
 	<name>ArjunaCore devguide module</name>
-	<packaging>jdocbook</packaging>
+	<packaging>jar</packaging>
 
 	<build>
 		<plugins>
@@ -43,6 +43,12 @@
 						<groupId>org.jboss</groupId>
 						<artifactId>jbossorg-jdocbook-style</artifactId>
 						<version>1.1.0</version>
+						<type>jdocbook-style</type>
+					</dependency>
+					<dependency>
+						<groupId>org.jboss.jbossts</groupId>
+						<artifactId>jdocbook-style</artifactId>
+						<version>5.0.0.M1-SNAPSHOT</version>
 						<type>jdocbook-style</type>
 					</dependency>
 				</dependencies>
