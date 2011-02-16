@@ -26,76 +26,45 @@
 	<packaging>jar</packaging>
 
 	<build>
+		<outputDirectory>target/publican</outputDirectory>
 		<plugins>
 
-			<plugin>
-				<groupId>org.jboss.maven.plugins</groupId>
-				<artifactId>maven-jdocbook-plugin</artifactId>
-				<version>2.3.4</version>
-				<extensions>true</extensions>
-				<dependencies>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-docbook-xslt</artifactId>
-						<version>1.1.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossorg-jdocbook-style</artifactId>
-						<version>1.1.0</version>
-						<type>jdocbook-style</type>
-					</dependency>
-					<dependency>
-						<groupId>org.jboss.jbossts</groupId>
-						<artifactId>jdocbook-style</artifactId>
-						<version>5.0.0.M1-SNAPSHOT</version>
-						<type>jdocbook-style</type>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<sourceDocumentName>ArjunaCore_Development_Guide.xml</sourceDocumentName>
-					<sourceDirectory>.</sourceDirectory>
-					<masterTranslation>en-US</masterTranslation>
-					<imageResource>
-						<directory>${basedir}/en-US</directory>
-						<includes>
-							<include>images/*</include>
-						</includes>
-					</imageResource>
+<plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <configuration>
+              <tasks>
 
 
-					<formats>
-						<format>
-							<formatName>pdf</formatName>
-							<stylesheetResource>file:${basedir}/publican/Common_Content/jboss-community/xsl/pdf.xsl</stylesheetResource>
-						</format>
-						<!-- <format> <formatName>pdf</formatName> <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource> 
-							<finalName>Development_Guide.pdf</finalName> </format> <format> <formatName>html</formatName> 
-							<stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource> 
-							<finalName>index.html</finalName> </format> -->
-					</formats>
-					<options>
-						<xincludeSupported>true</xincludeSupported>
-						<!-- needed for uri-resolvers; can be ommitted if using 'current' uri 
-							scheme -->
-						<!-- could also locate the docbook dependency and inspect its version... -->
-						<docbookVersion>1.72.0</docbookVersion>
-						<localeSeparator>-</localeSeparator>
-						<autoDetectFonts>true</autoDetectFonts>
-					</options>
-				</configuration>
 
-				<executions>
-					<execution>
-						<id>make-doc</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>resources</goal>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            
+                <exec dir="." executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf"/>
+                    <arg value="--config=publican-maven.cfg"/>
+                </exec>
+
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+<plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+       
+            <configuration>
+		<includes>
+			<include>**/*.pdf</include>
+		</includes>
+            </configuration>
+       </plugin>
 		</plugins>
 	</build>
 </project>
