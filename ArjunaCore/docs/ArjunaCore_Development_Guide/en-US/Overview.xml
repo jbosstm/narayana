@@ -54,7 +54,7 @@
       <title>TxCore Class Hierarchy</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="images/txcore_class_hierarchy.png" format="PNG"/>
+          <imagedata width="440" fileref="images/txcore_class_hierarchy.png" format="PNG"/>
         </imageobject>
       </mediaobject>
     </figure>
@@ -201,7 +201,7 @@
       <title>Life cycle of a persistent Object in TXOJ</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="images/txoj-lifecycle.png" format="PNG"/>
+          <imagedata width="440" fileref="images/txoj-lifecycle.png" format="PNG"/>
         </imageobject>
         <textobject>
           <orderedlist>
