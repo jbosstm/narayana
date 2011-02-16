@@ -69,6 +69,7 @@
 		<module>tsmx</module>
 		<module>txoj</module>
 		<module>arjunacore</module>
+		<module>docs</module>
 	</modules>
 	
 	<properties>

@@ -154,7 +154,6 @@
 				</dependencySets>
 			</binaries>
 		</moduleSet>
-
 	</moduleSets>
 	<files>
 		<file>
@@ -229,6 +228,14 @@
 		<fileSet>
 			<directory>arjuna/services/config</directory>
 			<outputDirectory>services/config</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>docs/ArjunaCore_Installation_And_Administration_Guide/target/publican/ArjunaCore_Installation_And_Administration_Guide/en-US/pdf/</directory>
+			<outputDirectory>docs/ArjunaCore_Installation_And_Administration_Guide/en-US/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>docs/ArjunaCore_Development_Guide/target/publican/ArjunaCore_Development_Guide/en-US/pdf/</directory>
+			<outputDirectory>docs/ArjunaCore_Development_Guide/en-US/</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly> 
