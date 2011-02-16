@@ -70,7 +70,7 @@
         <jar jarfile="${install.dir}/${modulename}-objectstorebrowser.jar">
             <fileset dir="${build.dir}/classes"
                 includes="com/arjuna/ats/tools/objectstorebrowser/**/*.class"
-                excludes="com/arjuna/ats/tools/toolsframework/**/*.class,com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**/*.class"/>
+                excludes="com/arjuna/ats/tools/toolsframework/**/*.class,com/arjuna/ats/tools/objecstorebrowser/stateviewers/viewers/**/*.class"/>
 			<fileset dir="${etc.dir}/objectstorebrowser/" includes="*.gif"/>
             <metainf dir="${etc.dir}/objectstorebrowser/META-INF/" includes="tools.properties"/>
         </jar>
