@@ -300,10 +300,12 @@ public class RecoveredServerTransaction extends ServerTransaction implements
                 }
 
                 catch (TRANSIENT ex_trans) {
-                    // orbix seems to count unreachable as transient, but we no
-                    // longer support orbix
+                    /*
+                     * A failure that might not occur again if the request is retried. Not definite.
+                     */
+                    
                     jtsLogger.i18NLogger.warn_recovery_transactions_RecoveredServerTransaction_10(get_uid());
-                    theStatus = Status.StatusRolledBack;
+                    theStatus = Status.StatusUnknown;
                 }
                 // What here what should be done for Orbix2000
                 catch (OBJECT_NOT_EXIST ex)
