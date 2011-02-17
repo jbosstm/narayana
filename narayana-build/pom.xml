@@ -133,7 +133,7 @@
     </repositories>
 
 	<modules>
-		<module>common/pom.xml</module>
+		<module>../narayana-build-common/pom.xml</module>
 		<module>../ArjunaCore/pom.xml</module>
 		<module>../qa/tests/pom.xml</module>
 		<module>../ArjunaJTS/jtax/pom.xml</module>

@@ -32,6 +32,7 @@
 				<directory>etc</directory>
 			</resource>
 		</resources>
+		<testSourceDirectory>tests/classes</testSourceDirectory>
 		<testResources>
 			<testResource>
 				<directory>../</directory>
@@ -54,7 +55,6 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${basedir}/tests</source>
 								<source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
 							</sources>
 						</configuration>
