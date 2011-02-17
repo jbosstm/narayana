@@ -35,10 +35,7 @@
 		<testSourceDirectory>tests/classes</testSourceDirectory>
 		<testResources>
 			<testResource>
-				<directory>../</directory>
-				<includes>
-					<include>jbossts-properties.xml</include>
-				</includes>
+				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
 

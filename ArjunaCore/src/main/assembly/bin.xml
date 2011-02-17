@@ -175,11 +175,6 @@
 			<outputDirectory>etc</outputDirectory>
 		</file>
 		<file>
-			<source>jbossts-properties.xml</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>etc</outputDirectory>
-		</file>
-		<file>
 			<source>../ext/third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>
@@ -198,10 +193,21 @@
 			<destName>setup-env.bat</destName>
 			<filtered>true</filtered>
 		</file>
-		<fileSet>
-			<directory>docs/user_guide/FailureRecoveryGuide.pdf</directory>
+		<file>
+			<source>docs/user_guide/FailureRecoveryGuide.pdf</source>
 			<outputDirectory>docs</outputDirectory>
-		</fileSet>
+		</file>
+		<file>
+			<source>jbossts-properties-arjunacore.xml</source>
+			<fileMode>0644</fileMode>
+			<destName>default-jbossts-properties.xml</destName>
+		</file>
+		<file>
+			<source>jbossts-properties-arjunacore.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>etc</outputDirectory>
+			<destName>jbossts-properties.xml</destName>
+		</file>
 	</files>
 	<fileSets>
 		<fileSet>
