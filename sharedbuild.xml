@@ -244,7 +244,7 @@
 
         <if>
             <or>
-                <available file="jbossts-properties-arjuancore.xml"/>
+                <available file="jbossts-properties-arjunacore.xml"/>
                 <available file="jbossts-properties-arjunajta.xml"/>
                 <available file="jbossts-properties-arjunajts.xml"/>
             </or>
