@@ -74,6 +74,9 @@
 					<runOrder>alphabetical</runOrder>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<forkMode>pertest</forkMode>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
 					<excludes>
 						<!-- Dont run the common tests -->
 						<exclude>com/arjuna/common/tests/**</exclude>
