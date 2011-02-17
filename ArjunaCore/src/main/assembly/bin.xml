@@ -198,6 +198,10 @@
 			<destName>setup-env.bat</destName>
 			<filtered>true</filtered>
 		</file>
+		<fileSet>
+			<directory>docs/user_guide/FailureRecoveryGuide.pdf</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
 	</files>
 	<fileSets>
 		<fileSet>
@@ -231,11 +235,11 @@
 		</fileSet>
 		<fileSet>
 			<directory>docs/ArjunaCore_Installation_And_Administration_Guide/target/publican/ArjunaCore_Installation_And_Administration_Guide/en-US/pdf/</directory>
-			<outputDirectory>docs/ArjunaCore_Installation_And_Administration_Guide/en-US/</outputDirectory>
+			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
 			<directory>docs/ArjunaCore_Development_Guide/target/publican/ArjunaCore_Development_Guide/en-US/pdf/</directory>
-			<outputDirectory>docs/ArjunaCore_Development_Guide/en-US/</outputDirectory>
+			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly> 
