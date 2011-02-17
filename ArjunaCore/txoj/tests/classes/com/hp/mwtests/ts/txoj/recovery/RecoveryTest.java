@@ -44,20 +44,6 @@ import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-class MyRecoveredTO extends RecoveredTransactionalObject
-{
-    public MyRecoveredTO(Uid objectUid, String originalType,
-            ParticipantStore participantStore)
-    {
-        super(objectUid, originalType, participantStore);
-    }
-    
-    public void replay ()
-    {
-        super.replayPhase2();
-    }
-}
-
 public class RecoveryTest
 {
     @Test

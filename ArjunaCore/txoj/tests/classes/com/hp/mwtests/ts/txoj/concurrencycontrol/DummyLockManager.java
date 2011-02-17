@@ -29,44 +29,16 @@
  * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.recovery;
+package com.hp.mwtests.ts.txoj.concurrencycontrol;
 
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import org.junit.Test;
-
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import com.arjuna.ats.txoj.LockManager;
 
-import static org.junit.Assert.*;
-
-public class RecoveryModuleUnitTest
+public class DummyLockManager extends LockManager
 {
-    @Test
-    public void test () throws Exception
+    public DummyLockManager ()
     {
-        DummyTOModule trm = new DummyTOModule();
-        AtomicAction A = new AtomicAction();
-        
-        trm.intialise();
-        
-        A.begin();
-        
-        AtomicObject obj = new AtomicObject();
-        OutputObjectState os = new OutputObjectState();
-        Uid u = new Uid();
-        
-        assertTrue(obj.save_state(os, ObjectType.ANDPERSISTENT));
-        
-        assertTrue(StoreManager.getParticipantStore().write_uncommitted(u, obj.type(), os));
-        
-        A.abort();
-        
-        trm.periodicWorkFirstPass();
-        trm.periodicWorkSecondPass();
+        super(new Uid(), ObjectType.ANDPERSISTENT);
     }
 }

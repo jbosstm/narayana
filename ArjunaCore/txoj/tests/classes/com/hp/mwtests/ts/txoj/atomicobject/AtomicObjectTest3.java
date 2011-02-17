@@ -44,93 +44,13 @@ import static org.junit.Assert.*;
 
 import java.lang.InterruptedException;
 
-class AbortObject extends Thread
-{
-public AbortObject ()
-    {
-    }
-
-public void run ()
-    {
-	int thr = nextThreadId;
-
-	nextThreadId++;
-
-	AtomicAction a = new AtomicAction();
-
-	a.begin();
-
-	AtomicObjectTest3.indent(thr, 0);
-	System.out.println("begin");
-
-	AtomicObjectTest3.randomOperation(thr, 0);
-	AtomicObjectTest3.randomOperation(thr, 0);
-
-	a.abort();
-
-	AtomicObjectTest3.indent(thr, 0);
-	System.out.println("abort");
-    }
-
-private static int nextThreadId = 3;
-
-}
 
 
-class CommitObject extends Thread
-{
-
-public CommitObject ()
-    {
-    }
-
-public void run ()
-    {
-	int thr = nextThreadId;
-
-	nextThreadId++;
-
-	AtomicAction a = new AtomicAction();
-
-	a.begin();
-
-	AtomicObjectTest3.indent(thr, 0);
-	System.out.println("begin");
-
-	AtomicObjectTest3.randomOperation(thr, 0);
-	AtomicObjectTest3.randomOperation(thr, 0);
-
-	a.commit();
-
-	AtomicObjectTest3.indent(thr, 0);
-	System.out.println("commit");
-    }
-
-private static int nextThreadId = 3;
-
-}
 
 
-class ThreadObject2 extends Thread
-{
 
-public ThreadObject2 (int v)
-    {
-	_value = v;
-    }
 
-public void run ()
-    {
-	for (int i = 0; i < 100; i++)
-	{
-	    AtomicObjectTest3.randomOperation(_value, 0);
-	    AtomicObjectTest3.highProbYield();
-	}
-    }
 
-private int _value;
-
-}
 
 
 public class AtomicObjectTest3

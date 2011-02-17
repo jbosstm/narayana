@@ -37,6 +37,15 @@
         <run.tests.macro>
             <tests>
                 <fileset dir="tests/classes" includes="**/*.java">
+					<!-- Were refactored to true classes as used in multiple places -->
+					<exclude name="**/AbortObject.java"/>
+					<exclude name="**/CommitObject.java"/>
+					<exclude name="**/ThreadObject1.java"/>
+					<exclude name="**/ThreadObject2.java"/>
+					<exclude name="**/DummyLockManager.java"/>
+					<exclude name="**/DummyTOModule.java"/>
+					<exclude name="**/MyRecoveredTO.java"/>
+
                     <exclude name="**/common/**"/>
                 </fileset>
             </tests>

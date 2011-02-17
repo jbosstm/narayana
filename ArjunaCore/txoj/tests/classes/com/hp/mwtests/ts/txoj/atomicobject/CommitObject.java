@@ -18,6 +18,10 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
+package com.hp.mwtests.ts.txoj.atomicobject;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+
 /*
  * Copyright (C) 1998, 1999, 2000,
  *
@@ -26,41 +30,38 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: RecoveryTest.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: AtomicObjectTest3.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.txoj.concurrencycontrol;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-
-import org.junit.Test;
-
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.txoj.LockManager;
-import com.arjuna.ats.txoj.LockResult;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-
-import static org.junit.Assert.*;
-
-public class LockManagerUnitTest
+public class CommitObject extends Thread
 {
-    @Test
-    public void test () throws Throwable
-    {
-        AtomicObject obj = new AtomicObject();
-        
-        obj.finalize();
-        
-        obj = new AtomicObject();
-        
-        assertTrue(obj.releaselock(new Uid()));
-        assertEquals(obj.setlock(null), LockResult.REFUSED);
-        
-        obj.print(new PrintWriter(new ByteArrayOutputStream()));
-        obj.printState(new PrintWriter(new ByteArrayOutputStream()));
-        
-        assertEquals(new DummyLockManager().type(), "StateManager/LockManager");
-    }
-}
+
+	public CommitObject ()
+	    {
+	    }
+
+	public void run ()
+	    {
+		int thr = nextThreadId;
+
+		nextThreadId++;
+
+		AtomicAction a = new AtomicAction();
+
+		a.begin();
+
+		AtomicObjectTest3.indent(thr, 0);
+		System.out.println("begin");
+
+		AtomicObjectTest3.randomOperation(thr, 0);
+		AtomicObjectTest3.randomOperation(thr, 0);
+
+		a.commit();
+
+		AtomicObjectTest3.indent(thr, 0);
+		System.out.println("commit");
+	    }
+
+	private static int nextThreadId = 3;
+
+	}

@@ -44,26 +44,6 @@ import static org.junit.Assert.*;
 
 import java.lang.InterruptedException;
 
-class ThreadObject1 extends Thread
-{
-    public ThreadObject1(char c)
-    {
-        chr = c;
-    }
-
-    public void run ()
-    {
-        for (int i = 0; i < 100; i++)
-        {
-            AtomicObjectTest2.randomOperation(chr, 0);
-            AtomicObjectTest2.highProbYield();
-        }
-    }
-
-    private char chr;
-
-}
-
 public class AtomicObjectTest2
 {
     public static final int START_VALUE_1 = 10;
@@ -86,8 +66,8 @@ public class AtomicObjectTest2
 
         atomicObject2.set(START_VALUE_2);
 
-        ThreadObject1 thr1 = new ThreadObject1('1');
-        ThreadObject1 thr2 = new ThreadObject1('2');
+        ThreadObject2 thr1 = new ThreadObject2('1');
+        ThreadObject2 thr2 = new ThreadObject2('2');
 
         thr1.start();
         thr2.start();
