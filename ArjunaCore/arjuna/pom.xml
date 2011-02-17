@@ -69,6 +69,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<workingDirectory>${basedir}/target</workingDirectory>
 					<excludes>
 						<!-- NONE REPEATABLE -->
 						<exclude>**/ObjectStoreTest.java</exclude>
