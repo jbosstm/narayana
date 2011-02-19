@@ -37,6 +37,9 @@
 			<testResource>
 				<directory>src/test/resources</directory>
 			</testResource>
+			<testResource>
+				<directory>tests/byteman-scripts</directory>
+			</testResource>
 		</testResources>
 
 
@@ -64,10 +67,14 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<workingDirectory>${basedir}/target</workingDirectory>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${env.JAVA_HOME}/lib/tools.jar</additionalClasspathElement>
+					</additionalClasspathElements>
+					<workingDirectory>${basedir}/target/test-classes</workingDirectory>
 					<runOrder>alphabetical</runOrder>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<forkMode>pertest</forkMode>
+					<useManifestOnlyJar>false</useManifestOnlyJar>
 					<includes>
 						<include>**/*.java</include>
 					</includes>
@@ -88,15 +95,7 @@
 
 						<!-- LogStressTest2 takes too long - needs moving to /qa -->
 						<exclude>**/LogStressTest2.java</exclude>
-						<!-- tests which have been modified to run using byteman scripts -->
-						<exclude>**/reaper/ReaperMonitorTest.java</exclude>
-						<exclude>**/reaper/ReaperTestCase3.java</exclude>
-						<exclude>**/reaper/ReaperTestCase2.java</exclude>
-						<exclude>**/reaper/ReaperTestCase.java</exclude>
-						<exclude>**/objectstore/LogStoreRecoveryTest.java</exclude>
-						<exclude>**/objectstore/LogStoreTest2.java</exclude>
-
-						<exclude>**/recovery/RecoveryManagerStartStopTest.java</exclude>
+						
 						<!-- auxilairy code used by reaper test classes -->
 						<exclude>**/reaper/ReaperTestCaseControl.java</exclude>
 					</excludes>
@@ -129,9 +128,31 @@
 		<dependency>
 			<groupId>org.jboss.byteman</groupId>
 			<artifactId>byteman</artifactId>
-			<version>1.4.0</version>
+			<version>${byteman-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.byteman</groupId>
+			<artifactId>byteman-install</artifactId>
+			<version>${byteman-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.byteman</groupId>
+			<artifactId>byteman-submit</artifactId>
+			<version>${byteman-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.byteman</groupId>
+			<artifactId>byteman-bmunit</artifactId>
+			<version>${byteman-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<properties>
+		<byteman-version>1.5.1</byteman-version>
+	</properties>
 
 </project>
