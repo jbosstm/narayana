@@ -23,7 +23,11 @@ package com.hp.mwtests.ts.arjuna.reaper;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.common.Uid;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
 /**
@@ -34,6 +38,8 @@ import static org.junit.Assert.*;
  * @author Andrew Dinn (adinn@redhat.com), 2007-07-09
  */
 
+@RunWith(BMUnitRunner.class)
+@BMScript("reaper")
 public class ReaperTestCase2  extends ReaperTestCaseControl
 {
     @Test

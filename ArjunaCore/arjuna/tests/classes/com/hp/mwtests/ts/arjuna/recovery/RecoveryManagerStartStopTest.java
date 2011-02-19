@@ -34,13 +34,21 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
+
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.jboss.byteman.rule.helper.Helper;
 import org.jboss.byteman.rule.Rule;
 
 /**
  * test to ensure that the recovery manager cleans up all its threads when terminated
  */
+
+@RunWith(BMUnitRunner.class)
+@BMScript("recovery")
 public class RecoveryManagerStartStopTest
 {
     @Test

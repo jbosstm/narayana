@@ -42,10 +42,16 @@ import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import com.hp.mwtests.ts.arjuna.resources.TestBase;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
+@RunWith(BMUnitRunner.class)
+@BMScript("objectstore")
 public class LogStoreRecoveryTest extends TestBase
 {
     @Before

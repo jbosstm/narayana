@@ -25,9 +25,15 @@ import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.common.Uid;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
+@RunWith(BMUnitRunner.class)
+@BMScript("reaper")
 public class ReaperTestCase3  extends ReaperTestCaseControl
 {
     @Test

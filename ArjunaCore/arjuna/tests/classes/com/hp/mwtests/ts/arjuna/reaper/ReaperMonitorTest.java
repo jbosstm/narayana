@@ -20,15 +20,20 @@
  */
 package com.hp.mwtests.ts.arjuna.reaper;
 
-import com.arjuna.ats.arjuna.AtomicAction;
+import static org.junit.Assert.assertTrue;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
+@RunWith(BMUnitRunner.class)
+@BMScript("reaper")
 public class ReaperMonitorTest
 {
     class DummyMonitor implements ReaperMonitor

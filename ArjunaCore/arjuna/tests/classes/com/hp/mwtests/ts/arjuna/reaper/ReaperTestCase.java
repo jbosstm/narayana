@@ -28,7 +28,11 @@ import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
 /**
@@ -36,6 +40,9 @@ import static org.junit.Assert.*;
  *
  * @author jonathan.halliday@redhat.com, 2007-04-30
  */
+
+@RunWith(BMUnitRunner.class)
+@BMScript("reaper")
 public class ReaperTestCase extends ReaperTestCaseControl
 {
     @Test
