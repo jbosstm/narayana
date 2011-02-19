@@ -247,17 +247,35 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman</artifactId>
-            <version>1.4.0</version>
-            <scope>test</scope>
-        </dependency>
+	<dependency>
+		<groupId>org.jboss.byteman</groupId>
+		<artifactId>byteman</artifactId>
+        	<version>${byteman-version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.jboss.byteman</groupId>
+		<artifactId>byteman-install</artifactId>
+        	<version>${byteman-version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.jboss.byteman</groupId>
+		<artifactId>byteman-submit</artifactId>
+        	<version>${byteman-version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.jboss.byteman</groupId>
+		<artifactId>byteman-bmunit</artifactId>
+        	<version>${byteman-version}</version>
+		<scope>test</scope>
+	</dependency>
         <!-- txbridge uses the dtest addon -->
         <dependency>
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman-dtest</artifactId>
-            <version>1.4.0</version>
+            <version>${byteman-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -419,5 +437,8 @@
         </dependency>
 
     </dependencies>
-
+    
+    <properties>
+        <byteman-version>1.5.1</byteman-version>
+    </properties>
 </project>

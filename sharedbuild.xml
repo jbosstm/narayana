@@ -78,6 +78,17 @@
         <pathelement location="${emma.dir}/emma_ant.jar" />
     </path>
 
+    <property name="byteman.dir" value="${global.ext.lib.dir}" />
+
+    <path id="byteman.lib" >
+        <pathelement location="${byteman.dir}/byteman.jar" />
+        <pathelement location="${byteman.dir}/byteman-bmunit.jar" />
+        <pathelement location="${byteman.dir}/byteman-install.jar" />
+        <pathelement location="${byteman.dir}/byteman-submit.jar" />
+        <pathelement location="${byteman.dir}/byteman-dtest.jar" />
+        <pathelement location="${java.home}/../lib/tools.jar" />
+    </path>
+
     <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
 
@@ -463,6 +474,10 @@
                 message="&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;&lt;properties/&gt;"/>
 
         <copy file="${sharedbuild.base.dir}/ArjunaCore/arjuna/etc/log4j.properties" todir="${build.dir}/classes"/>
+        	
+        <copy todir="${build.dir}" failonerror="false">
+        	<fileset dir="tests/byteman-scripts/"/> 
+       	</copy>
 
         <mkdir dir="${build.dir}/testresults"/>
         <junit printsummary="yes" fork="yes" dir="${build.dir}" showoutput="@{showoutput}" includeantruntime="true">
@@ -479,6 +494,7 @@
                 <fileset dir="${global.ext.lib.dir}" includes="jboss-logging.jar,log4j.jar"/>
                 <additional.classpath.aux/>
                 <path refid="emma.lib" />
+                <path refid="byteman.lib" />
             </classpath>
 
             <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">

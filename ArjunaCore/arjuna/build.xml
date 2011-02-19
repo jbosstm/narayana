@@ -38,7 +38,7 @@
     <target name="compile-tests">
         <compile-tests.macro>
             <additional.classpath>
-                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs} byteman.jar"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs} byteman.jar byteman-bmunit.jar byteman-install.jar byteman-submit.jar"/>
             </additional.classpath>
         </compile-tests.macro>
     </target>
@@ -92,7 +92,7 @@
             </tests>
         </run.tests.macro>
         <!-- reaper tests run using script reaper.txt -->
-        <run.tests.macro script="reaper.txt">
+        <run.tests.macro>
             <tests>
                 <fileset dir="tests/classes">
                     <include name="**/reaper/ReaperMonitorTest.java"/>
@@ -111,7 +111,7 @@
              
         </run.tests.macro>
         <!-- object store tests run using script objectstore.txt -->
-        <run.tests.macro script="objectstore.txt">
+        <run.tests.macro>
             <tests>
                 <fileset dir="tests/classes">
                     <include name="**/objectstore/LogStoreRecoveryTest.java"/>
@@ -119,7 +119,7 @@
                 </fileset>
             </tests>
         </run.tests.macro>
-        <run.tests.macro script="recovery.txt">
+        <run.tests.macro>
             <tests>
                 <fileset dir="tests/classes" includes="**/recovery/RecoveryManagerStartStopTest.java"/>
             </tests>
