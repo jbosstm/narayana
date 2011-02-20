@@ -190,6 +190,7 @@
                 <fileset dir="." includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
+                <path refid="byteman.lib" />
                 <additional.classpath/>
             </classpath>
             <additional.src.dirs/>
@@ -447,7 +448,7 @@
                         <additional.classpath/>
                     </additional.classpath.aux>
                     <additional.jvmargs.aux>
-                        <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script}"/>
+<!--                        <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script}"/> -->
                         <jvmarg value="-Dorg.jboss.byteman.debug"/>
 			<!--
                         <jvmarg value="-Dorg.jboss.byteman.skip.override.rules"/>
