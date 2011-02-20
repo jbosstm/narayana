@@ -19,195 +19,174 @@
 		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
-	<moduleSets>
-		<moduleSet>
+	<dependencySets>
+		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:arjunajta</include>
+				<include>*:javadoc</include>
 			</includes>
-			<binaries>
-				<outputDirectory>htdocs</outputDirectory>
-				<attachmentClassifier>javadoc</attachmentClassifier>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>htdocs</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+		</dependencySet>
+		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:arjunajta</include>
+				<include>*:sources</include>
 			</includes>
-			<binaries>
-				<outputFileNameMapping>${module.artifactId}-sources.${module.extension}
-				</outputFileNameMapping>
-				<outputDirectory>lib</outputDirectory>
-				<attachmentClassifier>sources</attachmentClassifier>
-				<includeDependencies>false</includeDependencies>
-				<unpack>false</unpack>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
+			</outputFileNameMapping>
+			<outputDirectory>lib</outputDirectory>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-tools</include>
 			</includes>
-			<binaries>
-				<outputDirectory>bin</outputDirectory>
-				<outputFileNameMapping>${module.artifactId}.${module.extension}
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>bin</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-jmxbrowser</include>
 			</includes>
-			<binaries>
-				<outputDirectory>bin/tools</outputDirectory>
-				<outputFileNameMapping>${module.artifactId}.${module.extension}
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>bin/tools</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-jta-objectstorebrowser</include>
 			</includes>
-			<binaries>
-				<outputDirectory>bin/tools</outputDirectory>
-				<outputFileNameMapping>tsmx-objectstorebrowser.jar
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>bin/tools</outputDirectory>
+			<outputFileNameMapping>tsmx-objectstorebrowser.jar
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-perfgraph</include>
 			</includes>
-			<binaries>
-				<outputDirectory>bin/tools</outputDirectory>
-				<outputFileNameMapping>${module.artifactId}.${module.extension}
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>bin/tools</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:osbv-defaults</include>
 			</includes>
-			<binaries>
-				<outputDirectory>bin/tools/plugins</outputDirectory>
-				<outputFileNameMapping>${module.artifactId}.${module.extension}
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<outputDirectory>bin/tools/plugins</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:arjunajta</include>
+				<include>org.jboss.jbossts:jbossjta</include>
 			</includes>
-			<binaries>
-				<outputDirectory>lib</outputDirectory>
-				<outputFileNameMapping>${module.artifactId}.${module.extension}
-				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<dependencySets>
-					<dependencySet>
-						<outputDirectory>lib/ext</outputDirectory>
-						<outputFileNameMapping>${module.artifactId}.${module.extension}
-						</outputFileNameMapping>
-						<useTransitiveDependencies>true</useTransitiveDependencies>
-						<excludes>
-							<exclude>org.jboss.jbossts:common</exclude>
-							<exclude>org.jboss.jbossts:arjuna</exclude>
-							<exclude>org.jboss.jbossts:tsmx-tools</exclude>
-							<exclude>org.jboss.jbossts:tsmx-jmxbrowser</exclude>
-							<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
-							<exclude>org.jboss.jbossts:osbv-defaults</exclude>
-							<exclude>org.jboss.jbossts:tsmx-perfgraph</exclude>
-							<exclude>org.jboss.jbossts:txoj</exclude>
-						</excludes>
-					</dependencySet>
-				</dependencySets>
-			</binaries>
-		</moduleSet>
-		<moduleSet>
+			<excludes>
+				<exclude>*:sources</exclude>
+				<exclude>*:javadoc</exclude>
+			</excludes>
+			<outputDirectory>lib</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossjta</exclude>
+				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
+				<exclude>org.jboss.jbossts:common</exclude>
+				<exclude>org.jboss.jbossts:arjuna</exclude>
+				<exclude>org.jboss.jbossts:tsmx-tools</exclude>
+				<exclude>org.jboss.jbossts:tsmx-jmxbrowser</exclude>
+				<exclude>org.jboss.jbossts:tsmx-core-objectstorebrowser</exclude>
+				<exclude>org.jboss.jbossts:osbv-defaults</exclude>
+				<exclude>org.jboss.jbossts:tsmx-perfgraph</exclude>
+				<exclude>org.jboss.jbossts:txoj</exclude>
+				<exclude>org.jboss.jbossts:jta</exclude>
+				<exclude>org.jboss.jbossts:jdbc</exclude>
+				<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
+			</excludes>
+			<outputDirectory>lib/ext</outputDirectory>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
 			<includes>
 				<include>org.jboss.jbossts:arjunacore-services</include>
 			</includes>
-			<binaries>
-				<outputDirectory>services/lib</outputDirectory>
-				<outputFileNameMapping>jbossjta-services.jar
+			<outputDirectory>services/lib</outputDirectory>
+			<outputFileNameMapping>jbossjta-services.jar
 				</outputFileNameMapping>
-				<unpack>false</unpack>
-				<dependencySets>
-					<dependencySet>
-						<outputDirectory>lib/ext</outputDirectory>
-						<outputFileNameMapping>${module.artifactId}.${module.extension}
-						</outputFileNameMapping>
-						<useTransitiveDependencies>false</useTransitiveDependencies>
-						<excludes>
-							<exclude>org.jboss.jbossts:arjuna</exclude>
-						</excludes>
-					</dependencySet>
-				</dependencySets>
-			</binaries>
-		</moduleSet>
-	</moduleSets>
+			<unpack>false</unpack>
+		</dependencySet>
+	</dependencySets>
 	<files>
 		<file>
-			<source>copyright.txt</source>
+			<source>../copyright.txt</source>
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>../JBossORG-EULA.txt</source>
+			<source>../../JBossORG-EULA.txt</source>
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>tsmx/etc/toolsframework.xml</source>
+			<source>../../ArjunaCore/tsmx/etc/toolsframework.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>bin/tools</outputDirectory>
 		</file>
 		<file>
-			<source>arjuna/etc/log4j.properties</source>
+			<source>../../ArjunaCore/arjuna/etc/log4j.properties</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 		</file>
 		<file>
-			<source>../ext/third_party_licenses.txt</source>
+			<source>../../ext/third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>
 		</file>
 		<file>
-			<source>scripts/withoutorb-setup-env.sh</source>
+			<source>../../ArjunaCore/scripts/withoutorb-setup-env.sh</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.sh</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>scripts/withoutorb-setup-env.bat</source>
+			<source>../../ArjunaCore/scripts/withoutorb-setup-env.bat</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.bat</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>jbossts-properties-arjunajta.xml</source>
+			<source>../jbossts-properties-arjunajta.xml</source>
 			<fileMode>0644</fileMode>
 			<destName>default-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>jbossts-properties-arjunajta.xml</source>
+			<source>../jbossts-properties-arjunajta.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>jbossts-properties.xml</destName>
 		</file>
+		<file>
+			<source>../INSTALL</source>
+			<fileMode>0644</fileMode>
+		</file>
 	</files>
 	<fileSets>
 		<fileSet>
-			<directory>scripts</directory>
+			<directory>../../ArjunaCore/scripts</directory>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>
@@ -216,31 +195,33 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>arjuna/services/scripts/windows</directory>
+			<directory>../../ArjunaCore/arjuna/services/scripts/windows</directory>
 			<outputDirectory>services/bin/windows</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>arjuna/services/scripts/unix</directory>
+			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/hpux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>arjuna/services/scripts/unix</directory>
+			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/linux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>arjuna/services/scripts/unix</directory>
+			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/solaris</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>arjuna/services/config</directory>
+			<directory>../../ArjunaCore/arjuna/services/config</directory>
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>docs/ArjunaTA_Installation_And_Administration_Guide/target/publican/ArjunaTA_Installation_And_Administration_Guide/en-US/pdf/</directory>
+			<directory>../docs/ArjunaTA_Installation_And_Administration_Guide/target/publican/ArjunaTA_Installation_And_Administration_Guide/en-US/pdf/
+			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>docs/ArjunaTA_Development_Guide/target/publican/ArjunaTA_Development_Guide/en-US/pdf/</directory>
+			<directory>../docs/ArjunaTA_Development_Guide/target/publican/ArjunaTA_Development_Guide/en-US/pdf/
+			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
