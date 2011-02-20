@@ -21,8 +21,8 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>tsmx-objectstorebrowser</artifactId>
-	<name>ArjunaCore tsmx-objectstorebrowser module</name>
+	<artifactId>tsmx-core-objectstorebrowser</artifactId>
+	<name>ArjunaCore tsmx-core-objectstorebrowser module</name>
 	<packaging>jar</packaging>
 
 	<build>
@@ -41,9 +41,11 @@
 					<includes>
 						<include>com/arjuna/ats/tools/objectstorebrowser/**</include>
 					</includes>
+					<!--  TODO THIS WAS NOT ACTUALLY EXCLUDED IN THE ORIGINAL BUILD DUE TO A TYPO
 					<excludes>
 						<exclude>com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**</exclude>
 					</excludes>
+					 -->
 				</configuration>
 			</plugin>
 		</plugins>

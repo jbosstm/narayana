@@ -21,7 +21,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>tsmx</artifactId>
+	<artifactId>tsmx-core</artifactId>
 	<name>ArjunaCore tsmx module</name>
 	<packaging>pom</packaging>
 

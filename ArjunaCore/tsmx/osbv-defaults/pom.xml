@@ -70,7 +70,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>tsmx-objectstorebrowser</artifactId>
+			<artifactId>tsmx-core-objectstorebrowser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.javaee</groupId>

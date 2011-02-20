@@ -115,7 +115,7 @@
 									<include>org.jboss.jbossts:arjuna</include>
 									<include>org.jboss.jbossts:tsmx-tools</include>
 									<include>org.jboss.jbossts:tsmx-jmxbrowser</include>
-									<include>org.jboss.jbossts:tsmx-objectstorebrowser</include>
+									<include>org.jboss.jbossts:tsmx-core-objectstorebrowser</include>
 									<include>org.jboss.jbossts:osbv-defaults</include>
 									<include>org.jboss.jbossts:tsmx-perfgraph</include>
 									<include>org.jboss.jbossts:txoj</include>
@@ -147,7 +147,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>tsmx-objectstorebrowser</artifactId>
+			<artifactId>tsmx-core-objectstorebrowser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>

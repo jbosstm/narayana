@@ -23,30 +23,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>arjunacore-dist</artifactId>
+	<artifactId>arjunacore-all</artifactId>
 	<packaging>pom</packaging>
 	<name>ArjunaCore</name>
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/bin.xml</descriptor>
-					</descriptors>
-					<tarLongFileMode>gnu</tarLongFileMode>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -63,6 +45,7 @@
 	</build>
 
 	<modules>
+<!--
 		<module>../common</module>
 		<module>arjuna</module>
 		<module>arjuna/services</module>
@@ -70,10 +53,8 @@
 		<module>txoj</module>
 		<module>arjunacore</module>
 		<module>docs</module>
+-->
+		<module>arjunacore</module>
+		<module>dist</module>
 	</modules>
-	
-	<properties>
-		<PRODUCT_NAME>arjunacore</PRODUCT_NAME>
-		<HOME_DIRECTORY>JBOSSCORE_HOME</HOME_DIRECTORY>
-	</properties>
 </project>
