@@ -1,145 +1,137 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!--
-      JBoss, Home of Professional Open Source
-      Copyright 2009, Red Hat Middleware LLC, and individual contributors
-      as indicated by the @author tags.
-      See the copyright.txt in the distribution for a
-      full listing of individual contributors.
-      This copyrighted material is made available to anyone wishing to use,
-      modify, copy, or redistribute it subject to the terms and conditions
-      of the GNU Lesser General Public License, v. 2.1.
-      This program is distributed in the hope that it will be useful, but WITHOUT A
-      WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-      PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
-      You should have received a copy of the GNU Lesser General Public License,
-      v.2.1 along with this distribution; if not, write to the Free Software
-      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-      MA  02110-1301, USA.
-
-      (C) 2009,
-      @author JBoss Inc. (jonathan.halliday@redhat.com)
-    -->
+	<!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
+		LLC, and individual contributors as indicated by the @author tags. See the 
+		copyright.txt in the distribution for a full listing of individual contributors. 
+		This copyrighted material is made available to anyone wishing to use, modify, 
+		copy, or redistribute it subject to the terms and conditions of the GNU Lesser 
+		General Public License, v. 2.1. This program is distributed in the hope that 
+		it will be useful, but WITHOUT A WARRANTY; without even the implied warranty 
+		of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
+		General Public License for more details. You should have received a copy 
+		of the GNU Lesser General Public License, v.2.1 along with this distribution; 
+		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
+		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
 	<parent>
 		<groupId>org.jboss.jbossas</groupId>
 		<artifactId>jboss-as-component-matrix</artifactId>
 		<version>5.1.0.GA</version>
 	</parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.jbossts</groupId>
-    <artifactId>narayana-build-common</artifactId>
-    <packaging>pom</packaging>
-    <version>5.0.0.M1-SNAPSHOT</version>
-    <name>narayana-build-common</name>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.jbossts</groupId>
+	<artifactId>narayana-build-common</artifactId>
+	<packaging>pom</packaging>
+	<version>5.0.0.M1-SNAPSHOT</version>
+	<name>narayana-build-common</name>
 
-    <description>narayana-build-common</description>
+	<description>narayana-build-common</description>
 
-    <url>http://www.jboss.org/jbosstm/</url>
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://jira.jboss.org/jira/browse/JBTM/</url>
-    </issueManagement>
-    <ciManagement>
-        <system>hudson</system>
-        <url>http://hudson.qa.jboss.com/hudson/view/JBossTS/</url>
-    </ciManagement>
+	<url>http://www.jboss.org/jbosstm/</url>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>https://jira.jboss.org/jira/browse/JBTM/</url>
+	</issueManagement>
+	<ciManagement>
+		<system>hudson</system>
+		<url>http://hudson.qa.jboss.com/hudson/view/JBossTS/</url>
+	</ciManagement>
 
-    <developers>
+	<developers>
 
-        <developer>
-            <id>jhalliday</id>
-            <name>Jonathan Halliday</name>
-            <email>jonathan.halliday@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>project lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
+		<developer>
+			<id>jhalliday</id>
+			<name>Jonathan Halliday</name>
+			<email>jonathan.halliday@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>project lead</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
 
-        <developer>
-            <id>adinn</id>
-            <name>Andrew Dinn</name>
-            <email>adinn@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>XTS lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
+		<developer>
+			<id>adinn</id>
+			<name>Andrew Dinn</name>
+			<email>adinn@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>XTS lead</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
 
-        <developer>
-            <id>mmusgrov</id>
-            <name>Michael Musgrove</name>
-            <email>mmusgrov@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Core Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
+		<developer>
+			<id>mmusgrov</id>
+			<name>Michael Musgrove</name>
+			<email>mmusgrov@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>Core Developer</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
 
-        <developer>
-            <id>mark.little@jboss.com</id>
-            <name>Mark Little</name>
-            <email>mlittle@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>JBoss CTO</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
+		<developer>
+			<id>mark.little@jboss.com</id>
+			<name>Mark Little</name>
+			<email>mlittle@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>JBoss CTO</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
 
-        <developer>
-            <id>istudens@redhat.com</id>
-            <name>Ivo Studensky</name>
-            <email>istudens@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>QA lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
+		<developer>
+			<id>istudens@redhat.com</id>
+			<name>Ivo Studensky</name>
+			<email>istudens@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>QA lead</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
 
-    </developers>
+	</developers>
 
-    <licenses>
-        <license>
-            <name>LGPL 2.1</name>
-            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-        </license>
-    </licenses>
+	<licenses>
+		<license>
+			<name>LGPL 2.1</name>
+			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+		</license>
+	</licenses>
 
-    <scm>
-        <connection>scm:svn:http://anonsvn.jboss.org/repos/labs/labs/jbosstm/</connection>
-        <developerConnection>scm:svn:https://svn.jboss.org/repos/labs/labs/jbosstm/</developerConnection>
-        <url>http://fisheye.jboss.org/browse/JBossTS/</url>
-    </scm>
+	<scm>
+		<connection>scm:svn:http://anonsvn.jboss.org/repos/labs/labs/jbosstm/</connection>
+		<developerConnection>scm:svn:https://svn.jboss.org/repos/labs/labs/jbosstm/</developerConnection>
+		<url>http://fisheye.jboss.org/browse/JBossTS/</url>
+	</scm>
 
-    <repositories>
+	<repositories>
 		<repository>
 			<id>jbossThirdParty</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
 		</repository>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Maven Repository Group</name>
-            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<distributionManagement>
 		<repository>
@@ -271,12 +263,24 @@
 				<artifactId>jbossjta</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossjta</artifactId>
+				<version>${project.version}</version>
+				<classifier>javadoc</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossjta</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
-<properties>
-    <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
-    <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
-</properties>
+	<properties>
+		<maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
+		<buildproperty.date>${maven.build.timestamp}</buildproperty.date>
+	</properties>
 
 </project>

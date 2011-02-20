@@ -23,7 +23,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>arjunajta-dist</artifactId>
+	<artifactId>jbossjta-dist</artifactId>
 	<packaging>pom</packaging>
 	<name>ArjunaCore</name>
 
@@ -101,16 +101,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jta</artifactId>
+			<artifactId>jbossjta</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jta</artifactId>
+			<artifactId>jbossjta</artifactId>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jta</artifactId>
+			<artifactId>jbossjta</artifactId>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>

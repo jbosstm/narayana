@@ -45,6 +45,7 @@
 	</build>
 
 	<modules>
+		<module>../narayana-build-common</module>
 		<module>../common</module>
 		<module>../ArjunaCore/arjuna</module>
 		<module>../ArjunaCore/txoj</module>
