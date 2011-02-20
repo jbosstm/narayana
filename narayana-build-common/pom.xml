@@ -205,7 +205,19 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
-				<artifactId>tsmx</artifactId>
+				<artifactId>arjunacore</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>arjunacore</artifactId>
+				<version>${project.version}</version>
+				<classifier>javadoc</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>tsmx-core</artifactId>
 				<version>${project.version}</version>
 				<type>pom</type>
 			</dependency>
@@ -221,7 +233,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
-				<artifactId>tsmx-objectstorebrowser</artifactId>
+				<artifactId>tsmx-core-objectstorebrowser</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -237,6 +249,26 @@
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>txoj</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jta</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jdbc</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>tsmx-jta-objectstorebrowser</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossjta</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
