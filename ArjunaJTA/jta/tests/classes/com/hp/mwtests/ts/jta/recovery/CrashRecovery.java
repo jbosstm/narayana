@@ -37,9 +37,15 @@ import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import javax.transaction.xa.*;
 
+import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
+@RunWith(BMUnitRunner.class)
+@BMScript("recovery")
 public class CrashRecovery
 {
     @Test
