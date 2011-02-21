@@ -304,6 +304,11 @@
 				<version>${project.version}</version>
 				<classifier>sources</classifier>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossjta-integration</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

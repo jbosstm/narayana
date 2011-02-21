@@ -102,8 +102,18 @@
 			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
+			<includes>
+				<include>org.jboss.jbossts:jbossjta-integration</include>
+			</includes>
+			<outputDirectory>lib</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
 			<excludes>
 				<exclude>org.jboss.jbossts:jbossjta</exclude>
+				<exclude>org.jboss.jbossts:jbossjta-integration</exclude>
 				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
 				<exclude>org.jboss.jbossts:common</exclude>
 				<exclude>org.jboss.jbossts:arjuna</exclude>
