@@ -239,7 +239,6 @@
 
     <target name="dist.compositenode" depends="clean, init, install.lib, install.src, htdocs">
         <copy file="copyright.txt" todir="${build.dir}/install"/>
-        <copy file="${sharedbuild.base.dir}/JBossORG-EULA.txt" todir="${build.dir}/install"/>
         <copy file="${global.ext.lib.dir}/third_party_licenses.txt" todir="${build.dir}/install/lib/ext"/>
     </target>
 
