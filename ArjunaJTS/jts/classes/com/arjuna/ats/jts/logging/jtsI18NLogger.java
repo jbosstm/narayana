@@ -685,7 +685,7 @@ public interface jtsI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_transactions_RecoveredServerTransaction_1(String arg0);
 
-	@Message(id = 22167, value = "Got TRANSIENT from ORB for tx {0} and assuming OBJECT_NOT_EXIST", format = MESSAGE_FORMAT)
+	@Message(id = 22167, value = "Got TRANSIENT from ORB for tx {0}, unable determine status, will retry later", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_recovery_transactions_RecoveredServerTransaction_10(Uid arg0);
 

@@ -518,7 +518,7 @@ public class jtsI18NLoggerImpl implements jtsI18NLogger {
     }
 
     public void warn_recovery_transactions_RecoveredServerTransaction_10(Uid arg0) {
-        logger.logv(WARN, "ARJUNA-22167 Got TRANSIENT from ORB for tx {0} and assuming OBJECT_NOT_EXIST", arg0);
+        logger.logv(WARN, "ARJUNA-22167 Got TRANSIENT from ORB for tx {0}, unable determine status, will retry later", arg0);
     }
 
     public void warn_recovery_transactions_RecoveredServerTransaction_12() {
