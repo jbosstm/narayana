@@ -902,7 +902,6 @@ public interface arjunaI18NLogger {
 	public void warn_objectstore_CacheStore_4(String arg0);
 
 	@Message(id = 12225, value = "FileSystemStore::setupStore - cannot access root of object store: {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
 	public String get_objectstore_FileSystemStore_1(String arg0);
 
 	@Message(id = 12226, value = "FileSystemStore.removeFromCache - no entry for {0}", format = MESSAGE_FORMAT)
