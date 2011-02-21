@@ -25,7 +25,7 @@
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>jbossjta-dist</artifactId>
 	<packaging>pom</packaging>
-	<name>JBossJTA</name>
+	<name>JBossJTA distribution</name>
 
 	<build>
 		<plugins>

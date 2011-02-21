@@ -21,23 +21,34 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>common</artifactId>
-	<name>Arjuna core common</name>
+	<artifactId>jbossjts-integration</artifactId>
+	<name>JBossJTA ATX module</name>
 	<packaging>jar</packaging>
 
 	<build>
-		<sourceDirectory>classes</sourceDirectory>
-		<testSourceDirectory>tests</testSourceDirectory>
+		<sourceDirectory>../../atsintegration</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/jts/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+	
 	<dependencies>
-		<!-- START TEST -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>jta</artifactId>
 		</dependency>
-		<!-- END TEST -->
+		<dependency>
+			<groupId>org.jboss.integration</groupId>
+			<artifactId>jboss-integration</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

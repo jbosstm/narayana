@@ -25,7 +25,7 @@
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>jbossjta-all</artifactId>
 	<packaging>pom</packaging>
-	<name>JBossJTA</name>
+	<name>JBossJTA everything</name>
 
 	<build>
 		<plugins>
@@ -55,6 +55,7 @@
 		<module>tsmx</module>
 		<module>jbossjta</module>
 		<module>docs</module>
+		<module>integration</module>
 		<module>dist</module>
 	</modules>
 </project>
