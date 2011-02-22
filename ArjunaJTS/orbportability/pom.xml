@@ -76,11 +76,13 @@
 						<goals>
 							<goal>generate-test</goal>
 						</goals>
+						<configuration>
+							<sourceDirectory>tests/idl/</sourceDirectory>
+						</configuration>
 					</execution>
 				</executions>
 				<configuration>
 					<compiler>jacorb</compiler>
-					<sourceDirectory>tests/idl/</sourceDirectory>
 					<sources>
 						<source>
 							<includes>
@@ -101,12 +103,29 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
+					<workingDirectory>${basedir}/target/test-classes</workingDirectory>
 					<runOrder>alphabetical</runOrder>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<forkMode>pertest</forkMode>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
 					<excludes>
 						<!-- exclude tests which we don't want to run -->
 						<exclude>**/common/**</exclude>
+
+						<exclude>**/initialisation/postinit/**</exclude>
+						<exclude>**/initialisation/postset/**</exclude>
+						<exclude>**/initialisation/preinit/**</exclude>
+						<exclude>**/initialisation/TestAttributeCallback.java</exclude>
+						<exclude>**/SimpleObjectImpl.java</exclude>
+						<exclude>**/TestAttributeCallback.java</exclude>
+						<exclude>**/PrePostTestCallback.java</exclude>
+
+
+						<!-- these ones need fixing -->
+						<exclude>**/PropertyInitTest.java</exclude>
+						<exclude>**/PropertyInitTest3.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

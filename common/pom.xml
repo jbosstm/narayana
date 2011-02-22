@@ -27,6 +27,11 @@
 
 	<build>
 		<sourceDirectory>classes</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>etc</directory>
+			</resource>
+		</resources>
 		<testSourceDirectory>tests</testSourceDirectory>
 	</build>
 	<dependencies>
