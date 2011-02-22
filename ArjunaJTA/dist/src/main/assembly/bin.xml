@@ -14,9 +14,8 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <assembly>
 	<id>bin</id>
-	<includeBaseDirectory>false</includeBaseDirectory>
+	<includeBaseDirectory>true</includeBaseDirectory>
 	<formats>
-		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
 	<dependencySets>
