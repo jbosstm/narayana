@@ -194,7 +194,8 @@
 						<manifestEntries>
 							<arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
 							<arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-							<arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
+							<arjuna-builder>JBoss Inc. [${user.name}] ${os.name}
+								${os.version} ${buildproperty.date}</arjuna-builder>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -204,6 +205,15 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
+				<groupId>org.jboss.jbossas</groupId>
+				<artifactId>jboss-as-component-matrix</artifactId>
+				<version>6.0.0.20101110-CR1</version>
+				<!--<version>6.0.0-SNAPSHOT</version> -->
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>common</artifactId>
