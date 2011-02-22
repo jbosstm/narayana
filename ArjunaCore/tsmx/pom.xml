@@ -31,6 +31,7 @@
 		<module>objectstorebrowser</module>
 		<module>osbv-defaults</module>
 		<module>perfgraph</module>
+		<module>sar</module>
 	</modules>
 
 </project>
