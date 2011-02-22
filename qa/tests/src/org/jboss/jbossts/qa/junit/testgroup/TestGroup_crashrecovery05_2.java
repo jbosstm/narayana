@@ -54,15 +54,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test001()
 	{
 		setTestName("Test001");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -71,15 +71,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test002()
 	{
 		setTestName("Test002");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -88,15 +88,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test003()
 	{
 		setTestName("Test003");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -105,15 +105,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test004()
 	{
 		setTestName("Test004");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -122,15 +122,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test005()
 	{
 		setTestName("Test005");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -139,15 +139,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test006()
 	{
 		setTestName("Test006");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -156,15 +156,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test007()
 	{
 		setTestName("Test007");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -173,15 +173,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test008()
 	{
 		setTestName("Test008");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -190,15 +190,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test009()
 	{
 		setTestName("Test009");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -207,15 +207,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test010()
 	{
 		setTestName("Test010");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -224,15 +224,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test011()
 	{
 		setTestName("Test011");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -241,15 +241,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test012()
 	{
 		setTestName("Test012");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -258,15 +258,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test013()
 	{
 		setTestName("Test013");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -275,15 +275,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test014()
 	{
 		setTestName("Test014");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -292,15 +292,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test015()
 	{
 		setTestName("Test015");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -309,15 +309,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test016()
 	{
 		setTestName("Test016");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -326,15 +326,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test017()
 	{
 		setTestName("Test017");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -343,15 +343,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test018()
 	{
 		setTestName("Test018");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -360,15 +360,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test019()
 	{
 		setTestName("Test019");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -377,15 +377,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test020()
 	{
 		setTestName("Test020");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -394,15 +394,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test021()
 	{
 		setTestName("Test021");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -411,15 +411,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test022()
 	{
 		setTestName("Test022");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -428,15 +428,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test023()
 	{
 		setTestName("Test023");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -445,15 +445,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test024()
 	{
 		setTestName("Test024");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -462,37 +462,38 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test025()
 	{
 		setTestName("Test025");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server03.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server04.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
 	}
 
+
 	@Test public void CrashRecovery05_2_Test026()
 	{
 		setTestName("Test026");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -502,20 +503,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test027()
 	{
 		setTestName("Test027");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -525,20 +526,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test028()
 	{
 		setTestName("Test028");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -548,20 +549,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test029()
 	{
 		setTestName("Test029");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -571,20 +572,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test030()
 	{
 		setTestName("Test030");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -594,20 +595,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test031()
 	{
 		setTestName("Test031");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -617,20 +618,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test032()
 	{
 		setTestName("Test032");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -640,20 +641,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test033()
 	{
 		setTestName("Test033");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -663,20 +664,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test034()
 	{
 		setTestName("Test034");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -686,20 +687,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test035()
 	{
 		setTestName("Test035");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -709,20 +710,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test036()
 	{
 		setTestName("Test036");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -732,20 +733,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test037()
 	{
 		setTestName("Test037");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -755,20 +756,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test038()
 	{
 		setTestName("Test038");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -778,20 +779,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test039()
 	{
 		setTestName("Test039");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -801,20 +802,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test040()
 	{
 		setTestName("Test040");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -824,20 +825,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test041()
 	{
 		setTestName("Test041");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -847,20 +848,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test042()
 	{
 		setTestName("Test042");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -870,20 +871,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test043()
 	{
 		setTestName("Test043");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -893,20 +894,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test044()
 	{
 		setTestName("Test044");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -916,20 +917,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test045()
 	{
 		setTestName("Test045");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -939,20 +940,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test046()
 	{
 		setTestName("Test046");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -962,20 +963,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test047()
 	{
 		setTestName("Test047");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -985,20 +986,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test048()
 	{
 		setTestName("Test048");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1008,20 +1009,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test049()
 	{
 		setTestName("Test049");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1031,38 +1032,39 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test050()
 	{
 		setTestName("Test050");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server01.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server02.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
 		server3.terminate();
 	}
 
+
 	@Test public void CrashRecovery05_2_Test051()
 	{
 		setTestName("Test051");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1071,15 +1073,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test052()
 	{
 		setTestName("Test052");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1088,15 +1090,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test053()
 	{
 		setTestName("Test053");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1105,15 +1107,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test054()
 	{
 		setTestName("Test054");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1122,15 +1124,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test055()
 	{
 		setTestName("Test055");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1139,15 +1141,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test056()
 	{
 		setTestName("Test056");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1156,15 +1158,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test057()
 	{
 		setTestName("Test057");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1173,15 +1175,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test058()
 	{
 		setTestName("Test058");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1190,15 +1192,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test059()
 	{
 		setTestName("Test059");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1207,15 +1209,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test060()
 	{
 		setTestName("Test060");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1224,15 +1226,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test061()
 	{
 		setTestName("Test061");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1241,15 +1243,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test062()
 	{
 		setTestName("Test062");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1258,15 +1260,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test063()
 	{
 		setTestName("Test063");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1275,15 +1277,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test064()
 	{
 		setTestName("Test064");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1292,15 +1294,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test065()
 	{
 		setTestName("Test065");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1309,15 +1311,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test066()
 	{
 		setTestName("Test066");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1326,15 +1328,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test067()
 	{
 		setTestName("Test067");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1343,15 +1345,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test068()
 	{
 		setTestName("Test068");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1360,15 +1362,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test069()
 	{
 		setTestName("Test069");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1377,15 +1379,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test070()
 	{
 		setTestName("Test070");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1394,15 +1396,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test071()
 	{
 		setTestName("Test071");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1411,15 +1413,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test072()
 	{
 		setTestName("Test072");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1428,15 +1430,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test073()
 	{
 		setTestName("Test073");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1445,15 +1447,15 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test074()
 	{
 		setTestName("Test074");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
@@ -1462,37 +1464,38 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test075()
 	{
 		setTestName("Test075");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server07.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server1.start("$(5)", "$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server1.terminate();
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server08.class, Task.TaskType.EXPECT_READY, 480, "server");
 		server2.start("$(5)", "$(3)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server2.terminate();
 	}
 
+
 	@Test public void CrashRecovery05_2_Test076()
 	{
 		setTestName("Test076");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client01a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1502,20 +1505,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test077()
 	{
 		setTestName("Test077");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client02a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1525,20 +1528,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test078()
 	{
 		setTestName("Test078");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client03a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1548,20 +1551,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test079()
 	{
 		setTestName("Test079");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client04a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1571,20 +1574,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test080()
 	{
 		setTestName("Test080");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client05a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1594,20 +1597,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test081()
 	{
 		setTestName("Test081");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client06a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1617,20 +1620,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test082()
 	{
 		setTestName("Test082");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client07a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1640,20 +1643,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test083()
 	{
 		setTestName("Test083");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client08a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1663,20 +1666,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test084()
 	{
 		setTestName("Test084");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client09a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1686,20 +1689,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test085()
 	{
 		setTestName("Test085");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client10a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1709,20 +1712,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test086()
 	{
 		setTestName("Test086");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client11a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1732,20 +1735,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test087()
 	{
 		setTestName("Test087");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client12a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1755,20 +1758,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test088()
 	{
 		setTestName("Test088");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client13a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1778,20 +1781,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test089()
 	{
 		setTestName("Test089");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client14a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1801,20 +1804,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test090()
 	{
 		setTestName("Test090");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client15a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1824,20 +1827,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test091()
 	{
 		setTestName("Test091");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client16a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1847,20 +1850,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test092()
 	{
 		setTestName("Test092");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client17a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1870,20 +1873,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test093()
 	{
 		setTestName("Test093");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client18a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1893,20 +1896,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test094()
 	{
 		setTestName("Test094");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client19a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1916,20 +1919,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test095()
 	{
 		setTestName("Test095");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client20a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1939,20 +1942,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test096()
 	{
 		setTestName("Test096");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client21a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1962,20 +1965,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test097()
 	{
 		setTestName("Test097");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client22a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -1985,20 +1988,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test098()
 	{
 		setTestName("Test098");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client23a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -2008,20 +2011,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test099()
 	{
 		setTestName("Test099");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client24a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();
@@ -2031,20 +2034,20 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 	@Test public void CrashRecovery05_2_Test100()
 	{
 		setTestName("Test100");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server1 = createTask("server1", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server1.start("$(5)", "$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480);
+		Task server2 = createTask("server2", org.jboss.jbossts.qa.CrashRecovery05Servers.Server05.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server2.start("$(6)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25b.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
-		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server3 = createTask("server3", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_1");
 		server3.start("$(5)", "$(3)");
-		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480);
+		Task server4 = createTask("server4", org.jboss.jbossts.qa.CrashRecovery05Servers.Server06.class, Task.TaskType.EXPECT_READY, 480, "server_2");
 		server4.start("$(6)", "$(4)");
-		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client1 = createTask("client1", org.jboss.jbossts.qa.CrashRecovery05Clients2.Client25a.class, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
 		client1.start("$(3)", "$(4)");
 		client1.waitFor();
 		server4.terminate();

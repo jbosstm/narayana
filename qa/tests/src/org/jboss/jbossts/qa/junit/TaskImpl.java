@@ -44,7 +44,7 @@ public class TaskImpl implements Task
 
     private final static String PROPERTIES_FILE = "TaskImpl.properties";
 
-    private final static List<String> additionalCommandLineElements = new LinkedList<String>();
+    private final static List<String> additionalGlobalCommandLineElements = new LinkedList<String>();
 
     private static Properties properties = new Properties();
     static {
@@ -136,9 +136,9 @@ public class TaskImpl implements Task
     private PrintStream out;
 
     /**
-     * Name of a file to which emma code coverage should be written
+     * Elements to add to the command line.
      */
-    private String emmaCoverageFile;
+    private final List<String> additionalLocalCommandLineElements = new LinkedList<String>();
 
     /**
      * a thread which reads the task's merged stdout/stderr stream and identifies whether or not a Passed/Failed
@@ -158,9 +158,9 @@ public class TaskImpl implements Task
      * @param type the type of the test either PASS_FAIL or READY
      * @param out the output stream to which output from the task's process shoudl be redirected.
      * @param timeout the timeout for the task in seconds
-     * @param emmaCoverageFile name of a file to which emma code coverage should be written
+     * @param additionalLocalCommandLineElements elements to add to the command line.
      */
-    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout, String emmaCoverageFile)
+    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout, List<String> additionalLocalCommandLineElements)
     {
         if(clazz == null || type == null) {
             throw new ExceptionInInitializerError("TaskImpl()<ctor> params may not be null");
@@ -171,7 +171,7 @@ public class TaskImpl implements Task
         this.type = type;
         this.timeout = timeout;
         this.out = out;
-        this.emmaCoverageFile = emmaCoverageFile;
+        this.additionalLocalCommandLineElements.addAll(additionalLocalCommandLineElements);
         this.started = false;
         this.isDone = false;
         this.isTimedOut = false;
@@ -550,12 +550,9 @@ public class TaskImpl implements Task
             }
         }
 
-        list.addAll(additionalCommandLineElements);
+        list.addAll(additionalLocalCommandLineElements);
 
-        if(emmaCoverageFile != null) {
-            list.add("-Demma.coverage.out.file="+emmaCoverageFile);
-            //list.add("-Demma.verbosity.level=silent");
-        }
+        list.addAll(additionalGlobalCommandLineElements);
 
         list.add(classname);
 
@@ -570,7 +567,7 @@ public class TaskImpl implements Task
 
     public static void addCommandLineElement(String additionalCommandLineElement)
     {
-        additionalCommandLineElements.add(additionalCommandLineElement);
+        additionalGlobalCommandLineElements.add(additionalCommandLineElement);
     }
 
     /**

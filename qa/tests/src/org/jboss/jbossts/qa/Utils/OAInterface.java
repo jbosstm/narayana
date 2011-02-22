@@ -21,6 +21,8 @@
 package org.jboss.jbossts.qa.Utils;
 
 import com.arjuna.orbportability.OA;
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.Servant;
 
 /*
@@ -37,6 +39,12 @@ import org.omg.PortableServer.Servant;
 public class OAInterface
 {
 	private static OA _oa;
+
+    public static void initializeOA() throws InvalidName, SystemException
+    {
+        _oa = OA.getRootOA(ORBInterface.getORB());
+        _oa.initPOA();
+    }
 
 	public static void initOA()
 	{
