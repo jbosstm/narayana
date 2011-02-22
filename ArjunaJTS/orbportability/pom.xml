@@ -142,12 +142,6 @@
 			<version>3.0.0.Beta4</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>jacorb</groupId>
 			<artifactId>jacorb</artifactId>
 			<version>2.3.1jboss.patch01-brew</version>
@@ -156,6 +150,13 @@
 		<dependency>
 			<groupId>org.jboss.slf4j</groupId>
 			<artifactId>slf4j-jboss-logging</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

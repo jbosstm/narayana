@@ -14,55 +14,27 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jboss.jbossts</groupId>
+		<artifactId>narayana-build-common</artifactId>
+		<version>5.0.0.M1-SNAPSHOT</version>
+	</parent>
+
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.narayana</groupId>
 	<artifactId>jts</artifactId>
 	<name>ArjunaJTS jts</name>
-	<version>5.0.0.M1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<developers>
-		<developer>
-			<id>tomjenkinson</id>
-			<name>Thomas Jenkinson</name>
-			<email>tom.jenkinson@redhat.com</email>
-			<organization>JBoss</organization>
-			<organizationUrl>http://www.jboss.org/</organizationUrl>
-			<roles>
-				<role>Project Lead</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-	</developers>
-
-	<licenses>
-		<license>
-			<name>LGPL 2.1</name>
-			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-		</license>
-	</licenses>
-
 	<build>
+		<sourceDirectory>classes</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>etc</directory>
+			</resource>
+		</resources>
+		<testSourceDirectory>tests/classes</testSourceDirectory>
 		<plugins>
-             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>add-test-source</id>
-                    <phase>generate-sources</phase>
-                    <goals>
-                      <goal>add-test-source</goal>
-                    </goals>
-                    <configuration>
-                      <sources>
-                          <source>${basedir}/target/generated-test-sources/idl</source>
-                      </sources>
-                    </configuration>
-                  </execution>
-                </executions>
-            </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>idlj-maven-plugin</artifactId>
@@ -139,6 +111,57 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<workingDirectory>${basedir}/target/test-classes</workingDirectory>
+					<runOrder>alphabetical</runOrder>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<forkMode>pertest</forkMode>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+					<excludes>
+						<!-- exclude tests which we don't want to run -->
+						<exclude>**/common/**</exclude>
+
+						<exclude>**/exceptions/**</exclude>
+						<exclude>**/orbspecific/resources/**</exclude>
+						<exclude>**/resources/**</exclude>
+						<exclude>**/utils/ResourceTrace.java</exclude>
+						<exclude>**/utils/Util.java</exclude>
+
+						<exclude>**/TransactionTest2.java</exclude>
+						<exclude>**/CheckedTransactions.java</exclude>
+						<exclude>**/GridTest.java</exclude>
+						<exclude>**/remote/**</exclude>
+
+						<exclude>**/DefaultTimeout.java</exclude>
+
+						<!-- <exclude>**/RecoveryEnablementUnitTest.java</exclude> -->
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -148,6 +171,29 @@
 			<artifactId>jacorb</artifactId>
 			<version>2.3.1jboss.patch01-brew</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>arjuna</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>orbportability</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>txoj</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
