@@ -13,25 +13,25 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <assembly>
-	<id>my-sar</id>
+	<id>sar</id>
 	<formats>
 		<format>sar</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>resources</directory>
+			<directory>../../ArjunaCore/tsmx/sar/resources</directory>
 			<outputDirectory>/</outputDirectory>
 		</fileSet>
 	</fileSets>
 	<files>
 		<file>
-			<source>target/tsmx-tools-sar-${project.version}.jar</source>
+			<source>target/${project.artifactId}-${project.version}.jar</source>
 			<outputDirectory>/</outputDirectory>
 			<destName>embedded-tools.jar</destName>
 		</file>
 		<file>
-			<source>../etc/toolsframework.xml</source>
+			<source>../../ArjunaCore/tsmx/etc/toolsframework.xml</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>
@@ -48,7 +48,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:tsmx-core-objectstorebrowser</include>
+				<include>org.jboss.jbossts:tsmx-jta-objectstorebrowser</include>
 			</includes>
 			<outputDirectory>tools</outputDirectory>
 			<outputFileNameMapping>tsmx-objectstorebrowser.jar

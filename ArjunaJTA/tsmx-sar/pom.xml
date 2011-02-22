@@ -21,13 +21,13 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>tsmx-tools-sar</artifactId>
-	<name>ArjunaCore tsmx-tools sar</name>
+	<artifactId>tsmx-jta-sar</artifactId>
+	<name>ArjunaJTA tsmx-tools sar</name>
 	<packaging>jar</packaging>
 
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>../../ArjunaCore/tsmx/sar/src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -43,7 +43,7 @@
 						<phase>package</phase>
 						<configuration>
 							<descriptors>
-								<descriptor>src/assembly/my-sar.xml</descriptor>
+								<descriptor>src/assembly/sar.xml</descriptor>
 							</descriptors>
 							<archive>
 								<manifestEntries>
@@ -70,7 +70,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>tsmx-core-objectstorebrowser</artifactId>
+			<artifactId>tsmx-jta-objectstorebrowser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>

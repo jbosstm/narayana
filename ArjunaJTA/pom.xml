@@ -53,6 +53,7 @@
 		<module>jta</module>
 		<module>jdbc</module>
 		<module>tsmx</module>
+		<module>tsmx-sar</module>
 		<module>jbossjta</module>
 		<module>docs</module>
 		<module>integration</module>
