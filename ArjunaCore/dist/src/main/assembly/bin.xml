@@ -132,10 +132,6 @@
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>../../JBossORG-EULA.txt</source>
-			<fileMode>0644</fileMode>
-		</file>
-		<file>
 			<source>../tsmx/etc/toolsframework.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>bin/tools</outputDirectory>
