@@ -175,7 +175,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jboss.narayana</groupId>
+			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>jts</artifactId>
 			<version>5.0.0.M1-SNAPSHOT</version>
 		</dependency>
