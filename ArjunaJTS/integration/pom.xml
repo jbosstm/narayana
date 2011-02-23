@@ -27,27 +27,34 @@
 
 	<build>
 		<sourceDirectory>../../atsintegration</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/jts/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>jta</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>jts</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>jtax</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>orbportability</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.jboss.integration</groupId>
 			<artifactId>jboss-integration</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jacorb</groupId>
+			<artifactId>jacorb</artifactId>
+			<version>2.3.1jboss.patch01-brew</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

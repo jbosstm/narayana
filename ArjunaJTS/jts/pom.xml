@@ -84,7 +84,7 @@
 						<id>generate-test-sources</id>
 						<phase>generate-test-sources</phase>
 						<goals>
-							<goal>generate</goal>
+							<goal>generate-test</goal>
 						</goals>
 						<configuration>
 							<compiler>jacorb</compiler>

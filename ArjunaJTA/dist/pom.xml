@@ -23,7 +23,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>jbossjta-dist</artifactId>
+	<artifactId>jbossts-jta</artifactId>
 	<packaging>pom</packaging>
 	<name>JBossJTA distribution</name>
 

@@ -21,7 +21,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>tsmx-jta-sar</artifactId>
+	<artifactId>tsmx-tools-sar</artifactId>
 	<name>ArjunaJTA tsmx-tools sar</name>
 	<packaging>jar</packaging>
 
