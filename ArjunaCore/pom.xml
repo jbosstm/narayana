@@ -15,15 +15,10 @@
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
 
 
-	<parent>
-		<groupId>org.jboss.jbossts</groupId>
-		<artifactId>narayana-build-common</artifactId>
-		<version>5.0.0.M1-SNAPSHOT</version>
-	</parent>
-
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>arjunacore-all</artifactId>
+	<version>5.0.0.M1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ArjunaCore</name>
 
