@@ -56,12 +56,12 @@
 		<module>orbportability</module>
 		<module>jts</module>
 		<module>jtax</module>
-		<module>tsmx</module>
 		<module>tsmx-sar</module>
 		<module>jbossjts</module>
 		<module>integration</module>
 		<module>trailmap</module>
 		<module>docs</module>
+		<module>../rhq-plugin</module>
 		<module>dist</module>
 	</modules>
 </project>
