@@ -33,6 +33,19 @@
 			</resource>
 		</resources>
 		<testSourceDirectory>tests</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencies>
 		<!-- START TEST -->
