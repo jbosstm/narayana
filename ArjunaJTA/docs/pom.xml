@@ -23,7 +23,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>arjunajta-docs</artifactId>
+	<artifactId>jbossjta-docs</artifactId>
 	<packaging>pom</packaging>
 	<name>ArjunaJTA Documentation</name>
 
