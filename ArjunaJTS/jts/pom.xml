@@ -195,5 +195,10 @@
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.slf4j</groupId>
+			<artifactId>slf4j-jboss-logging</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>
