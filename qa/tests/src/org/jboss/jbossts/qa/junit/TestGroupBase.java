@@ -124,6 +124,14 @@ public class TestGroupBase
 		client.waitFor();
     }
 
+    protected void startAndWaitForClientWithFixedStoreDir(Class clazz, String... args) {
+        String name = "client_"+clientCount;
+        clientCount+=1;
+        Task client = createTask(name, clazz, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
+		client.start(args);
+		client.waitFor();
+    }
+
     protected Task createTask(String taskName, Class clazz, Task.TaskType taskType, int timeout) {
         return createTask(taskName, clazz, taskType, timeout, taskName);
     }
