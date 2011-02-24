@@ -25,7 +25,7 @@
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>jbossjta-docs</artifactId>
 	<packaging>pom</packaging>
-	<name>ArjunaJTA Documentation</name>
+	<name>JBossJTA Documentation</name>
 
 	<modules>
 		<module>ArjunaTA_Development_Guide</module>

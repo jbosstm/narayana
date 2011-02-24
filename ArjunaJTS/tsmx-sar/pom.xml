@@ -22,7 +22,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jbossts-tools</artifactId>
-	<name>ArjunaJTS tsmx tools sar</name>
+	<name>JBossJTS tsmx tools sar</name>
 	<packaging>jar</packaging>
 
 
