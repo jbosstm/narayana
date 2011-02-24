@@ -13,36 +13,20 @@
 		of the GNU Lesser General Public License, v.2.1 along with this distribution; 
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
-
+	<parent>
+		<groupId>org.jboss.jbossts</groupId>
+		<artifactId>narayana-build-common</artifactId>
+		<version>4.15.0.M1-SNAPSHOT</version>
+	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>arjunacore-all</artifactId>
-	<version>4.15.0.M1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>ArjunaCore</name>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+	<name>ArjunaCore everything</name>
 
 	<modules>
-		<module>../narayana-build-common</module>
 		<module>../common</module>
-		<module>arjuna</module>
+ 		<module>arjuna</module>
 		<module>arjuna/services</module>
 		<module>tsmx</module>
 		<module>txoj</module>

@@ -25,7 +25,7 @@
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>arjunacore-dist</artifactId>
 	<packaging>pom</packaging>
-	<name>ArjunaCore</name>
+	<name>ArjunaCore distribution</name>
 
 	<build>
 		<plugins>
