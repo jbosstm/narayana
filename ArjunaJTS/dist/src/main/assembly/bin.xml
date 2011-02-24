@@ -340,5 +340,9 @@
 				<include>README.txt</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>../jacorb</directory>
+			<outputDirectory>jacorb</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly> 

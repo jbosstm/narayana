@@ -22,7 +22,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jbossjta</artifactId>
-	<name>ArjunaCore packaged module</name>
+	<name>JBossJTA packaged module</name>
 	<packaging>jar</packaging>
 
 

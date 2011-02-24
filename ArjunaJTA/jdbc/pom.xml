@@ -22,7 +22,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jdbc</artifactId>
-	<name>ArjunaCore arjuna module</name>
+	<name>JBossJTA jdbc module</name>
 	<packaging>jar</packaging>
 
 	<build>
