@@ -231,6 +231,33 @@
 			</includes>
 		</fileSet>
 		<fileSet>
+			<directory>../services/
+			</directory>
+			<outputDirectory>services/</outputDirectory>
+			<filtered>true</filtered>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/services/scripts/windows
+			</directory>
+			<outputDirectory>services/bin/windows</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/services/scripts/unix</directory>
+			<outputDirectory>services/bin/hpux</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/services/scripts/unix</directory>
+			<outputDirectory>services/bin/linux</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/services/scripts/unix</directory>
+			<outputDirectory>services/bin/solaris</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/services/config</directory>
+			<outputDirectory>services/config</outputDirectory>
+		</fileSet>
+		<fileSet>
 			<directory>../../ArjunaCore/arjuna/services/scripts/windows
 			</directory>
 			<outputDirectory>services/bin/windows</outputDirectory>
