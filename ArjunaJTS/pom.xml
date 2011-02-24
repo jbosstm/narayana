@@ -48,11 +48,13 @@
 		<module>../ArjunaCore/arjuna/services</module>
 		<module>../ArjunaJTA/jta</module>
 		<module>../ArjunaJTA/jdbc</module>
+		<module>../ArjunaJTA/tsmx</module>
 		<module>orbportability</module>
 		<module>jts</module>
 		<module>jtax</module>
 		<module>tsmx-sar</module>
 		<module>jbossjts</module>
+		<module>tsmx</module>
 		<module>integration</module>
 		<module>trailmap</module>
 		<module>docs</module>

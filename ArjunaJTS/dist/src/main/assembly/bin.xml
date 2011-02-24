@@ -89,7 +89,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:jbossjta</include>
+				<include>org.jboss.jbossts:jbossjts</include>
 			</includes>
 			<excludes>
 				<exclude>*:sources</exclude>
@@ -102,7 +102,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:jbossjta-integration</include>
+				<include>org.jboss.jbossts:jbossjts-integration</include>
 			</includes>
 			<outputDirectory>lib</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -111,8 +111,8 @@
 		</dependencySet>
 		<dependencySet>
 			<excludes>
-				<exclude>org.jboss.jbossts:jbossjta</exclude>
-				<exclude>org.jboss.jbossts:jbossjta-integration</exclude>
+				<exclude>org.jboss.jbossts:jbossjts</exclude>
+				<exclude>org.jboss.jbossts:jbossjts-integration</exclude>
 				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
 				<exclude>org.jboss.jbossts:common</exclude>
 				<exclude>org.jboss.jbossts:arjuna</exclude>
@@ -125,6 +125,9 @@
 				<exclude>org.jboss.jbossts:jta</exclude>
 				<exclude>org.jboss.jbossts:jdbc</exclude>
 				<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
+				<exclude>org.jboss.jbossts:orbportability</exclude>
+				<exclude>org.jboss.jbossts:jts</exclude>
+				<exclude>org.jboss.jbossts:jtax</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>
@@ -134,7 +137,7 @@
 				<include>org.jboss.jbossts:arjunacore-services</include>
 			</includes>
 			<outputDirectory>services/lib</outputDirectory>
-			<outputFileNameMapping>jbossjta-services.jar
+			<outputFileNameMapping>jbossjts-services.jar
 				</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -160,32 +163,36 @@
 			<outputDirectory>lib/ext</outputDirectory>
 		</file>
 		<file>
-			<source>../../ArjunaCore/scripts/withoutorb-setup-env.sh</source>
+			<source>../../ArjunaCore/scripts/withorb-setup-env.sh</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.sh</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>../../ArjunaCore/scripts/withoutorb-setup-env.bat</source>
+			<source>../../ArjunaCore/scripts/withorb-setup-env.bat</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.bat</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>../jbossts-properties-arjunajta.xml</source>
+			<source>../jbossts-properties-arjunajts.xml</source>
 			<fileMode>0644</fileMode>
 			<destName>default-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../jbossts-properties-arjunajta.xml</source>
+			<source>../jbossts-properties-arjunajts.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>jbossts-properties.xml</destName>
 		</file>
 		<file>
 			<source>../INSTALL</source>
+			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>../docs/index.html</source>
 			<fileMode>0644</fileMode>
 		</file>
 	</files>
@@ -200,7 +207,8 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/scripts/windows</directory>
+			<directory>../../ArjunaCore/arjuna/services/scripts/windows
+			</directory>
 			<outputDirectory>services/bin/windows</outputDirectory>
 		</fileSet>
 		<fileSet>
@@ -220,6 +228,11 @@
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
+			<directory>../docs/images/
+			</directory>
+			<outputDirectory>docs/images</outputDirectory>
+		</fileSet>
+		<fileSet>
 			<directory>../docs/ArjunaTA_Installation_And_Administration_Guide/target/publican/ArjunaTA_Installation_And_Administration_Guide/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
@@ -228,6 +241,28 @@
 			<directory>../docs/ArjunaTA_Development_Guide/target/publican/ArjunaTA_Development_Guide/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../docs/user_guide/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+			<includes>
+				<include>**/*.pdf</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../orbportability/docs/programmers_guide</directory>
+			<outputDirectory>docs/user_guide</outputDirectory>
+			<includes>
+				<include>**/*.pdf</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaCore/docs/user_guide</directory>
+			<outputDirectory>docs/user_guide/transaction_core</outputDirectory>
+			<includes>
+				<include>**/*.pdf</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 </assembly> 

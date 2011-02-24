@@ -73,10 +73,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>arjuna</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>tsmx-tools</artifactId>
 		</dependency>
 		<dependency>
@@ -97,29 +93,25 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jbossjta</artifactId>
+			<artifactId>jbossjts</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jbossjta</artifactId>
+			<artifactId>jbossjts</artifactId>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jbossjta</artifactId>
+			<artifactId>jbossjts</artifactId>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jdbc</artifactId>
+			<artifactId>tsmx-jts-objectstorebrowser</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>tsmx-jta-objectstorebrowser</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jbossjta-integration</artifactId>
+			<artifactId>jbossjts-integration</artifactId>
 		</dependency>
 	</dependencies>
 	
