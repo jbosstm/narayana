@@ -21,19 +21,11 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:jbossjts:*:javadoc</include>
+				<include>*:javadoc</include>
 			</includes>
 			<outputDirectory>htdocs</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.jbossts:jbossts-jopr-plugin:*:javadoc</include>
-			</includes>
-			<outputDirectory>bin</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -151,10 +143,13 @@
 				<exclude>org.jboss.jbossts:tsmx-perfgraph</exclude>
 				<exclude>org.jboss.jbossts:txoj</exclude>
 				<exclude>org.jboss.jbossts:jta</exclude>
+				<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:orbportability</exclude>
 				<exclude>org.jboss.jbossts:jts</exclude>
 				<exclude>org.jboss.jbossts:jtax</exclude>
 				<exclude>org.jboss.jbossts:tsmx-jts-objectstorebrowser</exclude>
+				<exclude>org.jboss.jbossts:jbossts-tools</exclude>
+				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>
@@ -220,7 +215,7 @@
 		</file>
 		<file>
 			<source>../docs/index.html</source>
-			<outputDirectory>user_guide</outputDirectory>
+			<outputDirectory>docs</outputDirectory>
 			<fileMode>0644</fileMode>
 		</file>
 	</files>
@@ -274,7 +269,7 @@
 		<fileSet>
 			<directory>../docs/user_guide/
 			</directory>
-			<outputDirectory>docs</outputDirectory>
+			<outputDirectory>docs/user_guide/</outputDirectory>
 			<includes>
 				<include>**/*.pdf</include>
 			</includes>
@@ -291,6 +286,31 @@
 			<outputDirectory>docs/user_guide/transaction_core</outputDirectory>
 			<includes>
 				<include>**/*.pdf</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/idl/arjuna</directory>
+			<outputDirectory>idl</outputDirectory>
+			<includes>
+				<include>ArjunaOTS.idl</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../jts/idl/omg</directory>
+			<outputDirectory>idl</outputDirectory>
+			<includes>
+				<include>CosTransactions.idl</include>
+				<include>XA.idl</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../trailmap</directory>
+			<outputDirectory>trailmap</outputDirectory>
+			<includes>
+				<include>html/</include>
+				<include>src/</include>
+				<include>build.xml</include>
+				<include>README.txt</include>
 			</includes>
 		</fileSet>
 	</fileSets>
