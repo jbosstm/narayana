@@ -22,7 +22,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jtax</artifactId>
-	<name>JTAX</name>
+	<name>JBossJTS jtax module</name>
 	<packaging>jar</packaging>
 
 	<build>
@@ -92,13 +92,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<workingDirectory>${basedir}/target/test-classes</workingDirectory>
-					<runOrder>alphabetical</runOrder>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<forkMode>pertest</forkMode>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
 					<excludes>
 						<exclude>**/common/**</exclude>
 						<exclude>**/ExampleXAResource.java</exclude>

@@ -168,6 +168,34 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>emma-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
+				<inherited>true</inherited>
+				<configuration>
+					<metadataFile>${project.build.directory}/test-classes/coverage.em</metadataFile>
+					<metrics>method:70,block:70,line:80,class:100</metrics>
+					<dataFiles>
+						<dataFile>${project.build.directory}/test-classes/coverage.em</dataFile>
+						<dataFile>${project.build.directory}/test-classes/coverage.ec</dataFile>
+					</dataFiles>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>pertest</forkMode>
+					<workingDirectory>target/test-classes</workingDirectory>
+					<runOrder>alphabetical</runOrder>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<inherited>true</inherited>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

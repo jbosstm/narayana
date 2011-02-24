@@ -25,7 +25,7 @@
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>trailmap</artifactId>
 	<packaging>pom</packaging>
-	<name>Trailmap</name>
+	<name>JBossJTS Trailmap documentation</name>
 
 	<build>
 		<plugins>

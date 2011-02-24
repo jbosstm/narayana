@@ -20,7 +20,7 @@
 	<artifactId>jbossjts-all</artifactId>
 	<version>4.15.0.M1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>JBossJTA everything</name>
+	<name>JBossJTS everything</name>
 
 	<build>
 		<plugins>

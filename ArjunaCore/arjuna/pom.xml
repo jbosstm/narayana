@@ -70,14 +70,7 @@
 					<additionalClasspathElements>
 						<additionalClasspathElement>${env.JAVA_HOME}/lib/tools.jar</additionalClasspathElement>
 					</additionalClasspathElements>
-					<workingDirectory>${basedir}/target/test-classes</workingDirectory>
-					<runOrder>alphabetical</runOrder>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<forkMode>pertest</forkMode>
 					<useManifestOnlyJar>false</useManifestOnlyJar>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
 					<excludes>
 						<!-- Dont run the common tests -->
 						<exclude>com/arjuna/common/tests/**</exclude>

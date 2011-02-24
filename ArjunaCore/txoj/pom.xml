@@ -63,13 +63,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<workingDirectory>${basedir}/target</workingDirectory>
-					<runOrder>alphabetical</runOrder>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<forkMode>pertest</forkMode>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
 					<excludes>
 						<!-- Were refactored to true classes as used in multiple places -->
 						<exclude>**/AbortObject.java</exclude>

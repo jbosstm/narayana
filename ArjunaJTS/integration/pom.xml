@@ -22,7 +22,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jbossjts-integration</artifactId>
-	<name>JBossJTA ATX module</name>
+	<name>JBossJTS ATX module</name>
 	<packaging>jar</packaging>
 
 	<build>
