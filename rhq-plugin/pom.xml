@@ -9,7 +9,6 @@
         <version>5.0.0.M1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.on</groupId>
     <artifactId>jopr-jbossts-plugin</artifactId>
     <packaging>jar</packaging>
 
