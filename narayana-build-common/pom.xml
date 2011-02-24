@@ -227,6 +227,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossts-tools</artifactId>
+				<version>${project.version}</version>
+				<classifier>sar</classifier>
+				<type>sar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>tsmx-tools</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -327,6 +334,11 @@
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>tsmx-jts-objectstorebrowser</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossts-jopr-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>

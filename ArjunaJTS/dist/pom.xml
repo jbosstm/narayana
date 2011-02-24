@@ -73,6 +73,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>jbossts-tools</artifactId>
+			<classifier>sar</classifier>
+			<type>sar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>tsmx-tools</artifactId>
 		</dependency>
 		<dependency>
@@ -113,9 +119,13 @@
 			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>jbossjts-integration</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>jbossts-jopr-plugin</artifactId>
+		</dependency>
 	</dependencies>
-	
-	
+
+
 	<properties>
 		<PRODUCT_NAME>jbossjts</PRODUCT_NAME>
 		<HOME_DIRECTORY>JBOSSTS_HOME</HOME_DIRECTORY>

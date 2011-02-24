@@ -9,7 +9,7 @@
         <version>5.0.0.M1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jopr-jbossts-plugin</artifactId>
+    <artifactId>jbossts-jopr-plugin</artifactId>
     <packaging>jar</packaging>
 
     <name>Jopr Test Plugin</name>
@@ -29,36 +29,12 @@
 		</repository>
 	</repositories>
 
+<!--
 	<build>
-		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<!--<version>2.7</version>-->
 				<executions>
 					<execution>
 						<id>create_javadocs</id>
@@ -69,38 +45,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals> <goal>jar</goal> </goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-        <groupId>org.jboss.on</groupId>
-        <!--  Bypass the jopr-plugins-parent which can not have children. It must build after the plugins in order to execute integration tests on them. -->
-        <artifactId>jopr-modules-parent</artifactId>
-        <version>2.3.0.EmbJopr.1.3.0-4</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
+-->
 
     <dependencies>
 		<!-- Below are the core modules that are required dependencies of all plugins -->
