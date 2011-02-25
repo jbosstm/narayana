@@ -34,9 +34,8 @@
 	</target>
 
 	<target name="clean">
-		<exec executable="mvn" dir="${basedir}">
-			<arg value="clean"/>
-		</exec>
+		<delete dir="target"/>
+
 		<delete dir="build"/>
 		<delete dir="${install.doc.dir}"/>
 		<echo message="deleting ${install.jar.dir}/${pluginjar} and ${install.jar.dir}/${pluginsrcjar}"/>
