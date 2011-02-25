@@ -26,20 +26,47 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.2</version>
 				<executions>
 					<execution>
-						<id>unpack-dependencies</id>
+						<id>unpack-dist</id>
 						<phase>initialize</phase>
 						<goals>
-							<goal>unpack-dependencies</goal>
+							<goal>unpack</goal>
 						</goals>
 						<configuration>
-							<includes>**/*</includes>
-							<markersDirectory>${project.build.directory}/dependency-markers</markersDirectory>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<excludeTransitive>true</excludeTransitive>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jboss.jbossts</groupId>
+									<artifactId>jbossts-full</artifactId>
+									<version>${project.version}</version>
+									<classifier>bin</classifier>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/</outputDirectory>
+								</artifactItem>
+							</artifactItems>
 						</configuration>
-					</execution>					
+					</execution>
+					<execution>
+						<id>copy-junit</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>junit</groupId>
+									<artifactId>junit</artifactId>
+									<version>4.8.1</version>
+									<type>jar</type>
+									<outputDirectory>${basedir}/../build/extlib</outputDirectory>
+									<destFileName>junit.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -52,11 +79,10 @@
 						<configuration>
 							<target>
 								<ant>
-									<property name="buildtype" value="core"/>
-									<property name="org.jboss.jbossts.qa.ts.home" value="${project.build.directory}/arjunacore-dist-${project.version}"/>
+									<property name="org.jboss.jbossts.qa.ts.home"
+										value="${project.build.directory}/jbossts-full-${project.version}" />
 								</ant>
 							</target>
-
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -68,10 +94,10 @@
 						<configuration>
 							<target>
 								<ant antfile="run-tests.xml">
-									<property name="org.jboss.jbossts.qa.ts.home" value="${project.build.directory}/arjunacore-dist-${project.version}"/>
+									<property name="org.jboss.jbossts.qa.ts.home"
+										value="${project.build.directory}/jbossts-full-${project.version}" />
 								</ant>
 							</target>
-
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -79,36 +105,25 @@
 					</execution>
 				</executions>
 				<dependencies>
-			            <dependency>
-			              <groupId>sun.jdk</groupId>
-			              <artifactId>tools</artifactId>
-			              <version>1.4.2</version>
-			              <scope>system</scope>
-			              <systemPath>${java.home}/../lib/tools.jar</systemPath>
-			            </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant-junit</artifactId>
-			<version>1.6.5</version>
-		</dependency>
+					<dependency>
+						<groupId>sun.jdk</groupId>
+						<artifactId>tools</artifactId>
+						<version>1.4.2</version>
+						<scope>system</scope>
+						<systemPath>${java.home}/../lib/tools.jar</systemPath>
+					</dependency>
+					<dependency>
+						<groupId>junit</groupId>
+						<artifactId>junit</artifactId>
+						<version>4.8.1</version>
+					</dependency>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-junit</artifactId>
+						<version>1.6.5</version>
+					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>arjunacore-dist</artifactId>
-			<version>4.15.0.M1-SNAPSHOT</version>
-			<scope>test</scope>
-			<classifier>bin</classifier>
-			<type>zip</type>
-		</dependency>
-	</dependencies>
 </project>
