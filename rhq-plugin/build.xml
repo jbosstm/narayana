@@ -29,10 +29,8 @@
 
 	<target name="dist" depends="maven:package">
 		<copy file="${maven.project.build.directory}/${pluginjar}" tofile="${install.jar.dir}/jbossts-jopr-plugin.jar"/>
-		<copy file="${maven.project.build.directory}/${pluginsrcjar}" todir="${install.jar.dir}/jbossts-jopr-plugin-sources.jar"/>
-<!--
-		<copy file="${maven.project.build.directory}/${plugindocjar}" todir="${install.doc.dir}"/>
--->
+		<copy file="${maven.project.build.directory}/${pluginsrcjar}" tofile="${install.jar.dir}/jbossts-jopr-plugin-sources.jar"/>
+		<copy file="${maven.project.build.directory}/${plugindocjar}" tofile="${install.doc.dir}/jbossts-jopr-plugin-javadoc.jar"/>
 	</target>
 
 	<target name="clean">

@@ -29,7 +29,6 @@
 		</repository>
 	</repositories>
 
-<!--
 	<build>
 		<plugins>
 			<plugin>
@@ -47,7 +46,6 @@
 			</plugin>
 		</plugins>
 	</build>
--->
 
     <dependencies>
 		<!-- Below are the core modules that are required dependencies of all plugins -->
