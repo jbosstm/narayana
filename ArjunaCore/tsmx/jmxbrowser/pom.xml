@@ -43,6 +43,14 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>com/arjuna/ats/tools/jmxbrowser/**</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

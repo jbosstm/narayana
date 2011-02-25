@@ -48,6 +48,19 @@
 					 -->
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>com/arjuna/ats/tools/objectstorebrowser/**</include>
+					</includes>
+					<!--  TODO THIS WAS NOT ACTUALLY EXCLUDED IN THE ORIGINAL BUILD DUE TO A TYPO
+					<excludes>
+						<exclude>com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**</exclude>
+					</excludes>
+					 -->
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

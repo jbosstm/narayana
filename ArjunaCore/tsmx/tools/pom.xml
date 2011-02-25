@@ -57,6 +57,15 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>com/arjuna/ats/tools/toolsframework/**</include>
+						<include>com/arjuna/ats/tsmx/**</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
