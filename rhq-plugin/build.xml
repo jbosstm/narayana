@@ -2,7 +2,7 @@
 
 <project name="rhq-plugin" default="maven:package" basedir=".">
 
-	<property name="modulename" value="jbossts-jopr-plugin-4.15.0.M1-SNAPSHOT"/>
+	<property name="modulename" value="jopr-jbossts-plugin-2.3.0.EmbJopr.1.3.0-4"/>
 	<property name="component-module-list" value="${modulename}"/>
 	<property name="install.jar.dir" value="../install/bin"/>
 	<property name="install.doc.dir" value="../install/docs/rhq"/>
@@ -15,11 +15,6 @@
 	<property name="plugindocjar" value="${modulename}-javadoc.jar"/>
 
 	<target name="maven:package" depends="clean">
-
-		<exec executable="mvn" dir="../narayana-build-common">
-			<arg value="install"/>
-		</exec>
-
 		<exec executable="mvn" dir="${basedir}">
 			<arg value="-Dversion=${version}"/>
 			<arg value="-DartifactId=${modulename}"/>
@@ -28,14 +23,15 @@
 	</target>
 
 	<target name="dist" depends="maven:package">
-		<copy file="${maven.project.build.directory}/${pluginjar}" tofile="${install.jar.dir}/jbossts-jopr-plugin.jar"/>
-		<copy file="${maven.project.build.directory}/${pluginsrcjar}" tofile="${install.jar.dir}/jbossts-jopr-plugin-sources.jar"/>
-		<copy file="${maven.project.build.directory}/${plugindocjar}" tofile="${install.doc.dir}/jbossts-jopr-plugin-javadoc.jar"/>
+		<copy file="${maven.project.build.directory}/${pluginjar}" todir="${install.jar.dir}"/>
+		<copy file="${maven.project.build.directory}/${pluginsrcjar}" todir="${install.jar.dir}"/>
+		<copy file="${maven.project.build.directory}/${plugindocjar}" todir="${install.doc.dir}"/>
 	</target>
 
 	<target name="clean">
-		<delete dir="target"/>
-
+		<exec executable="mvn" dir="${basedir}">
+			<arg value="clean"/>
+		</exec>
 		<delete dir="build"/>
 		<delete dir="${install.doc.dir}"/>
 		<echo message="deleting ${install.jar.dir}/${pluginjar} and ${install.jar.dir}/${pluginsrcjar}"/>
