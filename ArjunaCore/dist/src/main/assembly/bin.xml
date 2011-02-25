@@ -178,7 +178,7 @@
 	</files>
 	<fileSets>
 		<fileSet>
-			<directory>../scripts</directory>
+			<directory>${basedir}/../scripts</directory>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>

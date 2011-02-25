@@ -221,7 +221,7 @@
 	</files>
 	<fileSets>
 		<fileSet>
-			<directory>../../ArjunaCore/scripts</directory>
+			<directory>${basedir}/../../ArjunaCore/scripts</directory>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>
@@ -231,7 +231,7 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../services/
+			<directory>${basedir}/../services/
 			</directory>
 			<outputDirectory>services/</outputDirectory>
 			<filtered>true</filtered>
