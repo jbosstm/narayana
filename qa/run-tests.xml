@@ -36,6 +36,8 @@
 
 -->
 <project name="QA Tests for JBossTS" default="junit" basedir=".">
+    <!-- set this property to the location of a JBossTS core build -->
+    <property name="org.jboss.jbossts.qa.ts.home" location="../install/"/>
 
     <property name="working.dir" location="build"/>
 
@@ -377,17 +379,17 @@
                     <include name="jbossts-*-qa.jar"/>
                 </fileset>
 
-                <fileset dir="../install/lib">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib">
                     <include name="*.jar"/>
                 </fileset>
-                <fileset dir="../install/lib/ext">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
                     <include name="*.jar"/>
                     <include name="*.zip"/>
                 </fileset>
                 <fileset dir="../ArjunaJTS/jts/build/lib">
                     <include name="jts_tests.jar"/>
                 </fileset>
-                <pathelement location="../install/etc"/>
+                <pathelement location="${org.jboss.jbossts.qa.ts.home}/etc"/>
 
             </classpath>
 
