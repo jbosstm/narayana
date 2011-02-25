@@ -334,10 +334,16 @@
 			<directory>../trailmap</directory>
 			<outputDirectory>trailmap</outputDirectory>
 			<includes>
-				<include>html/</include>
 				<include>src/</include>
 				<include>build.xml</include>
 				<include>README.txt</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>../trailmap/target/</directory>
+			<outputDirectory>trailmap</outputDirectory>
+			<includes>
+				<include>html/</include>
 			</includes>
 		</fileSet>
 		<fileSet>

@@ -31,14 +31,15 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<phase>compile</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<property name="docs.dir" value="docs" />
 								<property name="xsl.dir" value="xsl" />
-								<property name="html.dir" value="html" />
+								<property name="html.dir" value="target/html" />
 								<property name="xsl.file" value="ATL_LookAndFeel.xsl" />
 								<copy todir="${html.dir}">
 									<fileset dir="${docs.dir}">
@@ -53,13 +54,7 @@
 									extension=".html">
 									<param name="rootpath" expression="." />
 								</style>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
+							</target>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.ant</groupId>
@@ -67,6 +62,12 @@
 						<version>1.8.0</version>
 					</dependency>
 				</dependencies>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

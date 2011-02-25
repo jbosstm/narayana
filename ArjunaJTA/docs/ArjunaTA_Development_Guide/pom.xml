@@ -31,18 +31,19 @@
 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<phase>compile</phase>
 						<configuration>
-							<tasks>
+							<target unless="skipPublican">
 								<exec dir="." executable="publican">
 									<arg value="build" />
 									<arg value="--langs=en-US" />
 									<arg value="--formats=pdf" />
 									<arg value="--config=publican-maven.cfg" />
 								</exec>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
