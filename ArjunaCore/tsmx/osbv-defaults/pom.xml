@@ -73,8 +73,8 @@
 			<artifactId>tsmx-core-objectstorebrowser</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.javaee</groupId>
-			<artifactId>jboss-javaee</artifactId>
+			<groupId>org.jboss.spec.javax.transaction</groupId>
+			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

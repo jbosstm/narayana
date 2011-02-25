@@ -55,8 +55,7 @@
 						<manifestEntries>
 							<arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
 							<arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-							<arjuna-builder>JBoss Inc. [${user.name}] ${os.name}
-								${os.version} ${buildproperty.date}</arjuna-builder>
+							<arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
 						</manifestEntries>
 					</archive>
 				</configuration>
