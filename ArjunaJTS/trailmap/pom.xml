@@ -55,13 +55,13 @@
 									<param name="rootpath" expression="." />
 								</style>
 							</target>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-trax</artifactId>
-						<version>1.8.0</version>
-					</dependency>
-				</dependencies>
+							<dependencies>
+								<dependency>
+									<groupId>org.apache.ant</groupId>
+									<artifactId>ant-trax</artifactId>
+									<version>1.8.0</version>
+								</dependency>
+							</dependencies>
 						</configuration>
 						<goals>
 							<goal>run</goal>
