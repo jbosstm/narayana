@@ -255,6 +255,8 @@
 		localjunit.clean,
 		interop-tests.clean">
 
+	        <ant dir="${bridge.dir}" target="clean"/>
+		<delete dir="docs/build"/>
 		<delete dir="${xts.htdocs.dest}"/>
 		<delete dir="${xts.installationdirectory}"/>
 
