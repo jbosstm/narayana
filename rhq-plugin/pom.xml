@@ -2,15 +2,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+
     <parent>
-        <groupId>org.jboss.on</groupId>
-        <!--  Bypass the jopr-plugins-parent which can not have children. It must build after the plugins in order to execute integration tests on them. -->
-        <artifactId>jopr-modules-parent</artifactId>
-        <version>2.3.0.EmbJopr.1.3.0-4</version>
+        <groupId>org.jboss.jbossts</groupId>
+        <artifactId>narayana-build-common</artifactId>
+        <version>4.15.0.M1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.on</groupId>
-    <artifactId>jopr-jbossts-plugin</artifactId>
+    <artifactId>jbossts-jopr-plugin</artifactId>
     <packaging>jar</packaging>
 
     <name>Jopr Test Plugin</name>
@@ -31,35 +30,10 @@
 	</repositories>
 
 	<build>
-		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
 				<executions>
 					<execution>
 						<id>create_javadocs</id>
@@ -70,31 +44,105 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create_sources_jar</id>
-						<goals> <goal>jar</goal> </goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<forceCreation>true</forceCreation>
-					<includePom>true</includePom>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
     <dependencies>
+		<!-- Below are the core modules that are required dependencies of all plugins -->
+		<dependency>
+			<groupId>org.rhq</groupId>
+			<artifactId>rhq-core-domain</artifactId>
+			<version>${rhq.version}</version>
+			<scope>provided</scope> <!-- provided by the agent/plugin-container -->
+			<exclusions>
+				<exclusion>
+					<groupId>javax.xml.bind</groupId>
+					<artifactId>jaxb-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.xml.stream</groupId>
+					<artifactId>stax-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.rhq</groupId>
+			<artifactId>rhq-core-plugin-api</artifactId>
+			<version>${rhq.version}</version>
+			<scope>provided</scope> <!-- provided by the agent/plugin-container -->
+			<exclusions>
+				<exclusion>
+					<groupId>javax.xml.bind</groupId>
+					<artifactId>jaxb-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.xml.stream</groupId>
+					<artifactId>stax-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.rhq</groupId>
+			<artifactId>rhq-core-native-system</artifactId>
+			<version>${rhq.version}</version>
+			<scope>provided</scope> <!-- provided by the agent/plugin-container -->
+		</dependency>
+
         <dependency>
-            <groupId>${rhq.groupId}</groupId>
-            <artifactId>rhq-jmx-plugin</artifactId>
-            <version>${rhq.version}</version>
+ 			<groupId>org.rhq</groupId>
+           <artifactId>rhq-jmx-plugin</artifactId>
+			<version>${rhq.version}</version>
             <scope>provided</scope>
         </dependency>
+
+		<!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope> <!-- provided by the agent/plugin-container -->
+		</dependency>
+
+		<!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.5.6-Final</version>
+			<scope>provided</scope> <!-- provided by the agent/plugin-container -->
+			<exclusions>
+				<exclusion>
+					<groupId>javax.transaction</groupId>
+					<artifactId>jta</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!--
+		Uncomment the one of the three logging systems your plugin uses: log4j, commons-logging or i18nlog
+		All three are provided to your plugin by the agent/plugin-container.
+		-->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
     <!--
         <dependency>
             <groupId>org.rhq</groupId>
@@ -114,4 +162,9 @@
         -->
 
     </dependencies>
+
+
+	<properties>
+    <rhq.version>1.3.0.EmbJopr.1.3.0-4</rhq.version>
+	</properties>
 </project>
