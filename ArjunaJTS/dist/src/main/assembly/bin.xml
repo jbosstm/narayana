@@ -152,6 +152,8 @@
 				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
@@ -332,7 +334,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>../trailmap</directory>
-			<outputDirectory>trailmap</outputDirectory>
+			<outputDirectory>trail_map</outputDirectory>
 			<includes>
 				<include>src/</include>
 				<include>build.xml</include>
@@ -341,7 +343,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>../trailmap/target/</directory>
-			<outputDirectory>trailmap</outputDirectory>
+			<outputDirectory>trail_map</outputDirectory>
 			<includes>
 				<include>html/</include>
 			</includes>
