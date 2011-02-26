@@ -53,7 +53,6 @@
 				<configuration>
 					<includes>
 						<include>com/arjuna/ats/tools/toolsframework/**</include>
-						<include>com/arjuna/ats/tsmx/**</include>
 					</includes>
 				</configuration>
 			</plugin>
@@ -62,7 +61,8 @@
 				<configuration>
 					<includes>
 						<include>com/arjuna/ats/tools/toolsframework/**</include>
-						<include>com/arjuna/ats/tsmx/**</include>
+						<include>**/*.properties</include>
+						<include>**/*.gif</include>
 					</includes>
 				</configuration>
 			</plugin>

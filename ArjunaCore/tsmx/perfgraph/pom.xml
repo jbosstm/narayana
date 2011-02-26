@@ -48,6 +48,8 @@
 				<configuration>
 					<includes>
 						<include>com/arjuna/ats/tools/perfgraph/**</include>
+						<include>**/*.properties</include>
+						<include>**/*.gif</include>
 					</includes>
 				</configuration>
 			</plugin>
@@ -59,6 +61,11 @@
 			<artifactId>jfreechart</artifactId>
 			<version>1.0.2</version>
 		</dependency>
+	        <dependency>
+	            <groupId>jfree</groupId>
+	            <artifactId>jcommon</artifactId>
+	            <version>1.0.2</version>
+	        </dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>tsmx-tools</artifactId>

@@ -150,6 +150,7 @@
 				<exclude>org.jboss.jbossts:tsmx-jts-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:jbossts-tools</exclude>
 				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
+				<exclude>junit:junit</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

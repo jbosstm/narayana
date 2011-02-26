@@ -48,6 +48,8 @@
 				<configuration>
 					<includes>
 						<include>com/arjuna/ats/tools/jmxbrowser/**</include>
+						<include>**/*.properties</include>
+						<include>**/*.gif</include>
 					</includes>
 				</configuration>
 			</plugin>
