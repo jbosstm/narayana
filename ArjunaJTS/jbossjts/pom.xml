@@ -96,7 +96,8 @@
 								<source>../../ArjunaJTA/jdbc/classes</source>
 								<source>../orbportability/classes</source>
 								<source>../jts/classes</source>
-								<source>../jtax/bin</source>
+								<source>../jts/services/classes</source>
+								<source>../jtax/classes</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -105,9 +106,10 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<excludes>
-						<exclude>**/*.*</exclude>
-					</excludes>
+					<includes>
+						<include>com/arjuna/ats/jts/services/**/*.java</include>
+						<include>com/arjuna/ats/internal/tsmx/**/*.java</include>
+					</includes>
 				</configuration>
 				<executions>
 					<execution>
@@ -149,6 +151,29 @@
 									<include>org.jboss.jbossts:jtax</include>
 								</includes>
 							</artifactSet>
+<filters>
+  <filter>
+    <artifact>org.jboss.jbossts:tsmx-jmxbrowser</artifact>
+    <excludes>
+      <exclude>**/tools.properties</exclude>
+      <exclude>**/*.gif</exclude>
+    </excludes>
+  </filter>
+  <filter>
+    <artifact>org.jboss.jbossts:tsmx-perfgraph</artifact>
+    <excludes>
+      <exclude>**/tools.properties</exclude>
+      <exclude>**/*.gif</exclude>
+    </excludes>
+  </filter>
+  <filter>
+    <artifact>org.jboss.jbossts:tsmx-tools</artifact>
+    <excludes>
+      <exclude>**/tools.properties</exclude>
+      <exclude>**/*.gif</exclude>
+    </excludes>
+  </filter>
+</filters>
 						</configuration>
 					</execution>
 				</executions>
@@ -204,6 +229,11 @@
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>jtax</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>tanukisoft</groupId>
+			<artifactId>wrapper</artifactId>
+			<version>3.2.3</version>
 		</dependency>
 	</dependencies>
 
