@@ -192,15 +192,20 @@ public class RecoveryXids
      */
     public boolean updateIfEquivalentRM(XAResource xaResource, Xid[] xids)
     {
-        if(xids == null || xids.length == 0) {
-            return false;
+        if(xids != null && xids.length > 0) {
+            for(int i = 0; i < xids.length; i++) {
+                if(contains(xids[i])) {
+                    _xares = xaResource;
+                    return true;
+                }
+            }
         }
 
-        for(int i = 0; i < xids.length; i++) {
-            if(contains(xids[i])) {
-                _xares = xaResource;
-                return true;
-            }
+        // either (or both) passes have an empty Xid set,
+        // so fallback to isSameRM as we can't use Xid matching
+        if(isSameRM(xaResource)) {
+            _xares = xaResource;
+            return true;
         }
 
         return false;

@@ -36,7 +36,6 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 
@@ -188,12 +187,12 @@ public class XARecoveryModule implements RecoveryModule
 
         if (_xidScans != null)
 		{
-			Enumeration keys = _xidScans.keys();
+			Enumeration<XAResource> keys = _xidScans.keys();
 
 			while (keys.hasMoreElements())
 			{
-				XAResource theKey = (XAResource) keys.nextElement();
-				RecoveryXids xids = (RecoveryXids) _xidScans.get(theKey);
+				XAResource theKey = keys.nextElement();
+				RecoveryXids xids = _xidScans.get(theKey);
 
 				if (xids.contains(xid))
 					return theKey;
@@ -491,21 +490,24 @@ public class XARecoveryModule implements RecoveryModule
 			RecoveryXids xidsToRecover = null;
 
 			if (_xidScans == null)
-				_xidScans = new Hashtable();
+				_xidScans = new Hashtable<XAResource,RecoveryXids>();
 			else
 			{
                 refreshXidScansForEquivalentXAResourceImpl(xares, trans);
                 
-				xidsToRecover = (RecoveryXids) _xidScans.get(xares);
+				xidsToRecover = _xidScans.get(xares);
 
 				if (xidsToRecover == null)
 				{
-					java.util.Enumeration elements = _xidScans.elements();
+                    // this is probably redundant now due to updateIfEquivalentRM,
+                    // but in some implementations hashcode/equals does not behave itself.
+
+					java.util.Enumeration<RecoveryXids> elements = _xidScans.elements();
 					boolean found = false;
 
 					while (elements.hasMoreElements())
 					{
-						xidsToRecover = (RecoveryXids) elements.nextElement();
+						xidsToRecover = elements.nextElement();
 
 						if (xidsToRecover.isSameRM(xares))
 						{
@@ -706,24 +708,16 @@ public class XARecoveryModule implements RecoveryModule
      */
     private void refreshXidScansForEquivalentXAResourceImpl(XAResource xares, Xid[] xids)
     {
-        if(xids == null || xids.length == 0) {
-            return;
-        }
+        Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
 
-        Enumeration keys = _xidScans.keys();
-
-        while (keys.hasMoreElements())
-        {
-            XAResource theKey = (XAResource) keys.nextElement();
-            RecoveryXids recoveryXids = (RecoveryXids) _xidScans.get(theKey);
+        for(XAResource theKey : keys) {
+            RecoveryXids recoveryXids = _xidScans.get(theKey);
 
             if(recoveryXids.updateIfEquivalentRM(xares, xids)) {
                 // recoveryXids is for this xares, but was originally obtained using
                 // a different XAResource. rekey the hashtable to use the new one.
                 _xidScans.remove(theKey);
-                theKey = xares;
-                _xidScans.put(theKey, recoveryXids);
-                break;
+                _xidScans.put(xares, recoveryXids);
             }
         }
     }
@@ -835,7 +829,7 @@ public class XARecoveryModule implements RecoveryModule
 
     private Hashtable _failures = null;
 
-	private Hashtable _xidScans = null;
+	private Hashtable<XAResource,RecoveryXids> _xidScans = null;
 
 	private XARecoveryResourceManager _recoveryManagerClass = null;
 
