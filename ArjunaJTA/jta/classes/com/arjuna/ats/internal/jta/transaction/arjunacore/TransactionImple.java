@@ -1594,23 +1594,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
         XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
 
-		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterface();
-  		Class lastResourceOptimisationInterface = null;
-		if (lastResourceOptimisationInterfaceName != null)
-		{
-			try
-			{
-				lastResourceOptimisationInterface = Thread.currentThread()
-						.getContextClassLoader().loadClass(
-								lastResourceOptimisationInterfaceName);
-			}
-			catch (final Throwable th)
-			{
-                jtaLogger.i18NLogger.warn_transaction_arjunacore_lastResourceOptimisationInterface(lastResourceOptimisationInterfaceName, th);
-			}
-		}
-		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface;
+        LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterface();
 
+        if(LAST_RESOURCE_OPTIMISATION_INTERFACE == null) {
+            jtaLogger.i18NLogger.warn_transaction_arjunacore_lastResourceOptimisationInterface(jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterfaceClassName());
+        }
 	}
 
 	private static ConcurrentHashMap _transactions = new ConcurrentHashMap();

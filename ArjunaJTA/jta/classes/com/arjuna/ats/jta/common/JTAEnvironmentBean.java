@@ -79,7 +79,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile List<XAResourceMap> xaResourceMaps = null;
 
     private volatile boolean xaTransactionTimeoutEnabled = true;
-    private volatile String lastResourceOptimisationInterface = null;
+
+    private volatile String lastResourceOptimisationInterfaceClassName = null;
+    private volatile Class lastResourceOptimisationInterface = null;
 
     /**
      * Returns true if subtransactions are allowed.
@@ -129,11 +131,11 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         {
             if(transactionManagerClassName == null)
             {
-                this.transactionManagerClassName = null;
+                this.transactionManager = null;
             }
             else if(!transactionManagerClassName.equals(this.transactionManagerClassName))
             {
-                this.transactionManagerClassName = null;
+                this.transactionManager = null;
             }
             this.transactionManagerClassName = transactionManagerClassName;
         }
@@ -780,24 +782,66 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     }
 
     /**
-     * Returns the classname of the marker interface used to indicate a LastResource.
+     * Returns the class name of the marker interface used to indicate a LastResource.
      *
      * Default: null.
-     * Equivalent deprecated property: com.arjuna.ats.jta.lastResourceOptimisationInterface
+     * Equivalent deprecated property: com.arjuna.ats.jta.lastResourceOptimisationInterfaceClassName
      *
      * @return the classname of the market interface for LastResource handling.
      */
-    public String getLastResourceOptimisationInterface()
+    public String getLastResourceOptimisationInterfaceClassName()
     {
+        return lastResourceOptimisationInterfaceClassName;
+    }
+
+    /**
+     * Sets the class name of the marker interface used to indicate a LastResource.
+     *
+     * @param lastResourceOptimisationInterfaceClassName the class name of the marker interface.
+     */
+    public void setLastResourceOptimisationInterfaceClassName(String lastResourceOptimisationInterfaceClassName)
+    {
+        synchronized(this)
+        {
+            if(lastResourceOptimisationInterfaceClassName == null)
+            {
+                this.lastResourceOptimisationInterface = null;
+            }
+            else if(!lastResourceOptimisationInterfaceClassName.equals(this.lastResourceOptimisationInterfaceClassName))
+            {
+                this.lastResourceOptimisationInterface = null;
+            }
+            this.lastResourceOptimisationInterfaceClassName = lastResourceOptimisationInterfaceClassName;
+        }
+    }
+
+    /**
+     * Returns the Class representing the marker interface for LastResource.
+     *
+     * If there is no Class set and loading fails, this method will log an appropriate warning
+     * and return null, not throw an exception.
+     *
+     * @return the LastResource market interface.
+     */
+    public Class getLastResourceOptimisationInterface()
+    {
+        if(lastResourceOptimisationInterface == null && lastResourceOptimisationInterfaceClassName != null) {
+            synchronized(this) {
+                if(lastResourceOptimisationInterface == null && lastResourceOptimisationInterfaceClassName != null) {
+                    lastResourceOptimisationInterface = ClassloadingUtility.loadClass(lastResourceOptimisationInterfaceClassName);
+                }
+            }
+        }
+
         return lastResourceOptimisationInterface;
     }
 
     /**
-     * Sets the classname of the marker interface used to indicate a LastResource.
+     * Sets a Class to use as the marker interface for LastResource
      *
-     * @param lastResourceOptimisationInterface the classname of the marker interface.
+     * @param lastResourceOptimisationInterface a marker interface Class, or null.
      */
-    public void setLastResourceOptimisationInterface(String lastResourceOptimisationInterface)
+    public void setLastResourceOptimisationInterface(Class lastResourceOptimisationInterface)
     {
         this.lastResourceOptimisationInterface = lastResourceOptimisationInterface;
     }

@@ -160,8 +160,9 @@ public class EnvironmentBeanTest
             handleInterfaceField(bean, field, setter, getter);
             return;
 
+        } else if(field.getType().toString().equals("class java.lang.Class")) {
+            // ignore for now, no easy way to test
         } else {
-
             throw new Exception("unknown field type "+field.getType());
         }
 

@@ -269,8 +269,8 @@ public class jtaI18NLoggerImpl implements jtaI18NLogger {
 		return "ARJUNA-16068 Work already active!";
 	}
 
-	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0, Throwable arg1) {
-		logger.logv(WARN, arg1, "ARJUNA-16069 failed to load Last Resource Optimisation Interface {0}", arg0);
+	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0) {
+		logger.logv(WARN, "ARJUNA-16069 failed to load Last Resource Optimisation Interface {0}", arg0);
 	}
 
 	public void warn_transaction_arjunacore_markrollback(String arg0, String arg1) {

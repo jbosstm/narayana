@@ -57,5 +57,5 @@ public interface JTAEnvironmentBeanMBean
 
     boolean isXaTransactionTimeoutEnabled();
 
-    String getLastResourceOptimisationInterface();
+    String getLastResourceOptimisationInterfaceClassName();
 }

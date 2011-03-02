@@ -158,8 +158,8 @@ public class jtaxI18NLoggerImpl implements jtaxI18NLogger {
         return "ARJUNA-24032 Work already active!";
     }
 
-    public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0, Throwable arg1) {
-        logger.logv(WARN, arg1, "ARJUNA-24033 failed to load Last Resource Optimisation Interface {0}", arg0);
+    public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0) {
+        logger.logv(WARN, "ARJUNA-24033 failed to load Last Resource Optimisation Interface {0}", arg0);
     }
 
     public String get_jtax_transaction_jts_markedrollback() {

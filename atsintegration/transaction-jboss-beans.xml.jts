@@ -168,7 +168,7 @@
 
         <constructor factoryClass="com.arjuna.ats.jta.common.jtaPropertyManager" factoryMethod="getJTAEnvironmentBean"/>
 
-        <property name="lastResourceOptimisationInterface">org.jboss.tm.LastResource</property>
+        <property name="lastResourceOptimisationInterfaceClassName">org.jboss.tm.LastResource</property>
 
         <property name="transactionManagerClassName">com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate</property>
         <property name="userTransactionClassName">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</property>

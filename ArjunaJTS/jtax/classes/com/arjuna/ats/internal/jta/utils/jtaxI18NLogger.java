@@ -163,7 +163,7 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24033, value = "failed to load Last Resource Optimisation Interface {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0, @Cause() Throwable arg1);
+	public void warn_jtax_transaction_jts_lastResourceOptimisationInterface(String arg0);
 
 	@Message(id = 24034, value = "Could not enlist resource because the transaction is marked for rollback.", format = MESSAGE_FORMAT)
 	public String get_jtax_transaction_jts_markedrollback();

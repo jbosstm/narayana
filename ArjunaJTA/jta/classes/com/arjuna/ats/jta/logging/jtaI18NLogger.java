@@ -303,7 +303,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16069, value = "failed to load Last Resource Optimisation Interface {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0, @Cause() Throwable arg1);
+	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0);
 
 	@Message(id = 16070, value = "{0} - could not mark {0} as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

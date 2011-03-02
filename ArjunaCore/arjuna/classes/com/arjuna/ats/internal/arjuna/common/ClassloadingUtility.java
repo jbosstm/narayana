@@ -36,7 +36,27 @@ import java.util.List;
  */
 public class ClassloadingUtility
 {
-    // this really belongs in common, but can't use logging from there at present.
+    // this really belongs in common...
+
+    /**
+     * Load a class. No instantiation.
+     * 
+     * In the event of error (ClassNotFound etc) this method will log the error and return null.
+     *
+     * @param className the name of the class to load and instantiate.
+     * @return the specified Class, or null.
+     */
+    public static Class loadClass(String className) {
+        Class clazz;
+        try
+        {
+            clazz = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
+        } catch(ClassNotFoundException e) {
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_2(className, e);
+            return null;
+        }
+        return clazz;
+    }
 
     /**
      * Load, instantiate and return an instance of the named class, which is expected to be an implementation of
@@ -49,7 +69,7 @@ public class ClassloadingUtility
      * @param className the name of the class to load and instantiate.
      * @param environmentBeanInstanceName When the class ctor requires a *EnvironmentBean instance, the name of the bean.
      *   null for default ctor or default bean instance..
-     * @return an instantiate of the specified class, or null.
+     * @return an instance of the specified class, or null.
      */
     public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName)
     {
@@ -62,13 +82,8 @@ public class ClassloadingUtility
             return null;
         }
 
-        Class<?> clazz;
-
-        try
-        {
-            clazz = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
-        } catch(ClassNotFoundException e) {
-            tsLogger.i18NLogger.warn_common_ClassloadingUtility_2(className, e);
+        Class<?> clazz = loadClass( className );
+        if(clazz == null) {
             return null;
         }
 
@@ -95,8 +110,7 @@ public class ClassloadingUtility
 
         } catch (ClassCastException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch (IllegalAccessException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_5(className, e);
