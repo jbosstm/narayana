@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jta.recovery.*;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -925,10 +926,11 @@ public class XAResourceRecord extends AbstractRecord
 			else
 			{
 				String creatorName = os.unpackString();
-				Class c = Thread.currentThread().getContextClassLoader()
-						.loadClass(creatorName);
 
-				_recoveryObject = (RecoverableXAConnection) c.newInstance();
+                _recoveryObject = ClassloadingUtility.loadAndInstantiateClass(RecoverableXAConnection.class, creatorName, null);
+                if(_recoveryObject == null) {
+                    throw new ClassNotFoundException();
+                }
 
 				_recoveryObject.unpackFrom(os);
 				_theXAResource = _recoveryObject.getResource();

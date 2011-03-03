@@ -121,46 +121,67 @@ public class ClassloadingUtility
         return instance;
     }
 
+    public static <T> List<T> loadAndInstantiateClasses(Class<T> iface, List<String> classNames)
+    {
+        List<T> instances = new ArrayList<T>();
+
+        if(classNames != null) {
+            for(String className : classNames)
+            {
+                T instance = loadAndInstantiateClass(iface, className, null);
+                if(instance != null)
+                {
+                    instances.add(instance);
+                }
+            }
+        }
+
+        return instances;
+    }
+
+
     public static <T> List<T> loadAndInstantiateClassesWithInit(Class<T> iface, List<String> classNamesWithOptionalInitParams)
     {
         List<T> instances = new ArrayList<T>();
 
-        for(String theClassAndParameter : classNamesWithOptionalInitParams)
-        {
-            // see if there is a string parameter
-
-            int breakPosition = theClassAndParameter.indexOf(BREAKCHARACTER);
-
-            String theClass = null;
-            String theParameter = null;
-
-            if (breakPosition != -1)
+        if(classNamesWithOptionalInitParams != null) {
+            for(String theClassAndParameter : classNamesWithOptionalInitParams)
             {
-                theClass = theClassAndParameter.substring(0, breakPosition);
-                theParameter = theClassAndParameter.substring(breakPosition + 1);
-            }
-            else
-            {
-                theClass = theClassAndParameter;
-            }
+                // see if there is a string parameter
 
-            T instance = loadAndInstantiateClass(iface, theClass, null);
+                int breakPosition = theClassAndParameter.indexOf(BREAKCHARACTER);
 
+                String theClass = null;
+                String theParameter = null;
 
-            if (theClass != null && theParameter != null)
-            {
-                try {
-                    Method method = instance.getClass().getMethod("initialise", new Class[] {String.class}); // yup, UK English spelling
-                    method.invoke(instance, theParameter);
-                } catch(Exception e) {
-                    tsLogger.i18NLogger.warn_common_ClassloadingUtility_6(theClassAndParameter, e);
-                    continue;
+                if (breakPosition != -1)
+                {
+                    theClass = theClassAndParameter.substring(0, breakPosition);
+                    theParameter = theClassAndParameter.substring(breakPosition + 1);
                 }
-            }
+                else
+                {
+                    theClass = theClassAndParameter;
+                }
 
-            if(instance != null)
-            {
-                instances.add(instance);
+                T instance = loadAndInstantiateClass(iface, theClass, null);
+
+
+                if (theClass != null && theParameter != null)
+                {
+                    try {
+                        Method method = instance.getClass().getMethod("initialise", new Class[] {String.class}); // yup, UK English spelling
+                        method.invoke(instance, theParameter);
+                    } catch(Exception e) {
+                        tsLogger.i18NLogger.warn_common_ClassloadingUtility_6(theClassAndParameter, e);
+                        continue;
+                    }
+                }
+
+                if(instance != null)
+                {
+                    instances.add(instance);
+                }
             }
         }
 

@@ -115,9 +115,9 @@ public interface orbportabilityI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_common_Configuration_bindDefault_invalidbind(String arg0);
 
-	@Message(id = 21020, value = "{0} - caught exception for {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_event_EventManager_caughtexceptionfor(String arg0, String arg1, @Cause() Throwable arg2);
+//	@Message(id = 21020, value = "{0} - caught exception for {1}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_event_EventManager_caughtexceptionfor(String arg0, String arg1, @Cause() Throwable arg2);
 
 	@Message(id = 21021, value = "{0} - for: {1} threw exception", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -131,9 +131,9 @@ public interface orbportabilityI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_internal_orbspecific_oa_implementations(String arg0);
 
-	@Message(id = 21024, value = "{0} - could not find class {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_internal_utils_InitLoader_couldnotfindclass(String arg0, String arg1);
+//	@Message(id = 21024, value = "{0} - could not find class {1}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_internal_utils_InitLoader_couldnotfindclass(String arg0, String arg1);
 
 	@Message(id = 21025, value = "Exception whilst loading {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

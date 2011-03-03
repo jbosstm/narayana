@@ -88,7 +88,7 @@
          on recovery modules and their configuration when running in various
          deployments.
     -->
-    <entry key="RecoveryEnvironmentBean.recoveryExtensions">
+    <entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
         com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
         com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
         com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule
@@ -97,7 +97,7 @@
     </entry>
 
     <!-- Expiry scanners to use (order of invocation is random). -->
-    <entry key="RecoveryEnvironmentBean.expiryScanners">
+    <entry key="RecoveryEnvironmentBean.expiryScannerClassNames">
         com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
         com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner
         com.arjuna.ats.internal.jts.recovery.transactions.ExpiredToplevelScanner
@@ -105,7 +105,7 @@
     </entry>
 
     <!--
-        Add the following to the set of expiryScanners above to move logs that cannot be completed by failure recovery.
+        Add the following to the set of expiryScannerClassNames above to move logs that cannot be completed by failure recovery.
             But be sure you know what you are doing and why!
              com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner
     -->
@@ -141,7 +141,7 @@
 
 
     <!-- Recovery Activators to use. -->
-    <entry key="RecoveryEnvironmentBean.recoveryActivators">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryActivatorClassNames">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
 
 
 	<entry key="JTAEnvironmentBean.transactionManagerClassName">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>

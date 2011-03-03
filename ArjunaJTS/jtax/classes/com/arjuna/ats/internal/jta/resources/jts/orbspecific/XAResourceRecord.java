@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jta.recovery.*;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -959,10 +960,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			else
 			{
 				String creatorName = os.unpackString();
-				Class c = Thread.currentThread().getContextClassLoader()
-						.loadClass(creatorName);
 
-				_recoveryObject = (RecoverableXAConnection) c.newInstance();
+                _recoveryObject = ClassloadingUtility.loadAndInstantiateClass(RecoverableXAConnection.class, creatorName, null);
+                if(_recoveryObject == null) {
+                    throw new ClassNotFoundException();
+                }
 
 				_recoveryObject.unpackFrom(os);
 				_theXAResource = _recoveryObject.getResource();

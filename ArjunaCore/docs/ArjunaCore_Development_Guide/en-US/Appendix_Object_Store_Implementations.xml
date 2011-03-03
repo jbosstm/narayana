@@ -201,7 +201,7 @@
         </para>
         <para>
           The implementation of the <interfacename>JDBCAccess</interfacename> interface to use should be set in the
-          <varname>ObjectStoreEnvironmentBean.jdbcUserDbAccess</varname> property variable.
+          <varname>ObjectStoreEnvironmentBean.jdbcUserDbAccessClassName</varname> property variable.
         </para>
         <para>
           If overriding the object store implementation, the type of this object store is <type>JDBCStore</type>.
@@ -209,7 +209,7 @@
         <para>
           A JDBC object store can be used for managing the transaction log. In this case, the transaction log
           implementation should be set to <literal>JDBCActionStore</literal> and the <classname>JDBCAccess</classname>
-          implementation must be provided via the <varname>ObjectStoreEnvironmentBean.jdbcTxDbAccess property</varname>
+          implementation must be provided via the <varname>ObjectStoreEnvironmentBean.jdbcTxDbAccessClassName property</varname>
           variable. In this case, the default table name is <systemitem>JBossTSTxTable</systemitem>.
         </para>
         <para>

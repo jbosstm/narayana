@@ -501,9 +501,9 @@ public interface jtsI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_RecoveryEnablement_5(String arg0);
 
-	@Message(id = 22121, value = "The Recovery Service Initialisation failed}", format = MESSAGE_FORMAT)
+	@Message(id = 22121, value = "The Recovery Service Initialisation failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_RecoveryEnablement_6(@Cause() Throwable arg0);
+	public void warn_recovery_RecoveryEnablement_6();
 
 //	@Message(id = 22122, value = "added ORBAttribute for recoveryCoordinatorInitialiser", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

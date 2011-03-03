@@ -35,7 +35,7 @@ public interface CoreEnvironmentBeanMBean
 
     int getSocketProcessIdMaxPorts();
 
-    String getProcessImplementation();
+    String getProcessImplementationClassName();
 
     int getPid();
 

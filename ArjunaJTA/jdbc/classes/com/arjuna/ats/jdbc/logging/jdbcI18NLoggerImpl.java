@@ -89,7 +89,7 @@ public class jdbcI18NLoggerImpl implements jdbcI18NLogger {
 	}
 
 	public String get_dynamicerror() {
-		return "ARJUNA-17016 No dynamic class specified!";
+		return "ARJUNA-17016 Failed to load dynamic class";
 	}
 
 	public String get_enlistfailed() {

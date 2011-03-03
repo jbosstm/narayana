@@ -497,7 +497,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         {
             if(xaResourceOrphanFilterClassNames == null)
             {
-                this.xaResourceOrphanFilters = null;
+                this.xaResourceOrphanFilters = new ArrayList<XAResourceOrphanFilter>();
                 this.xaResourceOrphanFilterClassNames = new ArrayList<String>();
             }
             else if(!xaResourceOrphanFilterClassNames.equals(this.xaResourceOrphanFilterClassNames))
@@ -787,7 +787,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      * Default: null.
      * Equivalent deprecated property: com.arjuna.ats.jta.lastResourceOptimisationInterfaceClassName
      *
-     * @return the classname of the market interface for LastResource handling.
+     * @return the class name of the market interface for LastResource handling.
      */
     public String getLastResourceOptimisationInterfaceClassName()
     {
@@ -821,7 +821,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      * If there is no Class set and loading fails, this method will log an appropriate warning
      * and return null, not throw an exception.
      *
-     * @return the LastResource market interface.
+     * @return the LastResource marker interface.
      */
     public Class getLastResourceOptimisationInterface()
     {
@@ -839,10 +839,24 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     /**
      * Sets a Class to use as the marker interface for LastResource
      *
-     * @param lastResourceOptimisationInterface a marker interface Class, or null.
+     * @param clazz a marker interface Class, or null.
      */
-    public void setLastResourceOptimisationInterface(Class lastResourceOptimisationInterface)
+    public void setLastResourceOptimisationInterface(Class clazz)
     {
-        this.lastResourceOptimisationInterface = lastResourceOptimisationInterface;
+        synchronized(this)
+        {
+            Class oldClazz = this.lastResourceOptimisationInterface;
+            lastResourceOptimisationInterface = clazz;
+
+            if(clazz == null)
+            {
+                this.lastResourceOptimisationInterfaceClassName = null;
+            }
+            else if(clazz != oldClazz)
+            {
+                String name = ClassloadingUtility.getNameForClass(clazz);
+                this.lastResourceOptimisationInterfaceClassName = name;
+            }
+        }
     }
 }

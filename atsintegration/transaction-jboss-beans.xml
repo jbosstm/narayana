@@ -50,7 +50,7 @@
             </value-factory>
         </property>
 
-        <property name="recoveryExtensions" preinstantiate="false">
+        <property name="recoveryModuleClassNames" preinstantiate="false">
             <list elementClass="java.lang.String">
                 <value>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</value>
                 <value>com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</value>
@@ -58,13 +58,13 @@
             </list>
         </property>
 
-        <property name="expiryScanners" preinstantiate="false">
+        <property name="expiryScannerClassNames" preinstantiate="false">
             <list elementClass="java.lang.String">
                 <value>com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</value>
             </list>
         </property>
 
-        <property name="recoveryActivators">
+        <property name="recoveryActivatorClassNames">
             <null/>
         </property>
 

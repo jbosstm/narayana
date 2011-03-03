@@ -36,6 +36,7 @@ import java.net.* ;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.utils.Utility ;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.arjuna.recovery.Listener ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
@@ -119,35 +120,28 @@ public class TransactionStatusManager
     */
    private void start( String serviceName, String host, int port )
    {
-      try
-      {
-         Class serviceClass = Thread.currentThread().getContextClassLoader().loadClass( serviceName ) ;
+       try
+       {
+           Service service = ClassloadingUtility.loadAndInstantiateClass(Service.class, serviceName,  null);
+           if(service == null) {
+               tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_4(serviceName);
+               return;
+           }
 
-         Service service = (Service) serviceClass.newInstance() ;
+           ServerSocket socketServer = getTsmServerSocket(host, port);
 
-         ServerSocket socketServer = getTsmServerSocket(host, port);
+           addService( service, socketServer ) ;
 
-         addService( service, socketServer ) ;
+           TransactionStatusManagerItem.createAndSave(socketServer.getInetAddress().getHostAddress(), socketServer.getLocalPort() ) ;
 
-         TransactionStatusManagerItem.createAndSave(socketServer.getInetAddress().getHostAddress(), socketServer.getLocalPort() ) ;
+           tsLogger.i18NLogger.info_recovery_TransactionStatusManager_3(Integer.toString(socketServer.getLocalPort()),
+                   socketServer.getInetAddress().getHostAddress(), serviceName);
+       }
+       catch ( IOException ex ) {
+           tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_14(getListenerHostName(), Integer.toString(getListenerPort(-1)));
 
-         tsLogger.i18NLogger.info_recovery_TransactionStatusManager_3(Integer.toString(socketServer.getLocalPort()),
-                 socketServer.getInetAddress().getHostAddress(), serviceName);
-      }
-      catch ( ClassNotFoundException ex ) {
-          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_4(serviceName);
-      }
-      catch ( InstantiationException ex ) {
-          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_5(serviceName);
-      }
-      catch ( IllegalAccessException ex ) {
-          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_6(serviceName);
-      }
-      catch ( IOException ex ) {
-          tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_14(getListenerHostName(), Integer.toString(getListenerPort(-1)));
-
-          throw new FatalError(tsLogger.i18NLogger.get_recovery_TransactionStatusManager_9(), ex);
-      }
+           throw new FatalError(tsLogger.i18NLogger.get_recovery_TransactionStatusManager_9(), ex);
+       }
    }
 
     public void shutdown()

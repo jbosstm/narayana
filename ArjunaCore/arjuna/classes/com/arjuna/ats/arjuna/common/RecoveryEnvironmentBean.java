@@ -20,6 +20,10 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
+import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
@@ -50,13 +54,16 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     private volatile int transactionStatusManagerExpiryTime = 12; // hours
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.expiryScanner")
-    private volatile List<String> expiryScanners = new ArrayList<String>();
+    private volatile List<String> expiryScannerClassNames = new ArrayList<String>();
+    private volatile List<ExpiryScanner> expiryScanners = null;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryExtension")
-    private volatile List<String> recoveryExtensions = new ArrayList<String>();
+    private volatile List<String> recoveryModuleClassNames = new ArrayList<String>();
+    private volatile List<RecoveryModule> recoveryModules = null;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryActivator")
-    private volatile List<String> recoveryActivators = new ArrayList<String>();
+    private volatile List<String> recoveryActivatorClassNames = new ArrayList<String>();
+    private volatile List<RecoveryActivator> recoveryActivators = null;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")
     private volatile boolean timeoutSocket = false;
@@ -155,7 +162,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     }
 
     /**
-     * Returns the hostname on which the recovery listener shoud bind.
+     * Returns the hostname on which the recovery listener should bind.
      *
      * Default: "localhost"
      * Equivalent deprecated property: com.arjuna.ats.arjuna.recovery.recoveryAddress
@@ -301,9 +308,12 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      *
      * @return a list of ExpiryScanner implementation class names.
      */
-    public List<String> getExpiryScanners()
+    public List<String> getExpiryScannerClassNames()
     {
-        return new ArrayList<String>(expiryScanners);
+        synchronized(this)
+        {
+            return new ArrayList<String>(expiryScannerClassNames);
+        }
     }
 
     /**
@@ -311,14 +321,68 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      * List elements should be names of classes that implement ExpiryScanner.
      * The provided list will be copied, not retained.
      *
-     * @param expiryScanners a list of ExpiryScanner implementation class names.
+     * @param expiryScannerClassNames a list of ExpiryScanner implementation class names.
      */
-    public void setExpiryScanners(List<String> expiryScanners)
+    public void setExpiryScannerClassNames(List<String> expiryScannerClassNames)
     {
-        if(expiryScanners == null) {
-            this.expiryScanners = new ArrayList<String>();
-        } else {
-            this.expiryScanners = new ArrayList<String>(expiryScanners);
+        synchronized(this)
+        {
+            if(expiryScannerClassNames == null)
+            {
+                this.expiryScanners = new ArrayList<ExpiryScanner>();
+                this.expiryScannerClassNames = new ArrayList<String>();
+            }
+            else if(!expiryScannerClassNames.equals(this.expiryScannerClassNames))
+            {
+                this.expiryScanners = null;
+                this.expiryScannerClassNames = new ArrayList<String>(expiryScannerClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of ExpiryScanner instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements.
+     *
+     * @return the set of ExpiryScanner instances.
+     */
+    public List<ExpiryScanner> getExpiryScanners()
+    {
+        synchronized(this)
+        {
+            if(expiryScanners == null) {
+                List<ExpiryScanner> instances = ClassloadingUtility.loadAndInstantiateClasses(ExpiryScanner.class, expiryScannerClassNames);
+                expiryScanners = instances;
+            }
+            return new ArrayList<ExpiryScanner>(expiryScanners);
+        }
+    }
+
+    /**
+     * Sets the instances of ExpiryScanner.
+     * The provided list will be copied, not retained.
+     *
+     * @param expiryScanners the set of ExpiryScanner instances.
+     */
+    public void setExpiryScanners(List<ExpiryScanner> expiryScanners)
+    {
+        synchronized(this)
+        {
+            if(expiryScanners == null)
+            {
+                this.expiryScanners = new ArrayList<ExpiryScanner>();
+                this.expiryScannerClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.expiryScanners = new ArrayList<ExpiryScanner>(expiryScanners);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.expiryScanners);
+                this.expiryScannerClassNames = names;
+            }
         }
     }
 
@@ -331,9 +395,11 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      *
      * @return a list of RecoveryModule implementation class names.
      */
-    public List<String> getRecoveryExtensions()
+    public List<String> getRecoveryModuleClassNames()
     {
-        return new ArrayList<String>(recoveryExtensions);
+        synchronized(this) {
+            return new ArrayList<String>(recoveryModuleClassNames);
+        }
     }
 
     /**
@@ -341,16 +407,71 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      * List elements should be names of classes that implement RecoveryModule.
      * The provided list will be copied, not retained.
      *
-     * @param recoveryExtensions a list of RecoveryModule implementation class names.
+     * @param recoveryModuleClassNames a list of RecoveryModule implementation class names.
      */
-    public void setRecoveryExtensions(List<String> recoveryExtensions)
+    public void setRecoveryModuleClassNames(List<String> recoveryModuleClassNames)
     {
-        if(recoveryExtensions == null) {
-            this.recoveryExtensions = new ArrayList<String>();
-        } else {
-            this.recoveryExtensions = new ArrayList<String>(recoveryExtensions);
+        synchronized(this)
+        {
+            if(recoveryModuleClassNames == null)
+            {
+                this.recoveryModules = new ArrayList<RecoveryModule>();
+                this.recoveryModuleClassNames = new ArrayList<String>();
+            }
+            else if(!recoveryModuleClassNames.equals(this.recoveryModuleClassNames))
+            {
+                this.recoveryModules = null;
+                this.recoveryModuleClassNames = new ArrayList<String>(recoveryModuleClassNames);
+            }
         }
     }
+
+    /**
+     * Returns the set of RecoveryModule instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements. 
+     *
+     * @return the set of RecoveryModule instances.
+     */
+    public List<RecoveryModule> getRecoveryModules()
+    {
+        synchronized(this)
+        {
+            if(recoveryModules == null) {
+                List<RecoveryModule> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(RecoveryModule.class, recoveryModuleClassNames);
+                recoveryModules = instances;
+            }
+            return new ArrayList<RecoveryModule>(recoveryModules);
+        }
+    }
+
+    /**
+     * Sets the instances of RecoveryModule.
+     * The provided list will be copied, not retained.
+     *
+     * @param recoveryModules the set of RecoveryModule instances.
+     */
+    public void setRecoveryModules(List<RecoveryModule> recoveryModules)
+    {
+        synchronized(this)
+        {
+            if(recoveryModules == null)
+            {
+                this.recoveryModules = new ArrayList<RecoveryModule>();
+                this.recoveryModuleClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.recoveryModules = new ArrayList<RecoveryModule>(recoveryModules);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.recoveryModules);
+                this.recoveryModuleClassNames = names;
+            }
+        }
+    }
+    
 
     /**
      * Returns a list of names of classes that implement RecoveryActivator.
@@ -361,9 +482,11 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      *
      * @return a list of RecoveryActivator implementation class names.
      */
-    public List<String> getRecoveryActivators()
+    public List<String> getRecoveryActivatorClassNames()
     {
-        return new ArrayList<String>(recoveryActivators);
+        synchronized(this) {
+            return new ArrayList<String>(recoveryActivatorClassNames);
+        }
     }
 
     /**
@@ -371,14 +494,68 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
      * List elements should be names of classes that implement RecoveryActivator.
      * The provided list will be copied, not retained.
      *
-     * @param recoveryActivators a list of RecoveryActivator implementation class names.
+     * @param recoveryActivatorClassNames a list of RecoveryActivator implementation class names.
      */
-    public void setRecoveryActivators(List<String> recoveryActivators)
+    public void setRecoveryActivatorClassNames(List<String> recoveryActivatorClassNames)
     {
-        if(recoveryActivators == null) {
-            this.recoveryActivators = new ArrayList<String>();
-        } else {
-           this.recoveryActivators = new ArrayList<String>(recoveryActivators);
+        synchronized(this)
+        {
+            if(recoveryActivatorClassNames == null)
+            {
+                this.recoveryActivators = new ArrayList<RecoveryActivator>();
+                this.recoveryActivatorClassNames = new ArrayList<String>();
+            }
+            else if(!recoveryActivatorClassNames.equals(this.recoveryActivatorClassNames))
+            {
+                this.recoveryActivators = null;
+                this.recoveryActivatorClassNames = new ArrayList<String>(recoveryActivatorClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of RecoveryActivator instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements.
+     *
+     * @return the set of RecoveryActivator instances.
+     */
+    public List<RecoveryActivator> getRecoveryActivators()
+    {
+        synchronized(this)
+        {
+            if(recoveryActivators == null) {
+                List<RecoveryActivator> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(RecoveryActivator.class, recoveryActivatorClassNames);
+                recoveryActivators = instances;
+            }
+            return new ArrayList<RecoveryActivator>(recoveryActivators);
+        }
+    }
+
+    /**
+     * Sets the instances of RecoveryActivator.
+     * The provided list will be copied, not retained.
+     *
+     * @param recoveryActivators the set of RecoveryActivator instances.
+     */
+    public void setRecoveryActivators(List<RecoveryActivator> recoveryActivators)
+    {
+        synchronized(this)
+        {
+            if(recoveryActivators == null)
+            {
+                this.recoveryActivators = new ArrayList<RecoveryActivator>();
+                this.recoveryActivatorClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.recoveryActivators = new ArrayList<RecoveryActivator>(recoveryActivators);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.recoveryActivators);
+                this.recoveryActivatorClassNames = names;
+            }
         }
     }
 

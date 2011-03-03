@@ -21,6 +21,8 @@
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
 import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 /**
  * A JavaBean containing configuration properties for the JDBC based objectstore implementation.
@@ -29,8 +31,11 @@ import com.arjuna.ats.arjuna.objectstore.StateType;
  */
 public class JDBCStoreEnvironmentBean
 {
-    private volatile String jdbcUserDbAccess = null;
-    private volatile String jdbcTxDbAccess = null;
+    private volatile String jdbcUserDbAccessClassName = null;
+    private volatile JDBCAccess jdbcUserDbAccess;
+    private volatile String jdbcTxDbAccessClassName = null;
+    private volatile JDBCAccess jdbcTxDbAccess;
+
     private volatile int jdbcPoolSizeInitial = 1;
     private volatile int jdbcPoolSizeMaximum = 1;
     private volatile boolean jdbcPoolPutConnections = false;
@@ -38,50 +43,168 @@ public class JDBCStoreEnvironmentBean
     private volatile int share = StateType.OS_UNSHARED;
 
     /**
-     * Returns the classname of the JDBCAccess implementation used for the ObjectStore.
+     * Returns the class name of the JDBCAccess implementation used for the ObjectStore.
      *
      * Default: null
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.jdbcUserDbAccess
+     * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.jdbcUserDbAccessClassName
      *
      * @return the name of a class implementing JDBCAccess.
      */
-    public String getJdbcUserDbAccess()
+    public String getJdbcUserDbAccessClassName()
     {
+        return jdbcUserDbAccessClassName;
+    }
+
+    /**
+     * Sets the class name of the JDBCAccess implementation used for the ObjectStore.
+     *
+     * @param jdbcUserDbAccessClassName the name of the class implementing JDBCAccess.
+     */
+    public void setJdbcUserDbAccessClassName(String jdbcUserDbAccessClassName)
+    {
+        synchronized(this)
+        {
+            if(jdbcUserDbAccessClassName == null)
+            {
+                this.jdbcUserDbAccess = null;
+            }
+            else if(!jdbcUserDbAccessClassName.equals(this.jdbcUserDbAccessClassName))
+            {
+                this.jdbcUserDbAccess = null;
+            }
+            this.jdbcUserDbAccessClassName = jdbcUserDbAccessClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing JDBCAccess.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a JDBCAccess implementation instance, or null.
+     */
+    public JDBCAccess getJdbcUserDbAccess()
+    {
+        if(jdbcUserDbAccess == null && jdbcUserDbAccessClassName != null)
+        {
+            synchronized (this) {
+                if(jdbcUserDbAccess == null && jdbcUserDbAccessClassName != null) {
+                    JDBCAccess instance = ClassloadingUtility.loadAndInstantiateClass(JDBCAccess.class, jdbcUserDbAccessClassName, null);
+                    jdbcUserDbAccess = instance;
+                }
+            }
+        }
+
         return jdbcUserDbAccess;
     }
 
     /**
-     * Sets the classname of the JDBCAccess implementation used for the ObjectStore.
+     * Sets the instance of JDBCAccess
      *
-     * @param jdbcUserDbAccess the name of the class implementing JDBCAccess.
+     * @param instance an Object that implements JDBCAccess, or null.
      */
-    public void setJdbcUserDbAccess(String jdbcUserDbAccess)
+    public void setJdbcUserDbAccess(JDBCAccess instance)
     {
-        this.jdbcUserDbAccess = jdbcUserDbAccess;
+        synchronized(this)
+        {
+            JDBCAccess oldInstance = this.jdbcUserDbAccess;
+            jdbcUserDbAccess = instance;
+
+            if(instance == null)
+            {
+                this.jdbcUserDbAccessClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.jdbcUserDbAccessClassName = name;
+            }
+        }
     }
 
+
     /**
-     * Returns the classname of the JDBCAccess implementation used for the ActionStore.
+     * Returns the class name of the JDBCAccess implementation used for the ActionStore.
      *
      * Default: null
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.jdbcTxDbAccess
+     * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.jdbcTxDbAccessClassName
      *
      * @return the name of a class implementing JDBCAccess.
      */
-    public String getJdbcTxDbAccess()
+    public String getJdbcTxDbAccessClassName()
     {
+        return jdbcTxDbAccessClassName;
+    }
+
+    /**
+     * Sets the class name of the JDBCAccess implementation used for the ActionStore.
+     *
+     * @param jdbcTxDbAccessClassName the name of the class implementing JDBCAccess.
+     */
+    public void setJdbcTxDbAccessClassName(String jdbcTxDbAccessClassName)
+    {
+        synchronized(this)
+        {
+            if(jdbcTxDbAccessClassName == null)
+            {
+                this.jdbcTxDbAccess = null;
+            }
+            else if(!jdbcTxDbAccessClassName.equals(this.jdbcTxDbAccessClassName))
+            {
+                this.jdbcTxDbAccess = null;
+            }
+            this.jdbcTxDbAccessClassName = jdbcTxDbAccessClassName;
+        }
+    }
+
+   /**
+     * Returns an instance of a class implementing JDBCAccess.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a JDBCAccess implementation instance, or null.
+     */
+    public JDBCAccess getJdbcTxDbAccess()
+    {
+          if(jdbcTxDbAccess == null && jdbcTxDbAccessClassName != null)
+        {
+            synchronized (this) {
+                if(jdbcTxDbAccess == null && jdbcTxDbAccessClassName != null) {
+                    JDBCAccess instance = ClassloadingUtility.loadAndInstantiateClass(JDBCAccess.class, jdbcTxDbAccessClassName, null);
+                    jdbcTxDbAccess = instance;
+                }
+            }
+        }
+
         return jdbcTxDbAccess;
     }
 
     /**
-     * Sets the classname of the JDBCAccess implementation used for the ActionStore.
+     * Sets the instance of JDBCAccess
      *
-     * @param jdbcTxDbAccess the name of the class implementing JDBCAccess.
+     * @param instance an Object that implements JDBCAccess, or null.
      */
-    public void setJdbcTxDbAccess(String jdbcTxDbAccess)
+    public void setJdbcTxDbAccess(JDBCAccess instance)
     {
-        this.jdbcTxDbAccess = jdbcTxDbAccess;
+        synchronized(this)
+        {
+            JDBCAccess oldInstance = this.jdbcTxDbAccess;
+            jdbcTxDbAccess = instance;
+
+            if(instance == null)
+            {
+                this.jdbcTxDbAccessClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.jdbcTxDbAccessClassName = name;
+            }
+        }
     }
+
 
     /**
      * Returns the number of connections to initialize in the pool at startup.

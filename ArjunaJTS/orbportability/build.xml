@@ -28,6 +28,7 @@
 
         <import-module.macro module="common"/>
         <import-module.macro module="common_tests"/>
+        <import-module.macro module="arjuna"/>
 
     </target>
 

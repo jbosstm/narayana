@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jdbc;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jdbc.logging.*;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
@@ -340,9 +341,11 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	    {
 		if (_theDataSource == null)
 		{
-		    Class c = Thread.currentThread().getContextClassLoader().loadClass(_dynamic);
+		    _dynamicConnection = ClassloadingUtility.loadAndInstantiateClass(DynamicClass.class, _dynamic, null);
+            if(_dynamicConnection == null) {
+                throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
+            }
 
-		    _dynamicConnection = (DynamicClass) c.newInstance();
 		    _theDataSource = _dynamicConnection.getDataSource(_dbName);
 		}
 

@@ -90,7 +90,7 @@ public interface jdbcI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_drivers_invaliddb();
 
-	@Message(id = 17016, value = "No dynamic class specified!", format = MESSAGE_FORMAT)
+	@Message(id = 17016, value = "Failed to load dynamic class", format = MESSAGE_FORMAT)
 	public String get_dynamicerror();
 
 	@Message(id = 17017, value = "enlist of resource failed", format = MESSAGE_FORMAT)

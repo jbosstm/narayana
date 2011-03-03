@@ -54,7 +54,7 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16004, value = "XARecoveryModule setup failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_constfail(@Cause() Throwable arg0);
+	public void warn_recovery_constfail();
 
 	@Message(id = 16005, value = "{0} - failed to recover XAResource. status is ${1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

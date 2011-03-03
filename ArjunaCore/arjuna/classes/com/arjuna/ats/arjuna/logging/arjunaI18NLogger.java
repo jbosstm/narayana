@@ -708,17 +708,17 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_recovery_TransactionStatusManager_3(String arg0, String arg1, String arg2);
 
-	@Message(id = 12171, value = "Class not found: {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12171, value = "Failed to setup class for {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_recovery_TransactionStatusManager_4(String arg0);
 
-	@Message(id = 12172, value = "Failed to instantiate service class: {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManager_5(String arg0);
+//	@Message(id = 12172, value = "Failed to instantiate service class: {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_TransactionStatusManager_5(String arg0);
 
-	@Message(id = 12173, value = "Illegal access to service class: {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_TransactionStatusManager_6(String arg0);
+//	@Message(id = 12173, value = "Illegal access to service class: {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_TransactionStatusManager_6(String arg0);
 
 //	@Message(id = 12174, value = "Failed to create server socket on port: {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -837,9 +837,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_utils_FileLock_4(String arg0);
 
-	@Message(id = 12209, value = "Utility.getDefaultProcess - failed with", format = MESSAGE_FORMAT)
+	@Message(id = 12209, value = "Utility.getDefaultProcess failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_utils_Utility_1(@Cause() Throwable arg0);
+	public void warn_utils_Utility_1();
 
 	@Message(id = 12210, value = "Unable to use InetAddress.getLocalHost() to resolve address.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1164,9 +1164,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_Connection_2();
 
-	@Message(id = 12294, value = "Loading expiry scanner: could not find class {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_ExpiredEntryMonitor_10(String arg0);
+//	@Message(id = 12294, value = "Loading expiry scanner: could not find class {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_ExpiredEntryMonitor_10(String arg0);
 
 //	@Message(id = 12295, value = "{0} has inappropriate value ({1})", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1180,13 +1180,13 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_recovery_ExpiredEntryMonitor_5();
 
-	@Message(id = 12298, value = "Attempt to load expiry scanner with null class name!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_ExpiredEntryMonitor_7();
+//	@Message(id = 12298, value = "Attempt to load expiry scanner with null class name!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_ExpiredEntryMonitor_7();
 
-	@Message(id = 12299, value = "Expiry scanner {0} does not conform to ExpiryScanner interface", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_ExpiredEntryMonitor_9(String arg0);
+//	@Message(id = 12299, value = "Expiry scanner {0} does not conform to ExpiryScanner interface", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_ExpiredEntryMonitor_9(String arg0);
 
 //	@Message(id = 12300, value = "ExpiredTransactionScanner created, with expiry time of {0} seconds", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1212,9 +1212,9 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_ExpiredTransactionStatusManagerScanner_5(String arg0, String arg1);
 
-	@Message(id = 12306, value = "Attempt to load recovery module with null class name!", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_1();
+//	@Message(id = 12306, value = "Attempt to load recovery module with null class name!", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_PeriodicRecovery_1();
 
 //	@Message(id = 12307, value = "Ignoring request to scan because RecoveryManager state is: {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1232,21 +1232,21 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_recovery_PeriodicRecovery_13(String arg0, String arg1);
 
-	@Message(id = 12311, value = "Recovery module {0} does not conform to RecoveryModule interface", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_2(String arg0);
+//	@Message(id = 12311, value = "Recovery module {0} does not conform to RecoveryModule interface", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_PeriodicRecovery_2(String arg0);
 
-	@Message(id = 12312, value = "Loading recovery module", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_3(@Cause() Throwable arg0);
+//	@Message(id = 12312, value = "Loading recovery module", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_PeriodicRecovery_3(@Cause() Throwable arg0);
 
-	@Message(id = 12313, value = "Loading recovery module", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_4(@Cause() Throwable arg0);
+//	@Message(id = 12313, value = "Loading recovery module", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_PeriodicRecovery_4(@Cause() Throwable arg0);
 
-	@Message(id = 12314, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_recovery_PeriodicRecovery_5(String arg0);
+//	@Message(id = 12314, value = "Loading recovery module: could not find class {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = WARN)
+//	public void warn_recovery_PeriodicRecovery_5(String arg0);
 
 //	@Message(id = 12315, value = "{0} has inappropriate value ( {1} )", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1418,9 +1418,9 @@ public interface arjunaI18NLogger {
 	@Message(id = 12359, value = "SocketProcessId.getpid could not get unique port.", format = MESSAGE_FORMAT)
 	public String get_utils_SocketProcessId_2();
 
-    @Message(id = 12360, value = "Unable to instantiate ExpiryScanner", format = MESSAGE_FORMAT)
-    @LogMessage(level = WARN)
-    public void warn_recovery_ExpiredEntryMonitor_6(@Cause() Throwable arg0);
+//    @Message(id = 12360, value = "Unable to instantiate ExpiryScanner", format = MESSAGE_FORMAT)
+//    @LogMessage(level = WARN)
+//    public void warn_recovery_ExpiredEntryMonitor_6(@Cause() Throwable arg0);
 
     @Message(id = 12361, value = "Error constructing mbean", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)

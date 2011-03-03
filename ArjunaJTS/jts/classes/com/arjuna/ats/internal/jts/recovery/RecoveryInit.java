@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts.recovery;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.orbportability.common.opPropertyManager;
@@ -76,9 +77,6 @@ public class RecoveryInit
 	    // the eventhandler is the same for all orbs (at the moment)
 	    String eventHandlerClassName = "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter";
 
-	    Object recoveryCoordinatorInitialiser = null;
-	    String InitClassName = null;
-
 	    if ( _isNormalProcess)
 	    {
 		try
@@ -92,8 +90,9 @@ public class RecoveryInit
 		    {
 		    case ORBType.JACORB:
 			{
-			    InitClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
-			    recoveryCoordinatorInitialiser = Thread.currentThread().getContextClassLoader().loadClass(InitClassName).newInstance();
+			    String initClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
+                Class recoveryCoordinatorInitialiser = ClassloadingUtility.loadClass(initClassName);
+                recoveryCoordinatorInitialiser.newInstance();
 			}
 			break;
 		    default: {
@@ -104,9 +103,9 @@ public class RecoveryInit
 
 		    // register the ContactWriter to watch for the first ArjunaFactory construction
 
-            List<String> eventHandlers = opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlers();
+            List<String> eventHandlers = opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlerClassNames();
             eventHandlers.add(eventHandlerClassName);
-		    opPropertyManager.getOrbPortabilityEnvironmentBean().setEventHandlers(eventHandlers);
+		    opPropertyManager.getOrbPortabilityEnvironmentBean().setEventHandlerClassNames(eventHandlers);
 
 		    // Change here above the way to call this startRCService -
 		    // otherwise call it in JacOrbRecoveryInit above.

@@ -46,6 +46,7 @@ import com.arjuna.ats.arjuna.coordinator.OnePhaseResource;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
@@ -252,28 +253,10 @@ public class XAOnePhaseResource implements OnePhaseResource
         {
             case RecoverableXAConnection.AUTO_RECOVERY:
                 final String recoverableXAConnectionClassName = is.unpackString() ;
-                final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader() ;
-                final Class recoverableXAConnectionClass ;
-                try
-                {
-                    recoverableXAConnectionClass = contextClassLoader.loadClass(recoverableXAConnectionClassName) ;
-                }
-                catch (final ClassNotFoundException cnfe)
-                {
-                    throw generateUnpackError(cnfe) ;
-                }
 
-                try
-                {
-                    recoverableXAConnection = (RecoverableXAConnection)recoverableXAConnectionClass.newInstance() ;
-                }
-                catch (final InstantiationException ie)
-                {
-                    throw generateUnpackError(ie) ;
-                }
-                catch (final IllegalAccessException iae)
-                {
-                    throw generateUnpackError(iae) ;
+                recoverableXAConnection = ClassloadingUtility.loadAndInstantiateClass(RecoverableXAConnection.class, recoverableXAConnectionClassName, null);
+                if(recoverableXAConnection == null) {
+                    throw generateUnpackError(new ClassNotFoundException());
                 }
 
                 recoverableXAConnection.unpackFrom(is) ;

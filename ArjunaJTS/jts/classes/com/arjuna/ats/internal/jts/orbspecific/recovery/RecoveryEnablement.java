@@ -33,6 +33,7 @@
 package com.arjuna.ats.internal.jts.orbspecific.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.orbportability.*;
@@ -75,7 +76,7 @@ public class RecoveryEnablement implements RecoveryActivator
 
     public RecoveryEnablement ()
     {
-	Implementations.initialise();
+        Implementations.initialise();
     }
 
     /**
@@ -86,12 +87,12 @@ public class RecoveryEnablement implements RecoveryActivator
 
     public static void isNotANormalProcess()
     {
-	_isNormalProcess = false;
+        _isNormalProcess = false;
     }
 
     public static boolean isNormalProcess ()
     {
-	return _isNormalProcess;
+        return _isNormalProcess;
     }
 
     /**
@@ -109,27 +110,24 @@ public class RecoveryEnablement implements RecoveryActivator
         String theClassName = null;
 
         // The class that should start the service shall not be called directly. An intermediate class shall be used
-        try
+        switch (orbType)
         {
-            switch (orbType)
+            case ORBType.JACORB:
             {
-                case ORBType.JACORB:
-                {
-                    theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
-                    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
+                theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
+                recoveryService = ClassloadingUtility.loadAndInstantiateClass(RecoveryServiceInit.class, theClassName, null);
+                if(recoveryService == null) {
+                    jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_6();
+                } else {
                     outcome = recoveryService.startRCservice();
                 }
-                break;
-                default: {
-                    jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_1();
-                    outcome = false;
-                }
-                break;
             }
-        }
-        catch (Exception e)
-        {
-            jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_6(e);
+            break;
+            default: {
+                jtsLogger.i18NLogger.warn_recovery_RecoveryEnablement_1();
+                outcome = false;
+            }
+            break;
         }
 
         return outcome;
@@ -140,45 +138,45 @@ public class RecoveryEnablement implements RecoveryActivator
      */
     public static String getRecoveryManagerTag()
     {
-	if (_RecoveryManagerTag != null) {
-	    return _RecoveryManagerTag;
-	} else {
-	    return null;
-	}
+        if (_RecoveryManagerTag != null) {
+            return _RecoveryManagerTag;
+        } else {
+            return null;
+        }
     }
 
     static{
 
-	// tell the recovery init we aren't a normal TS-user
-	RecoveryEnablement.isNotANormalProcess();
-	RecoveryInit.isNotANormalProcess();
+        // tell the recovery init we aren't a normal TS-user
+        RecoveryEnablement.isNotANormalProcess();
+        RecoveryInit.isNotANormalProcess();
 
-	// see if there is a property defining the recoverymanager
-	// servicename
+        // see if there is a property defining the recoverymanager
+        // servicename
 
-	//	_RecoveryManagerTag = System.getProperty(RecoveryEnvironment.RECOVERY_MANAGER_TAG);
+        //	_RecoveryManagerTag = System.getProperty(RecoveryEnvironment.RECOVERY_MANAGER_TAG);
 
-	if (_RecoveryManagerTag == null)
-	{
-	    // if no property, use the hostname/ip address
+        if (_RecoveryManagerTag == null)
+        {
+            // if no property, use the hostname/ip address
 
-	    InetAddress thisAddress = null;
-	    try
-	    {
-		thisAddress = InetAddress.getLocalHost();
-		_RecoveryManagerTag = thisAddress.getHostName();
-	    }
-	    catch (UnknownHostException uhe)
-	    {
-		uhe.printStackTrace();
-	    }
+            InetAddress thisAddress = null;
+            try
+            {
+                thisAddress = InetAddress.getLocalHost();
+                _RecoveryManagerTag = thisAddress.getHostName();
+            }
+            catch (UnknownHostException uhe)
+            {
+                uhe.printStackTrace();
+            }
 
-	}
-	// prune off any spaces
-	if (_RecoveryManagerTag != null)
-	{
-	    _RecoveryManagerTag =_RecoveryManagerTag.trim();
-	}
+        }
+        // prune off any spaces
+        if (_RecoveryManagerTag != null)
+        {
+            _RecoveryManagerTag =_RecoveryManagerTag.trim();
+        }
     }
 
 }

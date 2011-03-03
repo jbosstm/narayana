@@ -236,64 +236,16 @@ public class ExpiredEntryMonitor extends Thread
         initialised = true;
     }
 
-  private static void loadScanners()
-  {
-      _expiryScanners = new Vector();
+    private static void loadScanners()
+    {
+        _expiryScanners = new Vector();
 
-      for(String scannerName : recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanners()) {
-          loadScanner(scannerName);
-      }
-  }
-    
-  private static void loadScanner( String className )
-  {
-      if (tsLogger.logger.isDebugEnabled()) {
-          tsLogger.logger.debug("Loading expiry scanner "+className);
-      }
-      
-      if (className == null) {
-          tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_7();
-
-          return;
-      }
-      else
-      {
-          try
-	  {
-	      Class c = Thread.currentThread().getContextClassLoader().loadClass( className );
-		
-		try
-		{
-		   ExpiryScanner m = (ExpiryScanner) c.newInstance();
-		   
-		   if ( m.toBeUsed() )
-		   {
-			   _expiryScanners.add( m );
-		   }
-		   else
-		   {
-		       if (tsLogger.logger.isDebugEnabled()) {
-                   tsLogger.logger.debug("Loading expiry scanner "+className);
-               }
-		   }
-		}
-		catch (ClassCastException e) {
-            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_9(className);
+        for(ExpiryScanner scanner : recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanners()) {
+            if ( scanner.toBeUsed() ) {
+                _expiryScanners.add( scanner );
+            }
         }
-		catch (IllegalAccessException e1) {
-            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e1);
-        }
-		catch (InstantiationException e2) {
-            tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_6(e2);
-        }
-		
-		c = null;
-	  }
-	  catch (ClassNotFoundException e) {
-          tsLogger.i18NLogger.warn_recovery_ExpiredEntryMonitor_10(className);
-      }
-      }
-  }
+    }
 
     /**
      * flag which causes the next scan to be skipped if it is true. this is set from _skipFirst when a

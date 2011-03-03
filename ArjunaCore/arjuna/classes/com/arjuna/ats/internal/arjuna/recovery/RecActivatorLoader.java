@@ -47,7 +47,7 @@ public class RecActivatorLoader
     // These are loaded in list iteration order.
     private void loadRecoveryActivators ()
     {
-        List<String> activatorNames = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryActivators();
+        List<String> activatorNames = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryActivatorClassNames();
 
         for(String activatorName : activatorNames) {
             RecoveryActivator recoveryActivator = ClassloadingUtility.loadAndInstantiateClass(RecoveryActivator.class, activatorName, null);

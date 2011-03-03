@@ -20,10 +20,12 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.common.util.ConfigurationInfo;
+import com.arjuna.ats.arjuna.utils.Process;
 
 import java.io.File;
 
@@ -45,8 +47,11 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     private volatile int socketProcessIdPort = 0;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts")
     private volatile int socketProcessIdMaxPorts = 1;
+
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.processImplementation")
-    private volatile String processImplementation = Utility.defaultProcessId;
+    private volatile String processImplementationClassName = Utility.defaultProcessId;
+    private volatile Process processImplementation = null;
+
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.pid")
     private volatile int pid = -1;
 
@@ -155,21 +160,77 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
      * Default: "com.arjuna.ats.internal.arjuna.utils.SocketProcessId"
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.utils.processImplementation
      *
-     * @return the name of a class implemeting Process.
+     * @return the name of a class implementing Process.
      */
-    public String getProcessImplementation()
+    public String getProcessImplementationClassName()
     {
-        return processImplementation;
+        return processImplementationClassName;
     }
 
     /**
      * Sets the class name of the Process implementation to use.
      *
-     * @param processImplementation the name of a class implementing Process.
+     * @param processImplementationClassName the name of a class implementing Process.
      */
-    public void setProcessImplementation(String processImplementation)
+    public void setProcessImplementationClassName(String processImplementationClassName)
     {
-        this.processImplementation = processImplementation;
+        synchronized(this) {
+            if(processImplementationClassName == null)
+            {
+                this.processImplementation = null;
+            }
+            else if(!processImplementationClassName.equals(this.processImplementationClassName))
+            {
+                this.processImplementation = null;
+            }
+            this.processImplementationClassName = processImplementationClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing com.arjuna.ats.arjuna.utils.Process.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a Process implementation instance, or null.
+     */
+    public Process getProcessImplementation()
+    {
+        if(processImplementation == null && processImplementationClassName != null)
+        {
+            synchronized(this) {
+                if(processImplementation == null && processImplementationClassName != null) {
+                    processImplementation = ClassloadingUtility.loadAndInstantiateClass(Process.class, processImplementationClassName, null);
+                }
+            }
+        }
+
+        return processImplementation;
+    }
+
+    /**
+     * Sets the instance of com.arjuna.ats.arjuna.utils.Process
+     *
+     * @param instance an Object that implements Process, or null.
+     */
+    public void setProcessImplementation(Process instance)
+    {
+        synchronized(this)
+        {
+            Process oldInstance = this.processImplementation;
+            processImplementation = instance;
+
+            if(instance == null)
+            {
+                this.processImplementationClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.processImplementationClassName = name;
+            }
+        }
     }
 
     /**

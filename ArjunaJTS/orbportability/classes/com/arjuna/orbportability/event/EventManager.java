@@ -156,20 +156,8 @@ public static synchronized EventManager getManager ()
     {
         _handlers = new Hashtable();
 
-        // load handler classes:
-        for(String handlerName : opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlers())
-        {
-            try
-            {
-                Class c = Thread.currentThread().getContextClassLoader().loadClass(handlerName);
-                EventHandler h = (EventHandler) c.newInstance();
-
-                addHandler(h);
-            }
-            catch (Exception ex)
-            {
-                opLogger.i18NLogger.warn_event_EventManager_caughtexceptionfor("EventManager", handlerName, ex);
-            }
+        for(EventHandler eventHandler : opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlers()) {
+            addHandler(eventHandler);
         }
     }
     

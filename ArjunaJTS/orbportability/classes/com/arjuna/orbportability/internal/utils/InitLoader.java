@@ -31,6 +31,7 @@
 
 package com.arjuna.orbportability.internal.utils;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.utils.InitClassInterface;
@@ -78,40 +79,33 @@ private void createInstance (String attrName, String className)
 	    return;
 	}
 	else
-	{
-	    try
-	    {
-            opLogger.i18NLogger.info_internal_utils_InitLoader_loading(initName, className);
+    {
+        opLogger.i18NLogger.info_internal_utils_InitLoader_loading(initName, className);
 
-		Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Class c = ClassloadingUtility.loadClass(className);
+        if(c == null) {
+            return;
+        }
+        try
+        {
+            Object o = c.newInstance();
 
-		try
-		{
-		    Object o = c.newInstance();
+            if ( o instanceof InitClassInterface )
+            {
+                ((InitClassInterface)o).invoke(initObj);
+            }
 
-                    if ( o instanceof InitClassInterface )
-                    {
-                        ((InitClassInterface)o).invoke(initObj);
-                    }
-
-		    o = null;
-		}
-		catch (IllegalAccessException e1)
-		{
+            o = null;
+        }
+        catch (IllegalAccessException e1)
+        {
             opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e1);
-		}
-		catch (InstantiationException e2)
-		{
+        }
+        catch (InstantiationException e2)
+        {
             opLogger.i18NLogger.warn_internal_utils_InitLoader_exception(initName, e2);
-		}
-
-		c = null;
-	    }
-	    catch (ClassNotFoundException e)
-	    {
-            opLogger.i18NLogger.warn_internal_utils_InitLoader_couldnotfindclass(initName, className);
-	    }
-	}
+        }
+    }
     }
 
 private String initName;

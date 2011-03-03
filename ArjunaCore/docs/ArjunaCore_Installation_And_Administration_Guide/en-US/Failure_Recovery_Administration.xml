@@ -154,7 +154,7 @@
       <application>ArjunaCore</application>. These modules support various aspects of transaction recovery, including
       JDBC recovery. It is possible for advanced users to create their own recovery modules and register them with the
       Recovery Manager. The recovery modules are registered with the RecoveryManager using
-      <methodname>RecoveryEnvironmentBean.recoveryExtensions</methodname>. These will be invoked on each pass of the
+      <methodname>RecoveryEnvironmentBean.recoveryModuleClassNames</methodname>. These will be invoked on each pass of the
       periodic recovery in the sort-order of the property names – it is thus possible to predict the ordering, but a
       failure in an application process might occur while a periodic recovery pass is in progress. The default Recovery
       Extension settings are:
@@ -172,7 +172,7 @@
       old. Scans and removals are performed by implementations of the
       <interfacename>com.arjuna.ats.arjuna.recovery.ExpiryScanner</interfacename> interface. These implementations are
       loaded by giving the class names as the value of a property
-      <property>RecoveryEnvironmentBean.expiryScanners</property>. The RecoveryManager calls the
+      <property>RecoveryEnvironmentBean.expiryScannerClassNames</property>. The RecoveryManager calls the
       <methodname>scan()</methodname><!-- I don't like using brackets unless the method never has any parameters -->
       method on each loaded Expiry Scanner implementation at an interval determined by the property
       <property>RecoveryEnvironmentBean.expiryScanInterval</property>. This value is given in hours, and defaults to

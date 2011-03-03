@@ -250,7 +250,7 @@ log4j.appender.stdout.layout.ConversionPattern=%d [%t] %-5p %c - %m%n
         JBossTS includes several recovery modules, supporting various aspects of transaction recovery including JDBC
         recovery. You can create your own recovery modules and register them with the
         <classname>RecoveryManager</classname> using the
-        <classname>RecoveryEnvironmentBean.recoveryExtensions</classname> property. These recovery modules are invoked
+        <classname>RecoveryEnvironmentBean.recoveryModuleClassNames</classname> property. These recovery modules are invoked
         on each pass of the periodic recovery in the order they appear. You can predict the order in which they run, but
         a failure in an application process might occur while a periodic recovery pass is in progress. The default
         <classname>RecoveryExtension</classname> settings are below.
@@ -455,7 +455,7 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
         for these and removing items that are very old. Scans and removals are performed by implementations of the
         <interfacename>>com.arjuna.ats.arjuna.recovery.ExpiryScanner</interfacename>. Implementations of this interface
         are loaded by giving the class names as the value of the property
-        <varname>RecoveryEnvironmentBean.expiryScanners</varname>. The <classname>RecoveryManager</classname> calls the
+        <varname>RecoveryEnvironmentBean.expiryScannerClassNames</varname>. The <classname>RecoveryManager</classname> calls the
         <methodname>scan</methodname> method on each loaded <classname>ExpiryScanner</classname> implementation at an
         interval determined by the property <varname>RecoveryEnvironmentBean.expiryScanInterval</varname>. This value is
         given in hours, and defaults to <literal>12</literal>. A property value of <literal>0</literal> disables any

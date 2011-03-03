@@ -41,9 +41,8 @@ public class XARecoveryModule extends
 
 	public XARecoveryModule ()
 	{
-		super(
-				com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceManagerImple.class
-						.getName(), "JTS XARecoveryModule");
+		super(new com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceManagerImple(),
+                "JTS XARecoveryModule");
 
 		com.arjuna.ats.internal.jta.Implementationsx.initialise();
 	}

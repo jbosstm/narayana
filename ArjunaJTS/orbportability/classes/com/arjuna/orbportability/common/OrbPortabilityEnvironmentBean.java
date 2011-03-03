@@ -20,8 +20,10 @@
  */
 package com.arjuna.orbportability.common;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.orbportability.event.EventHandler;
 
 import java.util.*;
 
@@ -39,7 +41,8 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private volatile String resolveService = "CONFIGURATION_FILE";
 
     @ConcatenationPrefix(prefix = "com.arjuna.orbportability.eventHandler")
-    private volatile List<String> eventHandlers = new ArrayList<String>();
+    private volatile List<String> eventHandlerClassNames = new ArrayList<String>();
+    private volatile List<EventHandler> eventHandlers = null;
 
     private volatile String orbImplementation = null;
     private volatile String oaImplementation = null;
@@ -141,7 +144,7 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     }
 
     /**
-     * Returns the classnames for the ORB object connect/disconnect event handlers.
+     * Returns the class names for the ORB object connect/disconnect event handlers.
      * The returned list is a copy. May return an empty list, will not return null.
      *
      * Default: empty list.
@@ -149,24 +152,80 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
      *
      * @return a list of names of classes, being implementations of the EventHandler interface.
      */
-    public List<String> getEventHandlers()
+    public List<String> getEventHandlerClassNames()
     {
-        return new ArrayList<String>(eventHandlers);
+        synchronized(this) {
+            return new ArrayList<String>(eventHandlerClassNames);
+        }
     }
 
     /**
-     * Sets the classnames of the ORB object connect/disconnect event handlers.
+     * Sets the class names of the ORB object connect/disconnect event handlers.
      * List elements should be names of classes that implement EventHandler.
      * The provided list will be copied, not retained.
      *
-     * @param eventHandlers a list of EventHandler implementation classnames.
+     * @param eventHandlerClassNames a list of EventHandler implementation classnames.
      */
-    public void setEventHandlers(List<String> eventHandlers)
+    public void setEventHandlerClassNames(List<String> eventHandlerClassNames)
     {
-        if(eventHandlers == null) {
-            this.eventHandlers = new ArrayList<String>();
-        } else {
-            this.eventHandlers = new ArrayList<String>(eventHandlers);
+        synchronized(this)
+        {
+            if(eventHandlerClassNames == null)
+            {
+                this.eventHandlers = new ArrayList<EventHandler>();
+                this.eventHandlerClassNames = new ArrayList<String>();
+            }
+            else if(!eventHandlerClassNames.equals(this.eventHandlerClassNames))
+            {
+                this.eventHandlers = null;
+                this.eventHandlerClassNames = new ArrayList<String>(eventHandlerClassNames);
+            }
+        }
+    }
+
+    /**
+     * Returns the set of EventHandler instances.
+     * The returned list is a copy. May return an empty list, will not return null.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation of one or more
+     * elements fails, this method will log an appropriate warning and return a non-null set with
+     * fewer elements.
+     *
+     * @return the set of EventHandler instances.
+     */
+    public List<EventHandler> getEventHandlers()
+    {
+        synchronized(this)
+        {
+            if(eventHandlers == null) {
+                List<EventHandler> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(EventHandler.class, eventHandlerClassNames);
+                eventHandlers = instances;
+            }
+            return new ArrayList<EventHandler>(eventHandlers);
+        }
+    }
+
+    /**
+     * Sets the instances of EventHandler.
+     * The provided list will be copied, not retained.
+     *
+     * @param eventHandlers the set of EventHandler instances.
+     */
+    public void setEventHandlers(List<EventHandler> eventHandlers)
+    {
+        synchronized(this)
+        {
+            if(eventHandlers == null)
+            {
+                this.eventHandlers = new ArrayList<EventHandler>();
+                this.eventHandlerClassNames = new ArrayList<String>();
+            }
+            else
+            {
+                this.eventHandlers = new ArrayList<EventHandler>(eventHandlers);
+                List<String> names = ClassloadingUtility.getNamesForClasses(this.eventHandlers);
+                this.eventHandlerClassNames = names;
+            }
         }
     }
 

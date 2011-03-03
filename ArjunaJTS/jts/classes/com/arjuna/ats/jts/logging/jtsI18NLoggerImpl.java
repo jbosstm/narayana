@@ -433,8 +433,8 @@ public class jtsI18NLoggerImpl implements jtsI18NLogger {
         logger.logv(WARN, "ARJUNA-22116 Could not locate supported ORB for RecoveryCoordinator initialisation.", (Object)null);
     }
 
-    public void warn_recovery_RecoveryEnablement_6(Throwable arg0) {
-        logger.logv(WARN, arg0, "ARJUNA-22121 The Recovery Service Initialisation failed}", (Object)null);
+    public void warn_recovery_RecoveryEnablement_6() {
+        logger.logv(WARN, "ARJUNA-22121 The Recovery Service Initialisation failed", (Object)null);
     }
 
     public void fatal_recovery_RecoveryInit_4() {

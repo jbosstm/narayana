@@ -644,16 +644,16 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 	}
 
 	public void warn_recovery_TransactionStatusManager_4(String arg0) {
-		logger.logv(WARN, "ARJUNA-12171 Class not found: {0}", arg0);
+		logger.logv(WARN, "ARJUNA-12171 Failed to setup class for: {0}", arg0);
 	}
 
-	public void warn_recovery_TransactionStatusManager_5(String arg0) {
-		logger.logv(WARN, "ARJUNA-12172 Failed to instantiate service class: {0}", arg0);
-	}
-
-	public void warn_recovery_TransactionStatusManager_6(String arg0) {
-		logger.logv(WARN, "ARJUNA-12173 Illegal access to service class: {0}", arg0);
-	}
+//	public void warn_recovery_TransactionStatusManager_5(String arg0) {
+//		logger.logv(WARN, "ARJUNA-12172 Failed to instantiate service class: {0}", arg0);
+//	}
+//
+//	public void warn_recovery_TransactionStatusManager_6(String arg0) {
+//		logger.logv(WARN, "ARJUNA-12173 Illegal access to service class: {0}", arg0);
+//	}
 
 	public String get_recovery_TransactionStatusManager_9() {
 		return "ARJUNA-12176 Could not get unique port.";
@@ -771,8 +771,8 @@ public class arjunaI18NLoggerImpl implements arjunaI18NLogger {
 		logger.logv(WARN, "ARJUNA-12208 An error occurred while creating file {0}", arg0);
 	}
 
-	public void warn_utils_Utility_1(Throwable arg0) {
-		logger.logv(WARN, arg0, "ARJUNA-12209 Utility.getDefaultProcess - failed with", (Object)null);
+	public void warn_utils_Utility_1() {
+		logger.logv(WARN, "ARJUNA-12209 Utility.getDefaultProcess failed", (Object)null);
 	}
 
 	public void warn_utils_Utility_2() {

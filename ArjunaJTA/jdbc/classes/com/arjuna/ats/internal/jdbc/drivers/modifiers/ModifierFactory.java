@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 
 import java.util.*;
@@ -53,18 +54,17 @@ public class ModifierFactory
 
     public static synchronized void putModifier (String dbName, int major, int minor, String modclass)
     {
-	try {
-		Object mod = Thread.currentThread().getContextClassLoader().loadClass(modclass).newInstance();
-	_modifiers.put(dbName+"_"+major+"_"+minor, mod);
-	} catch (Exception e) {
-	}
+        ConnectionModifier connectionModifier = ClassloadingUtility.loadAndInstantiateClass(ConnectionModifier.class, modclass, null);
+        if(connectionModifier != null) {
+            _modifiers.put(dbName+"_"+major+"_"+minor, connectionModifier);
+        }
     }
 
     /*
      * Convert input to lower case first.
      */
     
-    public static synchronized Object getModifier (String dbName, int major, int minor)
+    public static synchronized ConnectionModifier getModifier (String dbName, int major, int minor)
     {
 	String exactMatch = null;
 	String majorMatch = null;
@@ -95,11 +95,5 @@ public class ModifierFactory
 	return null;
     }    
 
-    private static Hashtable _modifiers = new Hashtable();
-
-    static
-    {
-	Object o = new list();
-    }
-    
+    private static Hashtable<String,ConnectionModifier> _modifiers = new Hashtable<String,ConnectionModifier>();
 }

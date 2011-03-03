@@ -46,6 +46,7 @@ import java.util.HashMap;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 import java.io.IOException;
 
@@ -112,7 +113,7 @@ public class JDBCStore implements ObjectStoreAPI
     public String getStoreName()
     {
         if (storeValid())
-            return getAccessClassName() + ":" + getTableName();
+            return getJDBCAccess().getClass().getName() + ":" + getTableName();
         else
             return "Invalid";
     }
@@ -285,13 +286,11 @@ public class JDBCStore implements ObjectStoreAPI
 
     public synchronized void packInto(OutputBuffer buff) throws IOException
     {
-        buff.packString(getAccessClassName());
         buff.packString(getTableName());
     }
 
     public synchronized void unpackFrom(InputBuffer buff) throws IOException
     {
-        setAccessClassName(buff.unpackString());
         setTableName(buff.unpackString());
     }
 
@@ -337,45 +336,7 @@ public class JDBCStore implements ObjectStoreAPI
     {
         this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
 
-         _jdbcAccessClassName = jdbcStoreEnvironmentBean.getJdbcUserDbAccess();
-
-        if(_jdbcAccessClassName == null) {
-            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
-        }
-
-        setTableName(_defaultTableName);
-
-        try
-        {
-            setupStore(_jdbcAccessClassName, getTableName());
-        }
-        catch (Exception e)
-        {
-            tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
-            throw new ObjectStoreException(e);
-        }
-
-        _isValid = true;
-    }
-
-    /**
-     * Get the JDBC access class name.
-     *
-     * @return The access class name.
-     */
-    protected String getAccessClassName()
-    {
-        return _jdbcAccessClassName;
-    }
-
-    /**
-     * Set the JDBC access class name.
-     *
-     * @param jdbcAccessClassName access class name.
-     */
-    protected void setAccessClassName(String jdbcAccessClassName)
-    {
-        _jdbcAccessClassName = jdbcAccessClassName;
+        initialise();
     }
 
     /**
@@ -430,23 +391,22 @@ public class JDBCStore implements ObjectStoreAPI
         _jdbcTableName = tableName;
     }
 
-    protected void initialise(String tableName) throws Exception
+    protected void initialise() throws ObjectStoreException
     {
-        String jdbcAccessClassName = getAccessClassName();
-
-        if (jdbcAccessClassName == null)
-        {
-            throw new FatalError(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
+        if(jdbcStoreEnvironmentBean.getJdbcUserDbAccess() == null) {
+            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
+        } else {
+            setJDBCAccess(jdbcStoreEnvironmentBean.getJdbcUserDbAccess());
         }
 
         try
         {
-            setupStore(jdbcAccessClassName, tableName);
+            setupStore();
         }
         catch (Exception e)
         {
             tsLogger.i18NLogger.fatal_objectstore_JDBCStore_1(getJDBCAccess().toString(), getTableName());
-            throw e;
+            throw new ObjectStoreException(e);
         }
 
         _isValid = true;
@@ -457,62 +417,18 @@ public class JDBCStore implements ObjectStoreAPI
     * we will exit.
     */
     @SuppressWarnings("unchecked")
-    protected void setupStore(String jdbcAccessClassName, String tableName)
-            throws Exception
+    protected void setupStore() throws Exception
     {
-        if (jdbcAccessClassName == null || jdbcAccessClassName.length() == 0)
-            throw new ObjectStoreException();
-
-        final JDBCAccess jdbcAccess;
-        synchronized (_theAccesses)
+        String impleTableName = getDefaultTableName();
+        final String jdbcAccessTableName = getJDBCAccess().tableName();
+        if ((jdbcAccessTableName != null) && (jdbcAccessTableName.length() > 0))
         {
-            final Object jdbcAccessObject = _theAccesses
-                    .get(jdbcAccessClassName);
-            if (jdbcAccessObject != null)
-            {
-                jdbcAccess = (JDBCAccess) jdbcAccessObject;
-            }
-            else
-            {
-                try
-                {
-                    final Class jdbcAccessClass = Thread.currentThread()
-                            .getContextClassLoader().loadClass(
-                                    jdbcAccessClassName);
-                    jdbcAccess = (JDBCAccess) jdbcAccessClass.newInstance();
-                }
-                catch (final Exception ex)
-                {
-                    tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(jdbcAccessClassName, ex);
-                    throw ex;
-                }
-                _theAccesses.put(jdbcAccessClassName, jdbcAccess);
-            }
-        }
-        setJDBCAccess(jdbcAccess);
-
-        final String impleTableName;
-        if ((tableName != null) && (tableName.length() > 0))
-        {
-            impleTableName = tableName;
-        }
-        else
-        {
-            final String jdbcAccessTableName = jdbcAccess.tableName();
-            if ((jdbcAccessTableName != null)
-                    && (jdbcAccessTableName.length() > 0))
-            {
-                impleTableName = jdbcAccessTableName;
-            }
-            else
-            {
-                impleTableName = getDefaultTableName();
-            }
+            impleTableName = jdbcAccessTableName;
         }
 
         setTableName(impleTableName);
 
-        final String impleKey = jdbcAccessClassName + ":" + impleTableName;
+        final String impleKey = getStoreName();
 
         synchronized (_theImples)
         {
@@ -532,7 +448,7 @@ public class JDBCStore implements ObjectStoreAPI
 
                     try
                     {
-                        connection = jdbcAccess.getConnection();
+                        connection = getJDBCAccess().getConnection();
                     }
                     catch (final SQLException sqle)
                     {
@@ -562,7 +478,7 @@ public class JDBCStore implements ObjectStoreAPI
                             throw ex;
                         }
 
-                        if (!jdbcImple.initialise(connection, jdbcAccess,
+                        if (!jdbcImple.initialise(connection, getJDBCAccess(),
                                 impleTableName, jdbcStoreEnvironmentBean)) {
                             tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
                             throw new ObjectStoreException();
@@ -672,8 +588,6 @@ public class JDBCStore implements ObjectStoreAPI
 
     private JDBCAccess _jdbcAccess;
 
-    private String _jdbcAccessClassName;
-
     private String _jdbcTableName;
 
     private static String _defaultTableName = "JBossTSTable";
@@ -685,6 +599,4 @@ public class JDBCStore implements ObjectStoreAPI
     */
 
     protected static final HashMap _theImples = new HashMap();
-
-    protected static final HashMap _theAccesses = new HashMap();
 }

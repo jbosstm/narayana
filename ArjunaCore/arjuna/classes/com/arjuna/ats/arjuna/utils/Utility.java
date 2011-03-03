@@ -34,6 +34,7 @@ package com.arjuna.ats.arjuna.utils;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -324,19 +325,13 @@ public class Utility
         processHandle = p;
     }
 
-    @SuppressWarnings("unchecked")
     private static synchronized void initDefaultProcess ()
     {
         if(processHandle == null)
         {
-            try
-            {
-                Class c = Thread.currentThread().getContextClassLoader().loadClass( arjPropertyManager.getCoreEnvironmentBean().getProcessImplementation());
-
-                processHandle = (Process) c.newInstance();
-            }
-            catch (final Exception e) {
-                tsLogger.i18NLogger.warn_utils_Utility_1(e);
+            processHandle = arjPropertyManager.getCoreEnvironmentBean().getProcessImplementation();
+            if(processHandle == null) {
+                tsLogger.i18NLogger.warn_utils_Utility_1();
             }
         }
     }

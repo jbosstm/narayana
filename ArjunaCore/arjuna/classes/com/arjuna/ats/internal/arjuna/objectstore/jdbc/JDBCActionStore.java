@@ -149,7 +149,7 @@ public class JDBCActionStore extends JDBCStore
     {
         super(jdbcStoreEnvironmentBean);
 
-        _txClassName = jdbcStoreEnvironmentBean.getJdbcTxDbAccess();
+        _txClassName = jdbcStoreEnvironmentBean.getJdbcTxDbAccessClassName();
     }
 
     protected String getAccessClassName()

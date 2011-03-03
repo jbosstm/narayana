@@ -858,58 +858,8 @@ public class PeriodicRecovery extends Thread
      */
     private void loadModules ()
     {
-        Vector<String> moduleNames = new Vector<String>(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryExtensions());
-
-        for(String moduleName : moduleNames) {
-            loadModule(moduleName);
-        }
+        _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
     }
-
-    /**
-     * load a specific recovery module and add it to the recovery modules list
-     *
-     * @param className
-     */
-   private void loadModule (String className)
-   {
-       if (tsLogger.logger.isDebugEnabled()) {
-           tsLogger.logger.debug("Loading recovery module " +
-                   className);
-       }
-
-      if (className == null) {
-          tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_1();
-
-          return;
-      }
-      else
-      {
-         try
-         {
-	     Class c = Thread.currentThread().getContextClassLoader().loadClass( className );
-
-            try
-            {
-               RecoveryModule m = (RecoveryModule) c.newInstance();
-               _recoveryModules.add(m);
-            }
-            catch (ClassCastException e) {
-                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_2(className);
-            }
-            catch (IllegalAccessException iae) {
-                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_3(iae);
-            }
-            catch (InstantiationException ie) {
-                tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_4(ie);
-            }
-
-            c = null;
-         }
-         catch ( ClassNotFoundException cnfe ) {
-             tsLogger.i18NLogger.warn_recovery_PeriodicRecovery_5(className);
-         }
-      }
-   }
 
     /**
      * initialise the periodic recovery instance to a suitable initial state

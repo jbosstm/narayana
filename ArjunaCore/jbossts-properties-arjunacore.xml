@@ -80,18 +80,18 @@
          on recovery modules and their configuration when running in various
          deployments.
     -->
-    <entry key="RecoveryEnvironmentBean.recoveryExtensions">
+    <entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
         com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
         com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
     </entry>
 
     <!-- Expiry scanners to use (order of invocation is random). -->
-    <entry key="RecoveryEnvironmentBean.expiryScanners">
+    <entry key="RecoveryEnvironmentBean.expiryScannerClassNames">
         com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
     </entry>
 
     <!--
-        Add the following to the set of expiryScanners above to move logs that cannot be completed by failure recovery.
+        Add the following to the set of expiryScannerClassNames above to move logs that cannot be completed by failure recovery.
             But be sure you know what you are doing and why!
              com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner
     -->

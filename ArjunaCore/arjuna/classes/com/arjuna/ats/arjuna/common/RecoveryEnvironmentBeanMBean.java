@@ -47,11 +47,11 @@ public interface RecoveryEnvironmentBeanMBean
 
     int getTransactionStatusManagerExpiryTime();
 
-    List<String> getExpiryScanners();
+    List<String> getExpiryScannerClassNames();
 
-    List<String> getRecoveryExtensions();
+    List<String> getRecoveryModuleClassNames();
 
-    List<String> getRecoveryActivators();
+    List<String> getRecoveryActivatorClassNames();
 
     boolean isTimeoutSocket();
 }

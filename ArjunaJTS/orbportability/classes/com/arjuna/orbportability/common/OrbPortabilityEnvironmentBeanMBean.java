@@ -38,7 +38,7 @@ public interface OrbPortabilityEnvironmentBeanMBean
 
     String getResolveService();
 
-    List<String> getEventHandlers();
+    List<String> getEventHandlerClassNames();
 
     String getOrbImplementation();
 

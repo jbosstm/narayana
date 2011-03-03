@@ -69,7 +69,7 @@ public class EmptyObjectStore
 			if (arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType() != null &&
 					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().startsWith("JDBCStore"))
 			{
-				JDBCAccess mJDBC = (JDBCAccess) Class.forName(new JDBCStoreEnvironmentBean().getJdbcUserDbAccess()).newInstance();
+				JDBCAccess mJDBC = (JDBCAccess) Class.forName(new JDBCStoreEnvironmentBean().getJdbcUserDbAccessClassName()).newInstance();
 				String tableName = mJDBC.tableName();
 				if (tableName == "")
 					/* from arjuna.internal.JDBCStore */

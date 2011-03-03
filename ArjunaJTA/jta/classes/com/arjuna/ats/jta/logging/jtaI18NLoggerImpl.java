@@ -49,8 +49,8 @@ public class jtaI18NLoggerImpl implements jtaI18NLogger {
 		logger.logv(WARN, "ARJUNA-16002 Cannot add resource to table: no XID value available.", (Object)null);
 	}
 
-	public void warn_recovery_constfail(Throwable arg0) {
-		logger.logv(WARN, arg0, "ARJUNA-16004 XARecoveryModule setup failed", (Object)null);
+	public void warn_recovery_constfail() {
+		logger.logv(WARN, "ARJUNA-16004 XARecoveryModule setup failed", (Object)null);
 	}
 
 	public void warn_recovery_failedtorecover(String arg0, String arg1) {

@@ -62,9 +62,8 @@ public class XARecoveryModule implements RecoveryModule
 {
     public XARecoveryModule()
 	{
-		this(
-				com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple.class
-						.getName(), "Local XARecoveryModule");
+		this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(),
+                "Local XARecoveryModule");
 
 		com.arjuna.ats.internal.jta.Implementations.initialise();
 	}
@@ -202,21 +201,12 @@ public class XARecoveryModule implements RecoveryModule
 		return null;
 	}
 
-	protected XARecoveryModule(String recoveryClass, String logName)
+	protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName)
     {
         _logName = logName;
-
-        try
-        {
-            Class c = Thread.currentThread().getContextClassLoader().loadClass(
-                    recoveryClass);
-
-            _recoveryManagerClass = (XARecoveryResourceManager) c.newInstance();
-        }
-        catch (Exception ex)
-        {
-            jtaLogger.i18NLogger.warn_recovery_constfail(ex);
-            _recoveryManagerClass = null;
+        _recoveryManagerClass = recoveryClass;
+        if(_recoveryManagerClass == null) {
+            jtaLogger.i18NLogger.warn_recovery_constfail();
         }
 
         _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
