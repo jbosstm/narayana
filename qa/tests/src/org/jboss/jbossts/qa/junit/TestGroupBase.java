@@ -77,6 +77,9 @@ public class TestGroupBase
         servers.clear();
         objectStoreNamesToTaskIds.clear();
 
+        Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+        emptyObjectStore.perform();
+
         try {
             Thread.sleep(3000);
         } catch(InterruptedException e) {}
