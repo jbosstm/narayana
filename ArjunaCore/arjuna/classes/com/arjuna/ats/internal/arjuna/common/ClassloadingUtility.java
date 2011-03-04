@@ -47,10 +47,16 @@ public class ClassloadingUtility
      * @return the specified Class, or null.
      */
     public static Class loadClass(String className) {
+
+        // This should be pretty much the only point in the codebase that actually does classloading.
+        // Once upon a time it used TCCL, but that does not play nice with AS and is fairly pointless
+        // anyhow, so we changed it... JBTM-828 and JBTM-735
+
         Class clazz;
         try
         {
-            clazz = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
+            //clazz = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
+            clazz = Class.forName( className );
         } catch(ClassNotFoundException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_2(className, e);
             return null;
