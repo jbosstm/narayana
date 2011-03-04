@@ -22,7 +22,7 @@
 
     <property name="modulename" value="jbossatx"/>
 
-    <property name="global.ext.libs" value="jboss-transaction-api_1.1_spec.jar,jboss-connector-api_1.5_spec.jar,jboss-logging.jar"/>
+    <property name="global.ext.libs" value="jboss-transaction-api_1.1_spec.jar,ironjacamar-spec-api.jar,jboss-logging.jar"/>
 
     <property name="component-module-list" value="../atsintegration"/>
 

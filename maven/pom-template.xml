@@ -154,89 +154,74 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- warning: evil maven kludge to work around http://jira.codehaus.org/browse/MNG-3537 -->
             <dependency>
-                <groupId>org.jboss.ejb3.depchain</groupId>
-                <artifactId>jboss-ejb3-depchain-as6</artifactId>
-                <version>1.0.0-alpha-43</version>
+                <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Alpha1/jboss-as-parent-7.0.0.Alpha1.pom -->
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-parent</artifactId>
+                <version>7.0.0.Alpha1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-            <!-- warning: 2nd evil maven kludge to work around http://jira.codehaus.org/browse/MNG-3537 -->
-            <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee6-specs-bom</artifactId>
-                <version>1.0.0.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- warning: son of evil maven kludge: the saga continues to work around http://jira.codehaus.org/browse/MNG-3537 -->
-            <dependency>
-                <groupId>org.jboss.managed.beans.depchain</groupId>
-                <artifactId>managed-beans-depchain-as6</artifactId>
-                <version>1.0.0-alpha-6</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
-                <groupId>org.jboss.jbossas</groupId>
-                <artifactId>jboss-as-component-matrix</artifactId>
-                <version>6.0.0.Final</version>
-                <!--<version>6.0.0-SNAPSHOT</version>-->
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
 
+        <!--
+            We mostly get our dependency *versions* transitively though the AS pom above.
+            Thus dependencies here should not specify a version unless they are not used
+            in the AS or we explicitly need a different version.
+        -->
+
         <!-- combined deps for the entire JBossTS. At some point we need to modularize this for different builds -->
 
-        <!-- XTS also requires commons-codec and commons-httpclient to compile the localjunit module -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
+        <!-- XTS also requires commons-codec (transitive via httpclient?) and commons-httpclient to compile the localjunit module. needed for test only, not XTS runtime dep. -->
+        <!--<dependency>-->
+            <!--<groupId>commons-codec</groupId>-->
+            <!--<artifactId>commons-codec</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
+            <version>3.1-jbossorg-1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
+        <!--  commons-logging, jcl-over-slf4j, slf4j-api,  slf4j-simple all just test time deps for localjunit? -->
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>commons-logging</groupId>-->
+            <!--<artifactId>commons-logging</artifactId>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>jcl-over-slf4j</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-simple</artifactId>-->
+        <!--</dependency>-->
 
         <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and JCA (for tx inflow) apis. -->
 
         <dependency>
+            <!-- JTA API -->
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.1_spec</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.spec.javax.resource</groupId>
-            <artifactId>jboss-connector-api_1.5_spec</artifactId>
+            <!-- JCA API -->
+            <groupId>org.jboss.ironjacamar</groupId>
+            <artifactId>ironjacamar-spec-api</artifactId>
         </dependency>
 
         <!-- unit tests use junit4 and some use byteman -->
@@ -316,11 +301,13 @@
         <dependency>
             <groupId>jacorb</groupId>
             <artifactId>jacorb</artifactId>
+            <version>2.3.1jboss.patch01-brew</version><!-- TODO AS7 -->
         </dependency>
 
         <dependency>
             <groupId>jacorb</groupId>
             <artifactId>idl</artifactId>
+            <version>2.3.1jboss.patch01-brew</version><!-- TODO AS7 -->
         </dependency>
 
         <!-- tsmx (tooling) requires graphing support: -->
@@ -351,12 +338,15 @@
         <dependency>
             <groupId>org.jboss.integration</groupId>
             <artifactId>jboss-corba-ots-spi</artifactId>
+            <version>6.0.0.CR1</version><!-- TODO AS7 -->
         </dependency>
 
-        <!-- qa test suite - JBossAS integration code -->
+        <!-- qa test suite - JBossAS integration code. (no longer used)
+            Also txbrige test suite - replace with org.jboss.as.server.Bootstrap (see AS7 ServerInModuleStartupTestCase for example) or arq -->
         <dependency>
             <groupId>org.jboss.jbossas</groupId>
             <artifactId>jboss-server-manager</artifactId>
+            <version>1.0.4.Final</version><!-- TODO AS7 -->
         </dependency>
 
         <dependency>
@@ -364,15 +354,17 @@
             <artifactId>jboss-ejb-api_3.1_spec</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.remoting</groupId>
-            <artifactId>jboss-remoting</artifactId>
-        </dependency>
+         <!--remoting not actually used except by obsolete qa/as tests? -->
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.remoting</groupId>-->
+            <!--<artifactId>jboss-remoting</artifactId>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.jboss.naming</groupId>
-            <artifactId>jnp-client</artifactId>
-        </dependency>
+        <!-- naming not actually used? -->
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.naming</groupId>-->
+            <!--<artifactId>jnp-client</artifactId>-->
+        <!--</dependency>-->
 
 
         <!-- XTS: -->
@@ -382,10 +374,14 @@
             <artifactId>jboss-servlet-api_3.0_spec</artifactId>
         </dependency>
 
+        <!-- test time dep only - XTS TestRunnerXMLServlet -->
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
         </dependency>
+
+
         <!--
                 <dependency>
                     <groupId>com.sun.xml.bind</groupId>
@@ -402,31 +398,33 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>3.0.0.Beta5</version>
+            <version>3.0.0.Beta5</version><!-- TODO AS7 -->
         </dependency>
 
         <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/logging/jboss-logging-tools/ -->
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-tools</artifactId>
-            <version>1.0.0.Beta4</version>
+            <version>1.0.0.Beta4</version><!-- TODO AS7 -->
         </dependency>
 
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>stax</groupId>-->
+            <!--<artifactId>stax-api</artifactId>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-core</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.ws.native</groupId>-->
+            <!--<artifactId>jbossws-native-core</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-common</artifactId>
+            <version>2.0.0.Alpha3</version><!-- TODO AS7 -->
         </dependency>
-        <!--
+
+    <!--
                 <dependency>
                     <groupId>javax.xml.ws</groupId>
                     <artifactId>jaxws-api</artifactId>
@@ -436,8 +434,10 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.0.Final</version><!-- TODO AS7 -->
         </dependency>
 
+        
     </dependencies>
     
     <properties>

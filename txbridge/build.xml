@@ -54,7 +54,7 @@
         <fileset dir="${global.ext.lib.dir}">
             <include name="jboss-logging.jar"/>
             <include name="jboss-transaction-api_1.1_spec.jar"/>
-            <include name="jboss-connector-api_1.5_spec.jar"/>
+            <include name="ironjacamar-spec-api.jar"/>
         </fileset>
 
         <fileset dir="${jbossts.home}/XTS/xts-install/lib">
