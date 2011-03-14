@@ -22,8 +22,6 @@
 
     <property name="modulename" value="common"/>
 
-    <property name="global.ext.libs" value="log4j.jar jboss-logging.jar"/>
-
     <import file="../sharedbuild.xml"/>
 
     <target name="run.tests">
