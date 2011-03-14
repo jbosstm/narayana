@@ -53,6 +53,8 @@
 
         <fileset dir="${global.ext.lib.dir}">
             <include name="jboss-logging.jar"/>
+            <include name="jboss-logging-generator.jar"/>
+            <include name="jboss-logging-processor.jar"/>
             <include name="jboss-transaction-api_1.1_spec.jar"/>
             <include name="ironjacamar-spec-api.jar"/>
         </fileset>

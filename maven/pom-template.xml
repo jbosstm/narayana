@@ -401,11 +401,18 @@
             <version>3.0.0.Beta5</version><!-- TODO AS7 -->
         </dependency>
 
+
+        <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/logging/jboss-logging-processor/ from beta5 -->
         <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/logging/jboss-logging-tools/ -->
         <dependency>
             <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging-tools</artifactId>
-            <version>1.0.0.Beta4</version><!-- TODO AS7 -->
+            <artifactId>jboss-logging-processor</artifactId>
+            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-generator</artifactId>
+            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
         </dependency>
 
         <!--<dependency>-->

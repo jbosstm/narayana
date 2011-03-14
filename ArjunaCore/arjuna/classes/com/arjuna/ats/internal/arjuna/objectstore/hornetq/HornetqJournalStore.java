@@ -114,7 +114,7 @@ public class HornetqJournalStore
         if(AIOSequentialFileFactory.isSupported()) {
             sequentialFileFactory = new AIOSequentialFileFactory(envBean.getStoreDir());
         } else {
-            sequentialFileFactory = new NIOSequentialFileFactory(envBean.getStoreDir());
+            sequentialFileFactory = new NIOSequentialFileFactory(envBean.getStoreDir(), true);
         }
 
         journal = new JournalImpl(envBean.getFileSize(), envBean.getMinFiles(), envBean.getCompactMinFiles(),

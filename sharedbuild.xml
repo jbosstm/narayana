@@ -46,7 +46,8 @@
     <!-- using an empty string does not work, it's treated as undefined
         and that results in everything being included by default. use
          e.g. "fakefile.jar" if needed. -->
-    <property name="global.ext.libs" value="jboss-logging.jar"/>
+    <property name="global.ext.libs" value="fakefile.jar"/>
+    <property name="global.ext.logging.libs" value="jboss-logging.jar,jboss-logging-processor.jar,jboss-logging-generator.jar"/>
     <property name="global.ext.test.libs" value="junit.jar"/>
 
     <property name="excluded.classes" value=""/>
@@ -134,6 +135,7 @@
             <classpath>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.logging.libs}"/>
                 <additional.classpath/>
             </classpath>
             <additional.src.dirs/>

@@ -22,7 +22,7 @@
 
     <property name="modulename" value="arjuna"/>
 
-    <property name="global.ext.libs" value="hornetq-core.jar,jboss-logging.jar"/><!-- jboss-logging-tools.jar -->
+    <property name="global.ext.libs" value="hornetq-core.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 
