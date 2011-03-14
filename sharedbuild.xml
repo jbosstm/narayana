@@ -231,6 +231,7 @@
 
         <copy todir="${dest.dir}/install/lib/ext">
             <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}" excludes="fakefile.jar"/>
+            <fileset dir="${global.ext.lib.dir}" includes="jboss-logging.jar"/>
         </copy>
 
     </target>

@@ -355,10 +355,11 @@
         </dependency>
 
          <!--remoting not actually used except by obsolete qa/as tests? -->
-        <!--<dependency>-->
-            <!--<groupId>org.jboss.remoting</groupId>-->
-            <!--<artifactId>jboss-remoting</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.jboss.remoting</groupId>
+            <artifactId>jboss-remoting</artifactId>
+            <version>2.5.3</version><!-- TODO AS7 -->
+        </dependency>
 
         <!-- naming not actually used? -->
         <!--<dependency>-->
