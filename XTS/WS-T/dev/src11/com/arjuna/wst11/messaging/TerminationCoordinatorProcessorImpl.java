@@ -123,7 +123,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(se);
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2();
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
@@ -203,7 +203,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(se);
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8();
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;
@@ -280,7 +280,7 @@ public class TerminationCoordinatorProcessorImpl extends TerminationCoordinatorP
                 catch (final SystemException se)
                 {
                     final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(se);
+                    final String message = WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13();
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(endpoint, faultMAP, soapFault, instanceIdentifier) ;
                     return ;

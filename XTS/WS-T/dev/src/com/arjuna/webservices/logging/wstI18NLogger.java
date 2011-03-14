@@ -79,7 +79,7 @@ public interface wstI18NLogger {
 	public String get_messaging_CompletionCoordinatorProcessorImpl_10();
 
 	@Message(id = 43013, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_messaging_CompletionCoordinatorProcessorImpl_2(@Cause() Throwable arg0);
+	public String get_messaging_CompletionCoordinatorProcessorImpl_2();
 
 	@Message(id = 43014, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_messaging_CompletionCoordinatorProcessorImpl_5();
@@ -88,7 +88,7 @@ public interface wstI18NLogger {
 	public String get_messaging_CompletionCoordinatorProcessorImpl_6();
 
 	@Message(id = 43016, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_messaging_CompletionCoordinatorProcessorImpl_7(@Cause() Throwable arg0);
+	public String get_messaging_CompletionCoordinatorProcessorImpl_7();
 
 	@Message(id = 43017, value = "Unexpected exception while sending InvalidStateFault to participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -258,13 +258,13 @@ public interface wstI18NLogger {
 	public String get_messaging_TerminatorParticipantProcessorImpl_12();
 
 	@Message(id = 43061, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_messaging_TerminatorParticipantProcessorImpl_13(@Cause() Throwable arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_13();
 
 	@Message(id = 43062, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_messaging_TerminatorParticipantProcessorImpl_16();
 
 	@Message(id = 43063, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_messaging_TerminatorParticipantProcessorImpl_2(@Cause() Throwable arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_2();
 
 	@Message(id = 43064, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_messaging_TerminatorParticipantProcessorImpl_5();
@@ -276,7 +276,7 @@ public interface wstI18NLogger {
 	public String get_messaging_TerminatorParticipantProcessorImpl_7();
 
 	@Message(id = 43067, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_messaging_TerminatorParticipantProcessorImpl_8(@Cause() Throwable arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_8();
 
 //	@Message(id = 43068, value = "Unable to write recovery record during completed for WS-BA participant {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -427,7 +427,7 @@ public interface wstI18NLogger {
 	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_10();
 
 	@Message(id = 43106, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_2(@Cause() Throwable arg0);
+	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_2();
 
 	@Message(id = 43107, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_5();
@@ -436,7 +436,7 @@ public interface wstI18NLogger {
 	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_6();
 
 	@Message(id = 43109, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_7(@Cause() Throwable arg0);
+	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_7();
 
 	@Message(id = 43110, value = "Unexpected exception while sending InvalidStateFault to participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -683,13 +683,13 @@ public interface wstI18NLogger {
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_12();
 
 	@Message(id = 43173, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(@Cause() Throwable arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_13();
 
 	@Message(id = 43174, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_16();
 
 	@Message(id = 43175, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(@Cause() Throwable arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_2();
 
 	@Message(id = 43176, value = "Unknown participant", format = MESSAGE_FORMAT)
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_5();
@@ -701,7 +701,7 @@ public interface wstI18NLogger {
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_7();
 
 	@Message(id = 43179, value = "Unknown error", format = MESSAGE_FORMAT)
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(@Cause() Throwable arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_8();
 
 	@Message(id = 43180, value = "Invalid coordinator completion coordinator state", format = MESSAGE_FORMAT)
 	public String get_wst11_messaging_engines_CoordinatorCompletionCoordinatorEngine_sendInvalidStateFault_2();

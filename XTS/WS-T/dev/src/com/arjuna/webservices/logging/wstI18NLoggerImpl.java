@@ -87,8 +87,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43012 Unknown participant";
 	}
 
-	public String get_messaging_CompletionCoordinatorProcessorImpl_2(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43013 Unknown error", arg0);
+	public String get_messaging_CompletionCoordinatorProcessorImpl_2() {
+		return "ARJUNA-43013 Unknown error";
 	}
 
 	public String get_messaging_CompletionCoordinatorProcessorImpl_5() {
@@ -99,8 +99,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43015 Unknown transaction";
 	}
 
-	public String get_messaging_CompletionCoordinatorProcessorImpl_7(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43016 Unknown error", arg0);
+	public String get_messaging_CompletionCoordinatorProcessorImpl_7() {
+		return "ARJUNA-43016 Unknown error";
 	}
 
 	public void info_messaging_CoordinatorCompletionCoordinatorProcessorImpl_getStatus_3(String arg0, Throwable arg1) {
@@ -263,16 +263,16 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43060 Unknown transaction";
 	}
 
-	public String get_messaging_TerminatorParticipantProcessorImpl_13(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43061 Unknown error", arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_13() {
+		return "ARJUNA-43061 Unknown error";
 	}
 
 	public String get_messaging_TerminatorParticipantProcessorImpl_16() {
 		return "ARJUNA-43062 Unknown participant";
 	}
 
-	public String get_messaging_TerminatorParticipantProcessorImpl_2(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43063 Unknown error", arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_2() {
+		return "ARJUNA-43063 Unknown error";
 	}
 
 	public String get_messaging_TerminatorParticipantProcessorImpl_5() {
@@ -287,8 +287,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43066 Transaction rolled back";
 	}
 
-	public String get_messaging_TerminatorParticipantProcessorImpl_8(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43067 Unknown error", arg0);
+	public String get_messaging_TerminatorParticipantProcessorImpl_8() {
+		return "ARJUNA-43067 Unknown error";
 	}
 
 	public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCompensate_1(String arg0, Throwable arg1) {
@@ -411,8 +411,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43105 Unknown participant";
 	}
 
-	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_2(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43106 Unknown error", arg0);
+	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_2() {
+		return "ARJUNA-43106 Unknown error";
 	}
 
 	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_5() {
@@ -423,8 +423,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43108 Unknown transaction";
 	}
 
-	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_7(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43109 Unknown error", arg0);
+	public String get_wst11_messaging_CompletionCoordinatorProcessorImpl_7() {
+		return "ARJUNA-43109 Unknown error";
 	}
 
 	public void info_wst11_messaging_CoordinatorCompletionCoordinatorProcessorImpl_getStatus_3(String arg0, Throwable arg1) {
@@ -659,16 +659,16 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43172 Unknown transaction";
 	}
 
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43173 Unknown error", arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_13() {
+		return "ARJUNA-43173 Unknown error";
 	}
 
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_16() {
 		return "ARJUNA-43174 Unknown participant";
 	}
 
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43175 Unknown error", arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_2() {
+		return "ARJUNA-43175 Unknown error";
 	}
 
 	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_5() {
@@ -683,8 +683,8 @@ public class wstI18NLoggerImpl implements wstI18NLogger {
 		return "ARJUNA-43178 Transaction rolled back";
 	}
 
-	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(Throwable arg0) {
-		return MessageFormat.format("ARJUNA-43179 Unknown error", arg0);
+	public String get_wst11_messaging_TerminationCoordinatorProcessorImpl_8() {
+		return "ARJUNA-43179 Unknown error";
 	}
 
 	public String get_wst11_messaging_engines_CoordinatorCompletionCoordinatorEngine_sendInvalidStateFault_2() {

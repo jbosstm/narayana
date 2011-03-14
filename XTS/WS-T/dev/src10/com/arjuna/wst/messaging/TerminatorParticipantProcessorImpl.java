@@ -119,7 +119,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_2(se);
+                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_2();
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
@@ -197,7 +197,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_8(se);
+                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_8();
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
@@ -273,7 +273,7 @@ public class TerminatorParticipantProcessorImpl extends TerminationCoordinatorPr
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_13(se);
+                    final String message = WSTLogger.i18NLogger.get_messaging_TerminatorParticipantProcessorImpl_13();
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     TerminationParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;

@@ -87,7 +87,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(se));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2());
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -98,7 +98,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2(th));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_2());
                     throw new SOAPFaultException(soapFault);
                 }
             }
@@ -158,7 +158,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(se));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8());
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -169,7 +169,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8(th));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_8());
                     throw new SOAPFaultException(soapFault);
                 }
             }
@@ -229,7 +229,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(se));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13());
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -240,7 +240,7 @@ public class TerminationCoordinatorRPCProcessorImpl extends TerminationCoordinat
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_RECEIVER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13(th));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_TerminationCoordinatorProcessorImpl_13());
                     throw new SOAPFaultException(soapFault);
                 }
             }

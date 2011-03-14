@@ -118,7 +118,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 catch (final SystemException se)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_2(se);
+                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_2();
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;
@@ -188,7 +188,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 catch (SystemException systemException)
                 {
                     final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_7(systemException);
+                    final String message = WSTLogger.i18NLogger.get_messaging_CompletionCoordinatorProcessorImpl_7();
                     final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
                     return ;

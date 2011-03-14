@@ -95,7 +95,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_2(se));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_2());
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -106,7 +106,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_2(th));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_2());
                     throw new SOAPFaultException(soapFault);
                 }
 
@@ -163,7 +163,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                 {
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_7(se));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_7());
                     throw new SOAPFaultException(soapFault);
                 }
                 catch (final Throwable th)
@@ -174,7 +174,7 @@ public class CompletionCoordinatorRPCProcessorImpl extends CompletionCoordinator
                     }
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME);
-                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_7(th));
+                    soapFault.addDetail().addDetailEntry(ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME).addTextNode(WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_7());
                     throw new SOAPFaultException(soapFault);
                 }
             }
