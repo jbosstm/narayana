@@ -403,6 +403,18 @@
 				<artifactId>jbossts-jopr-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossts-jopr-plugin</artifactId>
+				<version>${project.version}</version>
+				<classifier>javadoc</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossts-jopr-plugin</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

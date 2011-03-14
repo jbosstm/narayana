@@ -23,19 +23,55 @@
 			<includes>
 				<include>*:javadoc</include>
 			</includes>
-			<outputDirectory>htdocs</outputDirectory>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossjts:*</exclude>
+			</excludes>
+			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
+			</outputFileNameMapping>
+			<outputDirectory>bin</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
+			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
 				<include>*:sources</include>
 			</includes>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossjts:*</exclude>
+			</excludes>
+			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
+			</outputFileNameMapping>
+			<outputDirectory>bin</outputDirectory>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>*:javadoc</include>
+			</includes>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossts-jopr-plugin:*</exclude>
+			</excludes>
+			<outputDirectory>htdocs</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>*:sources</include>
+			</includes>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossts-jopr-plugin:*</exclude>
+			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
 			</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -46,6 +82,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -56,6 +93,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -66,6 +104,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -76,6 +115,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -86,6 +126,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -96,6 +137,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -106,6 +148,7 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -119,6 +162,7 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -128,6 +172,7 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<excludes>
@@ -150,12 +195,12 @@
 				<exclude>org.jboss.jbossts:tsmx-jts-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:jbossts-tools</exclude>
 				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
-				<exclude>junit:junit</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -165,6 +210,7 @@
 			<outputFileNameMapping>jbossjts-services.jar
 				</outputFileNameMapping>
 			<unpack>false</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 	</dependencySets>
 	<files>
