@@ -32,7 +32,7 @@
 		<module>WSTX</module>
 		<module>recovery</module>
 		<module>bridge</module>
-		<!--<module>sar</module>-->
+		<module>sar</module>
 		<module>docs</module>
 	</modules>
 </project>
