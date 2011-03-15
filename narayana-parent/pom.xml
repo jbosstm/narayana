@@ -21,12 +21,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>narayana-build-common</artifactId>
+	<artifactId>narayana-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>4.15.0.M1-SNAPSHOT</version>
-	<name>narayana-build-common</name>
+	<name>narayana-parent</name>
 
-	<description>narayana-build-common</description>
+	<description>narayana-parent</description>
 
 	<url>http://www.jboss.org/jbosstm/</url>
 	<issueManagement>
@@ -414,6 +414,160 @@
 				<artifactId>jbossts-jopr-plugin</artifactId>
 				<version>${project.version}</version>
 				<classifier>sources</classifier>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wsas</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c-all</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c10</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c11</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c10</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c11</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t-all</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t10</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t11</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t10</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t11</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf-all</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf10</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf11</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx-all</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx10</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx11</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx10</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx11</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>recovery</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>bridge</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossxts</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>xts-docs</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>xts-guide</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
