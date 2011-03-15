@@ -178,19 +178,21 @@ configured to cause a crash when the client tries to commit.
 
 The Byteman agent needs to be deployed as a JVM agent supplied with a
 handle on the relevant script file.  This is done by supplying the
-relevant command line option to teh JVM when starting the AS.
+relevant command line option to the JVM when starting the AS.
 
-  export JAVA_OPTS="$JAVA_OPTS -javaagent:${BytemanSVN}/workspace/adinn/orchestration/build/lib/orchestration.jar=script:${JBOSSTSSVN}/XTS/trunk/sar/tests/dd/scripts/<script>"
+  export JAVA_OPTS="$JAVA_OPTS -javaagent:${BYTEMAN_HOME}/lib/byteman.jar=script:${JBOSSTS_ROOT}/XTS/trunk/sar/tests/dd/scripts/<script>"
 
-where ${BytemanSVN} and ${JBOSSTSSVN} identify the directories into
-which the svn tree for the Byteman/jbossts code have been checked out
-and <script> shoudl be substituted witht the relevant script name.
+${BYTEMAN_HOME} should identify the directory into which you have installed
+a Byteman release. You can obtain Byteman from the Byteman project page
+at jboss.org. Fetch the latest zip  release and unzip it in ${BYTEMAN_HOME}
+
+${JBOSSTS_ROOT} ishould dentify the root directory of your JBossTS source tree
 
 Other command line properties configuring the operation of Byteman which
 may be of use are:
 
- -Dorg.jboss.jbossts.orchestration.dump.generated.classes=yes
- -Dorg.jboss.jbossts.orchestration.dump.generated.classes.directory=<dir>
- -Dorg.jboss.jbossts.orchestration.verbose=<any_value_will_do>
+ -Dorg.jboss.byteman.dump.generated.classes=yes
+ -Dorg.jboss.byteman.dump.generated.classes.directory=<dir>
+ -Dorg.jboss.byteman.verbose=<any_value_will_do>
 
 See the Byteman manual for more details.
