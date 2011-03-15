@@ -39,5 +39,5 @@ import org.jboss.logging.Logger;
 public class WSCLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.wsc");
-    public static final wscI18NLogger i18NLogger = new wscI18NLoggerImpl(logger);
+    public static final wscI18NLogger i18NLogger = Logger.getMessageLogger(wscI18NLogger.class, "com.arjuna.wsc");
 }

@@ -37,5 +37,5 @@ import org.jboss.logging.Logger;
 public class wstxLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.mw.wstx");
-    public static final wstxI18NLogger i18NLogger = new wstxI18NLoggerImpl(logger);
+    public static final wstxI18NLogger i18NLogger = Logger.getMessageLogger(wstxI18NLogger.class, "com.arjuna.mw.wstx");
 }

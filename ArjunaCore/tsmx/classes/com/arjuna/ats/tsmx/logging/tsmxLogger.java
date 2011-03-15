@@ -36,5 +36,5 @@ import org.jboss.logging.Logger;
 public class tsmxLogger
 {
 	public static final Logger logger = Logger.getLogger("com.arjuna.ats.tsmx");
-    public static final tsmxI18NLogger i18nLogger = new tsmxI18NLoggerImpl(logger);
+    public static final tsmxI18NLogger i18nLogger = Logger.getMessageLogger(tsmxI18NLogger.class, "com.arjuna.ats.tsmx");
 }

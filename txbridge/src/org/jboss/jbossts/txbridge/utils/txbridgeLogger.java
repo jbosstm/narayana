@@ -30,5 +30,5 @@ import org.jboss.logging.Logger;
 public class txbridgeLogger
 {
     public static final Logger logger = Logger.getLogger("org.jboss.jbossts.txbridge");
-    public static final txbridgeI18NLogger i18NLogger = new txbridgeI18NLoggerImpl(logger);
+    public static final txbridgeI18NLogger i18NLogger = Logger.getMessageLogger(txbridgeI18NLogger.class, "org.jboss.jbossts.txbridge");
 }

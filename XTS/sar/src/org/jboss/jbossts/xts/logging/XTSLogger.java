@@ -27,6 +27,6 @@ import org.jboss.logging.Logger;
 public class XTSLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.xtsservice");
-    public static final xtsI18NLogger i18NLogger  = new xtsI18NLoggerImpl(logger);
+    public static final xtsI18NLogger i18NLogger  = Logger.getMessageLogger(xtsI18NLogger.class, "com.arjuna.xtsservice");
 }
 

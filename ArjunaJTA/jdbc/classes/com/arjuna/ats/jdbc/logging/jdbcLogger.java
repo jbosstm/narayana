@@ -36,5 +36,5 @@ import org.jboss.logging.Logger;
 public class jdbcLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.ats.jdbc");
-    public static final jdbcI18NLogger i18NLogger = new jdbcI18NLoggerImpl(logger);
+    public static final jdbcI18NLogger i18NLogger = Logger.getMessageLogger(jdbcI18NLogger.class, "com.arjuna.ats.jdbc");
 }
