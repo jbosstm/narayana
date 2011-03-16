@@ -235,15 +235,14 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<!-- https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/jbossas/jboss-as-component-matrix/ -->
-				<groupId>org.jboss.jbossas</groupId>
-				<artifactId>jboss-as-component-matrix</artifactId>
-				<version>6.0.0.Final</version>
-				<!--<version>6.0.0-SNAPSHOT</version> -->
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+        	    <dependency>
+        	        <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Alpha1/jboss-as-parent-7.0.0.Alpha1.pom -->
+        	        <groupId>org.jboss.as</groupId>
+        	        <artifactId>jboss-as-parent</artifactId>
+        	        <version>7.0.0.Beta1</version>
+        	        <type>pom</type>
+        	        <scope>import</scope>
+	            </dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>common</artifactId>
