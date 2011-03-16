@@ -158,7 +158,7 @@
                 <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Alpha1/jboss-as-parent-7.0.0.Alpha1.pom -->
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-parent</artifactId>
-                <version>7.0.0.Alpha1</version>
+                <version>7.0.0.Beta1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -228,7 +228,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <!--<version>4.8.1</version>-->
             <scope>test</scope>
         </dependency>
 
@@ -442,7 +442,6 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.0.Final</version><!-- TODO AS7 -->
         </dependency>
 
         
