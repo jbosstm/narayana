@@ -80,7 +80,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
     private volatile boolean xaTransactionTimeoutEnabled = true;
 
-    private volatile String lastResourceOptimisationInterfaceClassName = null;
+    private volatile String lastResourceOptimisationInterfaceClassName = "com.arjuna.ats.jta.resources.LastResourceCommitOptimisation";
     private volatile Class lastResourceOptimisationInterface = null;
 
     /**
