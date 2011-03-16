@@ -27,7 +27,6 @@
 			<outputDirectory>trailmap</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 			<unpackOptions>
 				<excludes>
 					<exclude>META-INF/</exclude>
@@ -47,7 +46,6 @@
 			<outputDirectory>bin</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -62,7 +60,6 @@
 			<outputDirectory>bin</outputDirectory>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -75,7 +72,6 @@
 			<outputDirectory>htdocs</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -90,7 +86,6 @@
 			<outputDirectory>lib</outputDirectory>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -102,7 +97,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -114,7 +108,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -126,7 +119,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -138,7 +130,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -150,7 +141,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -162,7 +152,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -174,7 +163,6 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -189,7 +177,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -200,7 +187,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -230,7 +216,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -241,7 +226,6 @@
 			<outputFileNameMapping>jbossjts-services.jar
 				</outputFileNameMapping>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 	</dependencySets>
 	<files>
