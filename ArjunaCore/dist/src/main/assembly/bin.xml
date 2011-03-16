@@ -121,7 +121,6 @@
 				<exclude>org.jboss.jbossts:osbv-defaults</exclude>
 				<exclude>org.jboss.jbossts:tsmx-perfgraph</exclude>
 				<exclude>org.jboss.jbossts:txoj</exclude>
-				<exclude>junit:junit</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>

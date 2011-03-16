@@ -135,7 +135,6 @@
 				<exclude>org.jboss.jbossts:jta</exclude>
 				<exclude>org.jboss.jbossts:jdbc</exclude>
 				<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
-				<exclude>junit:junit</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>

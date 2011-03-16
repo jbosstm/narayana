@@ -43,6 +43,9 @@
 						<phase>prepare-package</phase>
 					</execution>
 				</executions>
+				<configuration>
+					<detectOfflineLinks>false</detectOfflineLinks>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
