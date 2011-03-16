@@ -133,6 +133,10 @@
 			<artifactId>jbossts-jopr-plugin</artifactId>
 			<classifier>sources</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossts</groupId>
+			<artifactId>trailmap</artifactId>
+		</dependency>
 	</dependencies>
 
 

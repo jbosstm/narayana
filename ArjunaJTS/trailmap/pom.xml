@@ -24,7 +24,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>trailmap</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>JBossJTS Trailmap documentation</name>
 
 	<build>
@@ -39,7 +39,7 @@
 							<target>
 								<property name="docs.dir" value="docs" />
 								<property name="xsl.dir" value="xsl" />
-								<property name="html.dir" value="target/html" />
+								<property name="html.dir" value="target/classes/html" />
 								<property name="xsl.file" value="ATL_LookAndFeel.xsl" />
 								<copy todir="${html.dir}">
 									<fileset dir="${docs.dir}">
@@ -54,6 +54,15 @@
 									extension=".html">
 									<param name="rootpath" expression="." />
 								</style>
+
+        <copy todir="target/classes/">
+            <fileset dir=".">
+		<include name="src/"/>
+		<include name="build.xml"/>
+		<include name="README.txt"/>
+            </fileset>
+        </copy>
+
 							</target>
 							<dependencies>
 								<dependency>

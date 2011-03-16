@@ -21,6 +21,20 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
+				<include>org.jboss.jbossts:trailmap</include>
+			</includes>
+			<outputDirectory>trailmap</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
+		<dependencySet>
+			<includes>
 				<include>*:javadoc</include>
 			</includes>
 			<excludes>
@@ -195,6 +209,7 @@
 				<exclude>org.jboss.jbossts:tsmx-jts-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:jbossts-tools</exclude>
 				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
+				<exclude>org.jboss.jbossts:trailmap</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -377,22 +392,6 @@
 			<includes>
 				<include>CosTransactions.idl</include>
 				<include>XA.idl</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>../trailmap</directory>
-			<outputDirectory>trail_map</outputDirectory>
-			<includes>
-				<include>src/</include>
-				<include>build.xml</include>
-				<include>README.txt</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>../trailmap/target/</directory>
-			<outputDirectory>trail_map</outputDirectory>
-			<includes>
-				<include>html/</include>
 			</includes>
 		</fileSet>
 		<fileSet>
