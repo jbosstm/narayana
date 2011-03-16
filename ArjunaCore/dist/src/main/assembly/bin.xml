@@ -20,6 +20,7 @@
 	</formats>
 	<dependencySets>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>*:javadoc</include>
 			</includes>
@@ -28,6 +29,7 @@
 			<unpack>true</unpack>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>*:sources</include>
 			</includes>
@@ -38,6 +40,7 @@
 			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-tools</include>
 			</includes>
@@ -48,6 +51,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-jmxbrowser</include>
 			</includes>
@@ -58,6 +62,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-core-objectstorebrowser</include>
 			</includes>
@@ -68,6 +73,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:tsmx-perfgraph</include>
 			</includes>
@@ -78,6 +84,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:osbv-defaults</include>
 			</includes>
@@ -88,6 +95,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:arjunacore</include>
 			</includes>
@@ -101,6 +109,7 @@
 			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
 				<exclude>org.jboss.jbossts:arjunacore</exclude>
 				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
@@ -118,6 +127,7 @@
 			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.jbossts:arjunacore-services</include>
 			</includes>
