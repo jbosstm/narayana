@@ -445,13 +445,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
-				<artifactId>ws-c10</artifactId>
+				<artifactId>ws-c</artifactId>
 				<version>${project.version}</version>
 				<classifier>api</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
-				<artifactId>ws-c11</artifactId>
+				<artifactId>ws-c10</artifactId>
 				<version>${project.version}</version>
 				<classifier>api</classifier>
 			</dependency>
@@ -475,6 +475,12 @@
 				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>ws-t11</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
@@ -532,6 +538,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx</artifactId>
+				<version>${project.version}</version>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
 				<artifactId>wstx10</artifactId>
 				<version>${project.version}</version>
 				<classifier>api</classifier>
@@ -555,9 +567,14 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>
-				<artifactId>jbossxts</artifactId>
+				<artifactId>jbossxts-api</artifactId>
 				<version>${project.version}</version>
-				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossxts-api</artifactId>
+				<version>${project.version}</version>
+				<classifier>javadoc</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jbossts</groupId>

@@ -26,7 +26,7 @@
 			<excludes>
 				<exclude>org.jboss.jbossts:jbossjts:*</exclude>
 			</excludes>
-			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
+			<outputFileNameMapping>${artifact.artifactId}-javadoc.${artifact.extension}
 			</outputFileNameMapping>
 			<outputDirectory>bin</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>

@@ -1,0 +1,179 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
+		LLC, and individual contributors as indicated by the @author tags. See the 
+		copyright.txt in the distribution for a full listing of individual contributors. 
+		This copyrighted material is made available to anyone wishing to use, modify, 
+		copy, or redistribute it subject to the terms and conditions of the GNU Lesser 
+		General Public License, v. 2.1. This program is distributed in the hope that 
+		it will be useful, but WITHOUT A WARRANTY; without even the implied warranty 
+		of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
+		General Public License for more details. You should have received a copy 
+		of the GNU Lesser General Public License, v.2.1 along with this distribution; 
+		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
+		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
+
+
+	<parent>
+		<groupId>org.jboss.jbossts</groupId>
+		<artifactId>narayana-parent</artifactId>
+		<version>4.15.0.M1-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.jbossts</groupId>
+	<artifactId>xts-full</artifactId>
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/bin.xml</descriptor>
+					</descriptors>
+					<tarLongFileMode>gnu</tarLongFileMode>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wsas</artifactId>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c10</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c11</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-c10</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t10</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t11</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t10</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>ws-t11</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf10</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wscf11</artifactId>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx10</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx11</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx10</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>wstx11</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>recovery</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>bridge</artifactId>
+				<classifier>api</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossxts-api</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>jbossxts-api</artifactId>
+				<classifier>javadoc</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.jbossts</groupId>
+				<artifactId>xts-guide</artifactId>
+			</dependency>
+	</dependencies>
+
+
+	<properties>
+		<PRODUCT_NAME>xts</PRODUCT_NAME>
+		<HOME_DIRECTORY>XTS_HOME</HOME_DIRECTORY>
+	</properties>
+</project>

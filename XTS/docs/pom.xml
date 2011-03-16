@@ -28,7 +28,6 @@
 	<name>XTS Documentation</name>
 
 	<modules>
-		<module>htdocs</module>
 		<module>Transactions_XTS_Administration_And_Development_Guide</module>
 	</modules>
 </project>
