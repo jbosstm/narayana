@@ -14,6 +14,20 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
+				<include>org.jboss.jbossts:xts-demo</include>
+			</includes>
+			<outputDirectory>demo</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
+		<dependencySet>
+			<includes>
 				<include>*:javadoc</include>
 			</includes>
 			<outputDirectory>docs/api</outputDirectory>
@@ -35,6 +49,7 @@
 			<excludes>
 				<exclude>*:api</exclude>
 				<exclude>*:xts-guide:*</exclude>
+				<exclude>*:xts-demo:*</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -59,10 +74,6 @@
 		<fileSet>
 			<directory>../docs/Transactions_XTS_Administration_And_Development_Guide/target/publican/Transactions_XTS_Administration_And_Development_Guide/en-US/pdf/</directory>
 			<outputDirectory>docs</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>../demo/</directory>
-			<outputDirectory>demo</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly> 

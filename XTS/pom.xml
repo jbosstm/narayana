@@ -33,7 +33,7 @@
 		<module>recovery</module>
 		<module>bridge</module>
 		<!--<module>sar</module>-->
-<!--		<module>demo</module>-->
+		<module>demo</module>
 		<module>docs</module>
 		<module>jbossxts-api</module>
 		<module>dist</module>
