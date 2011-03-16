@@ -26,7 +26,7 @@
 	<packaging>jar</packaging>
 
 	<build>
-		<sourceDirectory>../../atsintegration</sourceDirectory>
+		<sourceDirectory>../../atsintegration/classes</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
