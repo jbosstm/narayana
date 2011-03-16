@@ -598,6 +598,24 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.0.0.Beta5</version><!-- TODO AS7 -->
+		</dependency>
+	        <dependency>
+	            <groupId>org.jboss.logging</groupId>
+           	    <artifactId>jboss-logging-processor</artifactId>
+	            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+	        </dependency>
+        	<dependency>
+	            <groupId>org.jboss.logging</groupId>
+	            <artifactId>jboss-logging-generator</artifactId>
+	            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+        	</dependency>
+	</dependencies>
+
 	<properties>
 		<maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
 		<buildproperty.date>${maven.build.timestamp}</buildproperty.date>
