@@ -23,7 +23,10 @@ package com.arjuna.orbportability.common;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.orbportability.ORBData;
 import com.arjuna.orbportability.event.EventHandler;
+import com.arjuna.orbportability.oa.core.POAImple;
+import com.arjuna.orbportability.orb.core.ORBImple;
 
 import java.util.*;
 
@@ -44,8 +47,18 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private volatile List<String> eventHandlerClassNames = new ArrayList<String>();
     private volatile List<EventHandler> eventHandlers = null;
 
-    private volatile String orbImplementation = null;
-    private volatile String oaImplementation = null;
+    // alternative: com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4
+    private volatile String orbImpleClassName = "com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0";
+    private volatile Class<? extends ORBImple> orbImpleClass = null;
+
+    // alternative: com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4
+    private volatile String poaImpleClassName = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
+    private volatile Class<? extends POAImple> poaImpleClass = null;
+
+    // alternative: com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4
+    private volatile String orbDataClassName = "com.arjuna.orbportability.internal.orbspecific.versions.jacorb_2_0";
+    private volatile ORBData orbData = null;
+
     private volatile String bindMechanism = "CONFIGURATION_FILE";
 
     private volatile Map<String,String> orbInitializationProperties = new HashMap<String, String>();
@@ -230,49 +243,245 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     }
 
     /**
-     * Returns the classname of the ORBImple implementation.
+     * Returns the class name of the ORBImple implementation.
      *
-     * Default: null (i.e. use classpath based selection)
+     * Default: com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0
      * Equivalent deprecated property: com.arjuna.orbportability.orbImplementation
      *
      * @return the name of the class implementing ORBImple.
      */
-    public String getOrbImplementation()
+    public String getOrbImpleClassName()
     {
-        return orbImplementation;
+        return orbImpleClassName;
     }
 
     /**
-     * Sets the classname of the ORBImple implementation.
+     * Sets the class name of the ORBImple implementation. The class should have a public default constructor.
      *
-     * @param orbImplementation the name of the class implementing ORBImple.
+     * @param orbImpleClassName the name of the class implementing ORBImple.
      */
-    public void setOrbImplementation(String orbImplementation)
+    public void setOrbImpleClassName(String orbImpleClassName)
     {
-        this.orbImplementation = orbImplementation;
+        synchronized(this)
+        {
+            if(orbImpleClassName == null)
+            {
+                this.orbImpleClass = null;
+            }
+            else if(!orbImpleClassName.equals(this.orbImpleClassName))
+            {
+                this.orbImpleClass = null;
+            }
+            this.orbImpleClassName = orbImpleClassName;
+        }
     }
 
     /**
-     * Returns the classname of the POAImple implementation.
+     * Returns a class implementing ORBImple.
      *
-     * Default: null (i.e. user classpath based selection)
+     * If classloading fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return an ORBImple implementation instance, or null.
+     */
+    public Class<? extends ORBImple> getOrbImpleClass()
+    {
+        if(orbImpleClass == null && orbImpleClassName != null)
+        {
+            synchronized(this) {
+                if(orbImpleClass == null && orbImpleClassName != null) {
+                    Class<? extends ORBImple> clazz = ClassloadingUtility.loadClass(ORBImple.class, orbImpleClassName);
+                    orbImpleClass = clazz;
+                }
+            }
+        }
+
+        return orbImpleClass;
+    }
+
+    /**
+     * Sets the ORBImple implementation class. The class should have a public default constructor.
+     *
+     * @param orbImpleClass a Class that implements ORBImple
+     */
+    public void setOrbImpleClass(Class<? extends ORBImple> orbImpleClass)
+    {
+        synchronized(this)
+        {
+            Class<? extends ORBImple> oldClass = this.orbImpleClass;
+            this.orbImpleClass = orbImpleClass;
+
+            if(orbImpleClass == null)
+            {
+                this.orbImpleClassName = null;
+            }
+            else if(orbImpleClass != oldClass)
+            {
+                String name = orbImpleClass.getName();
+                this.orbImpleClassName = name;
+            }
+        }
+    }
+
+    /**
+     * Returns the class name of the POAImple implementation.
+     *
+     * Default: com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0
      * Equivalent deprecated property: com.arjuna.orbportability.oaImplementation
      *
      * @return the name of the class implementing POAImple.
      */
-    public String getOaImplementation()
+    public String getPoaImpleClassName()
     {
-        return oaImplementation;
+        return poaImpleClassName;
     }
 
     /**
-     * Sets the classname of the POAImple implementation.
+     * Sets the class name of the POAImple implementation. The class should have a public default constructor.
      *
-     * @param oaImplementation the name of the class implementing POAImple.
+     * @param poaImpleClassName the name of the class implementing POAImple.
      */
-    public void setOaImplementation(String oaImplementation)
+    public void setPoaImpleClassName(String poaImpleClassName)
     {
-        this.oaImplementation = oaImplementation;
+        synchronized(this)
+        {
+            if(poaImpleClassName == null)
+            {
+                this.poaImpleClass = null;
+            }
+            else if(!poaImpleClassName.equals(this.poaImpleClassName))
+            {
+                this.poaImpleClass = null;
+            }
+            this.poaImpleClassName = poaImpleClassName;
+        }
+    }
+
+    /**
+     * Returns a class implementing POAImple.
+     *
+     * If classloading fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return an POAImple implementation instance, or null.
+     */
+    public Class<? extends POAImple> getPoaImpleClass()
+    {
+        if(poaImpleClass == null && poaImpleClassName != null)
+        {
+            synchronized(this) {
+                if(poaImpleClass == null && poaImpleClassName != null) {
+                    Class<? extends POAImple> clazz = ClassloadingUtility.loadClass(POAImple.class, poaImpleClassName);
+                    poaImpleClass = clazz;
+                }
+            }
+        }
+
+        return poaImpleClass;
+    }
+
+    /**
+     * Sets the POAImple implementation class. The class should have a public default constructor.
+     *
+     * @param poaImpleClass a Class that implements POAImple
+     */
+    public void setPoaImpleClass(Class<? extends POAImple> poaImpleClass)
+    {
+        synchronized(this)
+        {
+            Class<? extends POAImple> oldClass = this.poaImpleClass;
+            this.poaImpleClass = poaImpleClass;
+
+            if(poaImpleClass == null)
+            {
+                this.poaImpleClassName = null;
+            }
+            else if(poaImpleClass != oldClass)
+            {
+                String name = poaImpleClass.getName();
+                this.poaImpleClassName = name;
+            }
+        }
+    }
+
+    /**
+     * Returns the class name of the ORBData implementation.
+     *
+     * Default: com.arjuna.orbportability.internal.orbspecific.versions.jacorb_2_0
+     *
+     * @return the name of the class implementing ORBData.
+     */
+    public String getOrbDataClassName()
+    {
+        return orbDataClassName;
+    }
+
+    /**
+     * Sets the class name of the ORBData implementation. The class should have a public default constructor.
+     *
+     * @param orbDataClassName the name of the class implementing ORBData.
+     */
+    public void setOrbDataClassName(String orbDataClassName)
+    {
+        synchronized(this)
+        {
+            if(orbDataClassName == null)
+            {
+                this.orbData = null;
+            }
+            else if(!orbDataClassName.equals(this.orbDataClassName))
+            {
+                this.orbData = null;
+            }
+            this.orbDataClassName = orbDataClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing ORBData.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return an ORBData implementation instance, or null.
+     */
+    public ORBData getOrbData()
+    {
+        if(orbData == null && orbDataClassName != null)
+        {
+            synchronized(this) {
+                if(orbData == null && orbDataClassName != null) {
+                    ORBData instance = ClassloadingUtility.loadAndInstantiateClass(ORBData.class,  orbDataClassName, null);
+                    orbData = instance;
+                }
+            }
+        }
+
+        return orbData;
+    }
+
+    /**
+     * Sets the instance of ORBData
+     *
+     * @param instance an Object that implements ORBData, or null.
+     */
+    public void setOrbData(ORBData instance)
+    {
+        synchronized(this)
+        {
+            ORBData oldInstance = this.orbData;
+            orbData = instance;
+
+            if(instance == null)
+            {
+                this.orbDataClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.orbDataClassName = name;
+            }
+        }
     }
 
     /**

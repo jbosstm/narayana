@@ -31,10 +31,9 @@
 
 package com.arjuna.orbportability;
 
+import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.internal.utils.SimpleXMLParser;
-
-import java.text.MessageFormat;
 
 /**
  * This class queries the ORB specific ORBData object for information
@@ -148,57 +147,19 @@ public class ORBInfo
         return minorVersion;
     }
 
-    public static final ORBData orbData ()
-    {
-	return _theData;
-    }
-
     private static ORBData          _theData = null;
     private static SimpleXMLParser  _xml = null;
 
-    private static final String _versionPackage = "com.arjuna.orbportability.internal.orbspecific.versions";
-
     static
     {
-        String className = null;
-
-        try
-        {
-            Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
-
-            className = _versionPackage+".jacorb_2_0";
-        }
-        catch (ClassNotFoundException je)
-        {
-            try
-            {
-                Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.Interceptors.PIORB");
-
-                className = _versionPackage+".javaidl_1_4";
-            }
-            catch (ClassNotFoundException joe)
-            {
-                opLogger.i18NLogger.fatal_ORBInfo_unsupportedorb(joe);
-
-                throw new ExceptionInInitializerError( joe );
-            }
-        }
-
-        try
-        {
-            Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-            _theData = (ORBData) c.newInstance();
-
+        try {
+            _theData = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbData();
             _xml = new SimpleXMLParser(_theData.getORBdata() );
         }
         catch (Exception e)
         {
-
             opLogger.i18NLogger.fatal_ORBInfo_creationfailed(e);
-
             throw new ExceptionInInitializerError( e );
         }
     }
-
 }

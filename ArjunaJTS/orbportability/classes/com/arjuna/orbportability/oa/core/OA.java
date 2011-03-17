@@ -57,12 +57,24 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 
 public class OA
 {
-
     public OA(com.arjuna.orbportability.orb.core.ORB theORB)
     {
-        initialise();
-
         _theORB = theORB;
+
+        try
+        {
+            Class<? extends POAImple> clazz = opPropertyManager.getOrbPortabilityEnvironmentBean().getPoaImpleClass();
+
+            if (opLogger.logger.isTraceEnabled()) {
+                opLogger.logger.trace("OA.initialise() - using OA Implementation " + clazz.getCanonicalName());
+            }
+
+            _theOA = clazz.newInstance();
+        }
+        catch (Exception e)
+        {
+            throw new ExceptionInInitializerError( e );
+        }
     }
 
     public boolean initialised ()
@@ -72,47 +84,47 @@ public class OA
 
     public void init () throws InvalidName, AdapterInactive, SystemException
     {
-        ((POAImple) _theOA).init(_theORB);
+        _theOA.init(_theORB);
     }
 
     public void createPOA (String adapterName, Policy[] policies)
             throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive,
             SystemException
     {
-        ((POAImple) _theOA).createPOA(adapterName, policies);
+        _theOA.createPOA(adapterName, policies);
     }
 
     public void destroyRootPOA () throws SystemException
     {
-        ((POAImple) _theOA).destroyRootPOA();
+        _theOA.destroyRootPOA();
     }
 
     public void destroyPOA (String adapterName) throws SystemException
     {
-        ((POAImple) _theOA).destroyPOA(adapterName);
+        _theOA.destroyPOA(adapterName);
     }
 
     public org.omg.PortableServer.POA rootPoa () throws SystemException
     {
-        return ((POAImple) _theOA).rootPoa();
+        return _theOA.rootPoa();
     }
 
     public void rootPoa (org.omg.PortableServer.POA thePOA)
             throws SystemException
     {
-        ((POAImple) _theOA).rootPoa(thePOA);
+        _theOA.rootPoa(thePOA);
     }
 
     public org.omg.PortableServer.POA poa (String adapterName)
             throws SystemException
     {
-        return ((POAImple) _theOA).poa(adapterName);
+        return _theOA.poa(adapterName);
     }
 
     public void poa (String adapterName, org.omg.PortableServer.POA thePOA)
             throws SystemException
     {
-        ((POAImple) _theOA).poa(adapterName, thePOA);
+        _theOA.poa(adapterName, thePOA);
     }
 
     public void run (String name) throws SystemException
@@ -125,57 +137,8 @@ public class OA
         _theOA.run(_theORB);
     }
 
-    @SuppressWarnings("unchecked")
-    private final void initialise ()
-    {
-        String className = opPropertyManager.getOrbPortabilityEnvironmentBean()
-                .getOaImplementation();
+    private final com.arjuna.orbportability.orb.core.ORB _theORB;
 
-        if (className == null)
-        {
-
-            try
-            {
-                Thread.currentThread().getContextClassLoader().loadClass(
-                        "org.jacorb.orb.ORB");
-
-                className = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
-            }
-            catch (ClassNotFoundException ce)
-            {
-                try
-                {
-                    Thread.currentThread().getContextClassLoader().loadClass(
-                            "com.sun.corba.se.internal.corba.ORB");
-
-                    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
-                }
-                catch (ClassNotFoundException je)
-                {
-                    throw new ExceptionInInitializerError(je);
-                }
-            }
-        }
-
-        if (opLogger.logger.isTraceEnabled()) {
-            opLogger.logger.trace("OA.initialise() - using OA Implementation " + className);
-        }
-
-        try
-        {
-            Class c = Thread.currentThread().getContextClassLoader().loadClass(
-                    className);
-
-            _theOA = (POAImple) c.newInstance();
-        }
-        catch (Exception e)
-        {
-            throw new ExceptionInInitializerError( e );
-        }
-    }
-
-    private com.arjuna.orbportability.orb.core.ORB _theORB;
-
-    private com.arjuna.orbportability.oa.core.POAImple _theOA;
+    private final com.arjuna.orbportability.oa.core.POAImple _theOA;
 
 }

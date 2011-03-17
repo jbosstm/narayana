@@ -79,9 +79,9 @@ public interface orbportabilityI18NLogger {
 	@LogMessage(level = FATAL)
 	public void fatal_ORBInfo_creationfailed(@Cause() Throwable arg0);
 
-	@Message(id = 21011, value = "ORBInfo ORB specific class creation failed - unable to find supported ORB", format = MESSAGE_FORMAT)
-    @LogMessage(level = FATAL)
-	public void fatal_ORBInfo_unsupportedorb(@Cause() Throwable arg0);
+//	@Message(id = 21011, value = "ORBInfo ORB specific class creation failed - unable to find supported ORB", format = MESSAGE_FORMAT)
+//    @LogMessage(level = FATAL)
+//	public void fatal_ORBInfo_unsupportedorb(@Cause() Throwable arg0);
 
 //	@Message(id = 21012, value = "{0} - could not open config file: {1}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)

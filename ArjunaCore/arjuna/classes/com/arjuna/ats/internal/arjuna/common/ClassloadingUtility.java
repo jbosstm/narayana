@@ -65,19 +65,15 @@ public class ClassloadingUtility
     }
 
     /**
-     * Load, instantiate and return an instance of the named class, which is expected to be an implementation of
-     * the specified interface.
+     * Load and return the named class, which is expected to be an implementation of the specified interface.
      *
-     * In the event of error (ClassNotFound, ClassCast, can't instantiate, ...) this method will log the error and return null.
-     *
+     * In the event of error (ClassNotFound, ClassCast, ...) this method will log the error and return null.
      *
      * @param iface the expected interface type.
      * @param className the name of the class to load and instantiate.
-     * @param environmentBeanInstanceName When the class ctor requires a *EnvironmentBean instance, the name of the bean.
-     *   null for default ctor or default bean instance..
-     * @return an instance of the specified class, or null.
+     * @return the specified class, or null.
      */
-    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName)
+    public static <T> Class<? extends T> loadClass(Class<T> iface, String className)
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("Loading class " + className);
@@ -93,10 +89,37 @@ public class ClassloadingUtility
             return null;
         }
 
+        try {
+            Class<? extends T> clazz2 = clazz.asSubclass(iface);
+            return clazz2;
+        } catch (ClassCastException e) {
+            tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Load, instantiate and return an instance of the named class, which is expected to be an implementation of
+     * the specified interface.
+     *
+     * In the event of error (ClassNotFound, ClassCast, can't instantiate, ...) this method will log the error and return null.
+     *
+     *
+     * @param iface the expected interface type.
+     * @param className the name of the class to load and instantiate.
+     * @param environmentBeanInstanceName When the class ctor requires a *EnvironmentBean instance, the name of the bean.
+     *   null for default ctor or default bean instance..
+     * @return an instance of the specified class, or null.
+     */
+    public static <T> T loadAndInstantiateClass(Class<T> iface, String className, String environmentBeanInstanceName)
+    {
         T instance = null;
 
         try {
-            Class<? extends T> clazz2 = clazz.asSubclass(iface);
+            Class<? extends T> clazz = loadClass(iface, className);
+            if(clazz == null) {
+                return null;
+            }
 
             Constructor[] ctors = clazz.getConstructors();
             Class environmentBeanClass = null;
@@ -111,11 +134,9 @@ public class ClassloadingUtility
             }
             if(environmentBeanClass == null && environmentBeanInstanceName == null) {
                 // no bean ctor, try default ctor
-                instance = (T)clazz2.newInstance();
+                instance = clazz.newInstance();
             }
 
-        } catch (ClassCastException e) {
-            tsLogger.i18NLogger.warn_common_ClassloadingUtility_3(className, iface.getName(), e);
         } catch (InstantiationException e) {
             tsLogger.i18NLogger.warn_common_ClassloadingUtility_4(className, e);
         } catch (IllegalAccessException e) {

@@ -40,9 +40,11 @@ public interface OrbPortabilityEnvironmentBeanMBean
 
     List<String> getEventHandlerClassNames();
 
-    String getOrbImplementation();
+    String getOrbImpleClassName();
 
-    String getOaImplementation();
+    String getPoaImpleClassName();
+
+    String getOrbDataClassName();
 
     String getBindMechanism();
 

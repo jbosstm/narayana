@@ -52,102 +52,64 @@ import org.omg.CORBA.SystemException;
 
 public class ORB
 {
-
-public ORB ()
+    public ORB ()
     {
-	initialise();
-    }
-
-public boolean initialised ()
-    {
-	return _theORB.initialised();
-    }
-
-public void init () throws SystemException
-    {
-	_theORB.init();
-    }
-
-public void init (Applet a, Properties p) throws SystemException
-    {
-	_theORB.init(a, p);
-    }
-
-public void init (String[] s, Properties p) throws SystemException
-    {
-	_theORB.init(s, p);
-    }
-
-public void shutdown () throws SystemException
-    {
-	_theORB.shutdown();
-    }
-
-public void destroy () throws SystemException
-    {
-	_theORB.destroy();
-    }
-
-public org.omg.CORBA.ORB orb () throws SystemException
-    {
-	return _theORB.orb();
-    }
-
-public void orb (org.omg.CORBA.ORB o) throws SystemException
-    {
-	_theORB.orb(o);
-    }
-
-private final void initialise ()
-    {
-	/*
-	 * Let the application provide its own ORB implementation.
-	 */
-
-	String className = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbImplementation();
-
-        if (className == null)
+        try
         {
-            try
-            {
-                Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
+            Class<? extends ORBImple> clazz = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbImpleClass();
 
-                className = "com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0";
+            if (opLogger.logger.isTraceEnabled()) {
+                opLogger.logger.trace("ORB.initialise() - using ORB Implementation " + clazz.getCanonicalName());
             }
-            catch (ClassNotFoundException ce)
-            {
-                //			ce.printStackTrace();
 
-                try
-                {
-                    Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
-
-                    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4";
-                }
-                catch (ClassNotFoundException je)
-                {
-                    throw new ExceptionInInitializerError(je);
-                }
-            }
+            _theORB = clazz.newInstance();
         }
-
-        if (opLogger.logger.isTraceEnabled()) {
-            opLogger.logger.trace("ORB.initialise() - using ORB Implementation " + className);
+        catch (Exception e)
+        {
+            throw new ExceptionInInitializerError( e );
         }
-
-	try
-	{
-	    Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-	    _theORB = (ORBImple) c.newInstance();
-	}
-	catch (Exception e)
-	{
-	    throw new ExceptionInInitializerError( e );
-	}
     }
 
-private ORBImple _theORB;
+    public boolean initialised ()
+    {
+        return _theORB.initialised();
+    }
 
+    public void init () throws SystemException
+    {
+        _theORB.init();
+    }
+
+    public void init (Applet a, Properties p) throws SystemException
+    {
+        _theORB.init(a, p);
+    }
+
+    public void init (String[] s, Properties p) throws SystemException
+    {
+        _theORB.init(s, p);
+    }
+
+    public void shutdown () throws SystemException
+    {
+        _theORB.shutdown();
+    }
+
+    public void destroy () throws SystemException
+    {
+        _theORB.destroy();
+    }
+
+    public org.omg.CORBA.ORB orb () throws SystemException
+    {
+        return _theORB.orb();
+    }
+
+    public void orb (org.omg.CORBA.ORB o) throws SystemException
+    {
+        _theORB.orb(o);
+    }
+
+    private final ORBImple _theORB;
 }
 
