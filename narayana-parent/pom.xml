@@ -595,10 +595,6 @@
 				<artifactId>trailmap</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
@@ -613,6 +609,22 @@
 	            <groupId>org.jboss.logging</groupId>
 	            <artifactId>jboss-logging-generator</artifactId>
 	            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+        	</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+		</dependency>
+	        <dependency>
+	            <groupId>org.jboss.logging</groupId>
+           	    <artifactId>jboss-logging-processor</artifactId>
+	        </dependency>
+        	<dependency>
+	            <groupId>org.jboss.logging</groupId>
+	            <artifactId>jboss-logging-generator</artifactId>
         	</dependency>
 	</dependencies>
 

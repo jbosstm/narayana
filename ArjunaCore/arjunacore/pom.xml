@@ -104,18 +104,6 @@
 						<exclude>**/*.*</exclude>
 					</excludes>
 				</configuration>
-				<executions>
-					<execution>
-						<id>comp</id>
-						<phase>compile</phase>
-						<goals></goals>
-						<configuration>
-							<excludes>
-								<exclude>**/*.*</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
