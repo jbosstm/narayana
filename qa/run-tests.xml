@@ -45,7 +45,8 @@
     <target name="scratch">
 
         <antcall target="junit-tests">
-            <param name="tests" value="jtsremote"/>
+            <param name="tests" value="defaulttimeout"/>
+            <!--<param name="additional.elements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
         </antcall>
 
     </target>
@@ -111,6 +112,8 @@
         <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
         <!-- jtsremote : 9 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="jtsremote"/></antcall>
+        <!-- defaulttimeout : 2 tests, 2 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="defaulttimeout"/></antcall>
 
 
         <!-- rawresources01_1 : 6 tests, 1 minute -->
@@ -352,6 +355,7 @@
         <property name="names" value=".*"/>
 
         <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
+        <!--<property name="additional.elements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
         <property name="additional.elements" value=""/>
 
         <!-- TODO support JTA mode testing of JTS .jar files? -
@@ -361,7 +365,7 @@
 
         <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
             the working dir is the same as the location of this script. -->
-        <junit printsummary="yes" haltonfailure="yes" fork="true" dir="${basedir}">
+        <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false">
             <classpath>
 
                 <!--
@@ -401,7 +405,7 @@
             <sysproperty key="additional.elements" value="${additional.elements}"/>
 
             <!--<jvmarg value="-Xdebug"/>-->
-            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
 
         </junit>
 
