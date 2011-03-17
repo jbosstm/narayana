@@ -22,6 +22,9 @@
 		<fileSet>
 			<directory>META-INF/</directory>
 			<outputDirectory>META-INF/</outputDirectory>
+			<includes>
+				<include>jboss-classloading.xml</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 	<files>
@@ -29,6 +32,16 @@
 			<source>target/${project.artifactId}-${project.version}.jar</source>
 			<outputDirectory>/</outputDirectory>
 			<destName>service.jar</destName>
+		</file>
+		<file>
+			<source>META-INF/application${buildType}.xml</source>
+			<outputDirectory>META-INF/</outputDirectory>
+			<destName>application.xml</destName>
+		</file>
+		<file>
+			<source>META-INF/xts${buildType}-jboss-beans.xml</source>
+			<outputDirectory>META-INF/</outputDirectory>
+			<destName>xts-jboss-beans.xml</destName>
 		</file>
 	</files>
 	<dependencySets>

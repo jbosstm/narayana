@@ -24,23 +24,6 @@
         <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target>
-                                <copy file="META-INF/application11.xml" tofile="target/archive-tmp/foo"/>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2</version>
@@ -146,4 +129,8 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <buildType>11</buildType>
+    </properties>
 </project>
