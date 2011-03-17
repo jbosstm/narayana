@@ -20,47 +20,23 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>../../ArjunaCore/tsmx/sar/resources</directory>
-			<outputDirectory>/</outputDirectory>
+			<directory>META-INF/</directory>
+			<outputDirectory>META-INF/</outputDirectory>
 		</fileSet>
 	</fileSets>
 	<files>
 		<file>
 			<source>target/${project.artifactId}-${project.version}.jar</source>
 			<outputDirectory>/</outputDirectory>
-			<destName>embedded-tools.jar</destName>
-		</file>
-		<file>
-			<source>../../ArjunaCore/tsmx/etc/toolsframework.xml</source>
-			<outputDirectory>/</outputDirectory>
+			<destName>service.jar</destName>
 		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
-			<includes>
-				<include>org.jboss.jbossts:tsmx-tools</include>
-			</includes>
+			<excludes>
+				<exclude>org.jboss.jbossts:jbossxts-sar</exclude>
+			</excludes>
 			<outputDirectory>/</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.jbossts:tsmx-jta-objectstorebrowser</include>
-			</includes>
-			<outputDirectory>tools</outputDirectory>
-			<outputFileNameMapping>tsmx-objectstorebrowser.jar
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.jbossts:osbv-defaults</include>
-			</includes>
-			<outputDirectory>tools/plugins</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
