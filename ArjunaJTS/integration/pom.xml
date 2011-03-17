@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
 	LLC, and others contributors as indicated by the @authors tag. All rights 
 	reserved. See the copyright.txt in the distribution for a full listing of 
@@ -12,83 +11,78 @@
 	should have received a copy of the GNU Lesser General Public License, v.2.1 
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jboss.jbossts</groupId>
-		<artifactId>narayana-parent</artifactId>
-		<version>4.15.0.M1-SNAPSHOT</version>
-	</parent>
-
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>jbossjts-integration</artifactId>
-	<name>JBossJTS ATX module</name>
-	<packaging>jar</packaging>
-
-	<build>
-		<sourceDirectory>../../atsintegration/classes</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.0-beta-4</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>false</doUpdate>
-					<scmBranchPropertyName>buildScmBranch</scmBranchPropertyName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
-							<arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-							<arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jta</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jtax</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>orbportability</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.integration</groupId>
-			<artifactId>jboss-integration</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jacorb</groupId>
-			<artifactId>jacorb</artifactId>
-			<version>2.3.1jboss.patch01-brew</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jboss.jbossts</groupId>
+        <artifactId>narayana-parent</artifactId>
+        <version>4.15.0.M1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jbossjts-integration</artifactId>
+    <name>JBossJTS ATX module</name>
+    <packaging>jar</packaging>
+    <build>
+        <sourceDirectory>../../atsintegration/classes</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.0-beta-4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>true</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <scmBranchPropertyName>buildScmBranch</scmBranchPropertyName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
+                            <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+                            <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>jts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>jtax</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>orbportability</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.integration</groupId>
+            <artifactId>jboss-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>jacorb</artifactId>
+            <version>2.3.1jboss.patch01-brew</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

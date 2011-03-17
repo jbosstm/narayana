@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
 	LLC, and others contributors as indicated by the @authors tag. All rights 
 	reserved. See the copyright.txt in the distribution for a full listing of 
@@ -12,53 +11,49 @@
 	should have received a copy of the GNU Lesser General Public License, v.2.1 
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jboss.jbossts</groupId>
-		<artifactId>narayana-parent</artifactId>
-		<version>4.15.0.M1-SNAPSHOT</version>
-	</parent>
-
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>jbossts-iaa-guide</artifactId>
-	<name>JBossJTS Installation and Administration Guide module</name>
-	<packaging>jar</packaging>
-
-	<build>
-		<outputDirectory>target/publican</outputDirectory>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<configuration>
-							<target unless="skipPublican">
-								<exec dir="." executable="publican">
-									<arg value="build" />
-									<arg value="--langs=en-US" />
-									<arg value="--formats=pdf" />
-									<arg value="--config=publican-maven.cfg" />
-								</exec>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*.pdf</include>
-					</includes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jboss.jbossts</groupId>
+        <artifactId>narayana-parent</artifactId>
+        <version>4.15.0.M1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jbossts-iaa-guide</artifactId>
+    <name>JBossJTS Installation and Administration Guide module</name>
+    <packaging>jar</packaging>
+    <build>
+        <outputDirectory>target/publican</outputDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target unless="skipPublican">
+                                <exec dir="." executable="publican">
+                                    <arg value="build"/>
+                                    <arg value="--langs=en-US"/>
+                                    <arg value="--formats=pdf"/>
+                                    <arg value="--config=publican-maven.cfg"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*.pdf</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

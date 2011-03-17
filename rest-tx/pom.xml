@@ -15,25 +15,21 @@
 		Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 		02110-1301, USA.
 		-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.jbossts.rts</groupId>
-	<artifactId>rest-tx</artifactId>
-	<version>1.0-M1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>RESTful Transactions</name>
-	<url>http://www.jboss.org/jbosstm</url>
-
-	<modules>
-		<module>tx</module>
-		<module>webservice</module>
-	</modules>
-
-	<properties>
-		<version.artifactId>1.0-M1-SNAPSHOT</version.artifactId>
-		<artifactId.name>rest-tx</artifactId.name>
-		<version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-	</properties>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.jbossts.rts</groupId>
+    <artifactId>rest-tx</artifactId>
+    <version>1.0-M1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>RESTful Transactions</name>
+    <url>http://www.jboss.org/jbosstm</url>
+    <modules>
+        <module>tx</module>
+        <module>webservice</module>
+    </modules>
+    <properties>
+        <version.artifactId>1.0-M1-SNAPSHOT</version.artifactId>
+        <artifactId.name>rest-tx</artifactId.name>
+        <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
+    </properties>
 </project>

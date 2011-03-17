@@ -1,7 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-	<!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
 		LLC, and individual contributors as indicated by the @author tags. See the 
 		copyright.txt in the distribution for a full listing of individual contributors. 
 		This copyrighted material is made available to anyone wishing to use, modify, 
@@ -13,117 +12,113 @@
 		of the GNU Lesser General Public License, v.2.1 along with this distribution; 
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
-
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.jbossts</groupId>
-	<artifactId>narayana-qa</artifactId>
-	<version>4.15.0.M1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>QA module</name>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<id>unpack-dist</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.jboss.jbossts</groupId>
-									<artifactId>jbossts-full</artifactId>
-									<version>${project.version}</version>
-									<classifier>bin</classifier>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>${project.build.directory}/</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-junit</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>junit</groupId>
-									<artifactId>junit</artifactId>
-									<version>4.8.1</version>
-									<type>jar</type>
-									<outputDirectory>${basedir}/../build/extlib</outputDirectory>
-									<destFileName>junit.jar</destFileName>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>compile-qa-tests</id>
-						<phase>compile</phase>
-						<configuration>
-							<target>
-								<ant>
-									<property name="org.jboss.jbossts.qa.ts.home"
-										value="${project.build.directory}/jbossts-full-${project.version}" />
-								</ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>run-qa-tests</id>
-						<phase>test</phase>
-						<configuration>
-							<target>
-								<ant antfile="run-tests.xml">
-									<property name="org.jboss.jbossts.qa.ts.home"
-										value="${project.build.directory}/jbossts-full-${project.version}" />
-								</ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>sun.jdk</groupId>
-						<artifactId>tools</artifactId>
-						<version>1.4.2</version>
-						<scope>system</scope>
-						<systemPath>${java.home}/../lib/tools.jar</systemPath>
-					</dependency>
-					<dependency>
-						<groupId>junit</groupId>
-						<artifactId>junit</artifactId>
-						<version>4.8.1</version>
-					</dependency>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-junit</artifactId>
-						<version>1.6.5</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.jbossts</groupId>
+    <artifactId>narayana-qa</artifactId>
+    <version>4.15.0.M1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>QA module</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>unpack-dist</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.jbossts</groupId>
+                                    <artifactId>jbossts-full</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>bin</classifier>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-junit</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>junit</groupId>
+                                    <artifactId>junit</artifactId>
+                                    <version>4.8.1</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${basedir}/../build/extlib</outputDirectory>
+                                    <destFileName>junit.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>compile-qa-tests</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <ant>
+                                    <property name="org.jboss.jbossts.qa.ts.home" value="${project.build.directory}/jbossts-full-${project.version}"/>
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-qa-tests</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <target>
+                                <ant antfile="run-tests.xml">
+                                    <property name="org.jboss.jbossts.qa.ts.home" value="${project.build.directory}/jbossts-full-${project.version}"/>
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>sun.jdk</groupId>
+                        <artifactId>tools</artifactId>
+                        <version>1.4.2</version>
+                        <scope>system</scope>
+                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                    </dependency>
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>4.8.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                        <version>1.6.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
