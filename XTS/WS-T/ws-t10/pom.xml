@@ -41,6 +41,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>ws-t10</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <webXml>../dev/dd/ws-t_web-app.xml</webXml>
+                            <classifier>war</classifier>
+                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>

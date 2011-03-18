@@ -42,6 +42,48 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>participant</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <webXml>../dev/dd/ws-t11-participant_web-app.xml</webXml>
+                            <classifier>participant</classifier>
+                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>coordinator</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <webXml>../dev/dd/ws-t11-coordinator_web-app.xml</webXml>
+                            <classifier>coordinator</classifier>
+                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <webXml>../dev/dd/ws-t11-client_web-app.xml</webXml>
+                            <classifier>client</classifier>
+                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>

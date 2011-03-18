@@ -435,6 +435,20 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-c10</artifactId>
+                <version>${project.version}</version>
+                <classifier>war</classifier>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-c11</artifactId>
+                <version>${project.version}</version>
+                <classifier>war</classifier>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>ws-t-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -467,9 +481,37 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-t10</artifactId>
+                <version>${project.version}</version>
+                <classifier>war</classifier>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-t11</artifactId>
+                <version>${project.version}</version>
+                <classifier>client</classifier>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-t11</artifactId>
+                <version>${project.version}</version>
+                <classifier>coordinator</classifier>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>ws-t11</artifactId>
+                <version>${project.version}</version>
+                <classifier>participant</classifier>
+                <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
@@ -480,6 +522,13 @@
                 <groupId>org.jboss.jbossts</groupId>
                 <artifactId>wscf</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>wscf10</artifactId>
+                <version>${project.version}</version>
+                <classifier>war</classifier>
+                <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
@@ -522,6 +571,13 @@
                 <artifactId>wstx10</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>wstx10</artifactId>
+                <version>${project.version}</version>
+                <classifier>war</classifier>
+                <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>

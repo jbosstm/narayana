@@ -128,8 +128,55 @@
             <artifactId>jboss-logging-generator</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-c10</artifactId>
+            <classifier>war</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-c11</artifactId>
+            <classifier>war</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-t10</artifactId>
+            <classifier>war</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-t11</artifactId>
+            <classifier>client</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-t11</artifactId>
+            <classifier>coordinator</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>ws-t11</artifactId>
+            <classifier>participant</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>wscf10</artifactId>
+            <classifier>war</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>wstx10</artifactId>
+            <classifier>war</classifier>
+            <type>war</type>
+        </dependency>
     </dependencies>
-
     <properties>
         <buildType>11</buildType>
     </properties>
