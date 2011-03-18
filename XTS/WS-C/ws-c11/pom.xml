@@ -36,7 +36,7 @@
                         <configuration>
                             <webXml>../dev/dd/ws-c11_web-app.xml</webXml>
                             <classifier>war</classifier>
-                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                            <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
                         </configuration>
                     </execution>
                 </executions>

@@ -55,7 +55,7 @@
                         <configuration>
                             <webXml>../dev/dd/ws-t11-participant_web-app.xml</webXml>
                             <classifier>participant</classifier>
-                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                            <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
                         </configuration>
                     </execution>
                     <execution>
@@ -67,7 +67,7 @@
                         <configuration>
                             <webXml>../dev/dd/ws-t11-coordinator_web-app.xml</webXml>
                             <classifier>coordinator</classifier>
-                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                            <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
                         </configuration>
                     </execution>
                     <execution>
@@ -79,7 +79,7 @@
                         <configuration>
                             <webXml>../dev/dd/ws-t11-client_web-app.xml</webXml>
                             <classifier>client</classifier>
-                            <packagingExcludes>WEB-INF/lib/</packagingExcludes>
+                            <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/</packagingExcludes>
                         </configuration>
                     </execution>
                 </executions>
