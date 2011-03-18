@@ -28,7 +28,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>*:javadoc</include>
+				<include>org.jboss.jbossts:jbossxts-api*javadoc*</include>
 			</includes>
 			<outputDirectory>docs/api</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -57,7 +57,25 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>*:api</include>
+				<include>org.jboss.jbossts:xts-test-servlet</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.jbossts:ws-t11*api</include>
+				<include>org.jboss.jbossts:wstx11*api</include>
+				<include>org.jboss.jbossts:ws-c*api</include>
+				<include>org.jboss.jbossts:bridge*api</include>
+				<include>org.jboss.jbossts:ws-t*api</include>
+				<include>org.jboss.jbossts:ws-c10*api</include>
+				<include>org.jboss.jbossts:wstx10*api</include>
+				<include>org.jboss.jbossts:wstx*api</include>
+				<include>org.jboss.jbossts:ws-t10*api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -66,13 +84,23 @@
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
-			<excludes>
-				<exclude>*:api</exclude>
-				<exclude>*:xts-guide:*</exclude>
-				<exclude>*:xts-demo:*</exclude>
-                <exclude>*:war:*</exclude>
-                <exclude>*localjunit*</exclude>
-			</excludes>
+            <includes>
+                <include>org.jboss.jbossts:wsas:jar</include>
+                <include>org.jboss.jbossts:ws-c:jar</include>
+                <include>org.jboss.jbossts:ws-c10:jar</include>
+                <include>org.jboss.jbossts:ws-c11:jar</include>
+                <include>org.jboss.jbossts:ws-t:jar</include>
+                <include>org.jboss.jbossts:ws-t10:jar</include>
+                <include>org.jboss.jbossts:ws-t11:jar</include>
+                <include>org.jboss.jbossts:wscf:jar</include>
+                <include>org.jboss.jbossts:wscf10:jar</include>
+                <include>org.jboss.jbossts:wscf11:jar</include>
+                <include>org.jboss.jbossts:wstx:jar</include>
+                <include>org.jboss.jbossts:wstx10:jar</include>
+                <include>org.jboss.jbossts:wstx11:jar</include>
+                <include>org.jboss.jbossts:recovery:jar</include>
+                <include>org.jboss.jbossts:jbossxts-api:jar</include>
+            </includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
 			<unpack>false</unpack>
@@ -81,7 +109,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>*jbossxts-sar*:sar</include>
+				<include>org.jboss.jbossts:jbossxts-sar:sar:sar</include>
 			</includes>
 			<outputDirectory>sar</outputDirectory>
 			<outputFileNameMapping>jbossxts.${artifact.extension}
@@ -92,11 +120,12 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>*:war</include>
+				<include>org.jboss.jbossts:ws-c10:war:war</include>
+				<include>org.jboss.jbossts:ws-c11:war:war</include>
+				<include>org.jboss.jbossts:ws-t10:war:war</include>
+				<include>org.jboss.jbossts:wscf10:war:war</include>
+				<include>org.jboss.jbossts:wstx10:war:war</include>
 			</includes>
-			<excludes>
-				<exclude>*ws-t11*war*</exclude>
-			</excludes>
 			<outputDirectory>webapps</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
@@ -106,7 +135,9 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>*ws-t11*war*</include>
+				<include>org.jboss.jbossts:ws-t11:war:client</include>
+				<include>org.jboss.jbossts:ws-t11:war:coordinator</include>
+				<include>org.jboss.jbossts:ws-t11:war:participant</include>
 			</includes>
 			<outputDirectory>webapps</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}

@@ -20,7 +20,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xts-all</artifactId>
     <packaging>pom</packaging>
-    <name>JBossJTS everything</name>
     <modules>
         <module>WSAS</module>
         <module>WS-C</module>

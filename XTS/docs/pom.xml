@@ -21,7 +21,6 @@
     <groupId>org.jboss.jbossts</groupId>
     <artifactId>xts-docs</artifactId>
     <packaging>pom</packaging>
-    <name>XTS Documentation</name>
     <modules>
         <module>Transactions_XTS_Administration_And_Development_Guide</module>
     </modules>
