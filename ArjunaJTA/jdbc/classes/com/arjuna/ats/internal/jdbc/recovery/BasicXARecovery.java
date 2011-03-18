@@ -137,7 +137,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		try
 		{
-            props = PropertiesFactory.getPropertiesFromFile(fileName);
+            props = PropertiesFactory.getPropertiesFromFile(fileName, BasicXARecovery.class.getClassLoader());
 		}
 		catch (Exception e)
 		{

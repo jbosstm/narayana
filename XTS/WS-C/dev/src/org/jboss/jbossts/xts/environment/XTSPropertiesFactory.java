@@ -58,18 +58,10 @@ public class XTSPropertiesFactory
         }
 
         // use the TS properties factory but supply the XTS property file name
-        // we also need to set the context class loader in case we try to load
-        // the fiel as a resource. this makes sure the resource load is performed
+        // we also need to pass the class loader in case we try to load
+        // the file as a resource. this makes sure the resource load is performed
         // relative to the XTS deployment
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-        try {
-            ClassLoader xtsLoader = XTSPropertiesFactory.class.getClassLoader();
-            Thread.currentThread().setContextClassLoader(xtsLoader);
-            defaultProperties = PropertiesFactory.getPropertiesFromFile(propertyFileName);
-        } finally {
-            Thread.currentThread().setContextClassLoader(loader);
-        }
+        defaultProperties = PropertiesFactory.getPropertiesFromFile(propertyFileName, XTSPropertiesFactory.class.getClassLoader());
     }
 }

@@ -93,7 +93,7 @@ public class JDBCXARecovery implements XAResourceRecovery
 
         try
         {
-            _props = PropertiesFactory.getPropertiesFromFile(parameter);
+            _props = PropertiesFactory.getPropertiesFromFile(parameter, JDBCXARecovery.class.getClassLoader());
 
             _dbName   = _props.getProperty(DATABASE_JNDI_NAME);
             _user     = _props.getProperty(USER_NAME);

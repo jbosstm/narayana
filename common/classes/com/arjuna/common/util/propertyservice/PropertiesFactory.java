@@ -65,14 +65,14 @@ public class PropertiesFactory
      * @param propertyFileName the file name. If relative, this is located using the FileLocator algorithm.
      * @return the Properties loaded from the specified source.
      */
-    public static Properties getPropertiesFromFile(String propertyFileName)
+    public static Properties getPropertiesFromFile(String propertyFileName, ClassLoader classLoader)
     {
         String filepath = null;
         try
         {
             // Convert the possibly relative path into a canonical path, using FileLocator.
             // This is the point where the search path is applied - user.dir (pwd), user.home, java.home, classpath
-            filepath = com.arjuna.common.util.propertyservice.FileLocator.locateFile(propertyFileName);
+            filepath = com.arjuna.common.util.propertyservice.FileLocator.locateFile(propertyFileName, classLoader);
             File propertyFile = new File(filepath);
             if(!propertyFile.exists() || !propertyFile.isFile()) {
                 throw new RuntimeException("invalid property file "+filepath);
@@ -183,6 +183,6 @@ public class PropertiesFactory
             throw new RuntimeException("Unable to resolve property file name");
         }
 
-        defaultProperties = getPropertiesFromFile(propertyFileName);
+        defaultProperties = getPropertiesFromFile(propertyFileName, PropertiesFactory.class.getClassLoader());
     }
 }
