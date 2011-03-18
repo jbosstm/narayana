@@ -21,7 +21,7 @@
     <artifactId>wsas</artifactId>
     <packaging>jar</packaging>
     <build>
-        <sourceDirectory>classes</sourceDirectory>
+        <sourceDirectory>../classes</sourceDirectory>
     </build>
     <dependencies>
         <dependency>

@@ -37,6 +37,26 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
+				<include>org.jboss.jbossts:localjunit</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>interop-tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.jbossts:localjunit</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
 				<include>*:api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
@@ -51,6 +71,7 @@
 				<exclude>*:xts-guide:*</exclude>
 				<exclude>*:xts-demo:*</exclude>
                 <exclude>*:war:*</exclude>
+                <exclude>*localjunit*</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -100,6 +121,16 @@
 			<source>../third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>
+		</file>
+		<file>
+			<source>../localjunit/run-tests.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>tests</outputDirectory>
+		</file>
+		<file>
+			<source>../localjunit/run-interop-tests.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>interop-tests</outputDirectory>
 		</file>
 	</files>
 	<fileSets>

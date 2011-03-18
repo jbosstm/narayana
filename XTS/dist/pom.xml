@@ -216,6 +216,10 @@
             <classifier>sar</classifier>
             <type>sar</type>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>localjunit</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <PRODUCT_NAME>xts</PRODUCT_NAME>
