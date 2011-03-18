@@ -48,9 +48,20 @@
 		<dependencySet>
 			<excludes>
 				<exclude>org.jboss.jbossts:jbossxts-sar</exclude>
+				<exclude>org.jboss.jbossts:ws-t11:war</exclude>
 			</excludes>
 			<outputDirectory>/</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.jbossts:ws-t11:war</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
