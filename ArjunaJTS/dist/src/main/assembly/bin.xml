@@ -36,11 +36,8 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>*:javadoc</include>
+				<include>org.jboss.jbossts:jbossts-jopr-plugin:*:javadoc</include>
 			</includes>
-			<excludes>
-				<exclude>org.jboss.jbossts:jbossjts:*</exclude>
-			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}-javadoc.${artifact.extension}
 			</outputFileNameMapping>
 			<outputDirectory>bin</outputDirectory>
@@ -50,11 +47,8 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>*:sources</include>
+				<include>org.jboss.jbossts:jbossts-jopr-plugin:*:sources</include>
 			</includes>
-			<excludes>
-				<exclude>org.jboss.jbossts:jbossjts:*</exclude>
-			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
 			</outputFileNameMapping>
 			<outputDirectory>bin</outputDirectory>
@@ -64,11 +58,8 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>*:javadoc</include>
+				<include>org.jboss.jbossts:jbossjts:*:javadoc</include>
 			</includes>
-			<excludes>
-				<exclude>org.jboss.jbossts:jbossts-jopr-plugin:*</exclude>
-			</excludes>
 			<outputDirectory>htdocs</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
@@ -76,11 +67,8 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>*:sources</include>
+				<include>org.jboss.jbossts:jbossjts:*:sources</include>
 			</includes>
-			<excludes>
-				<exclude>org.jboss.jbossts:jbossts-jopr-plugin:*</exclude>
-			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
 			</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
