@@ -398,6 +398,16 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
+                <artifactId>localjunit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>xts-test-servlet</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>wsas</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -626,6 +636,13 @@
                 <groupId>org.jboss.jbossts</groupId>
                 <artifactId>trailmap</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+           <dependency>
+                <groupId>org.jboss.jbossts</groupId>
+                <artifactId>jbossxts-sar</artifactId>
+                <version>${project.version}</version>
+                <classifier>sar</classifier>
+                <type>sar</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.logging</groupId>
