@@ -19,12 +19,12 @@
 			<outputDirectory>demo</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 			<unpackOptions>
 				<excludes>
 					<exclude>META-INF/</exclude>
 				</excludes>
 			</unpackOptions>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -42,20 +42,57 @@
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<excludes>
 				<exclude>*:api</exclude>
 				<exclude>*:xts-guide:*</exclude>
 				<exclude>*:xts-demo:*</exclude>
+                <exclude>*:war:*</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
 			<unpack>false</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>*jbossxts-sar*:sar</include>
+			</includes>
+			<outputDirectory>sar</outputDirectory>
+			<outputFileNameMapping>jbossxts.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>*:war</include>
+			</includes>
+			<excludes>
+				<exclude>*ws-t11*war*</exclude>
+			</excludes>
+			<outputDirectory>webapps</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>*ws-t11*war*</include>
+			</includes>
+			<outputDirectory>webapps</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 	</dependencySets>
 	<files>
