@@ -67,17 +67,11 @@ public class PropertiesFactory
      */
     public static Properties getPropertiesFromFile(String propertyFileName, ClassLoader classLoader)
     {
-        String filepath = null;
+        String propertiesSourceUri = null;
         try
         {
-            // Convert the possibly relative path into a canonical path, using FileLocator.
             // This is the point where the search path is applied - user.dir (pwd), user.home, java.home, classpath
-            filepath = com.arjuna.common.util.propertyservice.FileLocator.locateFile(propertyFileName, classLoader);
-            File propertyFile = new File(filepath);
-            if(!propertyFile.exists() || !propertyFile.isFile()) {
-                throw new RuntimeException("invalid property file "+filepath);
-            }
-            filepath = propertyFile.getCanonicalPath();
+            propertiesSourceUri = com.arjuna.common.util.propertyservice.FileLocator.locateFile(propertyFileName, classLoader);
         }
         catch(FileNotFoundException fileNotFoundException)
         {
@@ -88,22 +82,22 @@ public class PropertiesFactory
             if(url == null) {
                 throw new RuntimeException("missing property file "+propertyFileName);
             } else {
-                filepath = url.toString();
+                propertiesSourceUri = url.toString();
             }
         }
         catch (IOException e)
         {
-            throw new RuntimeException("invalid property file "+filepath, e);
+            throw new RuntimeException("invalid property file "+propertiesSourceUri, e);
         }
 
         Properties properties = null;
 
         try {
-            properties = loadFromFile(filepath);
+            properties = loadFromFile(propertiesSourceUri);
             properties = applySystemProperties(properties);
 
         } catch(Exception e) {
-            throw new RuntimeException("unable to load properties from file "+filepath, e);
+            throw new RuntimeException("unable to load properties from "+propertiesSourceUri, e);
         }
 
         return properties;
@@ -133,6 +127,7 @@ public class PropertiesFactory
         if( new File(uri).exists() ) {
             inputStream = new FileInputStream(uri);
         } else {
+            // it's probably a file embedded in a .jar
             inputStream = new URL(uri).openStream();
         }
 

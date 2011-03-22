@@ -54,14 +54,12 @@ class FileLocator
 {
     /**
      * Locate the specific file.
-     * Return the (URL decoded) absolute pathname to the file or null.
+     * Return the file path or uri (if a resource within an archive on the classpath) or throw FileNotFoundExcpetion.
      */
     static String locateFile (String findFile, ClassLoader classLoader) throws FileNotFoundException
     {
         URL url;
         String fullPathName;
-        StringBuffer decodedPathName;
-        int pos, len, start;
 
         if (findFile == null)
             throw new FileNotFoundException("locateFile: null file name");
@@ -78,36 +76,7 @@ class FileLocator
             return fullPathName;
 
         if ((url = locateByResource(findFile, classLoader)) != null)
-        {
-            /*
-        * The URL that we receive from getResource /might/ have ' '
-        * (space) characters converted to "%20" strings.  However,
-        * it doesn't have other URL encoding (e.g '+' characters are
-        * kept intact), so we'll just convert all "%20" strings to
-        * ' ' characters and hope for the best.
-        */
-            fullPathName = url.getFile();
-            pos = 0;
-            len = fullPathName.length();
-            start = 0;
-            decodedPathName = new StringBuffer();
-
-            while ((pos = fullPathName.indexOf(pct20, start)) != -1) {
-                decodedPathName.append(fullPathName.substring(start, pos));
-                decodedPathName.append(' ');
-                start = pos + pct20len;
-            }
-
-            if (start < len)
-                decodedPathName.append(fullPathName.substring(start, len));
-
-            fullPathName=decodedPathName.toString();
-
-            if (platformIsWindows())
-                fullPathName = fullPathName.substring(1, fullPathName.length());
-
-            return fullPathName;
-        }
+            return url.toString(); // no special decode handling any more.
 
         throw new FileNotFoundException("locateFile: file not found: " + findFile);
     }
