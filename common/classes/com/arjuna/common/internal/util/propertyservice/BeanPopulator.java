@@ -56,7 +56,7 @@ public class BeanPopulator
         if(name == null) {
             name = DEFAULT_NAME;
         }
-        String key = beanClass.getCanonicalName()+":"+name;
+        String key = beanClass.getName()+":"+name;
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
@@ -314,12 +314,12 @@ public class BeanPopulator
         if(valueFromProperties == null) {
 
             if(DEFAULT_NAME.equals(instanceName)) {
-                propertyFileKey = bean.getClass().getCanonicalName()+"."+field.getName();
+                propertyFileKey = bean.getClass().getName()+"."+field.getName();
                 valueFromProperties = properties.getProperty(propertyFileKey);
             }
 
             if(valueFromProperties == null) {
-                propertyFileKey = bean.getClass().getCanonicalName()+"."+instanceName+"."+field.getName();
+                propertyFileKey = bean.getClass().getName()+"."+instanceName+"."+field.getName();
                 valueFromProperties = properties.getProperty(propertyFileKey);
             }
         }
@@ -355,7 +355,7 @@ public class BeanPopulator
     {
         String lineSeparator = System.getProperty("line.separator");
         buffer.append("Bean class: ");
-        buffer.append(bean.getClass().getCanonicalName());
+        buffer.append(bean.getClass().getName());
         buffer.append(lineSeparator);
 
         for(Field field : bean.getClass().getDeclaredFields()) {
