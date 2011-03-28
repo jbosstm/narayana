@@ -105,16 +105,37 @@ public class ReaperElement implements Comparable<ReaperElement>
         }
 	}
 
-	public Reapable _control;
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReaperElement that = (ReaperElement) o;
+
+        // could be made more efficient, but this is easier to maintain consistently with compareTo.
+        // note that the comparison includes _absoluteTimeoutMills which is mutable, so weird things
+        // may happen if trying to locate the obj in a collection whilst concurrently mutating it.
+        // fortunately such comparisons are generally done with the obj identity shortcut anyhow.
+        return (compareTo(that) == 0);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return _control.get_uid().hashCode();
+    }
+
+    public final Reapable _control;
 
 	private long _absoluteTimeoutMills;
-    private int _bias;
+    private final int _bias;
 
     // bias is used to distinguish/sort instances with the same _absoluteTimeoutMills
     // as using Uid for this purpose is expensive. JBTM-611
 
-    private static int MAX_BIAS = 1000000;
-    private static AtomicInteger biasCounter = new AtomicInteger();
+    private static final int MAX_BIAS = 1000000;
+    private static final AtomicInteger biasCounter = new AtomicInteger();
 
     private static int getBiasCounter()
     {
