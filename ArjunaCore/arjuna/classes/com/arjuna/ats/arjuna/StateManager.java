@@ -1364,7 +1364,7 @@ public class StateManager
 
     protected Hashtable usingActions;
 
-    protected Uid objectUid;
+    protected final Uid objectUid;
 
     protected int objectModel = ObjectModel.SINGLE;
 

@@ -1284,6 +1284,7 @@ public class BasicAction extends StateManager
 		return null;
 	}
 
+    @Override
 	public boolean equals (java.lang.Object obj)
 	{
 		if (obj instanceof BasicAction)
@@ -1295,7 +1296,13 @@ public class BasicAction extends StateManager
 		return false;
 	}
 
-	/**
+    @Override
+    public int hashCode()
+    {
+        return get_uid().hashCode();
+    }
+
+    /**
 	 * Forget any heuristics we may have received, and tell the resources which
 	 * generated them to forget too.
 	 * 
