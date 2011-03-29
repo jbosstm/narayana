@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.hornetq.core.journal.*;
+import org.hornetq.core.journal.impl.AIOSequentialFile;
 import org.hornetq.core.journal.impl.JournalImpl;
 import org.hornetq.core.journal.impl.AIOSequentialFileFactory;
 import org.hornetq.core.journal.impl.NIOSequentialFileFactory;
@@ -112,9 +113,18 @@ public class HornetqJournalStore
 
         SequentialFileFactory sequentialFileFactory;
         if(AIOSequentialFileFactory.isSupported()) {
-            sequentialFileFactory = new AIOSequentialFileFactory(envBean.getStoreDir());
+            sequentialFileFactory = new AIOSequentialFileFactory(
+                    envBean.getStoreDir(),
+                    envBean.getBufferSize(),
+                    (int)(1000000000d / envBean.getBufferFlushesPerSecond()), // bufferTimeout nanos .000000001 second
+                    envBean.isLogRates());
         } else {
-            sequentialFileFactory = new NIOSequentialFileFactory(envBean.getStoreDir(), true);
+            sequentialFileFactory = new NIOSequentialFileFactory(
+                    envBean.getStoreDir(),
+                    true,
+                    envBean.getBufferSize(),
+                    (int)(1000000000d / envBean.getBufferFlushesPerSecond()), // bufferTimeout nanos .000000001 second
+                    envBean.isLogRates());
         }
 
         journal = new JournalImpl(envBean.getFileSize(), envBean.getMinFiles(), envBean.getCompactMinFiles(),

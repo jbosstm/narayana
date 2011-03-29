@@ -29,7 +29,7 @@ import java.io.File;
  *
  * Parameters on this file serve a similar role to their counterparts in HornetQ.
  * The HornetQ docs therefore provide relevant information on usage:
- * http://hornetq.sourceforge.net/docs/hornetq-2.1.1.Final/user-manual/en/html/persistence.html#configuring.message.journal.journal-type
+ * http://hornetq.sourceforge.net/docs/hornetq-2.1.2.Final/user-manual/en/html/persistence.html#configuring.message.journal.journal-type
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2010-03
  */
@@ -55,6 +55,12 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
     private volatile boolean syncWrites = true;
 
     private volatile boolean syncDeletes = true;
+
+    private volatile int bufferFlushesPerSecond = 500;
+
+    private volatile int bufferSize = 490 * 1024;
+
+    private volatile boolean logRates = false;
 
 
     /**
@@ -283,5 +289,73 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
     public void setSyncDeletes(boolean syncDeletes)
     {
         this.syncDeletes = syncDeletes;
+    }
+
+    /**
+     * Returns the target number of timer based buffer flushes per second.
+     * Caution: this property is functionally equivalent to HornetQ's
+     * journal-buffer-timeout but uses different units.
+     *
+     * Default 500.
+     *
+     * @return the number of buffer flushes per second.
+     */
+    public int getBufferFlushesPerSecond()
+    {
+        return bufferFlushesPerSecond;
+    }
+
+    /**
+     * Sets the target number of timer based buffer flushes per second.
+     *
+     * @param bufferFlushesPerSecond the target number.
+     */
+    public void setBufferFlushesPerSecond(int bufferFlushesPerSecond)
+    {
+        this.bufferFlushesPerSecond = bufferFlushesPerSecond;
+    }
+
+    /**
+     * Returns the buffer size in bytes.
+     *
+     * Default: 490 KB.
+     *
+     * @return the size of the buffer.
+     */
+    public int getBufferSize()
+    {
+        return bufferSize;
+    }
+
+    /**
+     * Sets the buffer size in bytes.
+     *
+     * @param bufferSize the size of the buffer.
+     */
+    public void setBufferSize(int bufferSize)
+    {
+        this.bufferSize = bufferSize;
+    }
+
+    /**
+     * Returns the debug log mode for Journal throughput statistics.
+     *
+     * Default: false.
+     *
+     * @return true is rate logging is enabled, false otherwise.
+     */
+    public boolean isLogRates()
+    {
+        return logRates;
+    }
+
+    /**
+     * Sets the debug log mode for Journal throughput statistics.
+     *
+     * @param logRates true to enable logging of statistics, false to disable.
+     */
+    public void setLogRates(boolean logRates)
+    {
+        this.logRates = logRates;
     }
 }

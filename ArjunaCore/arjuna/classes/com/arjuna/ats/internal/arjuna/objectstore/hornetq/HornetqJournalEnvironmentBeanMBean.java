@@ -46,4 +46,10 @@ public interface HornetqJournalEnvironmentBeanMBean
     public boolean isSyncWrites();
 
     public boolean isSyncDeletes();
+
+    public int getBufferFlushesPerSecond();
+
+    public int getBufferSize();
+
+    public boolean isLogRates();
 }
