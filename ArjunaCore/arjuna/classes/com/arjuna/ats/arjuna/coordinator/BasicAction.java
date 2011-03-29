@@ -138,7 +138,7 @@ public class BasicAction extends StateManager
      * applying abort to it we should end up at ourselves!
      */
 
-    public void finalize ()
+    public void finalizeInternal()
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("BasicAction::finalize()");
@@ -1376,6 +1376,10 @@ public class BasicAction extends StateManager
                 }
 
                 ActionManager.manager().put(this);
+
+                if(finalizeBasicActions) {
+                    finalizerObject = new BasicActionFinalizer(this);
+                }
 
                 if (TxStats.enabled())
                 {
@@ -3549,8 +3553,28 @@ public class BasicAction extends StateManager
     private Hashtable _childThreads;
     private Hashtable _childActions;
 
+    private BasicActionFinalizer finalizerObject;
+    private static final boolean finalizeBasicActions = arjPropertyManager.getCoordinatorEnvironmentBean().isFinalizeBasicActions();
+
     //    private Mutex _lock = new Mutex(); // TODO
 
     private static CheckedActionFactory _checkedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
+
+}
+
+class BasicActionFinalizer
+{
+    private final BasicAction basicAction;
+
+    BasicActionFinalizer(BasicAction basicAction)
+    {
+        this.basicAction = basicAction;
+    }
+
+    @Override
+    protected void finalize() throws Throwable
+    {
+        basicAction.finalizeInternal();
+    }
 }
 

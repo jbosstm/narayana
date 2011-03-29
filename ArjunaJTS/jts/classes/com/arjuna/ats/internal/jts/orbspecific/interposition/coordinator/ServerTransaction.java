@@ -96,6 +96,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 		_prepState = ActionStatus.COMMITTING;
 	}
 
+    @Override
 	public void finalize ()
 	{
 		if (jtsLogger.logger.isTraceEnabled()) {
@@ -117,7 +118,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 		_recoveryCoordinator = null;
 
-		super.finalize();
+		super.finalizeInternal();
 	}
 
 	public String type ()

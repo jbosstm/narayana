@@ -250,7 +250,7 @@ public class ArjunaTransactionImple extends
 	 * Memory management is much better in Java, so we don't have the problem of
 	 * the Control referencing the transaction and vice versa.
 	 */
-
+    @Override
 	public void finalize ()
 	{
 		if (jtsLogger.logger.isTraceEnabled()) {
@@ -270,7 +270,7 @@ public class ArjunaTransactionImple extends
 
 		controlHandle = null;
 
-		super.finalize();
+		super.finalizeInternal();
 	}
 
 	public final synchronized ControlImple getControlHandle ()

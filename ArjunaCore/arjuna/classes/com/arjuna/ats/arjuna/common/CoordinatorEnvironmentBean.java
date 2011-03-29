@@ -75,6 +75,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     private volatile String communicationStore = HashedActionStore.class.getName();
 
+    private volatile boolean finalizeBasicActions = false;
+
     /**
      * Returns the symbolic name for the action store type.
      *
@@ -669,5 +671,30 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setCommunicationStore(String communicationStore)
     {
         this.communicationStore = communicationStore;
+    }
+
+    /**
+     * Sets whether or not to use finalizers for BasicActions (i.e. transactions).
+     * This can provide a useful safety net to ensure cleanup of locks and other
+     * resources, but does not perform well.  In most cases it's preferable to
+     * set a transaction timeout and rely on the reaper for cleanup.
+     *
+     * Default: false
+     *
+     * @return true if a finalize method should be registered for BasicActions instances, false otherwise.
+     */
+    public boolean isFinalizeBasicActions()
+    {
+        return finalizeBasicActions;
+    }
+
+    /**
+     * Sets whether or not to use finalizers for BasicActions (i.e. transactions).
+     *
+     * @param finalizeBasicActions true to enable finalization, false to disable.
+     */
+    public void setFinalizeBasicActions(boolean finalizeBasicActions)
+    {
+        this.finalizeBasicActions = finalizeBasicActions;
     }
 }
