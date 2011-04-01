@@ -40,7 +40,7 @@
                 description="the total number of transactions (top-level and nested) created since last restart"
                 displayType="summary"
                 defaultOn="true"
-                defaultInterval="10000"
+                defaultInterval="30000"
                 measurementType="trendsup" dataType="measurement"/>
         <metric property="NumberOfNestedTransactions"
                 displayName="NumberOfNestedTransactions"
@@ -319,7 +319,7 @@
                     <parameters>
                         <c:simple-property required="true" name="status" displayName="New status">
                             <c:property-options>
-                                <c:option value="PREPARED" default="true"/>
+                                <c:option value="PREPARED"/>
                                 <c:option value="HEURISTIC"/>
                             </c:property-options>
                         </c:simple-property>
