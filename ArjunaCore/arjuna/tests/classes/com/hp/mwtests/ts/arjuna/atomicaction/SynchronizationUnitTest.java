@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class SynchronizationUnitTest
 {
     @Test
-    public void tes () throws Exception
+    public void test () throws Exception
     {
         AtomicAction A = new AtomicAction();
         SyncRecord sr = new SyncRecord();
