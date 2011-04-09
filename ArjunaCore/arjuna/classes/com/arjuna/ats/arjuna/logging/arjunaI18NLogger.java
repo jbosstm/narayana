@@ -144,7 +144,7 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_RecoveryRecord_2();
 
-	@Message(id = 12027, value = "StateManager::terminate() should be invoked in every destructor", format = MESSAGE_FORMAT)
+	@Message(id = 12027, value = "LockManager::terminate() should be invoked in every destructor", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_StateManager_1();
 

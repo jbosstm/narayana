@@ -2794,6 +2794,9 @@ public class BasicAction extends StateManager
                                     * list to indicate this. Covers statuses like FAILED_ERROR.
                                     */
 
+
+                            updateHeuristic(ok, true);
+                            
                             failedList.insert(recordBeingHandled);
                         }
                     }

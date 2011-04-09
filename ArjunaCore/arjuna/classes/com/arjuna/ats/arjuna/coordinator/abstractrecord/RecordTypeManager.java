@@ -60,7 +60,7 @@ public class RecordTypeManager
                 return _map.get(i).getRecordClass();
         }
         
-        return null;
+        return AbstractRecord.class;
     }
     
     public synchronized int getType (Class<? extends AbstractRecord> c)

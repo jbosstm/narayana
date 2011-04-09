@@ -101,7 +101,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		else
 			outcome = super.Abort();
 
-		afterCompletion(outcome);
+		afterCompletion(outcome, report_heuristics);
 
 		return outcome;
 	}
@@ -323,14 +323,28 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	}
 
 	/**
+         * Drive afterCompletion participants.
+         * 
+         * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
+         * 
+         * @return true if successful, false otherwise.
+         */
+	
+	protected boolean afterCompletion (int myStatus)
+	{
+	    return afterCompletion(myStatus, false);
+	}
+	
+	/**
 	 * Drive afterCompletion participants.
 	 * 
 	 * @param myStatus the outcome of the transaction (ActionStatus.COMMITTED or ActionStatus.ABORTED).
+	 * @param report_heuristics does the caller want to be informed about heurisitics at the point of invocation?
 	 * 
 	 * @return true if successful, false otherwise.
 	 */
 	
-	protected boolean afterCompletion (int myStatus)
+	protected boolean afterCompletion (int myStatus, boolean report_heuristics)
 	{
 		if (myStatus == ActionStatus.RUNNING) {
             tsLogger.i18NLogger.warn_coordinator_TwoPhaseCoordinator_3();
@@ -366,6 +380,24 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					{
 						SynchronizationRecord record = (SynchronizationRecord)stack.pop();
 
+						/*
+						 * If the caller doesn't want to be informed of heuristics during completion
+						 * then it's possible the application (or admin) may still want to be informed.
+						 * So special participants can be registered with the transaction which are
+						 * triggered during the Synchronization phase and given the true outcome of
+						 * the transaction. We do not dictate a specific implementation for what these
+						 * participants do with the information (e.g., OTS allows for the CORBA Notification Service
+						 * to be used).
+						 */
+						
+						if (!report_heuristics)
+						{
+						    if (record instanceof HeuristicNotification)
+						    {
+						        ((HeuristicNotification) record).heuristicOutcome(getHeuristicDecision());
+						    }
+						}
+						
 						try
 						{
 							if (!record.afterCompletion(myStatus)) {
