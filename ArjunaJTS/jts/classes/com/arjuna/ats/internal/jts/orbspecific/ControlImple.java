@@ -257,17 +257,6 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 			removeControl();
 
 			/*
-			 * If this is a proxy then there won't be a local transaction
-			 * implementation.
-			 */
-
-			if (_transactionHandle != null)
-			{
-				_transactionHandle.setControlHandle(null); // for gc
-				_transactionHandle = null;
-			}
-
-			/*
 			 * We do a lazy connect to the ORB, so we may never have to do a
 			 * disconnect either.
 			 */
@@ -276,6 +265,17 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 			{
 				ORBManager.getPOA().shutdownObject(this);
 				_myControl = null;
+			}
+
+			/*
+			 * If this is a proxy then there won't be a local transaction
+			 * implementation.
+			 */
+
+			if (_transactionHandle != null)
+			{
+				_transactionHandle.setControlHandle(null); // for gc
+				_transactionHandle = null;
 			}
 
 			tidyup();
