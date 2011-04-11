@@ -2795,7 +2795,12 @@ public class BasicAction extends StateManager
                                     */
 
 
-                            updateHeuristic(ok, true);
+                            if ((ok == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
+                                    || (ok == TwoPhaseOutcome.HEURISTIC_COMMIT)
+                                    || (ok == TwoPhaseOutcome.HEURISTIC_MIXED) || (ok == TwoPhaseOutcome.HEURISTIC_HAZARD))
+                            {
+                                updateHeuristic(ok, true);                               
+                            }
                             
                             failedList.insert(recordBeingHandled);
                         }
