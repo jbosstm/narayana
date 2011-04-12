@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaTA_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>Starting and Stopping the Transaction Manager</title>
+  <para>
+    By default the transaction manager starts up in an active state such that new transactions can be created
+    immediately. If you wish to have more control over this it is possible to set the
+    <option>CoordinatorEnvironmentBean.startDisabled</option> configuration option to <literal>YES</literal> and in
+    which case no transactions can be created until the transaction manager is enabled via a call to method
+    <methodname>TxControl.enable</methodname>).
+  </para>
+  <para>
+    It is possible to stop the creation of new transactions at any time by calling method
+    <methodname>TxControl.disable</methodname>. Transactions that are currently executing will not be affected. By
+    default recovery will be allowed to continue and the transaction system will still be available to manage recovery
+    requests from other instances in a distributed environment. (See the Failure Recovery Guide for further
+    details). However, if you wish to disable recovery as well as remove any resources it maintains, then you can pass
+    <literal>true</literal> to method <methodname>TxControl.disable</methodname>; the default is to use
+    <literal>false</literal>.
+  </para>
+  <para>
+    If you wish to shut the system down completely then it may also be necessary to terminate the background transaction
+    reaper (see the Programmers Guide for information about what the reaper does.) In order to do this you may want to
+    first prevent the creation of new transactions (if you are not creating transactions with timeouts then this step is
+    not necessary) using method <methodname>TxControl.disable</methodname>. Then you should call method
+    <methodname>TransactionReaper.terminate</methodname>. This method takes a Boolean parameter: if
+    <literal>true</literal> then the method will wait for the normal timeout periods associated with any transactions to
+    expire before terminating the transactions; if <methodname>false</methodname> then transactions will be forced to
+    terminate (rollback or have their outcome set such that they can only ever rollback) immediately.
+  </para>
+  <note>
+    <para>
+      if you intent to restart the recovery manager later after having terminated it then you MUST use the
+      <methodname>TransactionReapear.terminate</methodname> method with asynchronous behavior set to
+      <literal>false</literal>.
+    </para>
+  </note>
+</chapter>
+

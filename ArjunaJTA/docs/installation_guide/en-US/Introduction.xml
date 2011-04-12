@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaTA_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>Introduction</title>
+  <para>
+    Apart from ensuring that the run-time system is executing normally, there is little continuous administration needed
+    for the ArjunaTA software. Refer to <xref linkend="important_points_for_administrators" /> for some specific
+    concerns.
+  </para>
+  <itemizedlist id="important_points_for_administrators">
+    <title>Important Points for Administrators</title>
+    <listitem>
+      <para>
+        The present implementation of the ArjunaTA system provides no security or protection for data. The objects
+        stored in the ArjunaTA object store are (typically) owned by the user who ran the application that created
+        them. The Object Store and Object Manager facilities make no attempt to enforce even the limited form of
+        protection that Unix/Windows provides. There is no checking of user or group IDs on access to objects for either
+        reading or writing.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Persistent objects created in the Object Store never go away unless the StateManager.destroy method is invoked
+        on the object or some application program explicitly deletes them. This means that the Object Store gradually
+        accumulates garbage (especially during application development and testing phases). At present we have no
+        automated garbage collection facility. Further, we have not addressed the problem of dangling references. That
+        is, a persistent object, A, may have stored a Uid for another persistent object, B, in its passive
+        representation on disk. There is nothing to prevent an application from deleting B even though A still contains
+        a reference to it. When A is next activated and attempts to access B, a run-time error will occur.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        There is presently no support for version control of objects or database reconfiguration in the event of class
+        structure changes. This is a complex research area that we have not addressed. At present, if you change the
+        definition of a class of persistent objects, you are entirely responsible for ensuring that existing instances
+        of the object in the Object Store are converted to the new representation. The ArjunaTA software can neither
+        detect nor correct references to old object state by new operation versions or vice versa.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Object store management is critically important to the transaction service.
+      </para>
+    </listitem>
+  </itemizedlist>
+</chapter>
+

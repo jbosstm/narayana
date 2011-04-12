@@ -5,48 +5,45 @@
 <chapter>
     <title>Transactions Overview</title>
     <indexterm>
-        <primary>transactions</primary>
+        <primary>ACID properties</primary>
     </indexterm>
     <indexterm>
-        <primary>ACID</primary>
+        <primary>ACID transactions</primary>
+        <secondary>Heuristic outcomes</secondary>
     </indexterm>
     <indexterm>
-        <primary>Coordinator</primary>
+        <primary>ACID transactions</primary>
+        <secondary>Optimizations</secondary>
     </indexterm>
     <indexterm>
-        <primary>Participant</primary>
+        <primary>ACID transactions</primary>
+        <secondary>Synchronizations</secondary>
     </indexterm>
     <indexterm>
-        <primary>Two-Phase Commit</primary>
-        <secondary>2PC</secondary>
+        <primary>Architecture of ATS WS-T component</primary>
+        <secondary>Business Activities</secondary>
     </indexterm>
     <indexterm>
-        <primary>One-Phase Commit</primary>
-        <secondary>1PC</secondary>
+        <primary>Architecture of ATS WS-T component</primary>
+        <secondary>The context</secondary>
     </indexterm>
     <indexterm>
-        <primary>Web Service</primary>
+        <primary>commit</primary>
     </indexterm>
     <indexterm>
-        <primary>Transaction Service</primary>
+        <primary>Subtransactions</primary>
+        <secondary>fault-isolation</secondary>
     </indexterm>
     <indexterm>
-        <primary>Transaction Context</primary>
+        <primary>Subtransactions</primary>
+        <secondary>modularity</secondary>
     </indexterm>
     <indexterm>
-        <primary>Synchronization Protocol</primary>
+        <primary>Transaction processing overview</primary>
     </indexterm>
     <indexterm>
-        <primary>Optimizations to Synchronization Protocols</primary>
-    </indexterm>
-    <indexterm>
-        <primary>Non-atomic</primary>
-    </indexterm>
-    <indexterm>
-        <primary>Heuristic Outcomes</primary>
-    </indexterm>
-    <indexterm>
-        <primary>Interpositions</primary>
+        <primary>Transaction processing overview</primary>
+        <secondary>two-phase commit protocol</secondary>
     </indexterm>
     <section>
         <title>What is a transaction?</title>
