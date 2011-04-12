@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
+]>
+<chapter>
+  <title>Architecture of the Recovery Manager</title>
+  <section>
+    <title>Crash Recovery Overview</title>
+    <para>The main architectural components within Crash Recovery are
+      illustrated in the diagram below:</para>
+    <figure>
+      <title>Recovery Manager Architecture</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/fig1-crashrecoveryarchitecture.gif"
+            format="GIF" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>The Recovery Manager is a daemon process1 responsible for
+      performing crash recovery. Only one Recovery Manager runs per
+      node. The Object Store provides persistent data storage for
+      transactions to log data. During normal transaction processing
+      each transaction will log persistent data needed for the commit
+      phase to the Object Store. On successfully committing a
+      transaction this data is removed, however if the transaction fails
+      then this data remains within the Object Store.</para>
+    <para>The Recovery Manager functions by:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Periodically scanning the Object Store for transactions
+          that may have failed. Failed transactions are indicated by the
+          presence of log data after a period of time that the
+          transaction would have normally been expected to finish.
+        </para>
+      </listitem>
+      <listitem>
+        <para>Checking with the application process which originated the
+          transaction whether the transaction is still in progress or
+          not.</para>
+      </listitem>
+      <listitem>
+        <para>Recovering the transaction by re-activating the
+          transaction and then replaying phase two of the commit
+          protocol.</para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      The following sections describe the architectural components
+      in more
+      detail.
+  </para>
+  </section>
+  <section>
+    <title>Recovery Manager</title>
+    <para>
+      On initialization the Recovery Manager first loads in
+      configuration information via a properties file. This
+      configuration includes a number of recovery activators and
+      recovery modules, which are then dynamically loaded.
+    </para>
+    <para>
+      The Recovery Manager is not specifically tied to an Object
+      Request
+      Broker or ORB. Hence, the OTS recovery protocol is not
+      implicitly
+      enabled. To enable such protocol, we use the concept of
+      recovery
+      activator, defined with the interface RecoveryActivator,
+      which is
+      used to instantiate a recovery class related to the
+      underlying
+      communication protocol. For instance, when used with
+      OTS, the
+      RecoveryActivitor has the responsibility to create a
+      RecoveryCoordinator object able to respond to the
+      replay_completion operation.
+    </para>
+    <para>
+      All RecoveryActivator instances inherit the same interface.
+      They are
+      loaded via the following recovery extension property:
+    </para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.recoveryActivators"&gt;
+  list_of_class_names
+&lt;entry&gt;</programlisting>
+    </para>
+    <para>
+      For instance the RecoveryActivator provided in the
+      distribution of
+      JTS/OTS, which shall not be commented, is as
+      follow:
+    </para>
+    <para><programlisting>&lt;entry key="RecoveryEnvironmentBean.recoveryActivators"&gt;
+      com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement
+&lt;entry&gt;</programlisting>
+    </para>
+    <para>
+      When loaded all RecoveryActivator instances provide the method
+      startRCservice invoked by the Recovery Manager and used to create
+      the appropriate Recovery Component able to receive recovery
+      requests according to a particular transaction protocol. For
+      instance the RecoveryCoordinator defined by the OTS protocol.
+    </para>
+    <para>
+      Each recovery module is used to recover a different type of
+      transaction/resource, however each recovery module inherits the
+      same basic behavior.
+    </para>
+    <para>
+      Recovery consists of two separate passes/phases separated by
+      two timeout
+      periods. The first pass examines the object store for
+      potentially
+      failed transactions; the second pass performs crash
+      recovery on
+      failed transactions. The timeout between the first and
+      second pass
+      is known as the backoff period. The timeout between the
+      end of the
+      second pass and the start of the first pass is the
+      recovery
+      period. The recovery period is larger than the backoff
+      period.
+    </para>
+    <para>
+      The Recovery Manager invokes the first pass upon each recovery
+      module,
+      applies the backoff period timeout, invokes the second pass
+      upon
+      each recovery module and finally applies the recovery period
+      timeout before restarting the first pass again.
+    </para>
+    <para>
+      The recovery modules are loaded via the following recovery
+      extension
+      property:
+    </para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.recoveryExtenstions"&gt;
+   list_of_class_names
+&lt;entry&gt;</programlisting>
+    </para>
+    <para>
+      The backoff period and recovery period are set using the
+      following
+      properties:
+    </para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.recoveryBackoffPeriod"&gt;</programlisting>
+    </para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.periodicRecoveryPeriod"&gt;</programlisting>
+    </para>
+    <para>
+      The following java classes are used to implement the Recovery
+      Manager:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>package com.arjuna.ats.arjuna.recovery :</para>
+        <para>RecoveryManager – The daemon process that starts up by
+          instantiating an instance of the RecoveryManagerImple class.
+        </para>
+        <para>RecoveryEnvironment - Properties used by the recovery
+          manager.</para>
+        <para>RecoveryConfiguration - Specifies the name of the Recovery
+          Manager property file.(ie RecoveryManager-properties.xml)
+        </para>
+      </listitem>
+      <listitem>
+        <para>package com.arjuna.ats.internal.ts.arjuna.recovery :
+        </para>
+        <para>RecoveryManagerImple - Creates and starts instances of the
+          RecActivatorLoader, the PeriodicRecovery thread and the
+          ExpiryEntryMonitor thread.</para>
+        <para>RecActivatorLoader - Dynamically loads in the
+          RecoveryActivator specified in the Recovery Manager property
+          file. Each RecoveryActicator is specified as a recovery
+          extension in the properties file </para>
+        <para>PeriodicRecovery - Thread which loads each recovery
+          module, then calls the first pass method for each module,
+          applies the backoff period timeout, calls the second pass
+          method for each module and applies the recovery period
+          timeout. </para>
+        <para>RecoveryClassLoader - Dynamically loads in the recovery
+          modules specified in the Recovery Manager property file. Each
+          module is specified as a recovery extension in the properties
+          file (e.g., com.arjuna.ats.arjuna.recovery.recoveryExtension1=
+          com.arjuna.ats.internal.ts.arjuna.recovery.AtomicActionRecoveryModule).
+        </para>
+      </listitem>
+    </itemizedlist>
+    <note>
+      <para>By default, the recovery manager listens on the first
+        available port on a given machine. If you wish to control the
+        port number that it uses, you can specify this using the
+        com.arjuna.ats.arjuna.recovery.recoveryPort attribute.</para>
+    </note>
+    <section>
+      <title>Managing recovery directly</title>
+      <para>As already mentioned, recovery typically happens at periodic
+        intervals. If you require to drive recovery directly, then there
+        are two options, depending upon how the RecoveryManager has been
+        created.</para>
+    </section>
+    <section>
+      <title>Separate Recovery Manager</title>
+      <para>You can either use the
+        com.arjuna.ats.arjuna.tools.RecoveryMonitor program to send a
+        message to the Recovery Manager instructing it to perform
+        recovery, or you can create an instance of the
+        com.arjuna.ats.arjuna.recovery.RecoveryDriver class to do
+        likewise. There are two types of recovery scan available:</para>
+      <itemizedlist>
+        <listitem>
+          <para>i. ASYNC_SCAN: here a message is sent to the
+            RecoveryManager to instruct it to perform recovery, but the
+            response returns before recovery has completed.</para>
+        </listitem>
+        <listitem>
+          <para>ii. SYNC: here a message is sent to the RecoveryManager
+            to instruct it to perform recovery, and the response occurs
+            only when recovery has completed.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+    <section>
+      <title>In process Recovery Manager</title>
+      <para>You can invoke the scan operation on the RecoveryManager.
+        This operation returns only when recovery has completed.
+        However, if you wish to have an asynchronous interaction
+        pattern, then the RecoveryScan interface is provided:</para>
+
+      <example>
+        <title>RecoveryScan interface</title>
+        <programlisting role="JAVA" language="Java">
+          <xi:include href="extras/recoveryScanInterface.java"
+          xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        </programlisting>
+      </example>
+
+      <para>An instance of an object supporting this interface can be
+        passed to the scan operation and its completed method will be
+        called when recovery finishes. The scan operation returns
+        immediately, however.</para>
+    </section>
+    <section>
+      <title>Recovering For Multiple Transaction Coordinators</title>
+      <para>Sometimes a single Recovery Manager can be made responsible
+        for recovering transactions executing on behalf of multiple
+        transaction coordinators. Conversely, due to specific
+        configurations it may be that multiple Recovery Managers share
+        the same Object Store and in which case should not conflict with
+        each other, e.g., roll back transactions that they do not
+        understand. Therefore, when running recovery it is necessary to
+        tell JBossTS which types of transactions it can recover and
+        which transaction identifiers it should ignore.</para>
+      <para>When necessary each transaction identifier that JBossTS
+        creates may have a unique node identifier encoded within it and
+        JBossTS will only recover transactions and states that match a
+        specified node identifier. The node identifier for each JBossTS
+        instance should be set via the
+        com.arjuna.ats.arjuna.nodeIdentifier property. This value must
+        be unique across JBossTS instances. The contents of this should
+        be alphanumeric and not exceed 10 bytes in length. If you do not
+        provide a value, then JBossTS will fabricate one and report the
+        value via the logging infrastructure.</para>
+      <para>How this value is used will depend upon the type of
+        resources being recovered and will be discussed within the
+        relevant sections for the Recovery Modules.</para>
+    </section>
+  </section>
+  <section>
+    <title>Recovery Modules</title>
+    <para>As stated before each recovery module is used to recover a
+      different type of transaction/resource, but each recovery module
+      must implement the following RecoveryModule interface, which
+      defines two methods: periodicWorkFirstPass and
+      periodicWorkSecondPass invoked by the Recovery Manager. </para>
+
+    <example>
+      <title>RecoveryModule interface</title>
+      <programlisting role="JAVA" language="Java">
+        <xi:include href="extras/recoveryModuleInterface.java"
+        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+      </programlisting>
+    </example>
+    <section>
+      <title>JBossTS Recovery Module Classes</title>
+      <para>JBossTS provides a set of recovery modules that are
+        responsible to manage recovery according to the nature of the
+        participant and its position in a transactional tree. The
+        provided classes (that all implements the RecoveryModule
+        interface) are:</para>
+      <itemizedlist>
+        <listitem>
+          <para>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+          </para>
+          <para>Recovers AtomicAction transactions. </para>
+        </listitem>
+        <listitem>
+          <para>com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule
+          </para>
+          <para>Recovers JTS Transactions. This is a generic class from
+            which TopLevel and Server transaction recovery modules
+            inherit, respectively </para>
+        </listitem>
+        <listitem>
+          <para>com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule
+          </para>
+        </listitem>
+        <listitem>
+          <para>com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule
+          </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section>
+    <title>A Recovery Module for XA Resources</title>
+    <para>During recovery, the Transaction Manager needs to be able to
+      communicate to all resource managers that are in use by the
+      applications in the system. For each resource manager, the
+      Transaction Manager uses the XAResource.recover method to retrieve
+      the list of transactions that are currently in a prepared or
+      heuristically completed state. Typically, the system administrator
+      configures all transactional resource factories that are used by
+      the applications deployed on the system. An example of such a
+      resource factory is the JDBC XADataSource object, which is a
+      factory for the JDBC XAConnection objects.</para>
+    <para>Because XAResource objects are not persistent across system
+      failures, the Transaction Manager needs to have some way to
+      acquire the XAResource objects that represent the resource
+      managers which might have participated in the transactions prior
+      to the system failure. For example, a Transaction Manager might,
+      through the use of JNDI lookup mechanism, acquire a connection
+      from each of the transactional resource factories, and then obtain
+      the corresponding XAResource object for each connection. The
+      Transaction Manager then invokes the XAResource.recover method to
+      ask each resource manager to return the transactions that are
+      currently in a prepared or heuristically completed state.</para>
+    <note>
+      <para>When running XA recovery it is necessary to tell JBossTS
+        which types of Xid it can recover. Each Xid that JBossTS creates
+        has a unique node identifier encoded within it and JBossTS will
+        only recover transactions and states that match a specified node
+        identifier. The node identifier to use should be provided to
+        JBossTS via the property JTAEnvironmentBean.xaRecoveryNodes;
+        multiple values may be provided in a list. A value of ‘*’ will
+        force JBossTS to recover (and possibly rollback) all
+        transactions irrespective of their node identifier and should be
+        used with caution. The contents of
+        com.arjuna.ats.jta.xaRecoveryNode should be alphanumeric and
+        match the values of com.arjuna.ats.arjuna.nodeIdentifier.</para>
+    </note>
+    <para>One of the following recovery mechanisms will be used:</para>
+    <itemizedlist>
+      <listitem>
+        <para>If the XAResource is serializable, then the serialized
+          form will be saved during transaction commitment, and used
+          during recovery. It is assumed that the recreated XAResource
+          is valid and can be used to drive recovery on the associated
+          database.
+        </para>
+      </listitem>
+      <listitem>
+        <para>The com.arjuna.ats.jta.recovery.XAResourceRecovery,
+          com.arjuna.ats.jta.recovery.XARecoveryResourceManager and
+          com.arjuna.ats.jta.recovery.XARecoveryResource interfaces are
+          used. These are described in detail later in this document.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>To manage recovery, we have seen in the previous chapter that
+      the Recovery Manager triggers a recovery process by calling a set
+      of recovery modules that implements the two methods defined by the
+      RecoveryModule interface. To enable recovery of participants
+      controlled via the XA interface, a specific recovery module named
+      XARecoveryModule is provided. The XARecoveryModule, defined in the
+      packages com.arjuna.ats.internal.jta.recovery.arjunacore and
+      com.arjuna.ats.internal.jta.recovery.jts, handles recovery of XA
+      resources (databases etc.) used in JTA.</para>
+    <note>
+      <para>JBossTS supports two JTA implementations: a purely local
+        version (no distributed transactions) and a version layered on
+        the JTS. Recovery for the former is straightforward. In the
+        following discussion we shall implicitly consider on the JTS
+        implementation.</para>
+    </note>
+    <para>Its behavior consists of two aspects: “transaction-initiated”
+      and “resource-initiated” recovery. Transaction-initiated recovery
+      is possible where the particular transaction branch had progressed
+      far enough for a JTA Resource Record to be written in the
+      ObjectStore.</para>
+    <para>A JTA Resource record contains the information needed to link
+      the transaction, as known to the rest of JBossTS, to the database.
+      Resource-initiated recovery is necessary for branches where a
+      failure occurred after the database had made a persistent record
+      of the transaction, but before the JTA ResourceRecord was
+      persisted. Resource-initiated recovery is also necessary for
+      datasources for which it is not possible to hold information in
+      the JTA Resource record that allows the recreation in the
+      RecoveryManager of the XAConnection/XAResource that was used in
+      the original application.</para>
+    <para>Transaction-initiated recovery is automatic. The
+      XARecoveryModule finds the JTA Resource Record that need recovery,
+      then uses the normal recovery mechanisms to find the status of the
+      transaction it was involved in (i.e., it calls replay_completion
+      on the RecoveryCoordinator for the transaction branch),
+      (re)creates the appropriate XAResource and issues commit or
+      rollback on it as appropriate. The XAResource creation will use
+      the same information, database name, username, password etc., as
+      the original application.</para>
+    <para>Resource-initiated recovery has to be specifically configured,
+      by supplying the Recovery Manager with the appropriate information
+      for it to interrogate all the databases (XADataSources) that have
+      been accessed by any JBossTS application. The access to each
+      XADataSource is handled by a class that implements the
+      com.arjuna.ats.jta.recovery.XAResourceRecovery interface, as
+      illustrated in Figure 4. Instances of classes that implements the
+      XAResourceRecovery interface are dynamically loaded, as controlled
+      by properties with names beginning
+      “com.arjuna.ats.jta.recovery.XAResourceRecovery”.</para>
+    <figure>
+      <title>Resource-initiated recovery and XA Recovery</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/fig2-resourceinitiatedrecovery.gif"
+            format="GIF" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>The XARecoveryModule will use the XAResourceRecovery
+      implementation to get a XAResource to the target datasource. On
+      each invocation of periodicWorkSecondPass, the recovery module
+      will issue an XAResource.recover request – this will (as described
+      in the XA specification) return a list of the transaction
+      identifiers (Xid’s) that are known to the datasource and are in an
+      indeterminate (in-doubt) state. The list of these in-doubt Xid’s
+      received on successive passes (i.e. periodicWorkSecondPass-es) is
+      compared. Any Xid that appears in both lists, and for which no JTA
+      ResourceRecord was found by the intervening transaction-initiated
+      recovery is assumed to belong to a transaction that was involved
+      in a crash before any JTA ResourceRecord was written, and a
+      rollback is issued for that transaction on the XAResource.</para>
+    <para>This double-scan mechanism is used because it is possible the
+      Xid was obtained from the datasource just as the original
+      application process was about to create the corresponding
+      JTA_ResourceRecord. The interval between the scans should allow
+      time for the record to be written unless the application crashes
+      (and if it does, rollback is the right answer).</para>
+    <para>An XAResourceRecovery implementation class can be written to
+      contain all the information needed to perform recovery to some
+      datasource. Alternatively, a single class can handle multiple
+      datasources. The constructor of the implementation class must have
+      an empty parameter list (because it is loaded dynamically), but
+      the interface includes an initialise method which passes in
+      further information as a string. The content of the string is
+      taken from the property value that provides the class name:
+      everything after the first semi-colon is passed as the value of
+      the string. The use made of this string is determined by the
+      XAResourceRecovery implementation class.</para>
+    <para>For further details on the way to implement a class that
+      implements the interface XAResourceRecovery, read the JDBC chapter
+      of the JTA Programming Guide. An implementation class is provided
+      that supports resource-initiated recovery for any XADataSource.
+      This class could be used as a template to build your own
+      implementation class. </para>
+    <section>
+      <title>Assumed complete</title>
+      <para>If a failure occurs in the transaction environment after the
+        transaction coordinator had told the XAResource to commit but
+        before the transaction log has been updated to remove the
+        participant, then recovery will attempt to replay the commit. In
+        the case of a Serialized XAResource, the response from the
+        XAResource will enable the participant to be removed from the
+        log, which will eventually be deleted when all participants have
+        been committed. However, if the XAResource is not recoverable
+        then it is extremely unlikely that any XAResourceRecovery
+        instance will be able to provide the recovery sub-system with a
+        fresh XAResource to use in order to attempt recovery; in which
+        case recovery will continually fail and the log entry will never
+        be removed.</para>
+      <para>There are two possible solutions to this problem:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Rely on the relevant ExpiryScanner to eventually move
+            the log elsewhere. Manual intervention will then be needed
+            to ensure the log can be safely deleted. If a log entry is
+            moved, suitable warning messages will be output.
+        </para>
+        </listitem>
+        <listitem>
+          <para>Set the com.arjuna.ats.jta.xaAssumeRecoveryComplete to
+            true. This option is checked whenever a new XAResource
+            instance cannot be located from any registered
+            XAResourceRecovery instance. If false (the default),
+            recovery assumes that there is a transient problem with the
+            XAResourceRecovery instances (e.g., not all have been
+            registered with the sub-system) and will attempt recovery
+            periodically. If true then recovery assumes that a previous
+            commit attempt succeeded and this instance can be removed
+            from the log with no further recovery attempts. This option
+            is global, so needs to be used with care since if used
+            incorrectly XAResource instances may remain in an
+            uncommitted state.
+        </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section>
+    <title>Recovering XAConnections</title>
+    <para>When recovering from failures, JBossTS requires the ability to
+      reconnect to databases that were in use prior to the failures in
+      order to resolve any outstanding transactions. Most connection
+      information will be saved by the transaction service during its
+      normal execution, and can be used during recovery to recreate the
+      connection. However, it is possible that not all such information
+      will have been saved prior to a failure (for example, a failure
+      occurs before such information can be saved, but after the
+      database connection is used). In order to recreate those
+      connections it is necessary to provide implementations of the
+      following JBossTS interface
+      com.arjuna.ats.jta.recovery.XAResourceRecovery, one for each
+      database that may be used by an application.</para>
+    <note>
+      <para>if using the transactional JDBC driver provided with
+        JBossTS, then no additional work is necessary in order to ensure
+        that recovery occurs.</para>
+    </note>
+    <para>To inform the recovery system about each of the
+      XAResourceRecovery instances, it is necessary to specify their
+      class names through the
+      JTAEnvironmentBean.xaResourceRecoveryInstances property variable,
+      whose values is a list of space separated strings, each being a
+      classname followed by optional configuration information.</para>
+    <para>JTAEnvironmentBean.xaResourceRecoveryInstances=com.foo.barRecovery
+    </para>
+    <para>Additional information that will be passed to the instance
+      when it is created may be specified after a semicolon:</para>
+    <para>JTAEnvironmentBean.xaResourceRecoveryInstances=com.foo.barRecovery;myData=hello
+    </para>
+    <note>
+      <para>These properties need to go into the JTA section of the
+        property file.</para>
+    </note>
+    <para>Any errors will be reported during recovery.</para>
+    <example>
+      <title>XAResourceRecovery interface</title>
+      <programlisting role="JAVA" language="Java">
+          <xi:include href="extras/XAResourceRecoveryInterface.java"
+        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        </programlisting>
+    </example>
+    <para>Each method should return the following information:</para>
+    <itemizedlist>
+      <listitem>
+        <para>initialise: once the instance has been created, any
+          additional information which occurred on the property value
+          (anything found after the first semi-colon) will be passed to
+          the object. The object can then use this information in an
+          implementation specific manner to initialise itself, for
+          example.
+        </para>
+      </listitem>
+      <listitem>
+        <para>hasMoreResources: each XAResourceRecovery implementation
+          may provide multiple XAResource instances. Before any call to
+          getXAResource is made, hasMoreResources is called to determine
+          whether there are any further connections to be obtained. If
+          this returns false, getXAResource will not be called again
+          during this recovery sweep and the instance will not be used
+          further until the next recovery scan. It is up to the
+          implementation to maintain the internal state backing this
+          method and to reset the iteration as required. Failure to do
+          so will mean that the second and subsequent recovery sweeps in
+          the lifetime of the JVM do not attempt recovery.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          getXAResource: returns an instance of the XAResource
+          object. How this is created
+          (and how the parameters to its
+          constructors are obtained) is
+          up to the XAResourceRecovery
+          implementation. The parameters to
+          the constructors of this
+          class should be similar to those used
+          when creating the initial
+          driver or data source, and should
+          obviously be sufficient to
+          create new XAResources that can be
+          used to drive recovery.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <note>
+      <para>If you want your XAResourceRecovery instance to be called
+        during each sweep of the recovery manager then you should ensure
+        that once hasMoreResources returns false to indicate the end of
+        work for the current scan it then returns true for the next
+        recovery scan.</para>
+    </note>
+  </section>
+  <section>
+    <title>Alternative to XAResourceRecovery</title>
+    <para>The iterator based approach used by XAResourceRecovery leads
+      to a requirement for implementations to manage state, which makes
+      them more complex than necessary.</para>
+    <para>As an alternative, starting with JBossTS 4.4, users may
+      provide an implementation of the public interface
+    </para>
+    <example>
+      <title>XAResourceRecoveryHelper</title>
+      <programlisting role="JAVA" language="Java">
+          <xi:include href="extras/XAResourceRecoveryHelper.java"
+        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        </programlisting>
+    </example>
+    <para>During each recovery sweep the getXAResources method will be
+      called and recovery attempted on each element of the array. For
+      the majority of resource managers it will be necessary to have
+      only one XAResource in the array, as the recover() call on it can
+      return multiple Xids.</para>
+    <para>Unlike XAResourceRecovery instances, which are configured via
+      the xml properties file and instantiated by JBossTS, instances of
+      XAResourceRecoveryHelper and constructed by the application code
+      and registered with JBossTS by calling</para>
+    <para>
+      <programlisting language="Java" role="JAVA">XARecoveryModule.addXAResourceRecoveryHelper(...)</programlisting>
+    </para>
+    <para>The initialize method is not called by JBossTS in the current
+      implementation, but is provided to allow for the addition of
+      further configuration options in later releases.</para>
+    <para>XAResourceRecoveryHelper instances may be deregistered, after
+      which they will no longer be called by the recovery manager.
+      Deregistration may block for a time if a recovery scan is in
+      progress.</para>
+    <para>
+      <programlisting language="Java" role="JAVA">XARecoveryModule.removeXAResourceRecoveryHelper(...)</programlisting>
+    </para>
+    <para>The ability to dynamically add and remove instances of
+      XAResourceRecoveryHelper whilst the system is running makes this
+      approach an attractive option for environments in which e.g.
+      datasources may be deployed or undeployed, such as application
+      servers. Care should be taken with classloading behaviour in such
+      cases.</para>
+  </section>
+  <section>
+    <title>Shipped XAResourceRecovery implementations</title>
+    <para>Recovery of XA datasources can sometimes be implementation
+      dependant, requiring developers to provide their own
+      XAResourceRecovery instances. However, JBossTS ships with several
+      out-of-the-box implementations that may be useful.</para>
+    <note>
+      <para>These XAResourceRecovery instances are primarily intended
+        for when running JBossTS outside of a container such as JBossAS,
+        since they rely upon XADataSources as the primary handle to
+        drive recovery. If you are not running JBossTS stand-alone then
+        you should consult the relevant integration documentation to
+        ensure that the right recovery modules are being used.</para>
+    </note>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <programlisting>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</programlisting>
+          : this expects an XML property file to be specified upon
+          creation
+          and from which it will read the configuration
+          properties for the
+          datasource. For example:
+        </para>
+
+        <example>
+          <title>XML datasource</title>
+          <programlisting language="XML" role="XML">
+          <xi:include href="extras/xmlDatasource.xml"
+            xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        </programlisting>
+        </example>
+      </listitem>
+      <listitem>
+        <para>
+          <programlisting>com.arjuna.ats.internal.jdbc.recovery.JDBCXARecovery</programlisting>
+          : this recovery implementation should work on any datasource
+          that is exposed via JNDI. It expects an XML property file to
+          be specified upon creation and from which it will read the
+          database JNDI name, username and password. For example:
+        </para>
+        <example>
+          <title>JNDI datasource</title>
+          <programlisting language="XML" role="XML">
+          <xi:include href="extras/jndiDatasource.xml"
+            xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        </programlisting>
+        </example>
+      </listitem>
+    </itemizedlist>
+    <para>Because these classes are XAResourceRecovery instances they
+      are passed any necessary initialization information via the
+      initialise operation. In the case of BasicXARecovery and
+      JDBCXARecovery this should be the location of a property file
+      and
+      is specified in the JBossTS configuration file. For example:
+    </para>
+    <para>
+      <programlisting>com.arjuna.ats.jta.recovery.XAResourceRecoveryJDBC=com.arjuna.ats.internal.jdbc.recovery.JDBCXAResourceRecovery;thePropertyFile</programlisting>
+    </para>
+  </section>
+  <section>
+    <title>TransactionStatusConnectionManager</title>
+    <para>The TransactionStatusConnectionManager object is used by the
+      recovery modules to retrieve the status of transactions and acts
+      like a proxy for TransactionStatusManager objects. It maintains a
+      table of TransactionStatusConnector obects each of which connects
+      to a TransactionStatusManager object in an Application Process.
+    </para>
+    <para>The transactions status is retrieved using the
+      getTransactionStatus methods which take a transaction Uid and if
+      available a transaction type as parameters. The process Uid field
+      in the transactions Uid parameter is used to lookup the target
+      TransactionStatusManagerItem host/port pair in the Object Store.
+      The host/port pair are used to make a TCP connection to the target
+      TransactionStatusManager object by a TransactionStatusConnector
+      object. The TransactionStatusConnector passes the transaction
+      Uid/transaction type to the TransactionStatusManager in order to
+      retrieve the transactions status.</para>
+  </section>
+  <section>
+    <title>Expired Scanner Thread</title>
+    <para>When the Recovery Manager initialises an expiry scanner thread
+      ExpiryEntryMonitor is created which is used to remove long dead
+      items from the ObjectStore. A number of scanner modules are
+      dynamically loaded which remove long dead items for a particular
+      type. </para>
+    <para>Scanner modules are loaded at initialisation and are specified
+      as properties beginning with</para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.expiryScanners"&gt; 
+  list of class names
+&lt;/entry&gt;</programlisting>
+    </para>
+    <para>All the scanner modules are called periodically to scan for
+      dead items by the ExpiryEntryMonitor thread. This period is set
+      with the property:</para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.expiryScanInterval"&gt; 
+  number_of_hours
+&lt;/entry&gt;</programlisting>
+    </para>
+    <para>All scanners inherit the same behaviour from the java
+      interface ExpiryScanner. A scan method is provided by this
+      interface and implemented by all scanner modules, this is the
+      method that gets called by the scanner thread.</para>
+    <para>The ExpiredTransactionStatusManagerScanner removes long dead
+      TransactionStatusManagerItems from the Object Store. These items
+      will remain in the Object Store for a period of time before they
+      are deleted. This time is set by the property:</para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.transactionStatusManagerExpiryTime"&gt; 
+  number_of_hours
+&lt;/entry&gt; (default 12 hours)</programlisting>
+    </para>
+    <para>The AtomicActionExpiryScanner moves transaction logs for
+      AtomicActions that are assumed to have completed. For instance, if
+      a failure occurs after a participant has been told to commit but
+      before the transaction system can update the log, then upon
+      recovery JBossTS recovery will attempt to replay the commit
+      request, which will obviously fail, thus preventing the log from
+      being removed. This is also used when logs cannot be recovered
+      automatically for other reasons, such as being corrupt or zero
+      length. All logs are moved to a location based on the old location
+      appended with /Expired.</para>
+    <note>
+      <para>AtomicActionExpiryScanner is disabled by default. To enable
+        it simply add it to the JBossTS properties file. You do not need
+        to enable it in order to cope with (move) corrupt logs.</para>
+    </note>
+  </section>
+  <section>
+    <title>Application Process</title>
+    <para>This represents the user transactional program. A Local
+      transaction (hash) table, maintained within the running
+      application process keeps trace of the current status of all
+      transactions created by that application process, The Recovery
+      Manager needs access to the transaction tables so that it can
+      determine whether a transaction is still in progress, if so then
+      recovery does not happen.</para>
+    <para>The transaction tables are accessed via the
+      TransactionStatusManager object. On application program
+      initialisation the host/port pair that represents the
+      TransactionStatusManager is written to the Object Store in
+      ‘../Recovery/TransactionStatusManager’ part of the Object Store
+      file hierarchy and identified by the process Uid of the
+      application process.</para>
+    <para>The Recovery Manager uses the
+      TransactionStatusConnectionManager object to retrieve the status
+      of a transaction and a TransactionStatusConnector object is used
+      to make a TCP connection to the TransactionStatusManager.</para>
+  </section>
+  <section>
+    <title>TransactionStatusManager</title>
+    <para>This object acts as an interface for the Recovery Manager to
+      obtain the status of transactions from running JBossTS application
+      processes. One TransactionStatusManager is created per application
+      process by the class com.arjuna.ats.arjuna.coordinator.TxControl.
+      Currently a tcp connection is used for communication between the
+      RecoveryManager and TransactionStatusManager. Any free port is
+      used by the TransactionStatusManager by default, however the port
+      can be fixed with the property:</para>
+    <para>
+      <programlisting>&lt;entry key="RecoveryEnvironmentBean.transactionStatusManagerPort"&gt; 
+  port
+&lt;/entry&gt;</programlisting>
+    </para>
+    <para>On creation the TransactionStatusManager obtains a port which
+      it stores with the host in the Object Store as a
+      TransactionStatusManagerItem. A Listener thread is started which
+      waits for a connection request from a TransactionStatusConnector.
+      When a connection is established a Connection thread is created
+      which runs a Service (AtomicActionStatusService) which accepts a
+      transaction Uid and a transaction type (if available) from a
+      TransactionStatusConnector, the transaction status is obtained
+      from the local thransaction table and returned back to the
+      TransactionStatusConnector</para>
+  </section>
+  <section>
+    <title>Object Store</title>
+    <para>All objects are identified by a unique identifier Uid. One of
+      the values of which is a process id in which the object was
+      created. The Recovery Manager uses the process id to locate
+      transaction status manager items when contacting the originator
+      application process for the transaction status. Therefore, exactly
+      one recovery manager per ObjectStore must run on each nodes and
+      ObjectStores must not be shared by multiple nodes.</para>
+  </section>
+  <section>
+    <title>Socket free operation</title>
+    <para>The use of TCP/IP sockets for TransactionStatusManager and
+      RecoveryManager provides for maximum flexibility in the deployment
+      architecture. It is often desirable to run the RecoveryManager in
+      a separate JVM from the Transaction manager(s) for increased
+      reliability. In such deployments, TCP/IP provides for
+      communication between the RecoveryManager and transaction
+      manager(s), as detailed in the preceding sections. Specifically,
+      each JVM hosting a TransactionManager will run a
+      TransactionStatusManager listener, through which the
+      RecoveryManager can contact it to determine if a transaction is
+      still live or not. The RecoveryManager likewise listens on a
+      socket, through which it can be contacted to perform recovery
+      scans on demand. The presence of a recovery listener is also used
+      as a safety check when starting a RecoveryManager, since at most
+      one should be running for a given ObjectStore.</para>
+    <para>There are some deployment scenarios in which there is only a
+      single TransactionManager accessing the ObjectStore and the
+      RecoveryManager is co-located in the same JVM. For such cases the
+      use of TCP/IP sockets for communication introduces unnecessary
+      runtime overhead. Additionally, if several such distinct processes
+      are needed for e.g. replication or clustering, management of the
+      TCP/IP port allocation can become unwieldy. Therefore it may be
+      desirable to configure for socketless recovery operation.</para>
+    <para>The property
+      CoordinatorEnvironmentBean.transactionStatusManagerEnable can be
+      set to a value of NO to disable the TransactionStatusManager for
+      any given TransactionManager. Note that this must not be done if
+      recovery runs in a separate process, as it may lead to incorrect
+      recovery behavior in such cases. For an in-process recovery
+      manager, the system will use direct access to the
+      ActionStatusService instead.</para>
+    <para>The property RecoveryEnvironmentBean.recoveryListener can
+      likewise be used to disable the TCP/IP socket listener used by the
+      recovery manager. Care must be taken not to inadvertently start
+      multiple recovery managers for the same ObjectStore, as this
+      error, which may lead to significant crash recovery problems,
+      cannot be automatically detected and prevented without the benefit
+      of the socket listener.</para>
+  </section>
+</chapter>
