@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Administration_And_Development_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_Overview_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-Transactions_XTS_Development_Guide-Transactions_XTS_Development_Guide">
-   <title>Transactions XTS Administration And Development Guide</title>
-   <subtitle>Using the XTS Module of &PRODUCT; to provide Web Services Transactions</subtitle>
+<bookinfo id="book-Transactions_Overview_Guide">
+   <title>Transactions Overview Guide</title>
+   <!--subtitle>JBoss Transaction Service</subtitle-->
    <productname>JBoss Transactions</productname>
-   <productnumber>4.14.0</productnumber>
+   <productnumber>4.15.0</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>
       <para>
-        The XTS Development Guide contains information on how to use JBoss Transaction Service to develop service-based
+        The Transactions Overview Guide contains information on how to use JBoss Transaction Service to develop
         applications that use transaction technology to manage business processes.
       </para>
    </abstract>

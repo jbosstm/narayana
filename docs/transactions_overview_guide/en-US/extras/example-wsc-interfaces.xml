@@ -1,7 +1,0 @@
-<!-- Activation Service portType Declaration --> 
-<wsdl:portType name="ActivationCoordinatorPortType"> 
-  <wsdl:operation name="CreateCoordinationContext"> 
-    <wsdl:input message="wscoor:CreateCoordinationContext"/> 
-    <wsdl:output message="wscoor:CreateCoordinationContextResponse"/> 
-  </wsdl:operation> 
-</wsdl:portType> 

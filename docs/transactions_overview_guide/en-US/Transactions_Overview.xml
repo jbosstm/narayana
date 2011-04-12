@@ -1,102 +1,124 @@
-<?xml version='1.0' encoding='utf-8' ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Administration_And_Development_Guide.ent">
-%BOOK_ENTITIES;
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_Overview_Guide.ent">
 ]>
 <chapter>
-  
-  <title>Transactions Overview</title>
-
-  <indexterm><primary>transactions</primary></indexterm>
-  <indexterm><primary>ACID</primary></indexterm>
-  <indexterm><primary>Coordinator</primary></indexterm>
-  <indexterm><primary>Participant</primary></indexterm>
-  <indexterm><primary>Two-Phase Commit</primary><secondary>2PC</secondary></indexterm>
-  <indexterm><primary>One-Phase Commit</primary><secondary>1PC</secondary></indexterm>
-  <indexterm><primary>Web Service</primary></indexterm>
-  <indexterm><primary>Transaction Service</primary></indexterm>
-  <indexterm><primary>Transaction Context</primary></indexterm>
-  <indexterm><primary>Synchronization Protocol</primary></indexterm>
-  <indexterm><primary>Optimizations to Synchronization Protocols</primary></indexterm>
-  <indexterm><primary>Non-atomic</primary></indexterm>
-  <indexterm><primary>Heuristic Outcomes</primary></indexterm>
-  <indexterm><primary>Interpositions</primary></indexterm>
-  
-  <note>
-    <para>
-      This chapter deals with the theory of transactional Web Services. If you are familiar with these principles,
+    <title>Transactions Overview</title>
+    <indexterm>
+        <primary>transactions</primary>
+    </indexterm>
+    <indexterm>
+        <primary>ACID</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Coordinator</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Participant</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Two-Phase Commit</primary>
+        <secondary>2PC</secondary>
+    </indexterm>
+    <indexterm>
+        <primary>One-Phase Commit</primary>
+        <secondary>1PC</secondary>
+    </indexterm>
+    <indexterm>
+        <primary>Web Service</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Transaction Service</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Transaction Context</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Synchronization Protocol</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Optimizations to Synchronization Protocols</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Non-atomic</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Heuristic Outcomes</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Interpositions</primary>
+    </indexterm>
+    <section>
+        <title>What is a transaction?</title>
+        <note>
+            <para>
+      This chapter deals with the theory of transactional services. If you are familiar with these principles,
       consider this chapter a reference.
     </para>
-  </note>
-  <para>
-    Transactions have emerged as the dominant paradigm for coordinating interactions between parties in a distributed
-    system, and in particular to manage applications that require concurrent access to shared data. Much of the JBoss
-    Transaction Service Web Service API is based on contemporary transaction APIs whose familiarity will enhance
-    developer productivity and lessen the learning curve. While the following section provides the essential information
-    that you should know before starting to use XTS for building transactional Web Services, it should not be treated as
-    a definitive reference to all transactional technology.
+        </note>
+        <para>
+Consider the following situation: a user wishes to purchase access to an on-line newspaper and requires to pay for this access from an account maintained by an on-line bank. Once the newspaper site has received the user’s credit from the bank, they will deliver an electronic token to the user granting access to their site. Ideally the user would like the debiting of the account, and delivery of the token to be “all or nothing” (atomic). However, hardware and software failures could prevent either event from occurring, and leave the system in an indeterminate state.
   </para>
-  <para>
-    A transaction is a unit of work that encapsulates multiple database actions such that that either all the
-    encapsulated actions fail or all succeed.
+        <itemizedlist id="tx-properties">
+            <listitem>
+                <para>
+Atomic transactions (transactions) possess an “all-or-nothing” property, and are a well-known technique for guaranteeing application consistency in the presence of failures. Transactions possess the following ACID properties:
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+Atomicity: The transaction completes successfully (commits) or if it fails (aborts) all of its effects are undone (rolled back).
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+Consistency: Transactions produce consistent results and preserve application specific invariants. 
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+Isolation: Intermediate states produced while a transaction is executing are not visible to others. Furthermore transactions appear to execute serially, even if they are actually executed concurrently. 
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+Durability: The effects of a committed transaction are never lost (except by a catastrophic failure). 
+      </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+A transaction can be terminated in two ways: committed or aborted (rolled back). When a transaction is committed, all changes made within it are made durable (forced on to stable storage, e.g., disk). When a transaction is aborted, all of the changes are undone. Atomic actions can also be nested; the effects of a nested action are provisional upon the commit/abort of the outermost (top-level) atomic action.
   </para>
-  <para>
-    Transactions ensure data integrity when an application interacts with multiple datasources.
+        <para>
+Transactions have emerged as the dominant paradigm for coordinating interactions between parties in a (distributed) system, and in particular to manage applications that require concurrent access to shared data. A classic transaction is a unit of work that either completely succeeds, or fails with all partially completed work being undone. When a transaction is committed, all changes made by the associated requests are made durable, normally by committing the results of the work to a database. If a transaction should fail and is rolled back, all changes made by the associated work are undone. Transactions in distributed systems typically require the use of a transaction manager that is responsible for coordinating all of the participants that are part of the transaction.
   </para>
-
-  <para>
-    The main components involved in using and defining transactional Web Services using XTS are illustrated in <xref
-    linkend="fig-web-services-transaction" />.
-  </para>
-
-  <figure id="fig-web-services-transaction">
-    <title>Components Involved in an XTS Transaction</title>
-    <mediaobject>
-      <imageobject>
-   <imagedata fileref="images/fig-web-services-transaction.png" format="PNG"/>
-      </imageobject>
-      <textobject>
-   <variablelist>
-     <varlistentry>
-       <term>Transaction Service</term>
-       <listitem>
-         <para>The Transaction Service captures the model of the underlying transaction protocol and coordinates parties affiliated with the transaction according to that model.
-         </para>
-       </listitem>
-     </varlistentry>
-     <varlistentry>
-       <term>Transaction API</term>
-       <listitem>
-         <para>
-      Provides an interface for transaction demarcation and the registration of participants.
-         </para>
-       </listitem>
-     </varlistentry>
-     <varlistentry>
-       <term>A Participant</term>
-       <listitem>
-         <para>
-      The entity that cooperates with the transaction service on behalf of its associated business logic.
-         </para>
-       </listitem>
-     </varlistentry>
-     <varlistentry>
-       <term>The Context</term>
-       <listitem>
-         <para>
-      Captures the necessary details of the transaction such that participants can enlist within its scope.
-         </para>
-       </listitem>
-     </varlistentry>
-   </variablelist>
-      </textobject>
-    </mediaobject>
-  </figure>
-
-  <section>
-    <title>The Coordinator</title>
-    <para>
-      <!--
+        <itemizedlist id="tx-components">
+            <title>The main components involved in using and defining transactional applications are:</title>
+            <listitem>
+                <para>
+A Transaction Service: The Transaction Service captures the model of the underlying transaction protocol and coordinates parties affiliated with the transaction according to that model.
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+A Transaction API: Provides an interface for transaction demarcation and the registration of participants.
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+A Participant: The entity that cooperates with the transaction service on behalf of its associated business logic.
+      </para>
+            </listitem>
+            <listitem>
+                <para>
+The Context: Captures the necessary details of the transaction such that participants can enlist within its scope.
+      </para>
+            </listitem>
+        </itemizedlist>
+    </section>
+    <section>
+        <title>The Coordinator</title>
+        <para><!--
       Every transaction is associated with a coordinator, which is responsible for governing the outcome of the
       transaction. The coordinator may be implemented as a separate service or may be co-located with the user for
       improved performance. Each coordinator is created by the transaction manager service, which is effectively a
@@ -113,19 +135,7 @@
       parallel, so each coordinator is identified by a unique transaction
       identifier.
     </para>
-    <para>
-      <!--
-      A coordinator communicates with enrolled participants to inform them of the desired termination requirements, such
-      as whether they should accept (confirm) or reject (cancel) the work done within the scope of the given
-      transaction. For example, a decision is needed for whether to purchase the provisionally reserved flight tickets
-      for the user or to release them. An application may wish to terminate a transaction in a number of different ways
-      (confirm or cancel). However, although the coordinator will attempt to terminate in a manner consistent with that
-      desired by the client, the final outcome is ultimately determined by the interactions between the coordinator and
-      the participants.  </para> <para> A transaction manager is typically responsible for managing coordinators for
-      many transactions. The initiator of the transaction (the client) communicates with a transaction manager and asks
-      it to start a new transaction and associate a coordinator with the transaction. Once created, the context can be
-      propagated to Web Services in order for them to associate their work with the transaction.
-      -->
+        <para>
       The coordinator is responsible for ensuring that the web services invoked
       by the client arrive at a consistent outcome. When the client asks the
       coordinator to complete the transaction, the coordinator ensures that each
@@ -137,284 +147,275 @@
       started. The coordinator also reverts all changes if the client asks it to
       cancel the transaction.
     </para>
-    <para>
+        <para>
       The negotiation between the coordinator and the web services is organized to ensure that all services will make
       their changes permanent, or all of them will revert to the previous state, even if the coordinator or one of the
       web services crashes part of the way through the transaction."
     </para>
-  </section>
-
-  <section>
-    <title>The Transaction Context</title>
-    <para>
-      In order for a transaction to span a number of services, certain information has to be shared between those
-      services, to propagate information about the transaction. This information is known as the
-      <firstterm>Context</firstterm>. The coordination service hands a context back to the application client when it
-      begins a transaction. This context is passed as an extra, hidden parameter whenever the client invokes a
-      transactional web service. The XTS implementation saves and propagates this context automatically with only
-      minimal involvement required on the part of the client. <!--Using XTS, the context is automatically propagated and
-      processed by transaction-aware components of an application. Though XTS removes most of the work associated with
-      propagating contexts,--> However, it is still helpful to understand what information is captured in a
-      context. This information is listed in <xref linkend="context-contents" />.
+    </section>
+    <section>
+        <title>The Transaction Context</title>
+        <para>
+In order for a transaction to span a number of services, certain information has to be shared between those services in order to propagate information about the transaction. This information is known as the Context. The context is often automatically propagated and processed by transaction-aware components of an application:
     </para>
-
-    <variablelist id="context-contents">
-      <title>Contents of a Context</title>
-      <varlistentry>
-   <term>Transaction Identifier</term>
-   <listitem>
-     <para>
+        <variablelist id="context-contents">
+            <title>Contents of a Context</title>
+            <varlistentry>
+                <term>Transaction Identifier</term>
+                <listitem>
+                    <para>
        Guarantees global uniqueness for an individual transaction.
      </para>
-   </listitem>
-      </varlistentry>
-      <varlistentry>
-   <term>Transaction Coordinator Location</term>
-   <listitem>
-     <para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>Transaction Coordinator Location</term>
+                <listitem>
+                    <para>
        The endpoint address participants contact to enroll.
      </para>
-   </listitem>
-      </varlistentry>
-    </variablelist>
-
-    <figure>
-      <title>Web Services and Context Flow</title>
-      <mediaobject>
-   <imageobject>
-     <imagedata fileref="images/fig-web-services-context-flow.png" format="PNG"/>
-   </imageobject>
-   <textobject>
-     <para>
-       Whenever an application message is sent, the XTS Client API automatically creates a context and embeds it into
-       the message. Similarly, any transaction-aware services can extract that context using the XTS service-side
-       infrastructure and use it to perform work within the context of a particular transaction, even if that
-       transaction was initiated elsewhere on the Web. The value of this approach is that the business logic contained
-       within the client application and services are not peppered with transaction-processing code.
+                </listitem>
+            </varlistentry>
+        </variablelist>
+        <figure>
+            <title>Web Services and Context Flow</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="images/fig-web-services-context-flow.png" format="PNG"/>
+                </imageobject>
+                <textobject>
+                    <para>
+       As shown in Figure 1, whenever an application message is sent, the  Client API automatically creates a context and embeds it into the message. Similarly, any transaction-aware services are able to extract that context using the  service-side infrastructure and use it to perform work within the context of a particular transaction – even though that transaction was initiated elsewhere! The value of this approach is that the business logic contained within the client application and services are not peppered with transaction-processing code.
      </para>
-   </textobject>
-      </mediaobject>
-    </figure>
-  </section>
-
-  <section>
-    <title>Participants</title>
-    <para>
+                </textobject>
+            </mediaobject>
+        </figure>
+    </section>
+    <section>
+        <title>Participants</title>
+        <para>
       The coordinator cannot know the details of how every transactional service is implemented. In fact this knowledge
       is not even necessary for it to negotiate a transactional outcome. It treats each service taking part in a
       transaction as a participant and communicates with it according to some predefined participant coordination models
-      appropriate to the type of transaction. <!--When a service begins performing work within the scope of a
-      transaction it enrolls itself with the coordinator as a participant, specifying the participant model it wishes to
-      follow.--> When a web service receives its first service request in some given transaction, it enrolls with the
+      appropriate to the type of transaction. When a web service receives its first service request in some given transaction, it enrolls with the
       coordinator as a participant, specifying the participant model it wishes to follow. The context contains a URL for
       the endpoint of the coordination service which handles enrollment requests. So, the term participant merely refers
       a transactional service enrolled in a specific transaction using a specific participant model.
     </para>
-  </section>
-
-  <section>
-    <title>ACID Transactions</title>
-    <para>
+    </section>
+    <section>
+        <title>ACID Transactions</title>
+        <para>
       Traditionally, transaction processing systems support <firstterm>ACID</firstterm> properties. ACID is an acronym
       for <emphasis>A</emphasis>tomic, <emphasis>C</emphasis>onsistent, <emphasis>I</emphasis>solated, and
       <emphasis>D</emphasis>urable. A unit of work has traditionally been considered transactional only if the ACID
-      properties are maintained, as describe in <xref linkend="acid-properties" />.
+      properties are maintained, as describe in <xref linkend="acid-properties"/>.
     </para>
-
-    <variablelist id="acid-properties">
-      <title>ACID Properties</title>
-      <varlistentry>
-   <term>Atomicity</term>
-   <listitem>
-     <para>
+        <variablelist id="acid-properties">
+            <title>ACID Properties</title>
+            <varlistentry>
+                <term>Atomicity</term>
+                <listitem>
+                    <para>
        The transaction executes completely, or not at all.
      </para>
-   </listitem>
-      </varlistentry>
-      <varlistentry>
-   <term>Consistency</term>
-   <listitem>
-     <para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>Consistency</term>
+                <listitem>
+                    <para>
        The effects of the transaction preserve the internal consistency of an underlying data structure.
      </para>
-   </listitem>
-      </varlistentry>
-      <varlistentry>
-   <term>Isolated</term>
-   <listitem>
-     <para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>Isolated</term>
+                <listitem>
+                    <para>
        The transaction runs as if it were running alone, with no other transactions running, and is not visible to other
        transactions.
      </para>
-   </listitem>
-      </varlistentry>
-      <varlistentry>
-   <term>Durable</term>
-   <listitem>
-     <para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>Durable</term>
+                <listitem>
+                    <para>
        The transaction's results are not lost in the event of a failure.
      </para>
-   </listitem>
-      </varlistentry>
-    </variablelist>
-  </section>
-
-  <section>
-    <title>Two Phase Commit</title>
-
-    <para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </section>
+    <section>
+        <title>Two Phase Commit</title>
+        <para>
       The classical two-phase commit approach is the bedrock of JBoss Transaction Service, and more generally of Web
       Services transactions. Two-phase commit provides coordination of parties that are involved in a transaction. The
-      general flow of a two-phase commit transaction is described in <xref linkend="two-phase-commit-overview" />.
+      general flow of a two-phase commit transaction is described in <xref linkend="two-phase-commit-overview"/>.
     </para>
-
-    <figure id="two-phase-commit-overview">
-      <title>Two-Phase Commit Overview</title>
-      <mediaobject>
-   <imageobject>
-     <imagedata fileref="images/fig-two-phase-commit-overview.png" format="PNG"/>
-   </imageobject>
-   <textobject>
-     <itemizedlist>
-       <listitem><para>A transaction is started, and some work is performed.</para></listitem>
-       <listitem><para>Once the work is finished, the two-phase commit begins.</para></listitem>
-       <listitem><para>The coordinator (transaction manager) of the transaction asks each resource taking part in the
-       transaction whether it is prepared to commit.</para></listitem>
-       <listitem><para>If all resources respond positively, the coordinator instructs the resources to make all work performed durable (usually committed to a database).</para></listitem>
-       <listitem><para>If not, all work performed is rolled back (undone) such that the underlying data structures are
-       in their original states.</para></listitem>
-     </itemizedlist>
-   </textobject>
-      </mediaobject>
-    </figure>
-
-    <note>
-      <para>
+        <figure id="two-phase-commit-overview">
+            <title>Two-Phase Commit Overview</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="images/fig-two-phase-commit-overview.png" format="PNG"/>
+                </imageobject>
+                <textobject>
+                    <itemizedlist>
+                        <listitem>
+                            <para>A transaction is started, and some work is performed.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Once the work is finished, the two-phase commit begins.</para>
+                        </listitem>
+                        <listitem>
+                            <para>The coordinator (transaction manager) of the transaction asks each resource taking part in the
+       transaction whether it is prepared to commit.</para>
+                        </listitem>
+                        <listitem>
+                            <para>If all resources respond positively, the coordinator instructs the resources to make all work performed durable (usually committed to a database).</para>
+                        </listitem>
+                        <listitem>
+                            <para>If not, all work performed is rolled back (undone) such that the underlying data structures are
+       in their original states.</para>
+                        </listitem>
+                    </itemizedlist>
+                </textobject>
+            </mediaobject>
+        </figure>
+        <note>
+            <para>
    During two-phase commit transactions, coordinators and resources keep track of activity in non-volatile data stores
    so that they can recover in the case of a failure.
       </para>
-    </note>
-
-  </section>
-
-  <section>
-    <title>The Synchronization Protocol</title>
-    <para>
+        </note>
+    </section>
+    <section>
+        <title>The Synchronization Protocol</title>
+        <para>
       Besides the two-phase commit protocol, traditional transaction processing systems employ an additional protocol,
       often referred to as the <firstterm>synchronization protocol</firstterm>. With the original ACID properties,
       Durability is important when state changes need to be available despite failures. Applications interact with a
       persistence store of some kind, such as a database, and this interaction can impose a significant overhead,
       because disk access is much slower to access than main computer memory.
     </para>
-    <para>
+        <para>
       One solution to the problem disk access time is to cache the state in main memory and only operate on the cache
       for the duration of a transaction. Unfortunately, this solution needs a way to flush the state back to the
       persistent store before the transaction terminates, or risk losing the full ACID properties. This is what the
       synchronization protocol does, with <firstterm>Synchronization Participants</firstterm>.
     </para>
-    <para>
+        <para>
       Synchronizations are informed that a transaction is about to commit. At that point, they can flush cached state,
       which might be used to improve performance of an application, to a durable representation prior to the transaction
       committing. The synchronizations are then informed about when the transaction completes and its completion state.
     </para>
-
-    <procedure>
-      <title>The "Four Phase Protocol" Created By Synchronizations</title>
-      <para>
+        <procedure>
+            <title>The "Four Phase Protocol" Created By Synchronizations</title>
+            <para>
    Synchronizations essentially turn the two-phase commit protocol into a four-phase protocol:
       </para>
-      <step>
-   <title>Step 1</title>
-   <para>
+            <step>
+                <title>Step 1</title>
+                <para>
      Before the transaction starts the two-phase commit, all registered Synchronizations are informed. Any failure at
      this point will cause the transaction to roll back.
    </para>
-      </step>
-      <step>
-   <title>Steps 2 and 3</title>
-   <para>
+            </step>
+            <step>
+                <title>Steps 2 and 3</title>
+                <para>
      The coordinator then conducts the normal two-phase commit protocol.
    </para>
-      </step>
-      <step>
-   <title>Step 4</title>
-   <para>
+            </step>
+            <step>
+                <title>Step 4</title>
+                <para>
      Once the transaction has terminated, all registered Synchronizations are informed. However, this is a courtesy
      invocation because any failures at this stage are ignored: the transaction has terminated so there’s nothing to
      affect.
    </para>
-      </step>
-    </procedure>
-    <para>
+            </step>
+        </procedure>
+        <para>
       The synchronization protocol does not have the same failure requirements as the traditional two-phase commit
       protocol. For example, Synchronization participants do not need the ability to recover in the event of failures,
       because any failure before the two-phase commit protocol completes cause the transaction to roll back, and
       failures after it completes have no effect on the data which the Synchronization participants are responsible for.
     </para>
-  </section>
-
-  <section>
-    <title>Optimizations to the Protocol</title>
-    <para>
+    </section>
+    <section>
+        <title>Optimizations to the Protocol</title>
+        <para>
       There are several variants to the standard two-phase commit protocol that are worth knowing about, because they
-      can have an impact on performance and failure recovery. <xref linkend="two-phase-variants" /> gives more
+      can have an impact on performance and failure recovery. <xref linkend="two-phase-variants"/> gives more
       information about each one.
     </para>
-    <table id="two-phase-variants">
-      <title>Variants to the Two-Phase Commit Protocol</title>
-      <tgroup cols="2">
-   <thead>
-     <row>
-       <entry><para>Variant</para></entry>
-       <entry><para>Description</para></entry>
-     </row>
-   </thead>
-   <tbody>
-     <row>
-       <entry><para>Presumed Abort</para></entry>
-       <entry><para>If a transaction is going to roll back, the coordinator may record this information locally and tell
+        <table id="two-phase-variants">
+            <title>Variants to the Two-Phase Commit Protocol</title>
+            <tgroup cols="2">
+                <thead>
+                    <row>
+                        <entry>
+                            <para>Variant</para>
+                        </entry>
+                        <entry>
+                            <para>Description</para>
+                        </entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>Presumed Abort</para>
+                        </entry>
+                        <entry>
+                            <para>If a transaction is going to roll back, the coordinator may record this information locally and tell
        all enlisted participants. Failure to contact a participant has no effect on the transaction outcome. The
        coordinator is informing participants only as a courtesy. Once all participants have been contacted, the
        information about the transaction can be removed. If a subsequent request for the status of the transaction
        occurs, no information will be available and the requester can assume that the transaction has aborted. This
        optimization has the benefit that no information about participants need be made persistent until the transaction
        has progressed to the end of the <systemitem>prepare</systemitem> phase and decided to commit, since any failure
-       prior to this point is assumed to be an abort of the transaction.</para></entry>
-     </row>
-     <row>
-       <entry><para>One-Phase</para></entry>
-       <entry><para>If only a single participant is involved in the transaction, the coordinator does not need to drive
+       prior to this point is assumed to be an abort of the transaction.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>One-Phase</para>
+                        </entry>
+                        <entry>
+                            <para>If only a single participant is involved in the transaction, the coordinator does not need to drive
        it through the <systemitem>prepare</systemitem> phase. Thus, the participant is told to commit, and the
        coordinator does not need to record information about the decision, since the outcome of the transaction is the
-       responsibility of the participant.</para></entry>
-     </row>
-     <row>
-       <entry><para>Read-Only</para></entry>
-       <entry><para>When a participant is asked to prepare, it can indicate to the coordinator that no information or
+       responsibility of the participant.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>Read-Only</para>
+                        </entry>
+                        <entry>
+                            <para>When a participant is asked to prepare, it can indicate to the coordinator that no information or
        data that it controls has been modified during the transaction. Such a participant does not need to be informed
        about the outcome of the transaction since the fate of the participant has no affect on the
        transaction. Therefore, a read-only participant can be omitted from the second phase of the commit
-       protocol.</para></entry>
-     </row>
-   </tbody>
-      </tgroup>
-    </table>
-
-    <note>
-      <para>
-   The WS-Atomic Transaction protocol does not support the one-phase commit optimization.
-      </para>
-    </note>
-  </section>
-
-  <section>
-    <title>Non-Atomic Transactions and Heuristic Outcomes</title>
-    <para>
+       protocol.</para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+    <section>
+        <title>Non-Atomic Transactions and Heuristic Outcomes</title>
+        <para>
       In order to guarantee atomicity, the two-phase commit protocol is <firstterm>blocking</firstterm>. As a result of
       failures, participants may remain blocked for an indefinite period of time, even if failure recovery mechanisms
       exist. Some applications and participants cannot tolerate this blocking.
     </para>
-    <para>
+        <para>
       To break this blocking nature, participants that are past the <systemitem>prepare</systemitem> phase are allowed
       to make autonomous decisions about whether to commit or rollback. Such a participant must record its decision, so
       that it can complete the original transaction if it eventually gets a request to do so. If the coordinator
@@ -422,78 +423,93 @@
       made, no conflict exists. If the decisions of the participant and coordinator are different, the situation is
       referred to as a non-atomic outcome, and more specifically as a <firstterm>heuristic outcome</firstterm>.
     </para>
-    <para>
+        <para>
       Resolving and reporting heuristic outcomes to the application is usually the domain of complex, manually driven
       system administration tools, because attempting an automatic resolution requires semantic information about the
       nature of participants involved in the transactions.
     </para>
-    <para>
+        <para>
       Precisely when a participant makes a heuristic decision depends on the specific implementation. Likewise, the
       choice the participant makes about whether to commit or to roll back depends upon the implementation, and possibly
       the application and the environment in which it finds itself. The possible heuristic outcomes are discussed in
       <xref linkend="tbl-heuristic-outcomes"/>.
     </para>
-
-    <table id="tbl-heuristic-outcomes">
-      <title>Heuristic Outcomes</title>
-      <tgroup cols="2">
-   <thead>
-     <row>
-       <entry><para>Outcome</para></entry>
-       <entry><para>Description</para></entry>
-     </row>
-   </thead>
-   <tbody>
-     <row>
-       <entry><para>Heuristic Rollback</para></entry>
-       <entry><para>The commit operation failed because some or all of the participants unilaterally rolled back the
-       transaction.</para></entry>
-     </row>
-     <row>
-       <entry><para>Heuristic Commit</para></entry>
-       <entry><para>An attempted rollback operation failed because all of the participants unilaterally committed. One
+        <table id="tbl-heuristic-outcomes">
+            <title>Heuristic Outcomes</title>
+            <tgroup cols="2">
+                <thead>
+                    <row>
+                        <entry>
+                            <para>Outcome</para>
+                        </entry>
+                        <entry>
+                            <para>Description</para>
+                        </entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>Heuristic Rollback</para>
+                        </entry>
+                        <entry>
+                            <para>The commit operation failed because some or all of the participants unilaterally rolled back the
+       transaction.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>Heuristic Commit</para>
+                        </entry>
+                        <entry>
+                            <para>An attempted rollback operation failed because all of the participants unilaterally committed. One
        situation where this might happen is if the coordinator is able to successfully <systemitem>prepare</systemitem>
        the transaction, but then decides to roll it back because its transaction log could not be updated. While the
-       coordinator is making its decision, the participants decides to commit.</para></entry>
-     </row>
-     <row>
-       <entry><para>Heuristic Mixed</para></entry>
-       <entry><para>Some participants commit ed, while others were rolled back.</para></entry>
-     </row>
-     <row>
-       <entry><para>Heuristic Hazard</para></entry>
-       <entry><para>The disposition of some of the updates is unknown. For those which are known, they have either all
-       been committed or all rolled back.</para></entry>
-     </row>
-   </tbody>
-      </tgroup>
-    </table>
-
-    <para>
+       coordinator is making its decision, the participants decides to commit.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>Heuristic Mixed</para>
+                        </entry>
+                        <entry>
+                            <para>Some participants commit ed, while others were rolled back.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>Heuristic Hazard</para>
+                        </entry>
+                        <entry>
+                            <para>The disposition of some of the updates is unknown. For those which are known, they have either all
+       been committed or all rolled back.</para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+        <para>
       Heuristic decisions should be used with care and only in exceptional circumstances, since the decision may
       possibly differ from that determined by the transaction service. This type of difference can lead to a loss of
       integrity in the system. Try to avoid needing to perform resolution of heuristics, either by working with services
       and participants that do not cause heuristics, or by using a transaction service that provides assistance in the
       resolution process.
     </para>
-    
-  </section>
-
-  <section>
-    <title>Interposition</title>
-    <para>
-      <firstterm>Interposition</firstterm> is a scoping mechanism which allows coordination of a transaction to be
-      delegated across a hierarchy of coordinators. See <xref linkend="fig-interpositions" /> for a graphical
+    </section>
+    <section>
+        <title>Interposition</title>
+        <para><firstterm>Interposition</firstterm> is a scoping mechanism which allows coordination of a transaction to be
+      delegated across a hierarchy of coordinators. See <xref linkend="fig-interpositions"/> for a graphical
       representation of this concept.
     </para>
-    <figure id="fig-interpositions">
-      <title>Interpositions</title>
-      <mediaobject>
-   <imageobject>
-     <imagedata fileref="images/fig-interpositions.png" format="PNG"/>
-   </imageobject>
-   <textobject>
-     <para>
+        <figure id="fig-interpositions">
+            <title>Interpositions</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="images/fig-interpositions.png" format="PNG"/>
+                </imageobject>
+                <textobject>
+                    <para>
        The diagram shows a <firstterm>top-level coordinator</firstterm> and an <firstterm>interposed
        coordinator</firstterm>. The top-level coordinator is responsible for driving the original, top-level transaction
        to completion or rollback. The interposed coordinator manages its participants in a subordinate transaction, but
@@ -502,97 +518,87 @@
        incoming <systemitem>prepare</systemitem> and <systemitem>commit</systemitem>/<systemitem>rollback</systemitem>
        messages to its participants, combining their responses and returning them back to its parent coordinator.
      </para>
-   </textobject>
-      </mediaobject>
-    </figure>
-
-    <para>
+                </textobject>
+            </mediaobject>
+        </figure>
+        <para>
       Interposition is particularly useful for Web Services transactions, as a way of limiting the amount of network
       traffic required for coordination. For example, if communications between the top-level coordinator and a web
       service are slow because of network traffic or distance, the web service might benefit from executing in a
-      subordinate transaction which employs a local coordinator service. In <xref linkend="fig-interpositions" />,to
+      subordinate transaction which employs a local coordinator service. In <xref linkend="fig-interpositions"/>,to
       <systemitem>prepare</systemitem>, the top-level coordinator only needs to send one
       <systemitem>prepare</systemitem> message to the subordinate coordinator, and receive one
       <systemitem>prepared</systemitem> or <systemitem>aborted</systemitem> reply. The subordinate coordinator forwards
       a <systemitem>prepare</systemitem> locally to each participant and combines the results to decide whether to send
       a single <systemitem>prepared</systemitem> or <systemitem>aborted</systemitem> reply.
     </para>
-  </section>
-
-  <section>
-    <title>A New Transaction Protocol</title>
-
-    <para>
+    </section>
+    <section>
+        <title>A New Transaction Protocol</title>
+        <para>
       Many component technologies offer mechanisms for coordinating ACID transactions based on two-phase commit
       semantics. Some of these are CORBA/OTS, JTS/JTA, and MTS/MSDTC. ACID transactions are not suitable for all Web
-      Services transactions, as explained in <xref linkend="acid-not-suitable" />.
+      Services transactions, as explained in <xref linkend="acid-not-suitable"/>.
     </para>
-
-    <itemizedlist id="acid-not-suitable">
-      <title>Reasons ACID is Not Suitable for Web Services</title>
-      <listitem>
-   <para>
+        <itemizedlist id="acid-not-suitable">
+            <title>Reasons ACID is Not Suitable for Web Services</title>
+            <listitem>
+                <para>
      Classic ACID transactions assume that an organization that develops and deploys applications owns the entire
      infrastructure for the applications. This infrastructure has traditionally taken the form of an Intranet. Ownership
      implies that transactions operate in a trusted and predictable manner. To assure ACIDity, potentially long-lived
      locks can be kept on underlying data structures during two-phase commit. Resources can be used for any period of
      time and released when the transaction is complete.
    </para>
-   <para>
+                <para>
      In Web Services, these assumptions are no longer valid. One obvious reason is that the owners of data exposed
      through a Web service refuse to allow their data to be locked for extended periods, since allowing such locks
      invites denial-of-service attacks.
    </para>
-      </listitem>
-      <listitem>
-   <para>
+            </listitem>
+            <listitem>
+                <para>
      All application infrastructures are generally owned by a single party. Systems using classical ACID transactions
      normally assume that participants in a transaction will obey the directives of the transaction manager and only
      infrequently make unilateral decisions which harm other participants in a transaction.
    </para>
-   <para>
+                <para>
      Web Services participating in a transaction can effectively decide to resign from the transaction at any time, and
      the consumer of the service generally has little in the way of quality of service guarantees to prevent this.
    </para>
-      </listitem>
-    </itemizedlist>
-
-    <section>
-      <title>Transaction in Loosely Coupled Systems</title>
-
-      <para>
-   Extended transaction models which relax the ACID properties have been proposed over the years. WS-T provides a new
-   transaction protocol to implement these concepts for the Web Services architecture. XTS is designed to accommodate
-   four underlying requirements inherent in any loosely coupled architecture like Web Services. These requirements are
-   discussed in <xref linkend="web-services-requirements" />.
+            </listitem>
+        </itemizedlist>
+        <section>
+            <title>Addressing the Problems of Transactioning in Loosely Coupled Systems</title>
+            <para>
+   Though extended transaction models which relax the ACID properties have been proposed over the years, standards such as OASIS WS-TX provide a new transaction protocol to implement these concepts for the Web services architecture. The are designed to accommodate four underlying requirements inherent in any loosely coupled architecture like Web services:.
       </para>
-      <itemizedlist id="web-services-requirements">
-   <title>Requirements of Web Services</title>
-   <listitem>
-     <para>
+            <itemizedlist id="web-services-requirements">
+                <title>Requirements of Web Services</title>
+                <listitem>
+                    <para>
        Ability to handle multiple successful outcomes to a transaction, and to involve operations whose effects may not
        be isolated or durable.
      </para>
-   </listitem>
-   <listitem>
-     <para>
+                </listitem>
+                <listitem>
+                    <para>
        Coordination of autonomous parties whose relationships are governed by contracts, rather than the dictates of a
        central design authority.
      </para>
-   </listitem>
-   <listitem>
-     <para>
+                </listitem>
+                <listitem>
+                    <para>
        Discontinuous service, where parties are expected to suffer outages during their lifetimes, and coordinated work
        must be able to survive such outages.
      </para>
-   </listitem>
-   <listitem>
-     <para>
+                </listitem>
+                <listitem>
+                    <para>
        Interoperation using XML over multiple communication protocols. XTS uses SOAP encoding carried over HTTP.
      </para>
-   </listitem>
-      </itemizedlist>
+                </listitem>
+            </itemizedlist>
+        </section>
     </section>
-  </section>
 </chapter>
-
