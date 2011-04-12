@@ -1436,6 +1436,16 @@ public interface arjunaI18NLogger {
     @Message(id = 12364, value = "RecoveryActivator init failed for {0}", format = MESSAGE_FORMAT)
 	public String get_recovery_RecActivatorLoader_initfailed(String arg0);
 
+    @Message(id = 12365, value = "Method not implemented", format = MESSAGE_FORMAT)
+    public String get_method_not_implemented();
+
+    @Message(id = 12366, value = "Unexpected data read from journal - file may be corrupt.", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_journal_load_error();
+
+    @Message(id = 12367, value = "Failed to create store dir {0}", format = MESSAGE_FORMAT)
+    public String get_dir_create_failed(String arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

@@ -22,6 +22,7 @@ package com.arjuna.ats.internal.arjuna.objectstore.hornetq;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -56,7 +57,7 @@ import java.util.Set;
         </constructor>
     </bean>
 
-    TODO wire to RecMgr/TxMgr lifecycle deps
+    plus RecMgr/TxMgr lifecycle deps
 
 */
 
@@ -85,6 +86,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public void start()
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.start()");
+        }
+
         try {
             store.start();
         } catch(Exception e) {
@@ -95,6 +100,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public void stop()
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.stop()");
+        }
+
         try {
             store.stop();
         } catch(Exception e) {
@@ -112,7 +121,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public InputObjectState read_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
     /**
@@ -126,7 +135,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean remove_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
 
@@ -148,6 +157,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public InputObjectState read_committed(Uid u, String typeName) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.read_committed("+u+", "+typeName+")");
+        }
+
         typeName = ensureTypenamePrefix(typeName);
 
         return store.read_committed(u, typeName);
@@ -164,6 +177,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean remove_committed(Uid u, String typeName) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.remove_committed("+u+", "+typeName+")");
+        }
+
         typeName = ensureTypenamePrefix(typeName);
 
         return store.remove_committed(u, typeName);
@@ -181,7 +198,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean hide_state(Uid u, String tn) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
     /**
@@ -195,7 +212,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean reveal_state(Uid u, String tn) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
     /**
@@ -209,7 +226,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean commit_state(Uid u, String tn) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
     /**
@@ -221,6 +238,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public int currentState(Uid u, String typeName) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.currentState("+u+", "+typeName+")");
+        }
+
         typeName = ensureTypenamePrefix(typeName);
 
         if( store.contains(u, typeName)) {
@@ -243,7 +264,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean write_uncommitted(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
-        throw new ObjectStoreException("This should never be called");
+        throw new ObjectStoreException(tsLogger.i18NLogger.get_method_not_implemented());
     }
 
     /**
@@ -258,6 +279,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean write_committed(Uid u, String typeName, OutputObjectState buff) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.write_committed("+u+", "+typeName+")");
+        }
+
         typeName = ensureTypenamePrefix(typeName);
 
         return store.write_committed(u, typeName, buff);
@@ -266,6 +291,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean allObjUids(String typeName, InputObjectState foundInstances) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.allObjUids("+typeName+")");
+        }
+
         typeName = ensureTypenamePrefix(typeName);
 
         return allObjUids(typeName, foundInstances, StateStatus.OS_UNKNOWN);
@@ -283,6 +312,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean allObjUids(String typeName, InputObjectState foundInstances, int matchState) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.allObjUids("+typeName+", "+matchState+")");
+        }
+
         boolean result = true;
 
         typeName = ensureTypenamePrefix(typeName);
@@ -304,7 +337,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException("TODO");
+            throw new ObjectStoreException(e);
         }
 
         foundInstances.setBuffer(buffer.buffer());
@@ -323,6 +356,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
     @Override
     public boolean allTypes(InputObjectState foundTypes) throws ObjectStoreException
     {
+        if(tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.trace("HornetqObjectStore.allTypes()");
+        }
+
         boolean result = true;
 
         String[] knownTypes = store.getKnownTypes();

@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.hornetq;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.state.OutputBuffer;
@@ -29,7 +30,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.hornetq.core.journal.*;
-import org.hornetq.core.journal.impl.AIOSequentialFile;
 import org.hornetq.core.journal.impl.JournalImpl;
 import org.hornetq.core.journal.impl.AIOSequentialFileFactory;
 import org.hornetq.core.journal.impl.NIOSequentialFileFactory;
@@ -76,7 +76,7 @@ public class HornetqJournalStore
         List<PreparedTransactionInfo> preparedTransactions = new LinkedList<PreparedTransactionInfo>();
         TransactionFailureCallback failureCallback = new TransactionFailureCallback() {
             public void failedTransaction(long l, java.util.List<org.hornetq.core.journal.RecordInfo> recordInfos, java.util.List<org.hornetq.core.journal.RecordInfo> recordInfos1) {
-                System.err.println("This should never get called");
+                tsLogger.i18NLogger.warn_journal_load_error();
             }
         };
 
@@ -84,7 +84,7 @@ public class HornetqJournalStore
         maxID = journalLoadInformation.getMaxID();
 
         if(!preparedTransactions.isEmpty()) {
-            System.err.println("This should never happen");
+            tsLogger.i18NLogger.warn_journal_load_error();
         }
 
         for(RecordInfo record : committedRecords) {
@@ -94,20 +94,16 @@ public class HornetqJournalStore
             getContentForType(typeName).put(uid, record);
             // don't unpack the rest yet, we may never need it. read_committed does it on demand.
         }
-
-        System.out.println("HornetqJournalStore started foo");
     }
 
     public HornetqJournalStore(HornetqJournalEnvironmentBean envBean) throws IOException {
-
-        System.out.println("HornetqJournalStore ctor");
 
         syncWrites = envBean.isSyncWrites();
         syncDeletes = envBean.isSyncDeletes();
 
         File storeDir = new File(envBean.getStoreDir());
         if(!storeDir.exists() && !storeDir.mkdirs()) {
-            throw new IOException("Failed to create store dir "+storeDir.getCanonicalPath()); // TODO i18n
+            throw new IOException(tsLogger.i18NLogger.get_dir_create_failed(storeDir.getCanonicalPath()));
         }
         storeDirCanonicalPath = storeDir.getCanonicalPath();
 
