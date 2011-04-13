@@ -73,6 +73,16 @@
         <if>
             <istrue value="${publican}" />
             <then>
+                <exec dir="docs/quick_start" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+                <exec dir="docs/orbportability" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
                 <exec dir="docs/administration_guide" executable="publican">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
