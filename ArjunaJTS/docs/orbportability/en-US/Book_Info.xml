@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_ORB_Portability_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<bookinfo id="book-JBossJTS_ORB_Portability_Guide">
+  <title>&PRODUCT; ORB Portability Guide</title>
+  <productname>JBossJTS</productname>
+  <productnumber>4.15.0</productnumber>
+  <edition>1</edition>
+  <pubsnumber>1</pubsnumber>
+  <corpauthor>
+    <inlinemediaobject>
+      <imageobject>
+        <imagedata fileref="Common_Content/images/title_logo.svg" format="SVG" />
+      </imageobject>
+    </inlinemediaobject>
+  </corpauthor>
+  <xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>
+
