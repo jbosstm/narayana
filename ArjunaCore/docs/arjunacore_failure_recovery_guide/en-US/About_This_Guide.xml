@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recover_Guide.ent">
+<!ENTITY PRODUCT "JBoss Transactions">
+<!ENTITY BOOKID "ArjunaCore_Failure_Recover_Guide">
+<!ENTITY VERSION "4.15">
+<!ENTITY YEAR "2011">
+<!ENTITY HOLDER "JBoss.org">
+<!ENTITY APPSERVER "JBoss Application Server">
+<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->]>
+<chapter>
+  <title>About This Guide</title>
+  <para>
+    The Failure Recovery for TxCore and TXOJ contains information on how to use JBoss Transactions 4.10.0 failure recovery system when not
+    embedding it within an application server or using TXOJ.
+  </para>
+  <section>
+    <title>Audience</title>
+    <para>
+      This guide is most relevant to engineers who are responsible for administering JBoss Transactions 4.10.0 installations.
+    </para>
+  </section>
+  <section>
+    <title>Prerequisites</title>
+    <para>
+      You should have installed JBoss Transactions 4.10.0. The reader should be familiar with the main Failure Recovery Guide.
+    </para>
+  </section>
+</chapter>
