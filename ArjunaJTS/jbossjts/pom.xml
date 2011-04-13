@@ -131,7 +131,6 @@
                                 <includes>
                                     <include>org.jboss.jbossts:common</include>
                                     <include>org.jboss.jbossts:arjuna</include>
-                                    <include>org.jboss.jbossts:osbv-defaults</include>
                                     <include>org.jboss.jbossts:txoj</include>
                                     <include>org.jboss.jbossts:jta</include>
                                     <include>org.jboss.jbossts:jdbc</include>
@@ -154,10 +153,6 @@
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
             <artifactId>arjuna</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>osbv-defaults</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>

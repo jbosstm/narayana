@@ -100,17 +100,6 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.jbossts:osbv-defaults</include>
-			</includes>
-			<outputDirectory>bin/tools/plugins</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
 				<include>org.jboss.jbossts:jbossjts</include>
 			</includes>
 			<excludes>
@@ -140,7 +129,6 @@
 				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
 				<exclude>org.jboss.jbossts:common</exclude>
 				<exclude>org.jboss.jbossts:arjuna</exclude>
-				<exclude>org.jboss.jbossts:osbv-defaults</exclude>
 				<exclude>org.jboss.jbossts:txoj</exclude>
 				<exclude>org.jboss.jbossts:jta</exclude>
 				<exclude>org.jboss.jbossts:orbportability</exclude>

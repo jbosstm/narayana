@@ -266,11 +266,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
-                <artifactId>osbv-defaults</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>txoj</artifactId>
                 <version>${project.version}</version>
             </dependency>
