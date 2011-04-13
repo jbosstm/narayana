@@ -6,7 +6,7 @@
 <bookinfo id="book-ArjunaTA_Development_Guide-ArjunaTA_Development_Guide">
    <title>ArjunaTA Development Guide</title>
    <subtitle>Development reference guide for the ArjunaTA implementation of the JTA API</subtitle>
-   <productname>ArjunaTA</productname>
+   <productname>JBoss Transactions</productname>
    <productnumber>4.15.0</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>

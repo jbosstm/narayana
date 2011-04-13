@@ -7,7 +7,7 @@
   <title>JBossJTA Administration Guide</title>
   <subtitle>Administration of the &PRODUCT; toolkit, which implements the JTA API in the &PRODUCT;
     Transaction Service</subtitle>
-  <productname>JBossJTA</productname>
+  <productname>JBoss Transactions</productname>
   <productnumber>4.15.0</productnumber>
   <edition>1</edition>
   <pubsnumber>1</pubsnumber>

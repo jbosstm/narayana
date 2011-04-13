@@ -7,7 +7,7 @@
    <title>Stand-alone Installation Guide</title>
    <!-- <subtitle>Installation JBossJTA toolkit, which implements the JTA API in the JBossJTA
    Transaction Service</subtitle> -->
-   <productname>JBossJTA</productname>
+   <productname>JBoss Transactions</productname>
    <productnumber>4.15.0</productnumber>
    <edition>1</edition>
    <pubsnumber>1</pubsnumber>

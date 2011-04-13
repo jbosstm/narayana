@@ -4,7 +4,6 @@
 ]>
 <bookinfo id="book-ArjunaCore_Failure_Recover_Guide">
     <title>Failure Recovery for TxCore and TXOJ</title>
-    <!--subtitle>JBoss Transaction Service</subtitle-->
     <productname>JBoss Transactions</productname>
     <productnumber>4.15.0</productnumber>
     <edition>0</edition>
