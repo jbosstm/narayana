@@ -71,14 +71,10 @@
 
         <property name="dest.dir" value="docs"/>
 
-        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
-            <fileset dir="docs" includes="**/*.pdf"/>
-        </copy>
-
         <if>
             <istrue value="${publican}" />
             <then>
-                <exec dir="docs/ArjunaJTS_Installation_And_Administration_Guide" executable="publican">
+                <exec dir="docs/administration_guide" executable="publican">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
@@ -91,30 +87,15 @@
             </then>
         </if>
 
+
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+            <fileset dir="." includes="**/*.pdf"/>
         </copy>
 
-
-
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
-            <fileset dir="docs" includes="**/*.pdf"/>
             <fileset dir="docs" includes="images/*"/>
             <fileset dir="docs" includes="index.html"/>
         </copy>
-
-        <copy todir="${build.dir}/install/${dest.dir}/user_guide" overwrite="true">
-            <fileset dir="orbportability/docs/programmers_guide" includes="*.pdf"/>
-        </copy>
-
-        <copy todir="${build.dir}/install/${dest.dir}/user_guide/" overwrite="true" flatten="true">
-            <fileset dir="../docs/" includes="**/*.pdf"/>
-        </copy>
-
-        <copy todir="${build.dir}/install/${dest.dir}/user_guide/ArjunaCore" overwrite="true" flatten="true">
-            <fileset dir="../ArjunaCore/docs/" includes="**/*.pdf"/>
-        </copy>
-
     </target>
 
     <target name="install.scripts">
