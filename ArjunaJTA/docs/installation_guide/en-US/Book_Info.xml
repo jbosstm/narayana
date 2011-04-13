@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-ArjunaTA_Installation_And_Administration_Guide">
-   <title>ArjunaTA Installation And Administration Guide</title>
-   <subtitle>Installation and Administration of the ArjunaTA toolkit, which implements the JTA API in the ArjunaCore
-   Transaction Service</subtitle>
-   <productname>ArjunaTA</productname>
-   <productnumber>4.14.0</productnumber>
+<bookinfo id="book-JBossJTA_Installation_Guide">
+   <title>Stand-alone Installation Guide</title>
+   <!-- <subtitle>Installation JBossJTA toolkit, which implements the JTA API in the JBossJTA
+   Transaction Service</subtitle> -->
+   <productname>JBossJTA</productname>
+   <productnumber>4.15.0</productnumber>
    <edition>1</edition>
    <pubsnumber>1</pubsnumber>
    <!--

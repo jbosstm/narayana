@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaTA_Installation_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Installation_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
@@ -8,7 +8,7 @@
   <procedure>
     <title>Pre-Installation Steps</title>
     <para>
-      Before installing the ArjunaTA software, we recommend the following administrative steps  be taken, assuming a default configuration for ArjunaTA.
+      Before installing the &PRODUCT; software, we recommend the following administrative steps  be taken, assuming a default configuration for &PRODUCT;.
     </para>
     <step>
       <title>Install the distribution into the required location.</title>
@@ -19,7 +19,7 @@
     <step>
       <title>Specify the Location for the Object Store</title>
       <para>
-   ArjunaTA requires a minimum object store for storing the outcome of transactions in the  event of system crashes. The location of this should be specified in the properties file using the <property>ObjectStoreEnvironmentBean.objectStoreDir</property> key or by using environment
+   &PRODUCT; requires a minimum object store for storing the outcome of transactions in the  event of system crashes. The location of this should be specified in the properties file using the <property>ObjectStoreEnvironmentBean.objectStoreDir</property> key or by using environment
    variable:
       </para>
       <screen><command>java –DObjectStoreEnvironmentBean.objectStoreDir =C:\temp foo.</command></screen>

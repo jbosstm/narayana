@@ -1,3 +1,0 @@
-<entry key="RecoveryEnvironmentBean.expiryScannerClassNames">
-    com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
-</entry>
