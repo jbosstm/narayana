@@ -90,6 +90,11 @@
         <if>
             <istrue value="${publican}" />
             <then>
+                <exec dir="docs/failure_recovery_guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
                 <exec dir="docs/ArjunaCore_Development_Guide" executable="publican">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
@@ -99,7 +104,7 @@
         </if>
 
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+            <fileset dir="." includes="**/*.pdf"/>
         </copy>
 
     </target>
