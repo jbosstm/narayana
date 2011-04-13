@@ -40,11 +40,24 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <exec dir="failure_recovery_guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+                <exec dir="transactions_overview_guide" executable="publican">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
+            </then>
+        </if>
                 <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
                     <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
                 </copy>
-            </then>
-        </if>
+                <copy todir="${dest.dir}" overwrite="true" flatten="true">
+                    <fileset dir="." includes="**/*.pdf" excludes="**/*Release*.pdf"/>
+                </copy>
 
 
     </target>
