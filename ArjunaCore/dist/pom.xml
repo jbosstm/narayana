@@ -85,23 +85,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-jmxbrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-core-objectstorebrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
             <artifactId>osbv-defaults</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-perfgraph</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>

@@ -259,17 +259,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-core</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-jmxbrowser</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>jbossts-tools</artifactId>
                 <version>${project.version}</version>
                 <classifier>sar</classifier>
@@ -277,22 +266,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-tools</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-core-objectstorebrowser</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
                 <artifactId>osbv-defaults</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-perfgraph</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -308,11 +282,6 @@
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
                 <artifactId>jdbc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-jta-objectstorebrowser</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -372,11 +341,6 @@
             <dependency>
                 <groupId>org.jboss.jbossts</groupId>
                 <artifactId>jbossjts-integration</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
-                <artifactId>tsmx-jts-objectstorebrowser</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

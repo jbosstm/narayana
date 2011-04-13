@@ -25,14 +25,12 @@
         <module>common</module>
         <module>ArjunaCore/arjuna</module>
         <module>ArjunaCore/txoj</module>
-        <module>ArjunaCore/tsmx</module>
         <module>ArjunaCore/arjuna/services</module>
         <module>ArjunaCore/arjunacore</module>
         <module>ArjunaCore/docs</module>
         <module>ArjunaCore/dist</module>
         <module>ArjunaJTA/jta</module>
         <module>ArjunaJTA/jdbc</module>
-        <module>ArjunaJTA/tsmx</module>
         <module>ArjunaJTA/jbossjta</module>
         <module>ArjunaJTA/docs</module>
         <module>ArjunaJTA/integration</module>
@@ -40,9 +38,7 @@
         <module>ArjunaJTS/orbportability</module>
         <module>ArjunaJTS/jts</module>
         <module>ArjunaJTS/jtax</module>
-        <module>ArjunaJTS/tsmx-sar</module>
         <module>ArjunaJTS/jbossjts</module>
-        <module>ArjunaJTS/tsmx</module>
         <module>ArjunaJTS/integration</module>
         <module>ArjunaJTS/trailmap</module>
         <module>ArjunaJTS/docs</module>

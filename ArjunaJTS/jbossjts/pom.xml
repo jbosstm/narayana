@@ -85,8 +85,6 @@
                                 <source>../../common/classes</source>
                                 <source>../../ArjunaCore/arjuna/classes</source>
                                 <source>../../ArjunaCore/txoj/classes</source>
-                                <source>../../ArjunaCore/tsmx/classes</source>
-                                <source>../../ArjunaCore/tsmx/bin</source>
                                 <source>../../ArjunaJTA/jta/classes</source>
                                 <source>../../ArjunaJTA/jdbc/classes</source>
                                 <source>../orbportability/classes</source>
@@ -103,7 +101,6 @@
                 <configuration>
                     <includes>
                         <include>com/arjuna/ats/jts/services/**/*.java</include>
-                        <include>com/arjuna/ats/internal/tsmx/**/*.java</include>
                     </includes>
                 </configuration>
                 <executions>
@@ -134,10 +131,7 @@
                                 <includes>
                                     <include>org.jboss.jbossts:common</include>
                                     <include>org.jboss.jbossts:arjuna</include>
-                                    <include>org.jboss.jbossts:tsmx-tools</include>
-                                    <include>org.jboss.jbossts:tsmx-jmxbrowser</include>
                                     <include>org.jboss.jbossts:osbv-defaults</include>
-                                    <include>org.jboss.jbossts:tsmx-perfgraph</include>
                                     <include>org.jboss.jbossts:txoj</include>
                                     <include>org.jboss.jbossts:jta</include>
                                     <include>org.jboss.jbossts:jdbc</include>
@@ -146,29 +140,6 @@
                                     <include>org.jboss.jbossts:jtax</include>
                                 </includes>
                             </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>org.jboss.jbossts:tsmx-jmxbrowser</artifact>
-                                    <excludes>
-                                        <exclude>**/tools.properties</exclude>
-                                        <exclude>**/*.gif</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.jboss.jbossts:tsmx-perfgraph</artifact>
-                                    <excludes>
-                                        <exclude>**/tools.properties</exclude>
-                                        <exclude>**/*.gif</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.jboss.jbossts:tsmx-tools</artifact>
-                                    <excludes>
-                                        <exclude>**/tools.properties</exclude>
-                                        <exclude>**/*.gif</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -186,19 +157,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-jmxbrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
             <artifactId>osbv-defaults</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-perfgraph</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>

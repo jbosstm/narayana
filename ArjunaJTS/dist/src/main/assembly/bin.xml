@@ -100,50 +100,6 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.jbossts:tsmx-tools</include>
-			</includes>
-			<outputDirectory>bin</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.jbossts:tsmx-jmxbrowser</include>
-			</includes>
-			<outputDirectory>bin/tools</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.jbossts:tsmx-jts-objectstorebrowser</include>
-			</includes>
-			<outputDirectory>bin/tools</outputDirectory>
-			<outputFileNameMapping>tsmx-objectstorebrowser.jar
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.jbossts:tsmx-perfgraph</include>
-			</includes>
-			<outputDirectory>bin/tools</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
 				<include>org.jboss.jbossts:osbv-defaults</include>
 			</includes>
 			<outputDirectory>bin/tools/plugins</outputDirectory>
@@ -184,18 +140,12 @@
 				<exclude>org.jboss.jbossts:arjunacore-services</exclude>
 				<exclude>org.jboss.jbossts:common</exclude>
 				<exclude>org.jboss.jbossts:arjuna</exclude>
-				<exclude>org.jboss.jbossts:tsmx-tools</exclude>
-				<exclude>org.jboss.jbossts:tsmx-jmxbrowser</exclude>
-				<exclude>org.jboss.jbossts:tsmx-core-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:osbv-defaults</exclude>
-				<exclude>org.jboss.jbossts:tsmx-perfgraph</exclude>
 				<exclude>org.jboss.jbossts:txoj</exclude>
 				<exclude>org.jboss.jbossts:jta</exclude>
-				<exclude>org.jboss.jbossts:tsmx-jta-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:orbportability</exclude>
 				<exclude>org.jboss.jbossts:jts</exclude>
 				<exclude>org.jboss.jbossts:jtax</exclude>
-				<exclude>org.jboss.jbossts:tsmx-jts-objectstorebrowser</exclude>
 				<exclude>org.jboss.jbossts:jbossts-tools</exclude>
 				<exclude>org.jboss.jbossts:jbossts-jopr-plugin</exclude>
 				<exclude>org.jboss.jbossts:trailmap</exclude>
@@ -220,11 +170,6 @@
 		<file>
 			<source>../copyright.txt</source>
 			<fileMode>0644</fileMode>
-		</file>
-		<file>
-			<source>../../ArjunaCore/tsmx/etc/toolsframework.xml</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>bin/tools</outputDirectory>
 		</file>
 		<file>
 			<source>../../ArjunaCore/arjuna/etc/log4j.properties</source>

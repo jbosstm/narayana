@@ -85,7 +85,6 @@
                                 <source>../../common/classes</source>
                                 <source>../arjuna/classes</source>
                                 <source>../txoj/classes</source>
-                                <source>../tsmx/classes</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -114,11 +113,7 @@
                                 <includes>
                                     <include>org.jboss.jbossts:common</include>
                                     <include>org.jboss.jbossts:arjuna</include>
-                                    <include>org.jboss.jbossts:tsmx-tools</include>
-                                    <include>org.jboss.jbossts:tsmx-jmxbrowser</include>
-                                    <include>org.jboss.jbossts:tsmx-core-objectstorebrowser</include>
                                     <include>org.jboss.jbossts:osbv-defaults</include>
-                                    <include>org.jboss.jbossts:tsmx-perfgraph</include>
                                     <include>org.jboss.jbossts:txoj</include>
                                 </includes>
                             </artifactSet>
@@ -139,23 +134,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-jmxbrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-core-objectstorebrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
             <artifactId>osbv-defaults</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-perfgraph</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>

@@ -85,11 +85,8 @@
                                 <source>../../common/classes</source>
                                 <source>../../ArjunaCore/arjuna/classes</source>
                                 <source>../../ArjunaCore/txoj/classes</source>
-                                <source>../../ArjunaCore/tsmx/classes</source>
-                                <source>../../ArjunaCore/tsmx/bin</source>
                                 <source>../jta/classes</source>
                                 <source>../jdbc/classes</source>
-                                <source>../tsmx/bin</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -118,14 +115,10 @@
                                 <includes>
                                     <include>org.jboss.jbossts:common</include>
                                     <include>org.jboss.jbossts:arjuna</include>
-                                    <include>org.jboss.jbossts:tsmx-tools</include>
-                                    <include>org.jboss.jbossts:tsmx-jmxbrowser</include>
                                     <include>org.jboss.jbossts:osbv-defaults</include>
-                                    <include>org.jboss.jbossts:tsmx-perfgraph</include>
                                     <include>org.jboss.jbossts:txoj</include>
                                     <include>org.jboss.jbossts:jta</include>
                                     <include>org.jboss.jbossts:jdbc</include>
-                                    <include>org.jboss.jbossts:tsmx-jta-objectstorebrowser</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -145,19 +138,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-jmxbrowser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
             <artifactId>osbv-defaults</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-perfgraph</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
@@ -170,10 +151,6 @@
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
             <artifactId>jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>tsmx-jta-objectstorebrowser</artifactId>
         </dependency>
     </dependencies>
 </project>
