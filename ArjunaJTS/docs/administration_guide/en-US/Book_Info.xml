@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaJTS_Installation_And_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-ArjunaJTS_Installation_And_Administration_Guide">
-   <title>ArjunaJTS Installation And Administration Guide</title>
-   <subtitle>Installation and Administration of the ArjunaJTS toolkit, used as part of the ArjunaCore Transaction Service</subtitle>
-   <productname>ArjunaJTS</productname>
-   <productnumber>4.14.0</productnumber>
+<bookinfo id="book-JBossJTS_Administration_Guide">
+   <title>JBossJTS Administration Guide</title>
+   <subtitle>Administration of the JBossJTS toolkit, used as part of the ArjunaCore Transaction Service</subtitle>
+   <productname>JBossJTS</productname>
+   <productnumber>4.15.0</productnumber>
    <edition>1</edition>
    <pubsnumber>1</pubsnumber>
    <!--

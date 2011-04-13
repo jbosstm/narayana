@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Administration_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<book>
+  <xi:include href="Book_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Preface.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Starting_And_Stopping_Transaction_Manager.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="OTS_Java_EE_Transaction_Service_Management.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Failure_Recovery_Administration.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="ORB_Specific_Configurations.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Initializing_JBossTS_Applications.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <index />
+</book>

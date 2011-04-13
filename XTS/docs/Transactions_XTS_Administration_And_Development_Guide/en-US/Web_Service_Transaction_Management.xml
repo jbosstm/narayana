@@ -87,7 +87,7 @@
       <title>Using the <filename>coordinator/</filename> diretory to configure and deploy a stand-alone transaction manager</title>
       <step>
         <para>
-          Install JBossTS 4.14.
+          Install JBossTS 4.15.
         </para>
       </step>
       <step>
