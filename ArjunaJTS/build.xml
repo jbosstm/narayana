@@ -55,7 +55,6 @@
 
                 <packageset dir="../ArjunaCore/arjuna/classes" excludes="**/internal/**"/>
                 <packageset dir="../ArjunaCore/txoj/classes" excludes="**/internal/**"/>
-                <packageset dir="../ArjunaCore/tsmx/classes" excludes="**/internal/**"/>
 
                 <packageset dir="../ArjunaJTA/jta/classes" excludes="**/internal/**"/>
                 <packageset dir="../ArjunaJTA/jdbc/classes" excludes="**/internal/**"/>
