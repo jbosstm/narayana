@@ -29,11 +29,11 @@
   </section>
   <section>
     <title>Setting properties</title>
-    <para>JBossJTA has also been designed to be configurable at runtime through the use of various property attributes. These attributes can be
+    <para>&PRODUCT; has also been designed to be configurable at runtime through the use of various property attributes. These attributes can be
       provided at runtime on command line or specified through a properties file.</para>
     <section>
       <title>Specifying the object store location</title>
-      <para>JBossJTA requires an object store in order to persistently record the outcomes of transactions in the event of failures. In order to
+      <para>&PRODUCT; requires an object store in order to persistently record the outcomes of transactions in the event of failures. In order to
         specify the location of the object store it is necessary to specify the location when the application is executed; for example:</para>
       <para>
         <programlisting role="JAVA" language="Java">java –DObjectStoreEnvironmentBean.objectStoreDir=/var/tmp/ObjectStore myprogram</programlisting>
@@ -48,12 +48,12 @@
     <title>Demarcating Transactions</title>
     <para>The Java Transaction API consists of three elements: a high-level application transaction demarcation interface, a high-level transaction
       manager interface intended for application server, and a standard Java mapping of the X/Open XA protocol intended for transactional resource
-      manager. All of the JTA classes and interfaces occur within the javax.transaction package, and the corresponding JBossJTA implementations within
+      manager. All of the JTA classes and interfaces occur within the javax.transaction package, and the corresponding &PRODUCT; implementations within
       the com.arjuna.ats.jta package.</para>
     <section>
       <title>UserTransaction</title>
       <para>The UserTransaction interface provides applications with the ability to control transaction boundaries. </para>
-      <para>In JBossJTA, UserTransaction can be obtained from the static com.arjuna.ats.jta.UserTransaction.userTransaction() method. When obtained
+      <para>In &PRODUCT;, UserTransaction can be obtained from the static com.arjuna.ats.jta.UserTransaction.userTransaction() method. When obtained
         the UserTransaction object can be used to control transactions</para>
       <example>
         <title>User Transaction Example</title>
@@ -65,7 +65,7 @@
       <title>TransactionManager</title>
       <para>The TransactionManager interface allows the application server to control transaction boundaries on behalf of the application being
         managed.</para>
-      <para>In JBossJTA, transaction manager implementations can be obtained from the static
+      <para>In &PRODUCT;, transaction manager implementations can be obtained from the static
         com.arjuna.ats.jta.TransactionManager.transactionManager() method</para>
     </section>
     <section>
@@ -129,14 +129,14 @@
       (There is a single type of transactional driver through which any JDBC driver can be driven. This driver is
       com.arjuna.ats.jdbc.TransactionalDriver, which implements the java.sql.Driver interface.)</para>
     <para>Once the connection has been established (for example, using the java.sql.DriverManager.getConnection method), all operations on the
-      connection will be monitored by JBossJTA. Once created, the driver and any connection can be used in the same way as any other JDBC driver or
+      connection will be monitored by &PRODUCT;. Once created, the driver and any connection can be used in the same way as any other JDBC driver or
       connection.</para>
-    <para>JBossJTA connections can be used within multiple different transactions simultaneously, i.e., different threads, with different notions of
-      the current transaction, may use the same JDBC connection. JBossJTA does connection pooling for each transaction within the JDBC connection. So,
+    <para>&PRODUCT; connections can be used within multiple different transactions simultaneously, i.e., different threads, with different notions of
+      the current transaction, may use the same JDBC connection. &PRODUCT; does connection pooling for each transaction within the JDBC connection. So,
       although multiple threads may use the same instance of the JDBC connection, internally this may be using a different connection instance per
       transaction. With the exception of close, all operations performed on the connection at the application level will only be performed on this
       transaction-specific connection.</para>
-    <para>JBossJTA will automatically register the JDBC driver connection with the transaction via an appropriate resource. When the transaction
+    <para>&PRODUCT; will automatically register the JDBC driver connection with the transaction via an appropriate resource. When the transaction
       terminates, this resource will be responsible for either committing or rolling back any changes made to the underlying database via appropriate
       calls on the JDBC driver.</para>
   </section>

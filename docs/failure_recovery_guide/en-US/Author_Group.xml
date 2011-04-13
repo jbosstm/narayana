@@ -3,12 +3,12 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
 ]>
 <authorgroup>
-    <author>
-        <firstname>Mark</firstname>
-        <surname>Little</surname>
-        <affiliation>
-            <orgname>Red Hat</orgname>
-        </affiliation>
-        <email>mlittle@redhat.com</email>
-    </author>
+  <author>
+    <firstname>Mark</firstname>
+    <surname>Little</surname>
+    <affiliation>
+      <orgname>Red Hat</orgname>
+    </affiliation>
+    <email>mlittle@redhat.com</email>
+  </author>
 </authorgroup>

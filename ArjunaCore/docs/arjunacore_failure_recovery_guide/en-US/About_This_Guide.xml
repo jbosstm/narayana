@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recover_Guide.ent">
-<!ENTITY PRODUCT "JBoss Transactions">
-<!ENTITY BOOKID "ArjunaCore_Failure_Recover_Guide">
-<!ENTITY VERSION "4.15">
-<!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss.org">
-<!ENTITY APPSERVER "JBoss Application Server">
-<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->]>
+%BOOK_ENTITIES;
+]>
 <chapter>
   <title>About This Guide</title>
   <para>

@@ -107,8 +107,12 @@
             <fileset dir="orbportability/docs/programmers_guide" includes="*.pdf"/>
         </copy>
 
-        <copy todir="${build.dir}/install/${dest.dir}/user_guide/" overwrite="true">
+        <copy todir="${build.dir}/install/${dest.dir}/user_guide/" overwrite="true" flatten="true">
             <fileset dir="../docs/" includes="**/*.pdf"/>
+        </copy>
+
+        <copy todir="${build.dir}/install/${dest.dir}/user_guide/ArjunaCore" overwrite="true" flatten="true">
+            <fileset dir="../ArjunaCore/docs/" includes="**/*.pdf"/>
         </copy>
 
     </target>
