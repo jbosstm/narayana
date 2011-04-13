@@ -30,6 +30,12 @@
         <copy file="INSTALL" todir="${build.dir}/install"/>
     </target>
 
+    <target name="clean" depends="sharedbuild.clean">
+        <delete dir="docs/quick_start/target"/>
+        <delete dir="docs/administration_guide/target"/>
+        <delete dir="docs/installation_guide/target"/>
+    </target>
+
     <target name="htdocs">
         <htdocs.composite.macro>
             <packagesets>
@@ -69,16 +75,16 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
+                    <fileset dir="." includes="**/*.pdf"/>
+                </copy>
             </then>
         </if>
 
+        <ant dir="../ArjunaCore" target="install.docs"/>
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="." includes="**/*.pdf"/>
+            <fileset dir="../ArjunaCore" includes="**/*.pdf"/>
         </copy>
-
-        <!--<copy todir="${build.dir}/install/${dest.dir}/user_guide/transaction_core" overwrite="true">-->
-            <!--<fileset dir="../ArjunaCore/docs/user_guide" includes="*.pdf" excludes="Admin*"/>-->
-        <!--</copy>-->
     </target>
 
     <target name="install.scripts">

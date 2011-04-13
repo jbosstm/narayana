@@ -29,6 +29,10 @@
     <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc">
     </target>
 
+    <target name="clean" depends="sharedbuild.clean">
+        <delete dir="docs/failure_recovery_guide/target"/>
+    </target>
+
     <target name="htdocs">
         <htdocs.composite.macro>
             <packagesets>
@@ -82,10 +86,6 @@
 
         <property name="dest.dir" value="docs"/>
 
-        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="docs" includes="**/*.pdf"/>
-        </copy>
-
         <if>
             <istrue value="${publican}" />
             <then>
@@ -99,12 +99,11 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
+                    <fileset dir="." includes="**/*.pdf"/>
+                </copy>
             </then>
         </if>
-
-        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="." includes="**/*.pdf"/>
-        </copy>
 
     </target>
 

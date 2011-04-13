@@ -26,10 +26,13 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete dir="failure_recovery_guide/target"/>
+        <delete dir="transactions_overview_guide/target"/>
     </target>
 
     <target name="install.docs">
         <property name="dest.dir" value="${build.dir}/install/docs"/>
+
         <if>
             <istrue value="${publican}" />
             <then>
