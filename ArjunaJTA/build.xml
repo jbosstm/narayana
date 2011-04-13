@@ -47,10 +47,6 @@
 
         <property name="dest.dir" value="docs"/>
 
-        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
-            <fileset dir="docs" includes="**/*.pdf"/>
-        </copy>
-
         <if>
             <istrue value="${publican}" />
             <then>
@@ -78,7 +74,7 @@
         </if>
 
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
-            <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+            <fileset dir="." includes="**/*.pdf"/>
         </copy>
 
         <!--<copy todir="${build.dir}/install/${dest.dir}/user_guide/transaction_core" overwrite="true">-->
