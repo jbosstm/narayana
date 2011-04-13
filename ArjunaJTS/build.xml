@@ -46,6 +46,10 @@
         <delete>
             <fileset dir="." includes="**/idl-compiler.*"/>
         </delete>
+        <delete dir="docs/quick_start/target"/>
+        <delete dir="docs/orbportability/target"/>
+        <delete dir="docs/administration_guide/target"/>
+        <delete dir="docs/ArjunaJTS_Development_Guide/target"/>
     </target>
 
     <target name="htdocs">
