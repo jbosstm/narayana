@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
-  <title>ArjunaCore Runtime Information</title>
+  <title>&PRODUCT; Runtime Information</title>
   <para>
     Compile-time configuration information is available via class
     <classname>com.arjuna.common.util.ConfigurationInfo</classname>. Runtime configuration is embodied in the various

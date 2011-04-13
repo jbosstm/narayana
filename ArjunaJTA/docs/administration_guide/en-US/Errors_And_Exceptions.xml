@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaTA_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
@@ -17,7 +17,7 @@
       <listitem>
         <para>
           The application has run out of memory, and has thrown an <systemitem>OutOfMemoryError</systemitem>
-          exception. <application>ArjunaTA</application> has attempted to do some cleanup, by running the garbage
+          exception. <application>&PRODUCT;</application> has attempted to do some cleanup, by running the garbage
           collector, before re-throwing the exception. This is probably a transient problem and retrying the invocation
           should succeed.
         </para>

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaTA_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Failure Recovery Administration</title>
 
   <para>
-    The failure recovery subsystem of ArjunaTA will ensure that results of a transaction are applied consistently to
+    The failure recovery subsystem of &PRODUCT; will ensure that results of a transaction are applied consistently to
     all resources affected by the transaction, even if any of the application processes or the machine hosting them
     crash or lose network connectivity. In the case of machine (system) crash or network failure, the recovery will not
     take place until the system or network are restored, but the original application does not need to be
@@ -32,8 +32,8 @@
     <title>The Recovery Manager</title>
 
     <para>
-      The failure recovery subsystem of ArjunaTA requires that the stand-alone Recovery Manager process be running for
-      each <systemitem>ObjectStore</systemitem> (typically one for each node on the network that is running ArjunaTA
+      The failure recovery subsystem of &PRODUCT; requires that the stand-alone Recovery Manager process be running for
+      each <systemitem>ObjectStore</systemitem> (typically one for each node on the network that is running &PRODUCT;
       applications). The <filename>RecoveryManager</filename> file is located in the arjunacore JAR file within the
       package <package>com.arjuna.ats.arjuna.recovery.RecoveryManager</package>. To start the Recovery Manager issue the
       following command:
@@ -145,7 +145,7 @@
     </para>
     <note>
       <para>
-        In previous versions of <application>ArjunaTA</application>, there was no contact mechanism, and the back-off
+        In previous versions of <application>&PRODUCT;</application>, there was no contact mechanism, and the back-off
         period needed to be long enough to avoid catching transactions in flight at all. From 3.0, there is no such
         risk.
       </para>
@@ -153,7 +153,7 @@
     <para>
       Two recovery modules, implementations of the
       <interfacename>com.arjuna.ats.arjuna.recovery.RecoveryModule</interfacename> interface, are supplied with
-      <application>ArjunaTA</application>. These modules support various aspects of transaction recovery, including JDBC
+      <application>&PRODUCT;</application>. These modules support various aspects of transaction recovery, including JDBC
       recovery. It is possible for advanced users to create their own recovery modules and register them with the
       Recovery Manager. The recovery modules are registered with the RecoveryManager using
       <methodname>RecoveryEnvironmentBean.recoveryModuleClassNames</methodname>. These will be invoked on each pass of the
@@ -191,12 +191,12 @@
         <listitem>
           <para>
             One TransactionStatusManager item is created by every application process that uses
-            <application>ArjunaTA</application>. It contains the information that allows the RecoveryManager to
+            <application>&PRODUCT;</application>. It contains the information that allows the RecoveryManager to
             determine if the process that initiated the transaction is still alive, and its status. The expiry time for
             these items is set by the property
             <property>com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime</property>, expressed in
             hours. The default is 12, and 0 (zero) means never to expire.The expiry time should be greater than the
-            lifetime of any single processes using <application>ArjunaTA</application>.
+            lifetime of any single processes using <application>&PRODUCT;</application>.
           </para>
         </listitem>
       </varlistentry>
