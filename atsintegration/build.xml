@@ -34,9 +34,6 @@
         <import-module.macro module="arjuna"/>
         <import-module.macro module="jta"/>
 
-        <copy todir="${build.dir}/lib/ext" flatten="true"
-                file="${sharedbuild.base.dir}/ArjunaCore/tsmx/${build.dir}/lib/tsmx.jar"/>
-
         <property name="exclude-these-classes" value="**/jts/** ${excluded.classes}"/>
 
     </target>

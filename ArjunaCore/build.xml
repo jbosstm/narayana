@@ -24,9 +24,9 @@
 
     <import file="../sharedbuild.xml"/>
 
-    <property name="component-module-list" value="../common,arjuna,txoj,tsmx"/>
+    <property name="component-module-list" value="../common,arjuna,txoj"/>
 
-    <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc, install.tools">
+    <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc">
     </target>
 
     <target name="htdocs">
@@ -146,13 +146,6 @@
         <copy file="arjuna/etc/log4j.properties" todir="${etc.dest.dir}"/>
         <copy file="jbossts-properties-arjunacore.xml" tofile="${etc.dest.dir}/jbossts-properties.xml"/>
 
-    </target>
-
-    <target name="install.tools">
-        <ant dir="tsmx" target="tools" inheritall="false">
-            <property name="install.dir" value="${basedir}/${build.dir}/install/bin/tools"/>
-        </ant>
-        <move file="${build.dir}/install/bin/tools/tsmx-tools.jar" todir="${build.dir}/install/bin"/>
     </target>
 
 </project>

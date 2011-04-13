@@ -35,14 +35,13 @@
 
     <import file="../sharedbuild.xml"/>
 
-    <property name="component-module-list" value="../common,../ArjunaCore/arjuna,../ArjunaCore/txoj,../ArjunaCore/tsmx,../ArjunaJTA/jta,../ArjunaJTA/jdbc,orbportability,jts,jtax"/>
+    <property name="component-module-list" value="../common,../ArjunaCore/arjuna,../ArjunaCore/txoj,../ArjunaJTA/jta,../ArjunaJTA/jdbc,orbportability,jts,jtax"/>
 
-    <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc, install.jacorb, install.trailmap, install.tools, install.idl">
+    <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc, install.jacorb, install.trailmap, install.idl">
         <copy file="INSTALL" todir="${build.dir}/install"/>
     </target>
 
     <target name="clean" depends="sharedbuild.clean">
-        <ant dir="tsmx" inheritall="false" target="clean"/>
         <ant dir="trailmap" antfile="build_docs.xml" inheritall="false" target="clean"/>
         <delete>
             <fileset dir="." includes="**/idl-compiler.*"/>
@@ -181,13 +180,6 @@
                 <include name="src/**"/>
             </fileset>
         </copy>
-    </target>
-
-    <target name="install.tools">
-        <ant dir="tsmx" target="tools" inheritall="false">
-            <property name="install.dir" value="${basedir}/${build.dir}/install/bin/tools"/>
-        </ant>
-        <move file="${build.dir}/install/bin/tools/tsmx-tools.jar" todir="${build.dir}/install/bin"/>
     </target>
 
     <target name="install.idl">
