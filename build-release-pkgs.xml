@@ -148,10 +148,6 @@
             <property name="com.hp.mw.sourceid" value="${tag}"/>
         </ant>
 
-        <ant dir="${workdir}/build/${tag}/ArjunaCore/tsmx/sar" antfile="build.xml" target="build-sar"/>
-        <copy file="${workdir}/build/${tag}/ArjunaCore/tsmx/sar/build/mbean/jbossts-tools.sar"
-              todir="${workdir}/build/${tag}/install/bin"/>
-
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
             <property  name="sartype" value="sar-11"/>

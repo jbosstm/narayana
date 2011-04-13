@@ -29,9 +29,7 @@
     </target>
 
     <target name="install.docs">
-
         <property name="dest.dir" value="${build.dir}/install/docs"/>
-
         <if>
             <istrue value="${publican}" />
             <then>
@@ -40,6 +38,18 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
+                    <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+                </copy>
+            </then>
+        </if>
+    </target>
+
+    <target name="install.common.docs">
+        <property name="dest.dir" value="${build.dir}/install/docs"/>
+        <if>
+            <istrue value="${publican}" />
+            <then>
                 <exec dir="failure_recovery_guide" executable="publican">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
@@ -50,16 +60,11 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-            </then>
-        </if>
-                <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
-                    <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
-                </copy>
                 <copy todir="${dest.dir}" overwrite="true" flatten="true">
                     <fileset dir="." includes="**/*.pdf" excludes="**/*Release*.pdf"/>
                 </copy>
-
-
+            </then>
+        </if>
     </target>
 
 </project>

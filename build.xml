@@ -55,12 +55,18 @@
         <ant dir="ArjunaJTS"/>
         <install.macro src.module="ArjunaJTS"/>
         <ant dir="qa"/>
+        <ant dir="docs" target="install.common.docs">
+            <property name="dest.dir" value="../install/docs"/>
+        </ant>
     </target>
 
     <target name="jta" depends="clean, init_dependencies, antbuildsystem">
         <ant dir="ArjunaJTA"/>
         <install.macro src.module="ArjunaJTA"/>
         <ant dir="qa"/>
+        <ant dir="docs" target="install.common.docs">
+            <property name="dest.dir" value="../install/docs"/>
+        </ant>
     </target>
 
     <target name="core" depends="clean, init_dependencies, antbuildsystem">

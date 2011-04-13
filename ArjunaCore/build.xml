@@ -35,7 +35,6 @@
                 <packageset dir="../common/classes" excludes="**/internal/**"/>
                 <packageset dir="arjuna/classes" excludes="**/internal/**"/>
                 <packageset dir="txoj/classes" excludes="**/internal/**"/>
-                <packageset dir="tsmx/classes" excludes="**/internal/**"/>
             </packagesets>
         </htdocs.composite.macro>
     </target>
