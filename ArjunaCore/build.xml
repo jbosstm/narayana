@@ -90,11 +90,6 @@
         <if>
             <istrue value="${publican}" />
             <then>
-                <exec dir="docs/ArjunaCore_Installation_And_Administration_Guide" executable="publican">
-                    <arg value="build"/>
-                    <arg value="--langs=en-US"/>
-                    <arg value="--formats=pdf,html"/>
-                </exec>
                 <exec dir="docs/ArjunaCore_Development_Guide" executable="publican">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
