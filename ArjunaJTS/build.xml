@@ -77,22 +77,22 @@
         <if>
             <istrue value="${publican}" />
             <then>
-                <exec dir="docs/quick_start" executable="publican">
+                <exec dir="docs/quick_start" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/orbportability" executable="publican">
+                <exec dir="docs/orbportability" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/administration_guide" executable="publican">
+                <exec dir="docs/administration_guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/ArjunaJTS_Development_Guide" executable="publican">
+                <exec dir="docs/ArjunaJTS_Development_Guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>

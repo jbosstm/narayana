@@ -4,8 +4,8 @@
 %BOOK_ENTITIES;
 ]>
 <bookinfo id="book-JBossJTS_ORB_Portability_Guide">
-  <title>&PRODUCT; ORB Portability Guide</title>
-  <productname>JBoss Transactions</productname>
+  <title>JBossJTS ORB Portability Guide</title>
+  <productname>JBossJTS</productname>
   <productnumber>4.15.0</productnumber>
   <edition>1</edition>
   <pubsnumber>1</pubsnumber>

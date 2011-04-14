@@ -55,22 +55,22 @@
         <if>
             <istrue value="${publican}" />
             <then>
-                <exec dir="docs/administration_guide" executable="publican">
+                <exec dir="docs/administration_guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/installation_guide" executable="publican">
+                <exec dir="docs/installation_guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/quick_start" executable="publican">
+                <exec dir="docs/quick_start" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/ArjunaTA_Development_Guide" executable="publican">
+                <exec dir="docs/ArjunaTA_Development_Guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
@@ -84,6 +84,11 @@
         <ant dir="../ArjunaCore" target="install.docs"/>
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
             <fileset dir="../ArjunaCore" includes="**/*.pdf"/>
+        </copy>
+
+        <ant dir="../docs" target="install.common.docs"/>
+        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
+            <fileset dir="../docs" includes="**/*.pdf"/>
         </copy>
     </target>
 

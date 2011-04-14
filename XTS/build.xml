@@ -162,7 +162,7 @@
             <istrue value="${publican}" />
             <then>
                 <delete dir="${publican.build.dir}" failonerror="false"/>
-                <exec dir="docs/Transactions_XTS_Administration_And_Development_Guide" executable="publican">
+                <exec dir="docs/Transactions_XTS_Administration_And_Development_Guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>

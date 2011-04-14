@@ -32,7 +32,7 @@
                         <phase>compile</phase>
                         <configuration>
                             <target unless="skipPublican">
-                                <exec dir="." executable="publican">
+                                <exec dir="." executable="publican" failonerror="true">
                                     <arg value="build"/>
                                     <arg value="--langs=en-US"/>
                                     <arg value="--formats=pdf"/>

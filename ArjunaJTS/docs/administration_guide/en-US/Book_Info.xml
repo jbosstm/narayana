@@ -5,8 +5,8 @@
 ]>
 <bookinfo id="book-JBossJTS_Administration_Guide">
    <title>JBossJTS Administration Guide</title>
-   <subtitle>Administration of the JBossJTS toolkit, used as part of the ArjunaCore Transaction Service</subtitle>
-   <productname>JBoss Transactions</productname>
+   <subtitle>Administration of the JBossJTS toolkit, used as part of the Transaction Service</subtitle>
+   <productname>JBossJTS</productname>
    <productnumber>4.15.0</productnumber>
    <edition>1</edition>
    <pubsnumber>1</pubsnumber>

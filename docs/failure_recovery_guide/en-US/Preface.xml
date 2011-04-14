@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "Transactions_XTS_Administration_And_Development_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
 ]>
-<preface id="pref-Transactions_XTS_Programmers_Guide-Preface">
+<preface id="pref-Failure_Recovery_Guide-Preface">
     <title>Preface</title>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Conventions.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Feedback.xml">
