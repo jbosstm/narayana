@@ -31,6 +31,7 @@
 
     <target name="clean" depends="sharedbuild.clean">
         <delete dir="docs/failure_recovery_guide/target"/>
+        <delete dir="docs/development_guide/target"/>
     </target>
 
     <target name="htdocs">
@@ -94,7 +95,7 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
-                <exec dir="docs/ArjunaCore_Development_Guide" executable="publican" failonerror="true">
+                <exec dir="docs/development_guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
