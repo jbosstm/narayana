@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Development_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter>
+  <title>Configuring JBossJTA</title>
+  
+  <section>
+    <title>Configuration loading mechanism</title>
+    <para>
+      In general, configuration is managed the same as ArjunaCore. Refer to the <citetitle>ArjunaCore Development
+      Guide</citetitle> for more information.
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>Configuration options</title>
+    <para>
+      The canonical reference for configuration options is the javadoc of the various EnvironmentBean classes. For
+      ArjunaJTA, these classes are the ones provided by ArjunaCore, as well as:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          com.arjuna.ats.jdbc.common.JDBCEnvironmentBean.java
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          com.arjuna.ats.jta.common.JTAEnvironmentBean.java
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      Modules built on ArjunaCore and ArjunaJTA may add additional beans. Please refer to the relevant Development
+      Guides for details of these.
+    </para>
+  </section>
+</chapter>
+
