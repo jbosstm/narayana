@@ -175,7 +175,7 @@
       However, since the elements of the <systemitem>queue</systemitem> objects are not individually concurrency
       controlled, certain combinations of concurrent operation invocations are executed serially, even though logically
       they could be executed concurrently. An example of this is modifying the states of two different elements in the
-      queue.  <xref linkend="chap-configuration-options" /> addresses some of these issues.
+      queue.  The platform Development Guide addresses some of these issues.
     </para>
     
   </section>

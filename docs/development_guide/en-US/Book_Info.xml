@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Development_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "Development_Guide.ent">
 %BOOK_ENTITIES;
 ]>
-<bookinfo id="book-JBossJTA_Development_Guide-JBossJTA_Development_Guide">
-   <title>JBossJTA Development Guide</title>
-   <subtitle>Development reference guide for the JBossJTA implementation of the JTA API</subtitle>
-   <productname>JBossJTA</productname>
+<bookinfo id="book-Development_Guide-Development_Guide">
+   <title>Development Guide</title>
+   <subtitle> Development reference guide for the JBoss Transactions Suite of software</subtitle>
+   <productname>JBoss Transactions</productname>
    <productnumber>4.15.0</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>
       <para>
-        Development reference guide for the ArjunaTA implementation of the JTA API
+        Development reference guide for the JBoss Transactions Suite of software
       </para>
    </abstract>
    <corpauthor>

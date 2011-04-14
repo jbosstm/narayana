@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recover_Guide.ent">
-<!ENTITY PRODUCT "JBoss Transactions">
-<!ENTITY BOOKID "ArjunaCore_Failure_Recover_Guide">
-<!ENTITY VERSION "4.15">
-<!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss.org">
-<!ENTITY APPSERVER "JBoss Application Server">
-<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->]>
+]>
 <book>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Book_Info.xml"/>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Preface.xml"/>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Further_failure_recovery.xml"/>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Revision_History.xml"/>
-    <index/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Book_Info.xml" />
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Preface.xml" />
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Further_failure_recovery.xml" />
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Revision_History.xml" />
+  <!-- <index /> -->
 </book>

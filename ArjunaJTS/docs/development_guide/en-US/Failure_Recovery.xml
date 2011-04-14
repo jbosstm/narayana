@@ -6,483 +6,510 @@
 <chapter>
   <title>Failure Recovery</title>
   <para>
-    The failure recovery subsystem of JBossTS ensure that results of a transaction are applied consistently to all
-    resources affected by the transaction, even if any of the application processes or the hardware hosting them crash
-    or lose network connectivity. In the case of hardware crashes or network failures, the recovery does not take place
-    until the system or network are restored, but the original application does not need to be restarted. Recovery is
-    handled by the Recovery Manager process. For recover to take place, information about the transaction and the
-    resources involved needs to survive the failure and be accessible afterward. This information is held in the
-    <classname>ActionStore</classname>, which is part of the <classname>ObjectStore</classname>. If the
-    <classname>ObjectStore</classname> is destroyed or modified, recovery may not be possible.
+    The failure recovery subsystem of JBossTS ensure that results of a transaction are applied
+    consistently to all
+    resources affected by the transaction, even if any of the application
+    processes or the hardware hosting them crash
+    or lose network connectivity. In the case of
+    hardware crashes or network failures, the recovery does not take place
+    until the system or
+    network are restored, but the original application does not need to be restarted. Recovery is
+    handled by the Recovery Manager process. For recover to take place, information about the
+    transaction and the
+    resources involved needs to survive the failure and be accessible afterward.
+    This information is held in the
+    <classname>ActionStore</classname>
+    , which is part of the
+    <classname>ObjectStore</classname>
+    . If the
+    <classname>ObjectStore</classname>
+    is destroyed or modified, recovery may not be possible.
   </para>
   <para>
-    Until the recovery procedures are complete, resources affected by a transaction which was in progress at the time of
-    the failure may be inaccessible. Database resources may report this as as tables or rows held by <phrase>in-doubt
-    transactions</phrase>. For TXOJ resources, an attempt to activate the Transactional Object, such as when trying to
+    Until the recovery procedures are complete, resources affected by a transaction which was in
+    progress at the time of
+    the failure may be inaccessible. Database resources may report this as as
+    tables or rows held by
+    <phrase>in-doubt
+      transactions</phrase>
+    . For TXOJ resources, an attempt to activate the Transactional Object, such as when trying to
     get a lock, fails.
   </para>
-  <!-- Surely JDK 1.3 is no longer supported
-  <note>
-    <para>
-      Because of limitations in the ORB which ships with the JDK 1.3, it is not possible to provide crash recovery. We
-      therefore do not recommend using this ORB for mission critical applications.
-    </para>
-  </note>
-  -->
-  
+  <!-- Surely JDK 1.3 is no longer supported <note> <para> Because of limitations in the ORB which ships 
+    with the JDK 1.3, it is not possible to provide crash recovery. We therefore do not recommend using this 
+    ORB for mission critical applications. </para> </note> -->
+
   <section>
     <title>Configuring the failure recovery subsystem for your ORB</title>
     <para>
-      Although some ORB-specific configuration is necessary to configure the ORB sub-system, the basic settings are ORB-independent.
-      The configuration which applies to JBossTS is in the <filename>RecoveryManager-properties.xml</filename> file and
-      the <filename>orportability-properties.xml</filename> file. Contents of each file are below.
+      Although some ORB-specific configuration is necessary to configure the ORB sub-system, the
+      basic settings are ORB-independent.
+      The configuration which applies to JBossTS is in the
+      <filename>RecoveryManager-properties.xml</filename>
+      file and
+      the
+      <filename>orportability-properties.xml</filename>
+      file. Contents of each file are below.
     </para>
     <example>
       <title>RecoverManager-properties.xml</title>
-      <programlisting language="XML" role="XML"><xi:include href="extras/RecoveryManager-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      <programlisting language="XML" role="XML"><xi:include
+        href="extras/RecoveryManager-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
+        parse="text" /></programlisting>
     </example>
     <example>
       <title>orportability-properties.xml</title>
-      <programlisting language="XML" role="XML"><xi:include href="extras/orportability-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+      <programlisting language="XML" role="XML"><xi:include
+        href="extras/orportability-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>
-      These entries cause instances of the named classes to be loaded. The named classes then load the ORB-specific
-      classes needed and perform other initialization. This enables failure recovery for transactions initiated by or
-      involving applications using this property file. The default <filename>RecoveryManager-properties.xml</filename>
-      file and <filename>orportability-properties.xml</filename> with the distribution include these entries.
+      These entries cause instances of the named classes to be loaded. The named classes then load
+      the ORB-specific
+      classes needed and perform other initialization. This enables failure recovery
+      for transactions initiated by or
+      involving applications using this property file. The default
+      <filename>RecoveryManager-properties.xml</filename>
+      file and
+      <filename>orportability-properties.xml</filename>
+      with the distribution include these entries.
     </para>
     <important>
       <para>
-        Failure recovery is NOT supported with the JavaIDL ORB that is part of JDK. Failure recovery is supported for
+        Failure recovery is NOT supported with the JavaIDL ORB that is part of JDK. Failure
+        recovery is supported for
         JacOrb only.
       </para>
     </important>
     <para>
-      To disable recovery, remove or comment out the <literal>RecoveryEnablement</literal> line in the property file.
+      To disable recovery, remove or comment out the
+      <literal>RecoveryEnablement</literal>
+      line in the property file.
     </para>
   </section>
-  
-  <section>
-    <title>The recovery manager</title>
-    <para>
-      The failure recovery subsystem of JBossTS requires the stand-alone Recovery Manager process to be running for
-      each <systemitem>ObjectStore</systemitem>. Typically, there is one <systemitem>ObjectStore</systemitem> for each
-      node on the network that is running JBossTS applications. The
-      RecoveryManager file is located in the <filename>arjuna.jar</filename> file within the package
-      <package>com.arjuna.ats.arjuna.recovery.RecoveryManager</package>. To start the Recovery Manager issue the following
-      command:
-    </para>
-    <example>
-      <title>Starting the recovery manager</title>
-      <screen>
-        java com.arjuna.ats.arjuna.recovery.RecoveryManager
-      </screen>
-    </example>
-    <para>
-      If the <option>-test</option> flag is used with the Recovery Manager, it displays a “Ready” message when you
-      start it.
-    </para>
-    <important>
-        <para>
-          If you are using JacORB, the Recovery Manager is started to allow successful registration of
-          <classname>Resource</classname> objects.
-        </para>
-    </important>
-    
-    <section>
-      <title>Configuring the RecoveryManager</title>
-      <para>
-        The <classname>RecoveryManager</classname> reads the properties defined in the
-        <filename>jbossts-properties.xml</filename> file and then the property file
-        <filename>RecoveryManager-properties.xml</filename>, from the same directory as it found the <filename>arjuna
-        properties</filename> file. An entry for a property in the <filename>RecoveryManager-properties.xml</filename>
-        file overrides an entry for the same property in the main <filename>TransactionService-properties.xml</filename>
-        file. Most of the entries are specific to the <classname>RecoveryManager</classname>.
-      </para>
-      <para>
-        A default version of <filename>RecoveryManager-properties.xml</filename> is supplied with the distribution. You
-        can use this file without modification, unless you want to modify the debug tracing fields as outlined in <xref
-        linkend="recovery-manager-output" />. 
-      </para>
-      
-      <section id="recovery-manager-output">
-        <title>Output</title>
-        <para>
-          You will likely need output from the <classname>RecoveryManager</classname>, to provide a record of what
-          recovery activity has taken place. <classname>RecoveryManager</classname> uses the logging tracing mechanism
-          provided by the <firstterm>Arjuna Common Logging Framework (CLF)</firstterm>, which provides a high level
-          interface that hides differences that exist between existing logging APIs such as Jakarta log4j or the JDK
-          logging API.
-        </para>
-        <para>
-          With the CLF, applications make logging calls on <classname>commonLogger</classname> objects. These
-          <classname>commonLogger</classname> objects pass log messages to <classname>Handler</classname> for
-          publication. Both <classname>commonLoggers</classname> and <classname>Handlers</classname> filter log messages
-          by level. Each log message has an associated log Level that gives the importance and urgency of a log message.
-        </para>
-        <orderedlist>
-          <title>Logging levels, from most to least verbose</title>
-          <listitem>
-            <para>
-              DEBUG
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              INFO
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              WARN
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              ERROR
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              FATAL
-            </para>
-          </listitem>
-        </orderedlist>
-        <para>
-          The choice of the underlying logging infrastructure is defined by the property
-          <varname>LoggingEnvironmentBean.loggingFactory</varname>, which is set by default to
-          <literal>log4j</literal>. Possible values are described in the <classname>LoggingEnvironmentBean</classname>
-          javadoc.
-        </para>
-        <para>
-          The properties of the underlying log system are configured in a manner specific to that log system. For log4j,
-          a <filename>log4j.properties</filename> file is used. 
-        </para>
-        <example>
-          <title>Default log4j configuration file used by JBossTS</title>
-          <screen>
-# Default LOG4J Configuration
-# Arjuna Technologies Ltd.
-# $Id: log4j.properties,v 1.1 2003/09/28 11:38:24 rbegg Exp $
-log4j.rootLogger=WARN, stdout 
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern=%d [%t] %-5p %c - %m%n
-          </screen>
-        </example>
-        <para>
-          To set the logging level to <literal>DEBUG</literal>, set the <varname>log4j.rootLogger</varname> to
-          <literal>DEBUG</literal>.
-        </para>
-        <para>
-          Messages describing the start and the periodical behavior of the <classname>RecoveryManager</classname> are
-          set the <literal>INFO</literal> level. To see them, set the logging level to <literal>INFO</literal>. Setting
-          the normal recovery messages to the <literal>INFO</literal> level produces a moderate level of reporting from
-          the <classname>RecoveryManager</classname>. If no recovery needs to take place, the only thing reported is the
-          entry into each module for each periodic pass. To disable the <literal>INFO</literal> messages produced by the
-          <classname>RecoveryManager</classname>, set the logging level to <literal>ERROR</literal>.
-        </para>
-        <note>
-          <para>
-            Set the Logging level at least to the <literal>WARN</literal> value to enable the report of warning
-            messages.
-          </para>
-        </note>
-      </section>
 
-    </section>
-    
-    <section>
-      <title>Periodic recovery</title>
-      <para>
-        The <classname>RecoveryManager</classname> scans the <classname>ObjectStore</classname> and other locations of
-        information, looking for transactions and resources that may require recovery. The scans and recovery processing
-        are performed by recovery modules, which are instances of classes that implement the
-        <interfacename>com.arjuna.ats.arjuna.recovery.RecoveryModule</interfacename> interface. Each module is
-        responsible for a particular category of transaction or resource.The set of recovery modules is dynamically
-        loaded, using properties found in the <filename>RecoveryManager-properties.xml</filename> file.
-      </para>
-      <para>
-        The interface has two methods: <methodname>periodicWorkFirstPass</methodname> and
-        <methodname>periodicWorkSecondPass</methodname>. At an interval defined by property
-        <varname>PERIODIC_RECOVERY_PERIOD</varname>, the <classname>RecoveryManager</classname> calls the
-        <methodname>periodicWorkFirstPass</methodname> method on each property. It then waits for a brief period,
-        defined by <varname>RECOVERY_BACKOFF_PERIOD</varname>, before calling the
-        <methodname>periodicWorkSecondPass</methodname> method. Typically, in the first pass, the module scans the
-        relevant part of the ObjectStore to find transactions or resources that are in-doubt, or part of the way through
-        the commitment process. On the second pass, if any of the same items are still in-doubt, the original
-        application process may have crashed and the item may need recovery.
-      </para>
-      <para>
-        If the <classname>RecoveryManager</classname> attempts to recover a transaction that is still progressing in the
-        original process, it is likely to break the consistency. Accordingly, the recovery modules use a mechanism,
-        implemented in the <package>com.arjuna.ats.internal.jts.recovery.contact</package> package, to check whether the
-        original process is still alive, and whether the transaction is still in progress. The
-        <classname>RecoveryManager</classname> only proceeds with recovery if the original process has disappeared or
-        the transaction is completed. If a server process or machine crashes, but the transaction-initiating process
-        survives, the transaction complete, usually generating a warning. Recovery of such a transaction is the
-        responsibility of the <classname>RecoveryManager</classname>.
-      </para>
-      <para>
-        It is important to set the interval periods appropriately. The total iteration time is the sum of
-        <varname>PERIODIC_RECOVERY_PERIOD</varname>, <varname>RECOVERY_BACKOFF_PERIOD</varname>, and the length of time it takes to scan the stores and to
-        attempt recovery of any in-doubt transactions, for all the recovery modules. The recovery attempt time may
-        include connection timeouts while trying to use the ORB to communicate with processes or machines that have
-        crashed or are inaccessible. This is why the recovery system includes mechanisms to avoid trying to recover
-        the same transaction infinitely. The total iteration time affects how long a resource remains
-        inaccessible after a failure.
-      </para>
-      <para>
-        Set <varname>PERIODIC_RECOVERY_PERIOD</varname> accordingly. It defaults to 120 seconds. The
-        <varname>RECOVERY_BACKOFF_PERIOD</varname> can be comparatively short, and defaults to 10 seconds. Its purpose
-        is to reduce the number of transactions that are candidates for recovery, and which require a contact call to
-        the original process to check whether they are still in progress.
-      </para>
-      <!-- Taking this out because it is ancient history
-      <note>
-        <para>
-          In JBossTS 2.0, there was no contact mechanism, and the backoff period had to be long enough to avoid catching
-          transactions in flight at all. From 2.1, there is no such risk.
-        </para>
-      </note>
-      -->
-      <para>
-        JBossTS includes several recovery modules, supporting various aspects of transaction recovery including JDBC
-        recovery. You can create your own recovery modules and register them with the
-        <classname>RecoveryManager</classname> using the
-        <classname>RecoveryEnvironmentBean.recoveryModuleClassNames</classname> property. These recovery modules are invoked
-        on each pass of the periodic recovery in the order they appear. You can predict the order in which they run, but
-        a failure in an application process might occur while a periodic recovery pass is in progress. The default
-        <classname>RecoveryExtension</classname> settings are below.
-      </para>
-      <example>
-        <title>Default RecoveryExtension settings</title>
-        <programlisting language="XML" role="XML"><xi:include href="extras/default-RecoveryExtension-settings.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
-      </example>
-    </section>
-    
+  <section>
+    <title>JTS specific recovery</title>
+
     <section>
       <title>XA resource recovery</title>
       <para>
-        Recovery of XA resources accessed via JDBC is handled by the <classname>XARecoveryModule</classname>. This
-        module includes both <phrase>transaction-initiated</phrase> and <phrase>resource-initiated</phrase> recovery.
+        Recovery of XA resources accessed via JDBC is handled by the
+        <classname>XARecoveryModule</classname>
+        . This
+        module includes both
+        <phrase>transaction-initiated</phrase>
+        and
+        <phrase>resource-initiated</phrase>
+        recovery.
       </para>
       <itemizedlist>
         <listitem>
           <para>
-            Transaction-initiated recovery is possible where the particular transaction branch progressed far enough for
-            a <systemitem>JTA_ResourceRecord</systemitem> to be written in the ObjectStore. The record contains the
-            information needed to link the transaction to information known by the rest of JBossTS in the database.
+            Transaction-initiated recovery is possible where the particular transaction branch
+            progressed far enough for
+            a
+            <systemitem>JTA_ResourceRecord</systemitem>
+            to be written in the ObjectStore. The record contains the
+            information needed to link the
+            transaction to information known by the rest of JBossTS in the database.
           </para>
         </listitem>
         <listitem>
           <para>
-            Resource-initiated recovery is necessary for branches where a failure occurred after the database made a
-            persistent record of the transaction, but before the <systemitem>JTA_ResourceRecord</systemitem> was
-            written.  Resource-initiated recovery is also necessary for datasources for which it is impossible to hold
-            information in the <systemitem>JTA_ResourceRecord</systemitem> that allows the recreation in the
-            RecoveryManager of the <classname>XAConnection</classname> or <classname>XAResource</classname> used in the
+            Resource-initiated recovery is necessary for branches where a failure occurred after the
+            database made a
+            persistent record of the transaction, but before the
+            <systemitem>JTA_ResourceRecord</systemitem>
+            was
+            written. Resource-initiated recovery is also necessary for datasources for which it
+            is impossible to hold
+            information in the
+            <systemitem>JTA_ResourceRecord</systemitem>
+            that allows the recreation in the
+            RecoveryManager of the
+            <classname>XAConnection</classname>
+            or
+            <classname>XAResource</classname>
+            used in the
             original application.
           </para>
         </listitem>
       </itemizedlist>
       <para>
-        Transaction-initiated recovery is automatic. The <classname>XARecoveryModule</classname> finds the
-        <systemitem>JTA_ResourceRecord</systemitem> which needs recovery, using the two-pass mechanism described
-        above. It then uses the normal recovery mechanisms to find the status of the transaction the resource was
-        involved in, by running <methodname>replay_completion</methodname> on the
-        <classname>RecoveryCoordinator</classname> for the transaction branch. Next, it creates or recreates the
-        appropriate <classname>XAResource</classname> and issues <methodname>commit</methodname> or
-        <methodname>rollback</methodname> on it as appropriate. The <classname>XAResource</classname> creation uses the
-        same database name, username, password, and other information as the application.
+        Transaction-initiated recovery is automatic. The
+        <classname>XARecoveryModule</classname>
+        finds the
+        <systemitem>JTA_ResourceRecord</systemitem>
+        which needs recovery, using the two-pass mechanism described
+        above. It then uses the normal
+        recovery mechanisms to find the status of the transaction the resource was
+        involved in, by
+        running
+        <methodname>replay_completion</methodname>
+        on the
+        <classname>RecoveryCoordinator</classname>
+        for the transaction branch. Next, it creates or recreates the
+        appropriate
+        <classname>XAResource</classname>
+        and issues
+        <methodname>commit</methodname>
+        or
+        <methodname>rollback</methodname>
+        on it as appropriate. The
+        <classname>XAResource</classname>
+        creation uses the
+        same database name, username, password, and other information as the
+        application.
       </para>
       <para>
         Resource-initiated recovery must be specifically configured, by supplying the
-        <classname>RecoveryManager</classname> with the appropriate information for it to interrogate all the
-        <classname>XADataSources</classname> accessed by any JBossTS application. The access to each
-        <classname>XADataSource</classname> is handled by a class that implements the
-        <interfacename>com.arjuna.ats.jta.recovery.XAResourceRecovery</interfacename> interface. Instances of this class
+        <classname>RecoveryManager</classname>
+        with the appropriate information for it to interrogate all the
+        <classname>XADataSources</classname>
+        accessed by any JBossTS application. The access to each
+        <classname>XADataSource</classname>
+        is handled by a class that implements the
+        <interfacename>com.arjuna.ats.jta.recovery.XAResourceRecovery</interfacename>
+        interface. Instances of this class
         are dynamically loaded, as controlled by property
-        <varname>JTAEnvironmentBean.xaResourceRecoveryInstances</varname>.
+        <varname>JTAEnvironmentBean.xaResourceRecoveryInstances</varname>
+        .
       </para>
       <para>
-        The <classname>XARecoveryModule</classname> uses the <classname>XAResourceRecovery</classname> implementation to
-        get an <classname>XAResource</classname> to the target datasource. On each invocation of
-        <methodname>periodicWorkSecondPass</methodname>, the recovery module issues an
-        <methodname>XAResource.recover</methodname> request. This request returns a list of the transaction identifiers
-        that are known to the datasource and are in an in-doubt state. The list of these in-doubt Xids is compared
-        across multiple passes, using <methodname>periodicWorkSecondPass-es</methodname>. Any Xid that appears in both
-        lists, and for which no <systemitem>JTA_ResourceRecord</systemitem> is found by the intervening
-        transaction-initiated recovery, is assumed to belong to a transaction involved in a crash before any
-        <systemitem>JTA_Resource_Record</systemitem> was written, and a <methodname>rollback</methodname> is issued for
-        that transaction on the <classname>XAResource</classname>.
+        The
+        <classname>XARecoveryModule</classname>
+        uses the
+        <classname>XAResourceRecovery</classname>
+        implementation to
+        get an
+        <classname>XAResource</classname>
+        to the target datasource. On each invocation of
+        <methodname>periodicWorkSecondPass</methodname>
+        , the recovery module issues an
+        <methodname>XAResource.recover</methodname>
+        request. This request returns a list of the transaction identifiers
+        that are known to the
+        datasource and are in an in-doubt state. The list of these in-doubt Xids is compared
+        across
+        multiple passes, using
+        <methodname>periodicWorkSecondPass-es</methodname>
+        . Any Xid that appears in both
+        lists, and for which no
+        <systemitem>JTA_ResourceRecord</systemitem>
+        is found by the intervening
+        transaction-initiated recovery, is assumed to belong to a
+        transaction involved in a crash before any
+        <systemitem>JTA_Resource_Record</systemitem>
+        was written, and a
+        <methodname>rollback</methodname>
+        is issued for
+        that transaction on the
+        <classname>XAResource</classname>
+        .
       </para>
       <para>
-        This double-scan mechanism is used because it is possible the Xid was obtained from the datasource just as the
-        original application process was about to create the corresponding JTA_ResourceRecord. The interval between the
-        scans should allow time for the record to be written unless the application crashes (and if it does, rollback is
+        This double-scan mechanism is used because it is possible the Xid was obtained from the
+        datasource just as the
+        original application process was about to create the corresponding
+        JTA_ResourceRecord. The interval between the
+        scans should allow time for the record to be
+        written unless the application crashes (and if it does, rollback is
         the right answer).
       </para>
       <para>
-        An <classname>XAResourceRecovery</classname> implementation class can contain all the information needed to
-        perform recovery to a specific datasource. Alternatively, a single class can handle multiple datasources which
-        have some similar features. The constructor of the implementation class must have an empty parameter list,
-        because it is loaded dynamically. The interface includes an <methodname>initialise</methodname> method, which
-        passes in further information as a <type>string</type>. The content of the string is taken from the property
-        value that provides the class name. Everything after the first semi-colon is passed as the value of the
-        string. The <classname>XAResourceRecovery</classname> implementation class determines how to use the string.
+        An
+        <classname>XAResourceRecovery</classname>
+        implementation class can contain all the information needed to
+        perform recovery to a specific
+        datasource. Alternatively, a single class can handle multiple datasources which
+        have some
+        similar features. The constructor of the implementation class must have an empty parameter
+        list,
+        because it is loaded dynamically. The interface includes an
+        <methodname>initialise</methodname>
+        method, which
+        passes in further information as a
+        <type>string</type>
+        . The content of the string is taken from the property
+        value that provides the class name.
+        Everything after the first semi-colon is passed as the value of the
+        string. The
+        <classname>XAResourceRecovery</classname>
+        implementation class determines how to use the string.
       </para>
       <para>
-        An <classname>XAResourceRecovery</classname> implementation class, <classname>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</classname>, supports resource-initiated recovery for any XADataSource. For this class, the string
-        received in method <methodname>initialise</methodname> is assumed to contain the number of connections to recover, and the name of the
-        properties file containing the dynamic class name, the database username, the database password and the database
-        connection URL. The following example is for an Oracle 8.1.6 database accessed via the Sequelink 5.1 driver:
+        An
+        <classname>XAResourceRecovery</classname>
+        implementation class,
+        <classname>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</classname>
+        , supports resource-initiated recovery for any XADataSource. For this class, the string
+        received in method
+        <methodname>initialise</methodname>
+        is assumed to contain the number of connections to recover, and the name of the
+        properties
+        file containing the dynamic class name, the database username, the database password and the
+        database
+        connection URL. The following example is for an Oracle 8.1.6 database accessed via
+        the Sequelink 5.1 driver:
       </para>
       <screen>
 XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;2;OraRecoveryInfo
       </screen>
       <para>
-        This implementation is only meant as an example, because it relies upon usernames and passwords appearing in
-        plain text properties files. You can create your own implementations of
-        <classname>XAConnectionRecovery</classname>. See the javadocs and the example
-        <package>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</package>.
+        This implementation is only meant as an example, because it relies upon usernames and
+        passwords appearing in
+        plain text properties files. You can create your own implementations
+        of
+        <classname>XAConnectionRecovery</classname>
+        . See the javadocs and the example
+        <package>com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery</package>
+        .
       </para>
-      
+
       <example>
         <title>XAConnectionRecovery implementation</title>
-        <programlisting role="JAVA" language="Java"><xi:include href="extras/XAConnectionRecovery.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        <programlisting role="JAVA" language="Java"><xi:include
+          href="extras/XAConnectionRecovery.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
-      <!-- Removed as ancient 
-      <note>
-        <title>Oracle usernames for Oracle 8.0 to 8.1.4</title>
-        <para>
-          it is necessary for any database user that will use distributed transactions (e.g., JBossTS and JDBC) to have
-          select privilege on the SYS via DBA_PENDING_TRANSACTIONS. For 8.1.5 and higher, this is not (apparently)
-          necessary for normal transaction access. However, this privilege is needed for the database user given when
-          creating an XAConnection that provides an XAResource that is then used for
-          XAResource.recover. (XAResource.commit, rollback etc. do not require the privilege). Accordingly,
-          administrators may wish to create a special database username for the JBossTS RecoveryManager, which has this
-          privilege, which need not be granted to users in general. An implication of this is that access to the
-          RecoveryManager_2_2.properties file needs to be appropriately controlled, if the password for the
-          RecoveryManager user is contained in it.
-        </para>
-      </note>
-      -->
+      <!-- Removed as ancient <note> <title>Oracle usernames for Oracle 8.0 to 8.1.4</title> <para> it 
+        is necessary for any database user that will use distributed transactions (e.g., JBossTS and JDBC) to 
+        have select privilege on the SYS via DBA_PENDING_TRANSACTIONS. For 8.1.5 and higher, this is not (apparently) 
+        necessary for normal transaction access. However, this privilege is needed for the database user given 
+        when creating an XAConnection that provides an XAResource that is then used for XAResource.recover. (XAResource.commit, 
+        rollback etc. do not require the privilege). Accordingly, administrators may wish to create a special 
+        database username for the JBossTS RecoveryManager, which has this privilege, which need not be granted 
+        to users in general. An implication of this is that access to the RecoveryManager_2_2.properties file 
+        needs to be appropriately controlled, if the password for the RecoveryManager user is contained in it. 
+        </para> </note> -->
       <note>
         <title>Multiple recovery domains and resource-initiated recovery</title>
         <para>
-          <methodname>XAResource.recover</methodname> returns the list of all transactions that are in-doubt with in the
-          datasource. If multiple recovery domains are used with a single datasource, resource-initiated recovery sees
-          transactions from other domains. Since it does not have a <systemitem>JTA_ResourceRecord</systemitem>
-          available, it rolls back the transaction in the database, if the Xid appears in successive recover calls. To
-          suppress resource-initiated recovery, do not supply an <varname>XAConnectionRecovery</varname> property, or
+          <methodname>XAResource.recover</methodname>
+          returns the list of all transactions that are in-doubt with in the
+          datasource. If multiple
+          recovery domains are used with a single datasource, resource-initiated recovery sees
+          transactions from other domains. Since it does not have a
+          <systemitem>JTA_ResourceRecord</systemitem>
+          available, it rolls back the transaction in the database, if the Xid appears in successive
+          recover calls. To
+          suppress resource-initiated recovery, do not supply an
+          <varname>XAConnectionRecovery</varname>
+          property, or
           confine it to one recovery domain.
         </para>
       </note>
     </section>
-    
+
     <section>
       <title>Recovery behavior</title>
       <para>
-        Property <varname>OTS_ISSUE_RECOVERY_ROLLBACK</varname> controls whether the
-        <classname>RecoveryManager</classname> explicitly issues a rollback request when
-        <methodname>replay_completion</methodname> asks for the status of a transaction that is unknown. According to
-        the <systemitem>presume-abort</systemitem> mechanism used by OTS and JTS, the transaction can be assumed to have
-        rolled back, and this is the response that is returned to the <classname>Resource</classname>, including a
-        subordinate coordinator, in this case. The <classname>Resource</classname> should then apply that result to the
-        underlying resources. However, it is also legitimate for the superior to issue a rollback, if
-        <varname>OTS_ISSUE_RECOVERY_ROLLBACK</varname> is set to <literal>YES</literal>.
+        Property
+        <varname>OTS_ISSUE_RECOVERY_ROLLBACK</varname>
+        controls whether the
+        <classname>RecoveryManager</classname>
+        explicitly issues a rollback request when
+        <methodname>replay_completion</methodname>
+        asks for the status of a transaction that is unknown. According to
+        the
+        <systemitem>presume-abort</systemitem>
+        mechanism used by OTS and JTS, the transaction can be assumed to have
+        rolled back, and this
+        is the response that is returned to the
+        <classname>Resource</classname>
+        , including a
+        subordinate coordinator, in this case. The
+        <classname>Resource</classname>
+        should then apply that result to the
+        underlying resources. However, it is also legitimate for
+        the superior to issue a rollback, if
+        <varname>OTS_ISSUE_RECOVERY_ROLLBACK</varname>
+        is set to
+        <literal>YES</literal>
+        .
       </para>
       <para>
-        The OTS transaction identification mechanism makes it possible for a transaction coordinator to hold a
-        <classname>Resource</classname> reference that will never be usable. This can occur in two cases:
+        The OTS transaction identification mechanism makes it possible for a transaction coordinator
+        to hold a
+        <classname>Resource</classname>
+        reference that will never be usable. This can occur in two cases:
       </para>
       <itemizedlist>
         <listitem>
           <para>
-            The process holding the <classname>Resource</classname> crashes before receiving the commit or rollback
+            The process holding the
+            <classname>Resource</classname>
+            crashes before receiving the commit or rollback
             request from the coordinator.
           </para>
         </listitem>
         <listitem>
           <para>
-            The <classname>Resource</classname> receives the commit or rollback, and responds. However, the message is
-            lost or the coordinator process has crashed.
+            The
+            <classname>Resource</classname>
+            receives the commit or rollback, and responds. However, the message is
+            lost or the
+            coordinator process has crashed.
           </para>
         </listitem>
       </itemizedlist>
       <para>
-        In the first case, the <classname>RecoveryManager</classname> for the <classname>Resource</classname>
-        <classname>ObjectStore</classname> eventually reconstructs a new <classname>Resource</classname> (with a
-        different CORBA object reference (IOR), and issues a <methodname>replay_completion</methodname> request
-        containing the new <classname>Resource</classname> IOR. The <classname>RecoveryManager</classname> for the
-        coordinator substitutes this in place of the original, useless one, and issues <methodname>commit</methodname>
-        to the new reconstructed <classname>Resource</classname>. The <classname>Resource</classname> has to have been
-        in a commit state, or there would be no transaction intention list. Until the
-        <methodname>replay_completion</methodname> is received, the <classname>RecoveryManager</classname> tries to send
-        <methodname>commit</methodname> to its <classname>Resource</classname> reference.–This will fail with a CORBA
-        System Exception. Which exception depends on the ORB and other details.
+        In the first case, the
+        <classname>RecoveryManager</classname>
+        for the
+        <classname>Resource</classname>
+        <classname>ObjectStore</classname>
+        eventually reconstructs a new
+        <classname>Resource</classname>
+        (with a
+        different CORBA object reference (IOR), and issues a
+        <methodname>replay_completion</methodname>
+        request
+        containing the new
+        <classname>Resource</classname>
+        IOR. The
+        <classname>RecoveryManager</classname>
+        for the
+        coordinator substitutes this in place of the original, useless one, and issues
+        <methodname>commit</methodname>
+        to the new reconstructed
+        <classname>Resource</classname>
+        . The
+        <classname>Resource</classname>
+        has to have been
+        in a commit state, or there would be no transaction intention list. Until
+        the
+        <methodname>replay_completion</methodname>
+        is received, the
+        <classname>RecoveryManager</classname>
+        tries to send
+        <methodname>commit</methodname>
+        to its
+        <classname>Resource</classname>
+        reference.–This will fail with a CORBA
+        System Exception. Which exception depends on the ORB
+        and other details.
       </para>
       <para>
-        In the second case, the <classname>Resource</classname> no longer exists. The
-        <classname>RecoveryManager</classname> at the coordinator will never get through, and will receive System
+        In the second case, the
+        <classname>Resource</classname>
+        no longer exists. The
+        <classname>RecoveryManager</classname>
+        at the coordinator will never get through, and will receive System
         Exceptions forever.
       </para>
       <para>
-        The <classname>RecoveryManager</classname> cannot distinguish these two cases by any protocol mechanism. There
-        is a perceptible cost in repeatedly attempting to send the commit to an inaccessible
-        <classname>Resource</classname>. In particular, the timeouts involved will extend the recovery iteration time,
-        and thus potentially leave resources inaccessible for longer.
+        The
+        <classname>RecoveryManager</classname>
+        cannot distinguish these two cases by any protocol mechanism. There
+        is a perceptible cost in
+        repeatedly attempting to send the commit to an inaccessible
+        <classname>Resource</classname>
+        . In particular, the timeouts involved will extend the recovery iteration time,
+        and thus
+        potentially leave resources inaccessible for longer.
       </para>
       <para>
-        To avoid this, the <classname>RecoveryManager</classname> only attempts to send <methodname>commit</methodname>
-        to a <classname>Resource</classname> a limited number of times. After that, it considers the transaction
-        <phrase>assumed complete</phrase>. It retains the information about the transaction, by changing the object type
-        in the <classname>ActionStore</classname>, and if the <classname>Resource</classname> eventually does wake up
-        and a <methodname>replay_completion</methodname> request is received, the <classname>RecoveryManager</classname>
-        activates the transaction and issues the commit request to the new Resource IOR. The number of times the
-        <classname>RecoveryManager</classname> attempts to issue <methodname>commit</methodname> as part of the periodic
-        recovery is controlled by the property variable <varname>COMMITTED_TRANSACTION_RETRY_LIMIT</varname>, and
-        defaults to <literal>3</literal>.
+        To avoid this, the
+        <classname>RecoveryManager</classname>
+        only attempts to send
+        <methodname>commit</methodname>
+        to a
+        <classname>Resource</classname>
+        a limited number of times. After that, it considers the transaction
+        <phrase>assumed complete</phrase>
+        . It retains the information about the transaction, by changing the object type
+        in the
+        <classname>ActionStore</classname>
+        , and if the
+        <classname>Resource</classname>
+        eventually does wake up
+        and a
+        <methodname>replay_completion</methodname>
+        request is received, the
+        <classname>RecoveryManager</classname>
+        activates the transaction and issues the commit request to the new Resource IOR. The number
+        of times the
+        <classname>RecoveryManager</classname>
+        attempts to issue
+        <methodname>commit</methodname>
+        as part of the periodic
+        recovery is controlled by the property variable
+        <varname>COMMITTED_TRANSACTION_RETRY_LIMIT</varname>
+        , and
+        defaults to
+        <literal>3</literal>
+        .
       </para>
     </section>
-    
+
     <section>
       <title>Expired entry removal</title>
       <para>
-        The operation of the recovery subsystem causes some entries to be made in the <classname>ObjectStore</classname>
-        that are not removed in normal progress. The <classname>RecoveryManager</classname> has a facility for scanning
-        for these and removing items that are very old. Scans and removals are performed by implementations of the
-        <interfacename>>com.arjuna.ats.arjuna.recovery.ExpiryScanner</interfacename>. Implementations of this interface
-        are loaded by giving the class names as the value of the property
-        <varname>RecoveryEnvironmentBean.expiryScannerClassNames</varname>. The <classname>RecoveryManager</classname> calls the
-        <methodname>scan</methodname> method on each loaded <classname>ExpiryScanner</classname> implementation at an
-        interval determined by the property <varname>RecoveryEnvironmentBean.expiryScanInterval</varname>. This value is
-        given in hours, and defaults to <literal>12</literal>. A property value of <literal>0</literal> disables any
-        expiry scanning. If the value as supplied is positive, the first scan is performed when
-        <classname>RecoveryManager</classname> starts. If the value is negative, the first scan is delayed until after
-        the first interval, using the absolute value.
+        The operation of the recovery subsystem causes some entries to be made in the
+        <classname>ObjectStore</classname>
+        that are not removed in normal progress. The
+        <classname>RecoveryManager</classname>
+        has a facility for scanning
+        for these and removing items that are very old. Scans and
+        removals are performed by implementations of the
+        <interfacename>>com.arjuna.ats.arjuna.recovery.ExpiryScanner</interfacename>
+        . Implementations of this interface
+        are loaded by giving the class names as the value of the
+        property
+        <varname>RecoveryEnvironmentBean.expiryScannerClassNames</varname>
+        . The
+        <classname>RecoveryManager</classname>
+        calls the
+        <methodname>scan</methodname>
+        method on each loaded
+        <classname>ExpiryScanner</classname>
+        implementation at an
+        interval determined by the property
+        <varname>RecoveryEnvironmentBean.expiryScanInterval</varname>
+        . This value is
+        given in hours, and defaults to
+        <literal>12</literal>
+        . A property value of
+        <literal>0</literal>
+        disables any
+        expiry scanning. If the value as supplied is positive, the first scan is
+        performed when
+        <classname>RecoveryManager</classname>
+        starts. If the value is negative, the first scan is delayed until after
+        the first interval,
+        using the absolute value.
       </para>
       <para>
         There are two kinds of item that are scanned for expiry:
       </para>
       <informaltable>
         <tgroup cols="2">
-          <colspec colwidth="100px"/>
-          <colspec colwidth="350px"/>
+          <colspec colwidth="100px" />
+          <colspec colwidth="350px" />
           <tbody>
             <row>
               <entry>Contact items</entry>
               <entry>
                 <para>
-                  One contact item is created by every application process that uses JBossTS. They contain the
-                  information that the <classname>RecoveryManager</classname> uses to determine if the process that
-                  initiated the transaction is still alive, and what the transaction status is. The expiry time for
+                  One contact item is created by every application process that uses JBossTS. They
+                  contain the
+                  information that the
+                  <classname>RecoveryManager</classname>
+                  uses to determine if the process that
+                  initiated the transaction is still alive, and
+                  what the transaction status is. The expiry time for
                   these is set by the property
-                  <varname>RecoveryEnvironmentBean.transactionStatusManagerExpiryTime</varname>, which is expressed in
-                  hours. The default is <literal>12</literal>, and <literal>0</literal> suppresses the expiration. This
-                  is the interval after which a process that cannot be contacted is considered to be dead. It should be
-                  long enough to avoid accidentally removing valid entries due to short-lived transient errors such as
+                  <varname>RecoveryEnvironmentBean.transactionStatusManagerExpiryTime</varname>
+                  , which is expressed in
+                  hours. The default is
+                  <literal>12</literal>
+                  , and
+                  <literal>0</literal>
+                  suppresses the expiration. This
+                  is the interval after which a process that cannot
+                  be contacted is considered to be dead. It should be
+                  long enough to avoid
+                  accidentally removing valid entries due to short-lived transient errors such as
                   network downtime.
                 </para>
               </entry>
@@ -491,16 +518,33 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
               <entry>Assumed complete transactions</entry>
               <entry>
                 <para>
-                  The expiry time is counted from when the transactions were assumed to be complete. A
-                  <methodname>replay_completion</methodname> request resets the clock. The risk with removing assumed
-                  complete transactions it that a prolonged communication outage means that a remote
-                  <classname>Resource</classname> cannot connect to the <classname>RecoveryManager</classname> for the
-                  parent transaction. If the assumed complete transaction entry is expired before the communications are
-                  recovered, the eventual <methodname>replay_completion</methodname> will find no information and the
-                  <classname>Resource</classname> will be rolled back, although the transaction committed. Consequently,
-                  the expiry time for assumed complete transactions should be set to a value that exceeds any
-                  anticipated network outage. The parameter is <varname>ASSUMED_COMPLETE_EXPIRY_TIME</varname>. It is
-                  expressed in hours, with <literal>240</literal> being the default, and <literal>0</literal> meaning
+                  The expiry time is counted from when the transactions were assumed to be complete.
+                  A
+                  <methodname>replay_completion</methodname>
+                  request resets the clock. The risk with removing assumed
+                  complete transactions it
+                  that a prolonged communication outage means that a remote
+                  <classname>Resource</classname>
+                  cannot connect to the
+                  <classname>RecoveryManager</classname>
+                  for the
+                  parent transaction. If the assumed complete transaction entry is expired
+                  before the communications are
+                  recovered, the eventual
+                  <methodname>replay_completion</methodname>
+                  will find no information and the
+                  <classname>Resource</classname>
+                  will be rolled back, although the transaction committed. Consequently,
+                  the expiry
+                  time for assumed complete transactions should be set to a value that exceeds any
+                  anticipated network outage. The parameter is
+                  <varname>ASSUMED_COMPLETE_EXPIRY_TIME</varname>
+                  . It is
+                  expressed in hours, with
+                  <literal>240</literal>
+                  being the default, and
+                  <literal>0</literal>
+                  meaning
                   never to expire.
                 </para>
               </entry>
@@ -510,61 +554,103 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
       </informaltable>
       <example>
         <title>ExpiryScanner properties</title>
-        <programlisting language="XML" role="XML"><xi:include href="extras/ExpiryScanner-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+        <programlisting language="XML" role="XML"><xi:include
+          href="extras/ExpiryScanner-properties.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
+          parse="text" /></programlisting>
       </example>
       <para>
-        There are two <classname>ExpiryScannner</classname>s for the assumed complete transactions, because there are
-        different types in the ActionStore.
+        There are two
+        <classname>ExpiryScannner</classname>
+        s for the assumed complete transactions, because there are
+        different types in the
+        ActionStore.
       </para>
     </section>
-    
+
     <section>
       <title>Recovery domains</title>
       <para>
-        A key part of the recovery subsystem is that the <classname>RecoveryManager</classname> hosts the OTS
-        <classname>RecoveryCoordinator</classname> objects that handle recovery for transactions initiated in
-        application processes. Information passes between the application process and the
-        <classname>RecoveryManager</classname> in one of three ways:
+        A key part of the recovery subsystem is that the
+        <classname>RecoveryManager</classname>
+        hosts the OTS
+        <classname>RecoveryCoordinator</classname>
+        objects that handle recovery for transactions initiated in
+        application processes. Information
+        passes between the application process and the
+        <classname>RecoveryManager</classname>
+        in one of three ways:
       </para>
       <itemizedlist>
         <listitem>
           <para>
-            <classname>RecoveryCoordinator</classname> object references (IORs) are created in the application
-            process. They contain information identifying the transaction in the object key. They pass the object key to
-            the <classname>Resource</classname> objects, and the <classname>RecoveryManager</classname> receives it.
+            <classname>RecoveryCoordinator</classname>
+            object references (IORs) are created in the application
+            process. They contain information
+            identifying the transaction in the object key. They pass the object key to
+            the
+            <classname>Resource</classname>
+            objects, and the
+            <classname>RecoveryManager</classname>
+            receives it.
           </para>
         </listitem>
         <listitem>
           <para>
-            The application process and the <classname>RecoveryManager</classname> access the same
-            <filename>jbossts-properties.xml</filename>, and therefore use the same <classname>ObjectStore</classname>.
+            The application process and the
+            <classname>RecoveryManager</classname>
+            access the same
+            <filename>jbossts-properties.xml</filename>
+            , and therefore use the same
+            <classname>ObjectStore</classname>
+            .
           </para>
         </listitem>
         <listitem>
           <para>
-            The <classname>RecoveryCoordinator</classname> invokes CORBA directly in the application, using information
-            in the contact items. Contact items are kept in the <classname>ObjectStore</classname>.
+            The
+            <classname>RecoveryCoordinator</classname>
+            invokes CORBA directly in the application, using information
+            in the contact items.
+            Contact items are kept in the
+            <classname>ObjectStore</classname>
+            .
           </para>
         </listitem>
       </itemizedlist>
       <para>
         Multiple recovery domains may useful if you are doing a migration, and separate
-        <classname>ObjectStores</classname> are useful. However, multiple RecoveryManagers can cause problems with XA
-        datasources if resource-initiated recovery is active on any of them.
+        <classname>ObjectStores</classname>
+        are useful. However, multiple RecoveryManagers can cause problems with XA
+        datasources if
+        resource-initiated recovery is active on any of them.
       </para>
     </section>
   </section>
-  
+
   <section>
-    <title>Transaction status and <methodname>replay_comparison</methodname></title>
+    <title>
+      Transaction status and
+      <methodname>replay_comparison</methodname>
+    </title>
     <para>
-      When a transaction successfully commits, the transaction log is removed from the system. The log is no longer
-      required, since all registered Resources have responded successfully to the two-phase commit sequence. However, if
-      a <classname>Resource</classname> calls <methodname>replay_completion</methodname> on the
-      <classname>RecoveryCoordinator</classname> after the transaction it represents commits, the status returned is
-      <classname>StatusRolledback</classname>. The transaction system does not keep a record of committed transactions,
-      and assumes that in the absence of a transaction log, the transaction must have rolled back. This is in line with
-      the <systemitem>presumed abort protocol</systemitem> used by the OTS.
+      When a transaction successfully commits, the transaction log is removed from the system. The
+      log is no longer
+      required, since all registered Resources have responded successfully to the
+      two-phase commit sequence. However, if
+      a
+      <classname>Resource</classname>
+      calls
+      <methodname>replay_completion</methodname>
+      on the
+      <classname>RecoveryCoordinator</classname>
+      after the transaction it represents commits, the status returned is
+      <classname>StatusRolledback</classname>
+      . The transaction system does not keep a record of committed transactions,
+      and assumes that in
+      the absence of a transaction log, the transaction must have rolled back. This is in line with
+      the
+      <systemitem>presumed abort protocol</systemitem>
+      used by the OTS.
     </para>
   </section>
 </chapter>

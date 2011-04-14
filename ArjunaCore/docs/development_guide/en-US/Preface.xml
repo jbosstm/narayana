@@ -1,28 +1,13 @@
-<?xml version='1.0' encoding='utf-8' ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Development_Guide.ent">
-%BOOK_ENTITIES;
 ]>
 <preface id="pref-ArjunaCore_Development_Guide-Preface">
-   <title>Preface</title>
-   <section>
-     <title>Prerequisites</title>
-     <para>
-       This guide assumes a basic familiarity with Java service development and object-oriented programming. A
-       fundamental level of understanding in the following areas will also be useful:
-     </para>
-     <itemizedlist>
-       <listitem>
-         <para>General understanding of the APIs, components, and objects that are present in Java applications.</para>
-       </listitem>
-       <listitem>
-         <para>A general understanding of the Windows and UNIX operating systems.</para>
-       </listitem>
-     </itemizedlist>
-   </section>
-   <xi:include href="Common_Content/Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude"><xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="Common_Content/Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   </xi:fallback>
-   </xi:include>
+    <title>Preface</title>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Conventions.xml"/>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Feedback.xml">
+        <xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Feedback.xml"/>
+        </xi:fallback>
+    </xi:include>
 </preface>
-
