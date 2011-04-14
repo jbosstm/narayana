@@ -1,0 +1,16 @@
+Index: run-tests.xml
+===================================================================
+--- run-tests.xml	(revision 36750)
++++ run-tests.xml	(working copy)
+@@ -386,9 +386,9 @@
+                     <include name="*.jar"/>
+                     <include name="*.zip"/>
+                 </fileset>
+-                <fileset dir="../ArjunaJTS/jts/build/lib">
++<!--                <fileset dir="../ArjunaJTS/jts/build/lib">
+                     <include name="jts_tests.jar"/>
+-                </fileset>
++                </fileset> -->
+                 <pathelement location="${org.jboss.jbossts.qa.ts.home}/etc"/>
+ 
+             </classpath>
