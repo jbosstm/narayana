@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE authorgroup PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+]>
+<authorgroup>
+  <author>
+    <firstname>Jonathan</firstname>
+    <surname>Halliday</surname>
+    <affiliation>
+      <orgname>Red Hat</orgname>
+    </affiliation>
+    <email>jhalliday@redhat.com</email>
+  </author>
+</authorgroup>

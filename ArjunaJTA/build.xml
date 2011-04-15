@@ -87,7 +87,9 @@
             <fileset dir="../ArjunaCore" includes="**/*.pdf"/>
         </copy>
 
-        <ant dir="../docs" target="install.common.docs"/>
+        <ant dir="../docs" target="install.common.docs">
+            <property name="dest.dir" value="build"/>
+        </ant>
         <copy todir="${build.dir}/install/${dest.dir}" overwrite="true" flatten="true">
             <fileset dir="../docs" includes="**/*.pdf"/>
         </copy>

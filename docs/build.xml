@@ -63,6 +63,11 @@
                     <arg value="--langs=en-US"/>
                     <arg value="--formats=pdf,html"/>
                 </exec>
+                <exec dir="txbridge_guide" executable="publican" failonerror="true">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
                 <copy todir="${dest.dir}" overwrite="true" flatten="true">
                     <fileset dir="." includes="**/*.pdf" excludes="**/*Release*.pdf"/>
                 </copy>

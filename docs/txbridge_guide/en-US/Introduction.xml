@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+]>
+<chapter>
+  <title>Introduction</title>
+  <section>
+    <title>Contextual Overview</title>
+    <para>Transactions provide a structuring mechanism for business logic. Use of transactions
+      allows for grouping of data manipulations into constructs with certain properties. Traditional
+      ACID transactions provide for properties of Atomicity, Consistency, Isolation and Durability.
+    </para>
+    <para>In JavaEE applications, transaction support is provided via the Java Transaction API
+      (JTA). The classes and interfaces in the javax.transaction and javax.transaction.xa packages
+      provide a means by which the programmer may manage transaction demarcation (begin, commit,
+      rollback) and, where necessary, interact with the transaction management system (e.g.
+      enlistResource). In many JavaEE applications, further abstractions are provided on top of the
+      JTA. For example, EJB3 @TransactionAttribute annotations may be used for transaction boundary
+      demarcation in preference to explicit calls to the JTA's UserTransaction interface.</para>
+    <para>In distributed applications, the JTA implementation may provide propagation of transaction
+      context and transaction control calls between containers (JVMs) using either a propriety
+      transport or JTS, the Java mapping of the CORBA OTS standard on an RMI/IIOP transport. In
+      JBossTS, both local and distributed (JTS) implementations of the JTA are available.</para>
+    <para>In Web Services applications, ACID transaction management and interoperable context
+      propagation is provided for by the WS-AT standard. JBossTS XTS provides an implementation of
+      both the 1.0 and 1.2 versions of this standard. Bridging is provided only on the more recent
+      version. At the time of writing the standard covers only the web services API and protocol,
+      not the Java API through which the protocol may be driven. Therefore, XTS provides a custom
+      Java API to users, with characteristics broadly similar to the JTA.</para>
+    <para>For applications that combine traditional JavaEE transaction management and Web Service
+      transaction management, it is often desirable to have some mechanism for linking these
+      transaction types, such that a single transaction may span business logic written for either
+      transaction type. Examples include exposing existing JavaEE transactional business logic (e.g.
+      EJBs) as transactional Web Services, or allowing JavaEE transactional components to utilize
+      transactional Web Services.</para>
+  </section>
+  <section>
+    <title>Transaction Bridging</title>
+    <para>We use the term Transaction Bridging to describe the process of linking the JavaEE and Web
+      Services transaction domains. The transaction bridge component (txbridge) of JBossTS provides
+      bi-directional linkage, such that either type of transaction may encompass business logic
+      designed for use with the other type.</para>
+    <para>The technique used by the bridge is a combination of interposition and protocol mapping.
+    </para>
+    <para>Interposition is used in transaction systems to allow a tree of transaction coordinators
+      to be constructed, usually for performance reasons. Interposed coordinators function as
+      transaction managers for nodes below them in the tree, whilst appearing as resources
+      (participants in WS-AT terminology) to the node above them.</para>
+    <para>Within a single transaction domain, interposition may be used to allow remote nodes to
+      minimize the number of network calls necessary at transaction termination. The top level node
+      is known as the root coordinator, whilst interposed coordinators are termed subordinate. This
+      name indicates that they are not autonomously responsible for determining the transaction
+      outcome, but rather are driven by their parent coordinator. Therefore, whilst a top level
+      coordinator exposes only the commit and rollback methods for transaction termination and
+      handles the 2PC internally, the subordinates additionally expose the prepare method to their
+      parent, behaving much like resources during the termination protocol.</para>
+    <figure>
+      <title>Transaction interposition in a distributed JTA environment</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/interposition.gif" format="GIF" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>In the transaction bridge, an interposed coordinator is registered into the existing
+      transaction and performs the additional task of protocol mapping. That is, it appears to its
+      parent coordinator to be a resource of its native transaction type, whilst appearing to its
+      children to be a coordinator of their native transaction type, even though these transaction
+      types differ.</para>
+    <figure>
+      <title>Transactional bridging interposition</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/bridgeinterposition.png" format="PNG" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>The interposed coordinator is responsible for performing mapping between the transaction
+      protocols. There is a strong correspondence between the API and protocol used by the JTA and
+      WS-AT transaction types, which is unsurprising given their common heritage and shared problem
+      domain. However, method signatures, exception types and such do differ. The bridge provides a
+      abstraction layer to mask these distinctions as far as possible.</para>
+    <para>The net result of this is that existing business logic perceives its expected transaction
+      environment, even though the transaction in which it is executing may be subordinate to one of
+      a different type. No changes are necessary to existing transactional applications to allow
+      them to operate in the scope of foreign transactions. This facilitates reuse of existing
+      business logic components in new environments and increases the possibilities for new
+      architectures and interoperability.</para>
+    <para>The Recovery Manager functions by:</para>
+  </section>
+</chapter>
