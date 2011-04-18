@@ -115,40 +115,9 @@ The Context: Captures the necessary details of the transaction such that partici
     </section>
     <section>
         <title>The Coordinator</title>
-        <para><!--
-      Every transaction is associated with a coordinator, which is responsible for governing the outcome of the
-      transaction. The coordinator may be implemented as a separate service or may be co-located with the user for
-      improved performance. Each coordinator is created by the transaction manager service, which is effectively a
-      factory for those coordinators.
-      -->
-      Every transaction is associated with a coordinator, which is responsible
-      for governing the outcome of the transaction. When a client begins a Web
-      Service transaction it posts a <systemitem>create</systemitem> request to
-      a coordination service, which creates the coordinator and returns its
-      details to the client. This service may be located in its own container or
-      may be colocated with the application client or with one of the
-      transactional web services for improved performance. The coordination
-      service is typically responsible for managing many transactions in
-      parallel, so each coordinator is identified by a unique transaction
-      identifier.
-    </para>
-        <para>
-      The coordinator is responsible for ensuring that the web services invoked
-      by the client arrive at a consistent outcome. When the client asks the
-      coordinator to complete the transaction, the coordinator ensures that each
-      web service is ready to confirm any provisional changes it has made within
-      the scope of the transaction. It then asks them all to make their changes
-      permanent. If any of the web services indicates a problem at the
-      confirmation stage, the coordinator ensures that all web services reject
-      their provisional changes, reverting to the state before the transaction
-      started. The coordinator also reverts all changes if the client asks it to
-      cancel the transaction.
-    </para>
-        <para>
-      The negotiation between the coordinator and the web services is organized to ensure that all services will make
-      their changes permanent, or all of them will revert to the previous state, even if the coordinator or one of the
-      web services crashes part of the way through the transaction."
-    </para>
+        <para>Associated with every transaction is a coordinator, which is responsible for governing the outcome of the transaction. The coordinator may be implemented as a separate service or may be co-located with the user for improved performance. Each coordinator is created by the transaction manager service, which is in effect a factory for those coordinators.</para>
+        <para>A coordinator communicates with enrolled participants to inform them of the desired termination requirements, i.e., whether they should accept (e.g., confirm) or reject (e.g., cancel) the work done within the scope of the given transaction. For example, whether to purchase the (provisionally reserved) flight tickets for the user or to release them. An application/client may wish to terminate a transaction in a number of different ways (e.g., confirm or cancel). However, although the coordinator will attempt to terminate in a manner consistent with that desired by the client, it is ultimately the interactions between the coordinator and the participants that will determine the actual final outcome.</para>
+        <para>A transaction manager is typically responsible for managing coordinators for many transactions. The initiator of the transaction (e.g., the client) communicates with a transaction manager and asks it to start a new transaction and associate a coordinator with the transaction. Once created, the context can be propagated to Web services in order for them to associate their work with the transaction.</para>
     </section>
     <section>
         <title>The Transaction Context</title>
@@ -175,7 +144,7 @@ In order for a transaction to span a number of services, certain information has
             </varlistentry>
         </variablelist>
         <figure>
-            <title>Web Services and Context Flow</title>
+            <title>Context Flow</title>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="images/fig-web-services-context-flow.png" format="PNG"/>
@@ -191,67 +160,15 @@ In order for a transaction to span a number of services, certain information has
     <section>
         <title>Participants</title>
         <para>
-      The coordinator cannot know the details of how every transactional service is implemented. In fact this knowledge
-      is not even necessary for it to negotiate a transactional outcome. It treats each service taking part in a
-      transaction as a participant and communicates with it according to some predefined participant coordination models
-      appropriate to the type of transaction. When a web service receives its first service request in some given transaction, it enrolls with the
-      coordinator as a participant, specifying the participant model it wishes to follow. The context contains a URL for
-      the endpoint of the coordination service which handles enrollment requests. So, the term participant merely refers
-      a transactional service enrolled in a specific transaction using a specific participant model.
+      The coordinator cannot know the details of how every transactional service is implemented; in fact it is not necessary for it to do so in order to negotiate a transactional outcome. It treats each service taking part in a transaction as a participant and communicates with it according to some predefined participant coordination models appropriate to the type of transaction. When a service begins performing work within the scope of a transaction it enrolls itself with the coordinator as a participant, specifying the participant model it wishes to follow. So, the term participant merely refers a  transactional service enrolled in a specific transaction using a specific participant model.
     </para>
     </section>
     <section>
-        <title>ACID Transactions</title>
+        <title>Commit protocol</title>
         <para>
-      Traditionally, transaction processing systems support <firstterm>ACID</firstterm> properties. ACID is an acronym
-      for <emphasis>A</emphasis>tomic, <emphasis>C</emphasis>onsistent, <emphasis>I</emphasis>solated, and
-      <emphasis>D</emphasis>urable. A unit of work has traditionally been considered transactional only if the ACID
-      properties are maintained, as describe in <xref linkend="acid-properties"/>.
-    </para>
-        <variablelist id="acid-properties">
-            <title>ACID Properties</title>
-            <varlistentry>
-                <term>Atomicity</term>
-                <listitem>
-                    <para>
-       The transaction executes completely, or not at all.
-     </para>
-                </listitem>
-            </varlistentry>
-            <varlistentry>
-                <term>Consistency</term>
-                <listitem>
-                    <para>
-       The effects of the transaction preserve the internal consistency of an underlying data structure.
-     </para>
-                </listitem>
-            </varlistentry>
-            <varlistentry>
-                <term>Isolated</term>
-                <listitem>
-                    <para>
-       The transaction runs as if it were running alone, with no other transactions running, and is not visible to other
-       transactions.
-     </para>
-                </listitem>
-            </varlistentry>
-            <varlistentry>
-                <term>Durable</term>
-                <listitem>
-                    <para>
-       The transaction's results are not lost in the event of a failure.
-     </para>
-                </listitem>
-            </varlistentry>
-        </variablelist>
-    </section>
-    <section>
-        <title>Two Phase Commit</title>
-        <para>
-      The classical two-phase commit approach is the bedrock of JBoss Transaction Service, and more generally of Web
-      Services transactions. Two-phase commit provides coordination of parties that are involved in a transaction. The
-      general flow of a two-phase commit transaction is described in <xref linkend="two-phase-commit-overview"/>.
-    </para>
+A two-phase commit protocol is required to guarantee that all of the action participants either commit or abort any changes made. See <xref linkend="two-phase-commit-overview"/> which illustrates the main aspects of the commit protocol: during phase 1, the action coordinator, C, attempts to communicate with all of the action participants, A and B, to determine whether they will commit or abort. An abort reply from any participant acts as a veto, causing the entire action to abort. Based upon these (lack of) responses, the coordinator arrives at the decision of whether to commit or abort the action. If the action will commit, the coordinator records this decision on stable storage, and the protocol enters phase 2, where the coordinator forces the participants to carry out the decision. The coordinator also informs the participants if the action aborts.</para>
+<para>When each participant receives the coordinator’s phase 1 message, they record sufficient information on stable storage to either commit or abort changes made during the action. After returning the phase 1 response, each participant who returned a commit response must remain blocked until it has received the coordinator’s phase 2 message. Until they receive this message, these resources are unavailable for use by other actions. If the coordinator fails before delivery of this message, these resources remain blocked. However, if crashed machines eventually recover, crash recovery mechanisms can be employed to unblock the protocol and terminate the action.
+</para>
         <figure id="two-phase-commit-overview">
             <title>Two-Phase Commit Overview</title>
             <mediaobject>
@@ -283,8 +200,7 @@ In order for a transaction to span a number of services, certain information has
         </figure>
         <note>
             <para>
-   During two-phase commit transactions, coordinators and resources keep track of activity in non-volatile data stores
-   so that they can recover in the case of a failure.
+   During two-phase commit transactions, coordinators and resources keep track of activity in non-volatile data stores so that they can recover in the case of a failure.
       </para>
         </note>
     </section>
