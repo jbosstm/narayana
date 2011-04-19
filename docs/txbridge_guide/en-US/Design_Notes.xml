@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
 ]>
-<chapter>
+<appendix>
   <title>Design Notes</title>
   <section>
     <title>General Points</title>
@@ -155,4 +155,4 @@
       the that XTS, txbridge and the test artifacts are deployed. To manage the server they need to
       be provided with JBOSS_HOME and JAVA_HOME values in the build.xml.</para>
   </section>
-</chapter>
+</appendix>
