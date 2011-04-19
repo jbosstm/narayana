@@ -85,7 +85,6 @@
       a different type. No changes are necessary to existing transactional applications to allow
       them to operate in the scope of foreign transactions. This facilitates reuse of existing
       business logic components in new environments and increases the possibilities for new
-      architectures and interoperability.</para>
-    <para>The Recovery Manager functions by:</para>
+      architectures and interoperability.</para>    <para>The Recovery Manager functions by:</para>
   </section>
 </chapter>
