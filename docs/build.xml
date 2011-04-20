@@ -53,6 +53,11 @@
         <if>
             <istrue value="${publican}" />
             <then>
+                <exec dir="development_guide" executable="publican" failonerror="true">
+                    <arg value="build"/>
+                    <arg value="--langs=en-US"/>
+                    <arg value="--formats=pdf,html"/>
+                </exec>
                 <exec dir="failure_recovery_guide" executable="publican" failonerror="true">
                     <arg value="build"/>
                     <arg value="--langs=en-US"/>
