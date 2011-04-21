@@ -55,7 +55,7 @@ in the classpath. Note that versions of most 3rd party components are resolved v
 pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the pom-template.xml
 You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
 
-The build currently requires Java 6, ant 1.7.1, maven 2.2.1 and publican 2.1 with the jboss-community brand.
+The build currently requires Java 6, ant 1.7.1, maven 3.0.2 and publican 2.1 with the jboss-community brand.
 Later version for these tools may work. Download locations are:
 
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
