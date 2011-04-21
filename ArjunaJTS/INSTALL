@@ -211,16 +211,26 @@ Please refer to the unit tests in the src distribution for more details.
 Tools Deployment
 ----------------
 
-Embedded tools is an applet that runs in process with the AS which
-includes an interface for inspecting transactions. It is deployed as
-a service archive and can be found in the product install directory:
-<install directory>/bin/jbossts-tools.sar
+Transaction management is integrated into the admin console in the form of a JOPR plugin
+which is located in the install bin directory (jbossts-jopr-plugin.jar). Install it by copying
+to the admin console plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins).
 
-To start the tool simply copy the sar to the AS deploy directory, open
-the JMX console (http://.../jmx-console) and click on the service named
-EmbeddedTools.
+There is also a transaction statistics graphing tool which can run standalone or inside a
+jconsole tab (jconsole, a tool for managing JVMs, is distributed with the reference JDK):
 
-Note that the embedded tools will be deprecated in favour of the JOPR plugin
-for JBossTS transaction management. This is available as a jar in the install
-bin directory (jbossts-jopr-plugin.jar) which should be installed in the
-embedded JOPR plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins)
+The tool depends on the JFree graphing library. Download and upack orson from http://www.jfree.org/orson
+Set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
+If you intend to use the tool with jconsole you will also need to put the JDK tools and jconsole jars on
+the classpath:
+
+export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$TS_INSTALL_DIR/lib/jbossjts.jar>"
+
+Standalone Usage:
+
+java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
+
+(note that standalone usage does not require the JDK tools and jconsole jars)
+
+Usage with jconsole:
+
+jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $TS_INSTALL_DIR/lib/jbossjts.jar

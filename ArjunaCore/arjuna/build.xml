@@ -43,6 +43,19 @@
         </compile-tests.macro>
     </target>
 
+    <target name="compile">
+        <compile.macro>
+            <additional.classpath>
+                <!-- jconsole performance graphing support
+                     -->
+                <fileset dir="${sharedbuild.base.dir}/ext/" includes="orson-0.5.0.jar"/>
+                <fileset dir="${sharedbuild.base.dir}/ext/" includes="jcommon-1.0.10.jar"/>
+                <fileset dir="${sharedbuild.base.dir}/ext/" includes="jfreechart-1.0.6.jar"/>
+                <fileset dir="${java.home}/../lib/" includes="jconsole.jar"/>
+            </additional.classpath>
+        </compile.macro>
+    </target>
+
 	<!--
 		run tests that match a given pattern, for example
 		ant testone -DONECLASS="**/*ObjectStoreAPIJMXTest.java"

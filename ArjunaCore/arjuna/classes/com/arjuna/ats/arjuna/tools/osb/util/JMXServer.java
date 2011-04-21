@@ -101,7 +101,9 @@ public class JMXServer
 		ObjectInstance oi = null;
 
 		try {
-			tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_1(name);
+			if (tsLogger.logger.isDebugEnabled())
+				tsLogger.logger.debug("registering bean " + name);
+			//tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_1(name);
 			oi = getServer().registerMBean(bean, new ObjectName(name));
 		} catch (InstanceAlreadyExistsException e) {
 			tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_2(name);

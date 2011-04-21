@@ -285,6 +285,9 @@
                 <attribute name="arjuna-scm-revision" value="${com.hp.mw.sourceid}"/>
                 <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"/>
             </manifest>
+            <service type="com.sun.tools.jconsole.JConsolePlugin">
+                <provider classname="com.arjuna.ats.arjuna.tools.stats.TxPerfPlugin"/>
+            </service>
         </jar>
 
         <for list="${component-module-list}" param="module">

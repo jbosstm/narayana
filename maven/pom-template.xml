@@ -310,19 +310,6 @@
             <version>2.3.1jboss.patch01-brew</version><!-- TODO AS7 -->
         </dependency>
 
-        <!-- tsmx (tooling) requires graphing support: -->
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
         <!-- atsintegration (i.e. the JBossAS glue code) requires some app server bits. -->
 
         <dependency>
