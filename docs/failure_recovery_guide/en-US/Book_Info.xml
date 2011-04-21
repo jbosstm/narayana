@@ -11,7 +11,7 @@
     <pubsnumber>0</pubsnumber>
     <abstract>
         <para>
-        The Failure Recovery Guide contains information on how to use JBoss Transaction Service to develop
+        The Failure Recovery Guide contains information on how to use &PRODUCT; to develop
         applications that use transaction technology to manage business processes.
       </para>
     </abstract>

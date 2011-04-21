@@ -229,7 +229,7 @@
         </listitem>
       </itemizedlist>
       <para>
-        Therefore, JBoss Transaction Service provides runtime options to enable possible threading
+        Therefore, &PRODUCT; provides runtime options to enable possible threading
         optimizations. By
         setting the
         <varname>CoordinatorEnvironmentBean.asyncPrepare</varname>

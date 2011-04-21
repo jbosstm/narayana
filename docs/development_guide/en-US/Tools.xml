@@ -48,7 +48,7 @@
         <title>Result</title>
         <para>
           The <guilabel>Tools</guilabel> window appears. This is the launch area for all of the tools shipped
-          with the JBoss Transaction Service.  At the top of the window you will notice a menu bar (see Figure 7).
+          with &PRODUCT;.  At the top of the window you will notice a menu bar (see Figure 7).
         </para>
       </step>
     </procedure>
