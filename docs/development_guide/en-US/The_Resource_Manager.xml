@@ -97,7 +97,7 @@
         The <citetitle>ArjunaCore Development Guide</citetitle> discusses the <firstterm>Last Resource Commit
         optimization (LRCO)</firstterm>, whereby a single resource that is only one-phase aware, and does not support
         the <methodname>prepare</methodname> phase, can be enlisted with a transaction that is manipulating two-phase
-        aware participants. This optimization is also supported within the JBossTA.
+        aware participants. This optimization is also supported within the &PRODUCT;.
       </para>
       <para>
         In order to use the LRCO, your <interfacename>XAResource</interfacename> implementation must extend the

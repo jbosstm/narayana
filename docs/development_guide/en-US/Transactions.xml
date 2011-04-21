@@ -312,7 +312,7 @@
                 <methodname>commit</methodname>
                 operation is restricted to the transaction originator only. If the
                 calling thread is
-                not allowed to commit the transaction, an exception is thrown. JBossTA does not
+                not allowed to commit the transaction, an exception is thrown. &PRODUCT; does not
                 currently impose any restriction on the ability of threads to terminate
                 transactions.
               </para>
