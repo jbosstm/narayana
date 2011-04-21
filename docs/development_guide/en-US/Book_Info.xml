@@ -5,14 +5,14 @@
 ]>
 <bookinfo id="book-Development_Guide-Development_Guide">
    <title>Development Guide</title>
-   <subtitle> Development reference guide for the JBoss Transactions Suite of software</subtitle>
+   <subtitle> Development reference guide for the JBoss Transactions suite of software</subtitle>
    <productname>JBoss Transactions</productname>
    <productnumber>4.15.0</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>
       <para>
-        Development reference guide for the JBoss Transactions Suite of software
+        Development reference guide for the JBoss Transactions suite of software
       </para>
    </abstract>
    <corpauthor>
