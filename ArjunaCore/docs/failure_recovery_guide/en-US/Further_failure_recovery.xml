@@ -65,11 +65,11 @@
         (typically one for each node on the network that is running JBossTS applications). The RecoveryManager file is located in the package
         com.arjuna.ats.arjuna.recovery.RecoveryManager. To start the Recovery Manager issue the following command:</para>
       <para>
-        <programlisting role="JAVA" language="Java">java com.arjuna.ats.arjuna.recovery.RecoveryManager</programlisting>
+        <programlisting language="Java" role="JAVA">java com.arjuna.ats.arjuna.recovery.RecoveryManager</programlisting>
       </para>
       <para>If the -test flag is used with the Recovery Manager then it will display a “Ready” message when initialised, i.e.,</para>
       <para>
-        <programlisting role="JAVA" language="Java">java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</programlisting>
+        <programlisting language="Java" role="JAVA">java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</programlisting>
       </para>
     </section>
     <section>
@@ -150,9 +150,7 @@
         pass is in progress). The default Recovery Extension settings are:</para>
       <example>
         <title>Recovery Environment Bean XML</title>
-        <programlisting role="XML" language="XML">
-          <xi:include href="extras/recoveryEnvironmentBean.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+        <programlisting role="XML" language="XML"><xi:include href="extras/recoveryEnvironmentBean.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
     </section>
     <section>
@@ -188,22 +186,18 @@
       <para>The Expiry Scanner properties for these are:</para>
       <example>
         <title>Recovery Environment Bean XML</title>
-        <programlisting role="XML" language="XML">
-          <xi:include href="extras/recoveryEnvironmentBeanExpiryScanners.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+        <programlisting role="XML" language="XML"><xi:include href="extras/recoveryEnvironmentBeanExpiryScanners.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
       <para>To illustrate the behavior of a recovery module, the following pseudo code describes the basic algorithm used for Atomic Action
         transactions and Transactional Objects for java.</para>
       <example>
         <title>AtomicAction pseudo code</title>
-        <programlisting>
-          <xi:include href="extras/atomicaction.txt" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/atomicaction.txt" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
         </programlisting>
       </example>
       <example>
         <title>Transactional Object pseudo code</title>
-        <programlisting>
-          <xi:include href="extras/txoj.txt" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/txoj.txt" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
         </programlisting>
       </example>
     </section>
@@ -233,8 +227,7 @@
       <para>The code of the main class that control the application is given below</para>
       <example>
         <title>TestRecoveryModule.java</title>
-        <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/TestRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/TestRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
         </programlisting>
       </example>
       <para>The registered participant has the following behavior: </para>
@@ -260,25 +253,21 @@
       </warning>
       <example>
         <title>SimpleRecord.java</title>
-        <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/SimpleRecord.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/SimpleRecord.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
         </programlisting>
       </example>
       <para>The role of the Recovery Module in such application consists to read the content of the file used to store the status of the participant,
         to determine that status and print a message indicating if a recovery action is needed or not. </para>
       <example>
         <title>SimpleRecoveryModule.java</title>
-        <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/SimpleRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
+        <programlisting language="Java" role="JAVA"><xi:include href="extras/SimpleRecoveryModule.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
         </programlisting>
       </example>
       <para>The recovery module should now be deployed in order to be called by the Recovery Manager. To do so, we just need to add an entry in the
         the config file for the extension: </para>
       <example>
         <title>Recovery Environment Bean Recovery Extensions XML</title>
-        <programlisting role="XML" language="XML">
-          <xi:include href="extras/recoveryEnvironmentBeanRecoveryExtensions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+        <programlisting role="XML" language="XML"><xi:include href="extras/recoveryEnvironmentBeanRecoveryExtensions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
       <para>Once started, the Recovery Manager will automatically load the listed Recovery modules.</para>
       <note>
