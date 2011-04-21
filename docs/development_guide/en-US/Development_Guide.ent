@@ -1,4 +1,7 @@
-<!ENTITY PRODUCT "Documentation">
+<!ENTITY PRODUCT "JBoss Transactions">
 <!ENTITY BOOKID "Development_Guide">
+<!ENTITY VERSION "4.15">
 <!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss, Inc.">
+<!ENTITY HOLDER "JBoss.org">
+<!ENTITY APPSERVER "JBoss Application Server">
+<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->
