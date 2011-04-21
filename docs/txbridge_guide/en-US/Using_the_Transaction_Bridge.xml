@@ -28,10 +28,7 @@
         <literal>handler</literal>
         for Inbound Bridging
       </title>
-      <programlisting role="XML" language="XML">
-      <xi:include href="extras/inboundbridging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
-        parse="text" />
-      </programlisting>
+      <programlisting role="XML" language="XML"><xi:include href="extras/inboundbridging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>The web service may then operate as though running in the scope of a JTA transaction, as
       indeed it is. For example, it can call (or indeed simply be) an EJB3 business logic method
@@ -52,10 +49,7 @@
         <literal>handler</literal>
         for Outbound Bridging
       </title>
-      <programlisting role="XML" language="XML">
-      <xi:include href="extras/outboundbridging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
-        parse="text" />
-      </programlisting>
+      <programlisting role="XML" language="XML"><xi:include href="extras/outboundbridging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>The web service client may then make calls to web service implementations that expect to
       be invoked in the scope of a WS-AT transaction.</para>
@@ -196,10 +190,7 @@
       used:</para>
     <example>
       <title>Configuring Transaction Bridge Logging</title>
-      <programlisting role="XML" language="XML">
-      <xi:include href="extras/txbridgelogging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
-        parse="text" />
-      </programlisting>
+      <programlisting role="XML" language="XML"><xi:include href="extras/txbridgelogging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>Note that the transaction bridge is a thin layer on top of the XTS and JTA/JTS components
       of
@@ -210,10 +201,7 @@
       used to enable verbose logging:</para>
     <example>
       <title>Configuring verbose logging</title>
-      <programlisting role="XML" language="XML">
-      <xi:include href="extras/verboselogging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"
-        parse="text" />
-      </programlisting>
+      <programlisting role="XML" language="XML"><xi:include href="extras/verboselogging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>Note also that deployment ordering issues can result in JBossTS components, including the
       transaction bridge, becoming active before the logging system is fully configured. In such

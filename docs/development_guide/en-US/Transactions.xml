@@ -395,7 +395,7 @@
         <methodname>suspend</methodname>
         method
       </title>
-      <programlisting language="Java" role="JAVA"> <xi:include
+      <programlisting language="Java" role="JAVA"><xi:include
         href="extras/using_suspend_method.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /> </programlisting>
     </example>
     <note>

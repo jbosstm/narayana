@@ -296,9 +296,7 @@
     </para>
     <example id="resource_sharing_example">
       <title>Resource sharing example</title>
-      <programlisting language="Java" role="JAVA">
-        <xi:include href="extras/resource_sharing_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-      </programlisting>
+      <programlisting language="Java" role="JAVA"><xi:include href="extras/resource_sharing_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       <para>
         A transactional resource <systemitem>r1</systemitem>. Global transaction <systemitem>xid1</systemitem> is
         started and ended with r1. Then a different global transaction <systemitem>xid2</systemitem> is associated with

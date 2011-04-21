@@ -235,10 +235,7 @@
 
       <example>
         <title>RecoveryScan interface</title>
-        <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/recoveryScanInterface.java"
-          xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+        <programlisting role="JAVA" language="Java"><xi:include href="extras/recoveryScanInterface.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
       </example>
 
       <para>An instance of an object supporting this interface can be
@@ -282,10 +279,7 @@
 
     <example>
       <title>RecoveryModule interface</title>
-      <programlisting role="JAVA" language="Java">
-        <xi:include href="extras/recoveryModuleInterface.java"
-        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-      </programlisting>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/recoveryModuleInterface.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /> </programlisting>
     </example>
     <section>
       <title>JBossTS Recovery Module Classes</title>
@@ -550,10 +544,7 @@
     <para>Any errors will be reported during recovery.</para>
     <example>
       <title>XAResourceRecovery interface</title>
-      <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/XAResourceRecoveryInterface.java"
-        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/XAResourceRecoveryInterface.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>Each method should return the following information:</para>
     <itemizedlist>
@@ -616,10 +607,7 @@
     </para>
     <example>
       <title>XAResourceRecoveryHelper</title>
-      <programlisting role="JAVA" language="Java">
-          <xi:include href="extras/XAResourceRecoveryHelper.java"
-        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+      <programlisting role="JAVA" language="Java"><xi:include href="extras/XAResourceRecoveryHelper.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>During each recovery sweep the getXAResources method will be
       called and recovery attempted on each element of the array. For
@@ -677,10 +665,7 @@
 
         <example>
           <title>XML datasource</title>
-          <programlisting language="XML" role="XML">
-          <xi:include href="extras/xmlDatasource.xml"
-            xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+          <programlisting language="XML" role="XML"><xi:include href="extras/xmlDatasource.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         </example>
       </listitem>
       <listitem>
@@ -693,10 +678,7 @@
         </para>
         <example>
           <title>JNDI datasource</title>
-          <programlisting language="XML" role="XML">
-          <xi:include href="extras/jndiDatasource.xml"
-            xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" />
-        </programlisting>
+          <programlisting language="XML" role="XML"><xi:include href="extras/jndiDatasource.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         </example>
       </listitem>
     </itemizedlist>

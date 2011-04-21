@@ -119,7 +119,7 @@
         </para>
         <example>
           <title>Example Environment Bean</title>
-          <programlisting language="XML" role="XML"> <xi:include href="extras/EnvironmentBeans.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
+          <programlisting language="XML" role="XML"><xi:include href="extras/EnvironmentBeans.xml" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
         </example>
       </step>
       <step>
