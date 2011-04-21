@@ -147,16 +147,16 @@
       package.
     </para>
     <para>
-      Each Xid created by JBossTS needs a unique node identifier encoded within it, because JBossTS
+      Each Xid created by &PRODUCT; needs a unique node identifier encoded within it, because &PRODUCT;
       can only recover
       transactions and states that match a specified node identifier. The node
       identifier to use should be provided to
-      JBossTS via the
+      &PRODUCT; via the
       <varname>CoreEnvironmentBean.nodeIdentifier</varname>
       property. This value must be unique across
-      your JBossTS instances. The identifier is
+      your &PRODUCT; instances. The identifier is
       alphanumeric and limited to 10 bytes in length. If you do not provide a
-      value, then JBossTS
+      value, then &PRODUCT;
       generates one and reports the value via the logging infrastructure.
     </para>
 
@@ -341,7 +341,7 @@
       transaction semantics have been disabled, or the transaction times out, a
       transaction may terminated by a thread
       other than the one that created it. In this case, the
-      creator usually needs to be notified. JBossTS notifies the
+      creator usually needs to be notified. &PRODUCT; notifies the
       creator during operations
       <methodname>commit</methodname>
       or

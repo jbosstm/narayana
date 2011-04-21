@@ -251,7 +251,7 @@
     </section>
     <section>
       <title>Transaction Logs</title>
-      <para>JBossTS supports a number of different transaction log implementations. They are
+      <para>&PRODUCT; supports a number of different transaction log implementations. They are
         outlined
         below.</para>
       <section>

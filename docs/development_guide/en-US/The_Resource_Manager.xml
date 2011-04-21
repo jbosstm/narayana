@@ -81,7 +81,7 @@
       <para>
         By default, whenever an <interfacename>XAResource</interfacename> object is registered with a JTA-compliant
         transaction service, there is no way to manipulate the order in which it is invoked during the two-phase commit
-        protocol, with respect to other <interfacename>XAResource</interfacename> objects. JBossTS, however, provides
+        protocol, with respect to other <interfacename>XAResource</interfacename> objects. &PRODUCT;, however, provides
         support for controlling the order via the two interfaces
         <interfacename>com.arjuna.ats.jta.resources.StartXAResource</interfacename> and
         <interfacename>com.arjuna.ats.jta.resources.EndXAResource</interfacename>. By inheriting your
@@ -103,7 +103,7 @@
         In order to use the LRCO, your <interfacename>XAResource</interfacename> implementation must extend the
         <interfacename>com.arjuna.ats.jta.resources.LastResourceCommitOptimisation</interfacename> marker interface. A
         marker interface is an interface which provides no methods. When
-        enlisting the resource via method <methodname>Transaction.enlistResource</methodname>, JBossTS ensures that only a single instance of this
+        enlisting the resource via method <methodname>Transaction.enlistResource</methodname>, &PRODUCT; ensures that only a single instance of this
         type of participant is used within each transaction. Your resource is driven last in the commit protocol,
         and no invocation of method <methodname>prepare</methodname> occurs.
       </para>
@@ -151,13 +151,13 @@
           </listitem>
         </itemizedlist>
         <para>
-          If neither of these options is viable, JBossTS support enlisting multiple
+          If neither of these options is viable, &PRODUCT; support enlisting multiple
           one-phase aware resources within the same transaction, using LRCO, which is discussed in the
           <citetitle>ArjunaCore Development Guide</citetitle> in detail.
         </para>
         <warning>
           <para>
-            Even when this support is enabled, JBossTS issues a warning when it detects that the option has been
+            Even when this support is enabled, &PRODUCT; issues a warning when it detects that the option has been
             enabled: <literal>You have chosen to enable multiple last resources in the transaction manager. This is
             transactionally unsafe and should not be relied upon.</literal> Another warning is issued when multiple
             one-phase aware resources are enlisted within a transaction: <literal>This is transactionally unsafe and
@@ -166,7 +166,7 @@
           <para>
             To override the above-mentioned warning at runtime, set the
             <varname>CoreEnvironmentBean.disableMultipleLastResourcesWarning</varname> property to
-            <literal>true</literal>. You will see a warning that you have done this when JBossTS starts up and see the
+            <literal>true</literal>. You will see a warning that you have done this when &PRODUCT; starts up and see the
             warning about enlisting multiple one-phase resources only the first time it happens, but after that no
             further warnings will be output. You should obviously only consider changing the default value of this
             property (false) with caution.
@@ -348,14 +348,14 @@
     </para>
     <para>
       If You do not explicitly set a timeout value for a transaction, or you use a value of <literal>0</literal>, an
-      implementation-specific default value may be used. In JBossTS, property value
+      implementation-specific default value may be used. In &PRODUCT;, property value
       <varname>CoordinatorEnvironmentBean.defaultTimeout</varname> represents this implementation-specific default, in
       seconds. The default value is 60 seconds. A value of <literal>0</literal> disables default transaction timeouts.
     </para>
     <para>
       Unfortunately, imposing the same timeout as the transaction on a resource manager is not always appropriate. One
       example is that your business rules may require you to have control over the lifetimes on resource managers
-      without allowing that control to be passed to some external entity. JBossTS supports an all-or-nothing approach to
+      without allowing that control to be passed to some external entity. &PRODUCT; supports an all-or-nothing approach to
       whether or not method <methodname>setTransactionTimeout</methodname> is called on
       <interfacename>XAResource</interfacename> instances.
     </para>
