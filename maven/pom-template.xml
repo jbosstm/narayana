@@ -396,12 +396,12 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-processor</artifactId>
-            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+            <version>1.0.0.Beta6</version><!-- TODO AS7 -->
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-generator</artifactId>
-            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
+            <version>1.0.0.Beta6</version><!-- TODO AS7 -->
         </dependency>
 
         <!--<dependency>-->
