@@ -219,42 +219,37 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="resetStatsBtn" alignment="0" pref="246" max="32767" attributes="1"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="pollIntervalBtn" pref="120" max="32767" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="pollIntervalSpinner" min="-2" pref="114" max="-2" attributes="0"/>
+                              </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="enableStatsCB" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="resetStatsBtn" alignment="0" pref="246" max="32767" attributes="1"/>
-                                              <Group type="102" alignment="1" attributes="0">
-                                                  <Component id="pollIntervalBtn" pref="120" max="32767" attributes="1"/>
-                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                  <Component id="pollIntervalSpinner" min="-2" pref="114" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="sampleSizeBtn1" min="-2" max="-2" attributes="1"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="sampleSizeSpinner" min="-2" pref="114" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                                  <Component id="sampleSizeBtn1" min="-2" max="-2" attributes="1"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="sampleSizeSpinner" min="-2" pref="114" max="-2" attributes="0"/>
-                              </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="149" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="enableStatsCB" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="sampleSizeBtn1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="sampleSizeSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -266,7 +261,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="resetStatsBtn" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="73" max="32767" attributes="0"/>
+                          <EmptySpace pref="47" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -296,6 +291,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="enableStatsCB">
                   <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Enable Statistics"/>
                     <Property name="toolTipText" type="java.lang.String" value="Stop data collection by disabling the stats MBean in the target JVM"/>
                   </Properties>
@@ -321,7 +317,7 @@
             </Container>
             <Container class="org.jfree.beans.JLineChart" name="chart1">
               <Properties>
-                <Property name="xAxisLabel" type="java.lang.String" value="Time of Day"/>
+                <Property name="xAxisLabel" type="java.lang.String" value="Number of Poll Intervals"/>
                 <Property name="xAxisScale" type="org.jfree.beans.AxisScale" editor="org.jfree.beans.editors.AxisScaleEditor">
                   <SerializedValue value="-84,-19,0,5,115,114,0,25,111,114,103,46,106,102,114,101,101,46,98,101,97,110,115,46,65,120,105,115,83,99,97,108,101,110,85,102,59,126,70,-97,10,2,0,1,76,0,4,110,97,109,101,116,0,18,76,106,97,118,97,47,108,97,110,103,47,83,116,114,105,110,103,59,120,112,116,0,17,65,120,105,115,83,99,97,108,101,46,73,78,84,69,71,69,82"/>
                 </Property>

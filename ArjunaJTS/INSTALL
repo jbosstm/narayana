@@ -216,10 +216,12 @@ which is located in the install bin directory (jbossts-jopr-plugin.jar). Install
 to the admin console plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins).
 
 There is also a transaction statistics graphing tool which can run standalone or inside a
-jconsole tab (jconsole, a tool for managing JVMs, is distributed with the reference JDK):
+jconsole tab (jconsole, a tool for managing JVMs, is distributed with the reference JDK).
+Various transaction statistics are graphed in real time with each graph updated during each
+poll interval (4 seconds unless the interval is overridden on the jconsole command line).
 
-The tool depends on the JFree graphing library. Download and upack orson from http://www.jfree.org/orson
-Set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
+The tool depends on the JFree graphing library. Download and upack Orson from http://www.jfree.org/orson
+and set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
 If you intend to use the tool with jconsole you will also need to put the JDK tools and jconsole jars on
 the classpath:
 
@@ -234,3 +236,5 @@ java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
 Usage with jconsole:
 
 jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $TS_INSTALL_DIR/lib/jbossjts.jar
+
+The tool will automatically enable statistics gathering on startup. It is recommended that you disable statistics gathering prior to exit on the Settings tab in the GUI.

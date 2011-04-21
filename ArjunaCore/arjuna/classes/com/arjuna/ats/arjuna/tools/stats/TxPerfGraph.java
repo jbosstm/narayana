@@ -22,8 +22,6 @@ package com.arjuna.ats.arjuna.tools.stats;
 
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JMenuBar;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.Second;
 import com.arjuna.ats.arjuna.coordinator.TxStatsMBean;
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBeanMBean;
 import java.awt.BorderLayout;
@@ -32,9 +30,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
-import java.util.Date;
+import java.util.TimeZone;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -48,7 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
     private final static int NUMBER_OF_SAMPLES = 100;
@@ -87,16 +86,17 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
          NUMBER_OF_ABORTED_SERIES,
     };
 
+    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+    private static SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 
     private MBeanServerConnection server;
     private JFrame frame;
     private TxStatsMBean txMBean;
     private CoordinatorEnvironmentBeanMBean coordMBean;
 
-    private TimeSeries[] _dataSeries = new TimeSeries[7];
-    private TimeSeriesCollection _tsDS[] = new TimeSeriesCollection[7];
-    private Second currPeriod;
-    private Second tZero;
+    private XYSeries[] _dataSeries = new XYSeries[7];
+    private XYSeriesCollection _tsDS[] = new XYSeriesCollection[7];
+    private long counter = 0L;
     private DefaultPieDataset pieDS;
  //   TimerTask timerTask;
  //   Timer timer = new Timer("TxPerf Sampling thread");
@@ -106,18 +106,26 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
     /** Creates new form TxPerfGraph */
     public TxPerfGraph(JFrame frame) {
         this.frame = frame;
-        tZero = new Second(new Date());
+        timeFormatter.setTimeZone(GMT);
+
         initComponents();
 
         for (int count = 0; count < _dataSeries.length; count++) {
-            _dataSeries[count] = new TimeSeries(SERIES_LABELS[count]);//, Second.class);
+            _dataSeries[count] = new XYSeries(SERIES_LABELS[count]);//, Second.class);
             //_dataSeries[count].setMaximumItemCount(NUMBER_OF_SAMPLES);
-            _tsDS[count] = new TimeSeriesCollection(_dataSeries[count]);
+            _tsDS[count] = new XYSeriesCollection(_dataSeries[count]);
         }
 
         chart1.setDataset(_tsDS[NUMBER_OF_TRANSACTIONS_SERIES]);
         chart1.setTitle(SERIES_LABELS[NUMBER_OF_TRANSACTIONS_SERIES]);
         chart1.setSubtitle("");
+
+ //       DateAxis xAxis = new DateAxis("Time (hh:mm) Zulu", GMT);
+ //       xAxis.setAutoRange(true);
+ //       xAxis.setTickUnit(new DateTickUnit(DateTickUnit.MINUTE, 60, timeFormatter));
+ //       xAxis.setVerticalTickLabels(true);
+ //       xAxis.setDateFormatOverride(timeFormatter);
+
 
         allTxnBtn.setSelected(true);
 
@@ -143,8 +151,8 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
         sampleSizeSpinner.setVisible(false);
         enableStatsCB.setSelected(false);
         resetStatsBtn.setVisible(false);
-		pollIntervalBtn.setVisible(false);
-		sampleSizeBtn1.setVisible(false);
+	pollIntervalBtn.setVisible(false);
+	sampleSizeBtn1.setVisible(false);
 
         taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -182,10 +190,7 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
 
     private void sample() {
         try {
-            int secs = Calendar.getInstance().get(Calendar.SECOND) - tZero.getSecond();
-            Date d1 = new Date(secs);
-            Date d2 = new Date();
-            Second now = new Second(d2);
+            counter += 1;
 
             long [] stats = new long[7];
 
@@ -198,28 +203,25 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
             stats[NUMBER_OF_TIMEDOUT_SERIES] = txMBean.getNumberOfTimedOutTransactions();
 
             for (int i = 0; i < 7; i++) {
-                _dataSeries[i].addOrUpdate(now, stats[i]);
+                _dataSeries[i].add(counter, stats[i]);
             }
 
-            if (currPeriod != null) {
-                long [] pstats = new long[PIE_CHART_SERIES.length];
-
-                int cindex = _dataSeries[0].getIndex(now);
+            if (counter > 1) {
+                int cindex = _dataSeries[0].indexOf(counter);
                 int slices = periodSelectSlider.getValue();
                 int lb = cindex < slices ? 0 : cindex - slices;
 
                 for (int i = 0; i < PIE_CHART_SERIES.length; i++) {
-                    TimeSeries ts = _dataSeries[PIE_CHART_SERIES[i]];
+                    XYSeries ts = _dataSeries[PIE_CHART_SERIES[i]];
+                    Number n1 = ts.getDataItem(cindex).getY();
+                    Number n2 = ts.getDataItem(lb).getY();
 
-                    pieDS.setValue(PIE_CHART_LABELS[i], pstats[i] =
-                            ts.getValue(cindex).longValue() - ts.getValue(lb).longValue());
+                    pieDS.setValue(PIE_CHART_LABELS[i], n1.longValue() - n2.longValue());
                 }
 
                 txnPieChart.setSubtitle("(during last " + // (cindex - lb + 1) * POLL_PERIOD / 1000 + " seconds) - " +
                         (cindex - lb + 1) + " poll intervals");
             }
-
-            currPeriod = now;
         } catch (Exception e) {
             System.err.println("MBean property failure: " + e);
         }
@@ -395,6 +397,7 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
             }
         });
 
+        enableStatsCB.setSelected(true);
         enableStatsCB.setText("Enable Statistics");
         enableStatsCB.setToolTipText("Stop data collection by disabling the stats MBean in the target JVM");
         enableStatsCB.addActionListener(new java.awt.event.ActionListener() {
@@ -418,32 +421,29 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
         configTabLayout.setHorizontalGroup(
             configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(configTabLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(resetStatsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configTabLayout.createSequentialGroup()
+                        .addComponent(pollIntervalBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(pollIntervalSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(configTabLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addGap(2, 2, 2)
                         .addGroup(configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(enableStatsCB)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configTabLayout.createSequentialGroup()
-                                .addGroup(configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(resetStatsBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
-                                    .addGroup(configTabLayout.createSequentialGroup()
-                                        .addComponent(pollIntervalBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(pollIntervalSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(152, 152, 152))))
-                    .addGroup(configTabLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(sampleSizeBtn1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(sampleSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                            .addGroup(configTabLayout.createSequentialGroup()
+                                .addComponent(sampleSizeBtn1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(sampleSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(149, 149, 149))
         );
         configTabLayout.setVerticalGroup(
             configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(configTabLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addGap(38, 38, 38)
                 .addComponent(enableStatsCB)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(29, 29, 29)
                 .addGroup(configTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sampleSizeBtn1)
                     .addComponent(sampleSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -453,12 +453,12 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
                     .addComponent(pollIntervalSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetStatsBtn)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         chartsPane.addTab("Settings", configTab);
 
-        chart1.setXAxisLabel("Time of Day");
+        chart1.setXAxisLabel("Number of Poll Intervals");
         chart1.setXAxisScale(org.jfree.beans.AxisScale.INTEGER);
         chart1.setYAxisLabel("Number of Txns");
         chart1.setYAxisScale(org.jfree.beans.AxisScale.INTEGER);
@@ -542,6 +542,7 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
         );
 
         add(jPanel1);
+        add(menuBar);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnActionPerformed(int series) {
@@ -657,14 +658,19 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
     /*
      * SwingWorker for updating the TxPerf tab
      */
-    public SwingWorker<TimeSeries[], Object> newSwingWorker() {
+    public SwingWorker<XYSeries[], Object> newSwingWorker() {
         return new Worker();
     }
 
-    class Worker extends SwingWorker<TimeSeries[], Object> {
+    void dispose() {
+//        if (coordMBean != null && disableStatsOnDispose.isSelected())
+//            coordMBean.setEnableStatistics(false);
+    }
+
+    class Worker extends SwingWorker<XYSeries[], Object> {
 
         @Override
-        protected TimeSeries[] doInBackground() throws Exception {
+        protected XYSeries[] doInBackground() throws Exception {
             sample();
             return _dataSeries;
         }

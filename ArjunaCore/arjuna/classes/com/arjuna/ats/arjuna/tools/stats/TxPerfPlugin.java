@@ -38,18 +38,24 @@ public class TxPerfPlugin extends JConsolePlugin implements PropertyChangeListen
     private Map<String, JPanel> tabs;
 
     public TxPerfPlugin() {
+        // register itself as a listener
         addContextPropertyChangeListener(this);
     }
 
+    /*
+     * Returns a TxPerf tab to be added in JConsole.
+     */
     public synchronized Map<String, JPanel> getTabs() {
         if (tabs == null) {
-            tabs = new LinkedHashMap<String, JPanel>();
-
             graph = new TxPerfGraph(new JFrame("TxPerf"));
-            graph.setMBeanServerConnection(getContext().getMBeanServerConnection());
+            
+            graph.setMBeanServerConnection(
+                getContext().getMBeanServerConnection());
+            // use LinkedHashMap if you want a predictable order
+            // of the tabs to be added in JConsole
+            tabs = new LinkedHashMap<String, JPanel>();
             tabs.put("TxPerf", graph);
         }
-
         return tabs;
     }
 
@@ -63,9 +69,16 @@ public class TxPerfPlugin extends JConsolePlugin implements PropertyChangeListen
             // disconnected. Need to use the new MBeanServerConnection object
             // created at reconnection time.
             if (newState == ConnectionState.CONNECTED && graph != null) {
-                graph.setMBeanServerConnection(getContext().getMBeanServerConnection());
+                graph.setMBeanServerConnection(
+                    getContext().getMBeanServerConnection());
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        graph.dispose();
+        super.dispose();
     }
 
     @Override
