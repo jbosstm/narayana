@@ -9,7 +9,7 @@
   <section>
     <title>Using the transactional JDBC driver</title>
     <para>
-      JBossJTA supports construction of both local and distributed transactional applications which access databases
+      &PRODUCT; supports construction of both local and distributed transactional applications which access databases
       using the JDBC APIs. JDBC supports two-phase commit of transactions, and is similar to the XA X/Open
       standard. JBossTS provides JDBC support in package <package>com.arjuna.ats.jdbc</package>. A list of the tested
       drivers is available from the JBossTS website.<!-- Put this in an appendix? Link directly to it? -->
@@ -22,9 +22,9 @@
     <section>
       <title>Managing transactions</title>
       <para>
-        JBossJTA needs the ability to associate work performed on a JDBC connection with a specific
+        &PRODUCT; needs the ability to associate work performed on a JDBC connection with a specific
         transaction. Therefore, applications need to use a combination of implicit transaction propagation and indirect
-        transaction management. For each JDBC connection, JBossJTA must be able to determine the invoking thread's
+        transaction management. For each JDBC connection, &PRODUCT; must be able to determine the invoking thread's
         current transaction context.
       </para>
     </section>
@@ -32,7 +32,7 @@
       <title>Restrictions</title>
       <para>
         Nested transactions are not supported by JDBC. If you try to use a JDBC connection within a subtransaction,
-        JBossJTA throws a suitable exception and no work is allowed on that connection. However, if you need nested
+        &PRODUCT; throws a suitable exception and no work is allowed on that connection. However, if you need nested
         transactions, and are comfortable with straying from the JDBC standard, you can set property
         <varname>com.arjuna.ats.jta.supportSubtransactions</varname> property to <literal>YES</literal>.
       </para>
@@ -42,7 +42,7 @@
   <section>
     <title>Transactional drivers</title>
     <para>
-      The approach JBossJTA takes for incorporating JDBC connections within transactions is to provide transactional
+      The approach &PRODUCT; takes for incorporating JDBC connections within transactions is to provide transactional
       JDBC drivers as conduits for all interactions. These drivers intercept all invocations and ensure that they are
       registered with, and driven by, appropriate transactions. The driver
       <classname>com.arjuna.ats.jdbc.TransactionalDriver</classname> handles all JDBC drivers, implementing the
@@ -80,14 +80,14 @@
   <section>
     <title>Connections</title>
     <para>
-      Because JBossJTA provides JDBC connectivity via its own JDBC driver, application code can support transactions
+      Because &PRODUCT; provides JDBC connectivity via its own JDBC driver, application code can support transactions
       with relatively small code changes. Typically, the application programmer only needs to start and terminate
       transactions.
     </para>
     <section>
       <title>JDBC</title>
       <para>
-        The JBossJTA driver accepts the following properties, all located in class
+        The &PRODUCT; driver accepts the following properties, all located in class
         <classname>com.arjuna.ats.jdbc.TransactionalDriver</classname>.
       </para>
       <informaltable>
@@ -134,14 +134,14 @@
       <title>XADataSources</title>
       <para>
         JDBC connections are created from appropriate DataSources. Connections which participate in distributed
-        transactions are obtained from XADataSources. When using a JDBC driver, JBossJTA uses the appropriate DataSource
+        transactions are obtained from XADataSources. When using a JDBC driver, &PRODUCT; uses the appropriate DataSource
         whenever a connection to the database is made. It then obtains XAResources and registers them with the
         transaction via the JTA interfaces. The transaction service uses these XAResources when the transaction
         terminates in order to drive the database to either commit or roll back the changes made via the JDBC
         connection.
       </para>
       <para>
-        JBossJTA JDBC support can obtain XADataSources through the Java Naming and Directory Interface (JNDI) or dynamic
+        &PRODUCT; JDBC support can obtain XADataSources through the Java Naming and Directory Interface (JNDI) or dynamic
         class instantiation.
       </para>
       <section>
@@ -209,7 +209,7 @@
     <section>
       <title>Using the connection</title>
       <para>
-        Once the connection is established, all operations on the connection are monitored by JBossJTA. you do not need
+        Once the connection is established, all operations on the connection are monitored by &PRODUCT;. you do not need
         to use the transactional connection within transactions. If a transaction is not present when the connection is
         used, then operations are performed directly on the database.
       </para>
@@ -223,15 +223,15 @@
         within an appropriate period.
       </para>
       <para>
-        You can use JBossJTA connections within multiple transactions simultaneously. An example would be different
-        threads, with different notions of the current transaction. JBossJTA does connection pooling for each
+        You can use &PRODUCT; connections within multiple transactions simultaneously. An example would be different
+        threads, with different notions of the current transaction. &PRODUCT; does connection pooling for each
         transaction within the JDBC connection. Although multiple threads may use the same instance of the JDBC
         connection, internally there may be a separate connection for each transaction. With the exception of method
         <methodname>close</methodname>, all operations performed on the connection at the application level are only
         performed on this transaction-specific connection.
       </para>
       <para>
-        JBossJTA automatically registers the JDBC driver connection with the transaction via an appropriate
+        &PRODUCT; automatically registers the JDBC driver connection with the transaction via an appropriate
         resource. When the transaction terminates, this resource either commits or rolls back any changes made to the
         underlying database via appropriate calls on the JDBC driver.
       </para>
@@ -248,7 +248,7 @@
     <section>
       <title>Connection pooling</title>
       <para>
-        For each user name and password, JBossJTA maintains a single instance of each connection for as long as that
+        For each user name and password, &PRODUCT; maintains a single instance of each connection for as long as that
         connection is in use. Subsequent requests for the same connection get a reference to the original connection,
         rather than a new instance. You can try to close the connection, but the connection will only actually be closed
         when all users (including transactions) have either finished with the connection, or issued
@@ -261,9 +261,9 @@
       <para>
         Some JDBC drivers allow the reuse of a connection for multiple different transactions once a given transaction
         completes. Unfortunately this is not a common feature, and other drivers require a new connection to be
-        obtained for each new transaction. By default, the JBossJTA transactional driver always obtains a new
+        obtained for each new transaction. By default, the &PRODUCT; transactional driver always obtains a new
         connection for each new transaction. However, if an existing connection is available and is currently unused,
-        JBossJTA can reuse this connection. To turn on this feature, add option <varname>reuseconnection=true</varname>
+        &PRODUCT; can reuse this connection. To turn on this feature, add option <varname>reuseconnection=true</varname>
         to the JDBC URL. For instance, <code>jdbc:arjuna:sequelink://host:port;databaseName=foo;reuseconnection=true</code>
       </para>
     </section>
@@ -272,7 +272,7 @@
       <title>Terminating the transaction</title>
       <para>
         When a transaction with an associated JDBC connection terminates, because of the application or because a
-        transaction timeout expires, JBossJTA uses the JDBC driver to drive the database to either commit or roll back
+        transaction timeout expires, &PRODUCT; uses the JDBC driver to drive the database to either commit or roll back
         any changes made to it. This happens transparently to the application.
       </para>
     </section>
@@ -283,8 +283,8 @@
         If property <varname>AutoCommit</varname> of the interface <varname>java.sql.Connection</varname> is set to
         <literal>true</literal> for JDBC, the execution of every SQL statement is a separate top-level transaction, and
         it is not possible to group multiple statements to be managed within a single OTS transaction. Therefore,
-        JBossJTA disables <varname>AutoCommit</varname> on JDBC connections before they can be used. If
-        <varname>AutoCommit</varname> is later set to <literal>true</literal> by the application, JBossJTA throws the
+        &PRODUCT; disables <varname>AutoCommit</varname> on JDBC connections before they can be used. If
+        <varname>AutoCommit</varname> is later set to <literal>true</literal> by the application, &PRODUCT; throws the
         <systemitem>java.sql.SQLException</systemitem>.
       </para>
     </section>
@@ -292,7 +292,7 @@
     <section>
       <title>Setting isolation levels</title>
       <para>
-        When you use the JBossJTA JDBC driver, you may need to set the underlying transaction isolation level on the XA
+        When you use the &PRODUCT; JDBC driver, you may need to set the underlying transaction isolation level on the XA
         connection. By default, this is set to <literal>TRANSACTION_SERIALIZABLE</literal>, but another value may be
         more appropriate for your application. To change it, set the property
         <varname>com.arjuna.ats.jdbc.isolationLevel</varname> to the appropriate isolation level in string form. Example

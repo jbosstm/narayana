@@ -16,7 +16,6 @@
   <xi:include href="JTA_And_JTS.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="ORB_Specific_Configurations.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Configuring_JBossTS.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="IDL_Definitions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="References.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />

@@ -174,7 +174,7 @@
 
   
   <section>
-    <title>Options</title>
+    <title>ArjunaCore Options</title>
     <para>
       The canonical reference for configuration options is the Javadoc of the various
       <classname>EnvironmentBean</classname> classes, For ArjunaCore these are:
@@ -216,11 +216,45 @@
         </para>
       </listitem>
     </itemizedlist>
-    <para>
-      Additional modules built on ArjunaCore may include further beans containing module-specific configuration
-      options. Refer to the documentation for the specific modules for more information.
-    </para>
   </section>
-
+  <section>
+    <title>JBossJTA Configuration options</title>
+    <para>
+      The canonical reference for configuration options is the javadoc of the various EnvironmentBean classes. For
+      JBossJTA, these classes are the ones provided by ArjunaCore, as well as:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.jdbc.common.JDBCEnvironmentBean.java</classname>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.jta.common.JTAEnvironmentBean.java</classname>
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section>
+    <title>JBossJTS Options</title>
+    <para>
+      The canonical reference for configuration options is the javadoc of the various
+      <classname>EnvironmentBean</classname> classes, For ArjunaJTS these are the ones 
+      provided by ArjunaCore, as well as:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <classname>com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean.java</classname>
+          </para>
+      </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.jts.common.JTSEnvironmentBean.java</classname>
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </chapter>
 

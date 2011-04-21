@@ -10,7 +10,6 @@
   <xi:include href="JDBC.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Examples.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Using_JBossTA_In_Application_Servers.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Configuring_JBossTA.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <!-- <index /> -->
 </book>

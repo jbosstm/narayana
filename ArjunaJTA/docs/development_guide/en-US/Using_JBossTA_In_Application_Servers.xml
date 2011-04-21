@@ -4,14 +4,14 @@
 %BOOK_ENTITIES;
 ]>
 <chapter>
-  <title>Using JBossJTA in application servers</title>
+  <title>Using &PRODUCT; in application servers</title>
   <para>
     JBoss Application Server is discussed here. Refer to the documentation for your application server for differences.
   </para>
   <section>
     <title>Configuration</title>
     <para>
-      When JBossJTA runs embedded in JBoss Application Server, the transaction system is configured primarily through the
+      When &PRODUCT; runs embedded in JBoss Application Server, the transaction system is configured primarily through the
       <filename>transaction-jboss-beans.xml</filename> deployment descriptor, which overrides properties read from the
       default properties file embedded in the .<filename>jar</filename> file.
     </para>
