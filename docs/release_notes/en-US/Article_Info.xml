@@ -3,11 +3,11 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "Release_Notes.ent">
 %BOOK_ENTITIES;
 ]>
-<articleinfo id="arti-4.14_JBoss_Transactions_Release_Notes-a4.14_JBoss_Transactions_Release_Notes">
+<articleinfo id="arti-4.15_JBoss_Transactions_Release_Notes-a4.15_JBoss_Transactions_Release_Notes">
    <title>Release Notes</title>
    <subtitle>Release Notes for JBoss Transaction Manager</subtitle>
    <productname>JBoss Transaction manager</productname>
-   <productnumber>4.14</productnumber>
+   <productnumber>4.15</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>

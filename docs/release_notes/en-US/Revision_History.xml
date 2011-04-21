@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "Release_Notes.ent">
 %BOOK_ENTITIES;
 ]>
-<appendix id="appe-4.14_JBoss_Transactions_Release_Notes-Revision_History">
+<appendix id="appe-4.15_JBoss_Transactions_Release_Notes-Revision_History">
    <title>Revision History</title>
    <simpara>
       <revhistory>
@@ -17,7 +17,7 @@
             </author>
             <revdescription>
                <simplelist>
-                  <member>JBossTS 4.14 Release Notes</member>
+                  <member>JBossTS 4.15 Release Notes</member>
                </simplelist>
             </revdescription>
          </revision>
