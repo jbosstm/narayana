@@ -23,7 +23,9 @@
     <packaging>pom</packaging>
     <name>JBossJTS Documentation</name>
     <modules>
-        <module>ArjunaJTS_Development_Guide</module>
-        <module>ArjunaJTS_Installation_And_Administration_Guide</module>
+        <module>administration_guide</module>
+        <module>development_guide</module>
+        <module>orbportability</module>
+        <module>quick_start</module>
     </modules>
 </project>

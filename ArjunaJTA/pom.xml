@@ -29,6 +29,7 @@
         <module>jdbc</module>
         <module>jbossjta</module>
         <module>docs</module>
+        <module>../docs</module>
         <module>integration</module>
         <module>dist</module>
     </modules>

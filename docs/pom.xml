@@ -18,25 +18,14 @@
         <version>4.15.0.M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jbossjts-all</artifactId>
+    <groupId>org.jboss.jbossts</groupId>
+    <artifactId>common-docs</artifactId>
     <packaging>pom</packaging>
-    <name>JBossJTS everything</name>
     <modules>
-        <module>../common</module>
-        <module>../ArjunaCore/arjuna</module>
-        <module>../ArjunaCore/txoj</module>
-        <module>../ArjunaCore/arjuna/services</module>
-        <module>../ArjunaJTA/jta</module>
-        <module>../ArjunaJTA/jdbc</module>
-        <module>orbportability</module>
-        <module>jts</module>
-        <module>jtax</module>
-        <module>jbossjts</module>
-        <module>integration</module>
-        <module>trailmap</module>
-        <module>docs</module>
-        <module>../docs</module>
-        <module>../rhq-plugin</module>
-        <module>dist</module>
+        <module>development_guide</module>
+        <module>failure_recovery_guide</module>
+        <module>release_notes</module>
+        <module>transactions_overview_guide</module>
+        <module>txbridge_guide</module>
     </modules>
 </project>

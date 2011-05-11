@@ -23,7 +23,7 @@
     <packaging>pom</packaging>
     <name>ArjunaCore Documentation</name>
     <modules>
-        <module>ArjunaCore_Development_Guide</module>
-        <module>ArjunaCore_Installation_And_Administration_Guide</module>
+        <module>development_guide</module>
+        <module>failure_recovery_guide</module>
     </modules>
 </project>

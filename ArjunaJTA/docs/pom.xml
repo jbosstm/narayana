@@ -23,7 +23,9 @@
     <packaging>pom</packaging>
     <name>JBossJTA Documentation</name>
     <modules>
-        <module>ArjunaTA_Development_Guide</module>
-        <module>ArjunaTA_Installation_And_Administration_Guide</module>
+        <module>administration_guide</module>
+        <module>development_guide</module>
+        <module>installation_guide</module>
+        <module>quick_start</module>
     </modules>
 </project>

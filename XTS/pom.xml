@@ -31,6 +31,7 @@
         <module>sar</module>
         <module>demo</module>
         <module>docs</module>
+        <module>../docs</module>
         <module>jbossxts-api</module>
         <module>localjunit</module>
         <module>dist</module>

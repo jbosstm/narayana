@@ -18,7 +18,7 @@
         <version>4.15.0.M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>transactions-overview-guide</artifactId>
+    <artifactId>jbossjta-quickstart-guide</artifactId>
     <packaging>jar</packaging>
     <build>
         <outputDirectory>target/publican</outputDirectory>

@@ -42,6 +42,7 @@
         <module>ArjunaJTS/integration</module>
         <module>ArjunaJTS/trailmap</module>
         <module>ArjunaJTS/docs</module>
+        <module>docs</module>
         <module>rhq-plugin</module>
         <module>XTS</module>
         <module>ArjunaJTS/dist</module>
