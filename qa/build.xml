@@ -35,11 +35,11 @@
 
     <!--
         This is a redhat vpn server. for non-vpn use, mirror it locally or copy the drivers by hand.
-        wget \-\-no-parent -m http://reports.qa.atl.jboss.com/jdbc-drivers/
-        wget \-\-no-parent -m http://reports.qa.atl.jboss.com/jdbc-drivers/jConnect-6_0/classes
-        ant -Ddriver.url=file:///path/to/reports.qa.atl.jboss.com/jdbc-drivers get.drivers
+        wget \-\-no-parent -m http://www.qa.jboss.com/jdbc-drivers/
+        wget \-\-no-parent -m http://www.qa.jboss.com/jdbc-drivers/jConnect-6_0/classes
+        ant -Ddriver.url=file:///path/to/www.qa.jboss.com/jdbc-drivers get.drivers
     -->
-    <property name="driver.url" value="http://reports.qa.atl.jboss.com/jdbc-drivers/"/>
+    <property name="driver.url" value="http://www.qa.jboss.com/jdbc-drivers/"/>
 
 	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
 	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
