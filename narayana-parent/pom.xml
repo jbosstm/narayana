@@ -170,7 +170,7 @@
                         <artifactId>emma</artifactId>
                         <version>2.1.5320</version>
                         <scope>system</scope>
-                        <systemPath>${TS_EMMA_JAR}</systemPath>
+                        <systemPath>${project.build.directory}/../../../ext/emma.jar</systemPath>
                     </dependency>
                 </dependencies>
             </plugin>

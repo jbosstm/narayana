@@ -18,8 +18,7 @@
         <version>4.15.0.M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jbossjta-iaa-guide</artifactId>
-    <name>JBossJTA Installation and Administration Guide module</name>
+    <artifactId>jbossjta-admin-guide</artifactId>
     <packaging>jar</packaging>
     <build>
         <outputDirectory>target/publican</outputDirectory>

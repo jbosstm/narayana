@@ -22,6 +22,7 @@
     <packaging>pom</packaging>
     <name>Narayana build everything</name>
     <modules>
+        <module>narayana-parent</module>
         <module>common</module>
         <module>ArjunaCore/arjuna</module>
         <module>ArjunaCore/txoj</module>
@@ -42,9 +43,21 @@
         <module>ArjunaJTS/integration</module>
         <module>ArjunaJTS/trailmap</module>
         <module>ArjunaJTS/docs</module>
+        <module>XTS/WSAS</module>
+        <module>XTS/WS-C</module>
+        <module>XTS/WSCF</module>
+        <module>XTS/WS-T</module>
+        <module>XTS/WSTX</module>
+        <module>XTS/recovery</module>
+        <module>XTS/bridge</module>
+        <module>XTS/sar</module>
+        <module>XTS/demo</module>
+        <module>XTS/docs</module>
+        <module>XTS/jbossxts-api</module>
+        <module>XTS/localjunit</module>
+        <module>XTS/dist</module>
         <module>docs</module>
         <module>rhq-plugin</module>
-        <module>XTS</module>
         <module>ArjunaJTS/dist</module>
     </modules>
 </project>
