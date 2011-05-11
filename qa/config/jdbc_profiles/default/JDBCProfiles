@@ -129,7 +129,7 @@ DB_SQL_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi
 DB_SQL_JNDI_DatabaseUser=dtf11
 DB_SQL_JNDI_DatabasePassword=dtf11
 DB_SQL_JNDI_DatabaseName=jbossts
-DB_SQL_JNDI_Host=dev30.qa.atl.jboss.com
+DB_SQL_JNDI_Host=dev30.mw.lab.eng.bos.redhat.com
 ##DB_SQL_JNDI_Port=1433
 DB_SQL_JNDI_Port=3918
 
@@ -149,7 +149,7 @@ DB_SQL1_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi1
 DB_SQL1_JNDI_DatabaseUser=dtf11
 DB_SQL1_JNDI_DatabasePassword=dtf11
 DB_SQL1_JNDI_DatabaseName=jbossts
-DB_SQL1_JNDI_Host=dev30.qa.atl.jboss.com
+DB_SQL1_JNDI_Host=dev30.mw.lab.eng.bos.redhat.com
 DB_SQL1_JNDI_Port=3918
 
 # DB2
@@ -164,7 +164,7 @@ DB_SQL2_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi2
 DB_SQL2_JNDI_DatabaseUser=dtf12
 DB_SQL2_JNDI_DatabasePassword=dtf12
 DB_SQL2_JNDI_DatabaseName=jbossts
-DB_SQL2_JNDI_Host=dev30.qa.atl.jboss.com
+DB_SQL2_JNDI_Host=dev30.mw.lab.eng.bos.redhat.com
 DB_SQL2_JNDI_Port=3918
 
 
