@@ -106,10 +106,6 @@
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>../docs/user_guide/FailureRecoveryGuide.pdf</source>
-			<outputDirectory>docs</outputDirectory>
-		</file>
-		<file>
 			<source>../jbossts-properties-arjunacore.xml</source>
 			<fileMode>0644</fileMode>
 			<destName>default-jbossts-properties.xml</destName>
@@ -152,12 +148,37 @@
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../docs/ArjunaCore_Installation_And_Administration_Guide/target/publican/ArjunaCore_Installation_And_Administration_Guide/en-US/pdf/
+			<directory>../../ArjunaCore/docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/publican/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../docs/ArjunaCore_Development_Guide/target/publican/ArjunaCore_Development_Guide/en-US/pdf/
+			<directory>../../docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/failure_recovery_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../docs/transactions_overview_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/txbridge_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/build/release_notes/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>

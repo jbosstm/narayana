@@ -269,38 +269,6 @@
 			<outputDirectory>docs/images</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../docs/ArjunaJTS_Installation_And_Administration_Guide/target/publican/ArjunaJTS_Installation_And_Administration_Guide/en-US/pdf/
-			</directory>
-			<outputDirectory>docs</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>../docs/ArjunaJTS_Development_Guide/target/publican/ArjunaJTS_Development_Guide/en-US/pdf/
-			</directory>
-			<outputDirectory>docs</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>../docs/user_guide/
-			</directory>
-			<outputDirectory>docs/user_guide/</outputDirectory>
-			<includes>
-				<include>**/*.pdf</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>../orbportability/docs/programmers_guide</directory>
-			<outputDirectory>docs/user_guide</outputDirectory>
-			<includes>
-				<include>**/*.pdf</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>../../ArjunaCore/docs/user_guide</directory>
-			<outputDirectory>docs/user_guide/transaction_core</outputDirectory>
-			<includes>
-				<include>**/*.pdf</include>
-			</includes>
-		</fileSet>
-		<fileSet>
 			<directory>../jts/idl/arjuna</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
@@ -318,6 +286,84 @@
 		<fileSet>
 			<directory>../jacorb</directory>
 			<outputDirectory>jacorb</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>../../ArjunaJTS/docs/administration_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTS/docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTS/docs/orbportability/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTS/docs/quick_start/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+
+
+		<fileSet>
+			<directory>../../ArjunaJTA/docs/administration_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTA/docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTA/docs/installation_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaJTA/docs/quick_start/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../ArjunaCore/docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../docs/development_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/failure_recovery_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../../docs/transactions_overview_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/txbridge_guide/target/publican/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>		
+		<fileSet>
+			<directory>../../docs/build/release_notes/en-US/pdf/
+			</directory>
+			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly> 

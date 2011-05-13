@@ -22,6 +22,7 @@
     <packaging>pom</packaging>
     <name>JBossJTA everything</name>
     <modules>
+        <module>../docs</module>
         <module>../common</module>
         <module>../ArjunaCore/arjuna</module>
         <module>../ArjunaCore/txoj</module>
