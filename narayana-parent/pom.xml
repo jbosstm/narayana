@@ -18,10 +18,10 @@
         <version>6.0.0.Final</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.jbossts</groupId>
+    <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.15.0.M1-SNAPSHOT</version>
+    <version>5.0.0.M1-SNAPSHOT</version>
     <name>narayana-parent</name>
     <description>narayana-parent</description>
     <url>http://www.jboss.org/jbosstm/</url>
@@ -226,378 +226,378 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>arjuna</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>arjunacore-services</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>arjunacore</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>arjunacore</artifactId>
                 <version>${project.version}</version>
                 <classifier>sources</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>arjunacore</artifactId>
                 <version>${project.version}</version>
                 <classifier>javadoc</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossts-tools</artifactId>
                 <version>${project.version}</version>
                 <classifier>sar</classifier>
                 <type>sar</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>txoj</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jta</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjta</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjta</artifactId>
                 <version>${project.version}</version>
                 <classifier>javadoc</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjta</artifactId>
                 <version>${project.version}</version>
                 <classifier>sources</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjta-integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>orbportability</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jts</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jtax</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjts</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjts</artifactId>
                 <version>${project.version}</version>
                 <classifier>javadoc</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjts</artifactId>
                 <version>${project.version}</version>
                 <classifier>sources</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossjts-integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossts-jopr-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossts-jopr-plugin</artifactId>
                 <version>${project.version}</version>
                 <classifier>javadoc</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossts-jopr-plugin</artifactId>
                 <version>${project.version}</version>
                 <classifier>sources</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>localjunit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>xts-test-servlet</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wsas</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c11</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c10</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c10</artifactId>
                 <version>${project.version}</version>
                 <classifier>war</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-c11</artifactId>
                 <version>${project.version}</version>
                 <classifier>war</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t10</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t10</artifactId>
                 <version>${project.version}</version>
                 <classifier>war</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
                 <classifier>client</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
                 <classifier>coordinator</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>ws-t11</artifactId>
                 <version>${project.version}</version>
                 <classifier>participant</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wscf-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wscf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wscf10</artifactId>
                 <version>${project.version}</version>
                 <classifier>war</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wscf10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wscf11</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx11</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx10</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx10</artifactId>
                 <version>${project.version}</version>
                 <classifier>war</classifier>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>wstx11</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>recovery</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>bridge</artifactId>
                 <version>${project.version}</version>
                 <classifier>api</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossxts-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossxts-api</artifactId>
                 <version>${project.version}</version>
                 <classifier>javadoc</classifier>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>xts-docs</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>xts-guide</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>xts-demo</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>trailmap</artifactId>
                 <version>${project.version}</version>
             </dependency>
            <dependency>
-                <groupId>org.jboss.jbossts</groupId>
+                <groupId>org.jboss.narayana</groupId>
                 <artifactId>jbossxts-sar</artifactId>
                 <version>${project.version}</version>
                 <classifier>sar</classifier>

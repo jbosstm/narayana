@@ -13,9 +13,9 @@
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.jbossts</groupId>
+    <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-qa</artifactId>
-    <version>4.15.0.M1-SNAPSHOT</version>
+    <version>5.0.0.M1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>QA module</name>
     <build>
@@ -34,7 +34,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.jboss.jbossts</groupId>
+                                    <groupId>org.jboss.narayana</groupId>
                                     <artifactId>jbossts-full</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>

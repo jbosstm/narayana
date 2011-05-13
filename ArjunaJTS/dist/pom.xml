@@ -13,12 +13,12 @@
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
     <parent>
-        <groupId>org.jboss.jbossts</groupId>
+        <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-parent</artifactId>
-        <version>4.15.0.M1-SNAPSHOT</version>
+        <version>5.0.0.M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.jbossts</groupId>
+    <groupId>org.jboss.narayana</groupId>
     <artifactId>jbossts-full</artifactId>
     <packaging>pom</packaging>
     <name>JBossJTS distribution</name>
@@ -58,57 +58,57 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>arjunacore-services</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossts-tools</artifactId>
             <classifier>sar</classifier>
             <type>sar</type>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>txoj</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossjts</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossjts</artifactId>
             <classifier>javadoc</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossjts</artifactId>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossjts-integration</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossts-jopr-plugin</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossts-jopr-plugin</artifactId>
             <classifier>javadoc</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbossts-jopr-plugin</artifactId>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>trailmap</artifactId>
         </dependency>
     </dependencies>
