@@ -21,7 +21,7 @@
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-parent</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.0.M1-SNAPSHOT</version>
+    <version>4.15.0.M1-SNAPSHOT</version>
     <name>narayana-parent</name>
     <description>narayana-parent</description>
     <url>http://www.jboss.org/jbosstm/</url>
