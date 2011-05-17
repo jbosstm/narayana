@@ -81,15 +81,6 @@
 
     <property name="byteman.dir" value="${global.ext.lib.dir}" />
 
-    <path id="byteman.lib" >
-        <pathelement location="${byteman.dir}/byteman.jar" />
-        <pathelement location="${byteman.dir}/byteman-bmunit.jar" />
-        <pathelement location="${byteman.dir}/byteman-install.jar" />
-        <pathelement location="${byteman.dir}/byteman-submit.jar" />
-        <pathelement location="${byteman.dir}/byteman-dtest.jar" />
-        <pathelement location="${java.home}/../lib/tools.jar" />
-    </path>
-
     <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
 
@@ -109,6 +100,30 @@
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/lib"/>
         <mkdir dir="${build.dir}/lib/ext"/>
+
+		<!-- tools.jar and jconsole.jar are in different locations depending on the platform
+		     -->
+        <condition property="tools.jar" value="${java.home}/../lib/tools.jar">
+            <available file="${java.home}/../lib/tools.jar"/>
+        </condition>
+        <condition property="tools.jar" value="${java.home}/lib/tools.jar">
+            <available file="${java.home}/lib/tools.jar"/>
+        </condition>
+        <condition property="jconsole.jar" value="${java.home}/../lib/jconsole.jar">
+            <available file="${java.home}/../lib/jconsole.jar"/>
+        </condition>
+        <condition property="jconsole.jar" value="${java.home}/lib/jconsole.jar">
+            <available file="${java.home}/lib/jconsole.jar"/>
+        </condition>
+
+        <path id="byteman.lib" >
+            <pathelement location="${byteman.dir}/byteman.jar" />
+            <pathelement location="${byteman.dir}/byteman-bmunit.jar" />
+            <pathelement location="${byteman.dir}/byteman-install.jar" />
+            <pathelement location="${byteman.dir}/byteman-submit.jar" />
+            <pathelement location="${byteman.dir}/byteman-dtest.jar" />
+            <pathelement location="${tools.jar}" />
+        </path>
 
     </target>
 
