@@ -67,12 +67,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana</groupId>
-            <artifactId>jbossts-tools</artifactId>
-            <classifier>sar</classifier>
-            <type>sar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana</groupId>
             <artifactId>txoj</artifactId>
         </dependency>
         <dependency>

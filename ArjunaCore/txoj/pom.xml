@@ -76,6 +76,10 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.narayana</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>arjuna</artifactId>
         </dependency>
         <dependency>
