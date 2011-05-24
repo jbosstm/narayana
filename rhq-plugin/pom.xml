@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-parent</artifactId>
-        <version>4.15.0.M1-SNAPSHOT</version>
+        <version>4.15.1.M1-SNAPSHOT</version>
     </parent>
     <artifactId>jbossts-jopr-plugin</artifactId>
     <packaging>jar</packaging>

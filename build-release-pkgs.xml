@@ -82,9 +82,9 @@
     <!-- where to get the source -->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm/tags"/>
     <!-- The tag as it appears under svnbase -->
-    <property name="tag" value="JBOSSTS_4_15_0_Final"/>
+    <property name="tag" value="JBOSSTS_4_15_1_Final"/>
     <!-- The file name base for the user downloadable files. Derive it from the tag -->
-    <property name="filename" value="4.15.0.Final"/>
+    <property name="filename" value="4.15.1.Final"/>
     <!-- the location the JBossTS web site content is copied to -->
     <property name="downloads.dir" value="/home/jhalli/IdeaProjects/jboss/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
     <!-- the mvn repo to upload to -->

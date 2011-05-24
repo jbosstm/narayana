@@ -8,7 +8,7 @@
   <subtitle>Administration of the &PRODUCT; toolkit, which implements the JTA API in the &PRODUCT;
     Transaction Service</subtitle>
   <productname>JBossJTA</productname>
-  <productnumber>4.15.0</productnumber>
+  <productnumber>4.15.1</productnumber>
   <edition>1</edition>
   <pubsnumber>1</pubsnumber>
   <!-- <abstract> <para> A short overview and summary of the book&#39;s subject and purpose, traditionally no more than one paragraph long. Note: the abstract 

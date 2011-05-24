@@ -15,7 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-qa</artifactId>
-    <version>4.15.0.M1-SNAPSHOT</version>
+    <version>4.15.1.M1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>QA module</name>
     <build>

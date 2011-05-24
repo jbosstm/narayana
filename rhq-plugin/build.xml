@@ -2,7 +2,7 @@
 
 <project name="rhq-plugin" default="maven:package" basedir=".">
 
-	<property name="modulename" value="jbossts-jopr-plugin-4.15.0.M1-SNAPSHOT"/>
+	<property name="modulename" value="jbossts-jopr-plugin-4.15.1.M1-SNAPSHOT"/>
 	<property name="component-module-list" value="${modulename}"/>
 	<property name="install.jar.dir" value="../install/bin"/>
 	<property name="install.doc.dir" value="../install/docs/rhq"/>
