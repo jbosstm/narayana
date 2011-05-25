@@ -20,6 +20,7 @@
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>rest-tx</artifactId>
         <version>1.0-M1-SNAPSHOT</version>
+	<relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rest-tx-web</artifactId>
