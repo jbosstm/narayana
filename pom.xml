@@ -617,13 +617,16 @@
             </dependency>
 
 
-
+<!--
             <dependency>
 	        <groupId>org.jboss.slf4j</groupId>
 	        <artifactId>slf4j-jboss-logging</artifactId>
                 <version>1.0.2</version>
+-->
                 <!-- TODO AS7 -->
+<!--
             </dependency>
+-->
         </dependencies>
     </dependencyManagement>
     <dependencies>
