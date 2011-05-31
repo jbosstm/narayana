@@ -70,12 +70,15 @@
     <property name="xts.home" value=".."/>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
+    <!--
     <property name="jbossts.lib.dir" location="${jboss.home}/common/lib"/>
     <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
     <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+    -->
 
     <property name="lib.libs" value="jbossxts-api.jar"/>
 
+    <!--
     <property name="ext.libs" value="jbossjta.jar jbossjts.jar"/>
     <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
             geronimo-ws-metadata_2.0_spec.jar">
@@ -89,6 +92,7 @@
 
     <property name="jboss.common.libs" value="jboss-servlet-api_3.0_spec.jar jaxrpc-api.jar"/>
 
+    -->
     <!-- ================================================================== -->
 
     <property name="build.dir" location="build"/>
@@ -113,12 +117,22 @@
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
     </path>
     <path id="ext.path">
+        <!--
         <fileset dir="${jbossts.lib.dir}" includes="${ext.libs}"/>
+        -->
+        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-4.14.0.Final.jar"/>
     </path>
 
     <path id="jboss.client.path">
+        <!--
         <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.libs}"/>
         <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.libs}"/>
+        -->
+        <fileset dir="${jboss.home}/modules/javax/xml/ws/api/main/" includes="jboss-jaxws-api_2.2_spec-2.0.0.Alpha1.jar"/>
+        <fileset dir="${jboss.home}/modules/javax/xml/soap/api/main/" includes="jboss-saaj-api_1.3_spec-1.0.0.Final.jar"/>
+        <fileset dir="${jboss.home}/modules/javax/xml/rpc/api/main/" includes="jaxrpc-api-1.1.jar"/>
+        <fileset dir="${jboss.home}/modules/javax/xml/bind/api/main/" includes="jboss-jaxb-api_2.2_spec-1.0.2.Final.jar"/>
+        <fileset dir="${jboss.home}/modules/javax/servlet/api/main/" includes="jboss-servlet-api_3.0_spec-1.0.0.Final.jar"/>
     </path>
 
     <filterset id="webxmlrpc.filter">

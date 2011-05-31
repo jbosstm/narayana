@@ -52,4 +52,7 @@
     <module>
         <java>wstx-tests.jar</java>
     </module>
+    <module>
+        <java>wstx11-tests.jar</java>
+    </module>
 </application>

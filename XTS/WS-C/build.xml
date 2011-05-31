@@ -77,6 +77,9 @@
     <!-- we had to delete the JaxRPC handlers so we export the bits needed to allow clients to create them -->
     <property name="ws-c10.api.classes" value="com/arjuna/webservices/wscoor/CoordinationConstants.class"/>
 
+    <property name="ws-c11.coordinator.endpoint.classes" value="com/arjuna/webservices11/wscoor/sei/ActivationPortTypeImpl.class
+        com/arjuna/webservices11/wscoor/sei/RegistrationPortTypeImpl.class"/>
+
     <property name="tests.libs" value="junit.jar"/>
 
     <path id="tests.lib.path">
@@ -176,7 +179,7 @@
     <target name="jars11">
         <copy file="${dd.dir}/ws-c_handlers.xml" tofile="${build.classes11.dir}/ws-c_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-c11.jar">
-            <fileset dir="${build.classes11.dir}"/>
+            <fileset dir="${build.classes11.dir}" excludes="${ws-c11.coordinator.endpoint.classes}"/>
         </jar>
     </target>
 
@@ -202,7 +205,9 @@
 
     <target name="webapps11" depends="jars11" >
         <copy file="${dd.dir}/ws-c11_web-app.xml" tofile="${build.dd.dir}/web-app11.xml"/>
-        <war warfile="${build.webapps.dir}/ws-c11.war" webxml="${build.dd.dir}/web-app11.xml"/>
+        <war warfile="${build.webapps.dir}/ws-c11.war" webxml="${build.dd.dir}/web-app11.xml" manifest="${dd.dir}/manifest.mf">
+            <classes dir="${build.classes11.dir}" includes="${ws-c11.coordinator.endpoint.classes}" />
+        </war>
     </target>
 
     <target name="webapps" depends="jars, webapps11, webapps10"/>

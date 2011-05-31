@@ -57,9 +57,10 @@
     <property  environment="env"/>
     <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
     <property  name="jboss.server" value="default"/>
-    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+    <property  name="deploy.dir" value="${jboss.home}/standalone/deployments/"/>
+    <property  name="module.dir" value="${jboss.home}/modules/org/jboss/xts"/>
 
-    <!-- we assume the core XTS modules have already been installedi.e. WSAS, WS-C, WS-T, WSCF, WSTX, recovery -->
+    <!-- we assume the core XTS modules have already been installed i.e. WSAS, WS-C, WS-T, WSCF, WSTX, recovery -->
     <property name="src.dir" location="src"/>
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="webapps.dir" location="${xts.home}/webapps"/>
@@ -102,8 +103,6 @@
         <mkdir dir="${build.metainf.dir}"/>
         <mkdir dir="${build.conf.dir}"/>
     </target>
-
-    <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
 
     <!-- compile the sar source -->
     <target name="compile" depends="init, compile-both, compile-11"/>
@@ -167,6 +166,7 @@
             <!-- include sar boot and shutdown codes -->
 	        <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
+        <copy file="${build.dir}/service.jar" tofile="${lib.dir}/service.jar"/>
     </target>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
@@ -225,32 +225,15 @@
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
 
+        <!-- copy jboss-service file to build dir -->
+        <copy toFile="${build.metainf.dir}/jboss-service.xml" file="${metainf.dir}/jboss-service.xml"/>
+        <!-- copy modules file to lib dir -->
+        <copy toFile="${lib.dir}/module.xml" file="${metainf.dir}/module.xml"/>
         <!-- pack everything in the service archive -->
-        <jar jarfile="${build.dir}/jbossxts.sar">
-            <!-- include generic and 1.1 jars -->
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *api.jar"/>
+        <jar jarfile="${build.dir}/jbossxts.sar" manifest="${metainf.dir}/manifest.mf">
 
-            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
-
-            <!-- include 1.1 web apps-->
-            <fileset dir="${webapps.dir}" includes="*11*.war"/>
-
-            <!-- include config jar -->
-            <!-- don't need this because we configure from beans.xml
-            <fileset dir="${build.dir}" includes="config.jar"/>
-            -->
-
-            <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/xts11-jboss-beans.xml"/>
-
-            <!-- include classloading directives -->
-            <fileset dir="." includes="META-INF/jboss-classloading.xml"/>
-
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
-
-            <!-- include service implementation jar -->
-            <fileset dir="${build.dir}" includes="service.jar"/>
+            <!-- just include service def -->
+            <fileset dir="${build.dir}" includes="META-INF/jboss-service.xml"/>
         </jar>
     </target>
 
@@ -258,15 +241,65 @@
 
     <target name="clean">
       <delete dir="${build.dir}"/>
-      <delete file="${lib.dir}/jbossxts-api.jar"/>
+        <delete file="${lib.dir}/jbossxts-api.jar"/>
+        <delete file="${lib.dir}/service.jar"/>
     </target>
 
-    <target name="deploy" depends="undeploy, sar">
+    <target name="deploy-module">
+        <mkdir dir="${module.dir}/main"/>
+        <copy todir="${module.dir}/main" file="${metainf.dir}/module.xml"/>
+        <copy todir="${module.dir}/main">
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*api.jar"/>
+            <fileset dir="${lib.dir}" includes="bridge-api.jar"/>
+            <fileset dir="${lib.dir}" includes="jbossxts-api.jar"/>
+            <fileset dir="${build.dir}" includes="config.jar"/>
+        </copy>
+    </target>
+
+    <target name="undeploy-module">
+        <delete dir="${module.dir}"/>
+    </target>
+
+    <target name="deploy">
         <copy file="${build.dir}/jbossxts.sar" todir="${deploy.dir}"/>
+        <!--
+        -->
+        <copy file="${webapps.dir}/ws-c11.war" todir="${deploy.dir}"/>
+        <copy file="${webapps.dir}/ws-t11-client.war" todir="${deploy.dir}"/>
+        <copy file="${webapps.dir}/ws-t11-participant.war" todir="${deploy.dir}"/>
+        <copy file="${webapps.dir}/ws-t11-coordinator.war" todir="${deploy.dir}"/>
     </target>
 
     <target name="undeploy">
-        <delete file="${deploy.dir}/jbossxts.sar"/>
+        <delete file="${deploy.dir}/jbossxts.sar.deployed" failonerror="false"/>
+        <!--
+        -->
+        <delete file="${deploy.dir}/ws-c11.war.deployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-client.war.deployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-participant.war.deployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-coordinator.war.deployed" failonerror="false"/>
+        <sleep seconds="5"/>
+        <delete file="${deploy.dir}/jbossxts.sar.undeployed" failonerror="false"/>
+        <!--
+        -->
+        <delete file="${deploy.dir}/ws-c11.war.undeployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-client.war.undeployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-participant.war.undeployed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-coordinator.war.undeployed" failonerror="false"/>
+        <delete file="${deploy.dir}/jbossxts.sar.failed" failonerror="false"/>
+        <!--
+        -->
+        <delete file="${deploy.dir}/ws-c11.war.failed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-client.war.failed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-participant.war.failed" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-coordinator.war.failed" failonerror="false"/>
+        <delete file="${deploy.dir}/jbossxts.sar" failonerror="false"/>
+        <!--
+        -->
+        <delete file="${deploy.dir}/ws-c11.war" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-client.war" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-participant.war" failonerror="false"/>
+        <delete file="${deploy.dir}/ws-t11-coordinator.war" failonerror="false"/>
     </target>
 
 </project>
