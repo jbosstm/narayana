@@ -16,7 +16,7 @@
 
 	<target name="maven:package" depends="clean">
 
-		<exec executable="mvn" dir="../narayana-parent">
+		<exec executable="mvn" dir="../">
 			<arg value="install"/>
 			<arg value="-DTS_EMMA_JAR=/"/>
 		</exec>
