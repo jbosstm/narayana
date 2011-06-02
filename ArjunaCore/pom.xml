@@ -23,14 +23,11 @@
     <packaging>pom</packaging>
     <name>ArjunaCore everything</name>
     <modules>
-        <module>../docs</module>
-        <module>../common</module>
         <module>arjuna</module>
         <module>arjuna/services</module>
         <module>txoj</module>
         <module>arjunacore</module>
         <module>docs</module>
-        <module>../docs</module>
         <module>dist</module>
     </modules>
 </project>

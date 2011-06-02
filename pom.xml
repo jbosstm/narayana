@@ -615,18 +615,6 @@
                 <version>1.0.0.Beta6</version>
                 <!-- TODO AS7 -->
             </dependency>
-
-
-<!--
-            <dependency>
-	        <groupId>org.jboss.slf4j</groupId>
-	        <artifactId>slf4j-jboss-logging</artifactId>
-                <version>1.0.2</version>
--->
-                <!-- TODO AS7 -->
-<!--
-            </dependency>
--->
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -651,39 +639,10 @@
     <modules>
         <module>docs</module>
         <module>common</module>
-        <module>ArjunaCore/arjuna</module>
-        <module>ArjunaCore/txoj</module>
-        <module>ArjunaCore/arjuna/services</module>
-        <module>ArjunaCore/arjunacore</module>
-        <module>ArjunaCore/docs</module>
-        <module>ArjunaJTA/jta</module>
-        <module>ArjunaJTA/jdbc</module>
-        <module>ArjunaJTA/jbossjta</module>
-        <module>ArjunaJTA/docs</module>
-        <module>ArjunaJTA/integration</module>
-        <module>ArjunaJTS/orbportability</module>
-        <module>ArjunaJTS/jts</module>
-        <module>ArjunaJTS/jtax</module>
-        <module>ArjunaJTS/jbossjts</module>
-        <module>ArjunaJTS/integration</module>
-        <module>ArjunaJTS/trailmap</module>
-        <module>ArjunaJTS/docs</module>
-        <module>XTS/WSAS</module>
-        <module>XTS/WS-C</module>
-        <module>XTS/WSCF</module>
-        <module>XTS/WS-T</module>
-        <module>XTS/WSTX</module>
-        <module>XTS/recovery</module>
-        <module>XTS/bridge</module>
-        <module>XTS/sar</module>
-        <module>XTS/demo</module>
-        <module>XTS/docs</module>
-        <module>XTS/jbossxts-api</module>
-        <module>XTS/localjunit</module>
-        <module>rhq-plugin</module>
-        <module>ArjunaCore/dist</module>
-        <module>ArjunaJTA/dist</module>
-        <module>XTS/dist</module>
-        <module>ArjunaJTS/dist</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>XTS</module>
+        <!-- BUILT BY ArjunaJTS module>rhq-plugin</module-->
+        <module>ArjunaJTS</module>
     </modules>
 </project>

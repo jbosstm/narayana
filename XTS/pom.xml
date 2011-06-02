@@ -22,7 +22,6 @@
     <artifactId>xts-all</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>../docs</module>
         <module>WSAS</module>
         <module>WS-C</module>
         <module>WSCF</module>

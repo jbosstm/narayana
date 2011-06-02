@@ -23,15 +23,10 @@
     <packaging>pom</packaging>
     <name>JBossJTA everything</name>
     <modules>
-        <module>../docs</module>
-        <module>../common</module>
-        <module>../ArjunaCore/arjuna</module>
-        <module>../ArjunaCore/txoj</module>
         <module>jta</module>
         <module>jdbc</module>
         <module>jbossjta</module>
         <module>docs</module>
-        <module>../docs</module>
         <module>integration</module>
         <module>dist</module>
     </modules>

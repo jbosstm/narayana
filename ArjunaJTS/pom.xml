@@ -23,13 +23,6 @@
     <packaging>pom</packaging>
     <name>JBossJTS everything</name>
     <modules>
-        <module>../docs</module>
-        <module>../common</module>
-        <module>../ArjunaCore/arjuna</module>
-        <module>../ArjunaCore/txoj</module>
-        <module>../ArjunaCore/arjuna/services</module>
-        <module>../ArjunaJTA/jta</module>
-        <module>../ArjunaJTA/jdbc</module>
         <module>orbportability</module>
         <module>jts</module>
         <module>jtax</module>
@@ -37,7 +30,6 @@
         <module>integration</module>
         <module>trailmap</module>
         <module>docs</module>
-        <module>../docs</module>
         <module>../rhq-plugin</module>
         <module>dist</module>
     </modules>
