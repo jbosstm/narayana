@@ -361,7 +361,7 @@
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/build/release_notes/en-US/pdf/
+			<directory>../../docs/release_notes/target/publican/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>

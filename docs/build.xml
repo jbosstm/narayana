@@ -42,7 +42,7 @@
                     <arg value="--formats=pdf,html"/>
                 </exec>
                 <copy todir="${dest.dir}/release_notes" overwrite="true" flatten="true">
-                    <fileset dir="${build.dir}" includes="*/en-US/pdf/*.pdf"/>
+                    <fileset dir="release_notes" includes="**/*.pdf"/>
                 </copy>
             </then>
         </if>
@@ -74,7 +74,7 @@
                     <arg value="--formats=pdf,html"/>
                 </exec>
                 <copy todir="${dest.dir}" overwrite="true" flatten="true">
-                    <fileset dir="." includes="**/*.pdf" excludes="**/*Release*.pdf"/>
+                    <fileset dir="." includes="**/*.pdf" excludes="**/*elease*.pdf"/>
                 </copy>
             </then>
         </if>
