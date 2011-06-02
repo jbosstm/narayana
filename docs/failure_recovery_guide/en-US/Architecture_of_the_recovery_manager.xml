@@ -15,6 +15,7 @@
           <imagedata fileref="images/fig1-crashrecoveryarchitecture.gif"
             format="GIF" />
         </imageobject>
+      		  <textobject><para>Crash recovery architecture</para></textobject>
       </mediaobject>
     </figure>
     <para>The Recovery Manager is a daemon process1 responsible for
@@ -424,6 +425,7 @@
           <imagedata fileref="images/fig2-resourceinitiatedrecovery.gif"
             format="GIF" />
         </imageobject>
+      		  <textobject><para>Resource Initiated Recovery</para></textobject>
       </mediaobject>
     </figure>
     <para>The XARecoveryModule will use the XAResourceRecovery

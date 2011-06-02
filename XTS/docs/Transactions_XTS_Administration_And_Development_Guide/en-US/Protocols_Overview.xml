@@ -96,6 +96,7 @@
    <imageobject>
      <imagedata fileref="images/fig-wsc-four-roles.png" format="PNG"/>
    </imageobject>
+      		  <textobject><para>Four roles in WS-C</para></textobject>
       </mediaobject>
     </figure>
 
@@ -226,7 +227,7 @@
        <imagedata fileref="images/fig-wsc-wst-interop.png" format="PNG"/>
      </imageobject>
      <textobject>
-       <para></para>
+       <para>WSC WST Interop</para>
      </textobject>
    </mediaobject>
       </figure>
@@ -295,6 +296,7 @@
      <imageobject>
        <imagedata fileref="images/ws-trans-global-view.png" format="PNG"/>
      </imageobject>
+      		  <textobject><para>Global view</para></textobject>
    </mediaobject>
       </figure>
 
@@ -316,6 +318,7 @@
      <imageobject>
        <imagedata fileref="images/fig-ws-trans-services-participants.png" format="PNG"/>
      </imageobject>
+      		  <textobject><para>Services and Participants</para></textobject>
    </mediaobject>
       </figure>
       <!--
@@ -522,6 +525,7 @@
        <imageobject>
          <imagedata fileref="images/fig-2pc-participant-state-transitions.png" format="PNG"/>
        </imageobject>
+      		  <textobject><para>2PC state transitions</para></textobject>
      </mediaobject>
    </figure>
 
@@ -550,6 +554,7 @@
        <imageobject>
          <imagedata fileref="images/fig-at-model.png" format="PNG"/>
        </imageobject>
+      		  <textobject><para>AT Model</para></textobject>
      </mediaobject>
    </figure>
       </section> <!-- <title>Atomic Transactions </title> -->
@@ -727,6 +732,7 @@
        <imageobject>
          <imagedata fileref="images/fig-bawpc-state-transitions.png" format="PNG"/>
        </imageobject>
+      		  <textobject><para>Transitions</para></textobject>
      </mediaobject>
    </figure>
    
@@ -742,6 +748,7 @@
        <imageobject>
          <imagedata fileref="images/fig-bawcc-state-transitions.png" format="PNG"/>
        </imageobject>
+      		  <textobject><para>Transitions</para></textobject>
      </mediaobject>
    </figure>
       </section> <!--   <title>Business Activities</title> -->
