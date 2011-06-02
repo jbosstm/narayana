@@ -7,10 +7,10 @@ import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import org.jboss.wsf.common.addressing.MAPEndpoint;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAPEndpoint;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 

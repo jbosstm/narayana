@@ -31,6 +31,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        /*
         com.arjuna.wsc11.tests.junit.ActivationTestCase.class,
         com.arjuna.wsc11.tests.junit.RegistrationTestCase.class,
         com.arjuna.wsc11.tests.junit.ActivationServiceTestCase.class,
@@ -38,6 +39,8 @@ import org.junit.runners.Suite;
         com.arjuna.wsc11.tests.junit.RegistrationServiceTestCase.class,
         com.arjuna.wsc11.tests.junit.RegistrationServiceExceptionTestCase.class,
         com.arjuna.wsc11.tests.junit.EnduranceTestCase.class
+        */
+        com.arjuna.wsc11.tests.junit.ActivationServiceTestCase.class
 })
 public class TestSuite
 {

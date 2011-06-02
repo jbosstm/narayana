@@ -2,7 +2,7 @@ package com.arjuna.webservices11.wsat.processors;
 
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 

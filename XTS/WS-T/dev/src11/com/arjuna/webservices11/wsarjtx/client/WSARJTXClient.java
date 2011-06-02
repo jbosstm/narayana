@@ -3,9 +3,9 @@ package com.arjuna.webservices11.wsarjtx.client;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;

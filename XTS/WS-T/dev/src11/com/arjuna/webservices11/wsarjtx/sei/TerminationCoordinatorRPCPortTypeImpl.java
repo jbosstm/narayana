@@ -4,7 +4,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorRPCProcessor;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 import javax.annotation.Resource;
 import javax.jws.*;

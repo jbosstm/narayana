@@ -28,7 +28,7 @@ import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarjtx.client.TerminationParticipantClient;

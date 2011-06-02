@@ -25,7 +25,7 @@ import java.io.IOException;
 import com.arjuna.webservices.SoapFault;
 import com.jboss.transaction.txinterop.webservices.soapfault.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.SoapFault11;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;

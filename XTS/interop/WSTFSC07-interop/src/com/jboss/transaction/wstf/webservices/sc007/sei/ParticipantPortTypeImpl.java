@@ -24,7 +24,7 @@ import com.jboss.transaction.wstf.webservices.sc007.processors.ParticipantProces
 import com.jboss.transaction.wstf.webservices.sc007.client.InitiatorClient;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 

@@ -23,7 +23,7 @@ package com.jboss.transaction.txinterop.webservices.bainterop.sei;
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.SoapFault11;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.Action;

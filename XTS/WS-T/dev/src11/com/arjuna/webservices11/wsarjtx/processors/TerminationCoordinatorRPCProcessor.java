@@ -24,7 +24,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.wst11.BusinessActivityTerminator;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 /**
  * The Terminator Participant processor.

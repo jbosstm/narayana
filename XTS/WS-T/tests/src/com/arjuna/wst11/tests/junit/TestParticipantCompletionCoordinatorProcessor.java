@@ -26,7 +26,7 @@ import java.util.Map;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.ParticipantCompletionCoordinatorInboundEvents;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;

@@ -46,7 +46,7 @@ import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.wst11.tests.junit.TestCoordinatorProcessor.CoordinatorDetails;
 import com.arjuna.wst11.tests.TestUtil;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 public class TwoPCParticipantTestCase 
 {

@@ -38,7 +38,7 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 public class ActivationServiceTestCase
 {
-    @Test
+    /*@Test
     public void testKnownCoordinationType()
         throws Exception
     {
@@ -58,7 +58,7 @@ public class ActivationServiceTestCase
         {
             fail("Unexpected exception: " + th);
         }
-    }
+    }*/
 
     @Test
     public void testUnknownCoordinationType()

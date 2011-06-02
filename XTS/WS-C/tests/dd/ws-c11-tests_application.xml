@@ -34,15 +34,17 @@
         </web>
     </module>
 
+    <!--
     <module>
-        <java>ws-c-tests.jar</java>
+        <java>lib/ws-c-tests.jar</java>
     </module>
 
     <module>
-        <java>xts-test-servlet.jar</java>
+        <java>lib/xts-test-servlet.jar</java>
     </module>
     
     <module>
-        <java>junit.jar</java>
+        <java>lib/junit.jar</java>
     </module>
+    -->
 </application>

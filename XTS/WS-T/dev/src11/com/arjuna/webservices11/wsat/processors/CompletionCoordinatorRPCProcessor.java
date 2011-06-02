@@ -4,7 +4,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst11.CompletionCoordinatorParticipant;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 /**

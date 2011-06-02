@@ -25,7 +25,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;

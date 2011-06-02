@@ -6,7 +6,7 @@ import com.arjuna.webservices.util.InvalidEnumerationException;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorRPCPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.w3c.dom.Element;

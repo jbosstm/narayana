@@ -1,0 +1,1 @@
+Dependencies: org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.junit

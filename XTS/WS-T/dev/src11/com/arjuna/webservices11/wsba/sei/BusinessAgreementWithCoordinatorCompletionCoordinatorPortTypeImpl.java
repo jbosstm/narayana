@@ -6,7 +6,7 @@ import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;

@@ -65,12 +65,6 @@
         <!-- buildsystem jar from JBossTS containg resource bundle doclet for messages -->
     <property name="jbossts.buildsystem.jars" value="buildsystem.jar"/>
 
-        <!-- external jars used by XTS for CXF enabled builds -->
-    <condition property="cxf.build.extlib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-
     <!-- override to disable publican use -->
     <property name="publican" value="true"/>
     <property name="publican.build.dir" value="docs/build"/>
@@ -91,10 +85,8 @@
     </condition>
 
         <!-- external jars used by XTS for all builds -->
-    <property name="xts.build.extlib.jars" value="jaxb-api.jar jboss-javaee.jar
-            jbossws-client.jar stax-api.jar
-            jbossws-native-core.jar jbossws-common.jar  jboss-logging.jar jboss-logging-generator.jar jboss-logging-processor.jar
-            jboss-transaction-api_1.1_spec.jar jboss-servlet-api_3.0_spec.jar dom4j.jar ${cxf.build.extlib.jars}"/>
+    <property name="xts.build.extlib.jars" value="jbossws-api.jar jboss-logging.jar jboss-logging-generator.jar jboss-logging-processor.jar
+            jboss-transaction-api_1.1_spec.jar jboss-servlet-api_3.0_spec.jar dom4j.jar"/>
 
         <!-- paths internal to build -->
 

@@ -24,13 +24,13 @@ import java.io.IOException;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.ServiceRegistry;
-import org.jboss.wsf.common.addressing.MAPEndpoint;
+import org.jboss.ws.api.addressing.MAPEndpoint;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import com.jboss.transaction.wstf.webservices.sc007.generated.ParticipantPortType;
 
 /**

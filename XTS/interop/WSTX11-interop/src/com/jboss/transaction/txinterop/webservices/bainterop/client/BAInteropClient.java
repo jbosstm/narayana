@@ -32,9 +32,9 @@ import com.jboss.transaction.txinterop.webservices.bainterop.generated.Participa
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.ParticipantPortType;
 import com.jboss.transaction.txinterop.webservices.handlers.CoordinationContextHandler;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 /**

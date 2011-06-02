@@ -8,7 +8,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.namespace.QName;
 import java.util.Map;
 
-import org.jboss.wsf.common.addressing.*;
+import org.jboss.ws.api.addressing.*;
 
 /**
  * The complete addressing context.

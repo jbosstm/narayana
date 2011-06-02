@@ -23,7 +23,7 @@ package com.jboss.transaction.wstf.webservices.sc007.processors;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsaddr.processor.BaseWSAddrResponseProcessor;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 /**
  * The Initiator processor.

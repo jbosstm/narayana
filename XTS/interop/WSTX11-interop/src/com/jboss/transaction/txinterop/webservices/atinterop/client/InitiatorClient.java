@@ -27,7 +27,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.jboss.transaction.txinterop.webservices.soapfault.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropConstants;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.InitiatorPortType;

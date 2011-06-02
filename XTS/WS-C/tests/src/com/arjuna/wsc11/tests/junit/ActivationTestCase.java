@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.wsc.tests.TestUtil;

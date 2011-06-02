@@ -23,7 +23,7 @@ package com.arjuna.wst11.tests.junit;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorCallback;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 /**              B

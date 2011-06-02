@@ -15,7 +15,7 @@ import com.arjuna.wst.CompletionCoordinatorParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;

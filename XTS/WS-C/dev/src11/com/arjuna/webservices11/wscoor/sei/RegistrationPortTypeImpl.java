@@ -1,7 +1,7 @@
 package com.arjuna.webservices11.wscoor.sei;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 // import org.jboss.ws.annotation.EndpointConfig;
 

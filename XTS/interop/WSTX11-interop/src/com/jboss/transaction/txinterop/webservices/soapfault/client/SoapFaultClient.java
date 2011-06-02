@@ -24,7 +24,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.SoapFaultService;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.xmlsoap.schemas.soap.envelope.Fault;
 
 import javax.xml.ws.BindingProvider;

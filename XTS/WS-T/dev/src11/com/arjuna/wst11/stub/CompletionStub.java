@@ -3,7 +3,7 @@ package com.arjuna.wst11.stub;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.client.CompletionCoordinatorClient;

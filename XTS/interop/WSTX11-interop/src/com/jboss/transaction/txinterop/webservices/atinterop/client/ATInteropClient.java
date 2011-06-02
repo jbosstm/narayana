@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.arjuna.webservices11.ServiceRegistry;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPEndpoint;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPEndpoint;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.InitiatorService;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.ParticipantService;

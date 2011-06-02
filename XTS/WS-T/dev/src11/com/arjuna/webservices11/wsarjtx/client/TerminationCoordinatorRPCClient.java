@@ -32,10 +32,10 @@ import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
-import org.jboss.wsf.common.addressing.MAP;
-import org.jboss.wsf.common.addressing.MAPBuilder;
-import org.jboss.wsf.common.addressing.MAPBuilderFactory;
-import org.jboss.wsf.common.addressing.MAPEndpoint;
+import org.jboss.ws.api.addressing.MAP;
+import org.jboss.ws.api.addressing.MAPBuilder;
+import org.jboss.ws.api.addressing.MAPBuilderFactory;
+import org.jboss.ws.api.addressing.MAPEndpoint;
 
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;

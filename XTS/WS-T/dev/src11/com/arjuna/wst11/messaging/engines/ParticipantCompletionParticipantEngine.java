@@ -25,7 +25,7 @@ import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionParticipantInboundEvents;

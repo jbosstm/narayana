@@ -1,7 +1,7 @@
 package com.arjuna.webservices11.wsat.sei;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;

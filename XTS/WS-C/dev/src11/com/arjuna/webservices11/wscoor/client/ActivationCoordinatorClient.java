@@ -22,7 +22,7 @@ package com.arjuna.webservices11.wscoor.client;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
 import java.io.IOException;
