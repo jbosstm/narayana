@@ -34,6 +34,7 @@
         </web>
     </module>
 
+    <!--
     <module>
         <java>xts-test-servlet.jar</java>
     </module>
@@ -45,4 +46,5 @@
     <module>
         <java>wstx-tests.jar</java>
     </module>
+    -->
 </application>

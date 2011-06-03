@@ -33,6 +33,7 @@
             <context-root>/wsas-tests</context-root>
         </web>
     </module>
+    <!--
     <module>
         <java>wsas-tests.jar</java>
     </module>
@@ -42,4 +43,5 @@
     <module>
         <java>junit.jar</java>
     </module>
+    -->
 </application>

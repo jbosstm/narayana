@@ -21,11 +21,11 @@
  * @author JBoss Inc.
  -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-	version="2.4">
-    <display-name>JBoss WSTX1.1 interop</display-name>
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false">
 
     <description>JBoss WSTX1.1 interop</description>
 
@@ -84,25 +84,6 @@
       <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- Define Interop 11 JaxWS Server Endpoint Mappings -->
-    <servlet-mapping>
-      <servlet-name>Interop11ATInitiatorService</servlet-name>
-      <url-pattern>/ATInitiatorService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>Interop11ATParticipantService</servlet-name>
-      <url-pattern>/ATParticipantService</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-      <servlet-name>Interop11BAInitiatorService</servlet-name>
-      <url-pattern>/BAInitiatorService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>Interop11BAParticipantService</servlet-name>
-      <url-pattern>/BAParticipantService</url-pattern>
-    </servlet-mapping>
-
     <!-- define proxy, logging and junit test runner servlets -->
     <servlet>
         <servlet-name>HTTPProxyServlet</servlet-name>
@@ -133,6 +114,25 @@
         <servlet-class>com.jboss.transaction.txinterop.test.TestLogServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!-- Define Interop 11 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Interop11ATInitiatorService</servlet-name>
+      <url-pattern>/ATInitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Interop11ATParticipantService</servlet-name>
+      <url-pattern>/ATParticipantService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>Interop11BAInitiatorService</servlet-name>
+      <url-pattern>/BAInitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Interop11BAParticipantService</servlet-name>
+      <url-pattern>/BAParticipantService</url-pattern>
+    </servlet-mapping>
 
 	<!-- servlet mappings -->
     <servlet-mapping>

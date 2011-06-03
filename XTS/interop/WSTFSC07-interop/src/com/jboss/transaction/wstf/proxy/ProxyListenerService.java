@@ -95,6 +95,11 @@ public class ProxyListenerService extends HttpServlet
         ProxyURIRewriting.setProxyURI(proxyServiceURI) ;
     }
     
+    public void doGet(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
+        throws ServletException, IOException
+    {
+        doPost(httpServletRequest, httpServletResponse);
+    }
     /**
      * Handle the post request.
      * @param httpServletRequest The current HTTP servlet request.

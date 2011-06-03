@@ -56,7 +56,9 @@
         <module name="javax.transaction"/>
         -->
         <module name="org.jboss.jts"/>
-        <module name="org.jboss.ws.api"/>
+        <module name="org.jboss.ws.api" services="export"/>
+        <module name="org.jboss.ws.jaxws-client" services="export"/>
+        <module name="org.jboss.ws.cxf.jbossws-cxf-client" services="export"/>
         <module name="org.jboss.logging"/>
         <module name="javax.xml.soap.api"/>
         <module name="javax.xml.ws.api"/>

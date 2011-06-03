@@ -112,7 +112,7 @@
     <property name="wst.build.lib.dir" value="${ws-t.dir}/build/lib"/>
     <property name="wst.build.dd.dir" value="${ws-t.dir}/build/dd"/>
 
-    <property name="wsas.test.build.lib.dir"  value="${wsas.dir}/tests/build/lib"/>
+    <property name="wsas.test.build.dir"  value="${wsas.dir}/tests/build"/>
 
     <!--sibling module directories and jars -->
 
@@ -342,7 +342,7 @@
     <target name="tests.compile" depends="tests.init, tests.compile10, tests.compile11"/>
 
     <target name="tests.jar" depends="tests.compile">
-        <jar jarfile="${tests.build.webapps.dir}/wstx-tests.jar">
+        <jar jarfile="${tests.build.lib.dir}/wstx-tests.jar"  manifest="${tests.dd.dir}/META-INF/manifest.mf">
           <fileset dir="${tests.build.classes.dir}"/>
         </jar>
     </target>
@@ -354,7 +354,7 @@
 
 	<target name="tests.webapps11">
 	  <copy file="${tests.dd.dir}/wstx11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml"/>
-	  <war warfile="${tests.build.webapps.dir}/wstx11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml"/>
+	  <war warfile="${tests.build.webapps.dir}/wstx11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml"  manifest="${tests.dd.dir}/META-INF/war.manifest.mf"/>
 	</target>
 
     <target name="tests.webapps" depends="tests.jar, tests.webapps10, tests.webapps11"/>
@@ -362,18 +362,24 @@
     <target name="tests.ear-both" if="build10">
         <ear earfile="${tests.build.webapps.dir}/wstx-tests.ear" appxml="${tests.dd.dir}/wstx-tests_application.xml">
           <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-          <fileset dir="${tests.build.webapps.dir}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
-          <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
-           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
+          <fileset dir="${tests.build.webapps.dir}" includes="wstx-tests.war wstx11-tests.war"/>
+          <fileset dir="${tests.build.lib.dir}" includes="wstx-tests.jar"/>
+          <fileset dir="${wsas.test.build.dir}/lib" includes="xts-test-servlet.jar"/>
+           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*" excludes="META-INF/**/*manifest.mf"/>
         </ear>
     </target>
 
     <target name="tests.ear11" if="nobuild10">
-        <ear earfile="${tests.build.webapps.dir}/wstx-tests.ear" appxml="${tests.dd.dir}/wstx11-tests_application.xml">
-          <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-          <fileset dir="${tests.build.webapps.dir}" includes="wstx11-tests.war wstx-tests.jar"/>
-          <fileset dir="${wsas.test.build.lib.dir}" includes="xts-test-servlet.jar"/>
-           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*"/>
+        <mkdir dir="${tests.build.dir}/ext/lib"/>
+        <copy todir="${tests.build.dir}/ext/lib">
+            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
+        </copy>
+        <ear earfile="${tests.build.webapps.dir}/wstx-tests.ear" appxml="${tests.dd.dir}/wstx11-tests_application.xml" manifest="${tests.dd.dir}/META-INF/manifest.mf">
+           <fileset dir="${tests.build.dir}/ext" includes="lib/${tests.libs}"/>
+           <fileset dir="${tests.build.webapps.dir}" includes="wstx11-tests.war"/>
+           <fileset dir="${tests.build.dir}" includes="lib/wstx-tests.jar"/>
+           <fileset dir="${wsas.test.build.dir}" includes="lib/xts-test-servlet.jar"/>
+           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*" excludes="META-INF/**/*manifest.mf"/>
         </ear>
     </target>
 

@@ -101,7 +101,7 @@
             <fileset dir="${dd.dir}/soapfault/"
                     includes="wsdl/*"/>
         </copy>
-            <war destfile="${build.war.file}" webxml="${build.webxml.file}">
+            <war destfile="${build.war.file}" webxml="${build.webxml.file}" manifest="${dd.dir}/manifest.mf">
     			<classes dir="${build.classes.dir}"/>
     			<classes dir="${src.dir}" excludes="**/*.java"/>
                 <!-- need to stop using this at some point soon -->

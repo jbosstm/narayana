@@ -20,10 +20,12 @@
  * @author JBoss Inc.
  -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-	version="2.4">
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false">
+
     <display-name>JBoss WSTF interop</display-name>
 
     <description>JBoss WSTF interop</description>
@@ -53,16 +55,6 @@
       <servlet-class>com.jboss.transaction.wstf.webservices.sc007.sei.ParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <!-- Define Sc007 JaxWS Server Endpoint Mappings -->
-    <servlet-mapping>
-      <servlet-name>WSTFSc007InitiatorService</servlet-name>
-      <url-pattern>/InitiatorService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-      <servlet-name>WSTFSc007ParticipantService</servlet-name>
-      <url-pattern>/ParticipantService</url-pattern>
-    </servlet-mapping>
 
     <!-- define proxy, logging and junit test runner servlets -->
     <servlet>
@@ -94,6 +86,16 @@
         <servlet-class>com.jboss.transaction.wstf.test.TestLogServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!-- Define Sc007 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>WSTFSc007InitiatorService</servlet-name>
+      <url-pattern>/InitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>WSTFSc007ParticipantService</servlet-name>
+      <url-pattern>/ParticipantService</url-pattern>
+    </servlet-mapping>
 
 	<!-- servlet mappings -->
     <servlet-mapping>

@@ -34,6 +34,7 @@
         </web>
     </module>
 
+    <!--
     <module>
         <java>ws-t-tests.jar</java>
     </module>
@@ -45,4 +46,5 @@
     <module>
         <java>junit.jar</java>
     </module>
+    -->
 </application>

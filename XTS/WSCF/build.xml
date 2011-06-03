@@ -35,7 +35,7 @@
     <property  environment="env"/>
     <property  name="jboss.home" value="${env.JBOSS_HOME}"/>
     <property  name="jboss.server" value="default"/>
-    <property  name="deploy.dir" value="${jboss.home}/derver/${jboss.server}/deploy}"/>
+    <property  name="deploy.dir" value="${jboss.home}/server/${jboss.server}/deploy}"/>
 
 	<!-- internal paths and jars -->
 
@@ -64,7 +64,7 @@
     <!--sibling module directories and jars -->
 
     <property name="wsas.build.lib.dir" value="${wsas.dir}/build/lib"/>
-    <property name="wsas.tests.build.lib.dir"  value="${wsas.dir}/tests/build/lib"/>
+    <property name="wsas.tests.build.dir"  value="${wsas.dir}/tests/build"/>
     <property name="wsc.build.lib.dir" value="${ws-c.dir}/build/lib"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
@@ -261,7 +261,7 @@
     <target name="tests.compile" depends="tests.init, tests.compile10, tests.compile11"/>
 
     <target name="tests.jar" depends="tests.compile">
-        <jar jarfile="${tests.build.webapps.dir}/wscf-tests.jar">
+        <jar jarfile="${tests.build.lib.dir}/wscf-tests.jar" manifest="${tests.dd.dir}/manifest.mf">
             <fileset dir="${tests.build.classes.dir}"/>
         </jar>
     </target>
@@ -274,24 +274,30 @@
 
     <target name="tests.webapps11" depends="tests.compile11">
         <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml"/>
-        <war warfile="${tests.build.webapps.dir}/wscf11-tests.war" webxml="${tests,build.dd.dir}/web-app11.xml"/>
+        <war warfile="${tests.build.webapps.dir}/wscf11-tests.war" webxml="${tests,build.dd.dir}/web-app11.xml"  manifest="${tests.dd.dir}/war.manifest.mf"/>
     </target>
 
     <target name="tests.webapps" depends="tests.jar, tests.webapps10, tests.webapps11"/>
 
     <target name="tests.ear-both" if="build10">
-            <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf-tests_application.xml">
+        <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf-tests_application.xml">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-            <fileset dir="${tests.build.webapps.dir}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
-            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+            <fileset dir="${tests.build.webapps.dir}" includes="wscf-tests.war wscf11-tests.war"/>
+            <fileset dir="${tests.build.lib.dir}" includes="wscf-tests.jar"/>
+            <fileset dir="${wsas.tests.build.dir}/lib" includes="xts-test-servlet.jar"/>
         </ear>
     </target>
     
     <target name="tests.ear11" if="nobuild10">
-        <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf11-tests_application.xml">
+        <mkdir dir="${tests.build.dir}/ext/lib"/>
+        <copy todir="${tests.build.dir}/ext/lib">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-            <fileset dir="${tests.build.webapps.dir}" includes="wscf11-tests.war wscf-tests.jar"/>
-            <fileset dir="${wsas.tests.build.lib.dir}" includes="xts-test-servlet.jar"/>
+        </copy>
+        <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf11-tests_application.xml"  manifest="${tests.dd.dir}/manifest.mf">
+            <fileset dir="${tests.build.dir}/ext" includes="lib/*"/>
+            <fileset dir="${tests.build.webapps.dir}" includes="wscf11-tests.war"/>
+            <fileset dir="${tests.build.dir}" includes="lib/wscf-tests.jar"/>
+            <fileset dir="${wsas.tests.build.dir}" includes="lib/xts-test-servlet.jar"/>
         </ear>
     </target>
 
