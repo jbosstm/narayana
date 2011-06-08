@@ -4,64 +4,39 @@
 
 1. Download required jars
 =========================
-To test a product download the relevant libraries and put them on the classpath.
-The required libraries for the following products
-	atomikos
-	bitronix
-	jbossts
-	jotm
-	simplejta
-are listed below but, with the exception of jbossts, you will need to download them.
+To test a product download the relevant libraries and put them in the lib directory:
+
+Atomikos release 3.7.0
+lib/atomikos/transactions-osgi.jar
+
+Bitronix release 2.1.0
+lib/btm/btm-2.1.0.jar
+lib/btm/lib/slf4j-api-1.6.0.jar
+lib/btm/lib/slf4j-log4j12-1.6.0.jar
+lib/btm/lib/log4j-1.2.14.jar 
+
+JOTM release 2.2.1
+Copy the contents of the lib dir from JOTM distribution to 
+lib/jotm
+
+JBossTS jars are sourced from the build
+
 The compile ant target below currently excludes all products (except JBossTS) - once
 you have the available jars for a product remember to remove the exclude line.
-
-2. Download required dbs
-========================
-The tests operate against XA resources.
-The required libraries for the following databases
-	H2
-	Derby
-	Mysql
-are listed below but, with the exception of H2, you will need to download them.
-
-Thus a test of the JBossTS product with 2 H2 XA resources should work out of the box.
-
-[If mysql or derby support is required then uncomment the appropriate data source
-initialisation methods in class com.arjuna.ats.tools.perftest.DbWrapper]
 
 3. Adding suport for a new product
 ==================================
 The following steps are needed to integrate a new transaction product:
 - obtain the required jars and add them to the classpath
-- write a class that extends com.arjuna.ats.tools.perftest.product.Product
-  implement all the abstract methods
-  you may override any accessible methods in the base class if required
-  (take a look at any of the existing sub-classes of Product to see what's available).
-- put any required configuration files in the resources directory ${res.dir} make sure
-  they are accessible when running a target (see the run target below for examples)
+- write a class that extends the abstract class org.narayana.tools.perf.WorkerTask
 
 4. Testing a product
 ====================
-To test a particular product add it to the following ant property:
-	<property name="products" value="class name of the Product subclass, other products to test" />
+To test particular products specify them on the command line with a -p flag (comma separated). For example:
 
-You can control various parameters by passing args to the JVM (or use xargs=arg1%arg2%... to bundle args together):
-	tx.count=<no of txns>
-	db.user=<comma separated list of db users>
-	db.password=<comma separated list of db passwords>
-	db.url=<comma separated list of db urls>
+	ant -Dargs="-p org.narayana.tools.perf.AtomikosWorkerTask,org.narayana.tools.perf.NarayanaWorkerTask,org.narayana.tools.perf.BitronixWorkerTask,org.narayana.tools.perf.JotmWorkerTask -i 100 -t 5"
 
-When testing the JBossTS project you can tweek parameters via its properties file by setting the ant propery
-        <property name="propfile" value="path to jbossts property file"/>
-
-Test run output is stored in files controlled by two ant properties called result.file and csv.file
-
-You can override some properties from the command line:
-	ant -Dxargs=... -Dproducts=... -Dpropfile=...
-
-for example to use a property file called newproperties.xml with the JBossTS product, perhaps for testing
-different object store implementations, the command would be
-	ant -Dpropfile=newproperties.xml
+will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using 5 threads for each product.
   -->
 
 <project name="JBoss" default="run" basedir=".">
@@ -69,7 +44,7 @@ different object store implementations, the command would be
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="build.dir" value="${basedir}/build" />
     <property name="build.classes.dir" value="${build.dir}/classes" />
-    <property name="jbossts.home" value="../../../install" />
+    <property name="jbossts.install" value="../../../install" />
     <!--
         location of resources needed by the various products
       -->
@@ -77,83 +52,51 @@ different object store implementations, the command would be
     <property name="log.dir" value="logs" />
     <property name="suspend" value="n" />
 
-    <!-- Atomikos: http://www.atomikos.com/Main/TransactionsEssentials -->
-    <path id="classpath.atomikos">
-        <pathelement location="${lib.dir}/atomikos/transactions-essentials-all.jar" />
-    </path>
-    <!-- Bitronix: http://docs.codehaus.org/display/BTM/Download -->
+    <!-- Bitronix: http://docs.codehaus.org/display/BTM/Download release 2.1.0 -->
     <path id="classpath.bitronix">
-        <pathelement location="${lib.dir}/btm/btm-1.2.jar" />
-        <pathelement location="${lib.dir}/btm/slf4j-api-1.4.3.jar" />
-        <pathelement location="${lib.dir}/btm/slf4j-jdk14-1.4.3.jar" />
+		<pathelement location="${lib.dir}/btm/btm-2.1.0.jar" />
+		<pathelement location="${lib.dir}/btm/lib/slf4j-api-1.6.0.jar" />
+		<pathelement location="${lib.dir}/btm/lib/slf4j-log4j12-1.6.0.jar" />
+		<pathelement location="${lib.dir}/btm/lib/log4j-1.2.14.jar" />
     </path>
-    <!-- JBossTS: http://www.jboss.org/download/ -->
-    <path id="classpath.jbossts">
-        <pathelement location="${jbossts.home}/lib/ext/jbossts-common.jar" />
-
-<!--
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
--->
-        <pathelement location="${jbossts.home}/lib/jbossjta.jar" />
-        <pathelement location="${jbossts.home}/lib/jbossjts.jar" />
-
-        <pathelement location="${lib.dir}/jbossts/fscontext.jar" />
-        <pathelement location="${lib.dir}/jbossts/providerutil.jar" />
+    <!-- Atomikos: http://www.atomikos.com/Main/TransactionsEssentials release 3.7.0 -->
+    <path id="classpath.atomikos">
+		<pathelement location="${lib.dir}/atomikos/transactions-osgi.jar" />
     </path>
-    <!-- apache logging -->
-    <path id="classpath.common">
-        <pathelement location="${jbossts.home}/lib/ext/log4j-1.2.14.jar" />
-    </path>
-    <!-- JOTM: http://jotm.objectweb.org/download/index.html -->
+    <!-- JOTM: http://jotm.objectweb.org/download/index.html release 2.2.1 -->
     <path id="classpath.jotm">
-        <pathelement location="${lib.dir}/jotm/connector-1_5.jar" />
+        <pathelement location="${lib.dir}/jotm/ow2-connector-1.5-spec.jar" />
         <pathelement location="${lib.dir}/jotm/howl.jar" />
-        <pathelement location="${lib.dir}/jotm/jotm_iiop_stubs.jar" />
-        <pathelement location="${lib.dir}/jotm/jotm.jar" />
-        <pathelement location="${lib.dir}/jotm/jotm_jrmp_stubs.jar" />
-        <pathelement location="${lib.dir}/jotm/ow_carol.jar" />
+        <pathelement location="${lib.dir}/jotm/jotm-standalone.jar" />
+        <pathelement location="${lib.dir}/jotm/carol.jar" />
         <pathelement location="${lib.dir}/jotm/xapool.jar" />
+        <pathelement location="${lib.dir}/jotm/jotm-core.jar" />
+        <pathelement location="${lib.dir}/jotm/jotm-client.jar" />
+    </path>
+    <!-- JBossTS: http://www.jboss.org/download/ the current build -->
+    <path id="classpath.jbossts">
+        <pathelement location="${jbossts.install}/lib/jbossjta.jar" />
+        <pathelement location="${jbossts.install}/../build/extlib/netty.jar" />
+        <pathelement location="${jbossts.install}/lib/ext/hornetq-core.jar" />
+        <pathelement location="${jbossts.install}/lib/ext/jboss-logging.jar" />
     </path>
     <!-- SimpleJTA: https://simple-jta.dev.java.net/servlets/ProjectDocumentList -->
     <path id="classpath.simplejta">
         <pathelement location="${lib.dir}/simplejta/simplejta-1.07.jar" />
     </path>
-    
-    <path id="classpath.j2ee">
-        <fileset dir="${jbossts.home}/lib/ext" includes="jta-1_1-classes.zip"/>
-    </path>
-    <!-- http://db.apache.org/derby/index.html -->
-    <!-- or http://mvnrepository.com/artifact/org.apache.derby -->
-    <path id="classpath.derby">
-        <pathelement location="${lib.dir}/common/db/derby/derbyclient.jar" />
-        <pathelement location="${lib.dir}/common/db/derby/derby.jar" />
-        <pathelement location="${lib.dir}/common/db/derby/derbynet.jar" />
-        <pathelement location="${lib.dir}/common/db/derby/derbyrun.jar" />
-        <pathelement location="${lib.dir}/common/db/derby/derbytools.jar" />
-    </path>
-    <!-- http://www.h2database.com/html/download.html -->
-    <!-- http://dev.mysql.com/downloads/ (get the XA driver) -->
-    <path id="classpath.driver">
-        <pathelement location="${lib.dir}/common/db/driver/h2.jar" />
-        <pathelement location="${lib.dir}/common/db/driver/mysql-connector-java-5.0.8-bin.jar" />
+	<!-- common dependencies -->
+    <path id="classpath.common">
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${res.dir}"/>
     </path>
 
     <!-- Build classpath -->
     <path id="classpath">
-        <pathelement location="${res.dir}"/>
-        <pathelement location="${build.classes.dir}"/>
-
-        <path refid="classpath.atomikos" />
-        <path refid="classpath.bitronix" />
-        <path refid="classpath.jbossts" />
-        <path refid="classpath.common"/>
-        <path refid="classpath.jotm"/>
-        <path refid="classpath.simplejta"/>
-        <path refid="classpath.j2ee"/>
-        <path refid="classpath.derby"/>
-        <path refid="classpath.driver"/>
+		<path refid="classpath.bitronix"/>
+		<path refid="classpath.atomikos"/>
+		<path refid="classpath.jotm"/>
+		<path refid="classpath.jbossts"/>
+		<path refid="classpath.common"/>
     </path>
 
 <!--
@@ -163,8 +106,6 @@ different object store implementations, the command would be
 -->
 
     <target name="init">
-        <available file="${jbossts.home}/lib/jbossjta.jar" property="is.jta" />
-        <fail message="The tests only build on JTA version of JBossTS" unless="is.jta" />
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.classes.dir}"/>
         <mkdir dir="${log.dir}"/>
@@ -175,59 +116,37 @@ different object store implementations, the command would be
                destdir="${build.classes.dir}"
                debug="on"
                deprecation="on"
-               optimize="off"
+               optimize="on"
                includes="**">
             <classpath refid="classpath"/>
-            <exclude name="com/arjuna/ats/tools/perftest/product/AtomikosProduct.java" />
-            <exclude name="com/arjuna/ats/tools/perftest/product/BitronixProduct.java"/>
+
+			<exclude name="org/narayana/tools/perf/AtomikosWorkerTask.java" />
+			<exclude name="org/narayana/tools/perf/BitronixWorkerTask.java" />
+			<exclude name="org/narayana/tools/perf/JotmWorkerTask.java" />
+
 <!--
-            <exclude name="com/arjuna/ats/tools/perftest/product/JBossTSProduct.java" />
+            <compilerarg value="-Xlint"/>
 -->
-            <exclude name="com/arjuna/ats/tools/perftest/product/JOTMProduct.java" />
-            <exclude name="com/arjuna/ats/tools/perftest/product/SimpleJTAProduct.java" />
         </javac>
     </target>
 
-    <target name="init.products" unless="products">
-        <property name="products" value="com.arjuna.ats.tools.perftest.product.NonXAProduct,com.arjuna.ats.tools.perftest.product.XAProduct,com.arjuna.ats.tools.perftest.product.JBossTSProduct,com.arjuna.ats.tools.perftest.product.BitronixProduct,com.arjuna.ats.tools.perftest.product.AtomikosProduct"/>
-    </target>
+    <property name="args.all" value="-p org.narayana.tools.perf.AtomikosWorkerTask,org.narayana.tools.perf.NarayanaWorkerTask,org.narayana.tools.perf.BitronixWorkerTask,org.narayana.tools.perf.JotmWorkerTask -i 100 -t 5" />
+    <property name="args" value="-p org.narayana.tools.perf.NarayanaWorkerTask -i 100 -t 5" />
 
-    <target name="init.xargs" unless="xargs">
-        <property name="xargs" value="tx.count=100%thread.count=1%db.user=user1,user2%db.password=user1,user2%db.url=jdbc:h2:db1%db.url=jdbc:h2:db2"/>
-    </target>
+    <target name="run" depends="compile">
+        <java classname="org.narayana.tools.perf.TxnPerformanceTest" fork="yes" dir=".">
 
-    <target name="init.propfile" unless="propfile">
-        <available file="${jbossts.home}/etc/jbossjta-properties.xml" property="propfile"
-                   value="${jbossts.home}/etc/jbossjta-properties.xml" />
-        <available file="${jbossts.home}/etc/jbossjts-properties.xml" property="propfile"
-                   value="${jbossts.home}/etc/jbossjts-properties.xml" />
-    </target>
-
-    <target name="jar" depends="compile">
-        <jar destfile="${build.dir}/harness.jar">
-            <fileset dir="${build.classes.dir}">
-            </fileset>
-        </jar>
-    </target>
-
-    <target name="run" depends="compile,init.products,init.xargs,init.propfile">
-        <java classname="com.arjuna.ats.tools.perftest.product.Product" fork="yes" dir=".">
             <classpath refid="classpath"/>
-            <!-- a list of products to be compared -->
-            <sysproperty key="products" value="${products}" />
-            <!-- test run arguments -->
-            <sysproperty key="xargs" value="${xargs}" />
-
             <!-- config files for each supported product -->
+			<!--
             <sysproperty key="com.arjuna.ats.arjuna.common.propertiesFile" value="${propfile}" />
+            -->
             <sysproperty key="jotm.base" value="${res.dir}" />
             <jvmarg value="-Dcom.atomikos.icatch.file=${res.dir}/atomikos.properties"/>
             <jvmarg value="-Dbitronix.tm.configuration=${res.dir}/btm.properties"/>
-            <sysproperty key="h2.baseDir" value="${log.dir}" />
 
-            <!-- location of output files -->
-            <arg value="result.file=${log.dir}/result.log"/>
-            <arg value="csv.file=${log.dir}/result.csv"/>
+			<!-- commandline args -->
+            <arg value="${args}" />
 <!--
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend},address=5005" />
             <jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
@@ -241,5 +160,7 @@ different object store implementations, the command would be
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${log.dir}"/>
+        <delete dir="ObjectStore"/>
+        <delete file="transaction.log"/>
     </target>
 </project>
