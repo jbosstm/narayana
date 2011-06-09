@@ -144,7 +144,7 @@
       </para>
 
       <para>
-        The tool depends on the JFree graphing library. Download and upack orson from
+        The tool depends on the JFree graphing library. Download and unpack orson from
         http://www.jfree.org/orson.
         Set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
         If you intend to use the tool with jconsole you will also need to put the JDK tools and
