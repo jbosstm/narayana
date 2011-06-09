@@ -8,10 +8,6 @@
   <para>
     This chapter explains how to start and use the tools framework and what tools are available.
   </para>
-   <note>
-<para>For this version of &PRODUCT; the GUI based tools are mainly documented in the file &lt;INSTALL_ROOT&gt;/INSTALL
-</para>
-</note>
 
     <section>
       <title>ObjectStore command-line editors</title>
@@ -129,4 +125,58 @@
                 </tgroup> </table> 
 </section>
 </section>
+
+  <section>
+    <title>GUI Based Tools</title>
+    <section>
+      <title>Embedded Console</title>
+      <para>
+        Transaction management is integrated into the admin console in the form of a JOPR plugin
+        which is located in the install bin directory (jbossts-jopr-plugin.jar). Install it by copying
+        to the admin console plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins).
+      </para>
+    </section>
+    <section>
+      <title>Performance Graphing</title>
+      <para>
+        There is a transaction statistics graphing tool which can run standalone or inside a
+        jconsole tab (jconsole is a tool for managing JVMs and is distributed with the reference JDK):
+      </para>
+
+      <para>
+        The tool depends on the JFree graphing library. Download and upack orson from
+        http://www.jfree.org/orson.
+        Set the env variable ORSON_HOME to the directory where you plan to unpack the downloaded zip.
+        If you intend to use the tool with jconsole you will also need to put the JDK tools and
+        jconsole jars on the classpath:
+      </para>
+
+        <screen><command>
+        export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/jbossjta.jar>"
+        </command></screen>
+
+      <section>
+        <title>Standalone Usage</title>
+
+        <screen><command>
+          java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
+        </command></screen>
+
+		<para>
+          (note that standalone usage does not require the JDK tools and jconsole jars)
+		</para>
+      </section>
+      <section>
+        <title>Usage with jconsole</title>
+
+        <screen><command>
+          jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/jbossjta.jar
+        </command></screen>
+		<para>
+          This command will launch the jconsole GUI in which there will be an extra tab for
+          displaying transaction performance statistics.
+		</para>
+      </section>
+    </section>
+  </section>
 </chapter>
