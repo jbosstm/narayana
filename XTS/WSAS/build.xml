@@ -150,7 +150,7 @@
       <copy file="${tests.dd.dir}/wsas-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml">
       </copy>
         <jar jarfile="${tests.build.lib.dir}/wsas-tests.jar" basedir="${tests.build.classes.dir}" excludes="com/arjuna/qa/junit/*.class" manifest="${tests.dd.dir}/manifest.mf"/>
-        <jar jarfile="${tests.build.lib.dir}/xts-test-servlet.jar" basedir="${tests.build.classes.dir}" includes="com/arjuna/qa/junit/*.class" manifest="${tests.dd.dir}/manifest.mf"/>
+        <jar jarfile="${tests.build.lib.dir}/xts-test-servlet.jar" basedir="${tests.build.classes.dir}" includes="com/arjuna/qa/junit/*.class" manifest="${tests.dd.dir}/war.manifest.mf"/>
       <war warfile="${tests.build.webapps.dir}/wsas-tests.war" webxml="${tests.build.dd.dir}/web-app.xml" manifest="${tests.dd.dir}/war.manifest.mf">
       </war>
     </target>
