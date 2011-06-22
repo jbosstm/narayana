@@ -28,9 +28,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <!--
         <configuration>
           <workingDirectory>${build.directory}/surefire-working-directory</workingDirectory>
         </configuration>
+        -->
       </plugin>
     </plugins>
   </build>
