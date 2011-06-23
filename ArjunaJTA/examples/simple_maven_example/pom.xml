@@ -47,8 +47,15 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>TransactionManagerExample</mainClass>
+          <executable>java</executable>
           <workingDirectory>${build.directory}/exec-working-directory</workingDirectory>
+          <arguments>
+            <argument>-classpath</argument>
+            <!-- automatically creates the classpath using all project dependencies, 
+              also adding the project build directory -->
+            <classpath />
+            <argument>TransactionManagerExample</argument>
+          </arguments>
         </configuration>
       </plugin>
     </plugins>
