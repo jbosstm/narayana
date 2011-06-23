@@ -172,8 +172,6 @@
 	</dependencies>
 
 	<modules>
-		<module>basic</module>
-		<module>recovery</module>
 		<module>maven</module>
 		<module>integration</module>
 	</modules>
