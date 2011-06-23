@@ -67,7 +67,7 @@
 
     <!-- override to disable publican use -->
     <property name="publican" value="true"/>
-    <property name="publican.build.dir" value="docs/build"/>
+    <property name="publican.build.dir" value="docs/Transactions_XTS_Administration_And_Development_Guide/target/publican"/>
 
     <!-- by default we build 1.0 and 1.1 for ease of testing,
         but release bundles should use -Dsartype=sar-11 so that

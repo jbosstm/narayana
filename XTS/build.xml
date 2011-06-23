@@ -168,7 +168,7 @@
                     <arg value="--formats=pdf,html"/>
                 </exec>
                 <copy todir="${xts.installationdirectory}/docs" flatten="true">
-                    <fileset dir="${publican.build.dir}" includes="*/en-US/pdf/*.pdf"/>
+                    <fileset dir="${publican.build.dir}" includes="en-US/pdf/*.pdf"/>
                 </copy>
             </then>
         </if>
