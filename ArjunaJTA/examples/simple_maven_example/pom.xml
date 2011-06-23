@@ -35,7 +35,7 @@
           <workingDirectory>${build.directory}/surefire-working-directory</workingDirectory>
         </configuration>
       </plugin>
-      <!-- This plugin allows our example to be executed by maven by default -->
+      <!-- This plugin allows our example to be executed by maven -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
