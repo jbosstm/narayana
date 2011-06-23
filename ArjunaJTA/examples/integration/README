@@ -11,11 +11,24 @@ should have received a copy of the GNU Lesser General Public License, v.2.1
 along with this distribution; if not, write to the Free Software Foundation, 
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
 
+
 OVERVIEW
 --------
 This shows how to develop an EJB with transactional attributes and a JPA entity
 bean and then test it using TS deployed in JBossAS using Arquillian
 
+
 USAGE
 -----
 mvn install
+
+
+EXPECTED OUTPUT
+---------------
+As well as the normal output you would expect to see from maven, you should also see:
+1. A JBossAS instance starting up under mavens control
+	15:57:59,754 INFO  [ContainerRegistryCreator] Could not read active container configuration: null
+	15:58:00,255 INFO  [AbstractJBossASServerBase] Server Configuration:
+	<SNIP/>
+	15:58:22,005 INFO  [org.jboss.bootstrap.impl.base.server.AbstractServer] JBossAS [6.0.0.Final "Neo"] Started in 21s:739ms
+2. Output from the maven test showing that all the tests ran OK
