@@ -161,6 +161,7 @@
     
     <target name="api-jar" depends="compile, api-both-jar, api11-jar"/>
 
+    <!-- build the service jar -->
     <target name="service-jar" depends="compile">
         <jar jarfile="${build.dir}/service.jar">
             <!-- include sar boot and shutdown codes -->
@@ -168,6 +169,50 @@
         </jar>
         <copy file="${build.dir}/service.jar" tofile="${lib.dir}/service.jar"/>
     </target>
+
+    <!-- build the full implementation jar -->
+    <target name="impl-both-jar" if="build10">
+        <mkdir dir="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wsas.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wscf.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wscf10.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wscf11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-c.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-t.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wstx.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wstx10.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wstx11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
+        <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
+        <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
+        <delete dir="${build.dir}/tmp/impl"/>
+    </target>
+
+    <!-- build the 1.1 implementation jar -->
+    <target name="impl11-jar" if="nobuild10">
+        <mkdir dir="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wsas.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wscf.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wscf11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-c.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-t.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wstx.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/wstx11.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
+        <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
+        <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
+        <delete dir="${build.dir}/tmp/impl"/>
+    </target>
+
+    <target name="impl-jar" depends="compile, impl-both-jar, impl11-jar"/>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
     <target name="sar-both" if="build10">
@@ -237,7 +282,7 @@
         </jar>
     </target>
 
-    <target name="sar" depends="api-jar, service-jar, sar-both, sar-11"/>
+    <target name="sar" depends="api-jar, service-jar, impl-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>
