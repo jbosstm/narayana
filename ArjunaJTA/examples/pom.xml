@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jboss.narayana.examples</groupId>
-    <artifactId>jta-examples</artifactId>
+    <groupId>org.jboss.narayana.jta.examples</groupId>
+    <artifactId>examples</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>All examples of JBoss JTA</name>
+    <name>JBoss JTA Examples</name>
     <description>All examples of JBoss JTA</description>
 
 	<repositories>
@@ -34,7 +34,7 @@
 					</configuration>
 
 					<forkMode>pertest</forkMode>
-					<workingDirectory>target/test-classes</workingDirectory>
+					<workingDirectory>${project.build.directory}/surefire-working-directory</workingDirectory>
 					<runOrder>alphabetical</runOrder>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<inherited>true</inherited>
@@ -49,19 +49,6 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<testClassesDirectory>true</testClassesDirectory>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-					</archive>
-				</configuration>
-	  		</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
@@ -69,33 +56,13 @@
 					<target>1.6</target>
 				</configuration>
 	  		</plugin>
-	  <!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<configuration>
-						<skipTests>true</skipTests>
-					</configuration>
 
-					<forkMode>pertest</forkMode>
-					<workingDirectory>target/test-classes</workingDirectory>
-					<runOrder>alphabetical</runOrder>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<inherited>true</inherited>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.jboss.narayana.examples.XAResourceTest</mainClass>
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
@@ -105,20 +72,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-	  				<filesets>
-						<fileset>
-		  					<directory>PutObjectStoreDirHere</directory>
-						</fileset>
-						<fileset>
-		  					<directory>ObjectStore</directory>
-						</fileset>
-	  				</filesets>
-				</configuration>
-  			</plugin>
 
 		</plugins>
 	</build>
@@ -129,12 +82,6 @@
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
 			<version>1.0.0.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.jms</groupId>
-			<artifactId>jboss-jms-api_1.1_spec</artifactId>
-			<version>1.0.0.Final</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
 			<artifactId>jbossjta</artifactId>
@@ -152,26 +99,12 @@
 			<version>4.6</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Embedded Hornetq -->
-		<dependency>
-			<groupId>org.hornetq</groupId>
-			<artifactId>hornetq-core</artifactId>
-			<version>2.2.2.Final</version>
-		</dependency>
-		<dependency>  
-		   <groupId>org.hornetq</groupId>  
-		   <artifactId>hornetq-jms</artifactId>  
-		   <version>2.2.2.Final</version>  
-		</dependency>  
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<version>3.2.0.Final</version>
-		</dependency>
 	</dependencies>
 
 	<modules>
+		<module>javax_transaction</module>
+		<module>object_store/</module>
+		<module>recovery</module>
 		<module>maven</module>
 		<module>integration</module>
 	</modules>

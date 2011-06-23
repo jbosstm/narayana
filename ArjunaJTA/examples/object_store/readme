@@ -1,0 +1,15 @@
+	There are 3 object store examples:
+
+	1. A transaction manager stores its commit decision after before deciding to commit a transaction.
+	   This example shows how to change the store type to an (unsafe) in memory store:
+		org.jboss.narayana.jta.examples.VolatileStoreExample
+	2. This example shows how to change the store type to use the fast Hornetq journal:
+		org.jboss.narayana.jta.examples.HornetqStoreExample
+	3. This example shows how to change the store type to a file base store but in directory different from the default:
+		org.jboss.narayana.jta.examples.FileStoreExample
+
+	When running an example an exit code of zero represents success (otherwise failure together with an exception trace)
+
+	To run an example use the maven java exec plugin. For example to run the first example:
+
+	mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.VolatileStoreExample
