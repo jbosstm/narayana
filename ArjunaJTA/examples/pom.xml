@@ -174,7 +174,7 @@
 	<modules>
 		<module>basic</module>
 		<module>recovery</module>
-		<module>simple_maven_example</module>
-		<module>simple_integration_example</module>
+		<module>maven</module>
+		<module>integration</module>
 	</modules>
 </project>
