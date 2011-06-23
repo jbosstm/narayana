@@ -49,13 +49,7 @@
           <redirectTestOutputToFile>false</redirectTestOutputToFile>
           <trimStackTrace>false</trimStackTrace>
           <printSummary>true</printSummary>
-          <argLine>-Xmx512m -XX:MaxPermSize=256m
-            -Djava.net.preferIPv4Stack=true
-            -Djava.util.logging.manager=org.jboss.logmanager.LogManager
-            -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.Final/lib/endorsed
-            -Djboss.home=${project.build.directory}/jboss-6.0.0.Final
-            -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.Final
-            -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
+          <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.Final/lib/endorsed -Djboss.home=${project.build.directory}/jboss-6.0.0.Final -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.Final -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
         </configuration>
       </plugin>
     </plugins>
