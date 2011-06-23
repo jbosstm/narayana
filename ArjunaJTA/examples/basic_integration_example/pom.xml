@@ -8,9 +8,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.examples</groupId>
-  <artifactId>simple_integration_example</artifactId>
-  <name>simple_integration_example</name>
-  <description>simple_integration_example</description>
+  <artifactId>basic_integration_example</artifactId>
+  <name>basic_integration_example</name>
+  <description>basic_integration_example</description>
   <build>
     <plugins>
       <plugin>

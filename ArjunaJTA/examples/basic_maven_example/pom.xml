@@ -21,10 +21,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.examples</groupId>
-  <artifactId>simple_maven_example</artifactId>
+  <artifactId>basic_maven_example</artifactId>
   <packaging>jar</packaging>
-  <name>simple_maven_example</name>
-  <description>simple_maven_example</description>
+  <name>basic_maven_example</name>
+  <description>basic_maven_example</description>
   <build>
     <plugins>
       <!-- This plugin allows our example to be tested -->
