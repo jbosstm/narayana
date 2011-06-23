@@ -1,0 +1,2 @@
+This shows an example of how to include the jbossjta artifact in your own projects:
+	mvn compile exec:java

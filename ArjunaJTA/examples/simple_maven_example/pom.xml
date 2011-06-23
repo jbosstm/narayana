@@ -27,6 +27,7 @@
   <description>simple_maven_example</description>
   <build>
     <plugins>
+      <!-- This plugin allows our example to be tested -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -34,6 +35,7 @@
           <workingDirectory>${build.directory}/surefire-working-directory</workingDirectory>
         </configuration>
       </plugin>
+      <!-- This plugin allows our example to be executed by maven by default -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -45,6 +47,7 @@
           </execution>
         </executions>
         <configuration>
+          <mainClass>TransactionManagerExample</mainClass>
           <workingDirectory>${build.directory}/exec-working-directory</workingDirectory>
         </configuration>
       </plugin>
