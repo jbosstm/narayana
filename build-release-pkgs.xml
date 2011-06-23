@@ -70,12 +70,12 @@
             http://www.jboss.org/community/docs/DOC-11381  -->
 
 <!--
+-->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
     <property name="filename" value="5.0.0.SNAPSHOT"/>
     <property name="mvn.repositoryId" value="jboss-snapshots-repository"/>
     <property name="mvn.repo.url" value="https://repository.jboss.org/nexus/content/repositories/snapshots/"/>
--->
 
     <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
     <property name="workdir" location="/tmp/packaged_builds"/>
@@ -224,8 +224,13 @@
 
         <!-- xts -->
 
-        <mvn-artifact.macro artifact="jbossxts" packaging="sar"
-                            dir="${workdir}/build/${tag}/xts/sar"/>
+        <delete dir="${workdir}/build"/>
+        <mkdir dir="${workdir}/build"/>
+        <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
+        <mvn-artifact.macro artifact="jbossxts" packaging="jar"
+                            dir="${workdir}/build/${tag}/xts/lib"/>
+        <mvn-artifact.macro artifact="jbossxts-api" packaging="jar"
+                            dir="${workdir}/build/${tag}/xts/lib"/>
         <mvn-artifact.macro artifact="jbossxts-tests" packaging="zip"
                             dir="${workdir}/build/${tag}/xts/tests"/>
         <mvn-artifact.macro artifact="jbossxts-interop-tests" packaging="zip"
