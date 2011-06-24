@@ -87,11 +87,14 @@ public class TransactionExample {
 		utx.begin();
 
 		// abort the transaction
-		assert (utx.getStatus() == Status.STATUS_ACTIVE);
+		if (utx.getStatus() != Status.STATUS_ACTIVE)
+            throw new RuntimeException("transaction should have been active");
         utx.setRollbackOnly();
-        assert (utx.getStatus() == Status.STATUS_MARKED_ROLLBACK);
+        if (utx.getStatus() != Status.STATUS_MARKED_ROLLBACK)
+            throw new RuntimeException("transaction should have been marked rollback only");
         utx.rollback();
-        assert (utx.getStatus() == Status.STATUS_NO_TRANSACTION);
+        if (utx.getStatus() != Status.STATUS_NO_TRANSACTION)
+            throw new RuntimeException("transaction should not exist");
 	}
 
 	public void transactionTimeout() throws SystemException, NotSupportedException, InterruptedException, HeuristicRollbackException, HeuristicMixedException {

@@ -21,6 +21,8 @@
 package org.jboss.narayana.jta.examples.recovery;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jboss.narayana.jta.examples.util.DummyXAResource;
 import org.jboss.narayana.jta.examples.util.Util;
@@ -43,14 +45,6 @@ public class DummyRecovery extends RecoverySetup {
             System.err.println("to generate something to recover: java DummyRecovery -f");
             System.err.println("to recover after failure: java DummyRecovery -r");
         }
-    }
-
-    public static void beforeClass() {
-        startRecovery();
-    }
-
-    public static void afterClass() {
-        stopRecovery();
     }
 
     public void enlistmentFailure() throws NotSupportedException, RollbackException, SystemException, HeuristicMixedException, HeuristicRollbackException {

@@ -45,13 +45,17 @@ public class BasicXAExample extends RecoverySetup {
         tm.getTransaction().enlistResource(xares1);
         tm.getTransaction().enlistResource(xares2);
 
-        assert (xares1.startCalled);
+        if (!xares1.startCalled)
+            throw new RuntimeException("start should have called");
 
         // commit any transactional work that was done on the two dummy XA resources
         tm.commit();
 
-        assert (xares1.endCalled);
-        assert (xares1.prepareCalled);
-        assert (xares1.commitCalled);
+        if (!xares1.endCalled)
+            throw new RuntimeException("end should have called");
+        if (!xares1.prepareCalled)
+            throw new RuntimeException("prepare should have called");
+        if (!xares1.commitCalled)
+                throw new RuntimeException("commit should have called");
     }
 }

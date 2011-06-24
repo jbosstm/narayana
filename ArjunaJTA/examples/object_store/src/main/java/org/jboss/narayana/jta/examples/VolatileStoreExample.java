@@ -37,7 +37,8 @@ public class VolatileStoreExample {
         utx.begin();
         utx.commit();
 
-        assert (!new File(defaultStoreDir).exists());
+        if (new File(defaultStoreDir).exists())
+            throw new RuntimeException(defaultStoreDir + ": store directory should not have been created");
     }
 
     public static void setupStore() throws Exception {
@@ -45,5 +46,6 @@ public class VolatileStoreExample {
 
         BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "default").setObjectStoreType(storeClassName);
         BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setObjectStoreType(storeClassName);
+        Util.emptyObjectStore();
     }
 }

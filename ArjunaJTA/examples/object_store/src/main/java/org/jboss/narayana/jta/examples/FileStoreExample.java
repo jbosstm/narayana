@@ -37,7 +37,8 @@ public class FileStoreExample {
         utx.begin();
         utx.commit();
 
-        assert (new File(storeDir).exists());
+        if (!new File(storeDir).exists())
+            throw new RuntimeException(storeDir + " should have been created");
     }
 
     public static void setupStore() throws Exception {
