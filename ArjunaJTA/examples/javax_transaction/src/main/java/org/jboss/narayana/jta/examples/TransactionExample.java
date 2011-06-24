@@ -24,6 +24,7 @@ import javax.transaction.*;
 
 public class TransactionExample {
 	public static void main(String[] args) throws Exception {
+        System.setProperty("ObjectStoreBaseDir", "target");
         TransactionExample txeg = new TransactionExample();
 
 		txeg.commitUserTransaction();

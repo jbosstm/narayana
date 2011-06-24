@@ -8,3 +8,5 @@
 	To run an example use the maven java exec plugin. For example to run the first example:
 
 	mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.TransactionExample
+
+	By defalt transaction logs are stored in the current working directory (ObjectStore and PutObjectStoreDirHere).

@@ -27,7 +27,7 @@ import javax.transaction.UserTransaction;
 import java.io.File;
 
 public class FileStoreExample {
-    private static String storeDir = "TxStoreDir";
+    private static String storeDir = "target/TxStoreDir";
 
      public static void main(String[] args) throws Exception {
         setupStore();
@@ -42,5 +42,6 @@ public class FileStoreExample {
 
     public static void setupStore() throws Exception {
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).setObjectStoreDir(storeDir);
+        BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setObjectStoreDir(storeDir);
     }
 }

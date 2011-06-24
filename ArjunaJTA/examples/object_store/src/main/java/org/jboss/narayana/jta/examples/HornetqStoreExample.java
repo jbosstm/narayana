@@ -29,7 +29,7 @@ import java.io.File;
 
 public class HornetqStoreExample {
     private static final String storeClassName =  com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqObjectStoreAdaptor.class.getName();
-    private static final String storeDir = "HornetqStore";
+    private static final String storeDir = "target/HornetqStore";
 
     public static void main(String[] args) throws Exception {
         setupStore();
@@ -48,6 +48,7 @@ public class HornetqStoreExample {
                     .setStoreDir(hornetqStoreDir.getCanonicalPath());
 
         BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).setObjectStoreType(storeClassName);
+        BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setObjectStoreDir(storeDir);
 
         BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "default").setObjectStoreType(storeClassName);
         // TODO figure out why we can't use the hornetqStore as the communications store

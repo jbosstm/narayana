@@ -16,4 +16,23 @@
 	<artifactId>javax_transaction</artifactId>
 	<packaging>jar</packaging>
 	<name>Javax Transaction Examples</name>
+
+	<build>
+		<plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>PutObjectStoreDirHere</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>ObjectStore</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
 </project>
