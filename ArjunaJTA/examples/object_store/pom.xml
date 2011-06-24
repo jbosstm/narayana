@@ -9,27 +9,36 @@
 	</parent>
 
 	<description>
-	There are 4 basic examples:
-	1. Starting and ending transactions:
-		org.jboss.narayana.examples.basic.TransactionExample
-	2. Setting a transaction timeout:
-		org.jboss.narayana.examples.basic.TransactionTimeoutExample
-	3. A transaction manager stores its commit decision after before deciding to commit a transaction.
-	   This example shows how to change the store type to an (unsafe) in memory store:
-		org.jboss.narayana.examples.basic.VolatileStoreExample
-	4. This example shows how to change the store type to use the fast Hornetq journal:
-		org.jboss.narayana.examples.basic.HornetqStoreExample
-	5. This example shows how to change the store type to a file base store but in directory different from
-	   the default:
-		org.jboss.narayana.examples.basic.FileStoreExample
-
-	To run an example use the maven java exec pluging. For example to run the first example:
-
-	mvn -e exec:java -Dexec.classpathScope=test -Dexec.mainClass=org.jboss.narayana.examples.basic.TransactionExample
+	Examples showing how to configure different types of Object Store. Refer to the readme file for more details.
 	</description>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>object-store</artifactId>
 	<packaging>jar</packaging>
 	<name>Configuring the Object Store</name>
+
+    <build>
+      <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+          <executable>java</executable>
+          <arguments>
+            <argument>-classpath</argument>
+            <classpath />
+            <argument>org.jboss.narayana.jta.examples.FileStoreTest</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      </plugins>
+    </build>
 </project>

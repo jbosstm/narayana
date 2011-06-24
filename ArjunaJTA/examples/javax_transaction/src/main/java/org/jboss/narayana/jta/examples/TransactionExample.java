@@ -31,6 +31,7 @@ public class TransactionExample {
         txeg.rollbackUserTransaction();
         txeg.setRollbackOnly();
         txeg.transactionStatus();
+        txeg.transactionTimeout();
 	}
 
     public void commitUserTransaction() throws SystemException, NotSupportedException, RollbackException, HeuristicRollbackException, HeuristicMixedException {
@@ -90,5 +91,18 @@ public class TransactionExample {
         assert (utx.getStatus() == Status.STATUS_MARKED_ROLLBACK);
         utx.rollback();
         assert (utx.getStatus() == Status.STATUS_NO_TRANSACTION);
+	}
+
+	public void transactionTimeout() throws SystemException, NotSupportedException, InterruptedException, HeuristicRollbackException, HeuristicMixedException {
+		UserTransaction utx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+
+        utx.setTransactionTimeout(1);
+		utx.begin();
+        Thread.sleep(1500);
+         try {
+            utx.commit();
+            throw new RuntimeException("Should have got an exception whilst committing a transaction that exceeded its timeout");
+        } catch (RollbackException e) {
+        }
 	}
 }

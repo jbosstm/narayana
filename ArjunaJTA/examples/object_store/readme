@@ -6,7 +6,7 @@
 	2. This example shows how to change the store type to use the fast Hornetq journal:
 		org.jboss.narayana.jta.examples.HornetqStoreExample
 	3. This example shows how to change the store type to a file base store but in directory different from the default:
-		org.jboss.narayana.jta.examples.FileStoreExample
+		org.jboss.narayana.jta.examples.FileStoreTest
 
 	When running an example an exit code of zero represents success (otherwise failure together with an exception trace)
 
