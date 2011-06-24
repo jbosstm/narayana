@@ -32,46 +32,44 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
 @Stateless
-public class SimpleEjb implements SimpleEjbLocal {
+public class SimpleEJBImpl implements SimpleEJB {
 	@PersistenceContext(name = "my_persistence_ctx")
 	EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String getStatus() throws NamingException {
+	public int createCustomer(String name) throws NamingException {
 		UserTransaction tx = (UserTransaction) new InitialContext()
 				.lookup("java:comp/UserTransaction");
-		return "tom transactionally hacked this up: " + tx.toString();
-	}
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String getStatus2() throws NamingException {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
-		return "tom transactionally hacked this off: " + tx.toString();
-	}
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String createCustomerAndListIds() throws NamingException {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
+		System.out.println("createCustomer transaction is identified as: "
+				+ tx.toString());
 		Customer c1 = new Customer();
-		c1.setName("XYZ");
+		c1.setName(name);
 		em.persist(c1);
 
+		return c1.getId();
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public String listIds() throws NamingException {
+		UserTransaction tx = (UserTransaction) new InitialContext()
+				.lookup("java:comp/UserTransaction");
+		System.out.println("listIds transaction is identified as: "
+				+ tx.toString());
 		final List<Customer> list = em.createQuery("select c from Customer c")
 				.getResultList();
-		StringBuffer toReturn = new StringBuffer("customers (in tx "
-				+ tx.toString() + ": ");
+		StringBuffer toReturn = new StringBuffer("customers: ");
 		boolean added = false;
 		for (Customer customer : list) {
-			int id = customer.getId();
-			toReturn.append(id);
+			toReturn.append(customer.getId());
+			toReturn.append("/");
+			toReturn.append(customer.getName());
 			toReturn.append(", ");
 			added = true;
 		}
 		if (added) {
-			toReturn.delete(toReturn.length() - 3, toReturn.length() - 1);
+			return toReturn.substring(0, toReturn.length() - 3);
+		} else {
+			return toReturn.toString();
 		}
-		return toReturn.toString();
 	}
 }

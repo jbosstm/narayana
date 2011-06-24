@@ -5,57 +5,57 @@
 	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana</groupId>
-        <artifactId>narayana</artifactId>
-        <version>5.0.0.M1-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>common</artifactId>
-    <name>Arjuna core common</name>
-    <packaging>jar</packaging>
-    <build>
-        <sourceDirectory>classes</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>etc</directory>
-            </resource>
-        </resources>
-        <testSourceDirectory>tests</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/DummyProperties.java</exclude>
-                        <exclude>**/DummyEnvironmentBean.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <dependencies>
-        <!-- START TEST -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- END TEST -->
-    </dependencies>
+  <parent>
+    <groupId>org.jboss.narayana</groupId>
+    <artifactId>narayana</artifactId>
+    <version>5.0.0.M1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>common</artifactId>
+  <name>Arjuna core common</name>
+  <packaging>jar</packaging>
+  <build>
+    <sourceDirectory>classes</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>etc</directory>
+      </resource>
+    </resources>
+    <testSourceDirectory>tests</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <excludes>
+            <exclude>**/DummyProperties.java</exclude>
+            <exclude>**/DummyEnvironmentBean.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <!-- START TEST -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- END TEST -->
+  </dependencies>
 </project>

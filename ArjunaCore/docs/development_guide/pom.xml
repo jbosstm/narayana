@@ -12,49 +12,49 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana</groupId>
-        <artifactId>arjunacore-docs</artifactId>
-        <version>5.0.0.M1-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>arjunacore-dev-guide</artifactId>
-    <name>ArjunaCore devguide module</name>
-    <packaging>jar</packaging>
-    <build>
-        <outputDirectory>target/publican</outputDirectory>
-        <plugins>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target unless="skipPublican">
-                                <exec dir="." executable="publican" failonerror="true">
-                                    <arg value="build"/>
-                                    <arg value="--langs=en-US"/>
-                                    <arg value="--formats=pdf"/>
-                                    <arg value="--config=publican.cfg"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*.pdf</include>
-                    </includes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <parent>
+    <groupId>org.jboss.narayana</groupId>
+    <artifactId>arjunacore-docs</artifactId>
+    <version>5.0.0.M1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>arjunacore-dev-guide</artifactId>
+  <name>ArjunaCore devguide module</name>
+  <packaging>jar</packaging>
+  <build>
+    <outputDirectory>target/publican</outputDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <configuration>
+              <target unless="skipPublican">
+                <exec dir="." executable="publican" failonerror="true">
+                  <arg value="build"/>
+                  <arg value="--langs=en-US"/>
+                  <arg value="--formats=pdf"/>
+                  <arg value="--config=publican.cfg"/>
+                </exec>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*.pdf</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

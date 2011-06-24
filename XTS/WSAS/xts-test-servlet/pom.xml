@@ -12,26 +12,26 @@
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana</groupId>
-        <artifactId>wsas-all</artifactId>
-        <version>5.0.0.M1-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>xts-test-servlet</artifactId>
-    <packaging>jar</packaging>
-    <build>
-        <sourceDirectory>../tests/classes</sourceDirectory>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>com/arjuna/qa/junit/*.*</include>
-                    </includes>
-                </configuration>
-            </plugin>
+  <parent>
+    <groupId>org.jboss.narayana</groupId>
+    <artifactId>wsas-all</artifactId>
+    <version>5.0.0.M1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>xts-test-servlet</artifactId>
+  <packaging>jar</packaging>
+  <build>
+    <sourceDirectory>../tests/classes</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>com/arjuna/qa/junit/*.*</include>
+          </includes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -39,35 +39,32 @@
           <skipTests>true</skipTests>
         </configuration>
       </plugin>
-        </plugins>
-    </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.narayana</groupId>
-            <artifactId>wsas</artifactId>
-        </dependency>
-    
-        <dependency>
-            <groupId>org.jboss.narayana</groupId>
-            <artifactId>arjuna</artifactId>
-        </dependency>
-        <!-- XTS: -->
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-        </dependency>
-
-        <!-- test time dep only - XTS TestRunnerXMLServlet -->
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>wsas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>arjuna</artifactId>
+    </dependency>
+    <!-- XTS: -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+    </dependency>
+    <!-- test time dep only - XTS TestRunnerXMLServlet -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>

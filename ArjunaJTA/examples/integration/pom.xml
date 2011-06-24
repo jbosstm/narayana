@@ -1,75 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>org.jboss.narayana.jta.examples</groupId>
-    <artifactId>examples</artifactId>
-    <version>5.0.0.M1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.narayana.jta.examples</groupId>
   <artifactId>integration</artifactId>
+  <version>5.0.0.M1-SNAPSHOT</version>
   <name>basic integration example</name>
   <description>basic integration example</description>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss.jbossas</groupId>
-                  <artifactId>jboss-as-distribution</artifactId>
-                  <version>6.0.0.Final</version>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/client/jbossws-native-client.jar</additionalClasspathElement>
-            <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/server/default/deploy/jbossweb.sar</additionalClasspathElement>
-          </additionalClasspathElements>
-          <redirectTestOutputToFile>false</redirectTestOutputToFile>
-          <trimStackTrace>false</trimStackTrace>
-          <printSummary>true</printSummary>
-          <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.Final/lib/endorsed -Djboss.home=${project.build.directory}/jboss-6.0.0.Final -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.Final -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.jbossas</groupId>
-        <artifactId>jboss-as-depchain</artifactId>
-        <version>6.0.0.Final</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+  <packaging>war</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.arquillian.container</groupId>
-      <artifactId>arquillian-jbossas-embedded-6</artifactId>
-      <version>1.0.0.Alpha5</version>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <version>1.0.0.Final</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+      <version>1.0.0.Final</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ejb3</groupId>
+      <artifactId>jboss-ejb3-ext-api</artifactId>
+      <version>1.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.0-api</artifactId>
+      <version>1.0.0.Final</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian</groupId>
@@ -101,12 +62,102 @@
       <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-depchain</artifactId>
-      <version>6.0.0.Final</version>
-      <type>pom</type>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>jbossas-embedded-6</id>
+      <!-- <activation> <activeByDefault>true</activeByDefault> </activation> -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.jboss.jbossas</groupId>
+                      <artifactId>jboss-as-distribution</artifactId>
+                      <version>6.0.0.Final</version>
+                      <type>zip</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.build.directory}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/client/jbossws-native-client.jar</additionalClasspathElement>
+                <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/server/default/deploy/jbossweb.sar</additionalClasspathElement>
+              </additionalClasspathElements>
+              <redirectTestOutputToFile>false</redirectTestOutputToFile>
+              <trimStackTrace>false</trimStackTrace>
+              <printSummary>true</printSummary>
+              <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.Final/lib/endorsed -Djboss.home=${project.build.directory}/jboss-6.0.0.Final -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.Final -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-as-depchain</artifactId>
+            <version>6.0.0.Final</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-jbossas-embedded-6</artifactId>
+          <version>1.0.0.Alpha5</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.jbossas</groupId>
+          <artifactId>jboss-as-depchain</artifactId>
+          <version>6.0.0.Final</version>
+          <type>pom</type>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>jbossas-remote-6</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-jbossas-remote-6</artifactId>
+          <version>1.0.0.Alpha5</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.jbossas</groupId>
+          <artifactId>jboss-as-depchain</artifactId>
+          <version>6.0.0.Final</version>
+          <type>pom</type>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.jbossas</groupId>
+          <artifactId>jboss-as-client</artifactId>
+          <version>6.0.0.Final</version>
+          <type>pom</type>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

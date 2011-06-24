@@ -1,145 +1,145 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jboss.narayana</groupId>
-        <artifactId>narayana</artifactId>
-        <version>5.0.0.M1-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-    </parent>
-    <artifactId>jbossts-jopr-plugin</artifactId>
-    <packaging>jar</packaging>
-    <name>Jopr Test Plugin</name>
-    <description>A plugin for managing services</description>
-    <repositories>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Maven Repository Group</name>
-            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create_javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <detectOfflineLinks>false</detectOfflineLinks>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <dependencies>
-        <!-- Below are the core modules that are required dependencies of all plugins -->
-        <dependency>
-            <groupId>org.rhq</groupId>
-            <artifactId>rhq-core-domain</artifactId>
-            <version>${rhq.version}</version>
-            <scope>provided</scope>
-            <!-- provided by the agent/plugin-container -->
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.stream</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.rhq</groupId>
-            <artifactId>rhq-core-plugin-api</artifactId>
-            <version>${rhq.version}</version>
-            <scope>provided</scope>
-            <!-- provided by the agent/plugin-container -->
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.stream</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.rhq</groupId>
-            <artifactId>rhq-core-native-system</artifactId>
-            <version>${rhq.version}</version>
-            <scope>provided</scope>
-            <!-- provided by the agent/plugin-container -->
-        </dependency>
-        <dependency>
-            <groupId>org.rhq</groupId>
-            <artifactId>rhq-jmx-plugin</artifactId>
-            <version>${rhq.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-            <!-- provided by the agent/plugin-container -->
-        </dependency>
-        <!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>3.5.6-Final</version>
-            <scope>provided</scope>
-            <!-- provided by the agent/plugin-container -->
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana</groupId>
+    <artifactId>narayana</artifactId>
+    <version>5.0.0.M1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>jbossts-jopr-plugin</artifactId>
+  <packaging>jar</packaging>
+  <name>Jopr Test Plugin</name>
+  <description>A plugin for managing services</description>
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create_javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <detectOfflineLinks>false</detectOfflineLinks>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <!-- Below are the core modules that are required dependencies of all plugins -->
+    <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-core-domain</artifactId>
+      <version>${rhq.version}</version>
+      <scope>provided</scope>
+      <!-- provided by the agent/plugin-container -->
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.stream</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-core-plugin-api</artifactId>
+      <version>${rhq.version}</version>
+      <scope>provided</scope>
+      <!-- provided by the agent/plugin-container -->
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.stream</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-core-native-system</artifactId>
+      <version>${rhq.version}</version>
+      <scope>provided</scope>
+      <!-- provided by the agent/plugin-container -->
+    </dependency>
+    <dependency>
+      <groupId>org.rhq</groupId>
+      <artifactId>rhq-jmx-plugin</artifactId>
+      <version>${rhq.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+      <!-- provided by the agent/plugin-container -->
+    </dependency>
+    <!-- Fix for the Javac bug requiring annotations to be available when compiling classes. (fixed in JDK 6) -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+      <version>3.5.6-Final</version>
+      <scope>provided</scope>
+      <!-- provided by the agent/plugin-container -->
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--
 		Uncomment the one of the three logging systems your plugin uses: log4j, commons-logging or i18nlog
 		All three are provided to your plugin by the agent/plugin-container.
 		-->
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-jmx-plugin</artifactId>
@@ -156,8 +156,8 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
         -->
-    </dependencies>
-    <properties>
-        <rhq.version>1.3.0.EmbJopr.1.3.0-4</rhq.version>
-    </properties>
+  </dependencies>
+  <properties>
+    <rhq.version>1.3.0.EmbJopr.1.3.0-4</rhq.version>
+  </properties>
 </project>

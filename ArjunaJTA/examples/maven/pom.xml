@@ -11,8 +11,7 @@
   should have received a copy of the GNU Lesser General Public License, v.2.1 
   along with this distribution; if not, write to the Free Software Foundation, 
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.jta.examples</groupId>
     <artifactId>examples</artifactId>
@@ -50,7 +49,7 @@
           <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
           <arguments>
             <argument>-classpath</argument>
-            <classpath />
+            <classpath/>
             <argument>TransactionManagerExample</argument>
           </arguments>
         </configuration>

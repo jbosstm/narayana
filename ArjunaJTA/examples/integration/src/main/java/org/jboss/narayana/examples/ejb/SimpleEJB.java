@@ -22,10 +22,17 @@ package org.jboss.narayana.examples.ejb;
 
 import javax.naming.NamingException;
 
-public interface SimpleEjbLocal {
-	public String getStatus() throws NamingException;
+/**
+ * A simple example to show some transactional business logic.
+ */
+public interface SimpleEJB {
+	/**
+	 * The business logic.
+	 * 
+	 * @return
+	 * @throws NamingException
+	 */
+	public int createCustomer(String name) throws NamingException;
 
-	public String getStatus2() throws NamingException;
-
-	public String createCustomerAndListIds() throws NamingException;
+	public String listIds() throws NamingException;
 }
