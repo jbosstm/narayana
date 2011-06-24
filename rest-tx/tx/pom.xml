@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>rest-tx</artifactId>
-        <version>1.0-M1-SNAPSHOT</version>
+        <version>5.0.0.M1-SNAPSHOT</version>
 	<relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -66,6 +66,35 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+    		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <version>1.0.0.Final</version>
+      <scope>provided</scope>
+    </dependency>
         <!-- Jersey -->
         <dependency>
             <groupId>asm</groupId>
