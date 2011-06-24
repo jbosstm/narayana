@@ -644,6 +644,8 @@
         <module>XTS</module>
         <!-- BUILT BY ArjunaJTS module>rhq-plugin</module-->
         <module>ArjunaJTS</module>
+        <!--
         <module>rest-tx</module>
+        -->
     </modules>
 </project>
