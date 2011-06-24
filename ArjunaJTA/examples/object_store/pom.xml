@@ -17,19 +17,4 @@
 	<packaging>jar</packaging>
 	<name>Configuring the Object Store</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- temporarily disable the Hornetq store test - it seems to hang -->
-                    <excludes>
-                        <exclude>**/HornetqStoreExample.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

@@ -13,5 +13,3 @@
 	To run an example use the maven java exec plugin. For example to run the first example:
 
 	mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.VolatileStoreExample
-
-WARNING: I've disabled the hornetq store example temporarily - it seems to be hanging

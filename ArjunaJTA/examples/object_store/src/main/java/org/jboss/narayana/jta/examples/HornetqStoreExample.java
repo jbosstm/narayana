@@ -21,6 +21,7 @@
 package org.jboss.narayana.jta.examples;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
@@ -38,8 +39,7 @@ public class HornetqStoreExample {
         utx.begin();
         utx.commit();
 
-        if (!new File(storeDir).exists())
-            throw new RuntimeException(storeDir + " should have been created");
+		shutdownStore();
     }
 
     public static void setupStore() throws Exception {
@@ -54,6 +54,12 @@ public class HornetqStoreExample {
         BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "default").setObjectStoreType(storeClassName);
         // TODO figure out why we can't use the hornetqStore as the communications store
         //BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setObjectStoreType(storeClassName);
-
     }
+
+    public static void shutdownStore() throws Exception {
+        StoreManager.shutdown();
+
+        if (!new File(storeDir).exists())
+            throw new RuntimeException(storeDir + " should have been created");
+	}
 }
