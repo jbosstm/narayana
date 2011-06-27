@@ -161,6 +161,29 @@
     
     <target name="api-jar" depends="compile, api-both-jar, api11-jar"/>
 
+    <!-- build the config jar -->
+    <target name="config-both-jar" depends="compile" if="build10">
+        <!-- create config jar containing conf files for 1.0 and 1.1 -->
+        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
+        <filter token="coordinator.port" value="${coordinator.port}"/>
+        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties.xml"/>
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${build.conf.dir}"/>
+        </jar>
+        <copy file="${build.dir}/config.jar" tofile="${lib.dir}/config.jar"/>
+    </target>
+
+    <target name="config11-jar" depends="compile" if="nobuild10">
+        <!-- create config jar containing conf files for 1.1 -->
+        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties11.xml"/>
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${build.conf.dir}"/>
+        </jar>
+        <copy file="${build.dir}/config.jar" tofile="${lib.dir}/config.jar"/>
+    </target>
+
+    <target name="config-jar" depends="compile, config-both-jar, config11-jar"/>
+
     <!-- build the service jar -->
     <target name="service-jar" depends="compile">
         <jar jarfile="${build.dir}/service.jar">
@@ -188,6 +211,7 @@
         <unjar src="${lib.dir}/wstx11.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/config.jar" dest="${build.dir}/tmp/impl"/>
         <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
         <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
         <delete dir="${build.dir}/tmp/impl"/>
@@ -207,6 +231,7 @@
         <unjar src="${lib.dir}/wstx11.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
+        <unjar src="${lib.dir}/config.jar" dest="${build.dir}/tmp/impl"/>
         <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
         <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
         <delete dir="${build.dir}/tmp/impl"/>
@@ -216,14 +241,6 @@
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
     <target name="sar-both" if="build10">
-        <!-- create config jar containing conf files for 1.0 and 1.1 -->
-        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
-        <filter token="coordinator.port" value="${coordinator.port}"/>
-        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties.xml"/>
-        <jar jarfile="${build.dir}/config.jar">
-            <fileset dir="${build.conf.dir}"/>
-        </jar>
-
         <!-- copy 11 and 1.0 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
 
@@ -261,12 +278,6 @@
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
     <target name="sar-11" if="nobuild10">
-        <!-- create config jar containing conf files for 1.1 -->
-        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties11.xml"/>
-        <jar jarfile="${build.dir}/config.jar">
-            <fileset dir="${build.conf.dir}"/>
-        </jar>
-
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
 
@@ -282,7 +293,7 @@
         </jar>
     </target>
 
-    <target name="sar" depends="api-jar, service-jar, impl-jar, sar-both, sar-11"/>
+    <target name="sar" depends="api-jar, service-jar, config-jar, impl-jar, sar-both, sar-11"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>
