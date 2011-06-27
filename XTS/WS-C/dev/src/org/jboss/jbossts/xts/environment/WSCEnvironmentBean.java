@@ -58,7 +58,7 @@ public class WSCEnvironmentBean
      * if this is undefined then a URL is constructed using the scheme, host address, port and URL path specified
      * in the properties file or, where they are missing, using their default values.
      */
-    @FullPropertyName(name = "org.jboss.jbossts.xts11.coordinatorYRL")
+    @FullPropertyName(name = "org.jboss.jbossts.xts11.coordinatorURL")
     private volatile String coordinatorURL11 = null;
 
     /**
