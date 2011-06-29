@@ -67,7 +67,7 @@ public class SimpleEJBImpl implements SimpleEJB {
 			added = true;
 		}
 		if (added) {
-			return toReturn.substring(0, toReturn.length() - 3);
+			return toReturn.substring(0, toReturn.length() - 2);
 		} else {
 			return toReturn.toString();
 		}
