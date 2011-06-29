@@ -21,6 +21,6 @@
     </repository>
   </repositories>
   <modules>
-    <module>txoj-stm</module>
+    <module>txoj</module>
   </modules>
 </project>
