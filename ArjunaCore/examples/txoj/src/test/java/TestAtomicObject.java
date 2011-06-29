@@ -1,4 +1,4 @@
-import org.jboss.narayana.examples.stm.AtomicObject;
+import org.jboss.narayana.examples.txoj.AtomicObject;
 import org.junit.Test;
 
 public class TestAtomicObject {

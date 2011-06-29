@@ -1,4 +1,4 @@
-package org.jboss.narayana.examples.stm;
+package org.jboss.narayana.examples.txoj;
 
 import java.io.IOException;
 
