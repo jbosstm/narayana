@@ -304,6 +304,7 @@
         <copy file="${dd.dir}/ws-t-rpc_handlers.xml" tofile="${build.classes11.dir}/ws-t-rpc_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes} ${ws-t11.coordinator.endpoint.classes} ${ws-t11.participant.endpoint.classes} ${ws-t11.client.endpoint.classes}"/>
+            <fileset dir="${build.classes11.dir}" includes="${ws-t11.api.classes} ${ws-t11.coordinator.endpoint.classes} ${ws-t11.participant.endpoint.classes} ${ws-t11.client.endpoint.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t11-api.jar">
             <fileset dir="${build.classes11.dir}" includes="${ws-t11.api.classes}"/>

@@ -180,6 +180,7 @@
         <copy file="${dd.dir}/ws-c_handlers.xml" tofile="${build.classes11.dir}/ws-c_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-c11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${ws-c11.coordinator.endpoint.classes}"/>
+            <fileset dir="${build.classes11.dir}" includes="${ws-c11.coordinator.endpoint.classes}"/>
         </jar>
     </target>
 
