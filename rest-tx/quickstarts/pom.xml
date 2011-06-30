@@ -16,23 +16,13 @@
 	02110-1301, USA.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-tx</artifactId>
-        <version>5.0.0.M1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>examples</artifactId>
-    <packaging>jar</packaging>
-    <name>Examples of RESTful Atomic Transactions</name>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>quickstarts</artifactId>
+    <version>5.0.0.M1-SNAPSHOT</version>
+    <name>RESTful Atomic Transaction Quickstarts</name>
     <description>Provides examples of how to use transactions with web applications</description>
-    <properties>
-        <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-        <version.artifactId>5.0.0.M1-SNAPSHOT</version.artifactId>
-        <artifactId.name>examples</artifactId.name>
-        <version.org.jboss.jbossas>6.0.0.20100721-M4</version.org.jboss.jbossas>
-    </properties>
+
     <repositories>
         <repository>
             <id>jboss-public-repository-group</id>
@@ -45,40 +35,16 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <!-- Jersey -->
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-        </repository>
-        <!-- end Jersey -->
     </repositories>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.jbossas</groupId>
-                <artifactId>jboss-as-component-matrix</artifactId>
-                <version>6.0.0.20100721-M4</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>rest-tx-api</artifactId>
             <version>5.0.0.M1-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -108,23 +74,6 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create_sources_jar</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <forceCreation>true</forceCreation>
-                    <includePom>true</includePom>
                 </configuration>
             </plugin>
         </plugins>
