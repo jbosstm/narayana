@@ -1,6 +1,6 @@
 @echo off
 
-echo "Running quickstart"
+echo "Running recovery quickstart"
 
 rem To run an example use the maven java exec pluging. For example to run the second recovery example
 mvn -e compile exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.recovery.DummyRecovery -Dexec.args="-f"

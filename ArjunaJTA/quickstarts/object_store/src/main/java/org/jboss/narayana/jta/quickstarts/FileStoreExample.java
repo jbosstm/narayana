@@ -18,7 +18,7 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples;
+package org.jboss.narayana.jta.quickstarts;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;

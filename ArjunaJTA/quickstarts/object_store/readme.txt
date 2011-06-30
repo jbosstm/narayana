@@ -20,11 +20,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 	2. This example shows how to change the store type to use the fast Hornetq journal:
 		org.jboss.narayana.jta.quickstarts.HornetqStoreExample
 	3. This example shows how to change the store type to a file base store but in directory different from the default:
-		org.jboss.narayana.jta.quickstarts.FileStoreTest
+		org.jboss.narayana.jta.quickstarts.FileStoreExample
 
 	When running an example an exit code of zero represents success (otherwise failure together with an exception trace)
 
 	To run an example use the maven java exec plugin:
 	mvn -e compile exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.VolatileStoreExample
 	mvn -e compile exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.HornetqStoreExample
-	mvn -e compile exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.FileStoreTest
+	mvn -e compile exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.FileStoreExample

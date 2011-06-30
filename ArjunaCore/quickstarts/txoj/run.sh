@@ -1,7 +1,7 @@
 # ALLOW JOBS TO BE BACKGROUNDED
 set -m
 
-echo "Running quickstart"
+echo "Running txoj quickstart"
 
 mvn compile exec:exec
 if [ "$?" != "0" ]; then

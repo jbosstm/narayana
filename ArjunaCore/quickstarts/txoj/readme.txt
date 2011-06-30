@@ -40,6 +40,6 @@ Created persistent object 0:ffff7f000001:ac45:4e0b51d3:0
 Atomic object operated as expected
 
 
-WHAT HAPPENED?
---------------
+WHAT JUST HAPPENED?
+-------------------
 We created a transactional object and modified its state in an ACI property transaction (Atomic, Consistent and Isolated, but not Durable)
