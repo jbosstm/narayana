@@ -17,11 +17,12 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.narayana.rts</groupId>
+    <groupId>org.jboss.narayana.rts.quickstarts</groupId>
     <artifactId>quickstarts</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <name>RESTful Atomic Transaction Quickstarts</name>
     <description>Provides examples of how to use transactions with web applications</description>
+    <packaging>pom</packaging>
 
     <repositories>
         <repository>
@@ -36,14 +37,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>rest-tx-api</artifactId>
-            <version>5.0.0.M1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -78,4 +71,8 @@
             </plugin>
         </plugins>
     </build>
+    
+    <modules>
+    	<module>simple</module>
+    </modules>
 </project>
