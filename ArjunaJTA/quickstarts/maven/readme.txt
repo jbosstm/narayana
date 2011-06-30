@@ -20,6 +20,9 @@ This shows an example of how to include the jbossjta artifact in your own projec
 USAGE
 -----
 mvn compile exec:exec
+OR
+--
+./run.[sh|bat]
 
 
 EXPECTED OUTPUT
@@ -34,3 +37,8 @@ INFO: ARJUNA12337: TransactionStatusManagerItem host: 127.0.0.1 port: 51393
 INFO: ARJUNA12170: TransactionStatusManager started on port 51393 and host 127.0.0.1 with service com.arjuna.ats.arjuna.recovery.ActionStatusService
 TransactionImple < ac, BasicAction: 0:ffff7f000001:b89f:4e035407:2 status: ActionStatus.RUNNING >
 null
+
+
+WHAT JUST HAPPENED?
+-------------------
+We created a transaction
