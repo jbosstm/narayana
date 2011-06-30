@@ -21,6 +21,10 @@ USAGE
 -----
 mvn compile exec:exec
 
+OR
+--
+./run.[sh|bat]
+
 
 EXPECTED OUTPUT
 ---------------
@@ -34,3 +38,8 @@ INFO: ARJUNA12337: TransactionStatusManagerItem host: 127.0.0.1 port: 44448
 INFO: ARJUNA12170: TransactionStatusManager started on port 44448 and host 127.0.0.1 with service com.arjuna.ats.arjuna.recovery.ActionStatusService
 Created persistent object 0:ffff7f000001:ac45:4e0b51d3:0
 Atomic object operated as expected
+
+
+WHAT HAPPENED?
+--------------
+We created a transactional object and modified its state in an ACI property transaction (Atomic, Consistent and Isolated, but not Durable)
