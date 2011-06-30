@@ -15,18 +15,25 @@
   <name>Javax Transaction Examples</name>
   <build>
     <plugins>
+      <!-- This plugin allows our example to be executed by maven -->
       <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.4.1</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <filesets>
-            <fileset>
-              <directory>PutObjectStoreDirHere</directory>
-            </fileset>
-            <fileset>
-              <directory>ObjectStore</directory>
-            </fileset>
-          </filesets>
+          <executable>java</executable>
+          <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+          <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>org.jboss.narayana.jta.quickstarts.TransactionExample</argument>
+          </arguments>
         </configuration>
       </plugin>
     </plugins>

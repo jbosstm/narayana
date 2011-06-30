@@ -12,22 +12,7 @@
   <artifactId>recovery</artifactId>
   <packaging>jar</packaging>
   <name>Recovery Examples</name>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- some recovery tests need to halt the JVM in order to demonstrate recovery
-					     so we must skip the tests -->
-          <excludes>
-            <exclude>**/RecoverySetup.java</exclude>
-            <exclude>**/*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>

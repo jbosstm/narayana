@@ -18,7 +18,7 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples.util;
+package org.jboss.narayana.jta.quickstarts.util;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;

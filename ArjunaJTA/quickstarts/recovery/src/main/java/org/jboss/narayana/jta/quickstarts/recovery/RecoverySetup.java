@@ -18,14 +18,14 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples.recovery;
+package org.jboss.narayana.jta.quickstarts.recovery;
 
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import org.jboss.narayana.jta.examples.util.Util;
+import org.jboss.narayana.jta.quickstarts.util.Util;
 
 public class RecoverySetup {
     protected static RecoveryManager recoveryManager;

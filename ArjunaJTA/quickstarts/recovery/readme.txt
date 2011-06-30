@@ -11,16 +11,20 @@ should have received a copy of the GNU Lesser General Public License, v.2.1
 along with this distribution; if not, write to the Free Software Foundation, 
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
 
+OVERVIEW
+--------
+A transaction manager (TM) must be able to recover from failures during the commit phase of a transaction. These examples
+demonstrate that the TM is able to recover failed transactions.
 
-    There are 3 recovery examples:
+There are three examples:
 
     1. An example showing how to manually enlist (2 dummy) resources (without failures)
-		org.jboss.narayana.jta.examples.recovery.BasicXAExample
+		org.jboss.narayana.jta.quickstarts.recovery.BasicXAExample
 
 	2. An example demonstrating recovery from failures after prepare but before commit using Dummy XA resources:
-		org.jboss.narayana.jta.examples.recovery.DummyRecovery
+		org.jboss.narayana.jta.quickstarts.recovery.DummyRecovery
 
-	   This example needs to be run twice the first run (controled by a command line arg of -f, for fail)
+	   This example needs to be run twice, the first run (controled by a command line arg of -f, for fail)
 	   will halt the VM thus generating a "recovery record".
 
 	   The second run (controled by a command line arg of -r, for recover) will cause the transaction manager
@@ -31,23 +35,65 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 		The second run will trigger the recovery system which in turn commits the two prepared JMS XA resources.
 		Then the two messages are consumed.
 
-    When running an example an exit code of zero represents success (otherwise failure together with an exception trace).
 
-    To run an example use the maven java exec pluging. For example to run the second recovery example:
+USAGE
+-----
+./run.[sh|bat]
 
-	  mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.recovery.DummyRecovery -Dexec.args="-f"
-	  mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.recovery.DummyRecovery -Dexec.args="-r"
+To run an example manually you will need to run the example twice, once with a flag to tell the example to
+generate a failure followed by a second run with a flag to tell the example to recover the failed transaction.
+For example to run the JMS example:
+	  mvn exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.recovery.JmsRecovery -Dexec.args="-f"
+	  mvn exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.recovery.JmsRecovery -Dexec.args="-r"
 
-    And to run the JMS recovery example:
+and to run the Dummy XA resource example:
+	  mvn exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.recovery.DummyRecovery -Dexec.args="-f"
+	  mvn exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.recovery.DummyRecovery -Dexec.args="-r"
 
-	  mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.recovery.JmsRecovery -Dexec.args="-f"
-	  mvn -e exec:java -Dexec.mainClass=org.jboss.narayana.jta.examples.recovery.JmsRecovery -Dexec.args="-r"
+To run the example showing how to manually enlist resources into a transaction and to commit without failures:
+	  mvn exec:java -Dexec.mainClass=org.jboss.narayana.jta.quickstarts.recovery.BasicXAExample
 
-	On the second step of each example you will see a warning
-	   (HornetQException[errorCode=4 message=The connection was disconnected because of server shutdown])
+
 	which can be ignored. It caused by the recovery subsystem not performing an orderly shutdown of JMS
 	communications. This will be fixed in the next revision of JBossTS.
 
 	And finally, to read the (binary) hornetq logs use the PrintData tool:
 
-	mvn -e exec:java -Dexec.mainClass=org.hornetq.core.persistence.impl.journal.PrintData -Dexec.classpathScope=test -Dexec.args="target/data/hornetq/bindings target/data/hornetq/largemessages"
+	mvn exec:java -Dexec.mainClass=org.hornetq.core.persistence.impl.journal.PrintData -Dexec.classpathScope=test -Dexec.args="target/data/hornetq/bindings target/data/hornetq/largemessages"
+
+	Pass a -e flag to the mvn command line to enable exception stack traces.
+
+EXPECTED OUTPUT
+---------------
+Running all the examples will generate a lot of output including a java stack trace. The first step of each example
+is to cause the VM to halt thus generating a recovery record. The second step is meant to demonstrate the recovery
+system recovering the transaction.
+
+If all the examples succeed the last line of output should be
+"All recovery examples succeeded"
+
+When the dummy example finishes look for the output
+"Dummy example succeeded"
+When the dummy example finishes look for the output
+"JMS example succeeded"
+
+The final step of the JMS example will output the message
+"WARNING: I'm closing a core ClientSession you left open."
+and then generate a stack trace to show where the ClientSession was originally opened. This problem can be ignored but
+will be fixed in the next release of the transaction manager product. The error is caused by the recovery subsystem
+not performing an orderly shutdown of JMS communications.
+
+WHAT JUST HAPPENED?
+-------------------
+
+The JMS example starts a transaction and enlists two resources. One of the resources is a JMS XA session that 
+The JMS example generates two messages within a transactional XA session. Before sending the messages two
+resources are enlisted into the transaction, an XA resource corresponding to the JMS session used to send the 
+messages and a dummy XA resource. On the first run the dummy resources is configured to halt the VM during
+the second, commit, phase of the transaction completion protocol. This will cause the JMS messages to require
+recovery.
+
+During the second run the example manually requests a "recovery scan" (normally the recovery subsystem runs
+automatically). This scan will cause the the two messages to be committed hence making them available for consumption.
+The 2 messages are then consumed.
+

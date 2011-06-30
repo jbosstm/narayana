@@ -18,7 +18,7 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples.recovery;
+package org.jboss.narayana.jta.quickstarts.recovery;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
@@ -42,9 +42,9 @@ import org.hornetq.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 import org.hornetq.jms.server.recovery.HornetQXAResourceRecovery;
 import org.hornetq.utils.UUIDGenerator;
-import org.jboss.narayana.jta.examples.util.DummyXAResource;
-import org.jboss.narayana.jta.examples.util.DummyXid;
-import org.jboss.narayana.jta.examples.util.Util;
+import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
+import org.jboss.narayana.jta.quickstarts.util.DummyXid;
+import org.jboss.narayana.jta.quickstarts.util.Util;
 
 import javax.jms.*;
 import javax.transaction.*;

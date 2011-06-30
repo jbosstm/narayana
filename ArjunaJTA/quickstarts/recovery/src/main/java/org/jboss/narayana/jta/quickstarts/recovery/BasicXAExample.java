@@ -18,10 +18,10 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples.recovery;
+package org.jboss.narayana.jta.quickstarts.recovery;
 
-import org.jboss.narayana.jta.examples.util.DummyXAResource;
-import org.jboss.narayana.jta.examples.util.Util;
+import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
+import org.jboss.narayana.jta.quickstarts.util.Util;
 
 import javax.transaction.*;
 

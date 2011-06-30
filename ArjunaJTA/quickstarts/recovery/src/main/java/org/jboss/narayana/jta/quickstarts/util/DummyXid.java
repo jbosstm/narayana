@@ -10,7 +10,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.jboss.narayana.jta.examples.util;
+package org.jboss.narayana.jta.quickstarts.util;
 
 import javax.transaction.xa.Xid;
 

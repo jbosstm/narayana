@@ -18,7 +18,7 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.jta.examples;
+package org.jboss.narayana.jta.quickstarts;
 
 import javax.transaction.*;
 
