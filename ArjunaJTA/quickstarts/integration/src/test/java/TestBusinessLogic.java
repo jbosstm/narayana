@@ -18,6 +18,8 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
+import javax.naming.NamingException;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.quickstarts.ejb.Customer;
@@ -25,28 +27,30 @@ import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJBImpl;
 import org.jboss.narayana.quickstarts.servlet.SimpleServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class TestBusinessLogic {
 	@Deployment
-	public static JavaArchive createDeployment() {
+	public static WebArchive createDeployment() {
 		return ShrinkWrap
-				.create(JavaArchive.class, "test.jar")
+				.create(WebArchive.class, "test.war")
 				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
 						Customer.class)
 				.addClasses(SimpleServlet.class)
-				.addAsManifestResource("META-INF/persistence.xml",
-						"META-INF/persistence.xml");
+				.addAsResource("META-INF/persistence.xml",
+						"META-INF/persistence.xml")
+				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
 	@Test
-	public void checkThatDoubleCallIncreasesListSize() {
+	public void checkThatDoubleCallIncreasesListSize() throws NamingException {
 		SimpleServlet simpleServlet = new SimpleServlet();
-		simpleServlet.createCustomer("tom");
-		simpleServlet.createCustomer("tom");
+		simpleServlet.createCustomer("tom1");
+		simpleServlet.createCustomer("tom2");
 	}
 
 }

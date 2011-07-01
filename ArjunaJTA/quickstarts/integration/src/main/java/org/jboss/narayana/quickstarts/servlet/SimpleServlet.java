@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,8 +38,16 @@ import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
 @WebServlet(displayName = "hello", urlPatterns = "/hello")
 public class SimpleServlet extends HttpServlet {
 
-	@EJB
+	@EJB(lookup = "java:module/SimpleEJBImpl")
 	private SimpleEJB simpleEJB;
+
+	public SimpleServlet() throws NamingException {
+		if (simpleEJB == null) {
+			simpleEJB = (SimpleEJB) new InitialContext()
+					.lookup("java:module/SimpleEJBImpl");
+			System.out.println("needed to look up EJB - arq only");
+		}
+	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
