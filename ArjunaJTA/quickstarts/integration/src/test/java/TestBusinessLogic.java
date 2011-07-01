@@ -44,20 +44,18 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class TestBusinessLogic {
+	@EJB(lookup = "java:module/SimpleEJBImpl")
+	private SimpleEJB simpleEJB;
+	
 	@Deployment
 	public static WebArchive createDeployment() {
 		return ShrinkWrap
 				.create(WebArchive.class, "test.war")
 				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
 						Customer.class)
-				.addClasses(SimpleServlet.class)
 				.addAsResource("META-INF/persistence.xml",
-						"META-INF/persistence.xml")
-				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+						"META-INF/persistence.xml");
 	}
-
-	@EJB(lookup = "java:module/SimpleEJBImpl")
-	private SimpleEJB simpleEJB;
 
 	@Test
 	public void checkThatDoubleCallIncreasesListSize() throws NamingException,
