@@ -21,7 +21,7 @@ bean and then test it using TS deployed in JBossAS using Arquillian
 USAGE
 -----
 export JBOSS_HOME=<PATH_TO_JBOSS_HOME>
-mvn clean install -Parq-jbossas-managed
+mvn clean install
 
 
 COMMON ERROR
