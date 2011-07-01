@@ -26,8 +26,6 @@
   <properties>
     <!-- For arquillian -->
     <jbossHome>${env.JBOSS_HOME}</jbossHome>
-    <!-- For the AS maven plugin -->
-    <jboss.home>${env.JBOSS_HOME}</jboss.home>
   </properties>
 
   <build>
@@ -38,13 +36,6 @@
           <!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
-      </plugin>
-      <!-- The JBoss AS plugin deploys your war to a local JBoss AS container -->
-      <!-- To use, set the JBOSS_HOME environment variable and run: mvn package jboss-as:deploy -->
-      <plugin>
-        <groupId>org.jboss.as.plugins</groupId>
-        <artifactId>jboss-as-maven-plugin</artifactId>
-        <version>7.0.0.CR1</version>
       </plugin>
     </plugins>
   </build>
