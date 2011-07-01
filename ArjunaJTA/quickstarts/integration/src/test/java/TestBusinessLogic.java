@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 public class TestBusinessLogic {
 	@EJB(lookup = "java:module/SimpleEJBImpl")
 	private SimpleEJB simpleEJB;
-	
+
 	@Deployment
 	public static WebArchive createDeployment() {
 		return ShrinkWrap
@@ -54,7 +54,8 @@ public class TestBusinessLogic {
 				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
 						Customer.class)
 				.addAsResource("META-INF/persistence.xml",
-						"META-INF/persistence.xml");
+						"META-INF/persistence.xml")
+				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
 	@Test
