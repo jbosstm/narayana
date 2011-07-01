@@ -20,7 +20,8 @@ bean and then test it using TS deployed in JBossAS using Arquillian
 
 USAGE
 -----
-mvn install
+export JBOSS_HOME=<PATH_TO_JBOSS_HOME>
+mvn clean install -Parq-jbossas-managed
 
 
 EXPECTED OUTPUT

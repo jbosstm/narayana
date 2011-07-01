@@ -12,9 +12,6 @@
     <protocol type="jmx-as7">
       <property name="executionType">REMOTE</property>
     </protocol>
-    <configuration>
-      <property name="jbossHome">/home/tom/jbossas/jboss-7.0.0.CR1</property>
-    </configuration>
   </container>
 
 </arquillian>

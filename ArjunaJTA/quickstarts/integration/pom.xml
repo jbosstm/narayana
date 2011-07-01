@@ -22,7 +22,12 @@
       </snapshots>
     </repository>
   </repositories>
-
+  
+  <properties>
+    <!-- Specify the JBoss AS directory to be the JBOSS_HOME environment variable -->
+    <jbossHome>${env.JBOSS_HOME}</jbossHome>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
