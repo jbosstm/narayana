@@ -24,6 +24,13 @@ export JBOSS_HOME=<PATH_TO_JBOSS_HOME>
 mvn clean install -Parq-jbossas-managed
 
 
+COMMON ERROR
+------------
+If you get the following you have not exported JBOSS_HOME:
+Tests in error: 
+  TestBusinessLogic: jbossHome 'null' must exist
+
+
 EXPECTED OUTPUT
 ---------------
 As well as the normal output you would expect to see from maven, you should also see:
