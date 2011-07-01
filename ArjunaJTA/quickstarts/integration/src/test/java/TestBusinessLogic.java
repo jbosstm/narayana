@@ -18,12 +18,11 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.quickstarts.ejb.Customer;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJBImpl;
-import org.jboss.narayana.quickstarts.mdb.SimpleMDB;
 import org.jboss.narayana.quickstarts.servlet.SimpleServlet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -38,10 +37,9 @@ public class TestBusinessLogic {
 				.create(JavaArchive.class, "test.jar")
 				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
 						Customer.class)
-				.addClasses(SimpleMDB.class)
-				// .addAsManifestResource("WEB-INF/web.xml", "web.xml")
+				.addClasses(SimpleServlet.class)
 				.addAsManifestResource("META-INF/persistence.xml",
-						"persistence.xml");
+						"META-INF/persistence.xml");
 	}
 
 	@Test

@@ -21,169 +21,128 @@
     </repository>
   </repositories>
   <dependencies>
+    <!-- Annotation processor to generate the JPA 2.0 metamodel classes for typesafe criteria queries -->
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <version>1.0.0.Final</version>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-jpamodelgen</artifactId>
+      <version>1.1.1.Final</version>
       <scope>provided</scope>
+      <!-- Excluded because it's provided by the Java EE 6 dependencies -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate.javax.persistence</groupId>
+          <artifactId>hibernate-jpa-2.0-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+
+    <!-- Seam Solder provides convenient, portable CDI extensions such as an injectable logger -->
     <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-      <version>1.0.0.Final</version>
+      <groupId>org.jboss.seam.solder</groupId>
+      <artifactId>seam-solder</artifactId>
+      <version>3.0.0.Final</version>
+    </dependency>
+
+    <!-- JSR-303 (Bean Validation) Implementation -->
+    <!-- Provides portable constraints such as @Email -->
+    <!-- Hibernate Validator is shipped in JBoss AS 7 -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.1.0.Final</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.ejb3</groupId>
-      <artifactId>jboss-ejb3-ext-api</artifactId>
-      <version>1.1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.0-api</artifactId>
-      <version>1.0.0.Final</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-junit</artifactId>
-      <version>1.0.0.Alpha5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-impl-base</artifactId>
-      <version>1.0.0-alpha-12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-api</artifactId>
-      <version>1.0.0-alpha-12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-spi</artifactId>
-      <version>1.0.0-alpha-12</version>
-      <scope>test</scope>
-    </dependency>
+
+    <!-- Needed for running tests (you may also use TestNG) -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Optional, but highly recommended -->
+    <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.0.0.CR1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Include the JBoss' Java EE 6 APIs -->
+    <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) of artifacts. We use this here so that we always get the correct versions of artifacts. Here we use the jboss-javaee-web-6.0 stack (you can read this as the JBoss stack of the Java EE 6 Web Profile APIs), and we use version 2.0.0.Beta1 which is the latest release of the stack. You can actually use this stack with any version of JBoss AS that implements Java EE 6, not just JBoss AS 7! -->
+    <dependency>
+      <groupId>org.jboss.spec</groupId>
+      <artifactId>jboss-javaee-web-6.0</artifactId>
+      <version>2.0.0.CR1</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- <dependency> <groupId>org.jboss.spec.javax.servlet</groupId> <artifactId>jboss-servlet-api_3.0_spec</artifactId> <version>1.0.0.Final</version> <scope>provided</scope> </dependency> <dependency> <groupId>org.jboss.spec.javax.ejb</groupId> <artifactId>jboss-ejb-api_3.1_spec</artifactId> <version>1.0.0.Final</version> <scope>provided</scope> </dependency> <dependency> <groupId>org.jboss.ejb3</groupId> <artifactId>jboss-ejb3-ext-api</artifactId> <version>1.1.0</version> <scope>provided</scope> </dependency> <dependency> <groupId>org.hibernate.javax.persistence</groupId> 
+      <artifactId>hibernate-jpa-2.0-api</artifactId> <version>1.0.0.Final</version> <scope>provided</scope> </dependency> <dependency> <groupId>org.jboss.arquillian.junit</groupId> <artifactId>arquillian-junit-container</artifactId> <version>1.0.0.CR1</version> <scope>test</scope> </dependency> <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> <version>4.8.2</version> <scope>test</scope> </dependency> -->
   </dependencies>
+
   <profiles>
     <profile>
-      <id>no-tests</id>
-<activation> <activeByDefault>true</activeByDefault> </activation>
+      <!-- The default profile skips all tests, though you can tune it to run just unit tests based on a custom pattern -->
+      <!-- Seperate profiles are provided for running all tests, including Arquillian tests that execute in the specified container -->
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.6</version>
+            <version>2.4.3</version>
             <configuration>
               <skip>true</skip>
             </configuration>
           </plugin>
+          <!-- The JBoss AS plugin deploys your war to a local JBoss AS container -->
+          <!-- To use, set the JBOSS_HOME environment variable and run: mvn package jboss-as:deploy -->
+          <plugin>
+            <groupId>org.jboss.as.plugins</groupId>
+            <artifactId>jboss-as-maven-plugin</artifactId>
+            <version>7.0.0.CR1</version>
+          </plugin>
         </plugins>
       </build>
     </profile>
+
     <profile>
-      <id>jbossas-embedded-6</id>
-      <!-- <activation> <activeByDefault>true</activeByDefault> </activation> -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>unpack</id>
-                <phase>generate-test-resources</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.jboss.jbossas</groupId>
-                      <artifactId>jboss-as-distribution</artifactId>
-                      <version>6.0.0.Final</version>
-                      <type>zip</type>
-                      <overWrite>false</overWrite>
-                      <outputDirectory>${project.build.directory}</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.6</version>
-            <configuration>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/client/jbossws-native-client.jar</additionalClasspathElement>
-                <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.Final/server/default/deploy/jbossweb.sar</additionalClasspathElement>
-              </additionalClasspathElements>
-              <redirectTestOutputToFile>false</redirectTestOutputToFile>
-              <trimStackTrace>false</trimStackTrace>
-              <printSummary>true</printSummary>
-              <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.Final/lib/endorsed -Djboss.home=${project.build.directory}/jboss-6.0.0.Final -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.Final -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>org.jboss.jbossas</groupId>
-            <artifactId>jboss-as-depchain</artifactId>
-            <version>6.0.0.Final</version>
-            <type>pom</type>
-            <scope>import</scope>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
+      <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
+      <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
+      <!-- Run with: mvn clean test -Parq-jbossas-managed -->
+      <id>arq-jbossas-managed</id>
       <dependencies>
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-jbossas-embedded-6</artifactId>
-          <version>1.0.0.Alpha5</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.jbossas</groupId>
-          <artifactId>jboss-as-depchain</artifactId>
-          <version>6.0.0.Final</version>
-          <type>pom</type>
-          <scope>compile</scope>
+          <groupId>org.jboss.as</groupId>
+          <artifactId>jboss-as-arquillian-container-managed</artifactId>
+          <version>7.0.0.CR1</version>
+          <scope>test</scope>
         </dependency>
       </dependencies>
     </profile>
+
     <profile>
-      <id>jbossas-remote-6</id>
+      <!-- An optional Arquillian testing profile that executes tests in a remote JBoss AS instance -->
+      <!-- Run with: mvn clean test -Parq-jbossas-remote -->
+      <id>arq-jbossas-remote</id>
       <dependencies>
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-jbossas-remote-6</artifactId>
-          <version>1.0.0.Alpha5</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.jbossas</groupId>
-          <artifactId>jboss-as-depchain</artifactId>
-          <version>6.0.0.Final</version>
-          <type>pom</type>
-          <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.jbossas</groupId>
-          <artifactId>jboss-as-client</artifactId>
-          <version>6.0.0.Final</version>
-          <type>pom</type>
+          <groupId>org.jboss.as</groupId>
+          <artifactId>jboss-as-arquillian-container-remote</artifactId>
+          <version>7.0.0.CR1</version>
+          <scope>test</scope>
         </dependency>
       </dependencies>
     </profile>
