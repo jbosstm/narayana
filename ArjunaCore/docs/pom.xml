@@ -13,13 +13,12 @@
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <parent>
-    <groupId>org.jboss.narayana</groupId>
+    <groupId>org.jboss.narayana.arjunacore</groupId>
     <artifactId>arjunacore-all</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jboss.narayana</groupId>
   <artifactId>arjunacore-docs</artifactId>
   <packaging>pom</packaging>
   <name>ArjunaCore Documentation</name>
