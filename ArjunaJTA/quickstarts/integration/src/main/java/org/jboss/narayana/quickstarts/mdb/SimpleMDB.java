@@ -12,32 +12,28 @@
  */
 package org.jboss.narayana.quickstarts.mdb;
 
-//import javax.ejb.ActivationConfigProperty;
-//import javax.ejb.MessageDriven;
-//import javax.jms.JMSException;
-//import javax.jms.Message;
-//import javax.jms.MessageListener;
-//import javax.jms.TextMessage;
-//
-//import org.jboss.ejb3.annotation.ResourceAdapter;
-//
-//@MessageDriven(name = "MDB_BMTExample", activationConfig = {
-//		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-//		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/testQueue") })
-//@ResourceAdapter("jms-ra.rar")
-//public class SimpleMDB implements MessageListener {
-//	public void onMessage(final Message message) {
-//		TextMessage textMessage = (TextMessage) message;
-//		try {
-//			String text = textMessage.getText();
-//			System.out.println("message " + text + " received");
-//		} catch (JMSException e) {
-//			System.err.println("Something went wrong");
-//			e.printStackTrace();
-//		}
-//	}
-//}
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
-public class SimpleMDB {
+import org.jboss.ejb3.annotation.ResourceAdapter;
 
+@MessageDriven(name = "MDB_BMTExample", activationConfig = {
+		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/testQueue") })
+@ResourceAdapter("jms-ra.rar")
+public class SimpleMDB implements MessageListener {
+	public void onMessage(final Message message) {
+		TextMessage textMessage = (TextMessage) message;
+		try {
+			String text = textMessage.getText();
+			System.out.println("message " + text + " received");
+		} catch (JMSException e) {
+			System.err.println("Something went wrong");
+			e.printStackTrace();
+		}
+	}
 }

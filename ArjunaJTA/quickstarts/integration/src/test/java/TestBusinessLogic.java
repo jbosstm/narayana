@@ -18,7 +18,17 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
+import static org.junit.Assert.assertTrue;
+
+import javax.ejb.EJB;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,11 +56,33 @@ public class TestBusinessLogic {
 				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
-	@Test
-	public void checkThatDoubleCallIncreasesListSize() throws NamingException {
-		SimpleServlet simpleServlet = new SimpleServlet();
-		simpleServlet.createCustomer("tom1");
-		simpleServlet.createCustomer("tom2");
-	}
+	@EJB(lookup = "java:module/SimpleEJBImpl")
+	private SimpleEJB simpleEJB;
 
+	@Test
+	public void checkThatDoubleCallIncreasesListSize() throws NamingException,
+			NotSupportedException, SystemException, SecurityException,
+			IllegalStateException, RollbackException, HeuristicMixedException,
+			HeuristicRollbackException {
+		UserTransaction tx = (UserTransaction) new InitialContext()
+				.lookup("java:comp/UserTransaction");
+		tx.begin();
+		simpleEJB.createCustomer("tom");
+		tx.commit();
+
+		String firstList = simpleEJB.listIds();
+
+		tx = (UserTransaction) new InitialContext()
+				.lookup("java:comp/UserTransaction");
+		tx.begin();
+		simpleEJB.createCustomer("tom");
+		tx.commit();
+
+		String secondList = simpleEJB.listIds();
+
+		System.out.println(firstList);
+		System.out.println(secondList);
+
+		assertTrue(firstList.length() < secondList.length());
+	}
 }
