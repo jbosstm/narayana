@@ -10,11 +10,14 @@ for http requests on localhost (if you use a different host/port change the url 
 
 mvn compile exec:exec
 
+or use the run script
 
 EXPECTED OUTPUT
 ---------------
-transaction running: txStatus=TransactionActive
-Success
+[The examples run under the control of maven so you will need to filter maven output from example output.]
+
+	transaction running: txStatus=TransactionActive
+	Success
 
 
 WHAT JUST HAPPENED?

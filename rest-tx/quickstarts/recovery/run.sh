@@ -3,7 +3,7 @@ set -m
 
 echo "Running recovery quickstart"
 
-mvn compile exec:java -Dexec.mainClass=quickstart.ParticipantRecovery -Dexec.args="-f"
+mvn clean compile exec:java -Dexec.mainClass=quickstart.ParticipantRecovery -Dexec.args="-f"
 # We expect this to fail
 #if [ "$?" != "0" ]; then
 #   exit -1

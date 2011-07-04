@@ -11,7 +11,7 @@ for http requests on localhost (if you use a different host/port change the url 
 
 To test recovery you will need to run the example twice, once to generate a failure condition:
 
-    mvn compile exec:java -Dexec.mainClass=quickstart.ParticipantRecovery -Dexec.args="-f"
+    mvn clean compile exec:java -Dexec.mainClass=quickstart.ParticipantRecovery -Dexec.args="-f"
 
 and a second time in order to test that the web service is asked to replay the commit phase:
 
@@ -22,11 +22,13 @@ Use the run.sh or run.bat script to run both parts together.
 If you just want the same behaviour as the service example - ie without failures then run the example without
 any arguments:
 
-	mvn exec:java -Dexec.mainClass=quickstart.ParticipantRecovery
+	mvn clean compile exec:java -Dexec.mainClass=quickstart.ParticipantRecovery
 
 
 EXPECTED OUTPUT
 ---------------
+
+[The examples run under the control of maven so you will need to filter maven output from example output.]
 
 On the first run when generating a failure you should see two messages from the webservice enlisting
 two sets of urls into the transaction:
@@ -52,12 +54,15 @@ saying that it is going to halt the VM:
 
 On the second run when recovering after generating the failure you should see the following messages:
 
-	Client: waiting for recovery in 2 second intervals (for a max of 130 secs)
+    =============================================================================
+	Client: WAITING FOR RECOVERY IN 2 SECOND INTERVALS (FOR A MAX OF 130 SECONDS)
+    =============================================================================
 	Service: PUT request to terminate url: wId=2, status:=txStatus=TransactionCommitted
 	SUCCESS participant was recovered after 22 seconds. Number of commits: 1
 
 The first message states that the example is waiting for the recovery system (running in the AS
-you deployed the war to) to perform a recovery scan. The default interval between recovery scans is 120 seconds.
+you deployed the war to) to perform a recovery scan. It is highlighted so you know that the test
+isn't hanging. The default interval between recovery scans is 120 seconds.
 
 The second output line shows that the web service received a prepare request and hence recovery ran
 successfully. And the final output line indicates a successful run.

@@ -1,3 +1,23 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and/or its affiliates,
+ * and individual contributors as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2011,
+ * @author JBoss, by Red Hat.
+ */
 package quickstart;
 
 import org.jboss.jbossts.star.util.TxSupport;
@@ -21,7 +41,9 @@ public class ParticipantRecovery {
         TxSupport txn = new TxSupport(TXN_MGR_URL);
 
         if ("-r".equals(opt)) {
-            System.out.println("Client: waiting for recovery in 2 second intervals (for a max of 130 secs)");
+            System.out.println("=============================================================================");
+            System.out.println("Client: WAITING FOR RECOVERY IN 2 SECOND INTERVALS (FOR A MAX OF 130 SECONDS)");
+            System.out.println("=============================================================================");
 
             for (long i = 0l; i < 130l; i += 2) {
                 try {
@@ -30,7 +52,7 @@ public class ParticipantRecovery {
                     String cnt = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, SERVICE_URL + "/query", "GET", TxSupport.PLAIN_MEDIA_TYPE, null, null);
 
                     if (cnt != null && !"0".equals(cnt)) {
-                        System.out.println("SUCCESS participant was recovered after " + i + " seconds. Number of commits: " + cnt);
+                        System.out.println("SUCCESS participant was recovered after " + (i * 2) + " seconds. Number of commits: " + cnt);
                         System.exit(0);
                     }
 
