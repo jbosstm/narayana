@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>quickstarts</artifactId>
+        <groupId>org.jboss.narayana.rts.quickstarts</groupId>
+        <version>5.0.0.M1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>service</artifactId>
+    <name>quickstart Participant Service</name>
+    <description>Examples show how a web service can participate in a transaction</description>
+
+    <repositories>
+        <!-- Jersey -->
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </repository>
+        <!-- end Jersey -->
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>quickstart.MultipleParticipants</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- the implementation of REST Atomic Transactions -->
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>rest-tx-api</artifactId>
+            <version>5.0.0.M1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Jersey container for running participant services -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.18-i</version>
+        </dependency>
+        <!-- end Jersey -->
+    </dependencies>
+
+</project>

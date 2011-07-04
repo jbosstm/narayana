@@ -26,7 +26,33 @@
     <artifactId>simple</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <name>RESTful Atomic Transaction Quickstarts</name>
-    <description>Provides examples of how to use transactions with web applications</description>
+    <description>Basic example of how to start and stop a REST Atomic transaction</description>
+
+    <build>
+        <plugins>
+             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>RestTransactionExample</argument>
+                        <argument>MultipleTransactions</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
