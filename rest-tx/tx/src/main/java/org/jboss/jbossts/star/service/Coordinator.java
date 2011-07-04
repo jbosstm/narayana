@@ -35,7 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.AtomicAction;

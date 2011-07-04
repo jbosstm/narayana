@@ -1,2 +1,1 @@
-Dependencies: org.apache.log4j,org.jboss.jts
-
+Dependencies: org.jboss.logging, org.jboss.jts

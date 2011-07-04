@@ -22,7 +22,8 @@ package org.jboss.jbossts.star.test;
 
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
+
 import org.jboss.jbossts.star.provider.*;
 import org.jboss.jbossts.star.service.Coordinator;
 import org.jboss.jbossts.star.util.LinkHolder;

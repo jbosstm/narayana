@@ -20,7 +20,8 @@
  */
 package org.jboss.jbossts.star.util;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
+
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.resteasy.spi.Link;
 

@@ -29,8 +29,8 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import javax.ws.rs.core.Application;
 import java.util.Set;
 import java.util.HashSet;
+import org.jboss.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
 import org.jboss.jbossts.star.resource.RESTRecord;
 import org.jboss.jbossts.star.provider.TMUnavailableMapper;
