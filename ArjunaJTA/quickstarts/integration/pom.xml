@@ -35,6 +35,9 @@
         <configuration>
           <!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
@@ -50,11 +53,25 @@
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.ejb3</groupId>
       <artifactId>jboss-ejb3-ext-api</artifactId>
       <version>1.1.0</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- For the txoj -->
+    <dependency>
+      <groupId>org.jboss.jbossts</groupId>
+      <artifactId>jbossjta</artifactId>
+      <version>4.15.1.Final</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
