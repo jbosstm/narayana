@@ -18,14 +18,11 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
 import javax.ejb.EJB;
-import javax.naming.InitialContext;
-import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -41,8 +38,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.arjuna.ats.arjuna.common.Uid;
 
 @RunWith(Arquillian.class)
 public class TestSimpleServlet {
@@ -72,9 +67,9 @@ public class TestSimpleServlet {
 	}
 
 	@Test
-	public void checkThatDoubleCallIncreasesListSize()
-			throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException {
+	public void checkListCustomers() throws SecurityException,
+			NoSuchFieldException, IllegalArgumentException,
+			IllegalAccessException {
 
 		// Declare the servlet outside the container
 		SimpleServlet servlet = new SimpleServlet();
@@ -83,69 +78,19 @@ public class TestSimpleServlet {
 		field.set(servlet, simpleEJB);
 		field.setAccessible(false);
 
-		servlet.createCustomer("tom");
-
+		// Create a customer
+		servlet.createCustomer("checkThatDoubleCallIncreasesListSize");
 		String firstList = servlet.listCustomers();
-
-		servlet.createCustomer("tom");
-
+		// Create a different customer
+		servlet.createCustomer("checkThatDoubleCallIncreasesListSize2");
 		String secondList = servlet.listCustomers();
 
-		System.out.println(firstList);
-		System.out.println(secondList);
-
+		// Check that the list size increased
 		assertTrue(firstList.length() < secondList.length());
 	}
 
 	@Test
-	public void testTxoj() throws Exception {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
-
-		AtomicObject foo = new AtomicObject();
-		Uid u = foo.get_uid();
-
-		tx.begin();
-
-		foo.set(2);
-
-		tx.commit();
-
-		int finalVal = foo.get();
-
-		assertEquals(2, finalVal);
-
-		foo = new AtomicObject(u);
-
-		tx.begin();
-
-		foo.set(4);
-
-		tx.commit();
-
-		finalVal = foo.get();
-
-		assertEquals(4, finalVal);
-
-		foo = new AtomicObject(u);
-
-		finalVal = foo.get();
-
-		assertEquals(4, finalVal);
-
-		tx.begin();
-
-		foo.set(10);
-
-		tx.rollback();
-
-		finalVal = foo.get();
-
-		assertEquals(4, finalVal);
-	}
-
-	@Test
-	public void testServlet() throws Exception {
+	public void testCustomerCount() throws Exception {
 		// Declare the servlet outside the container
 		SimpleServlet servlet = new SimpleServlet();
 		Field field = servlet.getClass().getDeclaredField("simpleEJB");
@@ -157,23 +102,84 @@ public class TestSimpleServlet {
 		String response = null;
 		int indexOf = -1;
 		String customersCreated = null;
+		int size = 0;
+		int newSize = -1;
+
+		// Create a new customer
+		servlet.createCustomer("testCustomerCount");
 
 		// Get the initial number of customers
 		response = servlet.getCustomerCount();
 		indexOf = response.indexOf(toLookFor);
 		customersCreated = response.substring(indexOf + toLookFor.length(),
 				response.indexOf("</p>", indexOf));
-		int initialSize = Integer.parseInt(customersCreated);
+		newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == size + 1);
+		size = newSize;
 
 		// Create a new customer
-		servlet.createCustomer("tom");
+		servlet.createCustomer("testCustomerCount2");
 
 		// Check that one extra customer was created
 		response = servlet.getCustomerCount();
 		indexOf = response.indexOf(toLookFor);
 		customersCreated = response.substring(indexOf + toLookFor.length(),
 				response.indexOf("</p>", indexOf));
-		int newSize = Integer.parseInt(customersCreated);
-		assertTrue(newSize == initialSize + 1);
+		newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == size + 1);
+		size = newSize;
+	}
+
+	@Test
+	public void testCustomerCountInPresenceOfRollback() throws Exception {
+		// Declare the servlet outside the container
+		SimpleServlet servlet = new SimpleServlet();
+		Field field = servlet.getClass().getDeclaredField("simpleEJB");
+		field.setAccessible(true);
+		field.set(servlet, simpleEJB);
+		field.setAccessible(false);
+
+		String toLookFor = "<p>Customers created this run: ";
+		String response = null;
+		int indexOf = -1;
+		String customersCreated = null;
+		int size = 0;
+		int newSize = -1;
+
+		// Create a new customer
+		servlet.createCustomer("testCustomerCountInPresenceOfRollback");
+
+		// Get the initial number of customers
+		response = servlet.getCustomerCount();
+		indexOf = response.indexOf(toLookFor);
+		customersCreated = response.substring(indexOf + toLookFor.length(),
+				response.indexOf("</p>", indexOf));
+		newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == size + 1);
+		size = newSize;
+
+		// Create a new customer
+		servlet.createCustomer("testCustomerCountInPresenceOfRollback");
+
+		// Check that no extra customers were created
+		response = servlet.getCustomerCount();
+		indexOf = response.indexOf(toLookFor);
+		customersCreated = response.substring(indexOf + toLookFor.length(),
+				response.indexOf("</p>", indexOf));
+		newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == size);
+		size = newSize;
+
+		// Create a new customer
+		servlet.createCustomer("testCustomerCountInPresenceOfRollback2");
+
+		// Check that one extra customer was created
+		response = servlet.getCustomerCount();
+		indexOf = response.indexOf(toLookFor);
+		customersCreated = response.substring(indexOf + toLookFor.length(),
+				response.indexOf("</p>", indexOf));
+		newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == size + 1);
+		size = newSize;
 	}
 }

@@ -90,7 +90,7 @@ public class SimpleServlet extends HttpServlet {
 			toWrite.append("<p>" + simpleEJB.listIds() + "</p>");
 			tx.commit();
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			toWrite.append("FAILED: " + e.toString());
 		}
 		return toWrite.toString();
 	}
@@ -103,12 +103,12 @@ public class SimpleServlet extends HttpServlet {
 			UserTransaction tx = (UserTransaction) new InitialContext()
 					.lookup("java:comp/UserTransaction");
 			tx.begin();
-			simpleEJB.createCustomer(name);
 			atomicObject.incr(1);
+			simpleEJB.createCustomer(name);
 			toWrite.append("<p>Created: " + name + "</p>");
 			tx.commit();
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			toWrite.append("FAILED: " + e.toString());
 		}
 		return toWrite.toString();
 	}
@@ -121,11 +121,11 @@ public class SimpleServlet extends HttpServlet {
 			UserTransaction tx = (UserTransaction) new InitialContext()
 					.lookup("java:comp/UserTransaction");
 			tx.begin();
-			toWrite.append("<p>Customers created this run: " + atomicObject.get()
-					+ "</p>");
+			toWrite.append("<p>Customers created this run: "
+					+ atomicObject.get() + "</p>");
 			tx.commit();
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			toWrite.append("FAILED: " + e.toString());
 		}
 		return toWrite.toString();
 	}
