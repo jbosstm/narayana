@@ -14,7 +14,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 OVERVIEW
 --------
-All the quickstarts related to rest-tx are found in this folder structure. Each quickstart has a readme.txt to show how to execute the quickstart and what is happening in it. Each quickstart also contains a script to run the quickstart automatically and check the result automatically.
+All the quickstarts related to rest-tx are found in this folder structure. Each quickstart has
+a readme.txt to show how to execute the quickstart and what is happening in it. Each quickstart
+also contains a script to run the quickstart automatically and check the result automatically.
 
 
 USAGE

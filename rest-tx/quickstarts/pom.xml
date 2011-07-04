@@ -54,5 +54,6 @@
     <modules>
     	<module>simple</module>
     	<module>service</module>
+    	<module>recovery</module>
     </modules>
 </project>

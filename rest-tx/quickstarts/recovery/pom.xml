@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>service</artifactId>
-    <name>RESTful Atomic Transaction Quickstart: Participant Service</name>
-    <description>Examples show how a web service can participate in a transaction</description>
+    <artifactId>recovery</artifactId>
+    <name>RESTful Atomic Transaction Quickstart: Participant Service with Recovery</name>
+    <description>Example of how a web service can recover from failures during transaction completion</description>
 
     <repositories>
         <!-- Jersey -->
@@ -23,31 +23,6 @@
         </repository>
         <!-- end Jersey -->
     </repositories>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath />
-                        <argument>quickstart.MultipleParticipants</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
 
