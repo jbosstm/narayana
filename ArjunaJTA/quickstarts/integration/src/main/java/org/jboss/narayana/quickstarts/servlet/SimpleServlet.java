@@ -33,12 +33,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.UserTransaction;
 
 import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
+import org.jboss.narayana.quickstarts.txoj.AtomicObject;
 
 @WebServlet(displayName = "hello", urlPatterns = "/hello")
 public class SimpleServlet extends HttpServlet {
 
 	@EJB(lookup = "java:module/SimpleEJBImpl")
 	private SimpleEJB simpleEJB;
+
+	private AtomicObject atomicObject = new AtomicObject();
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -101,7 +104,25 @@ public class SimpleServlet extends HttpServlet {
 					.lookup("java:comp/UserTransaction");
 			tx.begin();
 			simpleEJB.createCustomer(name);
+			atomicObject.incr(1);
 			toWrite.append("<p>Created: " + name + "</p>");
+			tx.commit();
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+		return toWrite.toString();
+	}
+
+	public String getCustomerCount() {
+		StringBuffer toWrite = new StringBuffer();
+		toWrite.append("<h1>Customer count</h1>\n");
+
+		try {
+			UserTransaction tx = (UserTransaction) new InitialContext()
+					.lookup("java:comp/UserTransaction");
+			tx.begin();
+			toWrite.append("<p>Customers created this run: " + atomicObject.get()
+					+ "</p>");
 			tx.commit();
 		} catch (Throwable e) {
 			throw new RuntimeException(e);

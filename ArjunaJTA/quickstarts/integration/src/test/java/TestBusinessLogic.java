@@ -21,14 +21,10 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
+
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -36,6 +32,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.quickstarts.ejb.Customer;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJBImpl;
+import org.jboss.narayana.quickstarts.servlet.SimpleServlet;
 import org.jboss.narayana.quickstarts.txoj.AtomicObject;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -59,6 +56,7 @@ public class TestBusinessLogic {
 				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
 						Customer.class)
 				.addClasses(AtomicObject.class)
+				.addClasses(SimpleServlet.class)
 				.addAsResource("META-INF/persistence.xml",
 						"META-INF/persistence.xml")
 				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
@@ -74,25 +72,24 @@ public class TestBusinessLogic {
 	}
 
 	@Test
-	public void checkThatDoubleCallIncreasesListSize() throws NamingException,
-			NotSupportedException, SystemException, SecurityException,
-			IllegalStateException, RollbackException, HeuristicMixedException,
-			HeuristicRollbackException {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
-		tx.begin();
-		simpleEJB.createCustomer("tom");
-		tx.commit();
+	public void checkThatDoubleCallIncreasesListSize()
+			throws SecurityException, NoSuchFieldException,
+			IllegalArgumentException, IllegalAccessException {
 
-		String firstList = simpleEJB.listIds();
+		// Declare the servlet outside the container
+		SimpleServlet servlet = new SimpleServlet();
+		Field field = servlet.getClass().getDeclaredField("simpleEJB");
+		field.setAccessible(true);
+		field.set(servlet, simpleEJB);
+		field.setAccessible(false);
 
-		tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
-		tx.begin();
-		simpleEJB.createCustomer("tom");
-		tx.commit();
+		servlet.createCustomer("tom");
 
-		String secondList = simpleEJB.listIds();
+		String firstList = servlet.listCustomers();
+
+		servlet.createCustomer("tom");
+
+		String secondList = servlet.listCustomers();
 
 		System.out.println(firstList);
 		System.out.println(secondList);
@@ -147,4 +144,36 @@ public class TestBusinessLogic {
 		assertEquals(4, finalVal);
 	}
 
+	@Test
+	public void testServlet() throws Exception {
+		// Declare the servlet outside the container
+		SimpleServlet servlet = new SimpleServlet();
+		Field field = servlet.getClass().getDeclaredField("simpleEJB");
+		field.setAccessible(true);
+		field.set(servlet, simpleEJB);
+		field.setAccessible(false);
+
+		String toLookFor = "<p>Customers created this run: ";
+		String response = null;
+		int indexOf = -1;
+		String customersCreated = null;
+
+		// Get the initial number of customers
+		response = servlet.getCustomerCount();
+		indexOf = response.indexOf(toLookFor);
+		customersCreated = response.substring(indexOf + toLookFor.length(),
+				response.indexOf("</p>", indexOf));
+		int initialSize = Integer.parseInt(customersCreated);
+
+		// Create a new customer
+		servlet.createCustomer("tom");
+
+		// Check that one extra customer was created
+		response = servlet.getCustomerCount();
+		indexOf = response.indexOf(toLookFor);
+		customersCreated = response.substring(indexOf + toLookFor.length(),
+				response.indexOf("</p>", indexOf));
+		int newSize = Integer.parseInt(customersCreated);
+		assertTrue(newSize == initialSize + 1);
+	}
 }
