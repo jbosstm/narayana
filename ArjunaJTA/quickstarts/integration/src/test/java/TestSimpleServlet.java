@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
 import com.arjuna.ats.arjuna.common.Uid;
 
 @RunWith(Arquillian.class)
-public class TestBusinessLogic {
+public class TestSimpleServlet {
 	@EJB(lookup = "java:module/SimpleEJBImpl")
 	private SimpleEJB simpleEJB;
 
