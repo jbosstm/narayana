@@ -34,5 +34,5 @@ public interface SimpleEJB {
 	 */
 	public int createCustomer(String name) throws NamingException;
 
-	public String listIds() throws NamingException;
+	public String listCustomers() throws NamingException;
 }

@@ -50,7 +50,7 @@ public class SimpleEJBImpl implements SimpleEJB {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String listIds() throws NamingException {
+	public String listCustomers() throws NamingException {
 		UserTransaction tx = (UserTransaction) new InitialContext()
 				.lookup("java:comp/UserTransaction");
 		System.out.println("listIds transaction is identified as: "

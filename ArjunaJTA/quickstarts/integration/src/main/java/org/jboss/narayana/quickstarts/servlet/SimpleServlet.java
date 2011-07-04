@@ -35,7 +35,7 @@ import javax.transaction.UserTransaction;
 import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
 import org.jboss.narayana.quickstarts.txoj.AtomicObject;
 
-@WebServlet(displayName = "hello", urlPatterns = "/hello")
+@WebServlet(displayName = "customer-db", urlPatterns = "/customer-db")
 public class SimpleServlet extends HttpServlet {
 
 	@EJB(lookup = "java:module/SimpleEJBImpl")
@@ -49,8 +49,9 @@ public class SimpleServlet extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<html>");
-		out.println("<head><title>Rocking out with Openshift</title></head>");
+		out.println("<head><title>Customer Database</title></head>");
 		out.println("<body>");
+		out.println("<h1>Customer Database</h2>");
 		String operation = request.getParameter("operation");
 		if (operation != null) {
 			if (operation.equals("list")) {
@@ -66,7 +67,16 @@ public class SimpleServlet extends HttpServlet {
 				out.println(error("Unknown operation: " + operation));
 			}
 		} else {
-			out.println(error("Requires operation"));
+			out.println("<form method=\"get\" >");
+			out.println("<input type=\"text\" name=\"name\" size=30>");
+			out.println("<input type=\"hidden\" name=\"operation\" value=\"create\">");
+			out.println("<input type=\"submit\" value=\"Create customer\">");
+			out.println("</form>");
+
+			out.println("<form method=\"get\" >");
+			out.println("<input type=\"hidden\" name=\"operation\" value=\"list\">");
+			out.println("<input type=\"submit\" value=\"List customers\">");
+			out.println("</form>");
 		}
 		out.println("</body>");
 		out.println("</html>");
@@ -84,10 +94,13 @@ public class SimpleServlet extends HttpServlet {
 		toWrite.append("<h1>List of customer Ids</h1>\n");
 
 		try {
+			toWrite.append("<p>Customers created this run: "
+					+ atomicObject.get() + "</p>\n");
+
 			UserTransaction tx = (UserTransaction) new InitialContext()
 					.lookup("java:comp/UserTransaction");
 			tx.begin();
-			toWrite.append("<p>" + simpleEJB.listIds() + "</p>");
+			toWrite.append("<p>" + simpleEJB.listCustomers() + "</p>");
 			tx.commit();
 		} catch (Throwable e) {
 			toWrite.append("FAILED: " + e.toString());
