@@ -212,6 +212,9 @@
         <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/config.jar" dest="${build.dir}/tmp/impl"/>
+        <copy todir="${build.dir}/tmp/impl">
+            <fileset dir="${webapps.dir}" includes="*.war"/>
+        </copy>
         <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
         <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
         <delete dir="${build.dir}/tmp/impl"/>
@@ -232,6 +235,9 @@
         <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/config.jar" dest="${build.dir}/tmp/impl"/>
+        <copy todir="${build.dir}/tmp/impl">
+            <fileset dir="${webapps.dir}" includes="*.war"/>
+        </copy>
         <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
         <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
         <delete dir="${build.dir}/tmp/impl"/>
