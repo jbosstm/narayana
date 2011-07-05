@@ -22,6 +22,22 @@
       </snapshots>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
   <properties>
     <!-- For arquillian -->
@@ -29,6 +45,7 @@
   </properties>
 
   <build>
+      <finalName>${pom.artifactId}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
@@ -42,19 +59,39 @@
           </archive>
         </configuration>
       </plugin>
+      <!-- JBoss AS plugin to deploy war as a convenience -->
+      <plugin>
+        <groupId>org.jboss.as.plugins</groupId>
+        <artifactId>jboss-as-maven-plugin</artifactId>
+        <version>7.0.0.CR1</version>
+      </plugin>
+         <!-- Compiler plugin enforces Java 1.6 compatibility and activates 
+            annotation processors -->
+         <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+            </configuration>
+         </plugin>
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- Define the version of JBoss' Java EE 6 APIs we want to import. Any dependencies from org.jboss.spec will have their version defined by this BOM -->
+      <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) of artifacts. We use this here so that we always get the correct versions of artifacts. Here we use the jboss-javaee-web-6.0 stack (you can read this as the JBoss stack of the Java EE Web Profile 6 APIs), and we use version 2.0.0.Beta1 which is the latest release of the stack. You can actually use this stack with any version of JBoss AS that implements Java EE 6, not just JBoss AS 7! -->
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-web-6.0</artifactId>
+        <version>2.0.0.CR1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-    <!-- Include the JBoss' Java EE 6 APIs -->
-    <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) of artifacts. We use this here so that we always get the correct versions of artifacts. Here we use the jboss-javaee-web-6.0 stack (you can read this as the JBoss stack of the Java EE 6 Web Profile APIs), and we use version 2.0.0.Beta1 which is the latest release of the stack. You can actually use this stack with any version of JBoss AS that implements Java EE 6, not just JBoss AS 7! -->
-    <dependency>
-      <groupId>org.jboss.spec</groupId>
-      <artifactId>jboss-javaee-web-6.0</artifactId>
-      <version>2.0.0.CR1</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.jboss.ejb3</groupId>
@@ -67,6 +104,34 @@
           <artifactId>jboss-logging-spi</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- Import the JPA API, we use provided scope as the API is included in JBoss AS 7 -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Import the JSF API, we use provided scope as the API is included in JBoss AS 7 -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.faces</groupId>
+      <artifactId>jboss-jsf-api_2.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Import the JPA API, we use provided scope as the API is included in JBoss AS 7 -->
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.0-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- For the txoj -->
@@ -82,6 +147,15 @@
         </exclusion>
       </exclusions>
     </dependency>
+    
+    <!-- Import the injection annotations -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+      <scope>provided</scope>
+    </dependency>
+    
 
     <!-- We will provide some tests to check the quickstart deploys ok -->
     <dependency>

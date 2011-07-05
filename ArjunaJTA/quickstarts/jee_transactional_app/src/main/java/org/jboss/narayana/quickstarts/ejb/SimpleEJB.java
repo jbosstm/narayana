@@ -20,7 +20,14 @@
  */
 package org.jboss.narayana.quickstarts.ejb;
 
+import java.util.List;
+
 import javax.naming.NamingException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 
 /**
  * A simple example to show some transactional business logic.
@@ -31,8 +38,14 @@ public interface SimpleEJB {
 	 * 
 	 * @return
 	 * @throws NamingException
+	 * @throws Exception
 	 */
-	public int createCustomer(String name) throws NamingException;
+	public int createCustomer(String name) throws NamingException, Exception;
 
-	public String listCustomers() throws NamingException;
+	public List<Customer> listCustomers() throws NamingException,
+			NotSupportedException, SystemException, SecurityException,
+			IllegalStateException, RollbackException, HeuristicMixedException,
+			HeuristicRollbackException;
+
+	public int getCustomerCount() throws Exception;
 }

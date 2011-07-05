@@ -29,19 +29,32 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+
+import org.jboss.narayana.quickstarts.txoj.AtomicObject;
 
 @Stateless
 public class SimpleEJBImpl implements SimpleEJB {
+
+	private AtomicObject atomicObject = new AtomicObject();
+
 	@PersistenceContext(name = "my_persistence_ctx")
 	EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public int createCustomer(String name) throws NamingException {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
+	public int createCustomer(String name) throws Exception {
 		System.out.println("createCustomer transaction is identified as: "
-				+ tx.toString());
+				+ new InitialContext().lookup("java:comp/UserTransaction")
+						.toString());
+
+		// Can do this first because if there is a duplicate it will be rolled
+		// back for us
+		atomicObject.incr(1);
+
 		Customer c1 = new Customer();
 		c1.setName(name);
 		em.persist(c1);
@@ -50,26 +63,22 @@ public class SimpleEJBImpl implements SimpleEJB {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String listCustomers() throws NamingException {
-		UserTransaction tx = (UserTransaction) new InitialContext()
-				.lookup("java:comp/UserTransaction");
-		System.out.println("listIds transaction is identified as: "
-				+ tx.toString());
-		final List<Customer> list = em.createQuery("select c from Customer c")
-				.getResultList();
-		StringBuffer toReturn = new StringBuffer("customers: ");
-		boolean added = false;
-		for (Customer customer : list) {
-			toReturn.append(customer.getId());
-			toReturn.append("/");
-			toReturn.append(customer.getName());
-			toReturn.append(", ");
-			added = true;
-		}
-		if (added) {
-			return toReturn.substring(0, toReturn.length() - 2);
-		} else {
-			return toReturn.toString();
-		}
+	@SuppressWarnings("unchecked")
+	public List<Customer> listCustomers() throws NamingException,
+			NotSupportedException, SystemException, SecurityException,
+			IllegalStateException, RollbackException, HeuristicMixedException,
+			HeuristicRollbackException {
+		System.out.println("listCustomers transaction is identified as: "
+				+ new InitialContext().lookup("java:comp/UserTransaction")
+						.toString());
+		return em.createQuery("select c from Customer c").getResultList();
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public int getCustomerCount() throws Exception {
+		System.out.println("getCustomerCount transaction is identified as: "
+				+ new InitialContext().lookup("java:comp/UserTransaction")
+						.toString());
+		return atomicObject.get();
 	}
 }

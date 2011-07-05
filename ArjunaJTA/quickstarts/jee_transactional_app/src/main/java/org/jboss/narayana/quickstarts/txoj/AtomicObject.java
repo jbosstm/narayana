@@ -43,6 +43,7 @@ public class AtomicObject extends LockManager {
 
 	public AtomicObject() {
 		this(ObjectModel.SINGLE);
+		System.out.println("Creating new atomic object");
 	}
 
 	public AtomicObject(int om) {
