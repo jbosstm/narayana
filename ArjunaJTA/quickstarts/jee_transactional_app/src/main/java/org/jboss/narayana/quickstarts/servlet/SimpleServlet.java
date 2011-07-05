@@ -63,6 +63,8 @@ public class SimpleServlet extends HttpServlet {
 				} else {
 					out.println(error("Requires name parameter"));
 				}
+			} else if (operation.equals("count")) {
+				out.println(getCustomerCount());
 			} else {
 				out.println(error("Unknown operation: " + operation));
 			}
@@ -76,6 +78,11 @@ public class SimpleServlet extends HttpServlet {
 			out.println("<form method=\"get\" >");
 			out.println("<input type=\"hidden\" name=\"operation\" value=\"list\">");
 			out.println("<input type=\"submit\" value=\"List customers\">");
+			out.println("</form>");
+
+			out.println("<form method=\"get\" >");
+			out.println("<input type=\"hidden\" name=\"operation\" value=\"count\">");
+			out.println("<input type=\"submit\" value=\"Get customer count\">");
 			out.println("</form>");
 		}
 		out.println("</body>");
@@ -94,17 +101,17 @@ public class SimpleServlet extends HttpServlet {
 		toWrite.append("<h1>List of customer Ids</h1>\n");
 
 		try {
-			toWrite.append("<p>Customers created this run: "
-					+ atomicObject.get() + "</p>\n");
-
 			UserTransaction tx = (UserTransaction) new InitialContext()
 					.lookup("java:comp/UserTransaction");
 			tx.begin();
+			toWrite.append("<p>Customers created this run: "
+					+ atomicObject.get() + "</p>\n");
 			toWrite.append("<p>" + simpleEJB.listCustomers() + "</p>");
 			tx.commit();
 		} catch (Throwable e) {
 			toWrite.append("FAILED: " + e.toString());
 		}
+		toWrite.append("<a href=\"javascript:history.back(-1)\">Go Back</a>\n");
 		return toWrite.toString();
 	}
 
@@ -123,6 +130,7 @@ public class SimpleServlet extends HttpServlet {
 		} catch (Throwable e) {
 			toWrite.append("FAILED: " + e.toString());
 		}
+		toWrite.append("<a href=\"javascript:history.back(-1)\">Go Back</a>\n");
 		return toWrite.toString();
 	}
 
@@ -140,6 +148,7 @@ public class SimpleServlet extends HttpServlet {
 		} catch (Throwable e) {
 			toWrite.append("FAILED: " + e.toString());
 		}
+		toWrite.append("<a href=\"javascript:history.back(-1)\">Go Back</a>\n");
 		return toWrite.toString();
 	}
 }
