@@ -97,6 +97,6 @@
     <module>object_store/</module>
     <module>recovery</module>
     <module>maven</module>
-    <module>integration</module>
+    <module>jee_transactional_app</module>
   </modules>
 </project>
