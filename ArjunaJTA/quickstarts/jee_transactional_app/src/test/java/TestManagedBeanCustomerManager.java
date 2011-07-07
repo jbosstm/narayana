@@ -27,11 +27,11 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.quickstarts.ejb.Customer;
-import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
-import org.jboss.narayana.quickstarts.ejb.SimpleEJBImpl;
+import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJB;
+import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJBImpl;
 import org.jboss.narayana.quickstarts.jsf.CustomerManager;
-import org.jboss.narayana.quickstarts.jsf.ManagedBeanCustomerManager;
-import org.jboss.narayana.quickstarts.txoj.AtomicObject;
+import org.jboss.narayana.quickstarts.jsf.CustomerManagerManagedBean;
+import org.jboss.narayana.quickstarts.txoj.CustomerCreationCounter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -43,17 +43,17 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class TestManagedBeanCustomerManager {
 	@Inject
-	private ManagedBeanCustomerManager managedBeanCustomerManager;
+	private CustomerManagerManagedBean managedBeanCustomerManager;
 
 	@Deployment
 	public static WebArchive createDeployment() {
 		WebArchive archive = ShrinkWrap
 				.create(WebArchive.class, "test.war")
-				.addClasses(SimpleEJB.class, SimpleEJBImpl.class,
+				.addClasses(CustomerManagerEJB.class, CustomerManagerEJBImpl.class,
 						Customer.class)
-				.addClasses(AtomicObject.class)
+				.addClasses(CustomerCreationCounter.class)
 				.addClasses(CustomerManager.class,
-						ManagedBeanCustomerManager.class)
+						CustomerManagerManagedBean.class)
 				.addAsResource("META-INF/persistence.xml",
 						"META-INF/persistence.xml")
 				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");

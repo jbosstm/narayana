@@ -32,7 +32,7 @@ import javax.transaction.SystemException;
 /**
  * A simple example to show some transactional business logic.
  */
-public interface SimpleEJB {
+public interface CustomerManagerEJB {
 	/**
 	 * The business logic.
 	 * 

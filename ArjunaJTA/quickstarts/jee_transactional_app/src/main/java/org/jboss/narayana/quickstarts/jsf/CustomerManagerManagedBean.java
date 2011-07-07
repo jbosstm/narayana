@@ -35,14 +35,14 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.narayana.quickstarts.ejb.Customer;
-import org.jboss.narayana.quickstarts.ejb.SimpleEJB;
+import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJB;
 
 @Named("customerManager")
 @RequestScoped
-public class ManagedBeanCustomerManager implements CustomerManager {
+public class CustomerManagerManagedBean implements CustomerManager {
 
 	@EJB
-	private SimpleEJB simpleEJB;
+	private CustomerManagerEJB simpleEJB;
 
 	@Inject
 	private UserTransaction utx;

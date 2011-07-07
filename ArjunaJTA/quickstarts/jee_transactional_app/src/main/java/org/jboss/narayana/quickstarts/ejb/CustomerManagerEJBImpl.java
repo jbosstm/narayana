@@ -35,12 +35,12 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
-import org.jboss.narayana.quickstarts.txoj.AtomicObject;
+import org.jboss.narayana.quickstarts.txoj.CustomerCreationCounter;
 
 @Stateless
-public class SimpleEJBImpl implements SimpleEJB {
+public class CustomerManagerEJBImpl implements CustomerManagerEJB {
 
-	private AtomicObject atomicObject = new AtomicObject();
+	private CustomerCreationCounter atomicObject = new CustomerCreationCounter();
 
 	@PersistenceContext(name = "my_persistence_ctx")
 	EntityManager em;
