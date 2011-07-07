@@ -14,7 +14,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 OVERVIEW
 --------
-This shows an example of how to introduce TXOJ to your project
+This shows an example of how to introduce TXOJ to your project.
+
+TXOJ are described in the ArjunaCore developers guide.
 
 
 USAGE
