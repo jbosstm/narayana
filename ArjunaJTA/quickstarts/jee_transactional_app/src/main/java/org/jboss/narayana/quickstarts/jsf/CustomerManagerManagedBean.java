@@ -22,7 +22,6 @@ package org.jboss.narayana.quickstarts.jsf;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,46 +33,49 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.jboss.logging.Logger;
 import org.jboss.narayana.quickstarts.ejb.Customer;
 import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJB;
 
 @Named("customerManager")
 @RequestScoped
 public class CustomerManagerManagedBean implements CustomerManager {
-
-	@EJB
-	private CustomerManagerEJB simpleEJB;
+	private Logger logger = Logger.getLogger(CustomerManagerManagedBean.class
+			.getName());
 
 	@Inject
-	private UserTransaction utx;
+	private CustomerManagerEJB customerManagerEJB;
+
+	@Inject
+	private UserTransaction userTransaction;
 
 	public List<Customer> getCustomers() throws SecurityException,
 			IllegalStateException, NamingException, NotSupportedException,
 			SystemException, RollbackException, HeuristicMixedException,
 			HeuristicRollbackException {
-		System.out.println("Getting customers");
-		return simpleEJB.listCustomers();
+		logger.debug("Getting customers");
+		return customerManagerEJB.listCustomers();
 	}
 
 	public String addCustomer(String name) {
-		System.out.println("Adding customer: " + name);
+		logger.debug("Adding customer: " + name);
 		try {
-			utx.begin();
-			System.out.println("Creating customer");
-			simpleEJB.createCustomer(name);
-			utx.commit();
-			System.out.println("Created customer");
+			userTransaction.begin();
+			logger.debug("Creating customer");
+			customerManagerEJB.createCustomer(name);
+			userTransaction.commit();
+			logger.debug("Created customer");
 			return "customerAdded";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("Caught a duplicate", e);
 			// Transaction will be marked rollback only anyway utx.rollback();
 			return "customerDuplicate";
 		}
 	}
 
 	public int getCustomerCount() throws Exception {
-		System.out.println("Getting count");
-		int count = simpleEJB.getCustomerCount();
+		logger.debug("Getting count");
+		int count = customerManagerEJB.getCustomerCount();
 		return count;
 	}
 }

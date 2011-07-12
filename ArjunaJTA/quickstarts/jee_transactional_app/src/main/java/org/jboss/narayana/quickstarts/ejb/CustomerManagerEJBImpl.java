@@ -25,6 +25,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -35,29 +36,33 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
+import org.jboss.narayana.quickstarts.jsf.CustomerManagerManagedBean;
 import org.jboss.narayana.quickstarts.txoj.CustomerCreationCounter;
 
 @Stateless
 public class CustomerManagerEJBImpl implements CustomerManagerEJB {
+	private Logger logger = Logger.getLogger(CustomerManagerManagedBean.class
+			.getName());
 
-	private CustomerCreationCounter atomicObject = new CustomerCreationCounter();
+	private CustomerCreationCounter customerCreationCounter = new CustomerCreationCounter();
 
 	@PersistenceContext(name = "my_persistence_ctx")
-	EntityManager em;
+	EntityManager entityManager;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public int createCustomer(String name) throws Exception {
-		System.out.println("createCustomer transaction is identified as: "
+		logger.debug("createCustomer transaction is identified as: "
 				+ new InitialContext().lookup("java:comp/UserTransaction")
 						.toString());
 
 		// Can do this first because if there is a duplicate it will be rolled
 		// back for us
-		atomicObject.incr(1);
+		customerCreationCounter.incr(1);
 
 		Customer c1 = new Customer();
 		c1.setName(name);
-		em.persist(c1);
+		entityManager.persist(c1);
 
 		return c1.getId();
 	}
@@ -68,17 +73,18 @@ public class CustomerManagerEJBImpl implements CustomerManagerEJB {
 			NotSupportedException, SystemException, SecurityException,
 			IllegalStateException, RollbackException, HeuristicMixedException,
 			HeuristicRollbackException {
-		System.out.println("listCustomers transaction is identified as: "
+		logger.debug("listCustomers transaction is identified as: "
 				+ new InitialContext().lookup("java:comp/UserTransaction")
 						.toString());
-		return em.createQuery("select c from Customer c").getResultList();
+		return entityManager.createQuery("select c from Customer c")
+				.getResultList();
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public int getCustomerCount() throws Exception {
-		System.out.println("getCustomerCount transaction is identified as: "
+		logger.debug("getCustomerCount transaction is identified as: "
 				+ new InitialContext().lookup("java:comp/UserTransaction")
 						.toString());
-		return atomicObject.get();
+		return customerCreationCounter.get();
 	}
 }

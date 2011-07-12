@@ -49,8 +49,8 @@ public class TestManagedBeanCustomerManager {
 	public static WebArchive createDeployment() {
 		WebArchive archive = ShrinkWrap
 				.create(WebArchive.class, "test.war")
-				.addClasses(CustomerManagerEJB.class, CustomerManagerEJBImpl.class,
-						Customer.class)
+				.addClasses(CustomerManagerEJB.class,
+						CustomerManagerEJBImpl.class, Customer.class)
 				.addClasses(CustomerCreationCounter.class)
 				.addClasses(CustomerManager.class,
 						CustomerManagerManagedBean.class)

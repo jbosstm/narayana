@@ -42,10 +42,29 @@ public interface CustomerManagerEJB {
 	 */
 	public int createCustomer(String name) throws NamingException, Exception;
 
+	/**
+	 * List all the customers.
+	 * 
+	 * @return
+	 * @throws NamingException
+	 * @throws NotSupportedException
+	 * @throws SystemException
+	 * @throws SecurityException
+	 * @throws IllegalStateException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 */
 	public List<Customer> listCustomers() throws NamingException,
 			NotSupportedException, SystemException, SecurityException,
 			IllegalStateException, RollbackException, HeuristicMixedException,
 			HeuristicRollbackException;
 
+	/**
+	 * Get the total count of customers.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public int getCustomerCount() throws Exception;
 }
