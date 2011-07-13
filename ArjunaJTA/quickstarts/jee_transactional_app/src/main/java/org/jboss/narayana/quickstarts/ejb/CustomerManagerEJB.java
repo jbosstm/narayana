@@ -29,6 +29,8 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
+import org.jboss.narayana.quickstarts.jpa.Customer;
+
 /**
  * A simple example to show some transactional business logic.
  */

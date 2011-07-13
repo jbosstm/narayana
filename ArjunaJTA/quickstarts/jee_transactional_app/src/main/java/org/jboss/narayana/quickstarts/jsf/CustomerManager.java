@@ -29,7 +29,7 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
-import org.jboss.narayana.quickstarts.ejb.Customer;
+import org.jboss.narayana.quickstarts.jpa.Customer;
 
 /**
  * This is the customer manager as seen by the JSF pages. It defines the basic

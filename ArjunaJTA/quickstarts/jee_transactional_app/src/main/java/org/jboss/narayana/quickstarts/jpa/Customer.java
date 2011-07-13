@@ -18,7 +18,7 @@
  * (C) 2011,
  * @author JBoss, by Red Hat.
  */
-package org.jboss.narayana.quickstarts.ejb;
+package org.jboss.narayana.quickstarts.jpa;
 
 import java.io.Serializable;
 

@@ -36,6 +36,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
+import org.jboss.narayana.quickstarts.jpa.Customer;
 import org.jboss.narayana.quickstarts.jsf.CustomerManagerManagedBean;
 import org.jboss.narayana.quickstarts.txoj.CustomerCreationCounter;
 

@@ -26,9 +26,9 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.narayana.quickstarts.ejb.Customer;
 import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJB;
 import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJBImpl;
+import org.jboss.narayana.quickstarts.jpa.Customer;
 import org.jboss.narayana.quickstarts.jsf.CustomerManager;
 import org.jboss.narayana.quickstarts.jsf.CustomerManagerManagedBean;
 import org.jboss.narayana.quickstarts.txoj.CustomerCreationCounter;

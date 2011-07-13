@@ -34,8 +34,8 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
-import org.jboss.narayana.quickstarts.ejb.Customer;
 import org.jboss.narayana.quickstarts.ejb.CustomerManagerEJB;
+import org.jboss.narayana.quickstarts.jpa.Customer;
 
 @Named("customerManager")
 @RequestScoped
