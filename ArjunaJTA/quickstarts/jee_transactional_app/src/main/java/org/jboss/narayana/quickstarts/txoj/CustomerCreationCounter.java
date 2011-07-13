@@ -40,15 +40,7 @@ public class CustomerCreationCounter extends LockManager {
 	/**
 	 * This is the transactional state of the object.
 	 */
-	private int state;
-
-	/**
-	 * Create the counter.
-	 */
-	public CustomerCreationCounter() {
-		super(ObjectType.RECOVERABLE);
-		state = 0;
-	}
+	private int state = 0;
 
 	/**
 	 * Increment the counter.
