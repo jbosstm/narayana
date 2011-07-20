@@ -51,7 +51,7 @@ import javax.jws.soap.SOAPBinding;
 @WebService(serviceName="TheatreServiceATService", portName="TheatreServiceAT",
         name = "ITheatreServiceAT", targetNamespace = "http://www.jboss.com/jbosstm/xts/demo/Theatre",
         wsdlLocation = "/WEB-INF/wsdl/TheatreServiceAT.wsdl")
-@HandlerChain(file = "../context-handlers.xml", name = "Context Handlers")
+@HandlerChain(file = "/context-handlers.xml", name = "Context Handlers")
 @SOAPBinding(style=SOAPBinding.Style.RPC)
 public class TheatreServiceAT implements ITheatreServiceAT
 {

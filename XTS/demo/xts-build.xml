@@ -120,7 +120,7 @@
         <!--
         <fileset dir="${jbossts.lib.dir}" includes="${ext.libs}"/>
         -->
-        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-4.14.0.Final.jar"/>
+        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-*.jar"/>
     </path>
 
     <path id="jboss.client.path">
@@ -231,7 +231,7 @@
 
     <!-- the server side elements -->
     <target name="jboss-webservices" depends="compile">
-        <copy tofile="${build.dir}/classes/com/jboss/jbosstm/xts/demo/services/context-handlers.xml"
+        <copy tofile="${build.dir}/classes/context-handlers.xml"
 	      file="${jboss.dd.dir}/context-handlers.xml"/>
         <war destfile="${build.dir}/xts-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml" >
 	    <!-- include app wsdl -->
@@ -240,6 +240,9 @@
 	    <classes dir="${build.dir}/classes">
 		 <include name="com/jboss/jbosstm/xts/demo/services/**/*"/>
 	    </classes>
+            <classes dir="${build.dir}/classes">
+             <include name="context-handlers.xml"/>
+            </classes>
 	        <!-- generated server interfaces -->
 	    <classes dir="${build.dir}/classes/"
 		includes="com/jboss/jbosstm/xts/demo/restaurant/IRestaurantServiceAT.class"/>
@@ -253,6 +256,9 @@
 		includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceAT.class"/>
 	    <classes dir="${build.dir}/classes/"
 		includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceBA.class"/>
+            <manifest>
+                <attribute name="Dependencies" value="org.jboss.xts,org.jboss.jts"/>
+            </manifest>
         </war>
     </target>
 
@@ -263,6 +269,9 @@
                 <include name="com/arjuna/xts/nightout/services/**"/>
                 <include name="com/arjuna/mw/wst/service/**/*"/>
             </classes>
+            <manifest>
+                <attribute name="Dependencies" value="org.jboss.xts,org.jboss.jts"/>
+            </manifest>
         </war>
     </target>
 
@@ -274,7 +283,10 @@
 
         <war warfile="${build.dir}/xts-demo.war" webxml="${build.dir}/client-web-app.xml">
 	    <!-- include app wsdl and wscoor wsdl -->
+            <!--
             <webinf dir="${jboss.dd.dir}" includes="wsdl/*.wsdl"/>
+            -->
+            <classes dir="${jboss.dd.dir}" includes="wsdl/*.wsdl"/>
 	    <!-- impl classes -->
             <classes dir="${build.dir}/classes"
                 includes="com/jboss/jbosstm/xts/demo/client/**"/>
@@ -293,6 +305,9 @@
                 includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceBA.class"/>
 	    <!-- jsp files -->
             <fileset dir="${web.dir}" excludes="indexrpc.jsp"/>
+            <manifest>
+                <attribute name="Dependencies" value="org.jboss.xts"/>
+            </manifest>
         </war>
     </target>
 
@@ -313,6 +328,9 @@
             <fileset dir="${web.dir}" excludes="index.jsp indexrpc.jsp"/>
             <fileset dir="${build.web.dir}" includes="index.jsp"/>
             <webinf dir="${jboss.ddrpc.dir}" includes="client-jaxrpc-mapping.xml wsdl/**"/>
+            <manifest>
+                <attribute name="Dependencies" value="org.jboss.xts"/>
+            </manifest>
         </war>
     </target>
 

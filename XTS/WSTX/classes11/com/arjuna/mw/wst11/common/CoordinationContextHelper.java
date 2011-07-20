@@ -45,7 +45,11 @@ public class CoordinationContextHelper
     public static CoordinationContextType deserialise(final Element headerElement)
         throws JAXBException
     {
+        Thread current =Thread.currentThread();
+        ClassLoader loader = current.getContextClassLoader();
         try {
+            // use the XTS module loader so that JAXB can find its factory
+            current.setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
             JAXBContext jaxbContext = JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
             Unmarshaller unmarshaller;
             unmarshaller = jaxbContext.createUnmarshaller();
@@ -57,6 +61,9 @@ public class CoordinationContextHelper
             return coordinationContextType;
         } catch (JAXBException jaxbe) {
             return null;
+        } finally {
+            // restore the original  loader
+            current.setContextClassLoader(loader);
         }
     }
 
@@ -73,7 +80,11 @@ public class CoordinationContextHelper
         // only generate a Node and we need to add a SOAPHeaderElement. So, we cheat by serialising the
         // coordinationContextType into a header created by the caller, moving all its children into the
         // header element and then deleting it.
+        Thread current =Thread.currentThread();
+        ClassLoader loader = current.getContextClassLoader();
         try {
+            // use the XTS module loader so that JAXB can find its factory
+            current.setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
             JAXBContext jaxbContext = JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
             Marshaller marshaller;
             marshaller = jaxbContext.createMarshaller();
@@ -105,6 +116,9 @@ public class CoordinationContextHelper
             }
             headerElement.removeChild(element);
         } catch (JAXBException jaxbe) {
+        } finally {
+            // restore the original  loader
+            current.setContextClassLoader(loader);
         }
     }
 }

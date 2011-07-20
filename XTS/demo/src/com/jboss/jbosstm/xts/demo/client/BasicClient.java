@@ -589,7 +589,7 @@ public class BasicClient extends HttpServlet
                                             final String address, final String wsdlURL, final Class<T> clazz)
             throws MalformedURLException
     {
-        URL url = BasicClient.class.getResource("../../../../../../../" + wsdlURL);
+        URL url = BasicClient.class.getResource("/" + wsdlURL);
         Service service = Service.create(url, serviceName);
         T port = service.getPort(endpointName, clazz);
         BindingProvider bindingProvider = ((BindingProvider) port);
