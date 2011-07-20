@@ -70,5 +70,9 @@
             found in a deployment gets this package auto-added to its module loader
             -->
         <module name="javax.jws.api"/>
+        <!-- this is needed to ensure @Resource annotations are visible -->
+        <module name="javax.annotation.api"/>
+        <!-- need this so we can access HTTPServletRequest etc -->
+        <module name="javax.servlet.api"/>
     </dependencies>
 </module>

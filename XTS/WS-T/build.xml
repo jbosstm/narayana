@@ -303,7 +303,7 @@
         <copy file="${dd.dir}/ws-t_handlers.xml" tofile="${build.classes11.dir}/ws-t_handlers.xml"/>
         <copy file="${dd.dir}/ws-t-rpc_handlers.xml" tofile="${build.classes11.dir}/ws-t-rpc_handlers.xml"/>
         <jar jarfile="${build.lib.dir}/ws-t11.jar">
-            <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes} ${ws-t11.coordinator.endpoint.classes} ${ws-t11.participant.endpoint.classes} ${ws-t11.client.endpoint.classes}"/>
+            <fileset dir="${build.classes11.dir}" excludes="${ws-t11.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/ws-t11-api.jar">
             <fileset dir="${build.classes11.dir}" includes="${ws-t11.api.classes}"/>
@@ -323,15 +323,12 @@
         <copy file="${dd.dir}/ws-t11-client_web-app.xml" tofile="${build.dd.dir}/web-app11-client.xml"/>
         <!-- coordinator  -->
         <war warfile="${build.webapps.dir}/ws-t11-coordinator.war" webxml="${build.dd.dir}/web-app11-coordinator.xml" manifest="${dd.dir}/manifest.mf">
-            <classes dir="${build.classes11.dir}" includes="${ws-t11.coordinator.endpoint.classes}"/>
         </war>
         <!-- participants  -->
         <war warfile="${build.webapps.dir}/ws-t11-participant.war" webxml="${build.dd.dir}/web-app11-participant.xml" manifest="${dd.dir}/manifest.mf">
-            <classes dir="${build.classes11.dir}" includes="${ws-t11.participant.endpoint.classes}"/>
         </war>
         <!-- client  -->
         <war warfile="${build.webapps.dir}/ws-t11-client.war" webxml="${build.dd.dir}/web-app11-client.xml" manifest="${dd.dir}/manifest.mf">
-            <classes dir="${build.classes11.dir}" includes="${ws-t11.client.endpoint.classes}"/>
         </war>
     </target>
 
