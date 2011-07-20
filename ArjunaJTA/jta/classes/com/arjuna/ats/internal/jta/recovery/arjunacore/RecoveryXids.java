@@ -32,6 +32,8 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.XidImple;
+import com.sun.org.apache.bcel.internal.classfile.InnerClass;
 
 import java.util.*;
 import javax.transaction.xa.*;
@@ -60,88 +62,57 @@ public class RecoveryXids
 	return false;
     }
 
+    /**
+     * Update our tracking with results of a new recovery scan pass
+     * @param trans the Xids seen during the new scan.
+     */
     public final void nextScan (Xid[] trans)
     {
-	/*
-	 * Rather than recover now, wait until the next scan to
-	 * give any transactions a chance to finish.
-	 */
+        long currentTime = System.currentTimeMillis();
 
-	_scanHoldNumber++;
-
-	/*
-	 * We keep a list of all Xids that are returned from all
-	 * XAResource instances. Because we never know when exactly we 
-	 * can get rid of them (because of the multi-pass approach to
-	 * determining those that need to be recovered), we only keep the
-	 * cache for a maximum number of scans. After that, we zero it and
-	 * start from scratch again. This may mean that we take an extra pass
-	 * to recover some transactions.
-	 */
-
-	if (_scanHoldNumber > MAX_SCAN_HOLD)
-	    _scanM = null;
-
-	if (_scanM == null)
-	    _scanM = _scanN;
-	else
-	{
-	    if ((_scanM != null) && (_scanN != null))
-	    {
-		int newArraySize = _scanM.length + _scanN.length;
-		Xid[] copy = new Xid[newArraySize];
-		
-		System.arraycopy(_scanM, 0, copy, 0, _scanM.length);
-		System.arraycopy(_scanN, 0, copy, _scanM.length, _scanN.length);
-
-		_scanM = copy;
-	    }
-	}
-	    
-	_scanN = trans;
-    }
-
-    /*
-     * Go through the current list of inflight transactions and look for
-     * the same entries in the previous scan. If we find them, then we will
-     * try to recover them. Then move the current list into the old list
-     * for next time. We could prune out those transactions we manage to
-     * recover, but this will happen automatically at the next scan since
-     * they won't appear in the next new list of inflight transactions.
-     */
-
-    public final Xid[] toRecover ()
-    {
-        final int numScanN = (_scanN == null ? 0 : _scanN.length) ;
-        final int numScanM = (_scanM == null ? 0 : _scanM.length) ;
-        final int numScan = Math.min(numScanN, numScanM) ;
-
-        if (numScan == 0)
-        {
-            return null ;
-        }
-
-        final List<Xid> workingList = new ArrayList<Xid>(numScanN) ;
-
-        for(int i = 0; i < numScanN; i++)
-        {
-            // JBTM-823 / JBPAPP-5195 : don't assume list order/content match.
-            // the list is (hopefully) small and we don't entirely trust 3rd party
-            // Xid hashcode behaviour, so we just do this the brute force way...
-            for(int j = 0; j < numScanM; j++)
-            {
-                if (XAHelper.sameXID(_scanN[i], _scanM[j]))
-                {
-                    workingList.add(_scanN[i]);
-                    // any given id should be in _scanN only once, but _scanM may have dupls as
-                    // it's actually a combination of prev runs, per the array copy in nextScan.
-                    // we drop out here as we want each Xid only once in the return set:
-                    break;
+        // record the new information:
+        if(trans != null) {
+            for(Xid xid : trans) {
+                XidImple xidImple = new XidImple(xid);
+                if(!_whenFirstSeen.containsKey(xidImple)) {
+                    _whenFirstSeen.put(xidImple, currentTime);
                 }
+                _whenLastSeen.put(xidImple, currentTime);
             }
         }
 
-        return workingList.toArray(new Xid[workingList.size()]);
+        // garbage collect the stale information:
+        Set<XidImple> candidates = new HashSet<XidImple>(_whenFirstSeen.keySet());
+        for(XidImple candidate : candidates) {
+            if(_whenLastSeen.get(candidate) != currentTime) {
+                // seen it previously but it's gone now so we can forget it:
+                _whenFirstSeen.remove(candidate);
+                _whenLastSeen.remove(candidate);
+            }
+        }
+        // gc note: transient errors in distributed RMs may cause values to disappear in one scan and then reappear later.
+        // under the current model we'll recover Xids only if they stick around for enough consecutive scans to
+        // span the safely interval. In the unlikely event that causes problems, we'll need to postpone gc for a given
+        // interval and take care to include only Xids seen in the most recent scan when returning candidates for recovery.
+    }
+
+
+    /**
+     * Return any Xids that should be considered for recovery.
+     * @return Xids that are old enough to be eligible for recovery.
+     */
+    public final Xid[] toRecover ()
+    {
+        List<Xid> oldEnoughXids = new LinkedList<Xid>();
+        long currentTime = System.currentTimeMillis();
+
+        for(Map.Entry<XidImple,Long> entry : _whenFirstSeen.entrySet()) {
+            if(entry.getValue() + safetyIntervalMillis <= currentTime) {
+                oldEnoughXids.add(entry.getKey());
+            }
+        }
+
+        return oldEnoughXids.toArray(new Xid[oldEnoughXids.size()]);
     }
 
     public final boolean isSameRM (XAResource xares)
@@ -161,25 +132,9 @@ public class RecoveryXids
     
     public boolean contains (Xid xid)
     {
-	if (_scanN != null)
-	{
-	    for (int i = 0; i < _scanN.length; i++)
-	    {
-		if (XAHelper.sameXID(xid, _scanN[i]))
-		    return true;
-	    }
-	}
-	
-	if (_scanM != null)
-	{
-	    for (int i = 0; i < _scanM.length; i++)
-	    {
-		if (XAHelper.sameXID(xid, _scanM[i]))
-		    return true;
-	    }
-	}
+        XidImple xidImple = new XidImple(xid);
 
-	return false;
+        return _whenFirstSeen.containsKey(xidImple);
     }
 	
     /**
@@ -211,11 +166,12 @@ public class RecoveryXids
         return false;
     }
 
-    private Xid[]      _scanN;
-    private Xid[]      _scanM;
+    // record when we first saw and most recently saw a given Xid. time in system clock (milliseconds).
+    // since we don't trust 3rd party hashcode/equals we convert to our own wrapper class.
+    private final Map<XidImple,Long> _whenFirstSeen = new HashMap<XidImple, Long>();
+    private final Map<XidImple,Long> _whenLastSeen = new HashMap<XidImple, Long>();
+
     private XAResource _xares;
-    private int        _scanHoldNumber;
 
-    private static final int MAX_SCAN_HOLD = 10;  // number of scans we hold the cache for before flushing;
-
+    private static final int safetyIntervalMillis = 10000; // may eventually want to make this configurable?
 }

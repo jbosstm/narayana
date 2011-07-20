@@ -67,12 +67,23 @@ public class RecoveryXidsUnitTest
         xids[1] = new XidImple(new Uid());
         
         rxids.nextScan(xids);
-        
+
         Object[] trans = rxids.toRecover();
+        assertEquals(0, trans.length);
+
+        try {
+            Thread.sleep(10010);
+        } catch(InterruptedException e) {}
+
+
+        rxids.nextScan(xids); // force cleanup.
+        trans = rxids.toRecover();
         
         assertEquals(2, trans.length);
-        assertEquals(trans[0], xids[0]);
-        
+
+        assertTrue( trans[0].equals(xids[0]) || trans[1].equals(xids[0]));
+        assertTrue( trans[0].equals(xids[1]) || trans[1].equals(xids[1]));
+
         assertTrue(rxids.contains(xids[0]));
         
         assertFalse(rxids.updateIfEquivalentRM(new TestResource(), null));
