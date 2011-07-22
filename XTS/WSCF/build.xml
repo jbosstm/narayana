@@ -20,7 +20,7 @@
   @author JBoss Inc.
 -->
 
-<project name="WSCF" default="war" basedir=".">
+<project name="WSCF" default="jar" basedir=".">
 
 	<!-- Set module name -->
 	<property name="modulename" value="wscf"/>
@@ -40,12 +40,10 @@
 	<!-- internal paths and jars -->
 
     <property name="src.dir" value="classes"/>
-    <property name="src10.dir" value="classes10"/>
     <property name="src11.dir" value="classes11"/>
 
 	<property name="build.dir" value="build"/>
     <property name="build.classes.dir" value="${build.dir}/classes"/>
-    <property name="build.classes10.dir" value="${build.dir}/classes10/classes"/>
     <property name="build.classes11.dir" value="${build.dir}/classes11/classes"/>
 	<property name="build.lib.dir" value="${build.dir}/lib"/>
 	<property name="build.webapps.dir" value="${build.dir}/webapps"/>
@@ -70,8 +68,6 @@
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wsc.api.libs" value="ws-c-api.jar"/>
-    <property name="wsc10.libs" value="ws-c10.jar"/>
-    <property name="wsc10.api.libs" value="ws-c10-api.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
 
     <path id="wscf.lib.classpath">
@@ -96,23 +92,19 @@
 		</tstamp>
 		<!-- Make the destination directory -->
         <mkdir dir="${build.classes.dir}"/>
-        <mkdir dir="${build.classes10.dir}"/>
         <mkdir dir="${build.classes11.dir}"/>
 		<mkdir dir="${build.webapps.dir}"/>
 	</target>
 
 	<!-- Compilation targets -->
-    <target name="compile-generic">
+    <target name="compile" depends="init">
 		<echo message="Compiling module generic code"/>
         <compile.macro>
             <additional.classpath>
                 <path refid="wscf.lib.classpath"/>
             </additional.classpath>
         </compile.macro>
-	</target>
-
-    <target name="compile11">
-		<echo message="Compiling module 1.1 code"/>
+        <echo message="Compiling module 1.1 code"/>
         <compile.macro src.dir="${src11.dir}" dest.dir="${build.classes11.dir}">
             <additional.classpath>
                 <path>
@@ -124,23 +116,6 @@
         </compile.macro>
 	</target>
 
-    <target name="compile10" if="build10">
-		<echo message="Compiling module 1.0 code"/>
-        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}"
-                emmafilter="com.arjuna.mw.wscf.model.xa.* ">
-            <additional.classpath>
-                <path>
-                    <pathelement path="${build.classes.dir}"/>
-                    <pathelement path="${wsc.build.lib.dir}/${wsc10.libs}"/>
-                    <pathelement path="${wsc.build.lib.dir}/${wsc10.api.libs}"/>
-                </path>
-                <path refid="wscf.lib.classpath"/>
-            </additional.classpath>
-        </compile.macro>
-	</target>
-
-    <target name="compile" depends="init, compile-generic, compile10, compile11"/>
-
 	<!-- htdocs paths -->
 	<path id="htdocs.path">
 		<pathelement path="classes"/>
@@ -150,31 +125,19 @@
 	<property name="htdocs.list" value="*"/>
 
 	<!-- Jar targets -->
-    <target name="jar-generic">
+    <target name="jar" depends="compile, htdocs">
         <echo message="Building jar files"/>
         <mkdir dir="${build.lib.dir}"/>
         <jar jarfile="${build.lib.dir}/${modulename}.jar"
             basedir="${build.classes.dir}">
         </jar>
-    </target>
-
-    <target name="jar10" if="build10">
-        <echo message="Building 10 jar files"/>
-        <jar jarfile="${build.lib.dir}/${modulename}10.jar"
-            basedir="${build.classes10.dir}">
-        </jar>
-    </target>
-
-    <target name="jar11">
         <echo message="Building 11 jar files"/>
         <jar jarfile="${build.lib.dir}/${modulename}11.jar"
             basedir="${build.classes11.dir}">
         </jar>
     </target>
 
-    <target name="jar" depends ="compile, jar-generic, jar10, jar11"/>
-
-    <target name="htdocs11" if="nobuild10">
+    <target name="htdocs">
         <echo message="Building htdocs "/>
         <mkdir dir="${htdocs.dest}"/>
         <javadoc
@@ -189,31 +152,6 @@
             </classpath>
         </javadoc>
     </target>
-
-    <target name="htdocs-both" if="build10">
-        <echo message="Building htdocs "/>
-        <mkdir dir="${htdocs.dest}"/>
-        <javadoc
-            sourcepathref="htdocs.path"
-            destdir="${htdocs.dest}"
-            packagenames="${htdocs.list}"
-            >
-            <classpath>
-                <path refid="wscf.lib.classpath"/>
-                <path path="${src.dir}"/>
-                <path path="${src11.dir}"/>
-                <path path="${src10.dir}"/>
-            </classpath>
-        </javadoc>
-    </target>
-
-    <target name="htdocs" depends="htdocs-both, htdocs11"/>
-
-    <target name="war10" if="build10">
-        <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wscf_web-app.xml"/>
-    </target>
-
-    <target name="war" depends="jar, htdocs, war10"/>
 
 	<!-- test targets -->
 	<target name="tests.init">
@@ -227,22 +165,6 @@
 		<mkdir dir="${tests.build.lib.dir}"/>
 	</target>
     
-    <!-- this assumes the required libs have already been built-->
-	<target name="tests.compile10" if="build10">
-	  <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
-	    <classpath>
-	      <pathelement path="${build.lib.dir}/${modulename}.jar"/>
-          <pathelement path="${build.lib.dir}/${modulename}10.jar"/>
-          <pathelement path="${wsc.build.lib.dir}/${wsc10.libs}"/>
-          <pathelement path="${wsc.build.lib.dir}/${wsc10.api.libs}"/>
-	      <path refid="tests.lib.path"/>
-	      <path refid="wscf.lib.classpath"/>
-	    </classpath>
-	    <src path="${tests.src.dir}"/>
-        <include name="com/arjuna/wscf/**"/>
-	  </javac>
-	</target>
-
     <!-- this assumes the required libs have already been built-->
 	<target name="tests.compile11">
 	  <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
@@ -258,7 +180,7 @@
 	  </javac>
 	</target>
 
-    <target name="tests.compile" depends="tests.init, tests.compile10, tests.compile11"/>
+    <target name="tests.compile" depends="tests.init, tests.compile11"/>
 
     <target name="tests.jar" depends="tests.compile">
         <jar jarfile="${tests.build.lib.dir}/wscf-tests.jar" manifest="${tests.dd.dir}/manifest.mf">
@@ -266,29 +188,14 @@
         </jar>
     </target>
 
-    <target name="tests.webapps10" if="build10">
-        <copy file="${tests.dd.dir}/wscf-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app.xml"/>
-        <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml"/>
-        <war warfile="${tests.build.webapps.dir}/wscf-tests.war" webxml="${tests,build.dd.dir}/web-app.xml"/>
-    </target>
-
     <target name="tests.webapps11" depends="tests.compile11">
         <copy file="${tests.dd.dir}/wscf11-tests_web-app.xml" tofile="${tests,build.dd.dir}/web-app11.xml"/>
         <war warfile="${tests.build.webapps.dir}/wscf11-tests.war" webxml="${tests,build.dd.dir}/web-app11.xml"  manifest="${tests.dd.dir}/war.manifest.mf"/>
     </target>
 
-    <target name="tests.webapps" depends="tests.jar, tests.webapps10, tests.webapps11"/>
+    <target name="tests.webapps" depends="tests.jar, tests.webapps11"/>
 
-    <target name="tests.ear-both" if="build10">
-        <ear earfile="${tests.build.webapps.dir}/wscf-tests.ear" appxml="${tests.dd.dir}/wscf-tests_application.xml">
-            <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-            <fileset dir="${tests.build.webapps.dir}" includes="wscf-tests.war wscf11-tests.war"/>
-            <fileset dir="${tests.build.lib.dir}" includes="wscf-tests.jar"/>
-            <fileset dir="${wsas.tests.build.dir}/lib" includes="xts-test-servlet.jar"/>
-        </ear>
-    </target>
-    
-    <target name="tests.ear11" if="nobuild10">
+    <target name="tests.ear11">
         <mkdir dir="${tests.build.dir}/ext/lib"/>
         <copy todir="${tests.build.dir}/ext/lib">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
@@ -301,7 +208,7 @@
         </ear>
     </target>
 
-    <target name="tests.ear" depends="tests.webapps, tests.ear-both, tests.ear11"/>
+    <target name="tests.ear" depends="tests.webapps, tests.ear11"/>
 
     <target name="tests.deploy" depends="tests.ear, tests.undeploy">
         <copy file="${tests.build.webapps.dir}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>

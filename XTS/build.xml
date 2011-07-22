@@ -190,11 +190,7 @@
 	</target>
 
     <target name="install-sar" depends="build-sar">
-        <echo message="Installing service archive"/>
-        <mkdir dir="${xts.installationdirectory}/sar"/>
-        <copy todir="${xts.installationdirectory}/sar">
-            <fileset dir="${sar.dir}/build" includes="jbossxts.sar"/>
-        </copy>
+        <echo message="Installed service jars"/>
     </target>
 
     <target name="install-tests" depends="build-tests">
@@ -268,79 +264,66 @@
 	<!-- Module targets -->
 	<target name="wsas.build">
 		<ant dir="${wsas.dir}" inheritall="false">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
 	</target>
 
 	<target name="ws-c.build">
 		<ant dir="${ws-c.dir}" inheritall="false">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
 	</target>
 
 	<target name="wscf.build">
 		<ant dir="${wscf.dir}" inheritall="false">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
 	</target>
 
 	<target name="ws-t.build">
 		<ant dir="${ws-t.dir}" inheritall="false">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
        </ant>
 	</target>
 
     <target name="wstx.build">
         <ant dir="${wstx.dir}" inheritall="false">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
     </target>
 
     <target name="recovery.build">
         <ant dir="recovery">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
     </target>
 
     <target name="bridge.build">
         <ant dir="${bridge.dir}">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
     </target>
 
     <target name="sar.build">
         <ant dir="${sar.dir}">
-            <property name="sartype" value="${sartype}"/> 
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
     </target>
 
     <target name="tests.build">
         <ant dir="${wsas.dir}" target="tests">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
         <ant dir="${wscf.dir}" target="tests">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
         <ant dir="${ws-c.dir}" target="tests">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
         <ant dir="${ws-t.dir}" target="tests">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
         <ant dir="${wstx.dir}" target="tests">
-            <property name="sartype" value="${sartype}"/>
             <property name="emma.enabled" value="${emma.enabled}"/>
         </ant>
         <ant dir="${localjunit.dir}" target="all">

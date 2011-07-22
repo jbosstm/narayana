@@ -19,7 +19,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<project name="WSTX" default="war" basedir=".">
+<project name="WSTX" default="jar" basedir=".">
 
     <!-- Set module name -->
     <property name="modulename" value="wstx"/>
@@ -39,11 +39,9 @@
     <!-- internal paths and jars -->
 
     <property name="src.dir" value="classes"/>
-    <property name="src10.dir" value="classes10"/>
     <property name="src11.dir" value="classes11"/>
 	<property name="build.dir" value="build"/>
     <property name="build.classes.dir" value="${build.dir}/classes"/>
-    <property name="build.classes10.dir" value="${build.dir}/classes10/classes"/>
     <property name="build.classes11.dir" value="${build.dir}/classes11/classes"/>
 	<property name="build.webapps.dir" value="${build.dir}/webapps"/>
 	<property name="build.lib.dir" value="${build.dir}/lib"/>
@@ -61,18 +59,6 @@
 
     <!-- classes provided for clients via api jars -->
     <property name="wstx.api.classes" value="com/arjuna/mw/wst/TxContext.class"/>
-    <property name="wstx10.api.classes" value="com/arjuna/mw/wst/UserTransaction.class
-            com/arjuna/mw/wst/UserTransactionFactory.class com/arjuna/mw/wst/TransactionManager.class
-            com/arjuna/mw/wst/TransactionManagerFactory.class com/arjuna/mw/wst/UserBusinessActivity.class
-            com/arjuna/mw/wst/UserBusinessActivityFactory.class com/arjuna/mw/wst/BusinessActivityManager.class
-            com/arjuna/mw/wst/BusinessActivityManagerFactory.class
-            com/arjuna/mw/wst/client/JaxWSHeaderContextProcessor.class
-            com/arjuna/mw/wst/client/JaxRPCHeaderContextProcessor.class
-            com/arjuna/mw/wst/client/JaxBaseHeaderContextProcessor.class
-            com/arjuna/mw/wst/service/JaxWSHeaderContextProcessor.class
-            com/arjuna/mw/wst/service/JaxWSSubordinateHeaderContextProcessor.class
-            com/arjuna/mw/wst/service/JaxRPCHeaderContextProcessor.class
-            com/arjuna/mw/wst/service/JaxBaseHeaderContextProcessor.class"/>
     <property name="wstx11.api.classes" value="com/arjuna/mw/wst11/UserTransaction.class
             com/arjuna/mw/wst11/UserTransactionFactory.class com/arjuna/mw/wst11/TransactionManager.class
             com/arjuna/mw/wst11/TransactionManagerFactory.class com/arjuna/mw/wst11/UserBusinessActivity.class
@@ -99,9 +85,7 @@
     </path>
 
     <property name="wstx.libs" value="${modulename}.jar"/>
-    <property name="wstx10.libs" value="${modulename}10.jar"/>
     <property name="wstx11.libs" value="${modulename}11.jar"/>
-    <property name="wstx.all.libs" value="${wstx.libs} ${wstx10.libs} ${wstx11.libs}"/>
 
 	<!--Set external directories -->
 
@@ -119,23 +103,13 @@
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wsc-api.libs" value="ws-c-api.jar"/>
-    <property name="wsc10.libs" value="ws-c10.jar"/>
-    <property name="wsc10-api.libs" value="ws-c10-api.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
-    <property name="wsc.all.libs" value="${wsc.libs} ${wsc10.libs} ${wsc11.libs}"/>
     <property name="wscf.libs" value="wscf.jar"/>
-    <property name="wscf10.libs" value="wscf10.jar"/>
     <property name="wscf11.libs" value="wscf11.jar"/>
-    <property name="wscf.all.libs" value="${wscf.libs} ${wscf10.libs} ${wscf11.libs}"/>
     <property name="wst.libs" value="ws-t.jar"/>
     <property name="wst-api.libs" value="ws-t-api.jar"/>
-    <property name="wst10.libs" value="ws-t10.jar"/>
-    <property name="wst10-api.libs" value="ws-t10-api.jar"/>
     <property name="wst11.libs" value="ws-t11.jar"/>
     <property name="wst11-api.libs" value="ws-t11-api.jar"/>
-    <property name="wst.all.libs" value="${wst.libs} ${wst10.libs} ${wst11.libs}"/>
-
-    <property name="tests.all.libs" value="${wsas.libs} ${wsc.all.libs} ${wscf.all.libs} ${wst.all.libs} ${wstx.all.libs} ${tests.libs}"/>
 
     <path id="lib.classpath">
         <!--<path  refid="build.classpath"/>-->
@@ -143,12 +117,6 @@
         <fileset dir="${wsc.build.lib.dir}" includes="${wsc.libs} ${wsc-api.libs}"/>
         <fileset dir="${wscf.build.lib.dir}" includes="${wscf.libs}"/>
         <fileset dir="${wst.build.lib.dir}" includes="${wst.libs} ${wst-api.libs}"/>
-    </path>
-
-    <path id="lib.classpath10">
-        <fileset dir="${wsc.build.lib.dir}" includes="${wsc10.libs} ${wsc10-api.libs}"/>
-        <fileset dir="${wscf.build.lib.dir}" includes="${wscf10.libs}"/>
-        <fileset dir="${wst.build.lib.dir}" includes="${wst10.libs}  ${wst10-api.libs}"/>
     </path>
 
     <path id="lib.classpath11">
@@ -165,7 +133,6 @@
 		</tstamp>
 		<!-- Make the destination directory -->
         <mkdir dir="${build.classes.dir}"/>
-        <mkdir dir="${build.classes10.dir}"/>
         <mkdir dir="${build.classes11.dir}"/>
         <mkdir dir="${build.htdocs.dir}"/>
         <mkdir dir="${build.lib.dir}"/>
@@ -174,29 +141,13 @@
 
 	<!-- Compilation targets -->
 
-    <target name="compile-generic">
+    <target name="compile" depends="init">
         <echo message="Compiling module generic code"/>
         <compile.macro>
             <additional.classpath>
                 <path refid="lib.classpath"/>
             </additional.classpath>
         </compile.macro>
-    </target>
-
-    <target name="compile10" if="build10">
-        <echo message="Compiling module 1.0 code"/>
-        <compile.macro src.dir="${src10.dir}" dest.dir="${build.classes10.dir}">
-            <additional.classpath>
-                <path>
-                    <pathelement path="${build.classes.dir}"/>
-                </path>
-                <path refid="lib.classpath10"/>
-                <path refid="lib.classpath"/>
-            </additional.classpath>
-        </compile.macro>
-    </target>
-
-    <target name="compile11">
         <echo message="Compiling module 1.1 code"/>
         <compile.macro src.dir="${src11.dir}" dest.dir="${build.classes11.dir}">
             <additional.classpath>
@@ -209,8 +160,6 @@
         </compile.macro>
     </target>
 
-    <target name="compile" depends="init, compile-generic, compile11, compile10"/>
-
 	<!-- htdocs paths -->
 	<path id="htdocs.path">
 		<pathelement path="classes"/>
@@ -219,7 +168,7 @@
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
 	<property name="htdocs.list" value="com.arjuna.mw.*"/>
 
-    <target name="htdocs-both" if="build10">
+    <target name="htdocs">
         <echo message="Building htdocs "/>
         <javadoc
             sourcepathref="htdocs.path"
@@ -233,44 +182,15 @@
             </classpath>
         </javadoc>
     </target>
-
-    <target name="htdocs11" if="nobuild10">
-        <echo message="Building htdocs "/>
-        <javadoc
-            sourcepathref="htdocs.path"
-            destdir="${build.htdocs.dir}"
-            packagenames="${htdocs.list}"
-            >
-            <classpath>
-                <path refid="lib.classpath"/>
-                <path refid="build.classpath"/>
-                <path path="${src.dir}"/>
-            </classpath>
-        </javadoc>
-    </target>
-
-    <target name="htdocs" depends="htdocs-both, htdocs11"/>
 
     <!-- Jar targets -->
-    <target name="jar-generic">
+    <target name="jar" depends="compile, htdocs">
         <jar jarfile="${build.lib.dir}/${modulename}.jar">
             <fileset dir="${build.classes.dir}" excludes="${wstx.api.classes}"/>
         </jar>
         <jar jarfile="${build.lib.dir}/${modulename}-api.jar">
             <fileset dir="${build.classes.dir}" includes="${wstx.api.classes}"/>
         </jar>
-    </target>
-
-    <target name="jar10" if="build10">
-        <jar jarfile="${build.lib.dir}/${modulename}10.jar">
-            <fileset dir="${build.classes10.dir}" excludes="${wstx10.api.classes}"/>
-        </jar>
-        <jar jarfile="${build.lib.dir}/${modulename}10-api.jar">
-            <fileset dir="${build.classes10.dir}" includes="${wstx10.api.classes}"/>
-        </jar>
-    </target>
-
-    <target name="jar11">
         <jar jarfile="${build.lib.dir}/${modulename}11.jar">
             <fileset dir="${build.classes11.dir}" excludes="${wstx11.api.classes}"/>
         </jar>
@@ -278,14 +198,6 @@
             <fileset dir="${build.classes11.dir}" includes="${wstx11.api.classes}"/>
         </jar>
     </target>
-
-    <target name="jar" depends="compile, htdocs, jar-generic, jar10, jar11"/>
-
-    <target name="war10" if="build10">
-        <war warfile="${build.webapps.dir}/${modulename}10.war" webxml="xml/wstx_web-app.xml"/>
-    </target>
-
-    <target name="war" depends="jar, war10"/>
 
 	<target name="tests.init">
         <!-- delete the test destination directories -->
@@ -299,27 +211,7 @@
 	</target>
 
     <!-- this assumes all the rwuired libs have been built -->
-    <target name="tests.compile10" if="build10">
-      <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
-        <classpath>
-            <pathelement path="${build.lib.dir}/${modulename}.jar"/>
-            <pathelement path="${build.lib.dir}/${modulename}-api.jar"/>
-            <pathelement path="${build.lib.dir}/${modulename}10.jar"/>
-            <pathelement path="${build.lib.dir}/${modulename}10-api.jar"/>
-            <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
-            <path refid="lib.classpath10"/>
-            <path refid="lib.classpath11"/>
-            <path refid="lib.classpath"/>
-            <path refid="build.classpath"/>
-        </classpath>
-        <src path="${tests.src.dir}"/>
-          <exclude  name="com/arjuna/wst11/tests/**"/>
-          <exclude  name="com/arjuna/wstx11/tests/**"/>
-      </javac>
-    </target>
-
-    <!-- this assumes all the rwuired libs have been built -->
-    <target name="tests.compile11">
+    <target name="tests.compile" depends="tests.init">
       <javac destdir="${tests.build.classes.dir}" debug="yes" optimize="no">
         <classpath>
             <pathelement path="${build.lib.dir}/${modulename}.jar"/>
@@ -327,7 +219,6 @@
             <pathelement path="${build.lib.dir}/${modulename}11.jar"/>
             <pathelement path="${build.lib.dir}/${modulename}11-api.jar"/>
             <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
-            <path refid="lib.classpath10"/>
             <path refid="lib.classpath11"/>
             <path refid="lib.classpath"/>
             <path refid="build.classpath"/>
@@ -339,37 +230,18 @@
       </javac>
     </target>
 
-    <target name="tests.compile" depends="tests.init, tests.compile10, tests.compile11"/>
-
     <target name="tests.jar" depends="tests.compile">
         <jar jarfile="${tests.build.lib.dir}/wstx-tests.jar"  manifest="${tests.dd.dir}/META-INF/manifest.mf">
           <fileset dir="${tests.build.classes.dir}"/>
         </jar>
     </target>
 
-	<target name="tests.webapps10" if="build10">
-	  <copy file="${tests.dd.dir}/wstx-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app.xml"/>
-	  <war warfile="${tests.build.webapps.dir}/wstx-tests.war" webxml="${tests.build.dd.dir}/web-app.xml"/>
-	</target>
-
-	<target name="tests.webapps11">
+	<target name="tests.webapps" depends="tests.jar">
 	  <copy file="${tests.dd.dir}/wstx11-tests_web-app.xml" tofile="${tests.build.dd.dir}/web-app11.xml"/>
 	  <war warfile="${tests.build.webapps.dir}/wstx11-tests.war" webxml="${tests.build.dd.dir}/web-app11.xml"  manifest="${tests.dd.dir}/META-INF/war.manifest.mf"/>
 	</target>
 
-    <target name="tests.webapps" depends="tests.jar, tests.webapps10, tests.webapps11"/>
-
-    <target name="tests.ear-both" if="build10">
-        <ear earfile="${tests.build.webapps.dir}/wstx-tests.ear" appxml="${tests.dd.dir}/wstx-tests_application.xml">
-          <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
-          <fileset dir="${tests.build.webapps.dir}" includes="wstx-tests.war wstx11-tests.war"/>
-          <fileset dir="${tests.build.lib.dir}" includes="wstx-tests.jar"/>
-          <fileset dir="${wsas.test.build.dir}/lib" includes="xts-test-servlet.jar"/>
-           <fileset dir="${tests.dd.dir}" includes="META-INF/**/*" excludes="META-INF/**/*manifest.mf"/>
-        </ear>
-    </target>
-
-    <target name="tests.ear11" if="nobuild10">
+    <target name="tests.ear" depends="tests.webapps">
         <mkdir dir="${tests.build.dir}/ext/lib"/>
         <copy todir="${tests.build.dir}/ext/lib">
             <fileset dir="${jbossts.build.extlib.dir}" includes="${tests.libs}"/>
@@ -382,8 +254,6 @@
            <fileset dir="${tests.dd.dir}" includes="META-INF/**/*" excludes="META-INF/**/*manifest.mf"/>
         </ear>
     </target>
-
-    <target name="tests.ear" depends="tests.webapps, tests.ear-both, tests.ear11"/>
 
     <!-- production target for tests -->
     <target name="tests" depends="tests.ear"/>

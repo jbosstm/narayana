@@ -20,7 +20,7 @@
   @author JBoss Inc.
 -->
 
-<project name="sar" default="sar" basedir=".">
+<project name="sar" default="install" basedir=".">
 
     <!-- ================================================================== -->
     <!-- build and install the XTS component as a service archive           -->
@@ -79,21 +79,6 @@
 
     <property name="javac.debug" value="on"/>
 
-    <!-- by default we build 1.0 and 1.1 for ease of testing,
-        but release bundles should use -Dsartype=sar-11 so that
-        they contain only the supported version. -->
-    <property name="sartype" value="sar-both"/>
-
-    <!-- if condition for 1.0 specific targets -->
-    <condition property="build10">
-        <equals arg1="${sartype}" arg2="sar-both"/>
-    </condition>
-
-    <!-- if condition for 1.1 only targets -->
-    <condition property="nobuild10">
-        <isfalse value="${build10}"/>
-    </condition>
-
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -104,22 +89,8 @@
         <mkdir dir="${build.conf.dir}"/>
     </target>
 
-    <!-- compile the sar source -->
-    <target name="compile" depends="init, compile-both, compile-11"/>
-
-
-    <!-- compile 1.1 and 1.0 classes in the sar source -->
-    <target name="compile-both" if="build10">
-        <compile.macro>
-            <additional.classpath>
-                <fileset dir="${lib.dir}" includes="*.jar"/>
-            </additional.classpath>
-        </compile.macro>
-    </target>
-
-
     <!-- compile just 1.1 classes in the sar source -->
-    <target name="compile-11" if="nobuild10">
+    <target name="compile" depends="init">
         <compile.macro excluded.classes="**/org/jboss/jbossts/xts/initialisation/XTS10Initialisation.java">
             <additional.classpath>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
@@ -128,25 +99,8 @@
     </target>
 
 
-    <!-- build the full api jar -->
-    <target name="api-both-jar" if="build10">
-        <mkdir dir="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-c10-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
-        <unjar src="${lib.dir}/bridge-api.jar" dest="${build.dir}/tmp/api"/>
-        <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
-        <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
-        <delete dir="${build.dir}/tmp/api"/>
-    </target>
-
     <!-- build the 1.1 api jar -->
-    <target name="api11-jar" if="nobuild10">
+    <target name="api-jar" depends="compile">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
@@ -159,21 +113,8 @@
         <delete dir="${build.dir}/tmp/api"/>
     </target>
     
-    <target name="api-jar" depends="compile, api-both-jar, api11-jar"/>
-
     <!-- build the config jar -->
-    <target name="config-both-jar" depends="compile" if="build10">
-        <!-- create config jar containing conf files for 1.0 and 1.1 -->
-        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
-        <filter token="coordinator.port" value="${coordinator.port}"/>
-        <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties.xml"/>
-        <jar jarfile="${build.dir}/config.jar">
-            <fileset dir="${build.conf.dir}"/>
-        </jar>
-        <copy file="${build.dir}/config.jar" tofile="${lib.dir}/config.jar"/>
-    </target>
-
-    <target name="config11-jar" depends="compile" if="nobuild10">
+    <target name="config-jar" depends="compile">
         <!-- create config jar containing conf files for 1.1 -->
         <copy tofile="${build.conf.dir}/xts-properties.xml" file="${conf.dir}/xts-properties11.xml"/>
         <jar jarfile="${build.dir}/config.jar">
@@ -181,8 +122,6 @@
         </jar>
         <copy file="${build.dir}/config.jar" tofile="${lib.dir}/config.jar"/>
     </target>
-
-    <target name="config-jar" depends="compile, config-both-jar, config11-jar"/>
 
     <!-- build the service jar -->
     <target name="service-jar" depends="compile">
@@ -193,32 +132,8 @@
         <copy file="${build.dir}/service.jar" tofile="${lib.dir}/service.jar"/>
     </target>
 
-    <!-- build the full implementation jar -->
-    <target name="impl-both-jar" if="build10">
-        <mkdir dir="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wsas.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wscf.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wscf10.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wscf11.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-c.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-t.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wstx.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wstx10.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/wstx11.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/recovery.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/service.jar" dest="${build.dir}/tmp/impl"/>
-        <unjar src="${lib.dir}/config.jar" dest="${build.dir}/tmp/impl"/>
-        <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
-        <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
-        <delete dir="${build.dir}/tmp/impl"/>
-    </target>
-
     <!-- build the 1.1 implementation jar -->
-    <target name="impl11-jar" if="nobuild10">
+    <target name="impl-jar" depends="compile">
         <mkdir dir="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/wsas.jar" dest="${build.dir}/tmp/impl"/>
         <unjar src="${lib.dir}/wscf.jar" dest="${build.dir}/tmp/impl"/>
@@ -235,127 +150,14 @@
         <jar file="${build.dir}/jbossxts.jar" basedir="${build.dir}/tmp/impl"/>
         <copy file="${build.dir}/jbossxts.jar" tofile="${lib.dir}/jbossxts.jar"/>
         <delete dir="${build.dir}/tmp/impl"/>
-    </target>
-
-    <target name="impl-jar" depends="compile, impl-both-jar, impl11-jar"/>
-
-    <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" if="build10">
-        <!-- copy 11 and 1.0 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
-
-        <!-- pack everything in the service archive -->
-        <jar jarfile="${build.dir}/jbossxts.sar">
-            <!-- include generic 1.0 and 1.1 jars -->
-	    <!--
-            <fileset dir="${lib.dir}" includes="*.jar"/>
--->
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*-api.jar"/>
-
-            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
-
-            <!-- include 1.0 and 1.1 web apps -->
-            <fileset dir="${webapps.dir}" includes="*.war"/>
-
-            <!-- include config jar -->
-            <!-- don't need this because we configure from beans.xml
-            <fileset dir="${build.dir}" includes="config.jar"/>
-            -->
-
-            <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/xts-jboss-beans.xml"/>
-
-            <!-- include classloading directives -->
-            <fileset dir="." includes="META-INF/jboss-classloading.xml"/>
-
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
-
-            <!-- include service implementation jar -->
-            <fileset dir="${build.dir}" includes="service.jar"/>
-        </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" if="nobuild10">
-        <!-- copy 11 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
-
-        <!-- copy jboss-service file to build dir -->
-        <copy toFile="${build.metainf.dir}/jboss-service.xml" file="${metainf.dir}/jboss-service.xml"/>
-        <!-- copy modules file to lib dir -->
-        <copy toFile="${lib.dir}/module.xml" file="${metainf.dir}/module.xml"/>
-        <!-- pack everything in the service archive -->
-        <jar jarfile="${build.dir}/jbossxts.sar" manifest="${metainf.dir}/manifest.mf">
-
-            <!-- just include service def -->
-            <fileset dir="${build.dir}" includes="META-INF/jboss-service.xml"/>
-        </jar>
-    </target>
-
-    <target name="sar" depends="api-jar, service-jar, config-jar, impl-jar, sar-both, sar-11"/>
+    <target name="install" depends="api-jar, service-jar, config-jar, impl-jar"/>
 
     <target name="clean">
       <delete dir="${build.dir}"/>
         <delete file="${lib.dir}/jbossxts-api.jar"/>
         <delete file="${lib.dir}/service.jar"/>
     </target>
-
-    <target name="deploy-module">
-        <mkdir dir="${module.dir}/main"/>
-        <copy todir="${module.dir}/main" file="${metainf.dir}/module.xml"/>
-        <copy todir="${module.dir}/main">
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*api.jar"/>
-            <fileset dir="${lib.dir}" includes="bridge-api.jar"/>
-            <fileset dir="${lib.dir}" includes="jbossxts-api.jar"/>
-            <fileset dir="${build.dir}" includes="config.jar"/>
-        </copy>
-    </target>
-
-    <target name="undeploy-module">
-        <delete dir="${module.dir}"/>
-    </target>
-
-    <target name="deploy">
-        <copy file="${build.dir}/jbossxts.sar" todir="${deploy.dir}"/>
-        <!--
-        -->
-        <copy file="${webapps.dir}/ws-c11.war" todir="${deploy.dir}"/>
-        <copy file="${webapps.dir}/ws-t11-client.war" todir="${deploy.dir}"/>
-        <copy file="${webapps.dir}/ws-t11-participant.war" todir="${deploy.dir}"/>
-        <copy file="${webapps.dir}/ws-t11-coordinator.war" todir="${deploy.dir}"/>
-    </target>
-
-    <target name="undeploy">
-        <delete file="${deploy.dir}/jbossxts.sar.deployed" failonerror="false"/>
-        <!--
-        -->
-        <delete file="${deploy.dir}/ws-c11.war.deployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-client.war.deployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-participant.war.deployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-coordinator.war.deployed" failonerror="false"/>
-        <sleep seconds="5"/>
-        <delete file="${deploy.dir}/jbossxts.sar.undeployed" failonerror="false"/>
-        <!--
-        -->
-        <delete file="${deploy.dir}/ws-c11.war.undeployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-client.war.undeployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-participant.war.undeployed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-coordinator.war.undeployed" failonerror="false"/>
-        <delete file="${deploy.dir}/jbossxts.sar.failed" failonerror="false"/>
-        <!--
-        -->
-        <delete file="${deploy.dir}/ws-c11.war.failed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-client.war.failed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-participant.war.failed" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-coordinator.war.failed" failonerror="false"/>
-        <delete file="${deploy.dir}/jbossxts.sar" failonerror="false"/>
-        <!--
-        -->
-        <delete file="${deploy.dir}/ws-c11.war" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-client.war" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-participant.war" failonerror="false"/>
-        <delete file="${deploy.dir}/ws-t11-coordinator.war" failonerror="false"/>
-    </target>
-
 </project>

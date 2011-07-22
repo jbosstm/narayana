@@ -37,8 +37,6 @@
     <property name="reports.dir" value="reports"/>
     <property name="localjunit.lib.dir" value="." />
 
-    <property name="testtype" value="tests-both" />
-
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
         <pathelement location="${jbossts.build.extlib.dir}/commons-httpclient.jar"/>

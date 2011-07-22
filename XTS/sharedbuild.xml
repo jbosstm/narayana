@@ -69,21 +69,6 @@
     <property name="publican" value="true"/>
     <property name="publican.build.dir" value="docs/Transactions_XTS_Administration_And_Development_Guide/target/publican"/>
 
-    <!-- by default we build 1.0 and 1.1 for ease of testing,
-        but release bundles should use -Dsartype=sar-11 so that
-        they contain only the supported version. -->
-    <property name="sartype" value="sar-both"/>
-
-    <!-- if condition for 1.0 specific targets -->
-    <condition property="build10">
-        <equals arg1="${sartype}" arg2="sar-both"/>
-    </condition>
-
-    <!-- if condition for 1.1 only targets -->
-    <condition property="nobuild10">
-        <isfalse value="${build10}"/>
-    </condition>
-
         <!-- external jars used by XTS for all builds -->
     <property name="xts.build.extlib.jars" value="jbossws-api.jar jboss-logging.jar jboss-logging-generator.jar jboss-logging-processor.jar
             jboss-transaction-api_1.1_spec.jar jboss-servlet-api_3.0_spec.jar dom4j.jar"/>

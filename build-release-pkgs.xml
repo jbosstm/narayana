@@ -149,9 +149,7 @@
         </ant>
 
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
-            <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
-            <property  name="sartype" value="sar-11"/>
-            <property  name="testtype" value="tests-11"/>
+            <!-- build the 1.1 jbossxts jars and test apps) -->
         </ant>
 
         <ant dir="${workdir}/build/${tag}/rhq-plugin" antfile="build.xml" target="dist">

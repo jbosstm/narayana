@@ -61,14 +61,6 @@
         <run-localjunit-test serverUrl="${base.url}/wstx11-tests/index.xml" tag="wstx11" />
     </target>
 
-    <!-- target for both 1.0 and 1.1 tests -->
-    <target name="tests-both" depends="tests-11">
-        <run-localjunit-test serverUrl="${base.url}/wscf-tests/index.xml" tag="wscf" />
-        <run-localjunit-test serverUrl="${base.url}/wstx-tests/index.xml" tag="wstx" />
-        <run-localjunit-test serverUrl="${base.url}/ws-c-tests/index.xml" tag="ws-c" />
-        <run-localjunit-test serverUrl="${base.url}/ws-t-tests/index.xml" tag="ws-t" />
-    </target>
- 
     <macrodef name="run-localjunit-test">
         <attribute name="serverUrl" />
         <attribute name="tag" />
