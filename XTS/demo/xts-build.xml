@@ -1,6 +1,6 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  Copyright 2006-11, Red Hat, and individual contributors
   as indicated by the @author tags.
   See the copyright.txt in the distribution for a full listing
   of individual contributors.
@@ -16,7 +16,6 @@
   MA  02110-1301, USA.
 
 
-  (C) 2005-2006,
   @author JBoss Inc.
 -->
 
@@ -50,18 +49,13 @@
 
     <!--    deploy.dir The deployment directory for the ear                 -->
 
-    <property name="deploy.dir" location="${jboss.home}/server/default/deploy"/>
+    <property name="deploy.dir" location="${jboss.home}/standalone/deploy"/>
 
     <!--  default target build will build an ear file for the demo app for  -->
-    <!--  use in a JBoss server with XTS deployed as a JBoss service        -->
-    <!--  archive. The demo client communicates with demo services deployed -->
+    <!--  use in a JBoss AS7 server with XTS enabled                        -->
+    <!--  The demo client communicates with demo services deployed          -->
     <!--  as JaxWS endpoints. It employs the WS-COOR and WS-AT/BA 1.1       -->
     <!--  protocol implementation of web services transactions              -->
-
-    <!--  target buildrpc will build an ear file for the demo app using     -->
-    <!--  JaxRPC to communicate between the demo client and services. It    -->
-    <!--  employs the WS-COOR and WS-AT/BA 1.1 protocol implementation of   -->
-    <!--  web services transactions                                         -->
 
     <!-- ================================================================== -->
 
@@ -70,29 +64,9 @@
     <property name="xts.home" value=".."/>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
-    <!--
-    <property name="jbossts.lib.dir" location="${jboss.home}/common/lib"/>
-    <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
-    -->
 
     <property name="lib.libs" value="jbossxts-api.jar"/>
 
-    <!--
-    <property name="ext.libs" value="jbossjta.jar jbossjts.jar"/>
-    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
-            geronimo-ws-metadata_2.0_spec.jar">
-        <isset property="cxf.build"/>
-    </condition>
-
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar
-             jbossws-client.jar stax-api.jar 
-             jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
-    <property name="jboss.client.libs" value="${jboss.client.lib.jars}"/>
-
-    <property name="jboss.common.libs" value="jboss-servlet-api_3.0_spec.jar jaxrpc-api.jar"/>
-
-    -->
     <!-- ================================================================== -->
 
     <property name="build.dir" location="build"/>
@@ -100,12 +74,6 @@
     <property name="dd.dir" location="dd"/>
     <property name="jboss.dd.dir" location="${dd.dir}/jboss"/>
     <property name="build.jboss.dd.dir" location="${build.dir}/dd/jboss"/>
-
-    <property name="buildrpc.dir" location="buildrpc"/>
-    <property name="srcrpc.dir" location="srcrpc"/>
-    <property name="ddrpc.dir" location="ddrpc"/>
-    <property name="jboss.ddrpc.dir" location="${ddrpc.dir}/jboss"/>
-    <property name="build.jboss.ddrpc.dir" location="${buildrpc.dir}/dd/jboss"/>
 
     <property name="web.dir" location="web"/>
     <property name="build.web.dir" location="${build.dir}/web"/>
@@ -117,35 +85,16 @@
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
     </path>
     <path id="ext.path">
-        <!--
-        <fileset dir="${jbossts.lib.dir}" includes="${ext.libs}"/>
-        -->
         <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-*.jar"/>
     </path>
 
     <path id="jboss.client.path">
-        <!--
-        <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.libs}"/>
-        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.libs}"/>
-        -->
         <fileset dir="${jboss.home}/modules/javax/xml/ws/api/main/" includes="jboss-jaxws-api_2.2_spec-2.0.0.Alpha1.jar"/>
         <fileset dir="${jboss.home}/modules/javax/xml/soap/api/main/" includes="jboss-saaj-api_1.3_spec-1.0.0.Final.jar"/>
         <fileset dir="${jboss.home}/modules/javax/xml/rpc/api/main/" includes="jaxrpc-api-1.1.jar"/>
         <fileset dir="${jboss.home}/modules/javax/xml/bind/api/main/" includes="jboss-jaxb-api_2.2_spec-1.0.2.Final.jar"/>
         <fileset dir="${jboss.home}/modules/javax/servlet/api/main/" includes="jboss-servlet-api_3.0_spec-1.0.0.Final.jar"/>
     </path>
-
-    <filterset id="webxmlrpc.filter">
-        <filter token="restaurantATURL" value="${restaurantATRPCURL}"/>
-        <filter token="restaurantBAURL" value="${restaurantBARPCURL}"/>
-        <filter token="taxiATURL" value="${taxiATRPCURL}"/>
-        <filter token="taxiBAURL" value="${taxiBARPCURL}"/>
-        <filter token="theatreATURL" value="${theatreATRPCURL}"/>
-        <filter token="theatreBAURL" value="${theatreBARPCURL}"/>
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <filter token="urlstub" value="${urlstub}rpc"/>
-    </filterset>
 
     <filterset id="webxml.filter">
         <filter token="restaurantATURL" value="${restaurantATURL}"/>
@@ -161,7 +110,6 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
-        <delete dir="${buildrpc.dir}"/>
         <delete>
             <fileset dir="." includes="**/*.bak" defaultexcludes="no"/>
             <fileset dir="." includes="**/*~"    defaultexcludes="no"/>
@@ -185,28 +133,6 @@
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/classes"/>
         <mkdir dir="${build.jboss.dd.dir}"/>
-    </target>
-
-    <target name="initrpc" depends="init-properties">
-        <mkdir dir="${buildrpc.dir}"/>
-        <mkdir dir="${buildrpc.dir}/classes"/>
-        <mkdir dir="${build.jboss.ddrpc.dir}"/>
-    </target>
-
-    <target name="compilerpc" depends="initrpc">
-        <javac destdir="${buildrpc.dir}/classes" debug="${javac.debug}"
-            optimize="${javac.optimize}" deprecation="${javac.deprecation}" >
-            <classpath>
-                <path refid="compile.path"/>
-            </classpath>
-            <src path="${srcrpc.dir}"/>
-            <patternset>
-                <include name="com/arjuna/xts/nightout/clients/jboss/**"/>
-                <include name="com/arjuna/xts/nightout/services/**"/>
-                <!-- JaxRPC handlers have been removed from the XTS src as part of CXF port -->
-                <include name="com/arjuna/mw/**"/>
-            </patternset>
-        </javac>
     </target>
 
     <target name="compile" depends="init">
@@ -262,19 +188,6 @@
         </war>
     </target>
 
-    <target name="jboss-webservicesrpc" depends="compilerpc">
-        <war destfile="${buildrpc.dir}/xts-demo-webservicesrpc.war" webxml="${jboss.ddrpc.dir}/service-web-app.xml">
-            <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application.xml client-jaxrpc-mapping.xml"/>
-            <classes dir="${buildrpc.dir}/classes">
-                <include name="com/arjuna/xts/nightout/services/**"/>
-                <include name="com/arjuna/mw/wst/service/**/*"/>
-            </classes>
-            <manifest>
-                <attribute name="Dependencies" value="org.jboss.xts,org.jboss.jts"/>
-            </manifest>
-        </war>
-    </target>
-
     <!-- the client side elements -->
     <target name="jboss-webapp" depends="compile">
         <copy tofile="${build.dir}/client-web-app.xml" file="${jboss.dd.dir}/client-web-app.xml">
@@ -311,30 +224,7 @@
         </war>
     </target>
 
-    <target name="jboss-webapprpc" depends="compilerpc">
-        <copy tofile="${buildrpc.dir}/client-web-app.xml" file="${jboss.ddrpc.dir}/client-web-app.xml">
-            <filterset refid="webxmlrpc.filter"/>
-        </copy>
-
-        <copy tofile="${build.web.dir}/index.jsp" file="${web.dir}/indexrpc.jsp">
-                <filterset refid="webxmlrpc.filter"/>
-        </copy>
-
-        <war warfile="${buildrpc.dir}/xts-demorpc.war" webxml="${buildrpc.dir}/client-web-app.xml">
-            <classes dir="${buildrpc.dir}/classes">
-                <exclude name="com/arjuna/xts/nightout/services/**/*"/>
-                <exclude name="com/arjuna/mw/wst/service/**/*"/>
-            </classes>
-            <fileset dir="${web.dir}" excludes="index.jsp indexrpc.jsp"/>
-            <fileset dir="${build.web.dir}" includes="index.jsp"/>
-            <webinf dir="${jboss.ddrpc.dir}" includes="client-jaxrpc-mapping.xml wsdl/**"/>
-            <manifest>
-                <attribute name="Dependencies" value="org.jboss.xts"/>
-            </manifest>
-        </war>
-    </target>
-
-    <!-- the ear files -->
+    <!-- the ear file -->
     <target name="jboss-ear" depends="jboss-webservices, jboss-webapp">
         <copy tofile="${build.jboss.dd.dir}/application.xml" file="${jboss.dd.dir}/application.xml">
             <filterset refid="webxml.filter"/>
@@ -342,16 +232,6 @@
         <ear earfile="${build.dir}/xts-demo.ear"
             appxml="${build.jboss.dd.dir}/application.xml">
             <fileset dir="${build.dir}" includes="xts-demo-webservices.war xts-demo.war"/>
-        </ear>
-    </target>
-
-    <target name="jboss-earrpc" depends="jboss-webservicesrpc, jboss-webapprpc">
-        <copy tofile="${build.jboss.ddrpc.dir}/application.xml" file="${jboss.ddrpc.dir}/application.xml">
-            <filterset refid="webxmlrpc.filter"/>
-        </copy>
-        <ear earfile="${buildrpc.dir}/xts-demorpc.ear"
-            appxml="${build.jboss.ddrpc.dir}/application.xml">
-            <fileset dir="${buildrpc.dir}" includes="xts-demo-webservicesrpc.war xts-demorpc.war"/>
         </ear>
     </target>
 
@@ -366,34 +246,16 @@
         </javadoc>
     </target>
 
-    <target  name="docsrpc">
-        <javadoc packagenames="com.jboss.jbosstm.xts.demo.*" destdir="docsrpc">
-            <classpath>
-                <path refid="compile.path"/>
-            </classpath>
-            <sourcefiles>
-                <fileset dir="${src.dir}" includes="**/*.java"/>
-            </sourcefiles>
-        </javadoc>
-    </target>
-
     <target name="build" depends="jboss-ear, docs"/>
-
-    <target name="buildrpc" depends="jboss-earrpc"/>
 
     <target name="deploy" depends="build, undeploy">
         <copy file="${build.dir}/xts-demo.ear" tofile="${deploy.dir}/xts-demo.ear"/>
     </target>
 
     <target name="undeploy">
+        <delete file="${deploy.dir}/xts-demo.ear.deployed"/>
+        <sleep milliseconds="5000"/>
+        <delete file="${deploy.dir}/xts-demo.ear.undeployed"/>
         <delete file="${deploy.dir}/xts-demo.ear"/>
-    </target>
-
-    <target name="deployrpc" depends="buildrpc, undeployrpc">
-        <copy file="${buildrpc.dir}/xts-demorpc.ear" tofile="${deploy.dir}/xts-demorpc.ear"/>
-    </target>
-
-    <target name="undeployrpc">
-        <delete file="${deploy.dir}/xts-demorpc.ear"/>
     </target>
 </project>
