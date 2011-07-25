@@ -129,19 +129,14 @@
       <artifactId>jacorb</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Needed for JacORB logging -->
     <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <version>3.0.0.Beta5</version>
-      <!-- TODO AS7 -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.slf4j</groupId>
-      <artifactId>slf4j-jboss-logging</artifactId>
-      <scope>provided</scope>
-      <version>1.0.3.GA</version>
-    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
