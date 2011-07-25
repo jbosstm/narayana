@@ -72,24 +72,24 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 
 	public XidImple (AtomicAction c)
 	{
-		this(c.get_uid(), false);
+		this(c.get_uid(), false, null);
 	}
 
-	public XidImple (AtomicAction c, boolean branch)
+	public XidImple (AtomicAction c, boolean branch, String eisName)
 	{
-		this(c.get_uid(), branch);
+		this(c.get_uid(), branch, eisName);
 	}
 
 	public XidImple (Uid id)
 	{
-		this(id, false);
+		this(id, false, null);
 	}
 
-	public XidImple (Uid id, boolean branch)
+	public XidImple (Uid id, boolean branch, String eisName)
 	{
 		try
 		{
-			_theXid = XATxConverter.getXid(id, branch);
+			_theXid = XATxConverter.getXid(id, branch, eisName);
 		}
 		catch (Exception e)
 		{

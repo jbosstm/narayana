@@ -47,7 +47,7 @@ public class xidcheck
     public void test()
     {
         Uid test = new Uid();
-        XidImple xidImple = new XidImple(test, true);
+        XidImple xidImple = new XidImple(test, true, null);
 
         System.err.println("Uid is: "+test);
         System.err.println("Xid is: "+xidImple);

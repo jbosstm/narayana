@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jta.utils.*;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
@@ -571,7 +572,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					}
 				}
 
-				xid = createXid(branchRequired, theModifier);
+				xid = createXid(branchRequired, theModifier, xaRes);
 
 				boolean associatedWork = false;
 				int retry = 20;
@@ -651,7 +652,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 								|| (e.errorCode == XAException.XAER_RMERR))
 						{
 							if (retry > 0)
-								xid = createXid(true, theModifier);
+								xid = createXid(true, theModifier, xaRes);
 
 							retry--;
 						}
@@ -975,7 +976,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	    Xid res = baseXid();
 	    
 	    if (res == null)
-	        res = new XidImple(_theTransaction, false);
+	        res = new XidImple(_theTransaction);
 	    
 	    return res;
 	}
@@ -1482,14 +1483,20 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return null;
 	}
 
-	private final Xid createXid(boolean branch, XAModifier theModifier)
+	private final Xid createXid(boolean branch, XAModifier theModifier, XAResource xaResource)
 	{
 		Xid xid = baseXid();
 
 		if (xid != null)
 			return xid;
 
-		xid = new XidImple(_theTransaction, branch);
+        String eisName = null;
+        if(branch) {
+            if(_xaResourceRecordWrappingPlugin != null) {
+                eisName = _xaResourceRecordWrappingPlugin.getEISName(xaResource);
+            }
+        }
+		xid = new XidImple(_theTransaction, branch, eisName);
 
 		if (theModifier != null)
 		{
@@ -1590,6 +1597,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE;
 
+    private static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin;
+
 	static
 	{
         XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
@@ -1599,6 +1608,8 @@ public class TransactionImple implements javax.transaction.Transaction,
         if(LAST_RESOURCE_OPTIMISATION_INTERFACE == null) {
             jtaLogger.i18NLogger.warn_transaction_arjunacore_lastResourceOptimisationInterface(jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterfaceClassName());
         }
+
+        _xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
 	}
 
 	private static ConcurrentHashMap _transactions = new ConcurrentHashMap();

@@ -41,6 +41,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.*;
@@ -177,7 +178,7 @@ public class XARecoveryModule implements RecoveryModule
 	 *         transaction.
 	 */
 
-	public XAResource getNewXAResource(Xid xid)
+	private XAResource getNewXAResource(Xid xid)
 	{
 		if (_xidScans == null) {
 			resourceInitiatedRecovery();
@@ -200,6 +201,17 @@ public class XARecoveryModule implements RecoveryModule
 
 		return null;
 	}
+
+	/**
+	 * @param xaResourceRecord The record to reassociate.
+	 *
+	 * @return the XAResource than can be used to commit/rollback the specified
+	 *         record.
+	 */
+    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord)
+    {
+        return getNewXAResource(xaResourceRecord.getXid());
+    }
 
 	protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName)
     {

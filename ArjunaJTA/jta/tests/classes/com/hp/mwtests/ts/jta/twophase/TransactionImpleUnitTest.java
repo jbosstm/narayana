@@ -167,19 +167,21 @@ public class TransactionImpleUnitTest
     @Test
     public void testXidCreation () throws Exception
     {
-        Class[] parameterTypes = new Class[2];
+        Class[] parameterTypes = new Class[3];
         TransactionImple tx = new TransactionImple(0);
         
         parameterTypes[0] = boolean.class;
         parameterTypes[1] = XAModifier.class;
+        parameterTypes[2] = XAResource.class;
         
         Method m = tx.getClass().getDeclaredMethod("createXid", parameterTypes);
         m.setAccessible(true);
         
-        Object[] parameters = new Object[2];
+        Object[] parameters = new Object[3];
         
         parameters[0] = false;
         parameters[1] = new DummyXAModifier();
+        parameters[2] = new DummyXA(false);
         
         Xid res = (Xid) m.invoke(tx, parameters);
         

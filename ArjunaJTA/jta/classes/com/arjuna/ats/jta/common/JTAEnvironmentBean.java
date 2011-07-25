@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.common;
 
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jta.resources.XAResourceMap;
@@ -82,6 +83,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
     private volatile String lastResourceOptimisationInterfaceClassName = "com.arjuna.ats.jta.resources.LastResourceCommitOptimisation";
     private volatile Class lastResourceOptimisationInterface = null;
+
+    private volatile String xaResourceRecordWrappingPluginClassName;
+    private volatile XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
 
     /**
      * Returns true if subtransactions are allowed.
@@ -856,6 +860,86 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
             {
                 String name = ClassloadingUtility.getNameForClass(clazz);
                 this.lastResourceOptimisationInterfaceClassName = name;
+            }
+        }
+    }
+
+    /**
+     * Returns the class name of the XAResourceRecordWrappingPlugin implementation.
+     *
+     * Default: null
+     *
+     * @return the name of the class implementing XAResourceRecordWrappingPlugin.
+     */
+    public String getXAResourceRecordWrappingPluginClassName()
+    {
+        return xaResourceRecordWrappingPluginClassName;
+    }
+
+    /**
+     * Sets the class name of the XAResourceRecordWrappingPlugin implementation.
+     *
+     * @param xaResourceRecordWrappingPluginClassName the name of a class which implements XAResourceRecordWrappingPlugin.
+     */
+    public void setXAResourceRecordWrappingPluginClassName(String xaResourceRecordWrappingPluginClassName)
+    {
+        synchronized(this)
+        {
+            if(xaResourceRecordWrappingPluginClassName == null)
+            {
+                this.xaResourceRecordWrappingPlugin = null;
+            }
+            else if(!xaResourceRecordWrappingPluginClassName.equals(this.xaResourceRecordWrappingPluginClassName))
+            {
+                this.xaResourceRecordWrappingPlugin = null;
+            }
+            this.xaResourceRecordWrappingPluginClassName = xaResourceRecordWrappingPluginClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing XAResourceRecordWrappingPlugin.
+     *
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a XAResourceRecordWrappingPlugin implementation instance, or null.
+     */
+    public XAResourceRecordWrappingPlugin getXAResourceRecordWrappingPlugin()
+    {
+        if(xaResourceRecordWrappingPlugin == null && xaResourceRecordWrappingPluginClassName != null)
+        {
+            synchronized(this) {
+                if(xaResourceRecordWrappingPlugin == null && xaResourceRecordWrappingPluginClassName != null) {
+                    XAResourceRecordWrappingPlugin instance = ClassloadingUtility.loadAndInstantiateClass(XAResourceRecordWrappingPlugin.class,  xaResourceRecordWrappingPluginClassName, null);
+                    xaResourceRecordWrappingPlugin = instance;
+                }
+            }
+        }
+
+        return xaResourceRecordWrappingPlugin;
+    }
+
+    /**
+     * Sets the instance of XAResourceRecordWrappingPlugin
+     *
+     * @param instance an Object that implements XAResourceRecordWrappingPlugin, or null.
+     */
+    public void setXAResourceRecordWrappingPlugin(XAResourceRecordWrappingPlugin instance)
+    {
+        synchronized(this)
+        {
+            XAResourceRecordWrappingPlugin oldInstance = this.xaResourceRecordWrappingPlugin;
+            xaResourceRecordWrappingPlugin = instance;
+
+            if(instance == null)
+            {
+                this.xaResourceRecordWrappingPluginClassName = null;
+            }
+            else if(instance != oldInstance)
+            {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.xaResourceRecordWrappingPluginClassName = name;
             }
         }
     }

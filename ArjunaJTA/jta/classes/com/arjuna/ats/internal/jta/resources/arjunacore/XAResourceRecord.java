@@ -101,6 +101,10 @@ public class XAResourceRecord extends AbstractRecord
         }
 
 		_theXAResource = res;
+        if(_xaResourceRecordWrappingPlugin != null) {
+            _xaResourceRecordWrappingPlugin.transcribeWrapperData(this);
+        }
+
 		_recoveryObject = null;
 		_tranID = xid;
 
@@ -181,7 +185,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelPrepare()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + _tranID);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + this);
         }
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
@@ -263,7 +267,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelAbort()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelAbort for " + _tranID);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelAbort for " + this);
         }
 
 		if (!_valid)
@@ -411,7 +415,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelCommit()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelCommit for " + _tranID);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelCommit for " + this);
         }
 
 		if (!_prepared)
@@ -557,7 +561,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelOnePhaseCommit()
 	{
 	    if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelOnePhaseCommit for " + this);
         }
 
 	    boolean commit = true;
@@ -730,7 +734,7 @@ public class XAResourceRecord extends AbstractRecord
 	public boolean forgetHeuristic()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.forget for " + _tranID);
+            jtaLogger.logger.trace("XAResourceRecord.forget for " + this);
         }
 
 		forget();
@@ -807,33 +811,37 @@ public class XAResourceRecord extends AbstractRecord
 			{
 				os.packInt(RecoverableXAConnection.OBJECT_RECOVERY);
 
-                                if (_theXAResource instanceof Serializable)
-                                {
-        				try
-        				{
-        					ByteArrayOutputStream s = new ByteArrayOutputStream();
-        					ObjectOutputStream o = new ObjectOutputStream(s);
+                os.packString(_productName);
+                os.packString(_productVersion);
+                os.packString(_jndiName);
 
-        					o.writeObject(_theXAResource);
-        					o.close();
+                if (_theXAResource instanceof Serializable)
+                {
+                    try
+                    {
+                        ByteArrayOutputStream s = new ByteArrayOutputStream();
+                        ObjectOutputStream o = new ObjectOutputStream(s);
 
-        					os.packBoolean(true);
+                        o.writeObject(_theXAResource);
+                        o.close();
 
-        					os.packBytes(s.toByteArray());
-        				}
-        				catch (NotSerializableException ex)
-        				{
-                            jtaLogger.i18NLogger.warn_resources_arjunacore_savestate();
+                        os.packBoolean(true);
 
-                                            return false;
-        				}
-                                }
-                                else
-                                {
-                                    // have to rely upon XAResource.recover!
+                        os.packBytes(s.toByteArray());
+                    }
+                    catch (NotSerializableException ex)
+                    {
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_savestate();
 
-                                    os.packBoolean(false);
-                                }
+                        return false;
+                    }
+                }
+                else
+                {
+                    // have to rely upon XAResource.recover!
+
+                    os.packBoolean(false);
+                }
 			}
 			else
 			{
@@ -874,6 +882,10 @@ public class XAResourceRecord extends AbstractRecord
 
 			if (os.unpackInt() == RecoverableXAConnection.OBJECT_RECOVERY)
 			{
+                _productName = os.unpackString();
+                _productVersion = os.unpackString();
+                _jndiName = os.unpackString();
+
 				boolean haveXAResource = os.unpackBoolean();
 
 				if (haveXAResource)
@@ -911,7 +923,7 @@ public class XAResourceRecord extends AbstractRecord
 
 					if (_theXAResource == null)
 					{
-                        jtaLogger.i18NLogger.warn_resources_arjunacore_norecoveryxa(XAHelper.xidToString(_tranID));
+                        jtaLogger.i18NLogger.warn_resources_arjunacore_norecoveryxa( toString() );
 
 						/*
 						 * Don't prevent tx from activating because there may be
@@ -999,7 +1011,63 @@ public class XAResourceRecord extends AbstractRecord
 		return false;
 	}
 
-	public XAResourceRecord()
+    /**
+     * Returns the resource manager product name.
+     * @return the product name
+     */
+    public String getProductName()
+    {
+        return _productName;
+    }
+
+    /**
+     * Sets the resource manager product name.
+     * @param productName the product name
+     */
+    public void setProductName(String productName)
+    {
+        this._productName = productName;
+    }
+
+    /**
+     * Returns the resource manager product version.
+     * @return the product version
+     */
+    public String getProductVersion()
+    {
+        return _productVersion;
+    }
+
+    /**
+     * Sets the resource manager product version.
+     * @param productVersion the product version
+     */
+    public void setProductVersion(String productVersion)
+    {
+        this._productVersion = productVersion;
+    }
+
+    /**
+     * Returns the resource manager JNDI name for e.g. xa datasource.
+     * Note this is not used for lookup, only for information.
+     * @return the JNDI name.
+     */
+    public String getJndiName()
+    {
+        return _jndiName;
+    }
+
+    /**
+     * Sets the resource manager JNDI name.
+     * Note this is not used for lookup, only for information.
+     * @param jndiName the JNDI name.
+     */
+    public void setJndiName(String jndiName)
+    {
+        this._jndiName = jndiName;
+    }
+
+    public XAResourceRecord()
 	{
 		super();
 
@@ -1025,21 +1093,16 @@ public class XAResourceRecord extends AbstractRecord
 		_valid = true;
 		_theTransaction = null;
 		_recovered = true;
-	}	
-	       
-        public String toString ()
-        {
-            return "XAResourceRecord < resource:"+_theXAResource+", txid:"+_tranID+", heuristic"+TwoPhaseOutcome.stringForm(_heuristic)+" "+super.toString()+" >";
-        }
-
-	/**
-	 * For those objects where the original XAResource could not be saved.
-	 */
-
-	protected synchronized void setXAResource(XAResource res)
-	{
-		_theXAResource = res;
 	}
+
+    public String toString ()
+    {
+        return "XAResourceRecord < resource:"+_theXAResource+", txid:"+_tranID+
+                ", heuristic: "+TwoPhaseOutcome.stringForm(_heuristic)+
+                ((_productName != null && _productVersion != null) ? ", product: "+_productName+"/"+_productVersion : "")+
+                ((_jndiName != null) ? ", jndiName: "+_jndiName : "")+
+                " "+super.toString()+" >";
+    }
 
 	/**
 	 * This routine finds the new XAResource for the transaction that used the
@@ -1070,7 +1133,7 @@ public class XAResourceRecord extends AbstractRecord
 				     * Blaargh! There are better ways to do this!
 				     */
 
-					return ((XARecoveryModule) m).getNewXAResource(_tranID);
+					return ((XARecoveryModule) m).getNewXAResource(this);
 				}
 			}
 		}
@@ -1136,6 +1199,12 @@ public class XAResourceRecord extends AbstractRecord
 	private TransactionImple _theTransaction;
     private boolean _recovered = false;
 
+    // extra metadata from the wrapper, if present
+    private String _productName;
+    private String _productVersion;
+    private String _jndiName;
+    private static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin;
+
 	private static boolean _rollbackOptimization = false;
     private static boolean _assumedComplete = false;
 
@@ -1156,6 +1225,8 @@ public class XAResourceRecord extends AbstractRecord
 		 * with. Hence USE WITH EXTREME CARE!!
 		 */
         _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
+
+        _xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
 	}
 
 }

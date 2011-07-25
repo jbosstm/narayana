@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.jta.recovery;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -80,8 +81,8 @@ public class XARecoveryModuleUnitTest
         jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryClassNames(r);
         
         XARecoveryModule xarm = new XARecoveryModule();
-        
-        assertNull(xarm.getNewXAResource(new XidImple()));
+
+        assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
         
         for (int i = 0; i < 11; i++)
         {
@@ -89,9 +90,9 @@ public class XARecoveryModuleUnitTest
             xarm.periodicWorkSecondPass();
         }
         
-        assertTrue(xarm.getNewXAResource(new XidImple(new Uid())) == null);
+        assertTrue(xarm.getNewXAResource(  new XAResourceRecord(null, null, new XidImple(new Uid()), null) ) == null);
         
-        assertNull(xarm.getNewXAResource(new XidImple()));
+        assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
     }
     
     @Test

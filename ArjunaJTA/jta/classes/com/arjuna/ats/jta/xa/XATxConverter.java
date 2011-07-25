@@ -48,12 +48,12 @@ public class XATxConverter
 {
     public static final int FORMAT_ID = 131076; // different from JTS ones.
 
-    static XID getXid (Uid uid, boolean branch) throws IllegalStateException
+    static XID getXid (Uid uid, boolean branch, String eisName) throws IllegalStateException
     {
         if (branch)
-            return getXid(uid, new Uid(), FORMAT_ID, null);
+            return getXid(uid, new Uid(), FORMAT_ID, eisName);
         else
-            return getXid(uid, Uid.nullUid(), FORMAT_ID, null);
+            return getXid(uid, Uid.nullUid(), FORMAT_ID, eisName);
     }
 
     public static Xid getXid (Uid uid, boolean branch, int formatId) throws IllegalStateException
@@ -188,7 +188,27 @@ public class XATxConverter
 
     private static String getEISName(XID xid)
     {
-        return "unknown eis name"; // TODO
+        if(xid == null || xid.formatID != FORMAT_ID) {
+            return "unknown eis name";
+        }
+
+        Uid uid = getUid(xid);
+        int uidLength = uid.getBytes().length;
+        int nameLength = xid.bqual_length-uidLength;
+
+        if(nameLength == 0) {
+            return "unknown eis name";
+        }
+
+        byte[] eisName = new byte[nameLength];
+        System.arraycopy(xid.data, xid.gtrid_length+uidLength, eisName, 0, eisName.length);
+
+        try {
+            return new String(eisName, "US-ASCII");
+        } catch(UnsupportedEncodingException e) {
+            // should never happen, we use a required charset.
+            return "<failed to get eisName>";
+        }
     }
 
     public static String getXIDString(XID xid)
