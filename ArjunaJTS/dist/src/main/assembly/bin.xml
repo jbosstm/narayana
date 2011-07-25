@@ -22,7 +22,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:trailmap</include>
+				<include>org.jboss.narayana.jts:trailmap</include>
 			</includes>
 			<outputDirectory>trailmap</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -58,7 +58,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjts:*:javadoc</include>
+				<include>org.jboss.narayana.jts:jbossjts:*:javadoc</include>
 			</includes>
 			<outputDirectory>htdocs</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -67,7 +67,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjts:*:sources</include>
+				<include>org.jboss.narayana.jts:jbossjts:*:sources</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
 			</outputFileNameMapping>
@@ -89,7 +89,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjts</include>
+				<include>org.jboss.narayana.jts:jbossjts</include>
 			</includes>
 			<excludes>
 				<exclude>*:sources</exclude>
@@ -103,7 +103,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjts-integration</include>
+				<include>org.jboss.narayana.jts:jbossjts-integration</include>
 			</includes>
 			<outputDirectory>lib</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -113,18 +113,18 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
-				<exclude>org.jboss.narayana:jbossjts</exclude>
-				<exclude>org.jboss.narayana:jbossjts-integration</exclude>
-				<exclude>org.jboss.narayana:arjunacore-services</exclude>
+				<exclude>org.jboss.narayana.jts:jbossjts</exclude>
+				<exclude>org.jboss.narayana.jts:jbossjts-integration</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjunacore-services</exclude>
 				<exclude>org.jboss.narayana:common</exclude>
-				<exclude>org.jboss.narayana:arjuna</exclude>
-				<exclude>org.jboss.narayana:txoj</exclude>
-				<exclude>org.jboss.narayana:jta</exclude>
-				<exclude>org.jboss.narayana:orbportability</exclude>
-				<exclude>org.jboss.narayana:jts</exclude>
-				<exclude>org.jboss.narayana:jtax</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjuna</exclude>
+				<exclude>org.jboss.narayana.arjunacore:txoj</exclude>
+				<exclude>org.jboss.narayana.jta:jta</exclude>
+				<exclude>org.jboss.narayana.jts:orbportability</exclude>
+				<exclude>org.jboss.narayana.jts:jts</exclude>
+				<exclude>org.jboss.narayana.jts:jtax</exclude>
 				<exclude>org.jboss.narayana:jbossts-jopr-plugin</exclude>
-				<exclude>org.jboss.narayana:trailmap</exclude>
+				<exclude>org.jboss.narayana.jts:trailmap</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -134,7 +134,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:arjunacore-services</include>
+				<include>org.jboss.narayana.arjunacore:arjunacore-services</include>
 			</includes>
 			<outputDirectory>services/lib</outputDirectory>
 			<outputFileNameMapping>jbossjts-services.jar

@@ -60,19 +60,19 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
     </dependency>
     <dependency>

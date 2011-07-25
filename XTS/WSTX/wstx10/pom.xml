@@ -78,23 +78,23 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf10</artifactId>
     </dependency>
   </dependencies>

@@ -45,11 +45,11 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
     </dependency>
   </dependencies>

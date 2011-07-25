@@ -42,7 +42,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:arjunacore</include>
+				<include>org.jboss.narayana.arjunacore:arjunacore</include>
 			</includes>
 			<excludes>
 				<exclude>*:sources</exclude>
@@ -56,11 +56,11 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
-				<exclude>org.jboss.narayana:arjunacore</exclude>
-				<exclude>org.jboss.narayana:arjunacore-services</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjunacore</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjunacore-services</exclude>
 				<exclude>org.jboss.narayana:common</exclude>
-				<exclude>org.jboss.narayana:arjuna</exclude>
-				<exclude>org.jboss.narayana:txoj</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjuna</exclude>
+				<exclude>org.jboss.narayana.arjunacore:txoj</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>
@@ -68,7 +68,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:arjunacore-services</include>
+				<include>org.jboss.narayana.arjunacore:arjunacore-services</include>
 			</includes>
 			<outputDirectory>services/lib</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

@@ -45,183 +45,183 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf11</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>recovery</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>bridge</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts-api</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-guide</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-demo</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c10</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t10</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
       <classifier>client</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
       <classifier>coordinator</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
       <classifier>participant</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf10</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx10</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts-sar</artifactId>
       <classifier>sar</classifier>
       <type>sar</type>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>localjunit</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-test-servlet</artifactId>
     </dependency>
   </dependencies>

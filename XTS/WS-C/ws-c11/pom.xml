@@ -60,7 +60,7 @@
       <!-- TODO AS7 -->
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c</artifactId>
     </dependency>
   </dependencies>

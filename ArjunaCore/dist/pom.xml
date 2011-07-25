@@ -58,21 +58,21 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore-services</artifactId>
     </dependency>
     <dependency>
@@ -80,11 +80,11 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>txoj</artifactId>
     </dependency>
   </dependencies>

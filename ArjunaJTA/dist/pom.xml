@@ -59,7 +59,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore-services</artifactId>
     </dependency>
     <dependency>
@@ -67,33 +67,33 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>txoj</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jbossjta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jbossjta</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jbossjta</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jbossjta-integration</artifactId>
     </dependency>
   </dependencies>

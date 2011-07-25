@@ -122,7 +122,7 @@
     </dependency>
     <!-- end Jersey -->
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jbossjts</artifactId>
       <scope>provided</scope>
     </dependency>

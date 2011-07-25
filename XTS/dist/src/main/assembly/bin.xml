@@ -14,7 +14,7 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:xts-demo</include>
+				<include>org.jboss.narayana.xts:xts-demo</include>
 			</includes>
 			<outputDirectory>demo</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -28,7 +28,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:jbossxts-api*javadoc*</include>
+				<include>org.jboss.narayana.xts:jbossxts-api*javadoc*</include>
 			</includes>
 			<outputDirectory>docs/api</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -37,7 +37,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:localjunit</include>
+				<include>org.jboss.narayana.xts:localjunit</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>interop-tests</outputDirectory>
@@ -47,7 +47,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:localjunit</include>
+				<include>org.jboss.narayana.xts:localjunit</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>tests</outputDirectory>
@@ -57,7 +57,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:xts-test-servlet</include>
+				<include>org.jboss.narayana.xts:xts-test-servlet</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>tests</outputDirectory>
@@ -67,15 +67,15 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:ws-t11*api</include>
-				<include>org.jboss.narayana:wstx11*api</include>
-				<include>org.jboss.narayana:ws-c*api</include>
-				<include>org.jboss.narayana:bridge*api</include>
-				<include>org.jboss.narayana:ws-t*api</include>
-				<include>org.jboss.narayana:ws-c10*api</include>
-				<include>org.jboss.narayana:wstx10*api</include>
-				<include>org.jboss.narayana:wstx*api</include>
-				<include>org.jboss.narayana:ws-t10*api</include>
+				<include>org.jboss.narayana.xts:ws-t11*api</include>
+				<include>org.jboss.narayana.xts:wstx11*api</include>
+				<include>org.jboss.narayana.xts:ws-c*api</include>
+				<include>org.jboss.narayana.xts:bridge*api</include>
+				<include>org.jboss.narayana.xts:ws-t*api</include>
+				<include>org.jboss.narayana.xts:ws-c10*api</include>
+				<include>org.jboss.narayana.xts:wstx10*api</include>
+				<include>org.jboss.narayana.xts:wstx*api</include>
+				<include>org.jboss.narayana.xts:ws-t10*api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -85,21 +85,21 @@
 		</dependencySet>
 		<dependencySet>
             <includes>
-                <include>org.jboss.narayana:wsas:jar</include>
-                <include>org.jboss.narayana:ws-c:jar</include>
-                <include>org.jboss.narayana:ws-c10:jar</include>
-                <include>org.jboss.narayana:ws-c11:jar</include>
-                <include>org.jboss.narayana:ws-t:jar</include>
-                <include>org.jboss.narayana:ws-t10:jar</include>
-                <include>org.jboss.narayana:ws-t11:jar</include>
-                <include>org.jboss.narayana:wscf:jar</include>
-                <include>org.jboss.narayana:wscf10:jar</include>
-                <include>org.jboss.narayana:wscf11:jar</include>
-                <include>org.jboss.narayana:wstx:jar</include>
-                <include>org.jboss.narayana:wstx10:jar</include>
-                <include>org.jboss.narayana:wstx11:jar</include>
-                <include>org.jboss.narayana:recovery:jar</include>
-                <include>org.jboss.narayana:jbossxts-api:jar</include>
+                <include>org.jboss.narayana.xts:wsas:jar</include>
+                <include>org.jboss.narayana.xts:ws-c:jar</include>
+                <include>org.jboss.narayana.xts:ws-c10:jar</include>
+                <include>org.jboss.narayana.xts:ws-c11:jar</include>
+                <include>org.jboss.narayana.xts:ws-t:jar</include>
+                <include>org.jboss.narayana.xts:ws-t10:jar</include>
+                <include>org.jboss.narayana.xts:ws-t11:jar</include>
+                <include>org.jboss.narayana.xts:wscf:jar</include>
+                <include>org.jboss.narayana.xts:wscf10:jar</include>
+                <include>org.jboss.narayana.xts:wscf11:jar</include>
+                <include>org.jboss.narayana.xts:wstx:jar</include>
+                <include>org.jboss.narayana.xts:wstx10:jar</include>
+                <include>org.jboss.narayana.xts:wstx11:jar</include>
+                <include>org.jboss.narayana.xts:recovery:jar</include>
+                <include>org.jboss.narayana.xts:jbossxts-api:jar</include>
             </includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -109,7 +109,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:jbossxts-sar:sar:sar</include>
+				<include>org.jboss.narayana.xts:jbossxts-sar:sar:sar</include>
 			</includes>
 			<outputDirectory>sar</outputDirectory>
 			<outputFileNameMapping>jbossxts.${artifact.extension}
@@ -120,11 +120,11 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:ws-c10:war:war</include>
-				<include>org.jboss.narayana:ws-c11:war:war</include>
-				<include>org.jboss.narayana:ws-t10:war:war</include>
-				<include>org.jboss.narayana:wscf10:war:war</include>
-				<include>org.jboss.narayana:wstx10:war:war</include>
+				<include>org.jboss.narayana.xts:ws-c10:war:war</include>
+				<include>org.jboss.narayana.xts:ws-c11:war:war</include>
+				<include>org.jboss.narayana.xts:ws-t10:war:war</include>
+				<include>org.jboss.narayana.xts:wscf10:war:war</include>
+				<include>org.jboss.narayana.xts:wstx10:war:war</include>
 			</includes>
 			<outputDirectory>webapps</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -135,9 +135,9 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana:ws-t11:war:client</include>
-				<include>org.jboss.narayana:ws-t11:war:coordinator</include>
-				<include>org.jboss.narayana:ws-t11:war:participant</include>
+				<include>org.jboss.narayana.xts:ws-t11:war:client</include>
+				<include>org.jboss.narayana.xts:ws-t11:war:coordinator</include>
+				<include>org.jboss.narayana.xts:ws-t11:war:participant</include>
 			</includes>
 			<outputDirectory>webapps</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}

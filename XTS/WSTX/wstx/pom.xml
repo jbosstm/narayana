@@ -46,15 +46,15 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf</artifactId>
     </dependency>
   </dependencies>

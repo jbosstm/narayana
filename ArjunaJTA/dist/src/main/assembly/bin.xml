@@ -42,7 +42,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjta</include>
+				<include>org.jboss.narayana.jta:jbossjta</include>
 			</includes>
 			<excludes>
 				<exclude>*:sources</exclude>
@@ -56,7 +56,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossjta-integration</include>
+				<include>org.jboss.narayana.jta:jbossjta-integration</include>
 			</includes>
 			<outputDirectory>lib</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -66,14 +66,14 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
-				<exclude>org.jboss.narayana:jbossjta</exclude>
-				<exclude>org.jboss.narayana:jbossjta-integration</exclude>
-				<exclude>org.jboss.narayana:arjunacore-services</exclude>
+				<exclude>org.jboss.narayana.jta:jbossjta</exclude>
+				<exclude>org.jboss.narayana.jta:jbossjta-integration</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjunacore-services</exclude>
 				<exclude>org.jboss.narayana:common</exclude>
-				<exclude>org.jboss.narayana:arjuna</exclude>
-				<exclude>org.jboss.narayana:txoj</exclude>
-				<exclude>org.jboss.narayana:jta</exclude>
-				<exclude>org.jboss.narayana:jdbc</exclude>
+				<exclude>org.jboss.narayana.arjunacore:arjuna</exclude>
+				<exclude>org.jboss.narayana.arjunacore:txoj</exclude>
+				<exclude>org.jboss.narayana.jta:jta</exclude>
+				<exclude>org.jboss.narayana.jta:jdbc</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<unpack>false</unpack>
@@ -81,7 +81,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:arjunacore-services</include>
+				<include>org.jboss.narayana.arjunacore:arjunacore-services</include>
 			</includes>
 			<outputDirectory>services/lib</outputDirectory>
 			<outputFileNameMapping>jbossjta-services.jar

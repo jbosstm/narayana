@@ -122,7 +122,7 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
     </dependency>
     <dependency>
