@@ -178,7 +178,7 @@ public class HornetqJournalStore
                 journal.appendAddRecord(id, RECORD_TYPE, data, syncWrites);
             }
 
-            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false);
+            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false, (short)0);
             getContentForType(typeName).put(uid, record);
         } catch(Exception e) {
             throw new ObjectStoreException(e);

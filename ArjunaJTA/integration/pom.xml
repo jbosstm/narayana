@@ -42,7 +42,7 @@
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.integration</groupId>
+      <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
       <scope>provided</scope>
     </dependency>

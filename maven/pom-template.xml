@@ -155,10 +155,10 @@
         <dependencies>
 
             <dependency>
-                <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Alpha1/jboss-as-parent-7.0.0.Alpha1.pom -->
+                <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Final/jboss-as-parent-7.0.0.Final.pom -->
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-parent</artifactId>
-                <version>7.0.0.Beta3</version>
+                <version>7.0.0.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -222,7 +222,6 @@
             <!-- JCA API -->
             <groupId>org.jboss.ironjacamar</groupId>
             <artifactId>ironjacamar-spec-api</artifactId>
-            <version>1.0.0.Beta5</version><!-- TODO AS7 -->
         </dependency>
 
         <!-- unit tests use junit4 and some use byteman -->
@@ -302,7 +301,6 @@
         <dependency>
             <groupId>jacorb</groupId>
             <artifactId>jacorb</artifactId>
-            <version>2.3.1jboss.patch01-brew</version><!-- TODO AS7 -->
         </dependency>
 
         <dependency>
@@ -319,7 +317,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.integration</groupId>
+            <groupId>org.jboss</groupId>
             <artifactId>jboss-transaction-spi</artifactId>
         </dependency>
 
@@ -387,7 +385,6 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>3.0.0.Beta5</version><!-- TODO AS7 -->
         </dependency>
 
 
@@ -417,7 +414,6 @@
         <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-api</artifactId>
-            <version>1.0.0.Beta1</version><!-- TODO AS7 -->
         </dependency>
 
     <!--
