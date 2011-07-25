@@ -31,9 +31,7 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
-import com.sun.org.apache.bcel.internal.classfile.InnerClass;
 
 import java.util.*;
 import javax.transaction.xa.*;
