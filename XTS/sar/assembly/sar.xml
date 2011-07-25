@@ -47,8 +47,8 @@
 	<dependencySets>
 		<dependencySet>
 			<excludes>
-				<exclude>org.jboss.jbossts:jbossxts-sar</exclude>
-				<exclude>org.jboss.jbossts:ws-t11:war</exclude>
+				<exclude>org.jboss.narayana.xts:jbossxts-sar</exclude>
+				<exclude>org.jboss.narayana.xts:ws-t11:war</exclude>
 			</excludes>
 			<outputDirectory>/</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -58,7 +58,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.jbossts:ws-t11:war</include>
+				<include>org.jboss.narayana.xts:ws-t11:war</include>
 			</includes>
 			<outputDirectory>/</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}
