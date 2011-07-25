@@ -644,6 +644,7 @@
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <modules>
     <module>docs</module>
