@@ -19,8 +19,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jboss.narayana</groupId>
-  <artifactId>common-docs</artifactId>
+  <groupId>org.jboss.narayana.platform-docs</groupId>
+  <artifactId>platform-docs</artifactId>
   <packaging>pom</packaging>
   <name>platform docs</name>
   <description>platform docs</description>

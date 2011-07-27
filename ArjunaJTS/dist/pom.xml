@@ -19,7 +19,6 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jboss.narayana</groupId>
   <artifactId>jbossts-full</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS distribution</name>
@@ -90,16 +89,16 @@
       <artifactId>jbossjts-integration</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.admin</groupId>
       <artifactId>jbossts-jopr-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.admin</groupId>
       <artifactId>jbossts-jopr-plugin</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
+      <groupId>org.jboss.narayana.admin</groupId>
       <artifactId>jbossts-jopr-plugin</artifactId>
       <classifier>sources</classifier>
     </dependency>

@@ -36,7 +36,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossts-jopr-plugin:*:javadoc</include>
+				<include>org.jboss.narayana.admin:jbossts-jopr-plugin:*:javadoc</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-javadoc.${artifact.extension}
 			</outputFileNameMapping>
@@ -47,7 +47,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossts-jopr-plugin:*:sources</include>
+				<include>org.jboss.narayana.admin:jbossts-jopr-plugin:*:sources</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-sources.${artifact.extension}
 			</outputFileNameMapping>
@@ -78,7 +78,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana:jbossts-jopr-plugin</include>
+				<include>org.jboss.narayana.admin:jbossts-jopr-plugin</include>
 			</includes>
 			<outputDirectory>bin</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -123,7 +123,7 @@
 				<exclude>org.jboss.narayana.jts:orbportability</exclude>
 				<exclude>org.jboss.narayana.jts:jts</exclude>
 				<exclude>org.jboss.narayana.jts:jtax</exclude>
-				<exclude>org.jboss.narayana:jbossts-jopr-plugin</exclude>
+				<exclude>org.jboss.narayana.admin:jbossts-jopr-plugin</exclude>
 				<exclude>org.jboss.narayana.jts:trailmap</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
