@@ -22,6 +22,7 @@
   <artifactId>jbossjts</artifactId>
   <name>JBossJTS packaged module</name>
   <packaging>jar</packaging>
+  <description>jts uber</description>
   <build>
     <plugins>
       <plugin>

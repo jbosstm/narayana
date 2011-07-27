@@ -23,6 +23,7 @@
   <artifactId>arjunacore-all</artifactId>
   <packaging>pom</packaging>
   <name>ArjunaCore everything</name>
+  <description>arjunacore</description>
   <modules>
     <module>arjuna</module>
     <module>arjuna/services</module>

@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossts-dev-guide</artifactId>
   <name>JBossJTS devguide module</name>
+  <description>jts devguide</description>
   <packaging>jar</packaging>
   <build>
     <outputDirectory>target/publican</outputDirectory>

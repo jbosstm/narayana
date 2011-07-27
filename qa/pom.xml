@@ -18,6 +18,7 @@
   <version>5.0.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>QA module</name>
+  <description>qa</description>
   <build>
     <plugins>
       <plugin>

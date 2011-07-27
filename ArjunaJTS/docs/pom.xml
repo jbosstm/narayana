@@ -22,6 +22,7 @@
   <artifactId>jbossjts-docs</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS Documentation</name>
+  <description>jts docs</description>
   <modules>
     <module>administration_guide</module>
     <module>development_guide</module>

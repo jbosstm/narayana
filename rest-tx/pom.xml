@@ -27,6 +27,7 @@
     <artifactId>rest-tx</artifactId>
     <packaging>pom</packaging>
     <name>RESTful Transactions</name>
+    <description>rest tx</description>
     <url>http://www.jboss.org/jbosstm</url>
     <modules>
         <module>tx</module>

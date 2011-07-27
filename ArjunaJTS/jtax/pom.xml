@@ -22,6 +22,7 @@
   <artifactId>jtax</artifactId>
   <name>JBossJTS jtax module</name>
   <packaging>jar</packaging>
+  <description>jtax</description>
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests/classes</testSourceDirectory>

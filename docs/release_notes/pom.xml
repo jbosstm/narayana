@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>release-notes</artifactId>
   <packaging>jar</packaging>
+  <name>release notes</name>
+  <description>release notes</description>
   <build>
     <outputDirectory>target/publican</outputDirectory>
     <plugins>

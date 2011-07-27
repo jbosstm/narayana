@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>wstx</artifactId>
   <packaging>jar</packaging>
+  <name>wstx</name>
+  <description>wstx</description>
   <build>
     <sourceDirectory>../classes</sourceDirectory>
     <plugins>

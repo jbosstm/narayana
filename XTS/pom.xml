@@ -22,6 +22,8 @@
   <groupId>org.jboss.narayana.xts</groupId>
   <artifactId>xts-all</artifactId>
   <packaging>pom</packaging>
+  <name>xts all</name>
+  <description>xts all</description>
   <modules>
     <module>WSAS</module>
     <module>WS-C</module>

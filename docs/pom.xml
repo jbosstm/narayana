@@ -22,6 +22,8 @@
   <groupId>org.jboss.narayana</groupId>
   <artifactId>common-docs</artifactId>
   <packaging>pom</packaging>
+  <name>platform docs</name>
+  <description>platform docs</description>
   <modules>
     <module>development_guide</module>
     <module>failure_recovery_guide</module>

@@ -22,6 +22,8 @@
   <groupId>org.jboss.narayana.xts</groupId>
   <artifactId>wstx-all</artifactId>
   <packaging>pom</packaging>
+  <name>wstx all</name>
+  <description>wstx all</description>
   <modules>
     <module>wstx</module>
     <module>wstx10</module>

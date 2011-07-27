@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-t11</artifactId>
   <packaging>jar</packaging>
+  <name>wst11</name>
+  <description>wst11</description>
   <build>
     <sourceDirectory>../dev/src11</sourceDirectory>
     <plugins>

@@ -23,6 +23,7 @@
   <artifactId>jbossjts-all</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS everything</name>
+  <description>jts all</description>
   <modules>
     <module>orbportability</module>
     <module>jts</module>

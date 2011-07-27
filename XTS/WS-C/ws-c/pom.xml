@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-c</artifactId>
   <packaging>jar</packaging>
+  <name>wsc</name>
+  <description>wsc</description>
   <build>
     <sourceDirectory>../dev/src</sourceDirectory>
     <plugins>

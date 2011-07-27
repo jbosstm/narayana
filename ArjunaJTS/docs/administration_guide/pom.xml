@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossts-iaa-guide</artifactId>
   <name>JBossJTS Installation and Administration Guide module</name>
+  <description>jts admin guide</description>
   <packaging>jar</packaging>
   <build>
     <outputDirectory>target/publican</outputDirectory>

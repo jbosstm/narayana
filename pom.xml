@@ -18,6 +18,8 @@
   <version>5.0.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
+  <name>narayana</name>
+  <description>narayana</description>
   <issueManagement>
     <system>JIRA</system>
     <url>https://jira.jboss.org/jira/browse/JBTM/</url>

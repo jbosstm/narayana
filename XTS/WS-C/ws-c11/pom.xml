@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-c11</artifactId>
   <packaging>jar</packaging>
+  <name>wsc11</name>
+  <description>wsc11</description>
   <build>
     <sourceDirectory>../dev/src11</sourceDirectory>
     <plugins>

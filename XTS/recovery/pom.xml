@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recovery</artifactId>
   <packaging>jar</packaging>
+  <name>xts recovery</name>
+  <description>xts recovery</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
   </build>

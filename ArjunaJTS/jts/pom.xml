@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jts</artifactId>
   <name>JBossJTS jts</name>
+  <description>jts</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>classes</sourceDirectory>

@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xts-demo</artifactId>
   <packaging>jar</packaging>
+  <name>xts demo</name>
+  <description>xts demo</description>
   <build>
     <plugins>
       <plugin>

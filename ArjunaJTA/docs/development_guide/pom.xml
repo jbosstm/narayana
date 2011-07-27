@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossjta-dev-guide</artifactId>
   <name>JBossJTA devguide module</name>
+  <description>jta devguide</description>
   <packaging>jar</packaging>
   <build>
     <outputDirectory>target/publican</outputDirectory>

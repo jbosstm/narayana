@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>arjunacore</artifactId>
   <name>ArjunaCore packaged module</name>
+  <description>arjunacore uber jar</description>
   <packaging>jar</packaging>
   <build>
     <plugins>

@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-c10</artifactId>
   <packaging>jar</packaging>
+  <name>wsc10</name>
+  <description>wsc10</description>
   <build>
     <sourceDirectory>../dev/src10</sourceDirectory>
     <plugins>

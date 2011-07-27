@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-t10</artifactId>
   <packaging>jar</packaging>
+  <name>wst10</name>
+  <description>wst10</description>
   <build>
     <sourceDirectory>../dev/src10</sourceDirectory>
     <plugins>

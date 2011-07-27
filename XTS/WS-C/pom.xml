@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-c-all</artifactId>
   <packaging>pom</packaging>
+  <name>wsc all</name>
+  <description>wsc all</description>
   <modules>
     <module>ws-c</module>
     <module>ws-c10</module>

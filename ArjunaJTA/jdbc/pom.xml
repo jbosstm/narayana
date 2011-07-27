@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jdbc</artifactId>
   <name>JBossJTA jdbc module</name>
+  <description>transactional driver</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>classes</sourceDirectory>

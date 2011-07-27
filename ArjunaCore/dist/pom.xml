@@ -22,6 +22,7 @@
   <artifactId>arjunacore-dist</artifactId>
   <packaging>pom</packaging>
   <name>ArjunaCore distribution</name>
+  <description>arjunacore dist</description>
   <build>
     <plugins>
       <plugin>

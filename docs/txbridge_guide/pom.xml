@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>txbridge-guide</artifactId>
   <packaging>jar</packaging>
+  <name>txbridge guide</name>
+  <description>txbridge guide</description>
   <build>
     <outputDirectory>target/publican</outputDirectory>
     <plugins>

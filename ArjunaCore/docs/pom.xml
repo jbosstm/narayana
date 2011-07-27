@@ -20,8 +20,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>arjunacore-docs</artifactId>
-  <packaging>pom</packaging>
   <name>ArjunaCore Documentation</name>
+  <description>arjunacore docs</description>
+  <packaging>pom</packaging>
   <modules>
     <module>development_guide</module>
     <module>failure_recovery_guide</module>

@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossjta-integration</artifactId>
   <name>JBossJTA ATX module</name>
+  <description>jta atx</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>../../atsintegration/classes</sourceDirectory>

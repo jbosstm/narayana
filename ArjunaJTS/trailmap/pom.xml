@@ -22,6 +22,7 @@
   <artifactId>trailmap</artifactId>
   <packaging>jar</packaging>
   <name>JBossJTS Trailmap documentation</name>
+  <description>jts trailmap</description>
   <build>
     <plugins>
       <plugin>

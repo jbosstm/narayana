@@ -23,6 +23,7 @@
   <artifactId>jbossjta-all</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTA everything</name>
+  <description>jta all</description>
   <modules>
     <module>jta</module>
     <module>jdbc</module>

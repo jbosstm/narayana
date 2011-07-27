@@ -20,6 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossjta-admin-guide</artifactId>
+  <name>jta admin guide</name>
+  <description>jta admin guide</description>
   <packaging>jar</packaging>
   <build>
     <outputDirectory>target/publican</outputDirectory>

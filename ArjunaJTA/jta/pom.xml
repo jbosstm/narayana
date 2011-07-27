@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jta</artifactId>
   <name>JBossJTA jta module</name>
+  <description>jta</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>classes</sourceDirectory>

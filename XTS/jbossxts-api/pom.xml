@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossxts-api</artifactId>
   <packaging>jar</packaging>
+  <name>xts api</name>
+  <description>xts api</description>
   <build>
     <plugins>
       <plugin>
@@ -88,9 +90,6 @@
                 <source>../WS-C/dev/src11</source>
                 <source>../WS-T/dev/src11</source>
                 <source>../WSTX/classes11</source>
-                <source>../WS-C/dev/src10</source>
-                <source>../WS-T/dev/src10</source>
-                <source>../WSTX/classes10</source>
                 <source>../recovery/src</source>
               </sources>
             </configuration>
@@ -119,11 +118,8 @@
               <artifactSet>
                 <includes>
                   <include>org.jboss.narayana.xts:ws-c:api</include>
-                  <include>org.jboss.narayana.xts:ws-c10:api</include>
                   <include>org.jboss.narayana.xts:ws-t:api</include>
-                  <include>org.jboss.narayana.xts:ws-t10:api</include>
                   <include>org.jboss.narayana.xts:wstx:api</include>
-                  <include>org.jboss.narayana.xts:wstx10:api</include>
                   <include>org.jboss.narayana.xts:wstx11:api</include>
                   <include>org.jboss.narayana.xts:bridge:api</include>
                 </includes>
@@ -142,17 +138,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c10</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
@@ -163,11 +149,6 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>

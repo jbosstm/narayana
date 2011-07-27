@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xts-full</artifactId>
   <packaging>pom</packaging>
+  <name>xts full</name>
+  <description>xts full</description>
   <build>
     <plugins>
       <plugin>

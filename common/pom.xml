@@ -13,7 +13,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>common</artifactId>
-  <name>Arjuna core common</name>
+  <name>common</name>
+  <description>common</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>classes</sourceDirectory>

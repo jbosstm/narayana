@@ -23,6 +23,7 @@
   <artifactId>jbossts-jta</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTA distribution</name>
+  <description>jta dist</description>
   <build>
     <plugins>
       <plugin>

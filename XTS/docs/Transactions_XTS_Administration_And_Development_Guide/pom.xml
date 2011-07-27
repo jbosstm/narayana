@@ -21,6 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xts-guide</artifactId>
   <name>XTS Administration and Development Guide</name>
+  <description>xts admin and dev guide</description>
   <packaging>jar</packaging>
   <build>
     <outputDirectory>target/publican</outputDirectory>

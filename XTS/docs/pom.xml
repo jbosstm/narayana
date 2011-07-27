@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xts-docs</artifactId>
   <packaging>pom</packaging>
+  <name>xts docs</name>
+  <description>xts docs</description>
   <modules>
     <module>Transactions_XTS_Administration_And_Development_Guide</module>
   </modules>

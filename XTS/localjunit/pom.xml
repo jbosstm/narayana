@@ -14,6 +14,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>localjunit</artifactId>
   <packaging>jar</packaging>
+  <name>localjunit for xts</name>
+  <description>tests for xts</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>

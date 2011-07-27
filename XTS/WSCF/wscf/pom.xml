@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>wscf</artifactId>
   <packaging>jar</packaging>
+  <name>wscf</name>
+  <description>wscf</description>
   <build>
     <sourceDirectory>../classes</sourceDirectory>
   </build>

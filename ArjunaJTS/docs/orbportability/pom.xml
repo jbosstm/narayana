@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossts-orb-guide</artifactId>
   <packaging>jar</packaging>
+  <name>orb guide</name>
+  <description>orb portability guide</description>
   <build>
     <outputDirectory>target/publican</outputDirectory>
     <plugins>

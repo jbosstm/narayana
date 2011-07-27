@@ -22,6 +22,7 @@
   <artifactId>jbossjta-docs</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTA Documentation</name>
+  <description>jta docs</description>
   <modules>
     <module>administration_guide</module>
     <module>development_guide</module>

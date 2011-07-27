@@ -21,6 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>wsas-all</artifactId>
   <packaging>pom</packaging>
+  <name>wsas all</name>
+  <description>wsas all</description>
   <modules>
     <module>wsas</module>
     <module>xts-test-servlet</module>

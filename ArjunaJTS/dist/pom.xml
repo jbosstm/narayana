@@ -23,6 +23,7 @@
   <artifactId>jbossts-full</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS distribution</name>
+  <description>jts dist</description>
   <build>
     <plugins>
       <plugin>

@@ -22,6 +22,7 @@
   <artifactId>jbossjts-integration</artifactId>
   <name>JBossJTS ATX module</name>
   <packaging>jar</packaging>
+  <description>atx</description>
   <build>
     <sourceDirectory>../../atsintegration/classes</sourceDirectory>
     <plugins>
