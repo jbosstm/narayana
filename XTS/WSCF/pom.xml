@@ -25,7 +25,6 @@
   <description>wscf all</description>
   <modules>
     <module>wscf</module>
-    <module>wscf10</module>
     <module>wscf11</module>
   </modules>
 </project>

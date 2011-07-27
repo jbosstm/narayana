@@ -25,7 +25,6 @@
   <description>wsc all</description>
   <modules>
     <module>ws-c</module>
-    <module>ws-c10</module>
     <module>ws-c11</module>
   </modules>
 </project>

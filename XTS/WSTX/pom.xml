@@ -26,7 +26,6 @@
   <description>wstx all</description>
   <modules>
     <module>wstx</module>
-    <module>wstx10</module>
     <module>wstx11</module>
   </modules>
 </project>

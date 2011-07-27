@@ -392,11 +392,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-c10</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>ws-c11</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -405,19 +400,6 @@
         <artifactId>ws-c</artifactId>
         <version>${project.version}</version>
         <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-c10</artifactId>
-        <version>${project.version}</version>
-        <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-c10</artifactId>
-        <version>${project.version}</version>
-        <classifier>war</classifier>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
@@ -438,11 +420,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-t10</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>ws-t11</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -451,19 +428,6 @@
         <artifactId>ws-t</artifactId>
         <version>${project.version}</version>
         <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-t10</artifactId>
-        <version>${project.version}</version>
-        <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>ws-t10</artifactId>
-        <version>${project.version}</version>
-        <classifier>war</classifier>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
@@ -504,18 +468,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>wscf10</artifactId>
-        <version>${project.version}</version>
-        <classifier>war</classifier>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>wscf10</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>wscf11</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -531,11 +483,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>wstx10</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>wstx11</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -544,19 +491,6 @@
         <artifactId>wstx</artifactId>
         <version>${project.version}</version>
         <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>wstx10</artifactId>
-        <version>${project.version}</version>
-        <classifier>api</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>wstx10</artifactId>
-        <version>${project.version}</version>
-        <classifier>war</classifier>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>

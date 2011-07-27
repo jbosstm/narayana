@@ -72,10 +72,7 @@
 				<include>org.jboss.narayana.xts:ws-c*api</include>
 				<include>org.jboss.narayana.xts:bridge*api</include>
 				<include>org.jboss.narayana.xts:ws-t*api</include>
-				<include>org.jboss.narayana.xts:ws-c10*api</include>
-				<include>org.jboss.narayana.xts:wstx10*api</include>
 				<include>org.jboss.narayana.xts:wstx*api</include>
-				<include>org.jboss.narayana.xts:ws-t10*api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -87,16 +84,12 @@
             <includes>
                 <include>org.jboss.narayana.xts:wsas:jar</include>
                 <include>org.jboss.narayana.xts:ws-c:jar</include>
-                <include>org.jboss.narayana.xts:ws-c10:jar</include>
                 <include>org.jboss.narayana.xts:ws-c11:jar</include>
                 <include>org.jboss.narayana.xts:ws-t:jar</include>
-                <include>org.jboss.narayana.xts:ws-t10:jar</include>
                 <include>org.jboss.narayana.xts:ws-t11:jar</include>
                 <include>org.jboss.narayana.xts:wscf:jar</include>
-                <include>org.jboss.narayana.xts:wscf10:jar</include>
                 <include>org.jboss.narayana.xts:wscf11:jar</include>
                 <include>org.jboss.narayana.xts:wstx:jar</include>
-                <include>org.jboss.narayana.xts:wstx10:jar</include>
                 <include>org.jboss.narayana.xts:wstx11:jar</include>
                 <include>org.jboss.narayana.xts:recovery:jar</include>
                 <include>org.jboss.narayana.xts:jbossxts-api:jar</include>
@@ -120,11 +113,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana.xts:ws-c10:war:war</include>
 				<include>org.jboss.narayana.xts:ws-c11:war:war</include>
-				<include>org.jboss.narayana.xts:ws-t10:war:war</include>
-				<include>org.jboss.narayana.xts:wscf10:war:war</include>
-				<include>org.jboss.narayana.xts:wstx10:war:war</include>
 			</includes>
 			<outputDirectory>webapps</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

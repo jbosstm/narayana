@@ -56,10 +56,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c10</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
     </dependency>
     <dependency>
@@ -69,16 +65,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c10</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t10</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -87,11 +74,6 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
@@ -105,10 +87,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf10</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf11</artifactId>
     </dependency>
     <dependency>
@@ -117,20 +95,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx10</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx10</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
@@ -166,19 +135,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c10</artifactId>
-      <classifier>war</classifier>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
-      <classifier>war</classifier>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t10</artifactId>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
@@ -198,18 +155,6 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
       <classifier>participant</classifier>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf10</artifactId>
-      <classifier>war</classifier>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx10</artifactId>
-      <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
