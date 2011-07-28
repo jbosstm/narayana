@@ -595,11 +595,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-guide</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-demo</artifactId>
         <version>${project.version}</version>
       </dependency>

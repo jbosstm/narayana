@@ -127,10 +127,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>xts-guide</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-demo</artifactId>
     </dependency>
     <dependency>

@@ -20,42 +20,18 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>txbridge-guide</artifactId>
-  <packaging>jar</packaging>
   <name>txbridge guide</name>
   <description>txbridge guide</description>
+  <packaging>jdocbook</packaging>
   <build>
-    <outputDirectory>target/publican</outputDirectory>
     <plugins>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <configuration>
-              <target unless="skipPublican">
-                <exec dir="." executable="publican" failonerror="true">
-                  <arg value="build"/>
-                  <arg value="--langs=en-US"/>
-                  <arg value="--formats=pdf"/>
-                  <arg value="--config=publican.cfg"/>
-                </exec>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.pdf</include>
-          </includes>
-        </configuration>
+        <groupId>org.jboss.maven.plugins</groupId>
+        <artifactId>maven-jdocbook-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <docname>Transaction_Bridging_Guide</docname>
+  </properties>
 </project>

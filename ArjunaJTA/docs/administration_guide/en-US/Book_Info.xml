@@ -21,7 +21,7 @@
       <textobject><phrase>Logo</phrase></textobject>
     </inlinemediaobject>
   </corpauthor>
-  <xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <!--FOR PUBLICAN -->    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Legal_Notice.xml">        <!--FOR JDOCBOOK:-->        <xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="fallback_content/Legal_Notice.xml"/>        </xi:fallback>    </xi:include>
   <xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 </bookinfo>
 

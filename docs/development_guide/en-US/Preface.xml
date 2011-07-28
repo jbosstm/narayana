@@ -4,10 +4,10 @@
 ]>
 <preface id="pref-Failure_Recovery_Guide-Preface">
     <title>Preface</title>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Conventions.xml"/>
+    <!--FOR PUBLICAN -->    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Conventions.xml">        <!--FOR JDOCBOOK:-->        <xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="fallback_content/Conventions.xml"/>        </xi:fallback>    </xi:include>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Feedback.xml">
         <xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Feedback.xml"/>
+            <!--FOR PUBLICAN -->            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Feedback.xml">                <!--FOR JDOCBOOK:-->                <xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">                    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="fallback_content/Feedback.xml"/>                </xi:fallback>            </xi:include>
         </xi:fallback>
     </xi:include>
 </preface>
