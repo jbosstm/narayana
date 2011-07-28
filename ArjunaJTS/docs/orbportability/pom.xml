@@ -58,4 +58,19 @@
       </plugin>
     </plugins>
   </build>
+  <!--
+
+  <packaging>jdocbook</packaging>
+    <build>
+        <plugins>
+              <plugin>
+        <groupId>org.jboss.maven.plugins</groupId>
+                <artifactId>maven-jdocbook-plugin</artifactId>
+                      </plugin>
+                          </plugins>
+                            </build>
+                              <properties>
+                                  <docname>JBossJTS_ORB_Portability_Guide</docname>
+                                    </properties>
+                                    -->
 </project>
