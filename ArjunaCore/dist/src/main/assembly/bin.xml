@@ -148,37 +148,37 @@
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaCore/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/failure_recovery_guide/target/publican/en-US/pdf/
+			<directory>../../docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/transactions_overview_guide/target/publican/en-US/pdf/
+			<directory>../../docs/transactions_overview_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/txbridge_guide/target/publican/en-US/pdf/
+			<directory>../../docs/txbridge_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/release_notes/target/publican/en-US/pdf/
+			<directory>../../docs/release_notes/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>

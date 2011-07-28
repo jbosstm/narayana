@@ -186,11 +186,6 @@
 			<source>../INSTALL</source>
 			<fileMode>0644</fileMode>
 		</file>
-		<file>
-			<source>../docs/index.html</source>
-			<outputDirectory>docs</outputDirectory>
-			<fileMode>0644</fileMode>
-		</file>
 	</files>
 	<fileSets>
 		<fileSet>
@@ -252,11 +247,6 @@
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../docs/images/
-			</directory>
-			<outputDirectory>docs/images</outputDirectory>
-		</fileSet>
-		<fileSet>
 			<directory>../jts/idl/arjuna</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
@@ -277,79 +267,79 @@
 		</fileSet>
 
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/administration_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/orbportability/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/quick_start/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 
 
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/administration_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/installation_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/quick_start/target/publican/en-US/pdf/
+			<directory>../../ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaCore/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/publican/en-US/pdf/
+			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/development_guide/target/publican/en-US/pdf/
+			<directory>../../docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/failure_recovery_guide/target/publican/en-US/pdf/
+			<directory>../../docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/transactions_overview_guide/target/publican/en-US/pdf/
+			<directory>../../docs/transactions_overview_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/txbridge_guide/target/publican/en-US/pdf/
+			<directory>../../docs/txbridge_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/release_notes/target/publican/en-US/pdf/
+			<directory>../../docs/release_notes/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
