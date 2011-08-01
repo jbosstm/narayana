@@ -105,7 +105,7 @@
 
          <!-- pull the source code from svn -->
         <exec executable="svn" dir="${workdir}">
-            <arg value="export"/>
+            <arg value="checkout"/>
             <arg value="${svnbase}/${tag}"/>
         </exec>
 
