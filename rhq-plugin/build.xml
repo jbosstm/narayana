@@ -15,12 +15,6 @@
 	<property name="plugindocjar" value="${modulename}-javadoc.jar"/>
 
 	<target name="maven:package" depends="clean">
-
-		<exec executable="mvn" dir="../">
-			<arg value="install"/>
-			<arg value="-DTS_EMMA_JAR=/"/>
-		</exec>
-
 		<exec executable="mvn" dir="${basedir}">
 			<arg value="-Dversion=${version}"/>
 			<arg value="-DartifactId=${modulename}"/>

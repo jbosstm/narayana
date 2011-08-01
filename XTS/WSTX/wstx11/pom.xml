@@ -31,6 +31,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>api</id>
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
@@ -54,6 +55,31 @@
               </includes>
             </configuration>
           </execution>
+          <execution>
+            <id>impl</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>com/arjuna/mw/wst11/UserTransaction.class</exclude>
+                <exclude>com/arjuna/mw/wst11/UserTransactionFactory.class</exclude>
+                <exclude>com/arjuna/mw/wst11/TransactionManager.class</exclude>
+                <exclude>com/arjuna/mw/wst11/TransactionManagerFactory.class</exclude>
+                <exclude>com/arjuna/mw/wst11/UserBusinessActivity.class</exclude>
+                <exclude>com/arjuna/mw/wst11/UserBusinessActivityFactory.class</exclude>
+                <exclude>com/arjuna/mw/wst11/BusinessActivityManager.class</exclude>
+                <exclude>com/arjuna/mw/wst11/BusinessActivityManagerFactory.class</exclude>
+                <exclude>com/arjuna/mw/wst11/client/JaxWSHeaderContextProcessor.class</exclude>
+                <exclude>com/arjuna/mw/wst11/client/JaxBaseHeaderContextProcessor.class</exclude>
+                <exclude>com/arjuna/mw/wst11/service/JaxWSHeaderContextProcessor.class</exclude>
+                <exclude>com/arjuna/mw/wst11/service/JaxWSSubordinateHeaderContextProcessor.class</exclude>
+                <exclude>com/arjuna/mw/wst11/service/JaxBaseHeaderContextProcessor.class</exclude>
+              </excludes>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
@@ -70,6 +96,16 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t11</artifactId>
+      <classifier>api</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>wstx</artifactId>
+      <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.ws</groupId>

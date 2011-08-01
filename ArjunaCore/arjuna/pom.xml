@@ -41,6 +41,14 @@
     </testResources>
     <plugins>
       <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -106,25 +114,21 @@
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
-      <version>${byteman-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-install</artifactId>
-      <version>${byteman-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-submit</artifactId>
-      <version>${byteman-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
-      <version>${byteman-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -149,7 +153,4 @@
       <systemPath>${env.JAVA_HOME}/lib/jconsole.jar</systemPath>
     </dependency>
   </dependencies>
-  <properties>
-    <byteman-version>1.5.1</byteman-version>
-  </properties>
 </project>

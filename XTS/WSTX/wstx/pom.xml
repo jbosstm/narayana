@@ -31,6 +31,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>api</id>
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
@@ -40,6 +41,19 @@
               <includes>
                 <include>com/arjuna/mw/wst/TxContext.class</include>
               </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>impl</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>com/arjuna/mw/wst/TxContext.class</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
@@ -58,6 +72,11 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t</artifactId>
+      <classifier>api</classifier>
     </dependency>
   </dependencies>
 </project>

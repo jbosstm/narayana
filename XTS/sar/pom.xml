@@ -19,41 +19,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jbossxts-sar</artifactId>
+  <artifactId>service</artifactId>
   <packaging>jar</packaging>
   <name>xts sar</name>
   <description>xts sar</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>my-sar</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>assembly/sar.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>jboss-packaging-maven-plugin</artifactId>
-            <version>2.2</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
   </build>
   <dependencies>
     <dependency>
@@ -63,10 +34,6 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>jbossxts-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>

@@ -25,12 +25,18 @@
   <description>wsc</description>
   <build>
     <sourceDirectory>../dev/src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>../dev/dd</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>api</id>
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
@@ -40,6 +46,19 @@
               <includes>
                 <include>com/arjuna/wsc/AlreadyRegisteredException.class</include>
               </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>impl</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>com/arjuna/wsc/AlreadyRegisteredException.class</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>

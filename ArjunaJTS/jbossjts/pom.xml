@@ -26,6 +26,14 @@
   <build>
     <plugins>
       <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
         <version>1.0-beta-4</version>
@@ -129,13 +137,14 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
               <artifactSet>
                 <includes>
                   <include>org.jboss.narayana:common</include>
                   <include>org.jboss.narayana.arjunacore:arjuna</include>
                   <include>org.jboss.narayana.arjunacore:txoj</include>
                   <include>org.jboss.narayana.jta:jta</include>
-                  <include>org.jboss.narayana.jts:jdbc</include>
+                  <include>org.jboss.narayana.jta:jdbc</include>
                   <include>org.jboss.narayana.jts:orbportability</include>
                   <include>org.jboss.narayana.jts:jts</include>
                   <include>org.jboss.narayana.jts:jtax</include>

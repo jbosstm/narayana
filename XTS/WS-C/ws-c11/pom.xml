@@ -63,5 +63,10 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-c</artifactId>
+      <classifier>api</classifier>
+    </dependency>
   </dependencies>
 </project>

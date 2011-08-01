@@ -501,29 +501,6 @@
        	</copy>
 
         <mkdir dir="${build.dir}/testresults"/>
-        <junit printsummary="yes" fork="yes" dir="${build.dir}" showoutput="@{showoutput}" includeantruntime="true">
-            <formatter type="plain"/>
-            <classpath>
-                <pathelement location="etc"/>
-                <pathelement location="${build.dir}/lib/${modulename}.jar"/>
-                <pathelement location="${build.dir}/classes/"/>
-                <pathelement location="${build.dir}/tests/"/>
-                <fileset dir="${build.dir}/lib/ext/" includes="*"/>
-                <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
-                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
-                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
-                <fileset dir="${global.ext.lib.dir}" includes="jboss-logging.jar,log4j.jar"/>
-                <additional.classpath.aux/>
-                <path refid="emma.lib" />
-                <path refid="byteman.lib" />
-            </classpath>
-
-            <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
-                <tests.aux/>
-            </batchtest>
-
-	        <additional.jvmargs.aux/>
-        </junit>
         </sequential>
 
     </macrodef>

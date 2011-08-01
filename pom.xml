@@ -156,6 +156,13 @@
       <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.jboss.maven.plugins</groupId>
           <artifactId>maven-jdocbook-plugin</artifactId>
           <version>2.3.5</version>
@@ -207,6 +214,14 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -579,12 +594,23 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>jbossxts-api</artifactId>
+        <artifactId>bridge</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>jbossxts-api</artifactId>
+        <artifactId>jbossxts</artifactId>
+        <version>${project.version}</version>
+        <classifier>api</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.xts</groupId>
+        <artifactId>jbossxts</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.xts</groupId>
+        <artifactId>jbossxts</artifactId>
         <version>${project.version}</version>
         <classifier>javadoc</classifier>
       </dependency>
@@ -605,10 +631,8 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>jbossxts-sar</artifactId>
+        <artifactId>service</artifactId>
         <version>${project.version}</version>
-        <classifier>sar</classifier>
-        <type>sar</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
@@ -627,6 +651,31 @@
         <artifactId>jboss-logging-generator</artifactId>
         <version>1.0.0.Beta6</version>
         <!-- TODO AS7 -->
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman</artifactId>
+        <version>1.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-install</artifactId>
+        <version>1.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-submit</artifactId>
+        <version>1.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-bmunit</artifactId>
+        <version>1.5.1</version>
+      </dependency>
+      <dependency>
+  			<groupId>org.jboss.byteman</groupId>
+  			<artifactId>byteman-dtest</artifactId>
+        <version>1.5.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

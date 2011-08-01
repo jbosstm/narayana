@@ -24,6 +24,18 @@
   <packaging>pom</packaging>
   <name>JBossJTS everything</name>
   <description>jts all</description>
+  <build>
+    <plugins>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <modules>
     <module>orbportability</module>
     <module>jts</module>

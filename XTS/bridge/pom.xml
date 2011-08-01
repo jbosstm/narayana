@@ -31,6 +31,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>api</id>
             <goals>
               <goal>jar</goal>
             </goals>
@@ -39,6 +40,18 @@
               <includes>
                 <include>org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class</include>
               </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>impl</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>

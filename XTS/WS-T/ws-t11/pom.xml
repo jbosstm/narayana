@@ -31,6 +31,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>api</id>
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
@@ -41,6 +42,20 @@
                 <include>com/arjuna/wst11/BAParticipantManager.class</include>
                 <include>com/arjuna/wst11/ConfirmCompletedParticipant.class</include>
               </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>impl</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>com/arjuna/wst11/BAParticipantManager.class</exclude>
+                <exclude>com/arjuna/wst11/ConfirmCompletedParticipant.class</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
@@ -97,6 +112,11 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t</artifactId>
+      <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>

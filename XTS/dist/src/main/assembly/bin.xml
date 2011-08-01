@@ -28,7 +28,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana.xts:jbossxts-api*javadoc*</include>
+				<include>org.jboss.narayana.xts:jbossxts:*javadoc*</include>
 			</includes>
 			<outputDirectory>docs/api</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -67,12 +67,7 @@
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana.xts:ws-t11*api</include>
-				<include>org.jboss.narayana.xts:wstx11*api</include>
-				<include>org.jboss.narayana.xts:ws-c*api</include>
-				<include>org.jboss.narayana.xts:bridge*api</include>
-				<include>org.jboss.narayana.xts:ws-t*api</include>
-				<include>org.jboss.narayana.xts:wstx*api</include>
+				<include>org.jboss.narayana.xts:jbossxts:jar:api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
@@ -81,32 +76,11 @@
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
-            <includes>
-                <include>org.jboss.narayana.xts:wsas:jar</include>
-                <include>org.jboss.narayana.xts:ws-c:jar</include>
-                <include>org.jboss.narayana.xts:ws-c11:jar</include>
-                <include>org.jboss.narayana.xts:ws-t:jar</include>
-                <include>org.jboss.narayana.xts:ws-t11:jar</include>
-                <include>org.jboss.narayana.xts:wscf:jar</include>
-                <include>org.jboss.narayana.xts:wscf11:jar</include>
-                <include>org.jboss.narayana.xts:wstx:jar</include>
-                <include>org.jboss.narayana.xts:wstx11:jar</include>
-                <include>org.jboss.narayana.xts:recovery:jar</include>
-                <include>org.jboss.narayana.xts:jbossxts-api:jar</include>
-            </includes>
+			<includes>
+        <include>org.jboss.narayana.xts:jbossxts:jar</include>
+			</includes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<outputDirectory>lib</outputDirectory>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.narayana.xts:jbossxts-sar:sar:sar</include>
-			</includes>
-			<outputDirectory>sar</outputDirectory>
-			<outputFileNameMapping>jbossxts.${artifact.extension}
-			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -154,11 +128,6 @@
 		</file>
 	</files>
 	<fileSets>
-		<fileSet>
-			<directory>../config</directory>
-			<outputDirectory>conf</outputDirectory>
-			<filtered>true</filtered>
-		</fileSet>
 		<fileSet>
 			<directory>../docs/Transactions_XTS_Administration_And_Development_Guide/target/publican/Transactions_XTS_Administration_And_Development_Guide/en-US/pdf/</directory>
 			<outputDirectory>docs</outputDirectory>
