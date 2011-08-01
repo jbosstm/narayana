@@ -58,7 +58,7 @@
 
       This version is for JBossTS 4.11 onwards. Don't use it for earlier releases, they are structured differently.
 -->
-<project name="JBossTS Release Packaging" default="dist" basedir=".">
+<project name="JBossTS Release Packaging" default="dist,downloads" basedir=".">
     <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
@@ -120,7 +120,7 @@
 
         <!-- build the binary releases -->
         <exec dir="${workdir}/${tag}" executable="mvn">
-            <arg line="deploy -DskipTests"/>
+            <arg line="clean deploy -DskipTests"/>
         </exec>
     </target>
 
@@ -131,15 +131,15 @@
             <available dir="${downloads.dir}"/>
           </not>
         </fail>
+        <delete dir="${downloads.dir}/${version}"/>
         <mkdir dir="${downloads.dir}/${version}"/>
         <mkdir dir="${downloads.dir}/${version}/src"/>
         <mkdir dir="${downloads.dir}/${version}/binary"/>
-        <mkdir dir="${downloads.dir}/${version}/notes"/>
         <copy todir="${downloads.dir}/${version}/src">
             <fileset dir="${workdir}" includes="jbossts-*-${version}-src.zip"/>
         </copy>
         <copy todir="${downloads.dir}/${version}/binary">
-            <fileset dir="${workdir}" includes="jbossts-*-${version}.zip"/>
+            <fileset dir="${workdir}" includes="ArjunaJT*/dist/target/*-bin.zip,XTS/dist/target/*-bin.zip"/>
         </copy>
         <!-- TODO: notes dir, xml generation? project.xml edits -->
     </target>
