@@ -58,7 +58,7 @@
 
       This version is for JBossTS 4.11 onwards. Don't use it for earlier releases, they are structured differently.
 -->
-<project name="JBossTS Release Packaging" default="dist,downloads" basedir=".">
+<project name="JBossTS Release Packaging" default="all" basedir=".">
     <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
@@ -93,6 +93,8 @@
             <pathelement location="./antbuildsystem/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
+    
+    <target name="all" depends="dist,downloads"/>
 
     <target name="init">
         <tstamp/>
