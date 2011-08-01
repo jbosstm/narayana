@@ -102,10 +102,17 @@
 			<fileset dir="${build}/classes">
 				<include name="org/jboss/**"/>
 			</fileset>
-            <fileset dir=".">
-                <include name="META-INF/*"/>
-            </fileset>
 		</jar>
+
+        <jar jarfile="${build}/txbridge-src.jar">
+            <fileset dir="${src}">
+                <include name="org/jboss/**/*.java"/>
+            </fileset>
+        </jar>
+
+        <mkdir dir="${jbossts.home}/install/txbridge"/>
+        <copy file="${build}/txbridge.jar" tofile="${jbossts.home}/install/txbridge/jbosstxbridge.jar"/>
+        <copy file="${build}/txbridge-src.jar" tofile="${jbossts.home}/install/txbridge/jbosstxbridge-sources.jar"/>
 
         <ant dir="demo" target="dist" inheritall="false" inheritrefs="false"/>
         <ant dir="tests" target="dist" inheritall="false" inheritrefs="false"/>

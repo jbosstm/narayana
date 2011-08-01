@@ -107,7 +107,7 @@
 
     <target name="dist" depends="init" description="build the end-user release bundles (src and binary)">
 
-        <!-- pull the source code from svn -->
+         <!-- pull the source code from svn -->
         <exec executable="svn" dir="${workdir}">
             <arg value="export"/>
             <arg value="${svnbase}/${tag}"/>
@@ -139,7 +139,7 @@
         <delete file="${workdir}/jbossts-jta-${filename}.zip"/>
         <zip basedir="${workdir}/build/${tag}" destfile="${workdir}/jbossts-jta-${filename}.zip"
              includes="${tag}/**"/>
-        
+
         <!-- build the full release (assumes XTS builds against JTS) -->
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
@@ -151,6 +151,8 @@
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the 1.1 jbossxts jars and test apps) -->
         </ant>
+
+        <ant dir="${workdir}/build/${tag}/txbridge" antfile="build.xml" target="dist"/>
 
         <ant dir="${workdir}/build/${tag}/rhq-plugin" antfile="build.xml" target="dist">
             <property name="version" value="${filename}"/>
@@ -235,10 +237,13 @@
                             dir="${workdir}/build/${tag}/xts/interop-tests"/>
 
 
+        <!-- txbridge -->
+
+        <mvn-artifact.macro artifact="jbosstxbridge" packaging="jar"
+                            dir="${workdir}/build/${tag}/txbridge"/>
 
 
 
-        
     </target>
     <!-- macro to process a pom template into an actual pom and use it with mvn deploy-file to upload to the repo -->
 
@@ -253,6 +258,18 @@
         <sequential>
 
             <property name="groupid" value="org.jboss.jbossts"/>
+
+            <if>
+                <not>
+                    <available file="@{dir}/@{artifact}-sources.jar"/>
+                </not>
+                <then>
+                    <touch file="@{dir}/@{artifact}-sources.txt"/>
+                    <jar destfile="@{dir}/@{artifact}-sources.jar">
+                        <include name="@{dir}/@{artifact}-sources.txt"/>
+                    </jar>
+                </then>
+            </if>
 
             <!-- where a -sources.jar exists, upload it first as we need the latter binary .jar to overwrite the
                 generated pom due to the requirement for working around http://jira.codehaus.org/browse/MDEPLOY-48
@@ -298,7 +315,7 @@
             </exec>
 
         </sequential>
-        
+
    </macrodef>
 
     <!-- magnolia (the cms that sits behind jboss.org/jbosstm pages) is a pain. This target generates
