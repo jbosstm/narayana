@@ -64,6 +64,7 @@
           </archive>
         </configuration>
       </plugin>
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -107,6 +108,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -120,25 +122,6 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>1.4</version>
         <executions>
-          <execution>
-            <id>mainjar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes>
-                  <include>org.jboss.narayana.xts</include>
-                </includes>
-                <excludes>
-                  <exclude>org.jboss.narayana.xts:*:api</exclude>
-                </excludes>
-              </artifactSet>
-            </configuration>
-          </execution>
           <execution>
             <id>apijar</id>
             <phase>package</phase>
@@ -157,6 +140,26 @@
                   <include>org.jboss.narayana.xts:wstx:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:wstx11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:bridge:jar:api:${project.version}</include>
+                </includes>
+              </artifactSet>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>mainjar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+              <artifactSet>
+                <includes>
+                  <include>org.jboss.narayana.xts</include>
+                </includes>
+                <includes>
+                  <include>org.jboss.narayana.xts</include>
                 </includes>
               </artifactSet>
             </configuration>

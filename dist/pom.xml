@@ -13,16 +13,16 @@
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <parent>
-    <groupId>org.jboss.narayana.jts</groupId>
-    <artifactId>narayana-jts-all</artifactId>
+    <groupId>org.jboss.narayana</groupId>
+    <artifactId>narayana</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jbossts-full</artifactId>
+  <artifactId>narayana-full</artifactId>
   <packaging>pom</packaging>
-  <name>JBossJTS distribution</name>
-  <description>jts dist</description>
+  <name>${project.artifactId}</name>
+  <description>${project.artifactId}</description>
   <build>
     <plugins>
       <plugin>
@@ -63,26 +63,36 @@
       <artifactId>arjunacore-services</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>common</artifactId>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>txoj</artifactId>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
+      <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>narayana-jts</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>narayana-jts</artifactId>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
       <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta-integration</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>narayana-jts</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts</artifactId>
       <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>narayana-jts</artifactId>
+      <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -106,9 +116,77 @@
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>trailmap</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts</artifactId>
+      <classifier>api</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>rest-tx-web</artifactId>
+      <type>war</type>
+    </dependency>
+    
+    
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts</artifactId>
+      <classifier>api</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts</artifactId>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>xts-demo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-c11</artifactId>
+      <classifier>war</classifier>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t11</artifactId>
+      <classifier>client</classifier>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t11</artifactId>
+      <classifier>coordinator</classifier>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-t11</artifactId>
+      <classifier>participant</classifier>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>localjunit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>xts-test-servlet</artifactId>
+    </dependency>
   </dependencies>
   <properties>
     <PRODUCT_NAME>narayana-jts</PRODUCT_NAME>
     <HOME_DIRECTORY>JBOSSTS_HOME</HOME_DIRECTORY>
+    <PRODUCT_NAME>xts</PRODUCT_NAME>
+    <HOME_DIRECTORY>XTS_HOME</HOME_DIRECTORY>
   </properties>
 </project>

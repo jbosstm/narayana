@@ -142,6 +142,7 @@
 			<unpack>false</unpack>
 		</dependencySet>
 	</dependencySets>
+	<!--
 	<files>
 		<file>
 			<source>../copyright.txt</source>
@@ -344,4 +345,5 @@
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
+	-->
 </assembly> 

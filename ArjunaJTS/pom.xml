@@ -45,6 +45,5 @@
     <module>trailmap</module>
     <module>docs</module>
     <module>../rhq-plugin</module>
-    <module>dist</module>
   </modules>
 </project>

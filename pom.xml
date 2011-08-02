@@ -666,6 +666,12 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
+        <artifactId>jbossxts</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-docs</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -683,6 +689,12 @@
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>service</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>rest-tx-web</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
@@ -755,8 +767,9 @@
     <module>ArjunaCore</module>
     <module>ArjunaJTA</module>
     <module>XTS</module>
-    <!-- BUILT BY ArjunaJTS module>rhq-plugin</module-->
     <module>ArjunaJTS</module>
     <module>rest-tx</module>
+    <module>rhq-plugin</module>
+    <module>dist</module>
   </modules>
 </project>

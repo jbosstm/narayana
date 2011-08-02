@@ -136,13 +136,13 @@
         </exec>
 
         <!-- package the JTA only src tree (no JTS, XTS, txbridge, RTS) -->
-        <delete file="${workdir}/jbossts-jta-${version}-src.zip"/>
+        <delete file="${workdir}/narayana-jta-${version}-src.zip"/>
         <zip basedir="${workdir}" destfile="${workdir}/jbossts-jta-${version}-src.zip"
              includes="${tag}/**"
              excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/** ${tag}/txbridge/**, ${tag}/rest-tx/**, ${tag}/repository/**"/>
         
         <!-- package the full source release (all src tree) -->
-        <delete file="${workdir}/jbossts-full-${version}-src.zip"/>
+        <delete file="${workdir}/narayana-full-${version}-src.zip"/>
         <zip basedir="${workdir}" destfile="${workdir}/jbossts-full-${version}-src.zip"
              includes="${tag}/**"
              excludes="${tag}/repository/**"/>
@@ -172,10 +172,10 @@
         <mkdir dir="${downloads.dir}/${version}/binary"/>
         
         <copy todir="${downloads.dir}/${version}/src">
-            <fileset dir="${workdir}" includes="jbossts-*-${version}-src.zip"/>
+            <fileset dir="${workdir}" includes="narayana-*-${version}-src.zip"/>
         </copy>
         <copy todir="${downloads.dir}/${version}/binary">
-            <fileset dir="${workdir}/${tag}" includes="ArjunaJT*/dist/target/*-bin.zip,XTS/dist/target/*-bin.zip"/>
+            <fileset dir="${workdir}/${tag}" includes="dist/target/narayana-full-${version}-bin.zip"/>
         </copy>
         <!-- TODO: notes dir, xml generation? project.xml edits -->
     </target>

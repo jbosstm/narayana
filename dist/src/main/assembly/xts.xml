@@ -110,6 +110,7 @@
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 	</dependencySets>
+	<!--
 	<files>
 		<file>
 			<source>../third_party_licenses.txt</source>
@@ -133,4 +134,5 @@
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
+	-->
 </assembly> 

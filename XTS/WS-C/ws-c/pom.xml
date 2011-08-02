@@ -67,8 +67,8 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>common</artifactId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
     </dependency>
   </dependencies>
 </project>

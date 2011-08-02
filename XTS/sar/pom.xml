@@ -25,6 +25,11 @@
   <description>xts sar</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>resources</directory>
+      </resource>
+    </resources>
   </build>
   <dependencies>
     <dependency>

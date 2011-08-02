@@ -42,6 +42,5 @@
     <module>narayana-jta</module>
     <module>docs</module>
     <module>integration</module>
-    <module>dist</module>
   </modules>
 </project>
