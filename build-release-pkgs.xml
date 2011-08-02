@@ -33,8 +33,7 @@
       Tag the JBossTS release in svn.
         or you can do a snapshot release direct from trunk, see properties below.
 
-      Check the version of JBossAS referenced in maven/pom-template.xml is sane.
-        You MUST NOT use a snapshot release if doing a tagged build of JBossTS.
+      Check the version of JBossAS referenced in pom.xml is sane.
         In general, use the oldest JBossAS release the JBossTS release is intended to support.
 
       Update the properties section below to suit your machine.
@@ -52,13 +51,11 @@
       Update appropriate wiki pages, such as the 'which version to use' page.
         http://community.jboss.org/wiki/JBossTransactionsVersionGuide
 
-      ant -f build-release-pkgs.xml mvn-repository
-        to upload releases to the mvn staging server. Note: this requires you to have login info in your settings.xml
       Then login to https://repository.jboss.org/nexus/ and publish the artifacts.
 
-      This version is for JBossTS 4.11 onwards. Don't use it for earlier releases, they are structured differently.
+      This version is for JBossTS 5.0.0 onwards. Don't use it for earlier releases, they are structured differently.
 -->
-<project name="JBossTS Release Packaging" default="all" basedir=".">
+<project name="JBossTS Release Packaging" default="fail" basedir=".">
     <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
@@ -72,11 +69,11 @@
 <!--
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
-    <property name="version" value="5.0.0-SNAPSHOT"/>
+    <property name="version" value="5.0.0.M1-SNAPSHOT"/>
 -->
 
     <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
-    <property name="workdir" location="/tmp/packaged_builds"/>
+    <!--property name="workdir" location="/tmp/packaged_builds"/-->
     <!-- where to get the source -->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <!-- The tag as it appears under svnbase -->
@@ -94,54 +91,91 @@
         </classpath>
     </taskdef>
     
+    <target name="fail">
+      <fail message="you must specify a target"/>
+    </target>
+    
     <target name="all" depends="dist,downloads"/>
 
-    <target name="init">
+    <target name="dist-init" unless="dist-init">
         <tstamp/>
+        
+        <fail message="You must set a workdir">
+          <condition>
+            <not>
+              <isset property="workdir"/>
+            </not>
+          </condition>
+        </fail>
+        
+        <fail message="You must not already have a local maven cached repository to do a release build">
+          <condition>
+            <available file="repository" type="dir"/>
+          </condition>
+        </fail>
+        
+        <fail message="You cannot perform a build without cleaning the old version out">
+          <condition>
+            <available file="${workdir}/${tag}" type="dir"/>
+          </condition>
+        </fail>
+        
         <mkdir dir="${workdir}"/>
-    </target>
-
-    <target name="dist" depends="init" description="build the end-user release bundles (src and binary)">
 
          <!-- pull the source code from svn -->
         <exec executable="svn" dir="${workdir}">
             <arg value="checkout"/>
             <arg value="${svnbase}/${tag}"/>
         </exec>
+    </target>
 
-        <!-- package the full source release (all src tree) -->
-        <delete file="${workdir}/jbossts-full-${version}-src.zip"/>
-        <zip basedir="${workdir}" destfile="${workdir}/jbossts-full-${version}-src.zip"
-             includes="${tag}/**"/>
+    <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
+        <!-- build the binary releases -->
+        <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
+            <arg line="clean -gs tools/maven/conf/settings.xml"/>
+        </exec>
 
-        <!-- package the JTA only src tree (no JTS, XTS) -->
+        <!-- package the JTA only src tree (no JTS, XTS, txbridge, RTS) -->
         <delete file="${workdir}/jbossts-jta-${version}-src.zip"/>
         <zip basedir="${workdir}" destfile="${workdir}/jbossts-jta-${version}-src.zip"
              includes="${tag}/**"
-             excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/** ${tag}/txbridge/**"/>
+             excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/** ${tag}/txbridge/**, ${tag}/rest-tx/**, ${tag}/repository/**"/>
+        
+        <!-- package the full source release (all src tree) -->
+        <delete file="${workdir}/jbossts-full-${version}-src.zip"/>
+        <zip basedir="${workdir}" destfile="${workdir}/jbossts-full-${version}-src.zip"
+             includes="${tag}/**"
+             excludes="${tag}/repository/**"/>
 
         <!-- build the binary releases -->
-        <exec dir="${workdir}/${tag}" executable="mvn">
-            <arg line="clean deploy -DskipTests"/>
+        <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
+            <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml"/>
         </exec>
     </target>
 
     <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
     <target name="downloads" description="copy release bundles to JBossTS web site content">
         <fail>
-          <not>
-            <available dir="${downloads.dir}"/>
-          </not>
+          <condition>
+            <not>
+              <available file="${downloads.dir}" type="dir"/>
+            </not>
+          </condition>
         </fail>
-        <delete dir="${downloads.dir}/${version}"/>
+        <fail>
+          <condition>
+            <available file="${downloads.dir}/${version}" type="dir"/>
+          </condition>
+        </fail>
         <mkdir dir="${downloads.dir}/${version}"/>
         <mkdir dir="${downloads.dir}/${version}/src"/>
         <mkdir dir="${downloads.dir}/${version}/binary"/>
+        
         <copy todir="${downloads.dir}/${version}/src">
             <fileset dir="${workdir}" includes="jbossts-*-${version}-src.zip"/>
         </copy>
         <copy todir="${downloads.dir}/${version}/binary">
-            <fileset dir="${workdir}" includes="ArjunaJT*/dist/target/*-bin.zip,XTS/dist/target/*-bin.zip"/>
+            <fileset dir="${workdir}/${tag}" includes="ArjunaJT*/dist/target/*-bin.zip,XTS/dist/target/*-bin.zip"/>
         </copy>
         <!-- TODO: notes dir, xml generation? project.xml edits -->
     </target>
