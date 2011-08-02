@@ -20,7 +20,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jta</groupId>
-  <artifactId>jbossjta-all</artifactId>
+  <artifactId>narayana-jta-all</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTA everything</name>
   <description>jta all</description>
@@ -39,7 +39,7 @@
   <modules>
     <module>jta</module>
     <module>jdbc</module>
-    <module>jbossjta</module>
+    <module>narayana-jta</module>
     <module>docs</module>
     <module>integration</module>
     <module>dist</module>

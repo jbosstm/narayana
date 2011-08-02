@@ -14,7 +14,7 @@
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
-    <artifactId>jbossjts-all</artifactId>
+    <artifactId>narayana-jts-all</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -72,21 +72,21 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jbossjts</artifactId>
+      <artifactId>narayana-jts</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jbossjts</artifactId>
+      <artifactId>narayana-jts</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jbossjts</artifactId>
+      <artifactId>narayana-jts</artifactId>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jbossjts-integration</artifactId>
+      <artifactId>narayana-jts-integration</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.admin</groupId>
@@ -108,7 +108,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <PRODUCT_NAME>jbossjts</PRODUCT_NAME>
+    <PRODUCT_NAME>narayana-jts</PRODUCT_NAME>
     <HOME_DIRECTORY>JBOSSTS_HOME</HOME_DIRECTORY>
   </properties>
 </project>

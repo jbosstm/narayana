@@ -75,7 +75,7 @@ will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using
     </path>
     <!-- JBossTS: http://www.jboss.org/download/ the current build -->
     <path id="classpath.jbossts">
-        <pathelement location="${jbossts.install}/lib/jbossjta.jar" />
+        <pathelement location="${jbossts.install}/lib/narayana-jta.jar" />
         <pathelement location="${jbossts.install}/../build/extlib/netty.jar" />
         <pathelement location="${jbossts.install}/lib/ext/hornetq-core.jar" />
         <pathelement location="${jbossts.install}/lib/ext/jboss-logging.jar" />

@@ -13,16 +13,16 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.jboss.narayana.jta</groupId>
-    <artifactId>jbossjta-all</artifactId>
+    <groupId>org.jboss.narayana.jts</groupId>
+    <artifactId>narayana-jts-all</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jbossjta</artifactId>
-  <name>JBossJTA packaged module</name>
-  <description>jta uber jar</description>
+  <artifactId>narayana-jts</artifactId>
+  <name>JBossJTS packaged module</name>
   <packaging>jar</packaging>
+  <description>jts uber</description>
   <build>
     <plugins>
       <plugin>
@@ -95,8 +95,12 @@
                 <source>../../common/classes</source>
                 <source>../../ArjunaCore/arjuna/classes</source>
                 <source>../../ArjunaCore/txoj/classes</source>
-                <source>../jta/classes</source>
-                <source>../jdbc/classes</source>
+                <source>../../ArjunaJTA/jta/classes</source>
+                <source>../../ArjunaJTA/jdbc/classes</source>
+                <source>../orbportability/classes</source>
+                <source>../jts/classes</source>
+                <source>../jts/services/classes</source>
+                <source>../jtax/classes</source>
               </sources>
             </configuration>
           </execution>
@@ -105,10 +109,22 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>**/*.*</exclude>
-          </excludes>
+          <includes>
+            <include>com/arjuna/ats/jts/services/**/*.java</include>
+          </includes>
         </configuration>
+        <executions>
+          <execution>
+            <id>comp</id>
+            <phase>compile</phase>
+            <goals/>
+            <configuration>
+              <excludes>
+                <exclude>**/*.*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -129,6 +145,9 @@
                   <include>org.jboss.narayana.arjunacore:txoj</include>
                   <include>org.jboss.narayana.jta:jta</include>
                   <include>org.jboss.narayana.jta:jdbc</include>
+                  <include>org.jboss.narayana.jts:orbportability</include>
+                  <include>org.jboss.narayana.jts:jts</include>
+                  <include>org.jboss.narayana.jts:jtax</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -157,6 +176,23 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>orbportability</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jtax</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>tanukisoft</groupId>
+      <artifactId>wrapper</artifactId>
+      <version>3.2.3</version>
     </dependency>
   </dependencies>
 </project>

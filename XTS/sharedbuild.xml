@@ -57,7 +57,7 @@
     <property name="jbossts.buildsystem.build.lib.dir" location="${jbossts.buildsystem.build.dir}/lib"/>
 
         <!-- required JBossTS product jars -->
-    <property name="jbossts.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+    <property name="jbossts.install.lib.jars" value="narayana-jta.jar narayana-jts.jar"/>
 
         <!-- external jars also used by JBossTS -->
     <property name="jbossts.build.extlib.jars" value="fakeplaceholder.jar"/>

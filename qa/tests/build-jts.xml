@@ -45,8 +45,8 @@
 
 	<path id="jts.classpath">
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
-			<include name="jbossjts.jar"/>
-			<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
+			<include name="narayana-jts.jar"/>
+			<include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
 			<include name="jboss-transaction-api_1.1_spec.jar"/>
@@ -215,7 +215,7 @@
 
     <path id="as.classpath">
                 <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
-                        <include name="jbossjts.jar"/>
+                        <include name="narayana-jts.jar"/>
                 </fileset>
                 <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
                         <include name="jbossts-common.jar"/>

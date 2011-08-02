@@ -194,7 +194,7 @@
 					<li>Share the transaction service IOR on <font face="Courier New, Courier, mono">host1</font> with <font face="Courier New, Courier, mono">host2</font></li>
 					<p>
 					Open a command prompt on <font face="Courier New, Courier, mono">host2</font> and copy the <font face="Courier New, Courier, mono">CosServices.cfg</font> file
-					from the <font face="Courier New, Courier, mono">&lt;jbossjts_install_root>/etc</font> directory on <font face="Courier New, Courier, mono">host1</font>.</p>
+					from the <font face="Courier New, Courier, mono">&lt;narayana-jts_install_root>/etc</font> directory on <font face="Courier New, Courier, mono">host1</font>.</p>
 					<p>
 					For example, using the popular <font face="Courier New, Courier, mono">scp</font> package, open a shell prompt and issue the following command:</p>
 					<blockquote>

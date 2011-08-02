@@ -20,7 +20,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jts</groupId>
-  <artifactId>jbossjts-all</artifactId>
+  <artifactId>narayana-jts-all</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS everything</name>
   <description>jts all</description>
@@ -40,7 +40,7 @@
     <module>orbportability</module>
     <module>jts</module>
     <module>jtax</module>
-    <module>jbossjts</module>
+    <module>narayana-jts</module>
     <module>integration</module>
     <module>trailmap</module>
     <module>docs</module>

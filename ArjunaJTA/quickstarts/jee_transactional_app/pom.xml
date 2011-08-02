@@ -155,7 +155,7 @@
 		<!-- For the txoj -->
 		<dependency>
 			<groupId>org.jboss.jbossts</groupId>
-			<artifactId>jbossjta</artifactId>
+			<artifactId>narayana-jta</artifactId>
 			<version>4.15.1.Final</version>
 			<scope>provided</scope>
 			<exclusions>

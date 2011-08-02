@@ -14,12 +14,12 @@
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
-    <artifactId>jbossjts-all</artifactId>
+    <artifactId>narayana-jts-all</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jbossjts-docs</artifactId>
+  <artifactId>narayana-jts-docs</artifactId>
   <packaging>pom</packaging>
   <name>JBossJTS Documentation</name>
   <description>jts docs</description>

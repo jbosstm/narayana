@@ -36,7 +36,7 @@
 
 	<path id="jta.classpath">
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
-			<include name="jbossjta.jar"/>
+			<include name="narayana-jta.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
 			<include name="jboss-transaction-api_1.1_spec.jar"/>

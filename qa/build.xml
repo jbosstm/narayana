@@ -87,16 +87,16 @@
 
 
     <target name="buildtype">
-		<available file="${jbossts.install.lib}/jbossjts.jar" property="buildtype" value="jts"/>
+		<available file="${jbossts.install.lib}/narayana-jts.jar" property="buildtype" value="jts"/>
 		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/>
 
-		<available file="${jbossts.install.lib}/jbossjta.jar" property="buildtype" value="jta"/>
+		<available file="${jbossts.install.lib}/narayana-jta.jar" property="buildtype" value="jta"/>
 		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/>
 
         <available file="${jbossts.install.lib}/arjunacore.jar" property="buildtype" value="core"/>
 
-		<available file="${jbossts.install.lib}/jbossjta-integration.jar" property="integration.build"/>
-		<available file="${jbossts.install.lib}/jbossjts-integration.jar" property="integration.build"/>
+		<available file="${jbossts.install.lib}/narayana-jta-integration.jar" property="integration.build"/>
+		<available file="${jbossts.install.lib}/narayana-jts-integration.jar" property="integration.build"/>
 
         <condition property="dist.as">
 			<and>
@@ -134,8 +134,8 @@
 <echo>Supported targets:
   jta - build tests for the standalone jta transaction engine
   jts - build tests for the standalone jts transaction engine
-  jbossjta - build tests for the integrated jta transaction engine
-  jbossjts - build tests for the integrated jts transaction engine
+  narayana-jta - build tests for the integrated jta transaction engine
+  narayana-jts - build tests for the integrated jts transaction engine
   dist - build tests for the last build of the transaction engine
 </echo>
 	</target>

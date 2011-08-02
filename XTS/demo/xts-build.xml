@@ -85,7 +85,7 @@
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
     </path>
     <path id="ext.path">
-        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-*.jar"/>
+        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="narayana-jts-*.jar"/>
     </path>
 
     <path id="jboss.client.path">

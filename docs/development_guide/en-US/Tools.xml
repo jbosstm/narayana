@@ -152,7 +152,7 @@
       </para>
 
         <screen><command>
-        export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/jbossjta.jar>"
+        export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/narayana-jta.jar>"
         </command></screen>
 
       <section>
@@ -170,7 +170,7 @@
         <title>Usage with jconsole</title>
 
         <screen><command>
-          jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/jbossjta.jar
+          jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana-jta.jar
         </command></screen>
 		<para>
           This command will launch the jconsole GUI in which there will be an extra tab for

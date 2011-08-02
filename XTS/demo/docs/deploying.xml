@@ -51,7 +51,7 @@
                 <li><p>Install JBoss 5.0.</p>
                 </li>
                 <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
-                <li><p>(Optional**) Build and deploy JBoss JTA or JBoss JTS (execute '<code>ant jbossjta</code>' or '<code>ant jbossjts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
+                <li><p>(Optional**) Build and deploy JBoss JTA or JBoss JTS (execute '<code>ant narayana-jta</code>' or '<code>ant narayana-jts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
                 </li>
                 <li><p>(Optional**) Build JBoss XTS (follow the XTS build instructions in file INSTALL of the JBossTS install tree).</p>
                 </li>

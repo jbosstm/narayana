@@ -369,24 +369,24 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>jbossjta</artifactId>
+        <artifactId>narayana-jta</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>jbossjta</artifactId>
+        <artifactId>narayana-jta</artifactId>
         <version>${project.version}</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>jbossjta</artifactId>
+        <artifactId>narayana-jta</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>jbossjta-integration</artifactId>
+        <artifactId>narayana-jta-integration</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -406,24 +406,24 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>jbossjts</artifactId>
+        <artifactId>narayana-jts</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>jbossjts</artifactId>
+        <artifactId>narayana-jts</artifactId>
         <version>${project.version}</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>jbossjts</artifactId>
+        <artifactId>narayana-jts</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>jbossjts-integration</artifactId>
+        <artifactId>narayana-jts-integration</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
