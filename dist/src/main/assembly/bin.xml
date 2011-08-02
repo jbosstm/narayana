@@ -20,6 +20,103 @@
 	</formats>
 	<dependencySets>
 		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:xts-demo</include>
+			</includes>
+			<outputDirectory>demo</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/</exclude>
+				</excludes>
+			</unpackOptions>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:jbossxts:*javadoc*</include>
+			</includes>
+			<outputDirectory>docs/api</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:localjunit</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>interop-tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:localjunit</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:xts-test-servlet</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>tests</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:jbossxts:jar:api</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>lib</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+        <include>org.jboss.narayana.xts:jbossxts:jar</include>
+			</includes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>lib</outputDirectory>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:ws-c11:war:war</include>
+			</includes>
+			<outputDirectory>webapps</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.xts:ws-t11:war:client</include>
+				<include>org.jboss.narayana.xts:ws-t11:war:coordinator</include>
+				<include>org.jboss.narayana.xts:ws-t11:war:participant</include>
+			</includes>
+			<outputDirectory>webapps</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
 				<include>org.jboss.narayana.jts:trailmap</include>
@@ -142,55 +239,69 @@
 			<unpack>false</unpack>
 		</dependencySet>
 	</dependencySets>
-	<!--
 	<files>
 		<file>
-			<source>../copyright.txt</source>
+			<source>../ArjunaJTS/copyright.txt</source>
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>../../ArjunaCore/arjuna/etc/log4j.properties</source>
+			<source>../ArjunaCore/arjuna/etc/log4j.properties</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 		</file>
 		<file>
-			<source>../../ext/third_party_licenses.txt</source>
+			<source>../ext/third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>
 		</file>
 		<file>
-			<source>../../ArjunaCore/scripts/withorb-setup-env.sh</source>
+			<source>../ArjunaCore/scripts/withorb-setup-env.sh</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.sh</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>../../ArjunaCore/scripts/withorb-setup-env.bat</source>
+			<source>../ArjunaCore/scripts/withorb-setup-env.bat</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<destName>setup-env.bat</destName>
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>../jbossts-properties-arjunajts.xml</source>
+			<source>../ArjunaJTS/jbossts-properties-arjunajts.xml</source>
 			<fileMode>0644</fileMode>
 			<destName>default-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../jbossts-properties-arjunajts.xml</source>
+			<source>../ArjunaJTS/jbossts-properties-arjunajts.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../INSTALL</source>
+			<source>../ArjunaJTS/INSTALL</source>
 			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>../XTS/third_party_licenses.txt</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>lib/ext</outputDirectory>
+		</file>
+		<file>
+			<source>../XTS/localjunit/run-tests.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>tests</outputDirectory>
+		</file>
+		<file>
+			<source>../XTS/localjunit/run-interop-tests.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>interop-tests</outputDirectory>
 		</file>
 	</files>
 	<fileSets>
 		<fileSet>
-			<directory>${basedir}/../../ArjunaCore/scripts</directory>
+			<directory>${basedir}/../ArjunaCore/scripts</directory>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>
@@ -200,62 +311,62 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/../services/
+			<directory>${basedir}/../ArjunaJTS/services/
 			</directory>
 			<outputDirectory>services/</outputDirectory>
 			<filtered>true</filtered>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/services/scripts/windows
+			<directory>../ArjunaJTS/jts/services/scripts/windows
 			</directory>
 			<outputDirectory>services/bin/windows</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/services/scripts/unix</directory>
+			<directory>../ArjunaJTS/jts/services/scripts/unix</directory>
 			<outputDirectory>services/bin/hpux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/services/scripts/unix</directory>
+			<directory>../ArjunaJTS/jts/services/scripts/unix</directory>
 			<outputDirectory>services/bin/linux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/services/scripts/unix</directory>
+			<directory>../ArjunaJTS/jts/services/scripts/unix</directory>
 			<outputDirectory>services/bin/solaris</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/services/config</directory>
+			<directory>../ArjunaJTS/jts/services/config</directory>
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/scripts/windows
+			<directory>../ArjunaCore/arjuna/services/scripts/windows
 			</directory>
 			<outputDirectory>services/bin/windows</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
+			<directory>../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/hpux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
+			<directory>../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/linux</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/scripts/unix</directory>
+			<directory>../ArjunaCore/arjuna/services/scripts/unix</directory>
 			<outputDirectory>services/bin/solaris</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/arjuna/services/config</directory>
+			<directory>../ArjunaCore/arjuna/services/config</directory>
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/idl/arjuna</directory>
+			<directory>../ArjunaJTS/jts/idl/arjuna</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>ArjunaOTS.idl</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../jts/idl/omg</directory>
+			<directory>../ArjunaJTS/jts/idl/omg</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>CosTransactions.idl</include>
@@ -263,87 +374,90 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../jacorb</directory>
+			<directory>../ArjunaJTS/jacorb</directory>
 			<outputDirectory>jacorb</outputDirectory>
 		</fileSet>
 
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 
 
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../ArjunaCore/docs/development_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaCore/docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
+			<directory>../ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/development_guide/target/docbook/publish/en-US/pdf/
+			<directory>../docs/development_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
+			<directory>../docs/failure_recovery_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../../docs/transactions_overview_guide/target/docbook/publish/en-US/pdf/
+			<directory>../docs/transactions_overview_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/txbridge_guide/target/docbook/publish/en-US/pdf/
+			<directory>../docs/txbridge_guide/target/docbook/publish/en-US/pdf/
 			</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>		
 		<fileSet>
-			<directory>../../docs/release_notes/target/docbook/publish/en-US/pdf/
+			<directory>../docs/release_notes/target/docbook/publish/en-US/pdf/
 			</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../XTS/docs/Transactions_XTS_Administration_And_Development_Guide/target/publican/Transactions_XTS_Administration_And_Development_Guide/en-US/pdf/</directory>
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
-	-->
 </assembly> 
