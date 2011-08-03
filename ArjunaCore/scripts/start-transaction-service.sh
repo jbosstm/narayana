@@ -21,6 +21,5 @@
 #
 
 # Setup the environment for the JBoss Transaction Service
-. "$@HOME_DIRECTORY@/bin/setup-env.sh"
 
 "$JAVA_HOME/bin/java" com.arjuna.ats.jts.TransactionServer -test

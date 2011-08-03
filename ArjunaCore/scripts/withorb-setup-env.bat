@@ -28,28 +28,25 @@ if "%JAVA_HOME%"=="" goto java_home_error
 
 echo Environment variable JAVA_HOME set to "%JAVA_HOME%"
 
-if "%@HOME_DIRECTORY@%"=="" goto home_error
+if "%NARAYANA_HOME%"=="" goto home_error
 
-echo Environment variable @HOME_DIRECTORY@ set to "%@HOME_DIRECTORY@%"
+echo Environment variable NARAYANA_HOME set to "%NARAYANA_HOME%"
 
 rem Setup EXT classpath
 
 echo Setting up environment
 
-set PRODUCT_CLASSPATH=%@HOME_DIRECTORY@%\lib\@PRODUCT_NAME@.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\@PRODUCT_NAME@-jacorb.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%@HOME_DIRECTORY@%\bin\tsmx-tools.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%@HOME_DIRECTORY@%\etc\
+set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\narayana-jts.jar
+set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%NARAYANA_HOME%\etc\
 
-set EXT_CLASSPATH=%@HOME_DIRECTORY@%\lib\ext\jbossts-common.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\commons-logging-1.1.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\connector-api.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\jmxri.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\jndi.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\jta-1_1-classes.zip
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\log4j-1.2.14.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\xercesImpl.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\xmlParserAPIs.jar
+set EXT_CLASSPATH=%NARAYANA_HOME%\lib\ext\commons-logging-1.1.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\connector-api.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jmxri.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jndi.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jta-1_1-classes.zip
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\log4j-1.2.14.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\xercesImpl.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\xmlParserAPIs.jar
 
 rem
 rem Caution: JBossTS needs a specially patched version of JacORB.
@@ -71,7 +68,7 @@ echo Environment variable JAVA_HOME not set
 goto end
 
 :home_error
-echo Environment variable @HOME_DIRECTORY@ not set
+echo Environment variable NARAYANA_HOME not set
 goto end
 
 :end

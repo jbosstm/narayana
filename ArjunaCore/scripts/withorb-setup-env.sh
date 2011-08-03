@@ -32,10 +32,10 @@ then
 
 else
 
-	if test "x$@HOME_DIRECTORY@" = "x"
+	if test "x$NARAYANA_HOME" = "x"
 	then
 
-		echo Please ensure the @HOME_DIRECTORY@ environment variable is set
+		echo Please ensure the NARAYANA_HOME environment variable is set
 		CONTINUE_SETUP=false
 
 	fi
@@ -49,7 +49,7 @@ then
 # Caution: JBossTS needs a specially patched version of JacORB.
 # Use $JBOSSTS_HOME/jacorb here unless you have a good reason not to.
 #
-JACORB_HOME=$@HOME_DIRECTORY@/jacorb
+JACORB_HOME=$NARAYANA_HOME/jacorb
 
 # Find classpath separator
 
@@ -59,7 +59,7 @@ case `uname -a` in
     CYGWIN_* | Windows* )
         CPS=";"
 	JACORB_HOME=`echo $JACORB_HOME | sed -e 's;\\\;/;g'`
-	@HOME_DIRECTORY@=`echo $@HOME_DIRECTORY@ | sed -e 's;\\\;/;g'`
+	NARAYANA_HOME=`echo $NARAYANA_HOME | sed -e 's;\\\;/;g'`
     ;;
 esac
 
@@ -68,16 +68,15 @@ esac
 
 echo Setting up environment
 
-PRODUCT_CLASSPATH="$@HOME_DIRECTORY@/lib/@PRODUCT_NAME@.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$@HOME_DIRECTORY@/bin/tsmx-tools.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$@HOME_DIRECTORY@/etc/"
+PRODUCT_CLASSPATH="$NARAYANA_HOME/lib/narayana-jts.jar"
+PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$NARAYANA_HOME/etc/"
 
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/commons-logging-1.1.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/connector-api.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jmxri.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jndi.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jta-1_1-classes.zip"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/log4j-1.2.14.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/commons-logging-1.1.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/connector-api.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/jmxri.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/jndi.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/jta-1_1-classes.zip"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$NARAYANA_HOME/lib/ext/log4j-1.2.14.jar"
 
 JACORB_CLASSPATH="$JACORB_HOME/lib/jacorb.jar"
 JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/lib/idl.jar"

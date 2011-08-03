@@ -260,7 +260,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
-				<exclude>org.jboss.narayana.*</exclude>
+				<exclude>org.jboss.narayana*</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

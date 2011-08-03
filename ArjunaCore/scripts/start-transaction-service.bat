@@ -20,6 +20,4 @@ rem @author JBoss Inc.
 rem
 @echo off
 
-call "%@HOME_DIRECTORY@%\bin\setup-env.bat"
-
 "%JAVA_HOME%\bin\java" com.arjuna.ats.jts.TransactionServer -test
