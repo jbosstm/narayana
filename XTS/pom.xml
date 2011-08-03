@@ -48,7 +48,6 @@
     <module>demo</module>
     <module>docs</module>
     <module>jbossxts</module>
-    <module>jbossxts-api</module>
     <module>localjunit</module>
   </modules>
 </project>
