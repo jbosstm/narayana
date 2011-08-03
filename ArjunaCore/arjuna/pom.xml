@@ -106,6 +106,35 @@
       <artifactId>hornetq-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>orson</groupId>
+      <artifactId>orson</artifactId>
+      <version>0.5.0</version>
+      <scope>system</scope>
+      <systemPath>${orson.jar.location}</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>oracle.java</groupId>
+      <artifactId>jconsole</artifactId>
+      <version>1.6.0_20</version>
+      <scope>system</scope>
+      <systemPath>${env.JAVA_HOME}/lib/jconsole.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -130,35 +159,6 @@
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>orson</groupId>
-      <artifactId>orson</artifactId>
-      <version>0.5.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../../ext/orson-0.5.0.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>1.0.9</version>
-    </dependency>
-    <dependency>
-      <groupId>oracle.java</groupId>
-      <artifactId>jconsole</artifactId>
-      <version>1.6.0_20</version>
-      <scope>system</scope>
-      <systemPath>${env.JAVA_HOME}/lib/jconsole.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-processor</artifactId>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
