@@ -82,6 +82,7 @@
     <property name="version" value="5.0.0.M1-SNAPSHOT"/>
     <!-- the location the JBossTS web site content is copied to -->
     <property name="downloads.dir" value="${user.home}/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
+    <property name="docs.dir" value="${user.home}/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
 
     <!-- you probably don't need to change anything below here -->
 
@@ -132,7 +133,7 @@
     <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
         <!-- build the binary releases -->
         <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
-            <arg line="clean -gs tools/maven/conf/settings.xml"/>
+            <arg line="clean -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/orson-0.5.0.jar"/>
         </exec>
 
         <!-- package the JTA only src tree (no JTS, XTS, txbridge, RTS) -->
@@ -149,7 +150,7 @@
 
         <!-- build the binary releases -->
         <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
-            <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml"/>
+            <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/orson-0.5.0.jar"/>
         </exec>
     </target>
 
@@ -167,6 +168,19 @@
             <available file="${downloads.dir}/${version}" type="dir"/>
           </condition>
         </fail>
+        <fail>
+          <condition>
+            <not>
+              <available file="${docs.dir}" type="dir"/>
+            </not>
+          </condition>
+        </fail>
+        <fail>
+          <condition>
+            <available file="${docs.dir}/${version}" type="dir"/>
+          </condition>
+        </fail>
+        
         <mkdir dir="${downloads.dir}/${version}"/>
         <mkdir dir="${downloads.dir}/${version}/src"/>
         <mkdir dir="${downloads.dir}/${version}/binary"/>
@@ -178,6 +192,56 @@
             <fileset dir="${workdir}/${tag}" includes="dist/target/narayana-full-${version}-bin.zip"/>
         </copy>
         <!-- TODO: notes dir, xml generation? project.xml edits -->
+        <mkdir dir="${docs.dir}/${version}"/>
+        
+        <copy todir="${docs.dir}/${version}/narayana-jts-orbportability">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jts-quick_start">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jts-administration_guide">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jts-development_guide">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/arjunacore-failure_recovery_guide">
+            <fileset dir="${workdir}/${tag}/ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/arjunacore-development_guide">
+            <fileset dir="${workdir}/${tag}/ArjunaCore/docs/development_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jta-quick_start">
+            <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jta-installation_guide">
+            <fileset dir="${workdir}/${tag}/narayana-jta-ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jta-administration_guide">
+            <fileset dir="${workdir}/${tag}/narayana-jta-ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/narayana-jta-development_guide">
+            <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/xts-development_guide">
+            <fileset dir="${workdir}/${tag}/XTS/docs/Transactions_XTS_Administration_And_Development_Guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/failure_recovery_guide">
+            <fileset dir="${workdir}/${tag}/docs/failure_recovery_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/release_notes">
+            <fileset dir="${workdir}/${tag}/docs/release_notes/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/development_guide">
+            <fileset dir="${workdir}/${tag}/docs/development_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/transactions_overview_guide">
+            <fileset dir="${workdir}/${tag}/docs/transactions_overview_guide/target/docbook/publish/en-US/html"/>
+        </copy>
+        <copy todir="${docs.dir}/${version}/txbridge_guide">
+            <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
+        </copy>
     </target>
 
     <!-- copy the release artifacts to the maven repository -->
