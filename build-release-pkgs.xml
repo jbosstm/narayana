@@ -216,10 +216,10 @@
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/html"/>
         </copy>
         <copy todir="${docs.dir}/${version}/narayana-jta-installation_guide">
-            <fileset dir="${workdir}/${tag}/narayana-jta-ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html"/>
+            <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html"/>
         </copy>
         <copy todir="${docs.dir}/${version}/narayana-jta-administration_guide">
-            <fileset dir="${workdir}/${tag}/narayana-jta-ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/html"/>
+            <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/html"/>
         </copy>
         <copy todir="${docs.dir}/${version}/narayana-jta-development_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html"/>
