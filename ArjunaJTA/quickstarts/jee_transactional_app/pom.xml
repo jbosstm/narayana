@@ -53,7 +53,7 @@
     <jbossHome>${env.JBOSS_HOME}</jbossHome>
   </properties>
   <build>
-    <finalName>${pom.artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
