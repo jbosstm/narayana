@@ -69,6 +69,17 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <!-- JCA API -->
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-spec-api</artifactId>
+      <version>1.0.0.Beta5</version>
+      <!-- TODO AS7 -->
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <classifier>api</classifier>
@@ -117,11 +128,6 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-generator</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

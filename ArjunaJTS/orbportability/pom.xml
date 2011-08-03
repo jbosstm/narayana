@@ -156,14 +156,7 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!--
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-generator</artifactId>
       <scope>provided</scope>
     </dependency>
-    -->
   </dependencies>
 </project>

@@ -142,11 +142,6 @@
       <artifactId>jboss-logging-processor</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-generator</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <!-- Needed for JacORB logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
