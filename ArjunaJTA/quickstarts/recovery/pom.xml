@@ -12,7 +12,6 @@
   <artifactId>recovery</artifactId>
   <packaging>jar</packaging>
   <name>Recovery Examples</name>
-
   <dependencies>
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>

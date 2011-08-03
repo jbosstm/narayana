@@ -142,7 +142,6 @@
               </artifactSet>
             </configuration>
           </execution>
-
           <execution>
             <id>mainjar</id>
             <phase>package</phase>
@@ -242,78 +241,19 @@
       <classifier>api</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wsas</artifactId>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf</artifactId>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>recovery</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>service</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t11</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx11</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>bridge</artifactId>
-      <classifier>api</classifier>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-generator</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

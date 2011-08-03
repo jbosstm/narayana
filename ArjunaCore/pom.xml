@@ -42,5 +42,6 @@
     <module>txoj</module>
     <module>arjunacore</module>
     <module>docs</module>
+    <module>quickstarts</module>
   </modules>
 </project>

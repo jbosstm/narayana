@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbosstxbridge</artifactId>
-  <name>${pom.artifactId}</name>
-  <description>${pom.artifactId}</description>
+  <name>${project.artifactId}</name>
+  <description>${project.artifactId}</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -70,11 +70,12 @@
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>bridge</artifactId>
+      <artifactId>jbossxts</artifactId>
+      <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>jta</artifactId>
+      <artifactId>narayana-jta</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -86,23 +87,23 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
       <version>1.5.1</version>
       <scope>test</scope>
     </dependency>
-		<dependency>
-			<groupId>org.jboss.byteman</groupId>
-			<artifactId>byteman-dtest</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-dtest</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.jbossas</groupId>
       <artifactId>jboss-server-manager</artifactId>
       <version>1.0.2.GA</version>

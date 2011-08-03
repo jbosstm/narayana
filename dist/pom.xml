@@ -26,6 +26,14 @@
   <build>
     <plugins>
       <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
@@ -42,6 +50,14 @@
           </descriptors>
           <tarLongFileMode>gnu</tarLongFileMode>
         </configuration>
+        <dependencies>
+          <dependency>
+            <!-- Entry needed to enable jdocbook unzipping -->
+            <groupId>org.jboss.maven.plugins</groupId>
+            <artifactId>maven-jdocbook-plugin</artifactId>
+            <version>2.3.5</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -69,11 +85,6 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>narayana-jta</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
@@ -83,11 +94,6 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>narayana-jts</artifactId>
-      <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -108,11 +114,6 @@
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.admin</groupId>
-      <artifactId>jbossts-jopr-plugin</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>trailmap</artifactId>
     </dependency>
@@ -121,8 +122,6 @@
       <artifactId>rest-tx-web</artifactId>
       <type>war</type>
     </dependency>
-    
-    
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
@@ -173,11 +172,89 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-test-servlet</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>jbosstxbridge</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>administration-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>development-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>orbportability-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>quick-start-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>administration-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>development-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>installation-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>quick-start-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>development-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>failure-recovery-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.platform-docs</groupId>
+      <artifactId>development-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.platform-docs</groupId>
+      <artifactId>failure-recovery-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.platform-docs</groupId>
+      <artifactId>transactions-overview-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.platform-docs</groupId>
+      <artifactId>txbridge-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.platform-docs</groupId>
+      <artifactId>release-notes</artifactId>
+      <type>jdocbook</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>xts-guide</artifactId>
+      <type>jdocbook</type>
+    </dependency>
   </dependencies>
-  <properties>
-    <PRODUCT_NAME>narayana-jts</PRODUCT_NAME>
-    <HOME_DIRECTORY>JBOSSTS_HOME</HOME_DIRECTORY>
-    <PRODUCT_NAME>xts</PRODUCT_NAME>
-    <HOME_DIRECTORY>XTS_HOME</HOME_DIRECTORY>
-  </properties>
 </project>

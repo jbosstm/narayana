@@ -25,14 +25,6 @@
   <description>TXOJ example</description>
   <build>
     <plugins>
-      <!-- This plugin allows our example to be tested -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <workingDirectory>${project.build.directory}/surefire-working-directory</workingDirectory>
-        </configuration>
-      </plugin>
       <!-- This plugin allows our example to be executed by maven -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -58,15 +50,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.jbossts</groupId>
-      <artifactId>narayana-jta</artifactId>
-      <version>4.15.1.Final</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.logging</groupId>
-          <artifactId>jboss-logging-spi</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
+      <version>5.0.0.M1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

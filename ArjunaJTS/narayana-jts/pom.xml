@@ -194,5 +194,20 @@
       <artifactId>wrapper</artifactId>
       <version>3.2.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-generator</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>

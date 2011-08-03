@@ -19,7 +19,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>arjunacore-fail-guide</artifactId>
+  <artifactId>failure-recovery-guide</artifactId>
   <name>arjunacore failure guide</name>
   <description>arjunacore failure guide</description>
   <packaging>jdocbook</packaging>
