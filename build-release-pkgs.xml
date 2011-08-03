@@ -138,13 +138,13 @@
 
         <!-- package the JTA only src tree (no JTS, XTS, txbridge, RTS) -->
         <delete file="${workdir}/narayana-jta-${version}-src.zip"/>
-        <zip basedir="${workdir}" destfile="${workdir}/jbossts-jta-${version}-src.zip"
+        <zip basedir="${workdir}" destfile="${workdir}/narayana-jta-${version}-src.zip"
              includes="${tag}/**"
              excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/** ${tag}/txbridge/**, ${tag}/rest-tx/**, ${tag}/repository/**"/>
         
         <!-- package the full source release (all src tree) -->
         <delete file="${workdir}/narayana-full-${version}-src.zip"/>
-        <zip basedir="${workdir}" destfile="${workdir}/jbossts-full-${version}-src.zip"
+        <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${version}-src.zip"
              includes="${tag}/**"
              excludes="${tag}/repository/**"/>
 
