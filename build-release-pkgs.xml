@@ -189,7 +189,7 @@
             <fileset dir="${workdir}" includes="narayana-*-${version}-src.zip"/>
         </copy>
         <copy todir="${downloads.dir}/${version}/binary">
-            <fileset dir="${workdir}/${tag}" includes="dist/target/narayana-full-${version}-bin.zip"/>
+            <fileset dir="${workdir}/${tag}/dist/target/" includes="narayana-full-${version}-bin.zip"/>
         </copy>        
         <copy todir="${downloads.dir}/${version}/idl">
             <fileset dir="${workdir}/${tag}/ArjunaJTS/jts/idl/arjuna">
