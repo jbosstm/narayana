@@ -156,6 +156,7 @@
 
     <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
     <target name="downloads" description="copy release bundles to JBossTS web site content">
+    <!--
         <fail>
           <condition>
             <not>
@@ -184,6 +185,7 @@
         <mkdir dir="${downloads.dir}/${version}"/>
         <mkdir dir="${downloads.dir}/${version}/src"/>
         <mkdir dir="${downloads.dir}/${version}/binary"/>
+        <mkdir dir="${downloads.dir}/${version}/idl"/>
         
         <copy todir="${downloads.dir}/${version}/src">
             <fileset dir="${workdir}" includes="narayana-*-${version}-src.zip"/>
@@ -191,57 +193,81 @@
         <copy todir="${downloads.dir}/${version}/binary">
             <fileset dir="${workdir}/${tag}" includes="dist/target/narayana-full-${version}-bin.zip"/>
         </copy>
-        <!-- TODO: notes dir, xml generation? project.xml edits -->
+        
         <mkdir dir="${docs.dir}/${version}"/>
         
-        <copy todir="${docs.dir}/${version}/narayana-jts-orbportability">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jts-orbportability">
             <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jts-quick_start">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jts-quick_start">
             <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jts-administration_guide">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jts-administration_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jts-development_guide">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jts-development_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/arjunacore-failure_recovery_guide">
+        <copy todir="${docs.dir}/${version}/guides/arjunacore-failure_recovery_guide">
             <fileset dir="${workdir}/${tag}/ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/arjunacore-development_guide">
+        <copy todir="${docs.dir}/${version}/guides/arjunacore-development_guide">
             <fileset dir="${workdir}/${tag}/ArjunaCore/docs/development_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jta-quick_start">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jta-quick_start">
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jta-installation_guide">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jta-installation_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jta-administration_guide">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jta-administration_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/narayana-jta-development_guide">
+        <copy todir="${docs.dir}/${version}/guides/narayana-jta-development_guide">
             <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/xts-development_guide">
+        <copy todir="${docs.dir}/${version}/guides/xts-development_guide">
             <fileset dir="${workdir}/${tag}/XTS/docs/Transactions_XTS_Administration_And_Development_Guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/failure_recovery_guide">
+        <copy todir="${docs.dir}/${version}/guides/failure_recovery_guide">
             <fileset dir="${workdir}/${tag}/docs/failure_recovery_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/release_notes">
+        <copy todir="${docs.dir}/${version}/guides/release_notes">
             <fileset dir="${workdir}/${tag}/docs/release_notes/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/development_guide">
+        <copy todir="${docs.dir}/${version}/guides/development_guide">
             <fileset dir="${workdir}/${tag}/docs/development_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/transactions_overview_guide">
+        <copy todir="${docs.dir}/${version}/guides/transactions_overview_guide">
             <fileset dir="${workdir}/${tag}/docs/transactions_overview_guide/target/docbook/publish/en-US/html"/>
         </copy>
-        <copy todir="${docs.dir}/${version}/txbridge_guide">
+        <copy todir="${docs.dir}/${version}/guides/txbridge_guide">
             <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
         </copy>
+        
+        <unzip src="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="${docs.dir}/${version}/api/admin"/>
+        <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="${docs.dir}/${version}/api/JTA"/>
+        <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="${docs.dir}/${version}/api/JTS"/>
+        <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="${docs.dir}/${version}/api/XTS"/>
+        -->
+        
+        <copy todir="${downloads.dir}/${version}/idl">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/jts/idl/arjuna">
+       				<include name="ArjunaOTS.idl"/>
+        	 </fileset>
+        </copy>
+
+        <copy todir="${downloads.dir}/${version}/idl">
+            <fileset dir="${workdir}/${tag}/ArjunaJTS/jts/idl/omg">
+       				<include name="CosTransactions.idl"/>
+			        <include name="XA.idl"/>
+        	 </fileset>
+        </copy>
+        
+        <copy file="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="${downloads.dir}/${version}/api/admin"/>
+        <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="${downloads.dir}/${version}/api/JTA"/>
+        <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="${downloads.dir}/${version}/api/JTS"/>
+        <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="${downloads.dir}/${version}/api/XTS"/>
     </target>
 
     <!-- copy the release artifacts to the maven repository -->

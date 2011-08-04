@@ -21,8 +21,8 @@ This release contains:
   docs/
     api - The various project components javadocs
     guides - PDF versions of the projects documentation
+    idl - The IDL files for integration with the JTS
     JTS/
-      idl - The IDL files for integration with the JTS
       trailmap - A trailmap for the project
     XTS/
       demo - A trailmap for the project
