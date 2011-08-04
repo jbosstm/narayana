@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana</groupId>
-    <artifactId>narayana</artifactId>
+    <artifactId>narayana-all</artifactId>
     <version>5.0.0.M1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>

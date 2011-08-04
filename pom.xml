@@ -14,12 +14,12 @@
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana</groupId>
-  <artifactId>narayana</artifactId>
+  <artifactId>narayana-all</artifactId>
   <version>5.0.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
-  <name>narayana</name>
-  <description>narayana</description>
+  <name>${project.artifactId}</name>
+  <description>${project.artifactId}</description>
   <issueManagement>
     <system>JIRA</system>
     <url>https://jira.jboss.org/jira/browse/JBTM/</url>
