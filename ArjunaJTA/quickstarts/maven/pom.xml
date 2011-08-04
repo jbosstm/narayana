@@ -12,23 +12,41 @@
   along with this distribution; if not, write to the Free Software Foundation, 
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>org.jboss.narayana.jta.quickstarts</groupId>
-    <artifactId>quickstarts</artifactId>
-    <version>5.0.0.M1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.narayana.jta.quickstarts</groupId>
   <artifactId>maven</artifactId>
+  <version>5.0.0.M1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>basic maven example</name>
   <description>basic maven example</description>
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
       <!-- This plugin allows our example to be tested -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7.2</version>
         <configuration>
           <workingDirectory>${project.build.directory}/surefire-working-directory</workingDirectory>
         </configuration>
@@ -37,6 +55,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <goals>
@@ -57,6 +76,11 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
+      <version>5.0.0.M1-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

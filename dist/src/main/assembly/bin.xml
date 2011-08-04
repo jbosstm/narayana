@@ -294,13 +294,13 @@
 			<destName>jts_third_party_licenses.txt</destName>
 		</file>
 		<file>
-			<source>../ArjunaJTA/jbossts-properties-arjunajta.xml</source>
+			<source>../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>jbossts-properties.xml.jta</destName>
 		</file>
 		<file>
-			<source>../ArjunaJTS/jbossts-properties-arjunajts.xml</source>
+			<source>../ArjunaJTS/narayana-jts/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>jbossts-properties.xml.jts</destName>

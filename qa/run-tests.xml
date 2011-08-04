@@ -275,7 +275,7 @@
 
         <!-- override the config file, so that we can run jta mode tests even with jts binaries -->
         <property name="additional.elements"
-                  value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/jbossts-properties-arjunajta.xml"/>
+                  value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml"/>
 
         <!-- txcore : 28 tests, 2 minutes -->
         <antcall target="junit-tests">
