@@ -227,10 +227,6 @@
 				test, shutting it down when done -->
       <!-- Run with: mvn clean test -Parq-jbossas-managed -->
       <id>arq-jbossas-managed</id>
-      <!-- Launch this profile by default -->
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <dependencies>
         <dependency>
           <groupId>org.jboss.as</groupId>

@@ -21,18 +21,18 @@ bean and then test it using TS deployed in JBossAS using Arquillian
 USAGE
 -----
 export JBOSS_HOME=<PATH_TO_JBOSS_HOME>
-mvn clean install (This command will build and test the application using Arquillian)
-mvn clean install jboss-as:deploy -DskipTests (This command will deploy the application without running the tests)
+mvn install -Parq-jbossas-managed (This command will build and test the application using Arquillian)
+NOTE: If you get the following you have not exported JBOSS_HOME:
+Tests in error: 
+  TestBusinessLogic: jbossHome 'null' must exist
+
+
+DEPLOYING THE QUICKSTART
+------------------------
+mvn compile jboss-as:deploy (This command will deploy the application without running the tests)
 
 Once the application is deployed, you can access it from a browser by:
 http://localhost:8080/jee_transactional_app/ 
-
-
-COMMON ERROR
-------------
-If you get the following you have not exported JBOSS_HOME:
-Tests in error: 
-  TestBusinessLogic: jbossHome 'null' must exist
 
 
 EXPECTED OUTPUT
