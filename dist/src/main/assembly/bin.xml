@@ -390,14 +390,14 @@
 		</fileSet>
 		<fileSet>
 			<directory>../ArjunaJTS/jts/idl/arjuna</directory>
-			<outputDirectory>docs/idl</outputDirectory>
+			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>ArjunaOTS.idl</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>../ArjunaJTS/jts/idl/omg</directory>
-			<outputDirectory>docs/idl</outputDirectory>
+			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>CosTransactions.idl</include>
 				<include>XA.idl</include>
