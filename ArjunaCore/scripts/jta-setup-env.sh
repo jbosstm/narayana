@@ -67,9 +67,10 @@ for i in $NARAYANA_HOME/lib/ext/*.jar
 do
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$i"
 done
-export EXT_CLASSPATH
 
 CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
 export CLASSPATH
+
+echo You MUST ensure you have renamed the files NARAYANA_HOME/lib/narayana-jta* to remove the .jta suffix
 
 fi

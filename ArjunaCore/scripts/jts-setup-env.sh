@@ -75,16 +75,16 @@ for i in $NARAYANA_HOME/lib/ext/*.jar
 do
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$i"
 done
-export EXT_CLASSPATH
 
 for i in $JACORB_HOME/lib/*.jar
 do
 JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$i"
 done
-export JACORB_CLASSPATH
 JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/etc"
 
 CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH$CPS$JACORB_CLASSPATH"
 export CLASSPATH
+
+echo You MUST ensure you have renamed the files NARAYANA_HOME/lib/narayana-jts* to remove the .jts suffix
 
 fi

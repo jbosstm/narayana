@@ -45,6 +45,8 @@ endlocal & set EXT_CLASSPATH=%EXT_CLASSPATH%
 
 set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%
 
+echo You MUST ensure you have renamed the files NARAYANA_HOME\lib\narayana-jta* to remove the .jta suffix
+
 goto end
 
 :java_home_error

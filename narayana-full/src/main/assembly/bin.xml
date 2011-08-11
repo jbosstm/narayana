@@ -57,6 +57,7 @@
 			<unpack>true</unpack>
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
+<!-- NO LONGER INCLUDING XTS TESTS IN THE BINARY
 		<dependencySet>
 			<includes>
 				<include>org.jboss.narayana.xts:localjunit</include>
@@ -87,6 +88,7 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
+		-->
 		<dependencySet>
 			<includes>
 				<include>org.jboss.narayana.xts:jbossxts:jar:api</include>
@@ -340,6 +342,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${basedir}/../ArjunaCore/scripts</directory>
+			<fileMode>0755</fileMode>
 			<outputDirectory>.</outputDirectory>
 			<filtered>true</filtered>
 			<includes>

@@ -5,6 +5,7 @@ The JTA is also used by JBossAS 7 releases, but manual upgrading of the componen
  JTS and XTS are not currently available in AS7.
 Integration with JBossAS 6 or earlier is no longer supported.
 
+This version of Narayana contains a JTA/JTS/XTS and RTS. If you want to use either JTA/JTS or XTS standalone, you should follow the instructions below where the scripts to execute are detailed and the files you MUST rename are defined.
 
           WHATS INCLUDED
           --------------
@@ -53,7 +54,7 @@ This release contains:
 
           ENABLING JTA
           ------------
-To enable JTA you should:
+To enable JTA you MUST:
 1. Rename lib/narayana-jta.jar.jta to lib/narayana-jta.jar
 2. If you need to use this version of JTA in an application server, you should also rename lib/narayana-jta-integration.jar.jta to lib/narayana-jta-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
 3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
@@ -61,7 +62,7 @@ To enable JTA you should:
 
           ENABLING JTS
           ------------
-To enable JTA you should:
+To enable JTA you MUST:
 1. Rename lib/narayana-jts.jar.jts to lib/narayana-jts.jar
 2. If you need to use this version of JTS in an application server, you should also rename lib/narayana-jts-integration.jar.jts to lib/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
 3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath

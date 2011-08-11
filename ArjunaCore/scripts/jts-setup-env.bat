@@ -55,6 +55,8 @@ set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\etc
 
 set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%;%JACORB_CLASSPATH%
 
+echo You MUST ensure you have renamed the files NARAYANA_HOME\lib\narayana-jts* to remove the .jts suffix
+
 goto end
 
 :java_home_error
