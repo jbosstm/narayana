@@ -31,6 +31,8 @@ if "%NARAYANA_HOME%"=="" goto home_error
 
 echo Environment variable NARAYANA_HOME set to "%NARAYANA_HOME%"
 
+set JACORB_HOME=%NARAYANA_HOME%\jacorb
+
 rem Setup EXT classpath
 
 echo Setting up environment
@@ -38,24 +40,17 @@ echo Setting up environment
 set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\narayana-jts.jar
 set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%NARAYANA_HOME%\etc\
 
-set EXT_CLASSPATH=%NARAYANA_HOME%\lib\ext\commons-logging-1.1.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\connector-api.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jmxri.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jndi.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\jta-1_1-classes.zip
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\log4j-1.2.14.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\xercesImpl.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\ext\xmlParserAPIs.jar
+setlocal ENABLEDELAYEDEXPANSION
+FOR /R %NARAYANA_HOME%\lib\ext %%G IN (*.jar) DO set EXT_CLASSPATH=%%G;!EXT_CLASSPATH!
+endlocal & set EXT_CLASSPATH=%EXT_CLASSPATH%
 
 rem
 rem Caution: JBossTS needs a specially patched version of JacORB.
 rem Use %JBOSSTS_HOME%\jacorb here unless you have a good reason not to.
 rem
-set JACORB_HOME=PUT_JACORB_HOME_HERE
-set JACORB_CLASSPATH=%JACORB_HOME%\lib\jacorb.jar
-set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\lib\idl.jar
-set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\lib\logkit-1.2.jar
-set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\lib\avalon-framework-4.1.5.jar
+setlocal ENABLEDELAYEDEXPANSION
+FOR /R %JACORB_HOME%\lib %%G IN (*.jar) DO set JACORB_CLASSPATH=%%G;!JACORB_CLASSPATH!
+endlocal & set JACORB_CLASSPATH=%JACORB_CLASSPATH%
 set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\etc
 
 set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%;%JACORB_CLASSPATH%
