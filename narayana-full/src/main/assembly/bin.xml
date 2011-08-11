@@ -279,6 +279,18 @@
 	
 	<files>
 		<file>
+			<source>readme.txt</source>
+			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>run_all_quickstarts.sh</source>
+			<fileMode>0755</fileMode>
+		</file>
+		<file>
+			<source>run_all_quickstarts.bat</source>
+			<fileMode>0755</fileMode>
+		</file>
+		<file>
 			<source>../ArjunaJTS/copyright.txt</source>
 			<fileMode>0644</fileMode>
 		</file>
@@ -306,10 +318,6 @@
 			<destName>jbossts-properties.xml.jts</destName>
 		</file>
 		<file>
-			<source>readme.txt</source>
-			<fileMode>0644</fileMode>
-		</file>
-		<file>
 			<source>../XTS/third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>
@@ -332,12 +340,19 @@
 	<fileSets>
 		<fileSet>
 			<directory>${basedir}/../ArjunaCore/scripts</directory>
+			<outputDirectory>.</outputDirectory>
+			<filtered>true</filtered>
+			<includes>
+				<include>*-setup-env.*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/../ArjunaCore/scripts</directory>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>
 				<include>start-transaction-service*</include>
 				<include>start-recovery-manager*</include>
-				<include>*-setup-env.*</include>
 			</includes>
 		</fileSet>
 		<fileSet>

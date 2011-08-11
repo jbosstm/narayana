@@ -3,7 +3,7 @@ set -m
 
 echo "Running all quickstarts"
 
-for i in `find * -name run.sh | sed 's#\(.*\)/.*#\1#' |sort -u`
+for i in `find quickstarts/ -name run.sh | sed 's#\(.*\)/.*#\1#' |sort -u`
 do
     cd $i
     ./run.sh

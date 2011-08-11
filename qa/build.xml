@@ -24,7 +24,7 @@
 	<property name="driver.home" value="dbdrivers"/>
 
 	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="../install"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
 	<property name="jbossts.install.lib" location="${org.jboss.jbossts.qa.ts.home}/lib"/>
 
 	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
@@ -88,12 +88,12 @@
 
     <target name="buildtype">
 		<available file="${jbossts.install.lib}/narayana-jts.jar" property="buildtype" value="jts"/>
-		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/>
+<!--		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/> -->
 
 		<available file="${jbossts.install.lib}/narayana-jta.jar" property="buildtype" value="jta"/>
-		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/>
+<!--		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/> -->
 
-        <available file="${jbossts.install.lib}/arjunacore.jar" property="buildtype" value="core"/>
+<!--        <available file="${jbossts.install.lib}/arjunacore.jar" property="buildtype" value="core"/> -->
 
 		<available file="${jbossts.install.lib}/narayana-jta-integration.jar" property="integration.build"/>
 		<available file="${jbossts.install.lib}/narayana-jts-integration.jar" property="integration.build"/>
@@ -114,12 +114,29 @@
         <!-- always use jts regardless of build type, as we may not be able to
             determine the build type at clean time and jts should have the superset -->
         <ant dir="tests" antfile="build-jts.xml" target="clean"/>
+        
+        <delete dir="org.jboss.jbossts.qa.ts.home"/>
 	</target>
 
-	<target name="init" depends="buildtype">
+	<target name="init">
 		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+		<mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
+		<unzip file="../narayana-full/target/narayana-full-*-bin.zip" todir="${org.jboss.jbossts.qa.ts.home}"/>
+		<antcall target="init-jta"/>
+		<antcall target="init-jts"/>
+		<antcall target="buildtype"/>
+	</target>
+	
+	<target name="init-jta" if="init-jta">
+	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta.jar"/>
+	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta-integration.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta-integration.jar"/>
 	</target>
 
+	<target name="init-jts" unless="init-jta">
+	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts.jar"/>
+	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts-integration.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts-integration.jar"/>
+	</target>
+	
 	<target name="dist" depends="clean, init">
 
         <!-- build the test suite -->

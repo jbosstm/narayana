@@ -4,7 +4,7 @@ echo "Running all quickstarts"
 
 set OLDPWD=%cd%
 
-for /R * %%i in (.) do (
+for /R quickstarts %%i in (.) do (
 	if exist %%i\run.sh (
  		cd %%i
  		call run.bat %*
