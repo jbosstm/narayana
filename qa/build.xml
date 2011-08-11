@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2007, Red Hat Middleware LLC, and individual contributors
@@ -19,141 +20,93 @@
   @author JBoss Inc.
 -->
 <project name="JBossTS QA Suite Distribution" default="dist">
-
-	<property environment="env"/>
-	<property name="driver.home" value="dbdrivers"/>
-
-	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-	<property name="jbossts.install.lib" location="${org.jboss.jbossts.qa.ts.home}/lib"/>
-
-	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
-	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
-			  location="../ArjunaJTS/orbportability/lib/ext"/>
-
-	<!-- you should not need to configure anything below here -->
-
-    <!--
+  <property environment="env"/>
+  <property name="driver.home" value="dbdrivers"/>
+  <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
+  <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
+  <property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
+  <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
+  <property name="org.jboss.jbossts.qa.idlcompiler.lib" location="../ArjunaJTS/orbportability/lib/ext"/>
+  <!-- you should not need to configure anything below here -->
+  <!--
         This is a redhat vpn server. for non-vpn use, mirror it locally or copy the drivers by hand.
         wget \-\-no-parent -m http://www.qa.jboss.com/jdbc-drivers/
         wget \-\-no-parent -m http://www.qa.jboss.com/jdbc-drivers/jConnect-6_0/classes
         ant -Ddriver.url=file:///path/to/www.qa.jboss.com/jdbc-drivers get.drivers
     -->
-    <property name="driver.url" value="http://www.qa.jboss.com/jdbc-drivers/"/>
-
-	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
-	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
-
-    <target  name="get.drivers">
-
-        <!--
+  <property name="driver.url" value="http://www.qa.jboss.com/jdbc-drivers/"/>
+  <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
+  <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
+  <target name="get.drivers">
+    <!--
         https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
         http://www.jboss.com/products/platforms/application/supportedconfigurations/
         Files names below should be matched to those in run-tests.xml
         https://docspace.corp.redhat.com/clearspace/community/bu/middleware/jboss-qe/lab
         server connection params in config/jdbc_profiles/
         -->
-
-        <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
-        <get src="${driver.url}/ojdbc14.jar"
-             dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
-
-        <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
-        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar"
-             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
-        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar"
-             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
-
-        <!-- pgsql 8.1.408 is broken, use something more recent. -->
-        <get src="${driver.url}/postgresql-8.3-605.jdbc4.jar"
-             dest="${driver.home}/postgresql-8.3-605.jdbc4.jar"/>
-
-    	<!-- mysql server version 5 is the first with XA support, do use anything less.
+    <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
+    <get src="${driver.url}/ojdbc14.jar" dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
+    <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
+    <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar" dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
+    <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar" dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
+    <!-- pgsql 8.1.408 is broken, use something more recent. -->
+    <get src="${driver.url}/postgresql-8.3-605.jdbc4.jar" dest="${driver.home}/postgresql-8.3-605.jdbc4.jar"/>
+    <!-- mysql server version 5 is the first with XA support, do use anything less.
 	 		driver versions before 5.0.5 are broken, don't use them either. -->
-        <get src="${driver.url}/mysql-connector-java-5.1.8-bin.jar"
-             dest="${driver.home}/mysql-connector-java-5.1.8-bin.jar"/>
-
-        <mkdir dir="${driver.home}/DB2_v9.7"/>
-        <get src="${driver.url}/DB2_v9.7/db2jcc.jar"
-             dest="${driver.home}/DB2_v9.7/db2jcc.jar"/>
-        <get src="${driver.url}/DB2_v9.7/db2jcc_license_cu.jar"
-             dest="${driver.home}/DB2_v9.7/db2jcc_license_cu.jar"/>
-
-        <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
-        <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar"
-             dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
-
-    </target>
-
-
-    <target name="buildtype">
-		<available file="${jbossts.install.lib}/narayana-jts.jar" property="buildtype" value="jts"/>
-<!--		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/> -->
-
-		<available file="${jbossts.install.lib}/narayana-jta.jar" property="buildtype" value="jta"/>
-<!--		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/> -->
-
-<!--        <available file="${jbossts.install.lib}/arjunacore.jar" property="buildtype" value="core"/> -->
-
-		<available file="${jbossts.install.lib}/narayana-jta-integration.jar" property="integration.build"/>
-		<available file="${jbossts.install.lib}/narayana-jts-integration.jar" property="integration.build"/>
-
-        <condition property="dist.as">
-			<and>
-				<isset property="integration.build"/>
-				<isset property="as"/>
-			</and>
-		</condition>
-
-        <available file="${driver.home}" property="have.dbdrivers" value="true"/>
-    </target>
-
-	<target name="clean" depends="buildtype">
-		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
-
-        <!-- always use jts regardless of build type, as we may not be able to
+    <get src="${driver.url}/mysql-connector-java-5.1.8-bin.jar" dest="${driver.home}/mysql-connector-java-5.1.8-bin.jar"/>
+    <mkdir dir="${driver.home}/DB2_v9.7"/>
+    <get src="${driver.url}/DB2_v9.7/db2jcc.jar" dest="${driver.home}/DB2_v9.7/db2jcc.jar"/>
+    <get src="${driver.url}/DB2_v9.7/db2jcc_license_cu.jar" dest="${driver.home}/DB2_v9.7/db2jcc_license_cu.jar"/>
+    <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
+    <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar" dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
+  </target>
+  <target name="buildtype">
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar" property="buildtype" value="jts"/>
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar" property="buildtype" value="jta"/>
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta-integration.jar" property="integration.build"/>
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-integration.jar" property="integration.build"/>
+    <condition property="dist.as">
+      <and>
+        <isset property="integration.build"/>
+        <isset property="as"/>
+      </and>
+    </condition>
+    <available file="${driver.home}" property="have.dbdrivers" value="true"/>
+  </target>
+  <target name="clean">
+    <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+    <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
+    <!-- always use jts regardless of build type, as we may not be able to
             determine the build type at clean time and jts should have the superset -->
-        <ant dir="tests" antfile="build-jts.xml" target="clean"/>
-        
-        <delete dir="org.jboss.jbossts.qa.ts.home"/>
-	</target>
-
-	<target name="init">
-		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
-		<mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
-		<unzip file="../narayana-full/target/narayana-full-*-bin.zip" todir="${org.jboss.jbossts.qa.ts.home}"/>
-		<antcall target="init-jta"/>
-		<antcall target="init-jts"/>
-		<antcall target="buildtype"/>
-	</target>
-	
-	<target name="init-jta" if="init-jta">
-	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta.jar"/>
-	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta-integration.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jta-integration.jar"/>
-	</target>
-
-	<target name="init-jts" unless="init-jta">
-	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts.jar"/>
-	  <move file="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts-integration.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/lib/narayana-jts-integration.jar"/>
-	</target>
-	
-	<target name="dist" depends="clean, init">
-
-        <!-- build the test suite -->
-		<ant dir="tests" antfile="build-${buildtype}.xml">
-            <property name="org.jboss.jbossts.qa.server_manager_location"
-			          value="${org.jboss.jbossts.qa.server_manager_location}"/>
-		</ant>
-        
-    </target>
-
-	<target name="help">
-<echo>Supported targets:
+    <ant dir="tests" antfile="build-jts.xml" target="clean"/>
+  </target>
+  <target name="init" depends="clean">
+    <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+    <mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
+    <unzip src="../narayana-full/target/narayana-full-${narayana.version}-bin.zip" dest="${org.jboss.jbossts.qa.ts.home}"/>
+    <antcall target="init-jta"/>
+    <antcall target="init-jts"/>
+  </target>
+  <target name="init-jta" unless="init-jts">
+    <move file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar"/>
+  </target>
+  <target name="init-jts" if="init-jts">
+    <move file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar.jta" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+  </target>
+  <target name="dist" depends="clean, init, buildtype">
+    <!-- build the test suite -->
+    <ant dir="tests" antfile="build-${buildtype}.xml">
+      <property name="org.jboss.jbossts.qa.server_manager_location" value="${org.jboss.jbossts.qa.server_manager_location}"/>
+    </ant>
+  </target>
+  <target name="help">
+    <echo>Supported targets:
   jta - build tests for the standalone jta transaction engine
   jts - build tests for the standalone jts transaction engine
   narayana-jta - build tests for the integrated jta transaction engine
   narayana-jts - build tests for the integrated jts transaction engine
   dist - build tests for the last build of the transaction engine
 </echo>
-	</target>
+  </target>
 </project>

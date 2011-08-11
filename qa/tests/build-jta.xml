@@ -21,7 +21,8 @@
 <project name="JBossTS JTA QA Suite" default="build">
 
 	<!-- set this property to the location of a JBossTS JTA build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../dist/"/>
+	<property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
 
 	<!-- set properties for AS testing -->
 	<property environment="env"/>
@@ -35,13 +36,13 @@
 	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 
 	<path id="jta.classpath">
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
 			<include name="narayana-jta.jar"/>
 		</fileset>
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
 			<include name="jboss-transaction-api_1.1_spec.jar"/>
 		</fileset>
-        <fileset dir="../../build/extlib" includes="junit.jar"/>
+        <pathelement location="../ext/junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 
 	</path>
@@ -98,7 +99,7 @@
                 <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
                 <!-- additional dependency, which is why we don't just do this in compile task above: -->
                 <!-- include classes for AS tests -->
-                <fileset dir="../../build/extlib">
+                <fileset dir="../../ext">
                     <include name="jboss-transaction-api_1.1_spec.jar"/>
                     <include name="jboss-ejb-api.jar"/>
                     <include name="jboss-server-manager.jar"/>

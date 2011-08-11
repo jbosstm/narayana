@@ -21,7 +21,8 @@
 <project name="JBossTS 'Core' QA Suite" default="build">
 
 	<!-- set this property to the location of a JBossTS core build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
+	<property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
 
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
@@ -29,10 +30,10 @@
 	<property name="org.jboss.jbossts.qa.core.lib" location="lib"/>
 
 	<path id="core.classpath">
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
 			<include name="arjunacore.jar"/>
 		</fileset>
-        <pathelement location="../../build/extlib/junit.jar"/>
+        <pathelement location="../ext/junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 	</path>
 

@@ -21,7 +21,8 @@
 <project name="JBossTS JTS QA Suite" default="build">
 
 	<!-- set this property to the location of a JBossTS JTS build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="../../install"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
+	<property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
 
 	<!-- set properties for AS testing -->
 	<property environment="env"/>
@@ -40,21 +41,21 @@
 
 	<property name="org.jboss.jbossts.qa.orb.name.short" value="jacorb"/>
 	<property name="org.jboss.jbossts.qa.orb.name.long" value="JacORB"/>
-	<property name="org.jboss.jbossts.qa.orb.home" value="${org.jboss.jbossts.qa.ts.home}/jacorb"/>
+	<property name="org.jboss.jbossts.qa.orb.home" value="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/jacorb"/>
 	<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/jacorb.jar;${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
 
 	<path id="jts.classpath">
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
 			<include name="narayana-jts.jar"/>
 			<include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 		</fileset>
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
 			<include name="jboss-transaction-api_1.1_spec.jar"/>
 		</fileset>
 		<pathelement location="../../ArjunaJTS/orbportability/config"/>
 		<!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
-        <fileset dir="../../build/extlib" includes="junit.jar"/>
+        <pathelement location="../ext/junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
         <pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 	</path>
@@ -181,7 +182,7 @@
 		<idl-compiler orb="${org.jboss.jbossts.qa.orb.name.long}"
 					  buildlist="${org.jboss.jbossts.qa.jts.idl.buildlist}"
 					  destdir="${org.jboss.jbossts.qa.build.idl}"
-					  parameters="include='${org.jboss.jbossts.qa.ts.home}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+					  parameters="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
 		<javac srcdir="${org.jboss.jbossts.qa.build.idl}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
@@ -214,15 +215,15 @@
 	</target>
 
     <path id="as.classpath">
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
                         <include name="narayana-jts.jar"/>
                 </fileset>
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
                         <include name="jbossts-common.jar"/>
                         <include name="jta-1_1-classes.zip"/>
                 </fileset>
                 <!-- include classes for AS tests -->
-                <fileset dir="../../build/extlib">
+                <fileset dir="../../ext">
                     <include name="jboss-server-manager.jar"/>
                     <include name="jboss-transaction-api_1.1_spec.jar"/>
                     <include name="jboss-ejb-api_3.1_spec.jar"/>
