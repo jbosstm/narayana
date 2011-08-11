@@ -238,10 +238,10 @@
     <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/JTA"/>
     <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/JTS"/>
     <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/XTS"/>
-    <move todir="${downloads.dir}/${version}">
+    <move todir="${downloads.dir}/${version}" verbose="true">
       <fileset dir="tmp-downloads-dir"/>
     </move>
-    <move todir="${docs.dir}/${version}">
+    <move todir="${docs.dir}/${version}" verbose="true">
       <fileset dir="tmp-docs-dir"/>
     </move>
   </target>
