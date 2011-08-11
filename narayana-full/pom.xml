@@ -248,5 +248,16 @@
       <artifactId>xts-guide</artifactId>
       <type>jdocbook</type>
     </dependency>
+
+    <!-- Ensure these are in the distribution -->
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+    </dependency>
+
   </dependencies>
 </project>
