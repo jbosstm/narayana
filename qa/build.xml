@@ -75,6 +75,8 @@
     <available file="${driver.home}" property="have.dbdrivers" value="true"/>
   </target>
   <target name="clean">
+    <delete dir="dbdrivers"/>
+    <delete dir="testoutput"/>
     <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
     <!-- always use jts regardless of build type, as we may not be able to

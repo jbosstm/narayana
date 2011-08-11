@@ -44,7 +44,7 @@ will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="build.dir" value="${basedir}/build" />
     <property name="build.classes.dir" value="${build.dir}/classes" />
-    <property name="jbossts.install" value="../../../install" />
+    <property name="jbossts.install" value="../../dist/narayana-5.0.0.M1-SNAPSHOT" />
     <!--
         location of resources needed by the various products
       -->
@@ -76,7 +76,7 @@ will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using
     <!-- JBossTS: http://www.jboss.org/download/ the current build -->
     <path id="classpath.jbossts">
         <pathelement location="${jbossts.install}/lib/narayana-jta.jar" />
-        <pathelement location="${jbossts.install}/../ext/netty.jar" />
+        <pathelement location="${jbossts.install}/../../ext/netty.jar" />
         <pathelement location="${jbossts.install}/lib/ext/hornetq-core.jar" />
         <pathelement location="${jbossts.install}/lib/ext/jboss-logging.jar" />
     </path>
