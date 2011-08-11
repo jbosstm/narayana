@@ -841,6 +841,6 @@
     <module>rest-tx</module>
     <module>rhq-plugin</module>
     <module>txbridge</module>
-    <module>dist</module>
+    <module>narayana-all</module>
   </modules>
 </project>
