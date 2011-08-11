@@ -1,4 +1,3 @@
-rem
 rem JBoss, Home of Professional Open Source
 rem Copyright 2006, Red Hat Middleware LLC, and individual contributors
 rem as indicated by the @author tags.
