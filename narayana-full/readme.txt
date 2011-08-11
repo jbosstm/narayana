@@ -1,22 +1,19 @@
           WELCOME TO NARAYANA
           -------------------
-
 This release of Narayana is designed for use standalone.
-The JTA is also used by JBossAS 7 beta releases, but manual upgrading of the component inside JBossAS is not recommended.
+The JTA is also used by JBossAS 7 releases, but manual upgrading of the component inside JBossAS is not recommended.
  JTS and XTS are not currently available in AS7.
 Integration with JBossAS 6 or earlier is no longer supported.
 
 
           WHATS INCLUDED
           --------------
-          
 This release contains:
   bin/
     rest-tx-web.war - This can be deployed into a server running Narayana JTA to expose the Rest-TX API
     ws-*.war - These wars can be used to deploy XTS standalone
     jbossts-jopr-plugin - This can be deployed into a server running Narayana JTA and RHQ to administer the server - more details below
     start-*.[bat|sh] - These scripts can be used to launch standalone transaction managers and recovery managers
-    *setup-env-*.[bat|sh] - This will configure an environment for use with Narayana
   
   docs/
     api - The various project components javadocs
@@ -46,13 +43,47 @@ This release contains:
   services/
     This directory contains the files required to install Narayana as an operating system service
     
+  /
+    jta-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
+    jts-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
+    copyright.txt - A file to provide the copyright
+    readme.txt - This file
+
+    
+
+          ENABLING JTA
+          ------------
+To enable JTA you should:
+1. Rename lib/narayana-jta.jar.jta to lib/narayana-jta.jar
+2. If you need to use this version of JTA in an application server, you should also rename lib/narayana-jta-integration.jar.jta to lib/narayana-jta-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
+
+
+          ENABLING JTS
+          ------------
+To enable JTA you should:
+1. Rename lib/narayana-jts.jar.jts to lib/narayana-jts.jar
+2. If you need to use this version of JTS in an application server, you should also rename lib/narayana-jts-integration.jar.jts to lib/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
+
+
+          ENABLING XTS
+          ------------ 
+Please read the XTS guide for details on this, you will need to rename the following files:
+1. jbossxts.jar.xts to jbossxts.jar
+2. jbossxts-api.jar.xts to jbossxts-api.jar
+
+
+          ENABLING TXBRIDGE
+          ----------------- 
+Please read the txbridge guide for details on this, you will need to rename the following file:
+1. jbosstxbridge.jar.txbridge to jbosstxbridge.jar
+
 
           EMBEDDED TOOLS
           --------------
-
 JMX Instrumentation
 -------------------
-
 With this release it is now possible to monitor the transaction Object
 Store using JMX. Monitoring the Object Store is useful for trouble
 shooting problems that occur when transactions are committed (it does
@@ -76,7 +107,6 @@ Please refer to the unit tests in the src distribution for more details.
 
 Tools Deployment
 ----------------
-
 Transaction management is integrated into the admin console in the form of a JOPR plugin
 which is located in the install bin directory (jbossts-jopr-plugin.jar). Install it by copying
 to the admin console plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins).
