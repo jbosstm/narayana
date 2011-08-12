@@ -181,7 +181,6 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/admin"/>
     <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
     <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
     <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
@@ -234,7 +233,6 @@
     <copy todir="tmp-docs-dir/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <unzip src="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/admin"/>
     <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
     <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
     <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/rts"/>

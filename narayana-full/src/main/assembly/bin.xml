@@ -151,22 +151,6 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.admin:jbossts-jopr-plugin:*:javadoc</include>
-			</includes>
-			<outputFileNameMapping>${artifact.artifactId}-javadoc.${artifact.extension}
-			</outputFileNameMapping>
-			<outputDirectory>docs/api/admin</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-			<unpackOptions>
-				<excludes>
-					<exclude>META-INF/</exclude>
-				</excludes>
-			</unpackOptions>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
 				<include>org.jboss.narayana.jts:narayana-jts:*:javadoc</include>
 			</includes>
 			<outputDirectory>docs/api/jts</outputDirectory>

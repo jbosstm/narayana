@@ -101,11 +101,6 @@
       <artifactId>jbossts-jopr-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.admin</groupId>
-      <artifactId>jbossts-jopr-plugin</artifactId>
-      <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>trailmap</artifactId>
     </dependency>
