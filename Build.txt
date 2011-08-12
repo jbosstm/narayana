@@ -1,22 +1,4 @@
-ant
-
-will build JTS, AS integration, XTS and rhq-plugin modules.
-
-ant jta
-
-will build the standalone JTA version 
-
-ant jts	
-
-will build the standalone JTS version 
-
-ant jbossjta	
-
-will build the JTA version with AS integration 
-
-ant jbossjts	
-
-will build the JTS version with AS integration
+mvn install -Dorson.jar.location=/full/path/to/checkout/location/ext/orson.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
 
 ------------------------------------------
 
@@ -36,34 +18,27 @@ separately.
 See http://jbossts.blogspot.com/2007/07/trying-to-put-jbossts-into-perspective_6770.html or the docs for more
  on the module architecture.
 
-Each module contains an ant build script, which chiefly just inherits and selectively overrides the top level
- sharedbuild.xml  Understanding this approach requires some knowledge of ant's include and macro functions,
- its 'set once' approach to property values, and the way these features interact in recursive ant calls.
+Each module contains a set of maven build scripts, which chiefly just inherits and selectively overrides the parent
+ pom.xml  Understanding this approach requires some knowledge of maven's inheritance.
 
-Top level build targets always start from scratch. Individual module builds on the other hand are incremental,
-such that you may rebuild a single module by traversing into its directory and running 'ant', but only if you
-have first built any pre-req modules e.g. via a top level build.
+Top level maven builds always start from scratch. Individual module builds on the other hand are incremental,
+such that you may rebuild a single module by traversing into its directory and running 'mvn', but only if you
+have first built any pre-req modules e.g. via a parent build.
 
 In addition to driving the build of individual modules, the build files in the bundles directories (ArjunaCore,
 ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure, including docs, scripts,
 config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
 JTA and JTA in turn a superset of Core.
 
-3rd party dependency management is currently done via maven. The top level build invokes the maven/build.xml which
-calls maven to resolve the dependencies and populate build/extlib which other ant build scripts then reference
-in the classpath. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
-pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the pom-template.xml
+3rd party dependency management is currently done via maven. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
+pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the top leve pom.xml
 You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
 
-The build currently requires Java 6, ant 1.7.1, maven 3.0.2 and publican 2.1 with the jboss-community brand.
+The build currently requires Java 6 and maven 3.0.3.
 Later version for these tools may work. Download locations are:
 
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
-http://ant.apache.org/
 http://maven.apache.org/
-https://fedorahosted.org/releases/p/u/publican/
-
-Note: publican is optional. If you can live without documentation then build with ant -Dpublican=false
 
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
