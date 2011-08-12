@@ -30,11 +30,11 @@ To build the coordinator jar and war
 	mvn clean install
 
 Module tx contains unit tests that show how to implement the client and transactional participants.
-The coordinator and particpant both run in a single embedded container (https://grizzly-servlet-container.dev.java.net/).
+The coordinator and participant both run in a single embedded container (https://grizzly-servlet-container.dev.java.net/).
 
 To run the integration tests you will need to have a running instance of the JBoss application server
 (http://www.jboss.org/jbossas/). Start the with the default server and set the JBOSS_HOME environment variable
-appropriately. I have tested against AS trunk (6.0.0.20100721-M4) - I will update the project when AS6 is ready.
+appropriately. I have tested against AS trunk (6.0.0.20100721-M4) and AS7.
 The integration tests run the particpant in an embedded container and the coordinator in the JBoss AS:
 
 	mvn clean install -Premote
