@@ -87,10 +87,15 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-spec-api</artifactId>
+      <version>1.0.0.Beta5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.integration</groupId>
       <artifactId>jboss-corba-ots-spi</artifactId>
       <version>6.0.0.CR1</version>
-      <!-- TODO AS7 -->
       <scope>provided</scope>
     </dependency>
     <dependency>
