@@ -37,7 +37,7 @@ rem Setup EXT classpath
 
 echo Setting up environment
 
-set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\narayana-jts.jar
+set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\jts\narayana-jts.jar
 set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%NARAYANA_HOME%\etc\
 
 setlocal ENABLEDELAYEDEXPANSION
@@ -54,8 +54,6 @@ endlocal & set JACORB_CLASSPATH=%JACORB_CLASSPATH%
 set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\etc
 
 set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%;%JACORB_CLASSPATH%
-
-echo You MUST ensure you have renamed the files NARAYANA_HOME\lib\narayana-jts* to remove the .jts suffix
 
 goto end
 

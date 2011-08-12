@@ -67,7 +67,7 @@ esac
 
 echo Setting up environment
 
-PRODUCT_CLASSPATH="$NARAYANA_HOME/lib/narayana-jts.jar"
+PRODUCT_CLASSPATH="$NARAYANA_HOME/lib/jts/narayana-jts.jar"
 PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$NARAYANA_HOME/etc/"
 
 
@@ -84,7 +84,5 @@ JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/etc"
 
 CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH$CPS$JACORB_CLASSPATH"
 export CLASSPATH
-
-echo You MUST ensure you have renamed the files NARAYANA_HOME/lib/narayana-jts* to remove the .jts suffix
 
 fi

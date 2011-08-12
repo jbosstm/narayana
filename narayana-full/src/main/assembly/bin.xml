@@ -38,7 +38,7 @@
 			<includes>
 				<include>org.jboss.narayana.xts:xts-demo</include>
 			</includes>
-			<outputDirectory>docs/XTS/demo</outputDirectory>
+			<outputDirectory>docs/xts/demo</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
 			<unpackOptions>
@@ -52,49 +52,17 @@
 			<includes>
 				<include>org.jboss.narayana.xts:jbossxts:*javadoc*</include>
 			</includes>
-			<outputDirectory>docs/api/XTS</outputDirectory>
+			<outputDirectory>docs/api/xts</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
-<!-- NO LONGER INCLUDING XTS TESTS IN THE BINARY
-		<dependencySet>
-			<includes>
-				<include>org.jboss.narayana.xts:localjunit</include>
-			</includes>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-			<outputDirectory>XTS/interop-tests</outputDirectory>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.narayana.xts:localjunit</include>
-			</includes>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-			<outputDirectory>XTS/tests</outputDirectory>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
-				<include>org.jboss.narayana.xts:xts-test-servlet</include>
-			</includes>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-			<outputDirectory>XTS/tests</outputDirectory>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		-->
 		<dependencySet>
 			<includes>
 				<include>org.jboss.narayana.xts:jbossxts:jar:api</include>
 			</includes>
-			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}.xts</outputFileNameMapping>
-			<outputDirectory>lib</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>lib/xts</outputDirectory>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -103,11 +71,33 @@
 			<includes>
         <include>org.jboss.narayana.xts:jbossxts:jar</include>
 			</includes>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.xts</outputFileNameMapping>
-			<outputDirectory>lib</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+			<outputDirectory>lib/xts</outputDirectory>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+  	<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.rts:rest-tx-api:*javadoc*</include>
+			</includes>
+			<outputDirectory>docs/api/rts</outputDirectory>
+			<useProjectAttachments>true</useProjectAttachments>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+		</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<includes>
+				<include>org.jboss.narayana.rts:rest-tx-api</include>
+			</includes>
+			<excludes>
+				<exclude>*:javadoc</exclude>
+			</excludes>
+			<outputDirectory>lib/rts</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
 		</dependencySet>
 		<dependencySet>
 			<includes>
@@ -149,7 +139,7 @@
 			<includes>
 				<include>org.jboss.narayana.jts:trailmap</include>
 			</includes>
-			<outputDirectory>docs/JTS/trailmap</outputDirectory>
+			<outputDirectory>docs/jts/trailmap</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
 			<unpackOptions>
@@ -179,7 +169,7 @@
 			<includes>
 				<include>org.jboss.narayana.jts:narayana-jts:*:javadoc</include>
 			</includes>
-			<outputDirectory>docs/api/JTS</outputDirectory>
+			<outputDirectory>docs/api/jts</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
 		</dependencySet>
@@ -191,8 +181,8 @@
 			<excludes>
 				<exclude>*:javadoc</exclude>
 			</excludes>
-			<outputDirectory>lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.jts
+			<outputDirectory>lib/jts</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -201,8 +191,8 @@
 			<includes>
 				<include>org.jboss.narayana.jts:narayana-jts-integration</include>
 			</includes>
-			<outputDirectory>lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.jts
+			<outputDirectory>lib/jts</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -211,7 +201,7 @@
 			<includes>
 				<include>org.jboss.narayana.jta:narayana-jta:*:javadoc</include>
 			</includes>
-			<outputDirectory>docs/api/JTA</outputDirectory>
+			<outputDirectory>docs/api/jta</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
 		</dependencySet>
@@ -223,8 +213,8 @@
 			<excludes>
 				<exclude>*:javadoc</exclude>
 			</excludes>
-			<outputDirectory>lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.jta
+			<outputDirectory>lib/jta</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -233,8 +223,8 @@
 			<includes>
 				<include>org.jboss.narayana.jta:narayana-jta-integration</include>
 			</includes>
-			<outputDirectory>lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.jta
+			<outputDirectory>lib/jta</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -243,8 +233,8 @@
 			<includes>
 				<include>org.jboss.narayana:jbosstxbridge</include>
 			</includes>
-			<outputDirectory>lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}.txbridge
+			<outputDirectory>lib/txbridge</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
@@ -311,13 +301,13 @@
 			<source>../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-			<destName>jbossts-properties.xml.jta</destName>
+			<destName>default-jta-jbossts-properties.xml</destName>
 		</file>
 		<file>
 			<source>../ArjunaJTS/narayana-jts/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-			<destName>jbossts-properties.xml.jts</destName>
+			<destName>default-jts-jbossts-properties.xml</destName>
 		</file>
 		<file>
 			<source>../XTS/third_party_licenses.txt</source>
@@ -325,19 +315,6 @@
 			<outputDirectory>lib/ext</outputDirectory>
 			<destName>xts_third_party_licenses.txt</destName>
 		</file>
-		
-		<!--
-		<file>
-			<source>../XTS/localjunit/run-tests.xml</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>XTS/tests</outputDirectory>
-		</file>
-		<file>
-			<source>../XTS/localjunit/run-interop-tests.xml</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>XTS/interop-tests</outputDirectory>
-		</file>
-		-->
 	</files>
 	<fileSets>
 		<fileSet>

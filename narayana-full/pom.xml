@@ -115,6 +115,15 @@
       <type>war</type>
     </dependency>
     <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>rest-tx-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>rest-tx-api</artifactId>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <classifier>api</classifier>

@@ -686,6 +686,17 @@
         <type>war</type>
       </dependency>
       <dependency>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>rest-tx-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>rest-tx-api</artifactId>
+        <version>${project.version}</version>
+        <classifier>javadoc</classifier>
+      </dependency>
+      <dependency>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>jbosstxbridge</artifactId>
         <version>${project.version}</version>

@@ -60,7 +60,7 @@ esac
 
 echo Setting up environment
 
-PRODUCT_CLASSPATH="$NARAYANA_HOME/lib/narayana-jta.jar"
+PRODUCT_CLASSPATH="$NARAYANA_HOME/lib/jta/narayana-jta.jar"
 PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$NARAYANA_HOME/etc/"
 
 for i in $NARAYANA_HOME/lib/ext/*.jar
@@ -70,7 +70,5 @@ done
 
 CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
 export CLASSPATH
-
-echo You MUST ensure you have renamed the files NARAYANA_HOME/lib/narayana-jta* to remove the .jta suffix
 
 fi

@@ -35,7 +35,7 @@ rem Setup EXT classpath
 
 echo Setting up environment
 
-set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\narayana-jta.jar
+set PRODUCT_CLASSPATH=%NARAYANA_HOME%\lib\jta\narayana-jta.jar
 set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%NARAYANA_HOME%\etc\
 
 setlocal ENABLEDELAYEDEXPANSION
@@ -44,8 +44,6 @@ endlocal & set EXT_CLASSPATH=%EXT_CLASSPATH%
 
 
 set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%
-
-echo You MUST ensure you have renamed the files NARAYANA_HOME\lib\narayana-jta* to remove the .jta suffix
 
 goto end
 

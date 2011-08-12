@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2009, Red Hat Middleware LLC, and individual contributors
@@ -183,9 +182,10 @@
       </fileset>
     </copy>
     <copy file="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/admin"/>
-    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/JTA"/>
-    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/JTS"/>
-    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/XTS"/>
+    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
+    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
+    <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
+    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
     <copy todir="tmp-docs-dir/guides/narayana-jts-orbportability">
       <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/html"/>
     </copy>
@@ -235,9 +235,10 @@
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <unzip src="${workdir}/${tag}/rhq-plugin/target/jbossts-jopr-plugin-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/admin"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/JTA"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/JTS"/>
-    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/XTS"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
+    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
     <move todir="${downloads.dir}/${version}" verbose="true">
       <fileset dir="tmp-downloads-dir"/>
     </move>

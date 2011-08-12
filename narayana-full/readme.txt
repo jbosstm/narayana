@@ -5,7 +5,7 @@ The JTA is also used by JBossAS 7 releases, but manual upgrading of the componen
  JTS and XTS are not currently available in AS7.
 Integration with JBossAS 6 or earlier is no longer supported.
 
-This version of Narayana contains a JTA/JTS/XTS and RTS. If you want to use either JTA/JTS or XTS standalone, you should follow the instructions below where the scripts to execute are detailed and the files you MUST rename are defined.
+This version of Narayana contains a JTA/JTS/XTS and RTS. You should never include both lib/jts/*.jar and lib/jta/*.jar as they will conflict with each other.
 
           WHATS INCLUDED
           --------------
@@ -20,9 +20,9 @@ This release contains:
     api - The various project components javadocs
     guides - PDF versions of the projects documentation
     idl - The IDL files for integration with the JTS
-    JTS/
+    jts/
       trailmap - A trailmap for the project
-    XTS/
+    xts/
       demo - A trailmap for the project
       
   etc/
@@ -33,10 +33,11 @@ This release contains:
     
   lib/
     ext/ - All the dependencies required to run Narayana JTA/JTS/XTS
-    jbosstxbridge.jar.txbridge - After removing the .txbridge suffix, deploy this into a server running JTA and XTS to enable transactional bridging
-    jbossxts*.jar.xts - Remove the .xts suffix and deploy into a server to enable XTS, more details are available in the XTS guide.
-    narayana-jta*.jar.jta - Remove the .jta suffix to enable Narayana JTA
-    narayana-jts*.jar.jts - Remove the .jts suffix to enable Narayana JTS
+    txbridge/jbosstxbridge.jar - After removing the .txbridge suffix, deploy this into a server running JTA and XTS to enable transactional bridging
+    xts/jbossxts*.jar - More details are available in the XTS guide.
+    jta/narayana-jta*.jar - See below for usage information
+    jts/narayana-jts*.jar - See below for usage information
+    rts/rest-tx-api.jar
     
   quickstarts/
     Some examples to get you up and running quickly
@@ -55,30 +56,38 @@ This release contains:
           ENABLING JTA
           ------------
 To enable JTA you MUST:
-1. Rename lib/narayana-jta.jar.jta to lib/narayana-jta.jar
-2. If you need to use this version of JTA in an application server, you should also rename lib/narayana-jta-integration.jar.jta to lib/narayana-jta-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+1. Include lib/ext/*.jar and lib/jta/narayana-jta.jar
+2. If you need to use this version of JTA in an application server, you should also include lib/jta/narayana-jta-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
 3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
 
 
           ENABLING JTS
           ------------
-To enable JTA you MUST:
-1. Rename lib/narayana-jts.jar.jts to lib/narayana-jts.jar
-2. If you need to use this version of JTS in an application server, you should also rename lib/narayana-jts-integration.jar.jts to lib/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+To enable JTS you MUST:
+1. Include lib/ext/*.jar and lib/jts/narayana-jts.jar
+2. If you need to use this version of JTS in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
 3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
 
 
           ENABLING XTS
           ------------ 
-Please read the XTS guide for details on this, you will need to rename the following files:
-1. jbossxts.jar.xts to jbossxts.jar
-2. jbossxts-api.jar.xts to jbossxts-api.jar
+Please read the XTS guide for details on this, you will need to include the following files:
+1. lib/ext/*.jar
+2. lib/xts/jbossxts.jar
+3. lib/xts/jbossxts-api.jar
 
 
           ENABLING TXBRIDGE
           ----------------- 
-Please read the txbridge guide for details on this, you will need to rename the following file:
-1. jbosstxbridge.jar.txbridge to jbosstxbridge.jar
+Please read the txbridge guide for details on this, you will need to include the following file:
+1. lib/txbridge/jbosstxbridge.jar
+
+
+
+          ENABLING REST-TX API
+          -------------------- 
+Please read the txbridge guide for details on this, you will need to include the following file:
+1. lib/rts/rest-tx-api.jar
 
 
           EMBEDDED TOOLS
