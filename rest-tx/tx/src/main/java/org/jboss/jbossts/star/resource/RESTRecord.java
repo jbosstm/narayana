@@ -30,8 +30,9 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import org.jboss.jbossts.star.util.LinkHolder;
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.TxSupport;
-import org.jboss.resteasy.util.HttpResponseCodes;
 import org.jboss.logging.Logger;
+
+import java.net.HttpURLConnection;
 
 /**
  * Log record for driving participants through 2PC and recoverery
@@ -49,6 +50,8 @@ public class RESTRecord extends AbstractRecord
     private String txId;
     private boolean prepared;
     private String recoveryUrl;
+
+    public RESTRecord() {}
 
     public RESTRecord(String coordinatorUrl, String participantUrl, String terminateUrl, String txId)
     {
@@ -176,7 +179,7 @@ public class RESTRecord extends AbstractRecord
             log.trace("forgetting heuristic for " + terminateUrl);
 
         try {
-            new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK, HttpResponseCodes.SC_NO_CONTENT},
+            new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NO_CONTENT},
                     this.participantUrl, "DELETE", null, null, null);
             status = "";
         } catch (HttpResponseException e) {
@@ -202,7 +205,7 @@ public class RESTRecord extends AbstractRecord
 
         try
         {
-            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK}, this.terminateUrl, "PUT",
+            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT",
                     TxSupport.STATUS_MEDIA_TYPE, TxSupport.toStatusContent(TxSupport.PREPARED), null));
 
             prepared = true;
@@ -237,7 +240,7 @@ public class RESTRecord extends AbstractRecord
             return TwoPhaseOutcome.FINISH_ERROR;
 
         try {
-            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
+            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
                     TxSupport.toStatusContent(TxSupport.ABORTED), null));
         } catch (HttpResponseException e) {
 
@@ -287,7 +290,7 @@ public class RESTRecord extends AbstractRecord
                 log.trace("committing " + this.terminateUrl);
             
             if (!TxSupport.isReadOnly(status))
-                status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
+                status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
                         TxSupport.toStatusContent(TxSupport.COMMITTED), null));   // ONE_PHASE_COMMIT_CONTENT
             else
                 status = TxSupport.COMMITTED;
@@ -305,7 +308,7 @@ public class RESTRecord extends AbstractRecord
 
     private boolean checkFinishError(int expected, boolean commit) throws HttpResponseException
     {
-        if (expected == HttpResponseCodes.SC_NOT_FOUND)
+        if (expected == HttpURLConnection.HTTP_NOT_FOUND)
         {
             // the participant may have moved so check the coordinator terminateUrl
             if (hasParticipantMoved())
@@ -315,7 +318,7 @@ public class RESTRecord extends AbstractRecord
 
                 try
                 {
-                    TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
+                    TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
                         TxSupport.toStatusContent(commit ? TxSupport.COMMITTED : TxSupport.ABORTED), null));
                     if (log.isDebugEnabled())
                         log.debug("Finish OK at new terminateUrl: " + this.terminateUrl);
@@ -357,7 +360,7 @@ public class RESTRecord extends AbstractRecord
                     return false;
 
             // get the latest participant terminateUrl by probing the recovery terminateUrl:
-            String content = new TxSupport().httpRequest(new int[] {HttpResponseCodes.SC_OK}, recoveryUrl, "GET", TxSupport.PLAIN_MEDIA_TYPE, null, null);
+            String content = new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, recoveryUrl, "GET", TxSupport.PLAIN_MEDIA_TYPE, null, null);
             String terminator = new LinkHolder(content).get(TxSupport.TERMINATOR_LINK);
             String participant = new LinkHolder(content).get(TxSupport.PARTICIPANT_LINK);
 

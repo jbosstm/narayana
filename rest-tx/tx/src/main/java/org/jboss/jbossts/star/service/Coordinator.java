@@ -29,8 +29,6 @@ import org.jboss.jbossts.star.util.TxSupport;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import org.jboss.resteasy.util.HttpResponseCodes;
-
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.*;
@@ -53,7 +51,9 @@ public class Coordinator
      * Performing a GET on the transaction-manager returns a list of all transaction URIs
      * known to the coordinator (active and in recovery) separated by
      * the @see TxSupport.URI_SEPARATOR character
-    */
+     * @param info http context of the request
+     * @return JSON representation of active transactions and HTTP status code
+     */
     @GET
     @Path(TxSupport.TX_SEGMENT)
     @Produces(TxSupport.PLAIN_MEDIA_TYPE)
@@ -77,7 +77,8 @@ public class Coordinator
          * getTransactions(recoveringFilter); or
          * getTransactions(activeTxFilter);
          */
-
+        Response.ResponseBuilder builder = Response.ok(txns.toString());
+        builder.header("Content-Length", txns.length());
         return Response.ok(txns.toString()).build();
     }
 
@@ -97,7 +98,7 @@ public class Coordinator
         Transaction txn = transactions.get(id);
 
         if (txn == null)
-            return Response.status(HttpResponseCodes.SC_NOT_FOUND).build();
+            return Response.status(HttpURLConnection.HTTP_NOT_FOUND).build();
 
         return Response.ok(TxSupport.toStatusContent(txn.getStatus())).build();
     }
@@ -111,30 +112,30 @@ public class Coordinator
     @Path(TxSupport.TX_SEGMENT + "/{id}")
     public Response deleteTransaction(@PathParam("id") String id)
     {
-        return Response.status(HttpResponseCodes.SC_FORBIDDEN).build();
+        return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
     }
 
     // Performing HEAD, GET, POST, DELETE and OPTIONS on the transaction
     // url generates a 400 status code
     @HEAD @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt1(@PathParam("TxId")String txId) {
-        return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+        return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
     @GET @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt2(@PathParam("TxId")String txId) {
-        return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+        return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
     @POST @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt3(@PathParam("TxId")String txId) {
-        return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+        return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
     @DELETE @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt4(@PathParam("TxId")String txId) {
-        return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+        return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
     @OPTIONS @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt5(@PathParam("TxId")String txId) {
-        return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+        return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
 
     /**
@@ -219,7 +220,7 @@ public class Coordinator
         Transaction tx = getTransaction(id);
 
         if (tx == null)
-            return Response.status(HttpResponseCodes.SC_GONE).build();
+            return Response.status(HttpURLConnection.HTTP_GONE).build();
 
         Response.ResponseBuilder builder = Response.ok();
 
@@ -267,7 +268,7 @@ public class Coordinator
         else if (TxSupport.ABORTED.equals(how))
             commit = false;
         else
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+            return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
 
         tx.setFault(fault);
         AtomicAction.resume(tx);
@@ -292,9 +293,9 @@ public class Coordinator
         }
 
         if (status.length() == 0)
-            scRes = HttpResponseCodes.SC_INTERNAL_SERVER_ERROR;
+            scRes = HttpURLConnection.HTTP_INTERNAL_ERROR;
         else
-            scRes = HttpResponseCodes.SC_OK;
+            scRes = HttpURLConnection.HTTP_OK;
 
         return Response.status(scRes).entity(TxSupport.toStatusContent(status)).build();
     }
@@ -310,9 +311,11 @@ public class Coordinator
     @Path(TxSupport.TX_SEGMENT + "/{TxId}")
     public Response enlistParticipant(@Context UriInfo info, @PathParam("TxId")String txId, String content)
     {
+        log.trace("enlistParticipant request uri " + info.getRequestUri() + " txid: " + txId + " content: " + content);
+        System.out.println("enlistParticipant request uri " + info.getRequestUri() + " txid: " + txId + " content: " + content);
         Transaction tx = getTransaction(txId);
         if (tx == null)
-            return Response.status(HttpResponseCodes.SC_GONE).build();
+            return Response.status(HttpURLConnection.HTTP_GONE).build();
 
         LinkHolder links = new LinkHolder(content);
         String txURI = TxSupport.buildURI(info.getBaseUriBuilder(), info.getPathSegments().get(0).getPath(), info.getPathSegments().get(1).getPath());
@@ -331,7 +334,7 @@ public class Coordinator
         String coordinatorId = tx.enlistParticipant(txURI, links.get(TxSupport.PARTICIPANT_LINK), terminatorUrl, recoveryUrlBase);
 
         if (coordinatorId == null) // the request was rejected (2PC processing must have started or already registerd)
-            return Response.status(HttpResponseCodes.SC_FORBIDDEN).build();
+            return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
 
         links.put("txid", txId);
         participants.put(coordinatorId, links);
@@ -357,7 +360,7 @@ public class Coordinator
         LinkHolder p = participants.get(enlistmentId);
 
         if (p == null)
-            return Response.status(HttpResponseCodes.SC_NOT_FOUND).build();
+            return Response.status(HttpURLConnection.HTTP_NOT_FOUND).build();
 
         String pContent = TxSupport.getParticipantUrls(p.get(TxSupport.TERMINATOR_LINK), p.get(TxSupport.PARTICIPANT_LINK));
 
@@ -382,11 +385,11 @@ public class Coordinator
 
         log.trace("coordinator: replace: recovery-coordinator/" + enlistmentId + "?URL=" + terminator);
         if (terminator == null)
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).build();
+            return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
 
         participants.put(enlistmentId, links);
 
-        return Response.status(HttpResponseCodes.SC_OK).build();
+        return Response.status(HttpURLConnection.HTTP_OK).build();
     }
 
     @POST
@@ -394,7 +397,7 @@ public class Coordinator
     public Response postParticipant(@PathParam("RecCoordId")String enlistmentId)
     {
         log.trace("coordinator: replace via Post: recovery-coordinator/" + enlistmentId);
-        return Response.status(HttpResponseCodes.SC_UNAUTHORIZED).build();
+        return Response.status(HttpURLConnection.HTTP_UNAUTHORIZED).build();
     }
 
     @DELETE
@@ -406,12 +409,12 @@ public class Coordinator
         Transaction txn;
 
         if (p == null || (txn = transactions.get(p.get("txid"))) == null)
-            return Response.status(HttpResponseCodes.SC_NOT_FOUND).build();
+            return Response.status(HttpURLConnection.HTTP_NOT_FOUND).build();
 
         if (txn.forgetParticipant(p.get(TxSupport.TERMINATOR_LINK)))
-            return Response.status(HttpResponseCodes.SC_OK).build();
+            return Response.status(HttpURLConnection.HTTP_OK).build();
         
-        return Response.status(HttpResponseCodes.SC_CONFLICT).build();
+        return Response.status(HttpURLConnection.HTTP_CONFLICT).build();
     }
 
     private Transaction getTransaction(String txId)
