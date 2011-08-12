@@ -312,7 +312,6 @@ public class Coordinator
     public Response enlistParticipant(@Context UriInfo info, @PathParam("TxId")String txId, String content)
     {
         log.trace("enlistParticipant request uri " + info.getRequestUri() + " txid: " + txId + " content: " + content);
-        System.out.println("enlistParticipant request uri " + info.getRequestUri() + " txid: " + txId + " content: " + content);
         Transaction tx = getTransaction(txId);
         if (tx == null)
             return Response.status(HttpURLConnection.HTTP_GONE).build();
