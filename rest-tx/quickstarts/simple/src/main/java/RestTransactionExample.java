@@ -21,11 +21,12 @@
 import org.jboss.jbossts.star.util.TxSupport;
 
 public class RestTransactionExample {
-    private static final String[] hosts = {"localhost:8080"};
-    private static final String TXN_MGR_URL = "http://" + hosts[0] + "/rest-tx/tx/transaction-manager";
+    private static final String[] authorities = {"172.17.130.188:8080", "localhost:8080"};
+    private static final String TXN_MGR_URL = "http://" + authorities[1]  + "/rest-tx/tx/transaction-manager";
 
+    //-Dhttp.proxyHost=file.rdu.redhat.com -Dhttp.proxyPort=3128
     public static void main(String args[]) throws Exception {
-        // create a helper with the desired transaction manager resource endpoint
+        // create a helper with thin(e desired transaction manager resource endpoint
         TxSupport txn = new TxSupport(TXN_MGR_URL);
 
         // start a transaction
@@ -52,5 +53,4 @@ public class RestTransactionExample {
 
         System.out.println("Success");
     }
-
 }

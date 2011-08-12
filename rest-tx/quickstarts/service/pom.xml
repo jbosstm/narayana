@@ -51,6 +51,7 @@
       <artifactId>rest-tx-api</artifactId>
       <version>5.0.0.M1-SNAPSHOT</version>
     </dependency>
+
     <!-- Jersey container for running participant services -->
     <dependency>
       <groupId>com.sun.jersey</groupId>

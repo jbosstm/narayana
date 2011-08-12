@@ -28,7 +28,7 @@ else
 #mvn compile exec:java -Dexec.mainClass=quickstart.TransactionAwareResource -Dexec.args="-a 127.0.0.1:8081"
 	ep="172.17.130.188:8081"
 	ep="127.0.0.1:8081"
-	auth="127.0.0.1:8080"
+	auth="127.0.0.1:9090"
 	proxies=0
 fi
 
