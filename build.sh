@@ -19,7 +19,7 @@ ROOT="/"
 M2_HOME=""
 MAVEN_HOME=""
 
-MAVEN_OPTS="$MAVEN_OPTS -Xmx512M"
+MAVEN_OPTS="$MAVEN_OPTS -Xms1536m -Xmx1536m -XX:PermSize=1024m -XX:MaxPermSize=2048m"
 export MAVEN_OPTS
 
 # the default search path for maven
