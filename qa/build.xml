@@ -76,6 +76,8 @@
   </target>
   <target name="clean">
     <delete dir="dbdrivers"/>
+    <delete dir="PutObjectStoreDirHere"/>
+    <delete dir="ObjectStore"/>
     <delete dir="testoutput"/>
     <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
