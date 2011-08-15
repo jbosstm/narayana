@@ -81,6 +81,11 @@
     <delete dir="testoutput"/>
     <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
+    <delete file="transaction.log"/>
+    <delete >
+      <fileset dir="." includes="TEST-*.txt"/>
+    </delete>
+
     <!-- always use jts regardless of build type, as we may not be able to
             determine the build type at clean time and jts should have the superset -->
     <ant dir="tests" antfile="build-jts.xml" target="clean"/>
