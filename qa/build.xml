@@ -97,10 +97,10 @@
     <antcall target="init-jta"/>
     <antcall target="init-jts"/>
   </target>
-  <target name="init-jta" unless="init-jts">
+  <target name="init-jta" if="init-jta">
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jta/narayana-jta.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar"/>
   </target>
-  <target name="init-jts" if="init-jts">
+  <target name="init-jts" unless="init-jta">
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
   </target>
   <target name="dist" depends="clean, init, buildtype">
