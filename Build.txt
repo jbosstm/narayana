@@ -1,22 +1,12 @@
-mvn install -Dorson.jar.location=/full/path/to/checkout/location/ext/orson.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
+------------------------------------------
+To build Narayana you should call:
+./build.[sh|bat] <maven_goals>
 
+If you are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
+-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
 ------------------------------------------
 
-Now The Gory Details. Well, a few of them anyhow. You can't handle them all.
-
-JBossTS consists of a number of modules, various combinations of which are bundled to form releases. Bundles are:
-
- core = the transaction engine.
- jta = core + a JTA API layer.
- jts = jta + a JTS implementation
- jbossjta = jta + JBossAS integration code.
- jbossjts = jts + JBossAS integration code.
-
-In addition the XTS (web services transactions), txbridge (XTS/JTA integration) and rhq-plugin modules may be built
-separately.
-
-See http://jbossts.blogspot.com/2007/07/trying-to-put-jbossts-into-perspective_6770.html or the docs for more
- on the module architecture.
+Now The Gory Details.
 
 Each module contains a set of maven build scripts, which chiefly just inherits and selectively overrides the parent
  pom.xml  Understanding this approach requires some knowledge of maven's inheritance.
@@ -30,15 +20,14 @@ ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure,
 config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
 JTA and JTA in turn a superset of Core.
 
-3rd party dependency management is currently done via maven. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
+3rd party dependency management is done via maven. Note that versions of most 3rd party components are resolved via the JBossAS component-matix
 pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the top leve pom.xml
 You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
 
-The build currently requires Java 6 and maven 3.0.3.
-Later version for these tools may work. Download locations are:
-
+The build currently requires Java 6 and maven 3.0.3. Maven is provided in the tools/maven section, though later version for these tools may work. Download locations are:
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 http://maven.apache.org/
+
 
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
