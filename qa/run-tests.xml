@@ -42,219 +42,169 @@
   <property name="working.dir" location="build"/>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="scratch">
-    <antcall target="junit-tests">
-      <param name="tests" value="defaulttimeout"/>
-      <!--<param name="additional.elements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
-    </antcall>
+    <junit-tests tests="defaulttimeout"/>
+      <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
   <target name="express">
     <!-- currenttests01 : 36 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="currenttests01"/>
-    </antcall>
+    <junit-tests tests="currenttests01"/>
+    
     <!-- jtatests01 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="jtatests01"/>
-    </antcall>
+    <junit-tests tests="jtatests01"/>
+    
     <!-- otsserver : 20 tests, 7 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="otsserver"/>
-    </antcall>
+    <junit-tests tests="otsserver"/>
+    
     <!-- rawresources01_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources01_1"/>
-    </antcall>
+    <junit-tests tests="rawresources01_1"/>
+    
     <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources02_1"/>
-    </antcall>
+    <junit-tests tests="rawresources02_1"/>
+    
     <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources01_1"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources01_1"/>
+    
     <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources02_1"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources02_1"/>
+    
     <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery01"/>
-    </antcall>
+    <junit-tests tests="crashrecovery01"/>
+    
     <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery02_1"/>
-    </antcall>
+    <junit-tests tests="crashrecovery02_1"/>
+    
     <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery03"/>
-    </antcall>
+    <junit-tests tests="crashrecovery03"/>
+    
     <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery06"/>
-    </antcall>
+    <junit-tests tests="crashrecovery06"/>
+    
     <!-- crashrecovery12 : 7 tests, 5 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery12"/>
-    </antcall>
+    <junit-tests tests="crashrecovery12"/>
+    
   </target>
   <!-- General tests.
         These tests should take a combined time of around 2h20m or so.
     -->
   <target name="junit">
     <!-- txcore : 28 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore"/>
-      <param name="additional.elements" value="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
-    </antcall>
+    <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+    
     <!-- txcore_lockrecord : 112 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_lockrecord"/>
-    </antcall>
+    <junit-tests tests="txcore_lockrecord"/>
+    
     <!-- txcore_abstractrecord : 32 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_abstractrecord"/>
-    </antcall>
+    <junit-tests tests="txcore_abstractrecord"/>
+    
     <!-- txcore_statemanager : 64 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_statemanager"/>
-    </antcall>
+    <junit-tests tests="txcore_statemanager"/>
+    
     <!-- txcore_utility : 40 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_utility"/>
-    </antcall>
+    <junit-tests tests="txcore_utility"/>
+    
     <!-- txcore_recovery : 36 tests, 4 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_recovery"/>
-    </antcall>
+    <junit-tests tests="txcore_recovery"/>
+    
     <!-- currenttests01 : 36 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="currenttests01"/>
-    </antcall>
+    <junit-tests tests="currenttests01"/>
+    
     <!-- jtatests01 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="jtatests01"/>
-    </antcall>
+    <junit-tests tests="jtatests01"/>
+    
     <!-- otsserver : 20 tests, 4 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="otsserver"/>
-    </antcall>
+    <junit-tests tests="otsserver"/>
+    
     <!-- jtsremote : 9 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="jtsremote"/>
-    </antcall>
+    <junit-tests tests="jtsremote"/>
+    
     <!-- defaulttimeout : 2 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="defaulttimeout"/>
-    </antcall>
+    <junit-tests tests="defaulttimeout"/>
+    
     <!-- rawresources01_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources01_1"/>
-    </antcall>
+    <junit-tests tests="rawresources01_1"/>
+    
     <!-- rawresources01_2 : 147 tests, 7 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources01_2"/>
-    </antcall>
+    <junit-tests tests="rawresources01_2"/>
+    
     <!-- rawresources01_2b : 147 tests, 6 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources01_2b"/>
-    </antcall>
+    <junit-tests tests="rawresources01_2b"/>
+    
     <!-- rawresources01_3 : 150 tests, 8 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources01_3"/>
-    </antcall>
+    <junit-tests tests="rawresources01_3"/>
+    
     <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources02_1"/>
-    </antcall>
+    <junit-tests tests="rawresources02_1"/>
+    
     <!-- rawresources02_2 : 147 tests, 7 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources02_2"/>
-    </antcall>
+    <junit-tests tests="rawresources02_2"/>
+    
     <!-- rawresources02_2 : 147 tests, 6 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources02_2b"/>
-    </antcall>
+    <junit-tests tests="rawresources02_2b"/>
+    
     <!-- rawresources02_3 : 150 tests, 8 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawresources02_3"/>
-    </antcall>
+    <junit-tests tests="rawresources02_3"/>
+    
     <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources01_1"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources01_1"/>
+    
     <!-- rawsubtransactionawareresources01_2 : 10 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources01_2"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources01_2"/>
+    
     <!-- rawsubtransactionawareresources01_3 : 25 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources01_3"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources01_3"/>
+    
     <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources02_1"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources02_1"/>
+    
     <!-- rawsubtransactionawareresources02_2 : 10 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources02_2"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources02_2"/>
+    
     <!-- rawsubtransactionawareresources02_3 : 25 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="rawsubtransactionawareresources02_3"/>
-    </antcall>
+    <junit-tests tests="rawsubtransactionawareresources02_3"/>
+    
     <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery01"/>
-    </antcall>
+    <junit-tests tests="crashrecovery01"/>
+    
     <!-- crashrecovery02_1 : 5 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery02_1"/>
-    </antcall>
+    <junit-tests tests="crashrecovery02_1"/>
+    
     <!-- crashrecovery02_2 : 50 tests, 12 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery02_2"/>
-    </antcall>
+    <junit-tests tests="crashrecovery02_2"/>
+    
     <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery03"/>
-    </antcall>
+    <junit-tests tests="crashrecovery03"/>
+    
     <!-- crashrecovery04 : 48 tests, 6 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery04"/>
-    </antcall>
+    <junit-tests tests="crashrecovery04"/>
+    
     <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery05_1"/>
-    </antcall>
+    <junit-tests tests="crashrecovery05_1"/>
+    
     <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery05_2"/>
-    </antcall>
+    <junit-tests tests="crashrecovery05_2"/>
+    
     <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery06"/>
-    </antcall>
+    <junit-tests tests="crashrecovery06"/>
+    
     <!-- crashrecovery07 : 16 tests, 4 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery07"/>
-    </antcall>
+    <junit-tests tests="crashrecovery07"/>
+    
     <!-- crashrecovery08 : 32 tests, 15 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery08"/>
-    </antcall>
+    <junit-tests tests="crashrecovery08"/>
+    
     <!-- crashrecovery09 : 6 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery09"/>
-    </antcall>
+    <junit-tests tests="crashrecovery09"/>
+    
     <!-- crashrecovery10 : 6 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery10"/>
-    </antcall>
+    <junit-tests tests="crashrecovery10"/>
+    
     <!-- crashrecovery12 : 7 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery12"/>
-    </antcall>
+    <junit-tests tests="crashrecovery12"/>
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <!-- copy the selected db driver out of the available set into the classpath.
         See also build.xml get.drivers and TaskImpl.properties for classpath
@@ -273,251 +223,198 @@
         And a set of servers to run against. Did I mention it was complicated :-)
     -->
   <target name="junit-jdbc">
-    <antcall target="install-dbdriver">
-      <param name="files" value="ojdbc14.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_oracle_thin_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_oracle_thin_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    
+    <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+    
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <antcall target="install-dbdriver">
-      <param name="files" value="${mssql.driver}"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_mssqlserver_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_mssqlserver_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="postgresql-8.3-605.jdbc4.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_pgsql_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_pgsql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="mysql-connector-java-5.1.8-bin.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_mysql_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_mysql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="jconn3.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_sybase_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_sybase_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="db2*"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_ibmdb2_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_ibmdb2_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    
+    <junit-tests tests="jdbcresources01_mssqlserver_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_mssqlserver_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="postgresql-8.3-605.jdbc4.jar"/>
+    
+    <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.8-bin.jar"/>
+    
+    <junit-tests tests="jdbcresources01_mysql_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_mysql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    
+    <junit-tests tests="jdbcresources01_sybase_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_sybase_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="db2*"/>
+    
+    <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
+    
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
   <target name="junit-jdbc-ncl">
-    <antcall target="install-dbdriver">
-      <param name="files" value="ojdbc14.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_oracle_thin_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_oracle_thin_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="mysql-connector-java-5.1.8-bin.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_mysql_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_mysql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="postgresql-8.3-605.jdbc4.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources01_pgsql_jndi"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbcresources02_pgsql_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    
+    <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.8-bin.jar"/>
+    
+    <junit-tests tests="jdbcresources01_mysql_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_mysql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="postgresql-8.3-605.jdbc4.jar"/>
+    
+    <junit-tests tests="jdbcresources01_pgsql_jndi"/>
+    
+    <junit-tests tests="jdbcresources02_pgsql_jndi"/>
+    
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="junit-jdbc-crachrec">
     <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-    <antcall target="install-dbdriver">
-      <param name="files" value="ojdbc14.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-oracle_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    
+    <junit-tests tests="crashrecovery11-oracle_jndi"/>
+    
     <!--mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <antcall target="install-dbdriver">
-      <param name="files" value="${mssql.driver}"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-mssqlserver_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="db2*"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-ibmdb2_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="postgresql-8.3-603.jdbc3.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-pgsql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="mysql-connector-java-5.1.7-bin.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-mysql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="jconn3.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="crashrecovery11-sybase_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    
+    <junit-tests tests="crashrecovery11-mssqlserver_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="db2*"/>
+    
+    <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="postgresql-8.3-603.jdbc3.jar"/>
+    
+    <junit-tests tests="crashrecovery11-pgsql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.7-bin.jar"/>
+    
+    <junit-tests tests="crashrecovery11-mysql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    
+    <junit-tests tests="crashrecovery11-sybase_jndi"/>
+    
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="jta">
     <!-- override the config file, so that we can run jta mode tests even with jts binaries -->
     <property name="additional.elements" value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/narayana-jta/src/main/resources/jbossts-properties.xml"/>
     <!-- txcore : 28 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore"/>
-      <param name="additional.elements" value="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
-    </antcall>
+    <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+    
     <!-- txcore_lockrecord : 112 tests, 3 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_lockrecord"/>
-    </antcall>
+    <junit-tests tests="txcore_lockrecord"/>
+    
     <!-- txcore_abstractrecord : 32 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_abstractrecord"/>
-    </antcall>
+    <junit-tests tests="txcore_abstractrecord"/>
+    
     <!-- txcore_statemanager : 64 tests, 2 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_statemanager"/>
-    </antcall>
+    <junit-tests tests="txcore_statemanager"/>
+    
     <!-- txcore_utility : 40 tests, 1 minute -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_utility"/>
-    </antcall>
+    <junit-tests tests="txcore_utility"/>
+    
     <!-- jtatest01 : 6 tests, minute-->
-    <antcall target="junit-tests">
-      <param name="tests" value="jtatests01"/>
-    </antcall>
+    <junit-tests tests="jtatests01"/>
+    
     <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-    <antcall target="install-dbdriver">
-      <param name="files" value="ojdbc14.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_oracle_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    
+    <junit-tests tests="jdbclocals01_oracle_jndi"/>
+    
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <antcall target="install-dbdriver">
-      <param name="files" value="${mssql.driver}"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_mssqlserver_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="postgresql-8.3-603.jdbc3.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_pgsql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="mysql-connector-java-5.1.7-bin.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_mysql_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="jconn3.jar"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_sybase_jndi"/>
-    </antcall>
-    <antcall target="install-dbdriver">
-      <param name="files" value="db2*"/>
-    </antcall>
-    <antcall target="junit-tests">
-      <param name="tests" value="jdbclocals01_ibmdb2_jndi"/>
-    </antcall>
+    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    
+    <junit-tests tests="jdbclocals01_mssqlserver_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="postgresql-8.3-603.jdbc3.jar"/>
+    
+    <junit-tests tests="jdbclocals01_pgsql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.7-bin.jar"/>
+    
+    <junit-tests tests="jdbclocals01_mysql_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    
+    <junit-tests tests="jdbclocals01_sybase_jndi"/>
+    
+    <junit-tests target="install-dbdriver" files="db2*"/>
+    
+    <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
+    
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="performance">
     <!-- caution: perf tests are essentially regression tests and are only meaningful
             if used with the same hardware (profile) and config between runs. -->
     <!-- perfprofileio : 18 tests, 9 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="perfprofileio"/>
-    </antcall>
+    <junit-tests tests="perfprofileio"/>
+    
     <!-- perfprofile01_i (JTS implicit) : 25 tests, 31 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="perfprofile01_i"/>
-    </antcall>
+    <junit-tests tests="perfprofile01_i"/>
+    
     <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
-    <antcall target="junit-tests">
-      <param name="tests" value="perfprofile01_e"/>
-    </antcall>
+    <junit-tests tests="perfprofile01_e"/>
+    
+    
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="core-memory">
     <!-- txcore_memory : 40 tests -->
-    <antcall target="junit-tests">
-      <param name="tests" value="txcore_memory"/>
+    <junit-tests tests="txcore_memory"/>
       <!-- you need the right .so for the platform the test runs on. Note the the jvm
             may print 'can't find agent lib' when it can find one but it's the wrong one.
-              ext/libjbossAgent_linux64.so : Fedora 12, x86_64 -->
-      <param name="additional.elements" value="-agentpath:ext/libjbossAgent_linux64.so"/>
-    </antcall>
+              ext/libjbossAgent_linux64.so : Fedora 12, x86_64  additional.elements="-agentpath:ext/libjbossAgent_linux64.so"/> -->
+    
   </target>
   <!-- ##################################### -->
   <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
-  <target name="junit-tests">
-    <!-- pass in a param to override this. by default run everything. -->
-    <property name="names" value=".*"/>
+  <macrodef name="junit-tests">
+    <attribute name="tests"/>
     <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
-    <!--<property name="additional.elements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
-    <property name="additional.elements" value=""/>
+    <!--<property name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+    <attribute name="additional.elements" default=""/>
+    <sequential>
     <!-- TODO support JTA mode testing of JTS .jar files? -
             would need classpath munging for props file in TaskImpl.properties -->
-    <echo message="Running junit test group ${tests} from basedir=${basedir}"/>
+    <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
     <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
             the working dir is the same as the location of this script. -->
-    <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false">
+    <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" errorproperty="failed-tests">
       <classpath>
         <!--
                 This is the classpath for the test framework, not the test components e.g. clients/servers.
@@ -547,13 +444,14 @@
         <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
       </classpath>
       <formatter type="plain"/>
-      <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
-      <sysproperty key="names" value="${names}"/>
-      <sysproperty key="additional.elements" value="${additional.elements}"/>
+      <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}"/>
+      <sysproperty key="names" value=".*"/>
+      <sysproperty key="additional.elements" value="@{additional.elements}"/>
       <!--<jvmarg value="-Xdebug"/>-->
       <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
     </junit>
-  </target>
+    </sequential>
+  </macrodef>
   <!-- directory that contains emma.jar and emma_ant.jar: -->
   <path id="emma.lib">
     <pathelement location="../ext/emma.jar"/>
