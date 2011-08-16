@@ -37,7 +37,7 @@
   <property name="driver.url" value="http://www.qa.jboss.com/jdbc-drivers/"/>
   <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
   <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
-  <target name="get.drivers">
+  <target name="get.drivers" depends="clean-dbdrivers">
     <!--
         https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
         http://www.jboss.com/products/platforms/application/supportedconfigurations/
@@ -74,8 +74,12 @@
     </condition>
     <available file="${driver.home}" property="have.dbdrivers" value="true"/>
   </target>
-  <target name="clean">
-    <delete dir="dbdrivers"/>
+  <target name="clean-dbdrivers" unless="dbdrivers.cleaned">
+    <delete dir="${driver.home}"/>
+    <property name="dbdrivers.cleaned" value="true"/>
+  </target>
+  <target name="clean" depends="clean-tests,clean-dbdrivers"/>
+  <target name="clean-tests">
     <delete dir="PutObjectStoreDirHere"/>
     <delete dir="ObjectStore"/>
     <delete dir="testoutput"/>
