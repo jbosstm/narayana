@@ -86,6 +86,8 @@
     <delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <delete dir="${org.jboss.jbossts.qa.ts.home}"/>
     <delete file="transaction.log"/>
+    <delete file="idl-compiler.out"/>
+    <delete file="idl-compiler.err"/>
     <delete>
       <fileset dir="." includes="TEST-*.txt"/>
     </delete>

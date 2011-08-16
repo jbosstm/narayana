@@ -77,8 +77,8 @@
   <!-- The file name base for the user downloadable files. Derive it from the tag -->
   <property name="version" value="5.0.0.M1-SNAPSHOT"/>
   <!-- the location the JBossTS web site content is copied to -->
-  <property name="downloads.dir" value="${user.home}/transactions/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
-  <property name="docs.dir" value="${user.home}/transactions/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
+  <property name="downloads.dir" value="${user.home}/narayana/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
+  <property name="docs.dir" value="${user.home}/narayana/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
   <!-- you probably don't need to change anything below here -->
   <taskdef resource="net/sf/antcontrib/antlib.xml">
     <classpath>
