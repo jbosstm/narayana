@@ -71,10 +71,11 @@ To enable JTS you MUST:
 
           ENABLING XTS
           ------------ 
-Please read the XTS guide for details on this, you will need to include the following files:
+XTS standalone is not particularly well documented as yet. For details on running in this configuration you will need to include the following files:
 1. lib/ext/*.jar
 2. lib/xts/jbossxts.jar
 3. lib/xts/jbossxts-api.jar
+You can consult this community thread for more tips: http://community.jboss.org/message/554385#554385
 
 
           ENABLING TXBRIDGE
