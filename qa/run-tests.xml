@@ -163,13 +163,16 @@
   <!-- copy the selected db driver out of the available set into the classpath.
         See also build.xml get.drivers and TaskImpl.properties for classpath
      -->
-  <target name="install-dbdriver">
-    <delete dir="dbdrivers/selected_dbdriver"/>
-    <mkdir dir="dbdrivers/selected_dbdriver"/>
-    <copy todir="dbdrivers/selected_dbdriver" flatten="true">
-      <fileset dir="dbdrivers/" includes="**/${files}"/>
-    </copy>
-  </target>
+  <macrodef name="install-dbdriver">
+    <attribute name="files"/>
+    <sequential>
+      <delete dir="dbdrivers/selected_dbdriver"/>
+      <mkdir dir="dbdrivers/selected_dbdriver"/>
+      <copy todir="dbdrivers/selected_dbdriver" flatten="true">
+        <fileset dir="dbdrivers/" includes="**/@{files}"/>
+      </copy>
+    </sequential>
+  </macrodef>
   <!--  JDBC tests.
         You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones,
           although using the 'default' one is also an option.
@@ -180,7 +183,7 @@
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="junit-jdbc-testsuite">
-    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc14.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
@@ -188,19 +191,19 @@
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="jdbcresources01_mssqlserver_jndi"/>
     <junit-tests tests="jdbcresources02_mssqlserver_jndi"/>
-    <junit-tests target="install-dbdriver" files="postgresql-8.3-605.jdbc4.jar"/>
+    <install-dbdriver files="postgresql-8.3-605.jdbc4.jar"/>
     <junit-tests tests="jdbcresources01_pgsql_jndi"/>
     <junit-tests tests="jdbcresources02_pgsql_jndi"/>
-    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.8-bin.jar"/>
+    <install-dbdriver files="mysql-connector-java-5.1.8-bin.jar"/>
     <junit-tests tests="jdbcresources01_mysql_jndi"/>
     <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="jdbcresources01_sybase_jndi"/>
     <junit-tests tests="jdbcresources02_sybase_jndi"/>
-    <junit-tests target="install-dbdriver" files="db2*"/>
+    <install-dbdriver files="db2*"/>
     <junit-tests tests="jdbcresources01_ibmdb2_jndi"/>
     <junit-tests tests="jdbcresources02_ibmdb2_jndi"/>
   </target>
@@ -209,34 +212,34 @@
   </target>
   <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
   <target name="junit-jdbc-ncl-testsuite">
-    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc14.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
-    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.8-bin.jar"/>
+    <install-dbdriver files="mysql-connector-java-5.1.8-bin.jar"/>
     <junit-tests tests="jdbcresources01_mysql_jndi"/>
     <junit-tests tests="jdbcresources02_mysql_jndi"/>
-    <junit-tests target="install-dbdriver" files="postgresql-8.3-605.jdbc4.jar"/>
+    <install-dbdriver files="postgresql-8.3-605.jdbc4.jar"/>
     <junit-tests tests="jdbcresources01_pgsql_jndi"/>
     <junit-tests tests="jdbcresources02_pgsql_jndi"/>
   </target>
   <target name="junit-jdbc-crachrec">
     <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc14.jar"/>
     <junit-tests tests="crashrecovery11-oracle_jndi"/>
     <!--mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="crashrecovery11-mssqlserver_jndi"/>
-    <junit-tests target="install-dbdriver" files="db2*"/>
+    <install-dbdriver files="db2*"/>
     <junit-tests tests="crashrecovery11-ibmdb2_jndi"/>
-    <junit-tests target="install-dbdriver" files="postgresql-8.3-603.jdbc3.jar"/>
+    <install-dbdriver files="postgresql-8.3-603.jdbc3.jar"/>
     <junit-tests tests="crashrecovery11-pgsql_jndi"/>
-    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.7-bin.jar"/>
+    <install-dbdriver files="mysql-connector-java-5.1.7-bin.jar"/>
     <junit-tests tests="crashrecovery11-mysql_jndi"/>
-    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="crashrecovery11-sybase_jndi"/>
     <fail if="failed-tests" message="some tests failed"/>
   </target>
@@ -256,22 +259,22 @@
     <!-- jtatest01 : 6 tests, minute-->
     <junit-tests tests="jtatests01"/>
     <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-    <junit-tests target="install-dbdriver" files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc14.jar"/>
     <junit-tests tests="jdbclocals01_oracle_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
       <equals arg1="${java.specification.version}" arg2="1.6"/>
     </condition>
     <property name="mssql.driver" value="sqljdbc.jar"/>
-    <junit-tests target="install-dbdriver" files="${mssql.driver}"/>
+    <install-dbdriver files="${mssql.driver}"/>
     <junit-tests tests="jdbclocals01_mssqlserver_jndi"/>
-    <junit-tests target="install-dbdriver" files="postgresql-8.3-603.jdbc3.jar"/>
+    <install-dbdriver files="postgresql-8.3-603.jdbc3.jar"/>
     <junit-tests tests="jdbclocals01_pgsql_jndi"/>
-    <junit-tests target="install-dbdriver" files="mysql-connector-java-5.1.7-bin.jar"/>
+    <install-dbdriver files="mysql-connector-java-5.1.7-bin.jar"/>
     <junit-tests tests="jdbclocals01_mysql_jndi"/>
-    <junit-tests target="install-dbdriver" files="jconn3.jar"/>
+    <install-dbdriver files="jconn3.jar"/>
     <junit-tests tests="jdbclocals01_sybase_jndi"/>
-    <junit-tests target="install-dbdriver" files="db2*"/>
+    <install-dbdriver files="db2*"/>
     <junit-tests tests="jdbclocals01_ibmdb2_jndi"/>
     <fail if="failed-tests" message="some tests failed"/>
   </target>
