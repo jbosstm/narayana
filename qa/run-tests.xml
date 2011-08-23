@@ -72,6 +72,7 @@
     <junit-tests tests="crashrecovery06"/>
     <!-- crashrecovery12 : 7 tests, 5 minutes -->
     <junit-tests tests="crashrecovery12"/>
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="ci-tests" depends="junit-testsuite,junit-jdbc-ncl-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
@@ -295,6 +296,8 @@
     <!-- you need the right .so for the platform the test runs on. Note the the jvm
             may print 'can't find agent lib' when it can find one but it's the wrong one.
               ext/libjbossAgent_linux64.so : Fedora 12, x86_64  additional.elements="-agentpath:ext/libjbossAgent_linux64.so"/> -->
+              
+    <fail if="failed-tests" message="some tests failed"/>
   </target>
   <!-- ##################################### -->
   <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
