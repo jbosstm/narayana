@@ -48,7 +48,7 @@
   </target>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="test">
-    <property name="ojdbc14.jar" value="driver"/>
+    <property name="driver" value="ojdbc14.jar"/>
     <fail unless="test" message="you need to specify the name of a test"/>
     <install-dbdriver files="${driver}"/>
     <junit-tests tests="${test}"/>
