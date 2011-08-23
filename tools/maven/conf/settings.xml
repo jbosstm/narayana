@@ -8,5 +8,5 @@
    |
    | Default: ~/.m2/repository
   -->
-  <localRepository>./repository</localRepository>
+  <localRepository>${user.home}/.m2/narayana/repository</localRepository>
 </settings>
