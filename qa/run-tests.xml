@@ -46,6 +46,15 @@
     <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
     <fail if="failed-tests" message="some tests failed"/>
   </target>
+  <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
+  <target name="test">
+    <property name="ojdbc14.jar" value="driver"/>
+    <fail unless="test" message="you need to specify the name of a test"/>
+    <install-dbdriver files="${driver}"/>
+    <junit-tests tests="${test}"/>
+    <!--<param name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
+    <fail if="failed-tests" message="some tests failed"/>
+  </target>
   <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
   <target name="express">
     <!-- currenttests01 : 36 tests, 3 minutes -->
