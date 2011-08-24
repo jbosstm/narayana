@@ -19,12 +19,55 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>wscf-all</artifactId>
-  <packaging>pom</packaging>
-  <name>wscf all</name>
-  <description>wscf all</description>
-  <modules>
-    <module>wscf</module>
-    <module>wscf11</module>
-  </modules>
+  <artifactId>wscf11</artifactId>
+  <packaging>jar</packaging>
+  <name>wscf11</name>
+  <description>wscf11</description>
+  <build>
+    <sourceDirectory>classes11</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${basedir}/classes</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>ws-c11</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>wsas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

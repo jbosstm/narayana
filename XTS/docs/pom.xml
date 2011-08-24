@@ -24,6 +24,6 @@
   <name>xts docs</name>
   <description>xts docs</description>
   <modules>
-    <module>Transactions_XTS_Administration_And_Development_Guide</module>
+    <module>administration_and_development_guide</module>
   </modules>
 </project>

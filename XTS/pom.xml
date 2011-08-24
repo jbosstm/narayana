@@ -38,6 +38,7 @@
   </build>
   <modules>
     <module>WSAS</module>
+    <module>WSAS/xts-test-servlet</module>
     <module>WS-C</module>
     <module>WSCF</module>
     <module>WS-T</module>

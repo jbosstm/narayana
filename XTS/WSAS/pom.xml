@@ -19,12 +19,27 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>wsas-all</artifactId>
-  <packaging>pom</packaging>
-  <name>wsas all</name>
-  <description>wsas all</description>
-  <modules>
-    <module>wsas</module>
-    <module>xts-test-servlet</module>
-  </modules>
+  <artifactId>wsas</artifactId>
+  <packaging>jar</packaging>
+  <name>wsas</name>
+  <description>wsas</description>
+  <build>
+    <sourceDirectory>classes</sourceDirectory>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

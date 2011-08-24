@@ -133,9 +133,8 @@
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <artifactSet>
                 <includes>
-                  <include>org.jboss.narayana.xts:ws-c:jar:api:${project.version}</include>
-                  <include>org.jboss.narayana.xts:ws-t:jar:api:${project.version}</include>
-                  <include>org.jboss.narayana.xts:wstx:jar:api:${project.version}</include>
+                  <include>org.jboss.narayana.xts:ws-c11:jar:api:${project.version}</include>
+                  <include>org.jboss.narayana.xts:ws-t11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:wstx11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:bridge:jar:api:${project.version}</include>
                 </includes>
@@ -172,15 +171,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -188,15 +179,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -212,22 +195,12 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t</artifactId>
+      <artifactId>ws-c11</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
-      <classifier>api</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx</artifactId>
       <classifier>api</classifier>
     </dependency>
     <dependency>

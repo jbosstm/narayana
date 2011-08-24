@@ -42,15 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-c</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>ws-t</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -62,15 +54,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wscf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf11</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>wstx</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>

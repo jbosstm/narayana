@@ -27,6 +27,6 @@
     <module>administration_guide</module>
     <module>development_guide</module>
     <module>installation_guide</module>
-    <module>quick_start</module>
+    <module>quick_start_guide</module>
   </modules>
 </project>
