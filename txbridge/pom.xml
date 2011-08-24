@@ -120,6 +120,12 @@
       <artifactId>jboss-server-manager</artifactId>
       <version>1.0.2.GA</version>
       <scope>test</scope>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>jboss-logging-spi</artifactId>
+      		<groupId>org.jboss.logging</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
