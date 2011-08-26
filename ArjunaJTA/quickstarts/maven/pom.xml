@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jta.quickstarts</groupId>
   <artifactId>maven</artifactId>
-  <version>5.0.0.M1-SNAPSHOT</version>
+  <version>5.0.0.M1</version>
   <packaging>jar</packaging>
   <name>basic maven example</name>
   <description>basic maven example</description>

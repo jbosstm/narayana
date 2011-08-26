@@ -24,7 +24,7 @@
   <property name="driver.home" value="dbdrivers"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
+  <property name="narayana.version" value="5.0.0.M1"/>
   <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
   <property name="org.jboss.jbossts.qa.idlcompiler.lib" location="../ArjunaJTS/orbportability/lib/ext"/>
   <!-- you should not need to configure anything below here -->

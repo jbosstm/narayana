@@ -8,7 +8,7 @@ PART 1 Local Version
 2. deploy REST-AT war
 
 	cd /home/mmusgrov/source/jbosstm/trunk/rest-tx
-	cp webservice/target/rest-tx-web-5.0.0.M1-SNAPSHOT.war /home/mmusgrov/source/as/jboss-7.0.0.CR1/standalone/deployments
+	cp webservice/target/rest-tx-web-5.0.0.M1.war /home/mmusgrov/source/as/jboss-7.0.0.CR1/standalone/deployments
 
 3. deploy a simple javascript for monitoring REST-AT
 
@@ -84,7 +84,7 @@ pulishes the app at http://rhcdemo-mm2.dev.rhcloud.com/
 
 	cd rhcdemo
 
-	cp /home/mmusgrov/source/as/jboss-7.0.0.CR1/standalone/deployments/rest-tx-web-5.0.0.M1-SNAPSHOT.war deployments/
+	cp /home/mmusgrov/source/as/jboss-7.0.0.CR1/standalone/deployments/rest-tx-web-5.0.0.M1.war deployments/
 
 	git add deployments
 	git commit -m "rest war"

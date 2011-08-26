@@ -22,7 +22,7 @@
 
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="narayana.version" value="5.0.0.M1-SNAPSHOT"/>
+	<property name="narayana.version" value="5.0.0.M1"/>
 
 	<!-- set properties for AS testing -->
 	<property environment="env"/>
@@ -60,7 +60,7 @@
         <pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 	</path>
 
-	<target name="org.jboss.jbossts.qa.init">
+	<target name="org.jboss.jbossts.qa.init" depends="org.jboss.jbossts.qa.clean">
 
 		<mkdir dir="${org.jboss.jbossts.qa.buildroot}"/>
 		<mkdir dir="${org.jboss.jbossts.qa.build.classes}"/>
@@ -79,7 +79,7 @@
 	<target name="org.jboss.jbossts.qa.idl.compile"
 			depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init, org.jboss.jbossts.qa.idl.compile.init, org.jboss.jbossts.qa.idl.jacorb.compile"/>
 
-	<target name="org.jboss.jbossts.qa.idl.compile.init">
+	<target name="org.jboss.jbossts.qa.idl.compile.init" depends="org.jboss.jbossts.qa.init">
 
 		<taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList"
 				 classpathref="jts.classpath"/>
@@ -172,10 +172,6 @@
 					 mappings="SupportTests01=org.jboss.jbossts.qa;CosTransactions=org.omg;CORBA=org.omg"/>
 		</idl-build-list>
 
-	</target>
-
-	<target name="org.jboss.jbossts.qa.idl.jacorb.compile" if="org.jboss.jbossts.qa.jacorb" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init">
-
 		<taskdef name="idl-compiler" classname="com.arjuna.orbportability.common.ant.IDLCompiler"
 				 classpathref="jts.classpath"/>
 
@@ -193,10 +189,9 @@
 					  buildlist="${org.jboss.jbossts.qa.jts.idl.buildlist}"
 					  destdir="${org.jboss.jbossts.qa.build.idl}"
 					  parameters="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+	</target>
 
-
-		
-
+	<target name="org.jboss.jbossts.qa.idl.jacorb.compile" if="org.jboss.jbossts.qa.jacorb" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init">
 
 		<javac srcdir="${org.jboss.jbossts.qa.build.idl}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"

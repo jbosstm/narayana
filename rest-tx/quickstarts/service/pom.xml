@@ -3,7 +3,7 @@
   <parent>
     <artifactId>quickstarts</artifactId>
     <groupId>org.jboss.narayana.rts.quickstarts</groupId>
-    <version>5.0.0.M1-SNAPSHOT</version>
+    <version>5.0.0.M1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>service</artifactId>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>rest-tx-api</artifactId>
-      <version>5.0.0.M1-SNAPSHOT</version>
+      <version>5.0.0.M1</version>
     </dependency>
 
     <!-- Jersey container for running participant services -->

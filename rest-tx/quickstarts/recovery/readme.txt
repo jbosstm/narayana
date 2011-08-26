@@ -6,7 +6,7 @@ and still recover when the VM hosting the service crashes whilst the transaction
 
 USAGE
 -----
-Deploy the rest-tx war (rest-tx-web-5.0.0.M1-SNAPSHOT.war) into a running AS7 (or AS6) application server listening
+Deploy the rest-tx war (rest-tx-web-5.0.0.M1.war) into a running AS7 (or AS6) application server listening
 for http requests on localhost (if you use a different host/port change the url in MultipleParticipants.TXN_MGR_URK).
 
 To test recovery you will need to run the example twice, once to generate a failure condition:

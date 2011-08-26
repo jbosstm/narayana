@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
-    <version>5.0.0.M1-SNAPSHOT</version>
+    <version>5.0.0.M1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -35,7 +35,7 @@
     <module>quickstarts</module>
   </modules>
   <properties>
-    <version.artifactId>5.0.0.M1-SNAPSHOT</version.artifactId>
+    <version.artifactId>5.0.0.M1</version.artifactId>
     <artifactId.name>rest-tx</artifactId.name>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
   </properties>

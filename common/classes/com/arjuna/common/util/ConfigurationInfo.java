@@ -123,7 +123,7 @@ public class ConfigurationInfo
             }
 
         } catch(Exception exception) {
-            exception.printStackTrace();
+            // This is OK, it means we will run with defaults exception.printStackTrace();
         } finally {
             if(is!= null) {
                 try {

@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.rts.quickstarts</groupId>
   <artifactId>quickstarts</artifactId>
-  <version>5.0.0.M1-SNAPSHOT</version>
+  <version>5.0.0.M1</version>
   <name>RESTful Atomic Transaction Quickstarts</name>
   <description>Provides examples of how to use transactions with web applications</description>
   <packaging>pom</packaging>

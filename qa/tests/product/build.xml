@@ -44,7 +44,7 @@ will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="build.dir" value="${basedir}/build" />
     <property name="build.classes.dir" value="${build.dir}/classes" />
-    <property name="jbossts.install" value="../../dist/narayana-full-5.0.0.M1-SNAPSHOT" />
+    <property name="jbossts.install" value="../../dist/narayana-full-5.0.0.M1" />
     <!--
         location of resources needed by the various products
       -->
