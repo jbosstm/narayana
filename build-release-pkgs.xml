@@ -185,11 +185,11 @@
     <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
     <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
     <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
-    <copy todir="tmp-docs-dir/guides/narayana-jts-orbportability">
-      <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/html"/>
+    <copy todir="tmp-docs-dir/guides/narayana-jts-orbportability_guide">
+      <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <copy todir="tmp-docs-dir/guides/narayana-jts-quick_start">
-      <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/quick_start/target/docbook/publish/en-US/html"/>
+    <copy todir="tmp-docs-dir/guides/narayana-jts-quick_start_guide">
+      <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/quick_start_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <copy todir="tmp-docs-dir/guides/narayana-jts-administration_guide">
       <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/html"/>
@@ -204,7 +204,7 @@
       <fileset dir="${workdir}/${tag}/ArjunaCore/docs/development_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <copy todir="tmp-docs-dir/guides/narayana-jta-quick_start">
-      <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start/target/docbook/publish/en-US/html"/>
+      <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <copy todir="tmp-docs-dir/guides/narayana-jta-installation_guide">
       <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html"/>
@@ -215,8 +215,8 @@
     <copy todir="tmp-docs-dir/guides/narayana-jta-development_guide">
       <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <copy todir="tmp-docs-dir/guides/xts-development_guide">
-      <fileset dir="${workdir}/${tag}/XTS/docs/Transactions_XTS_Administration_And_Development_Guide/target/docbook/publish/en-US/html"/>
+    <copy todir="tmp-docs-dir/guides/xts-administration_and_development_guide">
+      <fileset dir="${workdir}/${tag}/XTS/docs/administration_and_development_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <copy todir="tmp-docs-dir/guides/failure_recovery_guide">
       <fileset dir="${workdir}/${tag}/docs/failure_recovery_guide/target/docbook/publish/en-US/html"/>
