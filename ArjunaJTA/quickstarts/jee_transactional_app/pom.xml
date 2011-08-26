@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jta.quickstarts</groupId>
   <artifactId>jee_transactional_app</artifactId>
-  <version>5.0.0.M1</version>
+  <version>5.0.0.M2-SNAPSHOT</version>
   <name>basic integration example</name>
   <description>basic integration example</description>
   <packaging>war</packaging>

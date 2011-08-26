@@ -22,7 +22,7 @@
 
 	<!-- set this property to the location of a JBossTS core build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="narayana.version" value="5.0.0.M1"/>
+	<property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
 
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>

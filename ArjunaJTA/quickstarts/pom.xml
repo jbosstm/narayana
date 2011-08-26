@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana.jta.quickstarts</groupId>
   <artifactId>quickstarts</artifactId>
-  <version>5.0.0.M1</version>
+  <version>5.0.0.M2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>JBoss JTA Examples</name>
   <description>All quickstarts of JBoss JTA</description>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
-      <version>5.0.0.M1</version>
+      <version>5.0.0.M2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

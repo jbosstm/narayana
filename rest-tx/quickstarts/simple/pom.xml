@@ -19,12 +19,12 @@
   <parent>
     <groupId>org.jboss.narayana.rts.quickstarts</groupId>
     <artifactId>quickstarts</artifactId>
-    <version>5.0.0.M1</version>
+    <version>5.0.0.M2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>simple</artifactId>
-  <version>5.0.0.M1</version>
+  <version>5.0.0.M2-SNAPSHOT</version>
   <name>RESTful Atomic Transaction Quickstart: Basic</name>
   <description>Basic example of how to start and stop a REST Atomic transaction</description>
   <build>
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>rest-tx-api</artifactId>
-      <version>5.0.0.M1</version>
+      <version>5.0.0.M2-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

@@ -66,7 +66,7 @@
   <!--
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
-    <property name="version" value="5.0.0.M1"/>
+    <property name="version" value="5.0.0.M2-SNAPSHOT"/>
 -->
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <!--property name="workdir" location="/tmp/packaged_builds"/-->
@@ -75,7 +75,7 @@
   <!-- The tag as it appears under svnbase -->
   <property name="tag" value="trunk"/>
   <!-- The file name base for the user downloadable files. Derive it from the tag -->
-  <property name="version" value="5.0.0.M1"/>
+  <property name="version" value="5.0.0.M2-SNAPSHOT"/>
   <!-- the location the JBossTS web site content is copied to -->
   <property name="downloads.dir" value="${user.home}/narayana/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
   <property name="docs.dir" value="${user.home}/narayana/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
@@ -181,10 +181,10 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
-    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
-    <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
-    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
+    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
+    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
+    <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
+    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
     <copy todir="tmp-docs-dir/guides/narayana-jts-orbportability">
       <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability/target/docbook/publish/en-US/html"/>
     </copy>
@@ -233,10 +233,10 @@
     <copy todir="tmp-docs-dir/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M1-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M1-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
-    <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M1-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
-    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M1-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
+    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
     <move todir="${downloads.dir}/${version}" verbose="true">
       <fileset dir="tmp-downloads-dir"/>
     </move>

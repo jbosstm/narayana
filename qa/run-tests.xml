@@ -38,7 +38,7 @@
 <project name="QA Tests for JBossTS" default="junit" basedir=".">
   <!-- set this property to the location of a JBossTS core build -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.0.0.M1"/>
+  <property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
   <property name="working.dir" location="build"/>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="scratch">

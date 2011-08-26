@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana</groupId>
   <artifactId>narayana-all</artifactId>
-  <version>5.0.0.M1</version>
+  <version>5.0.0.M2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
   <name>${project.artifactId}</name>

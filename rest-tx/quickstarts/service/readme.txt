@@ -6,7 +6,7 @@ for deploying the participant web services, but any conforming web container wil
 
 USAGE
 -----
-Deploy the rest-tx war (rest-tx-web-5.0.0.M1.war) into a running AS7 (or AS6) application server
+Deploy the rest-tx war (rest-tx-web-5.0.0.M2-SNAPSHOT.war) into a running AS7 (or AS6) application server
 that is listening for http requests on localhost (if you use a different host/port change the url in
 MultipleParticipants.TXN_MGR_URL).
 

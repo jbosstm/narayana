@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>rest-tx</artifactId>
-    <version>5.0.0.M1</version>
+    <version>5.0.0.M2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -29,7 +29,7 @@
   <description>Provides Transactions for web applications</description>
   <properties>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-    <version.artifactId>5.0.0.M1</version.artifactId>
+    <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
     <artifactId.name>rest-tx</artifactId.name>
     <version.org.jboss.jbossas>6.0.0.20100721-M4</version.org.jboss.jbossas>
   </properties>
