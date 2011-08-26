@@ -69,13 +69,13 @@
     <property name="version" value="5.0.0.M2-SNAPSHOT"/>
 -->
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
-  <!--property name="workdir" location="/tmp/packaged_builds"/-->
+  <!--property name="workdir" location="/tmp/narayana_releases"/-->
   <!-- where to get the source -->
-  <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
+  <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm/tags"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="tag" value="trunk"/>
+  <property name="tag" value="5_0_0_M1"/>
   <!-- The file name base for the user downloadable files. Derive it from the tag -->
-  <property name="version" value="5.0.0.M2-SNAPSHOT"/>
+  <property name="version" value="5.0.0.M1"/>
   <!-- the location the JBossTS web site content is copied to -->
   <property name="downloads.dir" value="${user.home}/narayana/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
   <property name="docs.dir" value="${user.home}/narayana/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
@@ -117,7 +117,7 @@
   </target>
   <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
     <!-- build the binary releases -->
-    <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
+    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
       <arg line="clean -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/orson-0.5.0.jar"/>
     </exec>
     <!-- package the JTA only src tree (no JTS, XTS, txbridge, RTS) -->
@@ -127,7 +127,7 @@
     <delete file="${workdir}/narayana-full-${version}-src.zip"/>
     <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${version}-src.zip" includes="${tag}/**" excludes="${tag}/repository/**"/>
     <!-- build the binary releases -->
-    <exec dir="${workdir}/${tag}" executable="mvn" failonerror="true">
+    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
       <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/orson-0.5.0.jar"/>
     </exec>
   </target>
@@ -181,10 +181,10 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
-    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
-    <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
-    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M2-SNAPSHOT-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
+    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
+    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
+    <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-${version}-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
+    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${version}-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
     <copy todir="tmp-docs-dir/guides/narayana-jts-orbportability_guide">
       <fileset dir="${workdir}/${tag}/ArjunaJTS/docs/orbportability_guide/target/docbook/publish/en-US/html"/>
     </copy>
@@ -233,10 +233,10 @@
     <copy todir="tmp-docs-dir/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
-    <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
-    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-5.0.0.M2-SNAPSHOT-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-${version}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
+    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${version}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
     <move todir="${downloads.dir}/${version}" verbose="true">
       <fileset dir="tmp-downloads-dir"/>
     </move>
