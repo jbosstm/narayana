@@ -203,7 +203,7 @@
     <copy todir="tmp-docs-dir/guides/arjunacore-development_guide">
       <fileset dir="${workdir}/${tag}/ArjunaCore/docs/development_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <copy todir="tmp-docs-dir/guides/narayana-jta-quick_start">
+    <copy todir="tmp-docs-dir/guides/narayana-jta-quick_start_guide">
       <fileset dir="${workdir}/${tag}/ArjunaJTA/docs/quick_start_guide/target/docbook/publish/en-US/html"/>
     </copy>
     <copy todir="tmp-docs-dir/guides/narayana-jta-installation_guide">
@@ -233,8 +233,8 @@
     <copy todir="tmp-docs-dir/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
     <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-${version}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
     <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${version}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
     <move todir="${downloads.dir}/${version}" verbose="true">
