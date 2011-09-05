@@ -23,14 +23,18 @@ REM Ignore the users classpath, cause it might mess
 REM things up
 REM ******************************************************
 
+set PWD=%~dp0
+echo %PWD%
+
+
 SETLOCAL
 
 set CLASSPATH=
 set M2_HOME=
 set MAVEN_HOME=
 
-set MAVEN_OPTS="%MAVEN_OPTS% -Xms1024m -Xmx1024m -XX:PermSize=1024m -XX:MaxPermSize=1024m"
-set MVN_OPTIONS="-s tools/maven/conf/settings.xml -Dorson.jar.location=`pwd`/ext/orson-0.5.0.jar -Demma.jar.location=`pwd`/ext/emma.jar"
+set MAVEN_OPTS=%MAVEN_OPTS% -Xms1024m -Xmx1024m -XX:PermSize=1024m -XX:MaxPermSize=1024m
+set MVN_OPTIONS=-gs tools\maven\conf\settings.xml -Dorson.jar.location=%PWD%\ext\orson-0.5.0.jar -Demma.jar.location=%PWD%\ext\emma.jar
 
 REM ******************************************************
 REM - "for" loops have been unrolled for compatibility
