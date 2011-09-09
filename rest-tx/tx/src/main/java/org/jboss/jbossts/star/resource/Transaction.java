@@ -175,6 +175,17 @@ public class Transaction extends AtomicAction
             r = pendingList.peekNext(r);
         }
     }
+    public boolean isGone()
+    {
+         switch ( status() )
+        {
+            case ActionStatus.COMMITTED  :
+            case ActionStatus.ABORTED    :
+                  return true;
+            default:
+                return false;
+        }
+    }
 
     public boolean isFinished()
     {

@@ -278,6 +278,8 @@ public class RESTRecord extends AbstractRecord
      */
     public int topLevelOnePhaseCommit()
     {
+		TxSupport txs = new TxSupport();
+
         check_halt(Fault.commit_halt);
         check_suspend(Fault.commit_suspend);
 
@@ -289,18 +291,30 @@ public class RESTRecord extends AbstractRecord
             if (log.isTraceEnabled())
                 log.trace("committing " + this.terminateUrl);
             
-            if (!TxSupport.isReadOnly(status))
-                status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-                        TxSupport.toStatusContent(TxSupport.COMMITTED), null));   // ONE_PHASE_COMMIT_CONTENT
-            else
+            if (!TxSupport.isReadOnly(status)) {
+                txs = new TxSupport();
+				String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+					this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
+					TxSupport.toStatusContent(TxSupport.COMMITTED), null);	// ONE_PHASE_COMMIT_CONTENT
+
+                status = txs.getStatus(body);
+
+            	if (log.isTraceEnabled())
+                	log.trace("commit http status: " + txs.getStatus() + " RTS status: " + status);
+            } else {
                 status = TxSupport.COMMITTED;
+			}
 
             if (log.isTraceEnabled())
                 log.trace("COMMIT OK at terminateUrl: " + this.terminateUrl);
         }
         catch (HttpResponseException e)
         {
+            if (log.isDebugEnabled())
+                log.debug("commit exception: " + e + " body: " + txs.getBody());
             checkFinishError(e.getActualResponse(), true);
+
+			status = txs.getBody();
         }
 
         return statusToOutcome(status);

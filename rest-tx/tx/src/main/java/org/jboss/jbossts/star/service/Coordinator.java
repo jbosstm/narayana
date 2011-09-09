@@ -169,13 +169,17 @@ public class Coordinator
         int timeout = TxSupport.getIntValue(content, TxSupport.TIMEOUT_PROPERTY, 0); // default is 0 - never timeout
         String uid = tx.get_uid().fileStringForm();
 
+        log.trace("coordinator: timeout=" + timeout);
         transactions.put(uid, tx);
 
         // round up the timeout from milliseconds to seconds
         if (timeout != 0) {
-            timeout = timeout / 1000;
             if (timeout == 0)
                 timeout = 1;
+            else if (timeout < 0)
+                timeout = 0;
+			else
+            	timeout /= 1000;
         }
 		
         int status = tx.begin(timeout);
@@ -186,10 +190,12 @@ public class Coordinator
                 URI uri1 = TxSupport.getUri(info, info.getPathSegments().size(), uid);
                 Response.ResponseBuilder builder = Response.created(uri1);
 
-                TxSupport.addLinkHeader(builder, info, TxSupport.TERMINATOR_LINK, TxSupport.TERMINATOR_LINK, uid, "terminate");
-                TxSupport.addLinkHeader(builder, info, TxSupport.PARTICIPANT_LINK, TxSupport.PARTICIPANT_LINK, uid);
+                TxSupport.addLinkHeader(builder, info, TxSupport.TERMINATOR_LINK,
+					TxSupport.TERMINATOR_LINK, uid, "terminate");
+                TxSupport.addLinkHeader(builder, info, TxSupport.PARTICIPANT_LINK,
+					TxSupport.PARTICIPANT_LINK, uid);
 
-                return builder.build();
+				return builder.build();
             }
 
             throw new TransactionStatusException("Transaction failed to start: " + status);
@@ -251,29 +257,47 @@ public class Coordinator
     @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response terminateTransaction(@PathParam("TxId")String txId, @QueryParam("fault") @DefaultValue("")String fault, String content)
     {
-        log.trace("coordinator: commit: transaction-manager/" + txId + "/terminate");
+        log.trace("coordinator: commit: transaction-manager/" + txId + "/terminate : content: " + content);
 
         Transaction tx = getTransaction(txId);
         Collection<String> enlistmentIds = new ArrayList<String>();
         String how = TxSupport.getStringValue(content, TxSupport.STATUS_PROPERTY);
         String status;
-        int aaRes;
         int scRes;
-        boolean commit;
+		int ihow;
 
         tx.getParticipants(enlistmentIds);
 
+		/*
+			ABORT_ONLY is not in the spec for the same reasons as it's not in the WS-TX and WS-CAF where
+			it is assumed that only the txn originator can end the tx:
+			- simply register a synchronization in the transaction that prevented a commit from happening;
+			and I haven't implemented synchronisations yet. 
+			It is unclear why allowing similar functionality via synchronisations doesn't open up a similar
+			security hole.
+		*/
+
         if (TxSupport.COMMITTED.equals(how))
-            commit  = true;
+            ihow = 0;
         else if (TxSupport.ABORTED.equals(how))
-            commit = false;
+            ihow = 1;
+        else if (TxSupport.ABORT_ONLY.equals(how))
+            ihow = 2;
         else
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
 
         tx.setFault(fault);
         AtomicAction.resume(tx);
-        aaRes = commit ? tx.commit(true) : tx.abort();
-        status = tx.getStatus(aaRes);
+
+		if (ihow == 0) {
+            status = tx.getStatus(tx.commit(true));
+        } else if (ihow == 1) {
+			status = tx.getStatus(tx.abort());
+        } else {
+			tx.preventCommit();
+            status = tx.getStatus();
+        }
+
         AtomicAction.suspend();
 
         log.trace("terminate result: " + status);
@@ -289,7 +313,7 @@ public class Coordinator
                     i.remove();
         } else if (tx.isFinishing()) {
             // TODO who cleans up in this case
-            log.debug("transaction is still terminating: " + aaRes);
+            log.debug("transaction is still terminating: " + status);
         }
 
         if (status.length() == 0)

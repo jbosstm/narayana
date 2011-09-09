@@ -228,12 +228,22 @@ public class TxSupport
                 addLocationHeader(connection, linkHeaders);
             }
 
+			if (log.isTraceEnabled())
+				log.trace("httpRequest:" +
+					"\n\turl: " + url +
+					"\n\tmethod: " + method +
+					"\n\tmediaType: " + mediaType +
+					"\n\tcontent: " + content +
+					"\n\tresponse code: " + status +
+					"\n\tresponse body: " + body
+				);
+
             if (expect != null && expect.length != 0) {
                 for (int sc : expect)
                     if (sc == status)
                         return body;
 
-                throw new HttpResponseException(null, "", expect, status);
+                throw new HttpResponseException(null, body, expect, status);
             } else {
                 return body;
             }
