@@ -130,8 +130,8 @@ and show both counters were incremented:
 
 	# enlist 2 participants via the BROWSER
 	# PARTICIPANT_HOST has to be an externally facing web address, e.g. gondolin.ncl.ac.uk:9188
-	http://$PARTICIPANT_HOST/service?counter=0&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>
-	http://$PARTICIPANT_HOST/service?counter=1&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>
+	curl "http://$PARTICIPANT_HOST/service?counter=0&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>"
+	curl "http://$PARTICIPANT_HOST/service?counter=1&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>"
 
  9. Tell tell the service to halt the VM before committing the second work load:
 
@@ -142,7 +142,7 @@ and show both counters were incremented:
 	ruby client.rb -v Put -a "<VALUE OF endUrl: FROM STEP 8 ABOVE>" -b "txStatus=TransactionCommitted"
 
  11. Restart the service (it will have halted during commit of the 2nd work load) and quickly show tha
-	http://$PARTICIPANT_HOST/service/query
+	curl http://$PARTICIPANT_HOST/service/query
 	shows counter 1 hasn't incremented yet.
 
 	wait for recovery to kick in and reissue the counter query
