@@ -80,7 +80,7 @@ deployed to a local git repo which will then be pushed to the cloud:
 	rhc-create-domain -n mm2 -l mmusgrov+3@redhat.com
 	rhc-create-app -a rhcdemo -t jbossas-7.0
 
-pulishes the app at http://rhcdemo-mm2.dev.rhcloud.com/
+pulishes the app at http://$TRANSACTION_MANAGER_HOST/
 
 	cd rhcdemo
 
@@ -92,9 +92,12 @@ pulishes the app at http://rhcdemo-mm2.dev.rhcloud.com/
 
 Now the application will be available at:
 
+The hostname where the transaction-manager is deployed will be referred to as: $TRANSACTION_MANAGER_HOST
+The hostname where the counter rest participant is deployed will be referred to as $PARTICIPANT_HOST
+
 TYPE into browser:
-	http://rhcdemo-mm2.dev.rhcloud.com
-	http://rhcdemo-mm2.dev.rhcloud.com/rest-tx/tx/transaction-manager
+	http://$TRANSACTION_MANAGER_HOST/rest-tx/tx/transaction-manager
+	http://$PARTICIPANT_HOST/service/query
 
 Instead of using a browser/javascript to start and stop transactions we will employ a Ruby client:
 
@@ -103,42 +106,43 @@ and then start a txn:
 
 cd /home/mmusgrov/source/jbosstm/trunk/rest-tx/quickstarts/demo
 # LIST TRANSACTIONS
-ruby client.rb -p 1 -v Get -a "http://rhcdemo-mm2.dev.rhcloud.com/rest-tx/tx/transaction-manager"
+ruby client.rb -v Get -a "http://$TRANSACTION_MANAGER_HOST/rest-tx/tx/transaction-manager"
 # START TRANSACTION
-ruby client.rb -p 1 -v Post -a "http://rhcdemo-mm2.dev.rhcloud.com/rest-tx/tx/transaction-manager" -b "timeout=0"
+ruby client.rb -v Post -a "http://$TRANSACTION_MANAGER_HOST/rest-tx/tx/transaction-manager" -b "timeout=0"
+record the value of endUrl as you need it below
 # COMMIT TRANSACTION
-ruby client.rb -p 1 -v Put -a "" -b "txStatus=TransactionCommitted"
+ruby client.rb -v Put -a "<VALUE OF endUrl: FROM COMMAND ABOVE>" -b "txStatus=TransactionCommitted"
 # LIST TRANSACTIONS
-ruby client.rb -p 1 -v Get -a "http://rhcdemo-mm2.dev.rhcloud.com/rest-tx/tx/transaction-manager"
+ruby client.rb -v Get -a "http://$TRANSACTION_MANAGER_HOST/rest-tx/tx/transaction-manager"
 
 Repeat steps 7 to 10:
  7. (increment both counters),
-	http://localhost:8080/service?counter=0
-	http://localhost:8080/service?counter=1
+	http://$PARTICIPANT_HOST/service?counter=0
+	http://$PARTICIPANT_HOST/service?counter=1
 
 and show both counters were incremented:
 
-	http://localhost:8080/service/query
+	http://$PARTICIPANT_HOST/service/query
 
  8. Now transactionally increment both counters failing the second request:
 	# START TRANSACTION via the COMMAND LINE
-	ruby client.rb -p 1 -v Post -a "http://rhcdemo-mm2.dev.rhcloud.com/rest-tx/tx/transaction-manager" -b "timeout=0"
+	ruby client.rb -v Post -a "http://$TRANSACTION_MANAGER_HOST/rest-tx/tx/transaction-manager" -b "timeout=0"
 
 	# enlist 2 participants via the BROWSER
-	# have to use the externally facing web address
-	http://gondolin.ncl.ac.uk:9188/service?counter=0&enlistURL=
-	http://gondolin.ncl.ac.uk:9188/service?counter=1&enlistURL=
+	# PARTICIPANT_HOST has to be an externally facing web address, e.g. gondolin.ncl.ac.uk:9188
+	http://$PARTICIPANT_HOST/service?counter=0&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>
+	http://$PARTICIPANT_HOST/service?counter=1&enlistURL=<VALUE OF enlistUrl: FROM COMMAND ABOVE>
 
  9. Tell tell the service to halt the VM before committing the second work load:
 
-	http://localhost:8080/service?failWid=9
+	http://$PARTICIPANT_HOST/service?failWid=9
 
  10. Commit the transaction
 
-	ruby client.rb -p 1 -v Put -a "" -b "txStatus=TransactionCommitted"
+	ruby client.rb -v Put -a "<VALUE OF endUrl: FROM STEP 8 ABOVE>" -b "txStatus=TransactionCommitted"
 
  11. Restart the service (it will have halted during commit of the 2nd work load) and quickly show tha
-	http://localhost:8080/service/query
+	http://$PARTICIPANT_HOST/service/query
 	shows counter 1 hasn't incremented yet.
 
 	wait for recovery to kick in and reissue the counter query

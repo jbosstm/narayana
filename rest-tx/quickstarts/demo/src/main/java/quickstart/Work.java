@@ -13,6 +13,7 @@ class Work implements java.io.Serializable {
     int counter;
 
     public Work(String enlistUrl, int wid, int index, int counter) {
+	System.out.println("Creating counter with: " + wid + " " + index + " " + counter);
         this.enlistUrl = enlistUrl;
         this.wid = wid;
         this.index = index;
