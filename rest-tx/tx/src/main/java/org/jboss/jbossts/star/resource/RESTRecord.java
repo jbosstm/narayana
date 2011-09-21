@@ -153,6 +153,8 @@ public class RESTRecord extends AbstractRecord
             return TwoPhaseOutcome.FINISH_OK;
         else if (TxSupport.COMMITTED.equals(status))
             return TwoPhaseOutcome.FINISH_OK;
+        else if (TxSupport.COMMITTED_ONE_PHASE.equals(status))
+            return TwoPhaseOutcome.FINISH_OK;
         else if (TxSupport.PREPARED.equals(status))
             return TwoPhaseOutcome.PREPARE_OK;
         else if (TxSupport.READONLY.equals(status))
@@ -205,8 +207,10 @@ public class RESTRecord extends AbstractRecord
 
         try
         {
-            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT",
-                    TxSupport.STATUS_MEDIA_TYPE, TxSupport.toStatusContent(TxSupport.PREPARED), null));
+            status = TxSupport.getStatus(
+				new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+					this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
+					TxSupport.toStatusContent(TxSupport.PREPARED), null));
 
             prepared = true;
 
@@ -262,7 +266,7 @@ public class RESTRecord extends AbstractRecord
         if (!prepared)
             return TwoPhaseOutcome.NOT_PREPARED;
 
-        return topLevelOnePhaseCommit();
+        return doCommit(TxSupport.COMMITTED);
     }
 
     public int nestedOnePhaseCommit()
@@ -278,6 +282,11 @@ public class RESTRecord extends AbstractRecord
      */
     public int topLevelOnePhaseCommit()
     {
+		return doCommit(TxSupport.COMMITTED_ONE_PHASE);
+    }
+
+    private int doCommit(String nextState)
+    {
 		TxSupport txs = new TxSupport();
 
         check_halt(Fault.commit_halt);
@@ -290,12 +299,12 @@ public class RESTRecord extends AbstractRecord
         {
             if (log.isTraceEnabled())
                 log.trace("committing " + this.terminateUrl);
-            
+  
             if (!TxSupport.isReadOnly(status)) {
                 txs = new TxSupport();
 				String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
 					this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-					TxSupport.toStatusContent(TxSupport.COMMITTED), null);	// ONE_PHASE_COMMIT_CONTENT
+					TxSupport.toStatusContent(nextState), null);
 
                 status = txs.getStatus(body);
 
@@ -319,7 +328,6 @@ public class RESTRecord extends AbstractRecord
 
         return statusToOutcome(status);
     }
-
     private boolean checkFinishError(int expected, boolean commit) throws HttpResponseException
     {
         if (expected == HttpURLConnection.HTTP_NOT_FOUND)

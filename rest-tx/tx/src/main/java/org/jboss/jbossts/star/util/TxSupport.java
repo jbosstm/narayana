@@ -75,6 +75,7 @@ public class TxSupport
     public static final String ABORTED = "TransactionRolledBack";
     public static final String COMMITTING = "TransactionCommitting";
     public static final String COMMITTED = "TransactionCommitted";
+    public static final String COMMITTED_ONE_PHASE = "TransactionCommittedOnePhase";
     public static final String H_ROLLBACK = "TransactionHeuristicRollback";
     public static final String H_COMMIT = "TransactionHeuristicCommit";
     public static final String H_HAZARD = "TransactionHeuristicHazard";
