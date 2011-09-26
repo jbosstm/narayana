@@ -48,6 +48,7 @@ import java.util.*;
 import java.sql.*;
 import javax.transaction.RollbackException;
 import java.sql.SQLException;
+import java.util.concurrent.Executor;
 
 /**
  * A transactional JDBC connection. This wraps the real connection and
@@ -295,7 +296,7 @@ public class ConnectionImple implements Connection
 	         */
 
 	        boolean delayClose = false;
-	        
+
 	        if (tx != null)
 	        {
 	            if (_recoveryConnection.validTransaction(tx))
@@ -313,12 +314,12 @@ public class ConnectionImple implements Connection
                         jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
 
 	                    // no indication about connections, so assume close immediately
-	                    
+
 	                    if (_theConnection != null && !_theConnection.isClosed())
 	                        _theConnection.close();
 
 	                    _theConnection = null;
-	                    
+
 	                    return;
 	                }
 	                else
@@ -339,14 +340,14 @@ public class ConnectionImple implements Connection
 	                if (delayClose)
 	                {
         	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _recoveryConnection));
-        	                       
+
                                 _theConnection = null;
 	                }
 	            }
 	            else
 	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
 	        }
-	        
+
 	        if (!delayClose)  // close now
 	        {
 	            _recoveryConnection.closeCloseCurrentConnection();
@@ -373,7 +374,7 @@ public class ConnectionImple implements Connection
 	        throw sqlException;
 	    }
 	}
-	
+
 	public boolean isClosed() throws SQLException
 	{
 		/*
@@ -753,6 +754,46 @@ public class ConnectionImple implements Connection
 
     /*
 	 * end of the JDBC 4.0 section
+	 * *******************************************************************
+	 */
+
+    /*
+     * ******************************************************************* *
+     * Java 7 method section.
+     */
+
+    //@Override
+    public void setSchema(String schema) throws SQLException
+    {
+        throw new SQLException();
+    }
+
+    //@Override
+    public String getSchema() throws SQLException
+    {
+        throw new SQLException();
+    }
+
+    //@Override
+    public void abort(Executor executor) throws SQLException
+    {
+        throw new SQLException();
+    }
+
+    //@Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+    {
+        throw new SQLException();
+    }
+
+    //@Override
+    public int getNetworkTimeout() throws SQLException
+    {
+        throw new SQLException();
+    }
+
+    /*
+	 * end of the Java 7 section
 	 * *******************************************************************
 	 */
 

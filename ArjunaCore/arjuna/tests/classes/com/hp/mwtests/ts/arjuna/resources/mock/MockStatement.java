@@ -44,35 +44,35 @@ public class MockStatement implements Statement
     public void addBatch (String arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void cancel () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearBatch () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearWarnings () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void close () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -268,56 +268,56 @@ public class MockStatement implements Statement
     public void setCursorName (String arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setEscapeProcessing (boolean arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFetchDirection (int arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFetchSize (int arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setMaxFieldSize (int arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setMaxRows (int arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPoolable (boolean arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setQueryTimeout (int arg0) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -332,6 +332,18 @@ public class MockStatement implements Statement
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+
+    //@Override
+    public void closeOnCompletion() throws SQLException
+    {
+    }
+
+    //@Override
+    public boolean isCloseOnCompletion() throws SQLException
+    {
+        return false;
     }
 }
 

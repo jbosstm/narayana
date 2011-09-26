@@ -48,6 +48,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 public class MockConnection implements Connection
 {
@@ -55,21 +56,21 @@ public class MockConnection implements Connection
     public void clearWarnings () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void close () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void commit () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -304,35 +305,35 @@ public class MockConnection implements Connection
     public void releaseSavepoint (Savepoint savepoint) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void rollback () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void rollback (Savepoint savepoint) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setAutoCommit (boolean autoCommit) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setCatalog (String catalog) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -340,7 +341,7 @@ public class MockConnection implements Connection
             throws SQLClientInfoException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -348,21 +349,21 @@ public class MockConnection implements Connection
             throws SQLClientInfoException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setHoldability (int holdability) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setReadOnly (boolean readOnly) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -383,14 +384,14 @@ public class MockConnection implements Connection
     public void setTransactionIsolation (int level) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setTypeMap (Map<String, Class<?>> map) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -405,6 +406,35 @@ public class MockConnection implements Connection
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+
+
+    //@Override
+    public void setSchema(String schema) throws SQLException
+    {
+    }
+
+    //@Override
+    public String getSchema() throws SQLException
+    {
+        return null;
+    }
+
+    //@Override
+    public void abort(Executor executor) throws SQLException
+    {
+    }
+
+    //@Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+    {
+    }
+
+    //@Override
+    public int getNetworkTimeout() throws SQLException
+    {
+        return 0;
     }
 }
 

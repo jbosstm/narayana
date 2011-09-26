@@ -60,7 +60,7 @@ public class MockResultSet implements ResultSet
     {
         _next = nxt;
     }
-    
+
     @Override
     public boolean absolute (int row) throws SQLException
     {
@@ -72,42 +72,42 @@ public class MockResultSet implements ResultSet
     public void afterLast () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void beforeFirst () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void cancelRowUpdates () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearWarnings () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void close () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void deleteRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -665,7 +665,7 @@ public class MockResultSet implements ResultSet
     public void insertRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -714,14 +714,14 @@ public class MockResultSet implements ResultSet
     public void moveToCurrentRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void moveToInsertRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -741,7 +741,7 @@ public class MockResultSet implements ResultSet
     public void refreshRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -776,28 +776,28 @@ public class MockResultSet implements ResultSet
     public void setFetchDirection (int direction) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFetchSize (int rows) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateArray (int columnIndex, Array x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateArray (String columnLabel, Array x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -805,7 +805,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -813,7 +813,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -821,7 +821,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -829,7 +829,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -837,7 +837,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -845,7 +845,7 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -853,7 +853,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -861,7 +861,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -869,7 +869,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -877,7 +877,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -885,7 +885,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -893,7 +893,7 @@ public class MockResultSet implements ResultSet
             int length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -901,7 +901,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -909,21 +909,21 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateBlob (int columnIndex, Blob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateBlob (String columnLabel, Blob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -931,7 +931,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -939,7 +939,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -947,7 +947,7 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -955,14 +955,14 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateBoolean (int columnIndex, boolean x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -970,35 +970,35 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateByte (int columnIndex, byte x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateByte (String columnLabel, byte x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateBytes (int columnIndex, byte[] x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateBytes (String columnLabel, byte[] x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1006,7 +1006,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1014,7 +1014,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1022,7 +1022,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1030,7 +1030,7 @@ public class MockResultSet implements ResultSet
             int length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1038,7 +1038,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1046,28 +1046,28 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateClob (int columnIndex, Clob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateClob (String columnLabel, Clob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateClob (int columnIndex, Reader reader) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1075,7 +1075,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1083,7 +1083,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1091,77 +1091,77 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateDate (int columnIndex, Date x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateDate (String columnLabel, Date x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateDouble (int columnIndex, double x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateDouble (String columnLabel, double x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateFloat (int columnIndex, float x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateFloat (String columnLabel, float x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateInt (int columnIndex, int x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateInt (String columnLabel, int x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateLong (int columnIndex, long x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateLong (String columnLabel, long x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1169,7 +1169,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1177,7 +1177,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1185,7 +1185,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1193,14 +1193,14 @@ public class MockResultSet implements ResultSet
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateNClob (int columnIndex, NClob clob) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1208,7 +1208,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1216,7 +1216,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1224,7 +1224,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1232,7 +1232,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1240,7 +1240,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1248,7 +1248,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1256,35 +1256,35 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateNull (int columnIndex) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateNull (String columnLabel) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateObject (int columnIndex, Object x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateObject (String columnLabel, Object x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1292,7 +1292,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1300,42 +1300,42 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateRef (int columnIndex, Ref x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateRef (String columnLabel, Ref x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateRow () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateRowId (int columnIndex, RowId x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateRowId (String columnLabel, RowId x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1343,7 +1343,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1351,49 +1351,49 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateShort (int columnIndex, short x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateShort (String columnLabel, short x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateString (int columnIndex, String x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateString (String columnLabel, String x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateTime (int columnIndex, Time x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateTime (String columnLabel, Time x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1401,7 +1401,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1409,7 +1409,7 @@ public class MockResultSet implements ResultSet
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -1432,7 +1432,21 @@ public class MockResultSet implements ResultSet
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     private boolean _next;
+
+
+
+    //@Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException
+    {
+        return null;
+    }
+
+    //@Override
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException
+    {
+        return null;
+    }
 }
 

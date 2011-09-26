@@ -61,24 +61,24 @@ public class MockPreparedStatement implements PreparedStatement
     {
         this(true);
     }
-    
+
     public MockPreparedStatement (boolean n)
     {
         _next = n;
     }
-    
+
     @Override
     public void addBatch () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearParameters () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MockPreparedStatement implements PreparedStatement
     public void setArray (int parameterIndex, Array x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -126,7 +126,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -134,7 +134,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -142,7 +142,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -150,7 +150,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -158,7 +158,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -166,7 +166,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -174,14 +174,14 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setBlob (int parameterIndex, Blob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -189,7 +189,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -197,28 +197,28 @@ public class MockPreparedStatement implements PreparedStatement
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setBoolean (int parameterIndex, boolean x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setByte (int parameterIndex, byte x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setBytes (int parameterIndex, byte[] x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -226,7 +226,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -234,7 +234,7 @@ public class MockPreparedStatement implements PreparedStatement
             int length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -242,21 +242,21 @@ public class MockPreparedStatement implements PreparedStatement
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setClob (int parameterIndex, Clob x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setClob (int parameterIndex, Reader reader) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -264,14 +264,14 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setDate (int parameterIndex, Date x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -279,35 +279,35 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setDouble (int parameterIndex, double x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFloat (int parameterIndex, float x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setInt (int parameterIndex, int x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setLong (int parameterIndex, long x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -315,7 +315,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -323,14 +323,14 @@ public class MockPreparedStatement implements PreparedStatement
             long length) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setNClob (int parameterIndex, NClob value) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -338,7 +338,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -346,7 +346,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -354,14 +354,14 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setNull (int parameterIndex, int sqlType) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -369,14 +369,14 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setObject (int parameterIndex, Object x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -384,7 +384,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -392,21 +392,21 @@ public class MockPreparedStatement implements PreparedStatement
             int scaleOrLength) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setRef (int parameterIndex, Ref x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setRowId (int parameterIndex, RowId x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -414,28 +414,28 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setShort (int parameterIndex, short x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setString (int parameterIndex, String x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setTime (int parameterIndex, Time x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -443,7 +443,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -451,7 +451,7 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -459,14 +459,14 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setURL (int parameterIndex, URL x) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -474,42 +474,42 @@ public class MockPreparedStatement implements PreparedStatement
             throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void addBatch (String sql) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void cancel () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearBatch () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void clearWarnings () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void close () throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -711,56 +711,56 @@ public class MockPreparedStatement implements PreparedStatement
     public void setCursorName (String name) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setEscapeProcessing (boolean enable) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFetchDirection (int direction) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setFetchSize (int rows) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setMaxFieldSize (int max) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setMaxRows (int max) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPoolable (boolean poolable) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setQueryTimeout (int seconds) throws SQLException
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -776,7 +776,19 @@ public class MockPreparedStatement implements PreparedStatement
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     private boolean _next;
+
+
+    //@Override
+    public void closeOnCompletion() throws SQLException
+    {
+    }
+
+    //@Override
+    public boolean isCloseOnCompletion() throws SQLException
+    {
+        return false;
+    }
 }
 
