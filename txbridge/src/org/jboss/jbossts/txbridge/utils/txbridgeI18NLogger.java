@@ -21,10 +21,7 @@
 package org.jboss.jbossts.txbridge.utils;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import org.jboss.logging.LogMessage;
-import org.jboss.logging.Message;
-import org.jboss.logging.MessageLogger;
-
+import org.jboss.logging.*;
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.Message.Format.*;
 
@@ -45,23 +42,23 @@ public interface txbridgeI18NLogger
 
     @Message(id = 33001, value = "Unable to get subordinate transaction id", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibdp_nosub(Throwable arg0);
+    public void error_ibdp_nosub(@Cause() Throwable arg0);
 
     @Message(id = 33002, value = "Unable to recover subordinate transaction id {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibdp_norecovery(Uid arg0, Throwable arg1);
+    public void error_ibdp_norecovery(Uid arg0, @Cause() Throwable arg1);
 
     @Message(id = 33003, value = "prepare on Xid={0} returning Aborted", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_ibdp_aborted(String arg0, Throwable arg1);
+    public void warn_ibdp_aborted(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 33004, value = "commit on Xid={0} failed", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibdp_commitfailed(String arg0, Throwable arg1);
+    public void error_ibdp_commitfailed(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 33005, value = "rollback on Xid={0} failed", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibdp_rollbackfailed(String arg0, Throwable arg1);
+    public void error_ibdp_rollbackfailed(String arg0, @Cause() Throwable arg1);
 
 
     @Message(id = 33006, value = "InboundBridgeRecoveryManager starting", format = MESSAGE_FORMAT)
@@ -74,24 +71,24 @@ public interface txbridgeI18NLogger
 
     @Message(id = 33008, value = "problem rolling back orphaned subordinate tx {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibrm_rollbackerr(String arg0, Throwable arg1);
+    public void error_ibrm_rollbackerr(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 33009, value = "Problem whilst scanning for in-doubt subordinate transactions", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_ibrm_scanerr(Throwable arg0);
+    public void error_ibrm_scanerr(@Cause() Throwable arg0);
 
 
     @Message(id = 33010, value = "prepare on Xid={0} failed, setting RollbackOnly", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_ibvp_preparefailed(String arg0, Throwable arg1);
+    public void warn_ibvp_preparefailed(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 33011, value = "setRollbackOnly failed", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_ibvp_setrollbackfailed(Throwable arg0);
+    public void warn_ibvp_setrollbackfailed(@Cause() Throwable arg0);
 
     @Message(id = 33012, value = "stop failed for Xid {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
-    public void warn_ibvp_stopfailed(String arg0, Throwable arg1);
+    public void warn_ibvp_stopfailed(String arg0, @Cause() Throwable arg1);
 
 
 
@@ -111,11 +108,11 @@ public interface txbridgeI18NLogger
 
     @Message(id = 33016, value = "Unable to recover subordinate transaction id={0},", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_obxar_unabletorecover(String arg0, Throwable arg1);
+    public void error_obxar_unabletorecover(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 33017, value = "Unable to enlist BridgeXAResource or register BridgeSynchronization", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_obm_unabletoenlist(Throwable arg0);
+    public void error_obm_unabletoenlist(@Cause() Throwable arg0);
 
     /*
         Allocate new messages directly above this notice.

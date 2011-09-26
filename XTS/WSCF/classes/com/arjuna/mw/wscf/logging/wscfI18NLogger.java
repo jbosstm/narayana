@@ -275,7 +275,7 @@ public interface wscfI18NLogger {
 
     @Message(id = 44064, value = "Unable to load protocol implementation class {0} caught exception", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_protocols_ProtocolManager_3(String arg0, Throwable arg1);
+    public void error_protocols_ProtocolManager_3(String arg0, @Cause() Throwable arg1);
 
     @Message(id = 44065, value = "Installed implementation class {0} for protocol type {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
@@ -283,7 +283,7 @@ public interface wscfI18NLogger {
 
     @Message(id = 44066, value = "Unable to instantiate protocol implementation class {0} caught exception", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
-    public void error_protocols_ProtocolManager_5(String arg0, Throwable arg1);
+    public void error_protocols_ProtocolManager_5(String arg0, @Cause() Throwable arg1);
 
     /*
         Allocate new messages directly above this notice.

@@ -305,11 +305,11 @@ public interface jtaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_transaction_arjunacore_lastResourceOptimisationInterface(String arg0);
 
-	@Message(id = 16070, value = "{0} - could not mark {0} as rollback only", format = MESSAGE_FORMAT)
+	@Message(id = 16070, value = "{0} - could not mark {1} as rollback only", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_transaction_arjunacore_markrollback(String arg0, String arg1);
 
-	@Message(id = 16071, value = "{0} caught XAException: {0}", format = MESSAGE_FORMAT)
+	@Message(id = 16071, value = "{0} caught XAException: {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_transaction_arjunacore_newtmerror(String arg0, String arg1, @Cause() Throwable arg2);
 
