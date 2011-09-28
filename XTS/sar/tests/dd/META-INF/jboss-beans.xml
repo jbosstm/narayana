@@ -20,7 +20,7 @@
   (C) 2009,
   @author JBoss Inc.
 -->
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
+<deployment xmlns="urn:jboss:pojo:7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jboss:pojo:7.0 jboss-pojo_7_0.xsd">
 
    <!-- a bean which creates a thread to run  one of the various XTS integration tests -->
    <bean name="XTSServiceTestRunner" class="org.jboss.jbossts.xts.servicetests.bean.XTSServiceTestRunnerBean">
