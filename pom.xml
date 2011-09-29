@@ -154,6 +154,72 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>add-source</goal>
+                      <goal>add-test-source</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>idlj-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>generate</goal>
+                      <goal>generate-test</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.jboss.maven.plugins</groupId>
+                    <artifactId>maven-jdocbook-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>generate</goal>
+                      <goal>resources</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.7</version>
@@ -209,7 +275,8 @@
           <dependencies>
             <dependency>
               <groupId>org.jboss.pressgang</groupId>
-              <!--Non-namespaced version for DocBook 4.5 compatibility. For XSD namespaced version, use pressgang-xslt-ns-->
+              <!--Non-namespaced version for DocBook 4.5 compatibility. For XSD 
+								namespaced version, use pressgang-xslt-ns -->
               <artifactId>pressgang-xslt</artifactId>
               <version>2.0.0</version>
             </dependency>
@@ -303,31 +370,13 @@
           </dependency>
         </dependencies>
       </plugin>
-      <!--
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0-beta-1</version>
-				<executions>
-					<execution>
-						<id>enforce-property</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireProperty>
-									<property>TS_EMMA_JAR</property>
-									<message>"You must tell me where emma is located - set the -DTS_EMMA_JAR property"</message>
-								</requireProperty>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
--->
+      <!-- <plugin> <inherited>true</inherited> <groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-enforcer-plugin</artifactId> <version>1.0-beta-1</version> 
+				<executions> <execution> <id>enforce-property</id> <goals> <goal>enforce</goal> 
+				</goals> <configuration> <rules> <requireProperty> <property>TS_EMMA_JAR</property> 
+				<message>"You must tell me where emma is located - set the -DTS_EMMA_JAR 
+				property"</message> </requireProperty> </rules> <fail>true</fail> </configuration> 
+				</execution> </executions> </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
