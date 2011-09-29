@@ -12,14 +12,6 @@ To use this wrapper to build an individual module (say arjuna) you would type:
 	[./]build.[sh|bat] clean install -pl :arjuna
 If you are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
-If you have build once using build.sh and then move to a different installation of maven, please ensure your $HOME/.m2/settings.xml point to the Narayana local repo:
-	1. The contents of $HOME/.m2/settings.xml should read (replacing /home/tom with your home directory):
-	<?xml version="1.0" encoding="UTF-8"?> 
-	<settings xmlns="http://maven.apache.org/settings/1.0.0"  
-        	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
-        	  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"> 
-		<localRepository>/home/tom/.m2/narayana/repository</localRepository>
-	</settings>
 If you want to be able to cd into a folder to call our shipped maven or a version of maven not shipped with our project (on linux):
 	1. Create a file called $HOME/bin/txmvn (assuming $HOME/bin is in the path)
 	2. Add the following contents to this file:

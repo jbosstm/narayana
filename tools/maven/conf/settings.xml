@@ -7,6 +7,6 @@
    | The path to the local repository maven will use to store artifacts.
    |
    | Default: ~/.m2/repository
-  -->
   <localRepository>${user.home}/.m2/narayana/repository</localRepository>
+  -->
 </settings>
