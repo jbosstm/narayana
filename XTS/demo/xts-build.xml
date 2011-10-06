@@ -49,7 +49,7 @@
 
     <!--    deploy.dir The deployment directory for the ear                 -->
 
-    <property name="deploy.dir" location="${jboss.home}/standalone/deploy"/>
+    <property name="deploy.dir" location="${jboss.home}/standalone/deployments"/>
 
     <!--  default target build will build an ear file for the demo app for  -->
     <!--  use in a JBoss AS7 server with XTS enabled                        -->
@@ -85,7 +85,7 @@
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
     </path>
     <path id="ext.path">
-        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="narayana-jts-*.jar"/>
+        <fileset dir="${jboss.home}/modules/org/jboss/jts/main/" includes="jbossjts-*.jar"/>
     </path>
 
     <path id="jboss.client.path">

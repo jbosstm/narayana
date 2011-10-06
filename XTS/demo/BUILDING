@@ -18,15 +18,22 @@
 # @author JBoss Inc.
 #
 
-This demo has been written for, and tested on, JBoss5.0.CR1.
-Please download and install one of these app servers from the
-JBoss website.
+This demo has been written for, and tested on, JBoss 7.0.2. It may work with other versions of JBoss 7.
+Please download and install this app server from the JBoss website.
+
+ensure JBoss AS is started with XTS enabled. This can be done by specifying the standalone-xts configuration when starting JBoss AS:
+
+cd $JBOSS_HOME
+sh bin/standalone.sh -server-config=standalone-xts.xml -Djava.awt.headless=false
+
+Note: The java.awt.headless property is needed for the demo as it starts a Java Swing user interface for each or the participant services. This is done for demonstration purposes; it is unlikely that a typical JEE application will ever do this. 
+
 
 Follow these steps to build the demo for JBoss
  - edit jboss.properties and replace variables as directed in the comments
  - add java and ant to your path
  - set environment variable JBOSS_HOME to point to the root directory of an
-   instance of JBoss5.0.0.CR1
+   instance of JBoss 7
  - execute 'sh build.sh jboss clean deploy' on unix or
    'build.bat jboss clean deploy' on windows
 
@@ -36,7 +43,3 @@ An alternative version of the demo can be built using JaxRPC instead
 of JaxWS by supplying the argument 'deployrpc' in place of 'deploy' on
 the 'execute' command line detailed above.
 
-n.b. deployment of the demo to JbossAS 5.0.CR1 assumes that the XTS
-has already been deployed as a service archive (sar). See the INSTALL
-file in your ArjunaJTA or ArjunaJTS install tree for instructions on how
-to perform this deployment.
