@@ -31,8 +31,8 @@ package com.arjuna.xts.nightout.services.Restaurant;
 
 import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
+import com.arjuna.mw.wst.BusinessActivityManager;
+import com.arjuna.mw.wst.BusinessActivityManagerFactory;
 
 /**
  * An adapter class that exposes the RestaurantManager business API as a
