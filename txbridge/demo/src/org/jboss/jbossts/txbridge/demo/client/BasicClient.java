@@ -73,9 +73,10 @@ public class BasicClient extends HttpServlet
         {
             URL wsdlLocation = new URL("http://localhost:8080/txbridge-demo-service/BistroImpl?wsdl");
             QName serviceName = new QName("http://bistro.demo.txbridge.jbossts.jboss.org/", "BistroImplService");
+            QName portName = new QName("http://bistro.demo.txbridge.jbossts.jboss.org/", "BistroImplPort");
 
             Service service = Service.create(wsdlLocation, serviceName);
-            bistro = service.getPort(Bistro.class);
+            bistro = service.getPort(portName, Bistro.class);
 
             // we could have used @HandlerChain but it's nice to show a bit of variety...
             BindingProvider bindingProvider = (BindingProvider)bistro;

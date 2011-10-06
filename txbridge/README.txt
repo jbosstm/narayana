@@ -9,25 +9,32 @@ see docs/TransactionBridgingGuide
 A word on version compatibility:
 --------------------------------
 
-This version, like the JBossTS it is bundled with, targets JBossAS 6  It probably will not work on earlier releases.
+This version, like the JBossTS it is bundled with, targets JBossAS 7. It probably will not work on earlier releases.
 Ideally the txbridge should be used in conjunction with the JBossTS release it is included in, although it may
 work with JBossTS 4.13.1 or later. This version won't work on any earlier release of JBossTS.
 
 Building:
 ---------
 
+Build the bridge:
 ant
-ensure XTS is deployed into the chosen server (see JBossAS docs/examples/transactions)
-set jbossas.home and jbossas.server in build.xml
-ant deploy
 
-for the demo app, assuming the above steps are complete first:
+Build and deploy the demo:
 
 cd demo
 set jbossas.home and jbossas.server in build.xml
 ant dist
 ant deploy-service
 ant deploy-client
+
+Start JBoss AS:
+---------------
+
+ensure JBoss AS is started with XTS enabled. This can be done by specifying the standalone-xts configuration when starting JBoss AS:
+
+cd $JBOSS_HOME
+./bin/standalone.sh --server-config=standalone-xts.xml
+
 
 See docs/TransactionBridgingGuide for further details on the demo app.
 

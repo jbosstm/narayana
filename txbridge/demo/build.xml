@@ -79,30 +79,36 @@
 			<fileset dir="${build}/classes">
 				<include name="org/jboss/jbossts/txbridge/demo/bistro/*"/>
 			</fileset>
+	    		<manifest>
+                		<!--attribute name="Dependencies" value="org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.junit,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export"/-->
+                		<attribute name="Dependencies" value="org.jboss.xts,org.jboss.jts"/>
+    			</manifest>
 		</jar>
 
         <copy file="${dd}/jaxws-handlers-client.xml" todir="${build}/classes/org/jboss/jbossts/txbridge/demo/client"/>
         <war warfile="${build}/txbridge-demo-client.war" webxml="${dd}/web.xml">
-			<classes dir="${build}/classes">
-                <include name="org/jboss/jbossts/txbridge/demo/client/*"/>
-			</classes>
-            <!-- jsp files -->
-            <fileset dir="${web}" includes="*.jsp"/>
-		</war>
-
+		<classes dir="${build}/classes">
+                	<include name="org/jboss/jbossts/txbridge/demo/client/*"/>
+		</classes>
+            	<!-- jsp files -->
+            	<fileset dir="${web}" includes="*.jsp"/>
+		<manifest>
+                	<attribute name="Dependencies" value="org.jboss.xts,org.jboss.jts"/>
+                </manifest>
+	</war>
 	</target>
 
     <!-- ##################################################################################### -->
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/target/jboss-6.0.0-SNAPSHOT"/>
-    <property name="jbossas.server" value="default"/>
+    <property name="jbossas.home" location="/home/paul/dev/jboss-as/build/target/jboss-as-7.1.0.Alpha2-SNAPSHOT"/>
+    <property name="jbossas.server" value="standalone"/>
 
     <target name="deploy-service" depends="dist" description="deploy EJB to JBossAS">
-        <copy file="${build}/txbridge-demo-service.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+        <copy file="${build}/txbridge-demo-service.jar" todir="${jbossas.home}/${jbossas.server}/deployments"/>
     </target>
 
     <target name="deploy-client" depends="dist" description="deploy Servlet to JBossAS">
-        <copy file="${build}/txbridge-demo-client.war" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+        <copy file="${build}/txbridge-demo-client.war" todir="${jbossas.home}/${jbossas.server}/deployments"/>
     </target>
 
 </project>
