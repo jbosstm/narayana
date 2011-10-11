@@ -122,10 +122,6 @@ public class BeanPopulator
      */
     public static void configureFromProperties(Object bean, String instanceName, Properties properties) throws Exception {
 
-        if(!bean.getClass().isAnnotationPresent(PropertyPrefix.class)) {
-            throw new Exception("no PropertyPrefix found on "+bean.getClass().getName());
-        }
-
         for(Field field : bean.getClass().getDeclaredFields()) {
             Class type = field.getType();
 
@@ -163,7 +159,7 @@ public class BeanPopulator
         StringBuffer buffer = new StringBuffer();
         printBean(bean, buffer);
         return buffer.toString();
-    }    
+    }
 
     /**
      * Render the state of the known bean instances as text.
@@ -255,8 +251,11 @@ public class BeanPopulator
     private static void handleSimpleProperty(Object bean, String instanceName, Properties properties, Field field, Method setter, Method getter)
             throws Exception
     {
-        PropertyPrefix prefixAnnotation = bean.getClass().getAnnotation(PropertyPrefix.class);
-        String prefix = prefixAnnotation.prefix();
+        String prefix = null;
+        if(bean.getClass().isAnnotationPresent(PropertyPrefix.class)) {
+            PropertyPrefix prefixAnnotation = bean.getClass().getAnnotation(PropertyPrefix.class);
+            prefix = prefixAnnotation.prefix();
+        }
 
         String valueFromProperties = getValueFromProperties(bean, instanceName, properties, field, prefix);
 
@@ -336,13 +335,16 @@ public class BeanPopulator
                 valueFromProperties = properties.getProperty(propertyFileKey);
             }
         }
-        
+
         if (valueFromProperties == null) {
-            propertyFileKey = prefix+field.getName();
 
             if(field.isAnnotationPresent(FullPropertyName.class)) {
                 FullPropertyName fullPropertyName = field.getAnnotation(FullPropertyName.class);
                 propertyFileKey = fullPropertyName.name();
+            } else if(prefix != null) {
+                propertyFileKey = prefix+field.getName();
+            } else {
+                propertyFileKey = field.getName();
             }
 
             valueFromProperties = properties.getProperty(propertyFileKey);
