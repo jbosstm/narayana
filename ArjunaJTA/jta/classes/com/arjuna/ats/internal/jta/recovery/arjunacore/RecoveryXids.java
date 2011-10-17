@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -41,9 +41,10 @@ public class RecoveryXids
 
     public RecoveryXids (XAResource xares)
     {
-	_xares = xares;
+    	_xares = xares;
+        _lastValidated = System.currentTimeMillis();
     }
-    
+
     public boolean equals (Object obj)
     {
 	if (obj instanceof RecoveryXids)
@@ -127,14 +128,22 @@ public class RecoveryXids
 	    return false;
 	}
     }
-    
+
     public boolean contains (Xid xid)
     {
         XidImple xidImple = new XidImple(xid);
 
         return _whenFirstSeen.containsKey(xidImple);
     }
-	
+
+    public boolean isStale() {
+        long now = System.currentTimeMillis();
+        long threshold = _lastValidated+(2*safetyIntervalMillis);
+        long diff = now - threshold;
+        boolean result = diff > 0;
+        return result;
+    }
+
     /**
      * If supplied xids contains any values seen on prev scans, replace the existing
      * XAResource with the supplied one and return true. Otherwise, return false.
@@ -149,6 +158,7 @@ public class RecoveryXids
             for(int i = 0; i < xids.length; i++) {
                 if(contains(xids[i])) {
                     _xares = xaResource;
+                    _lastValidated = System.currentTimeMillis();
                     return true;
                 }
             }
@@ -158,6 +168,7 @@ public class RecoveryXids
         // so fallback to isSameRM as we can't use Xid matching
         if(isSameRM(xaResource)) {
             _xares = xaResource;
+            _lastValidated = System.currentTimeMillis();
             return true;
         }
 
@@ -170,6 +181,7 @@ public class RecoveryXids
     private final Map<XidImple,Long> _whenLastSeen = new HashMap<XidImple, Long>();
 
     private XAResource _xares;
+    private long _lastValidated;
 
     private static final int safetyIntervalMillis = 10000; // may eventually want to make this configurable?
 }

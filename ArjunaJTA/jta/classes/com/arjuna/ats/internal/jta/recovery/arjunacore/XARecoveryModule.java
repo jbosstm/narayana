@@ -91,7 +91,7 @@ public class XARecoveryModule implements RecoveryModule
             }
         }
     }
-    
+
     public void removeXAResourceOrphanFilter(XAResourceOrphanFilter xaResourceOrphanFilter) {
         synchronized (_xaResourceOrphanFilters) {
             _xaResourceOrphanFilters.remove(xaResourceOrphanFilter);
@@ -146,12 +146,7 @@ public class XARecoveryModule implements RecoveryModule
                         + ".transactionInitiatedRecovery completed");
             }
 
-			/*
-			 * See the comment about this routine!!
-			 */
-
-			resourceInitiatedRecovery();
-            resourceInitiatedRecoveryForRecoveryHelpers();
+            bottomUpRecovery();
 
             if (jtaLogger.logger.isDebugEnabled()) {
                 jtaLogger.logger.debug(_logName
@@ -181,8 +176,7 @@ public class XARecoveryModule implements RecoveryModule
 	private XAResource getNewXAResource(Xid xid)
 	{
 		if (_xidScans == null) {
-			resourceInitiatedRecovery();
-            resourceInitiatedRecoveryForRecoveryHelpers();
+			bottomUpRecovery();
         }
 
         if (_xidScans != null)
@@ -270,7 +264,7 @@ public class XARecoveryModule implements RecoveryModule
 									if (recoveryStatus == XARecoveryResource.WAITING_FOR_RECOVERY)
 									{
 									    // resource initiated recovery not possible (no distribution).
-									    
+
 										problem = false;
 
                                         jtaLogger.i18NLogger.info_recovery_recoverydelayed(theUid, Integer.toString(recoveryStatus));
@@ -352,6 +346,25 @@ public class XARecoveryModule implements RecoveryModule
 
 		return true;
 	}
+
+    private void bottomUpRecovery() {
+
+        // scan using statically configured plugins;
+        resourceInitiatedRecovery();
+        // scan using dynamically configured plugins:
+        resourceInitiatedRecoveryForRecoveryHelpers();
+
+        // garbage collection:
+        if (_xidScans != null) {
+            Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
+            for(XAResource theKey : keys) {
+                RecoveryXids recoveryXids = _xidScans.get(theKey);
+                if(recoveryXids.isStale()) {
+                    _xidScans.remove(theKey);
+                }
+            }
+        }
+    }
 
 	/**
 	 * Now check for any outstanding transactions. If we didn't fail to recover
@@ -496,7 +509,7 @@ public class XARecoveryModule implements RecoveryModule
 			else
 			{
                 refreshXidScansForEquivalentXAResourceImpl(xares, trans);
-                
+
 				xidsToRecover = _xidScans.get(xares);
 
 				if (xidsToRecover == null)
