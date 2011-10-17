@@ -39,7 +39,3 @@ Follow these steps to build the demo for JBoss
 
 Open a browser and enter the xts-demo url (e.g. http://localhost:8080/xts-demo)
 
-An alternative version of the demo can be built using JaxRPC instead
-of JaxWS by supplying the argument 'deployrpc' in place of 'deploy' on
-the 'execute' command line detailed above.
-
