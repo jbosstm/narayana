@@ -47,7 +47,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.jboss.jts</Dependencies>
+							<Dependencies>org.jboss.xts</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -126,6 +126,7 @@
 	<dependency>
 		<groupId>org.jboss.narayana.xts</groupId>
 		<artifactId>jbossxts</artifactId>
+		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.jboss.logging</groupId>

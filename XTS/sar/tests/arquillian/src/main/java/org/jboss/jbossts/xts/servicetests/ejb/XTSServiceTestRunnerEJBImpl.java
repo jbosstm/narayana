@@ -42,7 +42,7 @@ public class XTSServiceTestRunnerEJBImpl implements XTSServiceTestRunnerEJB {
 			log.info("XTSServiceTestRunner run test " + testName);
 			Class testClass;
 			ClassLoader cl = XTSServiceTestRunnerEJBImpl.class.getClassLoader();
-
+			
 			try {
 				testClass = cl.loadClass(testName);
 			} catch (ClassNotFoundException cnfe) {
