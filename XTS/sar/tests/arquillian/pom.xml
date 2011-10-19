@@ -47,7 +47,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.jboss.xts</Dependencies>
+							<Dependencies>org.jboss.xts,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
