@@ -20,29 +20,45 @@
  */
 package org.jboss.jbossts.xts.servicetests.ejb;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestATRecoveryModule;
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestBARecoveryModule;
 import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import org.jboss.logging.Logger;
 
-@Stateless
+@Singleton
+@Startup
 public class XTSServiceTestRunnerEJBImpl implements XTSServiceTestRunnerEJB {
 
-	@SuppressWarnings("rawtypes")
-	public void runTest(String testName) throws Exception {
+	@PostConstruct
+	public void start() {
 		log.info("Starting XTSServiceTestRunner");
 
 		// ensure that the xts service test AT recovery helper module is registered
 		TestATRecoveryModule.register();
 		TestBARecoveryModule.register();
+	}
+	
+	@PreDestroy
+	public void stop() {
+		// ensure that the xts service test AT recovery helper module is unregistered
+		TestATRecoveryModule.unregister();
+		TestBARecoveryModule.unregister();
 
+		log.info("Stopped XTSServiceTestRunner");
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void runTest(String testName) throws Exception {
 		if(testName != null) {
 			log.info("XTSServiceTestRunner run test " + testName);
 			Class testClass;
 			ClassLoader cl = XTSServiceTestRunnerEJBImpl.class.getClassLoader();
-			
+
 			try {
 				testClass = cl.loadClass(testName);
 			} catch (ClassNotFoundException cnfe) {
@@ -81,12 +97,6 @@ public class XTSServiceTestRunnerEJBImpl implements XTSServiceTestRunnerEJB {
 				log.info("Joined test thread " + testName);
 			}
 		}
-		// ensure that the xts service test AT recovery helper module is unregistered
-
-		TestATRecoveryModule.unregister();
-		TestBARecoveryModule.unregister();
-
-		log.info("Stopped XTSServiceTestRunner");
 	}
 
 	private final Logger log = org.jboss.logging.Logger.getLogger(XTSServiceTestRunnerEJBImpl.class);
