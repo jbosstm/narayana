@@ -1,4 +1,4 @@
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.crash.test.at;
 
 import java.io.File;
 import javax.inject.Inject;
@@ -6,13 +6,14 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.servicetests.bean.XTSServiceTestRunnerBean;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class RunSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase {
+public class SingleParticipantPrepareAndCommitTest extends XTSServiceTestBase {
 	@Inject
 	private XTSServiceTestRunnerBean testRunner;
 
@@ -29,7 +30,6 @@ public class RunSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase
 
 	@Test
 	public void ATCrashDuringOnePhaseCommit() throws Exception {
-		
 		testRunner.runTest(testName);
 	}
 
