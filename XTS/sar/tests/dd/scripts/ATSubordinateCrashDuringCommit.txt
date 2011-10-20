@@ -145,12 +145,12 @@
 #
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
-#   prepare received for pseudo participant XXXXXX
+#   prepare called for pseudo-participant XXXXXX
+#   prepare completed for pseudo-participant XXXXXX
 #   prepare received for participant XXXXXX
 #   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepared sent for pseudo participant XXXXXX
+#   prepared sent for coordinator engine XXXXXX
+#   prepared sent for coordinator engine XXXXXX
 #   JVM exit
 #
 # n.b. there should be at least one prepared message received for each participant
@@ -162,20 +162,14 @@
 #   prepare sent for participant engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
-#   prepared received for participant engine XXXXXX
-#   prepare sent for participant engine XXXXXX
+#   prepare called for pseudo-participant XXXXXX
+#   prepare completed for pseudo-participant XXXXXX
 #   prepare received for participant XXXXXX
 #   prepare called for pseudo participant XXXXXX
 #   prepare sent for participant engine XXXXXX
 #   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepared received for participant engine XXXXXX
-#   prepare sent for participant engine XXXXXX
-#   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepared received for participant engine XXXXXX
-#   prepare completed for pseudo participant XXXXXX
-#   prepare received for participant XXXXXX
+#   prepared sent for coordinator engine XXXXXX
+#   prepared sent for coordinator engine XXXXXX
 #   JVM exit
 #   created recovered participant engine XXXXXX
 #   created recovered participant engine XXXXXX
@@ -185,24 +179,16 @@
 #   created recovered coordinator engine XXXXXX
 #   created recovered coordinator engine XXXXXX
 #   created recovered coordinator engine XXXXXX
-#   commit sent for participant engine XXXXXX
-#   commit received for participant XXXXXX
-#   committed sent for participant XXXXXX
-#   committed received for participant engine XXXXXX
-#   commit sent for participant engine XXXXXX
-#   commit received for participant XXXXXX
-#   commit called for pseudo participant XXXXXX
-#   commit sent for participant engine XXXXXX
-#   commit received for participant XXXXXX
-#   committed sent for participant XXXXXX
-#   committed received for participant engine XXXXXX
-#   commit sent for participant engine XXXXXX
-#   commit received for participant XXXXXX
-#   committed sent for participant XXXXXX
-#   committed received for participant engine XXXXXX
-#   commit completed for pseudo participant XXXXXX
-#   committed sent for participant XXXXXX
-#   committed received for participant engine XXXXXX
+#   received commit for recovered participant engine XXXXXX
+#   send committed for recovered participant engine XXXXXX
+#   received commit for recovered participant engine XXXXXX
+#   commit called for pseudo-participant XXXXXX
+#   received commit for recovered participant engine XXXXXX
+#   send committed for recovered participant engine XXXXXX
+#   received commit for recovered participant engine XXXXXX
+#   send committed for recovered participant engine XXXXXX
+#   commit completed for pseudo-participant XXXXXX
+#   send committed for recovered participant engine XXXXXX
 #   removed committed transaction XXXXXX
 #   JVM exit
 #
@@ -311,10 +297,10 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when a subordinate pseudo participant
-# (SubordinateDurable2PCStub) is requested to send a prepared message. It
+# (SubordinateDurable2PCStub) is requested to send a prepare message. It
 # traces the call.
 
-RULE trace subordinate participant stub prepare
+RULE trace subordinate participant stub prepare before
 CLASS com.arjuna.wst11.stub.SubordinateDurable2PCStub
 METHOD prepare
 AT ENTRY
@@ -326,10 +312,10 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when a subordinate pseudo participant
-# (SubordinateDurable2PCStub) is requested to send a prepared message. It
+# (SubordinateDurable2PCStub) is requested to send a prepare message. It
 # traces the call.
 
-RULE trace subordinate participant stub prepare 2
+RULE trace subordinate participant stub prepare after
 CLASS com.arjuna.wst11.stub.SubordinateDurable2PCStub
 METHOD prepare
 AFTER INVOKE prepare
@@ -430,7 +416,7 @@ DO debug("send committed for recovered participant engine " + identifier),
 ENDRULE
 
 #######################################################################
-# This rule is triggered when a recovered coordinator engine
+# This rule is triggered when a recovered participant engine
 # (ParticipantEngine) receives a commit message. This
 # happens during replay of a prepared TX from
 # the log. It traces the call.

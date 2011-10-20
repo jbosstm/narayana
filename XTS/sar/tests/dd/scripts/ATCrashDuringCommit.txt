@@ -160,8 +160,11 @@
 #
 # After the first boot the JVM should exit leaving the following in file testlog
 #
+#   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
+#   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
+#   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
 #   JVM exit
 #
@@ -175,9 +178,9 @@
 #   prepared received for participant XXXXXX
 #   prepared received for participant XXXXXX
 #   JVM exit
-#   committed received for participant XXXXXX
-#   committed received for participant XXXXXX
-#   committed received for participant XXXXXX
+#   commit on recovered coordinator engine XXXXXX
+#   commit on recovered coordinator engine XXXXXX
+#   commit on recovered coordinator engine XXXXXX
 #
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
@@ -228,8 +231,8 @@ BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
-DO debug("prepare on recovered coordinator engine " + identifier),
-   traceln("log", "prepare on recovered coordinator engine " + identifier)
+DO debug("prepare on non recovered coordinator engine " + identifier),
+   traceln("log", "prepare on non recovered coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
@@ -292,7 +295,7 @@ ENDRULE
 # progressed as expected.
 
 RULE trace prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverACCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,

@@ -27,7 +27,7 @@
 # JBossTS XTS implementation of the WS-AT 1.1 protocol using orchestration
 # rules. The basic scenario employs a client (XTS Service Test program)
 # and 2 web services located in one JVM/AS and a coordinator located in another
-# JVM/AS but it is possible for the lcinet and web services to be lcoated in
+# JVM/AS but it is possible for the client and web services to be located in
 # separate JVMs/ASs. The scenario is as follows (note ** AS<n> indicates
 # intercession by a Byteman rule executed in a specific AS):
 #
@@ -204,8 +204,9 @@ BIND engine:ParticipantEngine = $0,
      identifier:String = engine.getId()
 IF (NOT recovered)
    AND
-   debug("commit on non-recovered participant engine " + identifier)
-DO debug("!!!killing JVM!!!"),
+   traceln("log", "commit on non-recovered participant engine " + identifier)
+DO traceln("log", "JVM exit"),
+   debug("!!!killing JVM!!!"),
    killJVM()
 ENDRULE
 
@@ -224,7 +225,7 @@ BIND engine:ParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
-DO debug("recreated recovered participant engine " + identifier)
+DO traceln("log", "recreated recovered participant engine " + identifier)
 ENDRULE
 
 
@@ -233,13 +234,13 @@ ENDRULE
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 
-RULE open trace file
-CLASS org.jboss.jbossts.XTSService
-METHOD start()
-BIND NOTHING
-IF TRUE
-DO openTrace("log2", "testlog2")
-ENDRULE
+# RULE open trace file
+# CLASS org.jboss.jbossts.XTSService
+# METHOD start()
+# BIND NOTHING
+# IF TRUE
+# DO openTrace("log2", "testlog2")
+# ENDRULE
 
 ######################################################################
 # This rule is triggered in AS2 when a participant stub
@@ -260,7 +261,7 @@ LINE 330
 BIND engine:CoordinatorEngine = $0,
      identifier:String = engine.getId()
 IF (NOT flagged("firstCommit"))
-DO debug("coordinator waiting for participant to resend prepare" + identifier),
+DO traceln("log", "coordinator waiting for participant to resend prepare" + identifier),
    flag("firstCommit"),
    waitFor(identifier)
 ENDRULE
@@ -291,5 +292,5 @@ BIND engine : CoordinatorEngine = $0,
 IF debug("received committed for participant " + identifier)
    AND
    signalWake(identifier)
-DO debug("signalled coordinator waiting on " + identifier)
+DO traceln("log", "signalled coordinator waiting on " + identifier)
 ENDRULE

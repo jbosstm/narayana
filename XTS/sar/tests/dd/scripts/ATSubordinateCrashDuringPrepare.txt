@@ -168,12 +168,13 @@
 # (the number and order of entries depends upon how many and which type of participants
 # are enlisted)
 #
-#   prepare sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
-#   prepared received for participant XXXXXX
-#   prepare sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
+#   prepared sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare called for pseudo participant XXXXXX
 #   prepare sent for participant XXXXXX
 #   prepare received for participant XXXXXX
@@ -192,12 +193,13 @@
 # After reboot the JVM should exit leaving output in the following format in file
 # testlog.
 #
-#   prepare sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
-#   prepared received for participant XXXXXX
-#   prepare sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
+#   prepared sent for participant XXXXXX
+#   prepare sent for Coordinator engine XXXXXX
 #   prepare called for pseudo participant XXXXXX
 #   prepare sent for participant XXXXXX
 #   prepare received for participant XXXXXX
@@ -207,34 +209,33 @@
 #   saved to disk transaction XXXXXX
 #   prepare returned for pseudo participant XXXXXX
 #   JVM exit
-#   created recovered participant engine XXXXXX
-#   created recovered participant engine XXXXXX
-#   created recovered participant engine XXXXXX
-#   created recovered coordinator engine XXXXXX
-#   created recovered coordinator engine XXXXXX
+#   created recovered Participant engine XXXXXX
+#   created recovered Participant engine XXXXXX
+#   created recovered Participant engine XXXXXX
+#   created recovered Coordinator engine XXXXXX
+#   created recovered Coordinator engine XXXXXX
 #   reinstated prepared subordinate transaction XXXXXX
 #
-#   (parallel -- optional and may be repeated depending upon timing)
-#   completed sent for participant P2/P3
-#   completed received for participant P2/P3
 #   (parallel)
-#   completed sent for participant P1
-#   completed received for participant P1
-#   rollback sent for participant P1
-#   rollback received for participant P1
+#   prepared sent for Participant P1
+#   prepared received for Coordinator engine P1'
+#   rollback sent for Coordinator engine P1
+#   rollback received for Participant P1
 #   (parallel)
-#   rollback called for pseudo participant XXXXXX
-#   rollback called for subordinate transaction XXX
-#   rollback sent for Participant XXXXXX
+
+#   rollback called for pseudo-participant XXXXXX
+#   rollback called for subordinate coordinator XXX
+#   rollback sent for Coordinator engine XXXXXX
 #   rollback received for Participant XXXXXX
 #   aborted sent for Participant XXXXXX
-#   aborted received for Participant XXXXXX
-#   rollback sent for Participant XXXXXX
+#   aborted received for Coordinator engine XXXXXX
+#   rollback sent for Coordinator engine XXXXXX
 #   rollback received for Participant XXXXXX
 #   aborted sent for Participant XXXXXX
-#   aborted received for Participant XXXXXX
-#   rollback returned for subordinate transaction XXX
-#   rollback completed for pseudo participant XXXXXX
+#   aborted received for Coordinator engine XXXXXX
+#   rollback returned for subordinate coordinator XXX
+#   rollback completed for pseudo-participant XXXXXX
+
 #   removed transaction XXXXXX
 #   (end parallel)
 #

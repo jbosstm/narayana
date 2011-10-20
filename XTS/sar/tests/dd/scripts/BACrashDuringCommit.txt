@@ -142,14 +142,14 @@
 #    org.jboss.jbossts.xts.servicetests.XTSServiceTestName
 # to the name of a class which will execute the test. This property must
 # be defined in the JVM running the AS to which the xtstest war is deployed
-# i.e. the client AS. n.b. if the client is colocated with the coordinator then
+# i.e. the client AS. n.b. if the client is collocated with the coordinator then
 # this property must be left undefined at AS reboot otherwise the client
 # will run again, starting a new TX which may interfere with recovery of the
 # crashed TX.
 #
 # Available tests include:
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiCoordinatorCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCoordinatorCompletionParticipantCloseTest
 # this test invokes a single service registering 3 coordinator completion participants
 # and then closing the activity
 # the location of service is defined by defining a system property:
@@ -157,7 +157,7 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantParticipantCompletionParticipantCloseTest
 # this test invokes a single service registering 3 participant completion participants
 # it sends completed to each of the 3 participants before closing the activity
 # the location of service is defined by defining a system property:
@@ -165,7 +165,7 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiCoordinatorCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCoordinatorCompletionParticipantExitAndCloseTest
 # this test invokes a single service registering 3 coordinator completion participants
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining a system property:
@@ -173,7 +173,7 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantParticipantCompletionParticipantExitAndCloseTest
 # this test invokes a single service registering 3 participant completion participants
 # it sends an exit to the first participant and completed to the other participants
 # before closing the activity
@@ -255,17 +255,15 @@
 #
 #   received exit message for XXXXXXX completion participant stub XXXXXX       (only for CloseAndExit tests)
 #   received completed message for XXXXXXX completion participant stub XXXXXX  (number of occcurences depends upon test)
-#   received completed message for XXXXXXX completion participant stub XXXXXX
-#   received completed message for XXXXXXX completion participant stub XXXXXX
+#   complete on recovered XXXXXXX completion participant engine XXXXXXX        (number of occcurences depends upon test)
 #   JVM exit
 #
 # After reboot the JVM should exit leaving output in the following format in file
 # testlog.
 #
 #   received exit message for XXXXXXX completion participant stub XXXXXX       (only for CloseAndExit tests)
-#   received completed message for XXXXXXX completion participant stub XXXXXX
-#   received completed message for XXXXXXX completion participant stub XXXXXX
-#   received completed message for XXXXXXX completion participant stub XXXXXX
+#   received completed message for XXXXXXX completion participant stub XXXXXX  (number of occcurences depends upon test)
+#   complete on recovered XXXXXXX completion participant engine XXXXXXX        (number of occcurences depends upon test)
 #   JVM exit
 #   created recovered XXXXXXX completion participant stub XXXXXX
 #   created recovered XXXXXXX completion participant stub XXXXXX
@@ -277,7 +275,7 @@
 #   received closed message for XXXXXXX completion participant stub XXXXXX
 #   close on recovered XXXXXXX completion participant engine XXXXXX
 #   received closed message for XXXXXXX completion participant stub XXXXXX
-#   removed closed activity XXXXXX
+#   removed committed activity XXXXXX
 #
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
@@ -433,13 +431,13 @@ ENDRULE
 
 RULE trace participant completion engine create
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
-METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)
+METHOD <init>(String, W3CEndpointReference, State, boolean)
 AT ENTRY
 BIND identifier = $1,
      recovered=$4
 IF recovered
 DO debug("created recovered participant completion participant stub " + identifier),
-   trace("log", "created recovered participant completion participant stub " + identifier)
+   traceln("log", "created recovered participant completion participant stub " + identifier)
 ENDRULE
 
 #######################################################################
@@ -451,13 +449,13 @@ ENDRULE
 
 RULE trace coordinator completion engine create
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
-METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)
+METHOD <init>(String, W3CEndpointReference, State, boolean)
 AT ENTRY
 BIND identifier = $1,
      recovered=$4
 IF recovered
 DO debug("created recovered coordinator completion participant stub " + identifier),
-   trace("log", "created recovered coordinator completion participant stub " + identifier)
+   traceln("log", "created recovered coordinator completion participant stub " + identifier)
 ENDRULE
 
 #######################################################################
