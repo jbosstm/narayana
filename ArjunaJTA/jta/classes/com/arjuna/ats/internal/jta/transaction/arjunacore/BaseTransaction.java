@@ -54,7 +54,7 @@ public class BaseTransaction
 		 * programmer use them. Strict conformance will always say no.
 		 */
 
-		if (!jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions())
+		if (!_supportSubtransactions)
 		{
 		    try
 		    {
@@ -254,7 +254,7 @@ public class BaseTransaction
 		else
 		{
 			if ((theTransaction.getStatus() != javax.transaction.Status.STATUS_NO_TRANSACTION)
-					&& !jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions())
+					&& !_supportSubtransactions)
 			{
 				throw new IllegalStateException(
 						"BaseTransaction.checkTransactionState - "
