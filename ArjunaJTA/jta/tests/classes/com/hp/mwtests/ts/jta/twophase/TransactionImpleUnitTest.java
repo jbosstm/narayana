@@ -162,6 +162,7 @@ public class TransactionImpleUnitTest
         assertFalse(res.booleanValue());
         
         tx.rollback();
+        ThreadActionData.purgeActions();
     }
     
     @Test
