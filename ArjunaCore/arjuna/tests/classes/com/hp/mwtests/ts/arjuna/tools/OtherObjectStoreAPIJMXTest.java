@@ -74,7 +74,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testActionStore() throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         ActionStore as = new ActionStore(objectStoreEnvironmentBean);
 
@@ -117,7 +117,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testHashedStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         HashedStore as = new HashedStore(objectStoreEnvironmentBean);
 
@@ -159,7 +159,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testHashedActionStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         HashedActionStore as = new HashedActionStore(objectStoreEnvironmentBean);
 
@@ -201,7 +201,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testShadowingStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         ShadowingStore as = new ShadowingStore(objectStoreEnvironmentBean);
 
@@ -242,7 +242,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testNullActionStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         NullActionStore as = new NullActionStore(objectStoreEnvironmentBean);
 
@@ -283,7 +283,7 @@ public class OtherObjectStoreAPIJMXTest {
     public void testVolatileStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         VolatileStore as = new VolatileStore(objectStoreEnvironmentBean);
 

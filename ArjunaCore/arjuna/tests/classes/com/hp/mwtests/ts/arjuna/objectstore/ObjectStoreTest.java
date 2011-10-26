@@ -136,7 +136,7 @@ public class ObjectStoreTest
     public void testActionStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         ActionStore as = new ActionStore(objectStoreEnvironmentBean);
         
@@ -176,7 +176,7 @@ public class ObjectStoreTest
     public void testShadowNoFileLockStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         ShadowNoFileLockStore as = new ShadowNoFileLockStore(objectStoreEnvironmentBean);
         
@@ -216,7 +216,7 @@ public class ObjectStoreTest
     public void testHashedStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         HashedStore as = new HashedStore(objectStoreEnvironmentBean);
         
@@ -256,7 +256,7 @@ public class ObjectStoreTest
     public void testCacheStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         CacheStore as = new CacheStore(objectStoreEnvironmentBean);
         
@@ -296,7 +296,7 @@ public class ObjectStoreTest
     public void testHashedActionStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         HashedActionStore as = new HashedActionStore(objectStoreEnvironmentBean);
         
@@ -336,7 +336,7 @@ public class ObjectStoreTest
     public void testShadowingStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         ShadowingStore as = new ShadowingStore(objectStoreEnvironmentBean);
         
@@ -376,7 +376,7 @@ public class ObjectStoreTest
     public void testNullActionStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         NullActionStore as = new NullActionStore(objectStoreEnvironmentBean);
         
@@ -416,7 +416,7 @@ public class ObjectStoreTest
     public void testVolatileStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         VolatileStore as = new VolatileStore(objectStoreEnvironmentBean);
         
@@ -491,7 +491,7 @@ public class ObjectStoreTest
     public void testFileLockingStore () throws Exception
     {
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-        objectStoreEnvironmentBean.setLocalOSRoot( System.getProperty("java.io.tmpdir") );
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
 
         DummyOS as = new DummyOS(objectStoreEnvironmentBean);
         
@@ -552,6 +552,6 @@ public class ObjectStoreTest
 
     private static String imple = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
     private static String localOSRoot = "foo";
-    private static String objectStoreDir = System.getProperty("java.io.tmpdir")+"/bar";
+    private static String objectStoreDir = "tmp"+"/bar";
 
 }
