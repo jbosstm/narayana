@@ -49,7 +49,7 @@ DB_PGSQL_JNDI_DatabaseUser=dtf11
 DB_PGSQL_JNDI_DatabasePassword=dtf11
 # datasource properties:
 DB_PGSQL_JNDI_DatabaseName=jbossts
-DB_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+DB_PGSQL_JNDI_Host=dtfdb3.mw.lab.eng.bos.redhat.com
 ##DB_PGSQL_JNDI_Port=1521
 
 ######################################################################
@@ -64,7 +64,7 @@ DB1_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql1
 DB1_PGSQL_JNDI_DatabaseUser=dtf11
 DB1_PGSQL_JNDI_DatabasePassword=dtf11
 DB1_PGSQL_JNDI_DatabaseName=jbossts
-DB1_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+DB1_PGSQL_JNDI_Host=dtfdb3.mw.lab.eng.bos.redhat.com
 
 DB2_PGSQL_JNDI_NumberOfDrivers=2
 DB2_PGSQL_JNDI_Driver0=org.postgresql.Driver
@@ -74,7 +74,7 @@ DB2_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql2
 DB2_PGSQL_JNDI_DatabaseUser=dtf12
 DB2_PGSQL_JNDI_DatabasePassword=dtf12
 DB2_PGSQL_JNDI_DatabaseName=jbossts
-DB2_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+DB2_PGSQL_JNDI_Host=dtfdb3.mw.lab.eng.bos.redhat.com
 
 ##########################################################################
 # MySQL JNDI Profile
@@ -88,7 +88,7 @@ DB_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql
 DB_MYSQL_JNDI_DatabaseUser=dtf11
 DB_MYSQL_JNDI_DatabasePassword=dtf11
 DB_MYSQL_JNDI_DatabaseName=jbossts
-DB_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+DB_MYSQL_JNDI_Host=dtfdb2.mw.lab.eng.bos.redhat.com
 ##DB_MYSQL_JNDI_Port=1521
 
 ######################################################################
@@ -103,7 +103,7 @@ DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
 DB1_MYSQL_JNDI_DatabaseUser=dtf11
 DB1_MYSQL_JNDI_DatabasePassword=dtf11
 DB1_MYSQL_JNDI_DatabaseName=jbossts
-DB1_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+DB1_MYSQL_JNDI_Host=dtfdb2.mw.lab.eng.bos.redhat.com
 
 DB2_MYSQL_JNDI_NumberOfDrivers=2
 DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
@@ -113,7 +113,7 @@ DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
 DB2_MYSQL_JNDI_DatabaseUser=dtf12
 DB2_MYSQL_JNDI_DatabasePassword=dtf12
 DB2_MYSQL_JNDI_DatabaseName=jbossts
-DB2_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+DB2_MYSQL_JNDI_Host=dtfdb2.mw.lab.eng.bos.redhat.com
 
 ########################################################################
 # MSSQL Server JNDI Profile
@@ -180,7 +180,7 @@ DB_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin
 DB_THIN_JNDI_DatabaseUser=dtf11
 DB_THIN_JNDI_DatabasePassword=dtf11
 DB_THIN_JNDI_DatabaseName=TSH1
-DB_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
 DB_THIN_JNDI_Port=1521
 
 ######################################################################
@@ -197,7 +197,7 @@ DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
 DB1_THIN_JNDI_DatabaseUser=dtf11
 DB1_THIN_JNDI_DatabasePassword=dtf11
 DB1_THIN_JNDI_DatabaseName=TSH1
-DB1_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB1_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
 DB1_THIN_JNDI_Port=1521
 
 # DB2
@@ -210,7 +210,7 @@ DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
 DB2_THIN_JNDI_DatabaseUser=dtf12
 DB2_THIN_JNDI_DatabasePassword=dtf12
 DB2_THIN_JNDI_DatabaseName=TSH1
-DB2_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB2_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
 DB2_THIN_JNDI_Port=1521
 
 
