@@ -178,7 +178,7 @@
 			   <failOnMissingWebXml>false</failOnMissingWebXml>
 			   <archive>
 				   <manifestEntries>
-					   <Dependencies>deployment.arquillian-service,org.jboss.xts,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
+					   <Dependencies>org.jboss.xts,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
 				   </manifestEntries>
 			   </archive>
 		   </configuration>

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import javax.inject.Inject;
-import javax.management.InstanceNotFoundException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -30,7 +30,7 @@ public class SingleParticipantPrepareAndCommit {
 	}
 
 
-	@Test(expected = InstanceNotFoundException.class)
+	@Test(expected = UndeclaredThrowableException.class)
 	public void runTest() throws Exception {
 		String testName = 
 			"org.jboss.jbossts.xts.servicetests.test.at.SingleParticipantPrepareAndCommitTest";
