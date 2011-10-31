@@ -1,22 +1,22 @@
 package org.jboss.jbossts.xts.crash.test;
 
-import org.jboss.jbossts.xts.crash.test.at.SingleParticipantPrepareAndCommit;
+import org.jboss.jbossts.xts.crash.test.at.MultiServicePrepareAndCommit;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SingleParticipantPrepareAndCommit.class,
+	MultiServicePrepareAndCommit.class,
 	WatchRecovery.class,
 	RenameTestLog.class
 })
-
-public class TestATCrashDuringOnePhaseCommitSuite extends BaseCrashTest {
+public class TestATCrashDuringCommitSuite2 extends BaseCrashTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		deleteTestLog();
-		copyBytemanScript("ATCrashDuringOnePhaseCommit.txt");
-		RenameTestLog.scriptName = "ATCrashDuringOnePhaseCommit";
+		copyBytemanScript("ATCrashDuringCommit.txt");
+		RenameTestLog.scriptName = "ATCrashDuringCommit";
+		WatchRecovery.wait_time = 8;
 	}
 }

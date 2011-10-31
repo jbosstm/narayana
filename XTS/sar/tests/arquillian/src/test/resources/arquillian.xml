@@ -5,14 +5,13 @@
        	<property name="maxTestClassesBeforeRestart">2</property>
    </engine>
 	<!-- Example configuration for a remote JBoss AS 7 instance -->
-	<container qualifier="container-at-crash-during-one-phase-commit" default="true">
+	<container qualifier="jboss-as" default="true">
 		<protocol type="jmx-as7">
 			<property name="executionType">REMOTE</property>
 		</protocol>
 		<configuration>
 			<property name="serverConfig">standalone-xts.xml</property>
-			<property name="javaVmArguments">-Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/ATCrashDuringOnePhaseCommit.txt,boot:target/test-classes/lib/byteman.jar,listener:true</property>
+			<property name="javaVmArguments">-Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/Running.txt,boot:target/test-classes/lib/byteman.jar,listener:true</property>
 		</configuration>
 	</container>
-
 </arquillian>
