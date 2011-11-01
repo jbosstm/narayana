@@ -29,44 +29,6 @@
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>idlj-maven-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.jacorb</groupId>
-            <artifactId>jacorb-idl-compiler</artifactId>
-            <version>2.2.3</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-test</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <compiler>jacorb</compiler>
-          <sourceDirectory>tests/idl/</sourceDirectory>
-          <sources>
-            <source>
-              <includes>
-                <include>test.idl</include>
-              </includes>
-              <additionalArguments>
-                <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
-                <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
-              </additionalArguments>
-            </source>
-          </sources>
-          <includeDirs>
-            <includeDir>../jts/idl/omg</includeDir>
-            <includeDir>../jts/idl/arjuna</includeDir>
-            <includeDir>../jts/../jacorb/idl/omg</includeDir>
-          </includeDirs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -155,4 +117,129 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>jacorb</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>idlj-maven-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>org.jacorb</groupId>
+                <artifactId>jacorb-idl-compiler</artifactId>
+                <version>2.2.3</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>generate-test</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <compiler>jacorb</compiler>
+              <sourceDirectory>tests/idl/</sourceDirectory>
+              <sources>
+                <source>
+                  <includes>
+                    <include>test.idl</include>
+                  </includes>
+                  <additionalArguments>
+                    <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
+                    <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
+                  </additionalArguments>
+                </source>
+              </sources>
+              <includeDirs>
+                <includeDir>../jts/idl/omg</includeDir>
+                <includeDir>../jts/idl/arjuna</includeDir>
+                <includeDir>../jts/../jacorb/idl/omg</includeDir>
+              </includeDirs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>idlj</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>idlj-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>generate-test</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <compiler>idlj</compiler>
+              <sourceDirectory>tests/idl/</sourceDirectory>
+              <sources>
+                <source>
+                  <includes>
+                    <include>test.idl</include>
+                  </includes>
+                  <compatible>false</compatible>
+<!-- the defines option is broken in 1.1) hence the use of -d option below
+                  <defines>
+                      <define>
+                        <symbol>ORB_OTS_SUPPORT</symbol>
+                        <value>1</value>
+                      </define>
+                      <define>
+                        <symbol>ORB_CURRENT_SUPPORT</symbol>
+                        <value>1</value>
+                      </define>
+                  </defines>
+-->
+
+                  <packagePrefixes>
+                      <packagePrefix>
+                        <type>CosTransactions</type>
+                        <prefix>org.omg</prefix>
+                      </packagePrefix>
+                  </packagePrefixes>
+
+                  <additionalArguments>
+                    <additionalArgument>-i</additionalArgument>
+                    <additionalArgument>${basedir}/../jts/idl/omg</additionalArgument>
+                    <additionalArgument>-i</additionalArgument>
+                    <additionalArgument>${basedir}/../jts/idl/arjuna</additionalArgument>
+                    <additionalArgument>-i</additionalArgument>
+                    <additionalArgument>${env.JAVA_HOME}/lib</additionalArgument>
+                    <additionalArgument>-d</additionalArgument>
+                    <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
+                    <additionalArgument>-d</additionalArgument>
+                    <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
+                  </additionalArguments>
+                </source>
+              </sources>
+<!-- the includeDirs option is broken in 1.1 (and in 1.2-SNAPSHOT) hence the use of -i above
+              <includeDirs>
+                <includeDir>idl</includeDir>
+                <includeDir>../jts/idl/omg</includeDir>
+                <includeDir>../jts/idl/arjuna</includeDir>
+                <includeDir>${env.JAVA_HOME}/lib</includeDir>
+              </includeDirs>
+-->
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
