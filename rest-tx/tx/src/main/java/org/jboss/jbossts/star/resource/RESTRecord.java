@@ -320,10 +320,17 @@ public class RESTRecord extends AbstractRecord
         catch (HttpResponseException e)
         {
             if (log.isDebugEnabled())
-                log.debug("commit exception: " + e + " body: " + txs.getBody());
-            checkFinishError(e.getActualResponse(), true);
+                log.debug("commit exception: " + e + " HTTP code: " + e.getActualResponse() +
+					" body: " + txs.getBody());
 
-			status = txs.getBody();
+			// should result in the recovery system taking over
+			if (e.getActualResponse() == HttpURLConnection.HTTP_UNAVAILABLE) {
+                log.trace("Finishing with TwoPhaseOutcome.FINISH_ERROR");
+ 				return TwoPhaseOutcome.FINISH_ERROR;
+			} else {
+            	checkFinishError(e.getActualResponse(), true);
+				status = txs.getBody();
+			}
         }
 
         return statusToOutcome(status);

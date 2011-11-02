@@ -249,7 +249,7 @@ public class TxSupport
                 return body;
             }
         } catch (IOException e) {
-            throw new HttpResponseException(e, "", expect, status);
+            throw new HttpResponseException(e, "", expect, HttpURLConnection.HTTP_UNAVAILABLE);
         } finally {
             if (connection != null)
                 connection.disconnect();
