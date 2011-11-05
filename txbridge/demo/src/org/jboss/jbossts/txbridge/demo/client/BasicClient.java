@@ -31,6 +31,7 @@ package org.jboss.jbossts.txbridge.demo.client;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.wst.TransactionRolledBackException;
+import org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
@@ -78,7 +80,6 @@ public class BasicClient extends HttpServlet
             Service service = Service.create(wsdlLocation, serviceName);
             bistro = service.getPort(portName, Bistro.class);
 
-            // we could have used @HandlerChain but it's nice to show a bit of variety...
             BindingProvider bindingProvider = (BindingProvider)bistro;
             List<Handler> handlers = new ArrayList<Handler>(1);
             handlers.add(new JaxWSHeaderContextProcessor());
@@ -213,12 +214,7 @@ public class BasicClient extends HttpServlet
         System.out.println("CLIENT: transaction ID= "+ ut);
 
         // we reuse the existing WS-AT aware service from the XTS demo app
-        URL wsdlLocation = new URL("http://localhost:8080/xtsdemowebservices/RestaurantServiceAT?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/jbosstm/xts/demo/Restaurant", "RestaurantServiceATService");
-        Service service = Service.create(wsdlLocation, serviceName);
-
-        // use a modified client interface with @HandlerChain configured on it.
-        Restaurant restaurant = service.getPort(Restaurant.class);
+        Restaurant restaurant = createRestaurantClient();
 
         System.out.println("CLIENT: calling business Web Services...");
 
@@ -231,4 +227,26 @@ public class BasicClient extends HttpServlet
         System.out.println("done");
         System.out.flush();
     }
+
+    private Restaurant createRestaurantClient() throws MalformedURLException
+    {
+        //Obtain service
+        URL wsdlLocation = new URL("http://localhost:8080/xtsdemowebservices/RestaurantServiceAT?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/jbosstm/xts/demo/Restaurant", "RestaurantServiceATService");
+        Service service = Service.create(wsdlLocation, serviceName);
+
+        //Obtain port
+        QName portName = new QName("http://www.jboss.com/jbosstm/xts/demo/Restaurant", "RestaurantServiceAT");
+        Restaurant restaurant = service.getPort(portName, Restaurant.class);
+
+        //Add client Handlers
+        List<Handler> handlers = new ArrayList<Handler>(1);
+        handlers.add(new JaxWSTxOutboundBridgeHandler());
+        handlers.add(new JaxWSHeaderContextProcessor());
+        BindingProvider bindingProvider = (BindingProvider) restaurant;
+        bindingProvider.getBinding().setHandlerChain(handlers);
+
+        return restaurant;
+    }
+
 }
