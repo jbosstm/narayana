@@ -39,10 +39,15 @@
   <modules>
     <module>WSAS</module>
     <module>WSAS/xts-test-servlet</module>
+    <module>WSAS/tests</module>
     <module>WS-C</module>
+	<module>WS-C/tests</module>
     <module>WSCF</module>
+	<module>WSCF/tests</module>
     <module>WS-T</module>
+	<module>WS-T/tests</module>
     <module>WSTX</module>
+	<module>WSTX/tests</module>
     <module>recovery</module>
     <module>bridge</module>
     <module>sar</module>
