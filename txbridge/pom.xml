@@ -99,6 +99,12 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+	<dependency>
+  	  <groupId>commons-httpclient</groupId>
+	  <artifactId>commons-httpclient</artifactId>
+	  <version>3.1</version>
+	  <scope>test</scope>
+	</dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
