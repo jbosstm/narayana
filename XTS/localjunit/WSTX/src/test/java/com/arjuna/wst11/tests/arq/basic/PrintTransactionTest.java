@@ -18,35 +18,17 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 2002,
- *
- * Arjuna Technologies Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: PrintTransaction.java,v 1.1.24.1 2005/11/22 10:36:12 kconner Exp $
- */
-package com.arjuna.wst11.tests.junit.basic;
+package com.arjuna.wst11.tests.arq.basic;
 
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
-/**
- * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: PrintTransaction.java,v 1.1.24.1 2005/11/22 10:36:12 kconner Exp $
- * @since 1.0.
- */
+import com.arjuna.wst11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class PrintTransactionTest
@@ -56,20 +38,7 @@ public class PrintTransactionTest
 
 	@Deployment
 	public static WebArchive createDeployment() {
-		WebArchive archive = ShrinkWrap
-		.create(WebArchive.class, "test.war")
-		.addClass(PrintTransaction.class)
-		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
-		archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-		// Need to make sure we add the arquillian-service and msc as a
-		// dependency
-		final String ManifestMF = "Manifest-Version: 1.0\n"
-			+ "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
-		archive.setManifest(new StringAsset(ManifestMF));
-
-		return archive;
+		return WarDeployment.getDeployment(PrintTransaction.class);
 	}
 
 	@Test
