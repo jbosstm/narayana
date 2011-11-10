@@ -85,6 +85,7 @@ public class SpecTest extends BaseTest {
         */
         int tcnt1 = txn.txCount();
         int tcnt2 = txn.getTransactions().size();
+        log.info("Comparing (" + txn.txUrl() + "): " + tcnt1 + " vrs " + tcnt2 + " vrs " + (txnCount + 1));
         Assert.assertEquals(tcnt1, tcnt2);
         Assert.assertEquals(tcnt1, txnCount + 1);
 
