@@ -1,0 +1,158 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+package org.jboss.jbossts.txframework.functional.services;
+
+import com.arjuna.wst.*;
+import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.Error;
+import org.jboss.jbossts.txframework.api.annotation.management.TxManagement;
+import org.jboss.jbossts.txframework.api.annotation.service.ServiceRequest;
+import org.jboss.jbossts.txframework.api.annotation.transaction.WSAT;
+import org.jboss.jbossts.txframework.api.management.ATTxControl;
+import org.jboss.jbossts.txframework.functional.common.EventLog;
+import org.jboss.jbossts.txframework.functional.common.ServiceCommand;
+import org.jboss.jbossts.txframework.functional.common.SomeApplicationException;
+import org.jboss.jbossts.txframework.functional.interfaces.AT;
+import org.jboss.jbossts.txframework.impl.TXControlException;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.jws.HandlerChain;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Paul Robinson (paul.robinson@redhat.com)
+ */
+@Remote(AT.class)
+@WSAT
+@Stateless
+@WebService(serviceName = "ATService", portName = "AT",
+        name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
+//todo: Can the framework specify the handlerchain if not isPresent? Would have to be added earlier in the chain than we currently intercept
+@HandlerChain(file = "/context-handlers.xml", name = "Context Handlers")
+@SOAPBinding(style = SOAPBinding.Style.RPC)
+public class ATService implements AT
+{
+    @TxManagement
+    public ATTxControl txControl;
+    private boolean rollback = false;
+    private EventLog eventLog = new EventLog();
+
+    @WebMethod
+    @ServiceRequest
+    public void invoke(ServiceCommand[] serviceCommands) throws SomeApplicationException
+    {
+        try
+        {
+            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
+            {
+                throw new SomeApplicationException("Intentionally thrown Exception");
+            }
+
+            if (isPresent(ServiceCommand.READ_ONLY, serviceCommands))
+            {
+                //todo: is this right?
+                txControl.readOnly();
+            }
+
+            if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
+            {
+                rollback = true;
+            }
+        }
+        catch (TXControlException e)
+        {
+            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+        }
+    }
+
+    @WebMethod
+    public EventLog getEventLog()
+    {
+        return eventLog;
+    }
+
+    @WebMethod
+    public void clearEventLog()
+    {
+        eventLog.clear();
+    }
+
+    @Commit
+    @WebMethod(exclude = true)
+    public void commit()
+    {
+        eventLog.add(Commit.class);
+    }
+
+    @Rollback
+    @WebMethod(exclude = true)
+    public void rollback()
+    {
+        eventLog.add(Rollback.class);
+    }
+
+    @Prepare
+    @WebMethod(exclude = true)
+    public Vote prepare()
+    {
+        eventLog.add(Prepare.class);
+        if (rollback)
+        {
+            return new Aborted();
+        }
+        else
+        {
+            return new Prepared();
+        }
+    }
+
+    @Unknown
+    @WebMethod(exclude = true)
+    public void unknown() throws SystemException
+    {
+        eventLog.add(Unknown.class);
+    }
+
+    @Error
+    @WebMethod(exclude = true)
+    public void error() throws SystemException
+    {
+        eventLog.add(Error.class);
+    }
+
+    private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands)
+    {
+        for (ServiceCommand foundServiceCommand : serviceCommands)
+        {
+            if (foundServiceCommand == expectedServiceCommand)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
