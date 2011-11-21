@@ -586,9 +586,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_lastResource_disableWarning();
 
-	@Message(id = 12140, value = "Adding multiple last resources is disallowed. Current resource is {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12140, value = "Adding multiple last resources is disallowed. Trying to add {0}, but already have {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_lastResource_disallow(String arg0);
+	public void warn_lastResource_disallow(String arg0, String arg1);
 
 	@Message(id = 12141, value = "Multiple last resources have been added to the current transaction. This is transactionally unsafe and should not be relied upon. Current resource is {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)

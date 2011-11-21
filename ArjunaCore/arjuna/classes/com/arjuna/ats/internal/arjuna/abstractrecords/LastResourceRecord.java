@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Technologies Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: LastResourceRecord.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -51,7 +51,7 @@ import java.io.PrintWriter;
  * invokes the second phase on *all* participants, starting with the one that is
  * only one-phase aware. If it rolls back, it rolls all resources back, but the
  * order is not important.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: LastResourceRecord.java 2342 2006-03-30 13:06:17Z $
  * @since ATS 3.2.
@@ -145,7 +145,7 @@ public class LastResourceRecord extends AbstractRecord
 
         if (_lro == null)
             return TwoPhaseOutcome.PREPARE_NOTOK;
-        
+
         switch (_lro.commit())
         {
         case TwoPhaseOutcome.FINISH_OK:
@@ -155,6 +155,12 @@ public class LastResourceRecord extends AbstractRecord
         default:
             return TwoPhaseOutcome.PREPARE_NOTOK;
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "LastResourceRecord("+_lro+")";
     }
 
     public void print (PrintWriter strm)
@@ -182,7 +188,7 @@ public class LastResourceRecord extends AbstractRecord
                 return true;
             }
             else {
-                tsLogger.i18NLogger.warn_lastResource_disallow(a.toString());
+                tsLogger.i18NLogger.warn_lastResource_disallow(this.toString(), a.toString());
 
                 return false;
             }

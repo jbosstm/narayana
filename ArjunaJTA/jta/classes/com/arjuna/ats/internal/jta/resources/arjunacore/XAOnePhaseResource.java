@@ -105,11 +105,11 @@ public class XAOnePhaseResource implements OnePhaseResource
     public int commit()
     {
         boolean doForget = false;
-        
+
         try
         {
             // TODO we don't do an end here yet we do in 2PC. Check!!
-            
+
             xaResource.commit(xid, true) ;
             return TwoPhaseOutcome.FINISH_OK ;
         }
@@ -118,7 +118,7 @@ public class XAOnePhaseResource implements OnePhaseResource
             if (jtaLogger.logger.isTraceEnabled()) {
                 jtaLogger.logger.trace("XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
             }
-            
+
             switch (xae.errorCode)
             {
             case XAException.XA_HEURHAZ:
@@ -172,7 +172,7 @@ public class XAOnePhaseResource implements OnePhaseResource
                 }
             }
         }
-        
+
         return TwoPhaseOutcome.ONE_PHASE_ERROR; // presume abort.
     }
 
@@ -197,7 +197,7 @@ public class XAOnePhaseResource implements OnePhaseResource
                 jtaLogger.logger.trace("XAOnePhaseResource.rollback(" + xid + ") " + ex.getMessage());
             }
         }
-        
+
         return TwoPhaseOutcome.FINISH_ERROR ;
     }
 
@@ -294,6 +294,12 @@ public class XAOnePhaseResource implements OnePhaseResource
                 final String message = jtaLogger.i18NLogger.get_resources_arjunacore_XAOnePhaseResource_unpackType(Integer.toString(recoveryType));
                 throw new IOException(message);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "XAOnePhaseResource("+xaResource+")";
     }
 
     /**
