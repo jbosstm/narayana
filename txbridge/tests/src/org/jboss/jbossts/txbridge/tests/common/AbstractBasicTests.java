@@ -20,7 +20,7 @@
  */
 package org.jboss.jbossts.txbridge.tests.common;
 
-import com.arjuna.qa.junit.HttpUtils;
+import org.jboss.jbossts.txbridge.utils.HttpUtils;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.jboss.byteman.agent.submit.Submit;
 import org.jboss.byteman.contrib.dtest.BytemanTestHelper;

@@ -522,11 +522,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>localjunit</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-test-servlet</artifactId>
         <version>${project.version}</version>
       </dependency>
