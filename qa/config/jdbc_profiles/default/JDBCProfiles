@@ -177,10 +177,10 @@ DB_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_THIN_JNDI_Binding=oracle_thin
 DB_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin
-DB_THIN_JNDI_DatabaseUser=dtf11
-DB_THIN_JNDI_DatabasePassword=dtf11
-DB_THIN_JNDI_DatabaseName=TSH1
-DB_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
+DB_THIN_JNDI_DatabaseUser=jbossts0
+DB_THIN_JNDI_DatabasePassword=jbossts0
+DB_THIN_JNDI_DatabaseName=qaora11
+DB_THIN_JNDI_Host=db04.mw.lab.eng.bos.redhat.com
 DB_THIN_JNDI_Port=1521
 
 ######################################################################
@@ -194,10 +194,10 @@ DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_THIN_JNDI_Binding=oracle_thin1
 DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
-DB1_THIN_JNDI_DatabaseUser=dtf11
-DB1_THIN_JNDI_DatabasePassword=dtf11
-DB1_THIN_JNDI_DatabaseName=TSH1
-DB1_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
+DB1_THIN_JNDI_DatabaseUser=jbossts0
+DB1_THIN_JNDI_DatabasePassword=jbossts0
+DB1_THIN_JNDI_DatabaseName=qaora11
+DB1_THIN_JNDI_Host=db04.mw.lab.eng.bos.redhat.com
 DB1_THIN_JNDI_Port=1521
 
 # DB2
@@ -207,10 +207,10 @@ DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_THIN_JNDI_Binding=oracle_thin2
 DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
-DB2_THIN_JNDI_DatabaseUser=dtf12
-DB2_THIN_JNDI_DatabasePassword=dtf12
-DB2_THIN_JNDI_DatabaseName=TSH1
-DB2_THIN_JNDI_Host=dtfdb5.mw.lab.eng.bos.redhat.com
+DB2_THIN_JNDI_DatabaseUser=jbossts1
+DB2_THIN_JNDI_DatabasePassword=jbossts1
+DB2_THIN_JNDI_DatabaseName=qaora11
+DB2_THIN_JNDI_Host=db04.mw.lab.eng.bos.redhat.com
 DB2_THIN_JNDI_Port=1521
 
 
