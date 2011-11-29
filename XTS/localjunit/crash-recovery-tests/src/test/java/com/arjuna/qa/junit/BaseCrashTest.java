@@ -7,16 +7,14 @@ import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
 public class BaseCrashTest {
 	protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
 	protected String BytemanArgs = "-Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
@@ -36,6 +34,10 @@ public class BaseCrashTest {
 	public static Archive<?> createTestArchive() {
 		WebArchive archive = ShrinkWrap.
 		createFromZipFile(WebArchive.class, new File(xtstestWar));
+		final String ManifestMF = "Manifest-Version: 1.0\n"
+			+ "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
+		archive.setManifest(new StringAsset(ManifestMF));
+
 		return archive;	
 	}
 	@Before
@@ -66,8 +68,8 @@ public class BaseCrashTest {
 			}
 		}
 	}
-	
-	protected void runTest(String testClass) throws Exception {
+
+	protected void runTest(String testClass, long waitForCrash, long waitForRecovery) throws Exception {
 		Config config = new Config();
 		config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
 
@@ -75,14 +77,18 @@ public class BaseCrashTest {
 		deployer.deploy("xtstest");
 
 		//Waiting for crashing
-		Thread.sleep(2 * 60 * 1000);
+		Thread.sleep(waitForCrash * 60 * 1000);
 
 		//Boot jboss as after crashing
 		config.add("javaVmArguments", javaVmArguments);
 		controller.start("jboss-as", config.map());
+		
+		//redeploy xtstest
+		deployer.undeploy("xtstest");
+		deployer.deploy("xtstest");
 
 		//Waiting for recovery
-		Thread.sleep(5 * 60 * 1000);
+		Thread.sleep(waitForRecovery * 60 * 1000);
 
 		deployer.undeploy("xtstest");
 		controller.stop("jboss-as");

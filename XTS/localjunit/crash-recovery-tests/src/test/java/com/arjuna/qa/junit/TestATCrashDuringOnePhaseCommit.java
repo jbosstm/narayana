@@ -14,6 +14,6 @@ public class TestATCrashDuringOnePhaseCommit extends BaseCrashTest {
 	public void SingleParticipantPrepareAndCommit() throws Exception {
 		testName = "SingleParticipantPrepareAndCommit";
 		String testClass = "org.jboss.jbossts.xts.servicetests.test.at.SingleParticipantPrepareAndCommitTest";
-		runTest(testClass);
+		runTest(testClass, 3, 5);
 	}
 }
