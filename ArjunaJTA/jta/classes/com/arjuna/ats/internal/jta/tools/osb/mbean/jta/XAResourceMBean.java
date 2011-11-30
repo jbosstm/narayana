@@ -10,6 +10,8 @@ public interface XAResourceMBean extends LogRecordWrapperMBean {
 	String getClassName();
 	@MXBeanPropertyDescription("JNDI name of the JCA resource")
 	String getEisProductName();
+	@MXBeanPropertyDescription("JNDI Name of the datasource")
+	String getJndiName();
 	@MXBeanPropertyDescription("JCA product version")
 	String getEisProductVersion();
 	@MXBeanPropertyDescription("The number of seconds before the resource can rollback the branch")

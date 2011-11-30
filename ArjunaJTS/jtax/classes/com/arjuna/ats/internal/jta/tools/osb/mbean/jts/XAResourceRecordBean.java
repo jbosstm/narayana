@@ -6,6 +6,7 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
 import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 
 /**
  * MBean implementation of a transaction participant corresponding to a JTA XAResource
@@ -15,6 +16,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     String className = "unavailable";
     String eisProductName = "unavailable";
     String eisProductVersion = "unavailable";
+    String jndiName = "unavailable";
     int timeout = 0;
 
     public XAResourceRecordBean(UidWrapper w) {
@@ -29,6 +31,8 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     public String getClassName() { return className; }
     public String getEisProductName() { return eisProductName; }
     public String getEisProductVersion() { return eisProductVersion; }
+    public String getJndiName() {
+        return jndiName; }
     public int getTimeout() { return timeout; }
 
     /**
@@ -40,7 +44,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
             if (_theXAResource != null) {
                 XAResourceRecordBean.this.className = _theXAResource.getClass().getName();
-                XAResourceRecordBean.this.eisProductName = callMethod(_theXAResource, "getEisProductName");
+                XAResourceRecordBean.this.eisProductName =  callMethod(_theXAResource, "getEisProductName");
                 XAResourceRecordBean.this.eisProductVersion = callMethod(_theXAResource, "getEisProductVersion");
 
                 try {
