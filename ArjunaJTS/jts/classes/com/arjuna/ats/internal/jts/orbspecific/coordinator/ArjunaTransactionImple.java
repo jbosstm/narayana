@@ -288,7 +288,7 @@ public class ArjunaTransactionImple extends
 	 * example) then we do nothing - could throw TransactionRequired or
 	 * INVALID_TRANSACTION. However, if it was rolledback then we throw
 	 * TRANSACTION_ROLLEDBACK. Seems like an inconsistency.
-	 * 
+	 *
 	 * OTS is vague as to what to do if the transaction has been terminated,
 	 * so we make a sensible choice.
 	 *
@@ -384,12 +384,12 @@ public class ArjunaTransactionImple extends
 					CompletionStatus.COMPLETED_NO);
 		case ActionStatus.H_MIXED:
 		    if (report_heuristics)
-			throw new HeuristicMixed();		    
+			throw new HeuristicMixed();
 		    break;
 		case ActionStatus.H_HAZARD:
 		default:
 		    if (report_heuristics)
-		        throw new HeuristicHazard();		    
+		        throw new HeuristicHazard();
 		    break;
 		}
 	}
@@ -1170,7 +1170,7 @@ public class ArjunaTransactionImple extends
 			currentStatus = determineStatus(this);
 
 			// https://jira.jboss.org/jira/browse/JBTM-608
-			
+
 			if ((currentStatus == Status.StatusActive) || (currentStatus == Status.StatusPreparing))// is transaction still
 			    // running?
 			{
@@ -1255,7 +1255,7 @@ public class ArjunaTransactionImple extends
 	         * If XA compliant then return context even if we're inactive. Otherwise
 	         * throw Unavailable for consistency with other OTS implementations.
 	         */
-	        
+
 	        if (!XA_COMPLIANT)
 	            throw new Unavailable();
 	    }
@@ -1506,14 +1506,14 @@ public class ArjunaTransactionImple extends
 	            }
 	        }
 	    }
-	    
+
 	    /*
 	     * If there's no problem so far then call beforeCompletion on the underlying TwoPhaseCoordinator.
 	     */
 
 	    if (!problem)
 	        problem = !super.beforeCompletion();
-	    
+
 	    if (problem)
 	    {
 	        if (exp != null)
@@ -1643,13 +1643,9 @@ public class ArjunaTransactionImple extends
 	        _synchs = null;
 	    }
 
-	    /*
-             * If there's no problem so far then call afterCompletion on the underlying TwoPhaseCoordinator.
-             */
+        boolean superProblem = !super.afterCompletion(myStatus == Status.StatusCommitted ? ActionStatus.COMMITTED : ActionStatus.ABORTED);
 
-            problem = problem || !super.afterCompletion(myStatus == Status.StatusCommitted ? ActionStatus.COMMITTED : ActionStatus.ABORTED);
-            
-	    if (problem)
+        if (problem || superProblem)
 	    {
 	        if (exp != null)
 	            throw exp;
@@ -2234,7 +2230,7 @@ public class ArjunaTransactionImple extends
 	static boolean _propagateTerminator = false;
 
 	static boolean _propagateRemainingTimeout = true;  // OTS 1.2 onwards supported this.
-	
+
 	private static final boolean XA_COMPLIANT = true; // if we ever want to disable this then add an mbean option.
 
 	static
