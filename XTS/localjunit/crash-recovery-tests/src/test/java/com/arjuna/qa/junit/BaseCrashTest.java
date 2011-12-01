@@ -69,17 +69,18 @@ public class BaseCrashTest {
 		}
 	}
 
-	protected void runTest(String testClass, long waitForCrash, long waitForRecovery) throws Exception {
+	protected void runTest(String testClass, long waitForRecovery) throws Exception {
 		Config config = new Config();
 		config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
 
 		controller.start("jboss-as", config.map());
+		deployer.undeploy("xtstest");
 		deployer.deploy("xtstest");
 
 		//Waiting for crashing
-		Thread.sleep(waitForCrash * 60 * 1000);
+		controller.kill("jboss-as");
 
-		//Boot jboss as after crashing
+		//Boot jboss-as after crashing
 		config.add("javaVmArguments", javaVmArguments);
 		controller.start("jboss-as", config.map());
 		
