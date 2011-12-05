@@ -320,7 +320,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
 
         typeName = ensureTypenamePrefix(typeName);
 
-        Uid[] uids = store.getUidsForType(typeName);
+        Uid[] uids = store.getUidsForType(typeName); // may contain trailing null elements
 
         OutputObjectState buffer = new OutputObjectState();
 
@@ -330,7 +330,9 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
             {
                 for (Uid uid: uids)
                 {
-                    UidHelper.packInto(uid, buffer);
+                    if(uid != null) {
+                        UidHelper.packInto(uid, buffer);
+                    }
                 }
             }
             UidHelper.packInto(Uid.nullUid(), buffer);
@@ -362,7 +364,7 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
 
         boolean result = true;
 
-        String[] knownTypes = store.getKnownTypes();
+        String[] knownTypes = store.getKnownTypes(); // may contain trailing null elements
         Set<String> typeSet = new HashSet<String>();
 
         if (knownTypes == null || knownTypes.length == 0)
@@ -374,6 +376,10 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
         {
             for (String typeName: knownTypes)
             {
+                if(typeName == null) {
+                    continue;
+                }
+
                 if(typeName.startsWith("/")) {
                     typeName = typeName.substring(1);
                 }

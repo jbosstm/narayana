@@ -61,7 +61,7 @@ public class HornetqJournalStore
     private long maxID = 0;
 
     private final String storeDirCanonicalPath;
-    
+
     private static final byte RECORD_TYPE = 0x00;
 
     public void stop() throws Exception {
