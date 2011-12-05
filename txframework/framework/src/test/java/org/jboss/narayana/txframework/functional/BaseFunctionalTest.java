@@ -16,7 +16,7 @@ public class BaseFunctionalTest
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.txframework")
                 .addAsResource("context-handlers.xml")
-                .addAsManifestResource(new ByteArrayAsset("<beans xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd\"><interceptors><class>ServiceRequestInterceptor</class></interceptors></beans>".getBytes()),
+                .addAsManifestResource(new ByteArrayAsset("<interceptors><class>org.jboss.narayana.txframework.impl.ServiceRequestInterceptor</class></interceptors>".getBytes()),
                         ArchivePaths.create("beans.xml"));
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
