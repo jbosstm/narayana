@@ -19,6 +19,8 @@ import javax.xml.ws.soap.SOAPFaultException;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
+
 @RunWith(Arquillian.class)
 public class BACoordinatorCompletionTest extends BaseFunctionalTest
 {

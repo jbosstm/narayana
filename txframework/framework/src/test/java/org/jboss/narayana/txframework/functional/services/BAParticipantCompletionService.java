@@ -39,6 +39,9 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
+
+
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
