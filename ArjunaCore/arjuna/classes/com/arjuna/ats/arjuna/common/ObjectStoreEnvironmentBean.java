@@ -231,7 +231,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     {
         this.localOSRoot = localOSRoot;
     }
-    
+
     /**
      * Returns the ObjectStore directory path.
      *
@@ -282,12 +282,12 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     }
 
     /**
-     * Returns the symbolic name for the ObjectStore implementation.
+     * Returns the fully qualified class name for the ObjectStore implementation.
      *
-     * Default: "ShadowNoFileLockStore" TODO test
+     * Default: "com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore"
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.objectStoreType
      *
-     * @return the symbolic name of the ObjectStore implementation.
+     * @return the fully qualified class name of the ObjectStore implementation.
      */
     public String getObjectStoreType()
     {

@@ -35,7 +35,6 @@ import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
 public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
-    private volatile String actionStore = HashedActionStore.class.getName();
     private volatile boolean asyncCommit = false;
     private volatile boolean asyncPrepare = false;
     private volatile boolean asyncRollback = false;
@@ -60,7 +59,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile long txReaperCancelWaitPeriod = TransactionReaper.defaultCancelWaitPeriod;
     private volatile long txReaperCancelFailWaitPeriod = TransactionReaper.defaultCancelFailWaitPeriod;
     private volatile int txReaperZombieMax = TransactionReaper.defaultZombieMax;
-    
+
     private volatile int defaultTimeout = 60; // seconds
     private volatile boolean transactionStatusManagerEnable = true;
 
@@ -76,29 +75,6 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile String communicationStore = HashedActionStore.class.getName();
 
     private volatile boolean finalizeBasicActions = false;
-
-    /**
-     * Returns the symbolic name for the action store type.
-     *
-     * Default: "HashedActionStore"
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.actionStore
-     *
-     * @return the action store name.
-     */
-    public String getActionStore()
-    {
-        return actionStore;
-    }
-
-    /**
-     * Sets the symbolic name of the action store.
-     *
-     * @param actionStore the action store name.
-     */
-    public void setActionStore(String actionStore)
-    {
-        this.actionStore = actionStore;
-    }
 
     /**
      * Returns true if anynchronous commit behaviour is enabled.
@@ -580,7 +556,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns an instance of a class implementing CheckedActionFactory.
-     * 
+     *
      * If there is no pre-instantiated instance set and classloading or instantiation fails,
      * this method will log appropriate warning and return null, not throw an exception.
      *
@@ -624,7 +600,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
             }
         }
     }
-    
+
 
     /**
      * Whether to use the alternative abstract record ordering.

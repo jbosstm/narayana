@@ -27,8 +27,6 @@ package com.arjuna.ats.arjuna.common;
  */
 public interface CoordinatorEnvironmentBeanMBean
 {
-    String getActionStore();
-
     boolean isAsyncCommit();
 
     boolean isAsyncPrepare();
