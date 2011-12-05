@@ -18,23 +18,20 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package org.jboss.jbossts.txframework.functional.services;
+package org.jboss.narayana.txframework.functional.services;
 
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.*;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.Error;
-import org.jboss.jbossts.txframework.api.annotation.management.TxManagement;
-import org.jboss.jbossts.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.jbossts.txframework.api.annotation.transaction.WSBA;
-import org.jboss.jbossts.txframework.api.configuration.transaction.CompletionType;
-import org.jboss.jbossts.txframework.api.management.WSBATxControl;
-
-import static org.jboss.jbossts.txframework.functional.common.ServiceCommand.*;
-
-import org.jboss.jbossts.txframework.functional.common.EventLog;
-import org.jboss.jbossts.txframework.functional.common.ServiceCommand;
-import org.jboss.jbossts.txframework.functional.common.SomeApplicationException;
-import org.jboss.jbossts.txframework.functional.interfaces.BAParticipantCompletion;
-import org.jboss.jbossts.txframework.impl.TXControlException;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.*;
+import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
+import org.jboss.narayana.txframework.api.annotation.transaction.WSBA;
+import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
+import org.jboss.narayana.txframework.api.management.WSBATxControl;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -151,7 +148,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion
     @WebMethod(exclude = true)
     public void error()
     {
-        eventLog.add(Error.class);
+        eventLog.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
     }
 
     @Status

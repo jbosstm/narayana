@@ -1,19 +1,11 @@
-package org.jboss.jbossts.txframework.functional;
+package org.jboss.narayana.txframework.functional;
 
-import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.jbossts.txframework.functional.clients.BACoordinatorCompletionClient;
-import org.jboss.jbossts.txframework.functional.interfaces.BACoordinatorCompletion;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.After;
-import org.junit.Before;
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
 
 public class BaseFunctionalTest
 {
@@ -22,9 +14,9 @@ public class BaseFunctionalTest
     {
         //todo: Does the application developer have to specify the interceptor?
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addPackages(true, "org.jboss.jbossts.txframework")
+                .addPackages(true, "org.jboss.narayana.txframework")
                 .addAsResource("context-handlers.xml")
-                .addAsManifestResource(new ByteArrayAsset("<interceptors><class>org.jboss.jbossts.txframework.impl.ServiceRequestInterceptor</class></interceptors>".getBytes()),
+                .addAsManifestResource(new ByteArrayAsset("<beans xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd\"><interceptors><class>ServiceRequestInterceptor</class></interceptors></beans>".getBytes()),
                         ArchivePaths.create("beans.xml"));
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));

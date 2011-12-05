@@ -1,4 +1,4 @@
-package org.jboss.jbossts.txframework.functional.clients;
+package org.jboss.narayana.txframework.functional.clients;
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
@@ -20,7 +20,7 @@ package org.jboss.jbossts.txframework.functional.clients;
  * @author JBoss Inc.
  */
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.jbossts.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
@@ -29,16 +29,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATClient
+public class BAParticipantCompletionClient
 {
-    public static AT newInstance() throws Exception
+    public static BAParticipantCompletion newInstance() throws Exception
     {
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATService/AT?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/at/", "ATService");
-        QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
+        URL wsdlLocation = new URL("http://localhost:8080/test/BAParticipantCompletionService/BAParticipantCompletion?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
+        QName portName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        AT client = service.getPort(portName, AT.class);
+        BAParticipantCompletion client = service.getPort(portName, BAParticipantCompletion.class);
 
         /*
            Add client handler chain

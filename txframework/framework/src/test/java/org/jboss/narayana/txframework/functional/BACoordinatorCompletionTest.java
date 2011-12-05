@@ -1,17 +1,16 @@
-package org.jboss.jbossts.txframework.functional;
+package org.jboss.narayana.txframework.functional;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.Assert;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.Cancel;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.Close;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.Complete;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.ConfirmCompleted;
-import org.jboss.jbossts.txframework.functional.clients.BACoordinatorCompletionClient;
-import static org.jboss.jbossts.txframework.functional.common.ServiceCommand.*;
-import org.jboss.jbossts.txframework.functional.interfaces.BACoordinatorCompletion;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Close;
+import org.jboss.narayana.txframework.functional.clients.BACoordinatorCompletionClient;
+import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Complete;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.ConfirmCompleted;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

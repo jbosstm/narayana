@@ -1,21 +1,16 @@
-package org.jboss.jbossts.txframework.functional;
+package org.jboss.narayana.txframework.functional;
 
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
-import static org.jboss.jbossts.txframework.functional.common.ServiceCommand.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Commit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Rollback;
+import org.jboss.narayana.txframework.functional.clients.ATClient;
+import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.junit.After;
 import org.junit.Assert;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.*;
-import org.jboss.jbossts.txframework.functional.clients.ATClient;
-import org.jboss.jbossts.txframework.functional.interfaces.AT;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

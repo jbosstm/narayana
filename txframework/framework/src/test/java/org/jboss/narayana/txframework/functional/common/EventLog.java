@@ -1,4 +1,4 @@
-package org.jboss.jbossts.txframework.functional.common;
+package org.jboss.narayana.txframework.functional.common;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

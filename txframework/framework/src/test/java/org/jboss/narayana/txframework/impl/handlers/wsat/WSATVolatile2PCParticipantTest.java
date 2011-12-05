@@ -1,9 +1,9 @@
-package org.jboss.jbossts.txframework.impl.handlers.wsat;
+package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.wst.*;
-import junit.framework.Assert;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.*;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.impl.handlers.wsat.WSATDurable2PCParticipant;
 import org.junit.Test;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

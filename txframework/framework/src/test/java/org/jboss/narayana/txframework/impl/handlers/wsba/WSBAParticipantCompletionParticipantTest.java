@@ -1,35 +1,43 @@
-package org.jboss.jbossts.txframework.impl.handlers.wsba;
+package org.jboss.narayana.txframework.impl.handlers.wsba;
 
-import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import junit.framework.Assert;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.*;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.*;
+import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAParticipantCompletionParticipant;
 import org.junit.Test;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WSBACoordinatorCompletionParticipantTest
+public class WSBAParticipantCompletionParticipantTest
 {
     @Test
     public void testCallbacks() throws Exception
     {
         LifecycleImpl lifecycle = new LifecycleImpl();
-        WSBACoordinatorCompletionParticipant participant = new WSBACoordinatorCompletionParticipant(lifecycle);
+        WSBAParticipantCompletionParticipant participant = new WSBAParticipantCompletionParticipant(lifecycle);
 
         participant.cancel();
         participant.close();
         participant.compensate();
-        participant.complete();
         participant.confirmCompleted(true);
         participant.error();
         participant.status();
         participant.unknown();
 
+        List<Class<? extends Annotation>> expectedOrder = new ArrayList<Class<? extends Annotation>>();
+        expectedOrder.add(Cancel.class);
+        expectedOrder.add(Close.class);
+        expectedOrder.add(Compensate.class);
+        expectedOrder.add(ConfirmCompleted.class);
+        expectedOrder.add(Error.class);
+        expectedOrder.add(Status.class);
+        expectedOrder.add(Unknown.class);
+
         List<Class<? extends Annotation>> actualOrder = lifecycle.getExecutionOrder();
-        assertOrder(actualOrder, Cancel.class, Close.class, Compensate.class, Complete.class, ConfirmCompleted.class, Error.class, Status.class, Unknown.class);
+        assertOrder(actualOrder, Cancel.class, Close.class, Compensate.class, ConfirmCompleted.class, Error.class, Status.class, Unknown.class);
     }
 
     private void assertOrder(List<Class<? extends Annotation>> actualOrder, Class<? extends Annotation>... expectedOrder)
@@ -37,7 +45,7 @@ public class WSBACoordinatorCompletionParticipantTest
         org.junit.Assert.assertEquals(Arrays.asList(expectedOrder), actualOrder);
     }
 
-    public class LifecycleImpl implements BusinessAgreementWithCoordinatorCompletionParticipant, ConfirmCompletedParticipant
+    public class LifecycleImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant
     {
         private List<Class<? extends Annotation>> executionOrder = new ArrayList<Class<? extends Annotation>>();
 
@@ -59,12 +67,6 @@ public class WSBACoordinatorCompletionParticipantTest
             executionOrder.add(Compensate.class);
         }
 
-        @Complete
-        public void complete()
-        {
-            executionOrder.add(Complete.class);
-        }
-
         @ConfirmCompleted
         public void confirmCompleted(boolean success)
         {
@@ -74,8 +76,9 @@ public class WSBACoordinatorCompletionParticipantTest
         @Error
         public void error()
         {
-            executionOrder.add(Error.class);
+            executionOrder.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
         }
+
 
         @Status
         public String status()

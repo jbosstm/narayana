@@ -18,29 +18,26 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package org.jboss.jbossts.txframework.functional.services;
+package org.jboss.narayana.txframework.functional.services;
 
 import com.arjuna.wst.*;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.*;
-import org.jboss.jbossts.txframework.api.annotation.lifecycle.wsat.Error;
-import org.jboss.jbossts.txframework.api.annotation.management.TxManagement;
-import org.jboss.jbossts.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.jbossts.txframework.api.annotation.transaction.WSAT;
-import org.jboss.jbossts.txframework.api.management.ATTxControl;
-import org.jboss.jbossts.txframework.functional.common.EventLog;
-import org.jboss.jbossts.txframework.functional.common.ServiceCommand;
-import org.jboss.jbossts.txframework.functional.common.SomeApplicationException;
-import org.jboss.jbossts.txframework.functional.interfaces.AT;
-import org.jboss.jbossts.txframework.impl.TXControlException;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
+import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
+import org.jboss.narayana.txframework.api.management.ATTxControl;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -140,7 +137,7 @@ public class ATService implements AT
     @WebMethod(exclude = true)
     public void error() throws SystemException
     {
-        eventLog.add(Error.class);
+        eventLog.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error.class);
     }
 
     private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands)
