@@ -8,6 +8,7 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Prepare;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Rollback;
 import org.jboss.narayana.txframework.functional.clients.ATClient;
 import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.junit.After;
 import org.junit.Assert;
 import org.jboss.arquillian.junit.Arquillian;
@@ -17,6 +18,8 @@ import org.junit.runner.RunWith;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.List;
+
 import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 
 @RunWith(Arquillian.class)
@@ -35,7 +38,8 @@ public class ATTest extends BaseFunctionalTest
     @After
     public void teardownTest() throws Exception
     {
-        client.clearEventLog();
+        assertDataAvailable();
+        client.clearLogs();
     }
 
     @Test
@@ -101,7 +105,16 @@ public class ATTest extends BaseFunctionalTest
 
     private void assertOrder(Class<? extends Annotation>... expectedOrder)
     {
-        Assert.assertEquals(Arrays.asList(expectedOrder), client.getEventLog().getLog());
+        Assert.assertEquals(Arrays.asList(expectedOrder), client.getEventLog().getEventLog());
+    }
+
+    private void assertDataAvailable()
+    {
+        List<Class<? extends Annotation>> log = client.getEventLog().getDataUnavailableLog();
+        if (!log.isEmpty())
+        {
+            Assert.fail("One or more lifecycle methods could not access the managed data: " + log.toString());
+        }
     }
 }
 

@@ -27,6 +27,7 @@ import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
 import org.jboss.narayana.txframework.api.management.ATTxControl;
+import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
@@ -34,10 +35,12 @@ import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import java.lang.annotation.Annotation;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -47,11 +50,13 @@ import javax.jws.soap.SOAPBinding;
 @Stateless
 @WebService(serviceName = "ATService", portName = "AT",
         name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
-//todo: Can the framework specify the handlerchain if not isPresent? Would have to be added earlier in the chain than we currently intercept
+//todo: Can the framework specify the handlerchain if not present? Would have to be added earlier in the chain than we currently intercept
 @HandlerChain(file = "/context-handlers.xml", name = "Context Handlers")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATService implements AT
 {
+    @Inject
+    DataControl dataControl;
     @TxManagement
     public ATTxControl txControl;
     private boolean rollback = false;
@@ -61,6 +66,7 @@ public class ATService implements AT
     @ServiceRequest
     public void invoke(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
+        dataControl.put("data", "data");
         try
         {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
@@ -92,7 +98,7 @@ public class ATService implements AT
     }
 
     @WebMethod
-    public void clearEventLog()
+    public void clearLogs()
     {
         eventLog.clear();
     }
@@ -101,21 +107,21 @@ public class ATService implements AT
     @WebMethod(exclude = true)
     public void commit()
     {
-        eventLog.add(Commit.class);
+        logEvent(Commit.class);
     }
 
     @Rollback
     @WebMethod(exclude = true)
     public void rollback()
     {
-        eventLog.add(Rollback.class);
+        logEvent(Rollback.class);
     }
 
     @Prepare
     @WebMethod(exclude = true)
     public Vote prepare()
     {
-        eventLog.add(Prepare.class);
+        logEvent(Prepare.class);
         if (rollback)
         {
             return new Aborted();
@@ -130,14 +136,14 @@ public class ATService implements AT
     @WebMethod(exclude = true)
     public void unknown() throws SystemException
     {
-        eventLog.add(Unknown.class);
+        logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
     public void error() throws SystemException
     {
-        eventLog.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error.class);
+        logEvent(Error.class);
     }
 
     private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands)
@@ -150,6 +156,17 @@ public class ATService implements AT
             }
         }
         return false;
+    }
+
+    private void logEvent(Class<? extends Annotation> event)
+    {
+        //Check data is available
+        if (dataControl.get("data") == null)
+        {
+            eventLog.addDataUnavailable(event);
+        }
+
+        eventLog.addEvent(event);
     }
 
 }

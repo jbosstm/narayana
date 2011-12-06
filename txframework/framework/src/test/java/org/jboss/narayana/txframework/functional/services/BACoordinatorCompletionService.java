@@ -26,6 +26,7 @@ import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.WSBA;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
+import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
@@ -38,6 +39,7 @@ import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import java.lang.annotation.Annotation;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -53,14 +55,16 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
 {
     @TxManagement
     public WSBATxControl txControl;
-    @Inject
     private EventLog eventLog = new EventLog();
+    @Inject
+    DataControl dataControl;
 
     @WebMethod
     @ServiceRequest
-    //todo: batch up data and only add during confirmCompleted
+    //todo: batch up data and only addEvent during confirmCompleted
     public void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
+        dataControl.put("data", "data");
         try
         {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
@@ -102,56 +106,56 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
     @WebMethod(exclude = true)
     public void compensate()
     {
-        eventLog.add(Compensate.class);
+        logEvent(Compensate.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
     public void confirmCompleted(Boolean success)
     {
-        eventLog.add(ConfirmCompleted.class);
+        logEvent(ConfirmCompleted.class);
     }
 
     @Cancel
     @WebMethod(exclude = true)
     public void cancel()
     {
-        eventLog.add(Cancel.class);
+        logEvent(Cancel.class);
     }
 
     @Close
     @WebMethod(exclude = true)
     public void close()
     {
-        eventLog.add(Close.class);
+        logEvent(Close.class);
     }
 
     @Complete
     @WebMethod(exclude = true)
     public void complete()
     {
-        eventLog.add(Complete.class);
+        logEvent(Complete.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
     public void confirmCompleted(boolean success)
     {
-        eventLog.add(ConfirmCompleted.class);
+        logEvent(ConfirmCompleted.class);
     }
 
     @Error
     @WebMethod(exclude = true)
     public void error()
     {
-        eventLog.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
+        logEvent(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
     }
 
     @Status
     @WebMethod(exclude = true)
     public String status()
     {
-        eventLog.add(Status.class);
+        logEvent(Status.class);
         return null;
     }
 
@@ -159,7 +163,7 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
     @WebMethod(exclude = true)
     public void unknown()
     {
-        eventLog.add(Unknown.class);
+        logEvent(Unknown.class);
     }
 
     private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands)
@@ -172,5 +176,16 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
             }
         }
         return false;
+    }
+
+    private void logEvent(Class<? extends Annotation> event)
+    {
+        //Check data is available
+        if (dataControl == null ||  dataControl.get("data") == null)
+        {
+            eventLog.addDataUnavailable(event);
+        }
+
+        eventLog.addEvent(event);
     }
 }

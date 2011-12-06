@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 
@@ -37,6 +38,7 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest
     @After
     public void teardownTest() throws Exception
     {
+        assertDataAvailable();
         client.clearEventLog();
     }
 
@@ -92,6 +94,15 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest
 
     private void assertOrder(Class<? extends Annotation>... expectedOrder)
     {
-        org.junit.Assert.assertEquals(Arrays.asList(expectedOrder), client.getEventLog().getLog());
+        org.junit.Assert.assertEquals(Arrays.asList(expectedOrder), client.getEventLog().getEventLog());
+    }
+
+    private void assertDataAvailable()
+    {
+        List<Class<? extends Annotation>> log = client.getEventLog().getDataUnavailableLog();
+        if (!log.isEmpty())
+        {
+            org.junit.Assert.fail("One or more lifecycle methods could not access the managed data: " + log.toString());
+        }
     }
 }

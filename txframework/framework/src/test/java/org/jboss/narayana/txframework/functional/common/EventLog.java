@@ -6,20 +6,32 @@ import java.util.List;
 
 public class EventLog
 {
-    private static volatile List<Class<? extends Annotation>> log = new ArrayList<Class<? extends Annotation>>();
+    private static volatile List<Class<? extends Annotation>> dataUnavailableLog = new ArrayList<Class<? extends Annotation>>();
+    private static volatile List<Class<? extends Annotation>> eventLog = new ArrayList<Class<? extends Annotation>>();
 
-    public void add(Class<? extends Annotation> event)
+    public void addEvent(Class<? extends Annotation> event)
     {
-        log.add(event);
+        eventLog.add(event);
     }
 
-    public List<Class<? extends Annotation>> getLog()
+    public void addDataUnavailable(Class<? extends Annotation> event)
     {
-        return log;
+        dataUnavailableLog.add(event);
+    }
+
+    public List<Class<? extends Annotation>> getEventLog()
+    {
+        return eventLog;
+    }
+
+    public List<Class<? extends Annotation>> getDataUnavailableLog()
+    {
+        return dataUnavailableLog;
     }
 
     public void clear()
     {
-        log.clear();
+        eventLog.clear();
+        dataUnavailableLog.clear();
     }
 }

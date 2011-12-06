@@ -16,6 +16,6 @@ public interface AT
     public EventLog getEventLog();
 
     @WebMethod
-    public void clearEventLog();
+    public void clearLogs();
 
 }
