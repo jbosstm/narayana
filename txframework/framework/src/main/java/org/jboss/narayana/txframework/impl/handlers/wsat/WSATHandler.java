@@ -1,8 +1,10 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.*;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
@@ -10,20 +12,31 @@ import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
 import javax.interceptor.InvocationContext;
+import javax.transaction.Transaction;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class WSATHandler implements ProtocolHandler
 {
     private Object serviceImpl;
     private ATTxControl atTxControl;
+    private static final WSATParticipantRegistry participantRegistry = new WSATParticipantRegistry();
 
     public WSATHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
     {
         this.serviceImpl = serviceImpl;
 
         String idPrefix = serviceImpl.getClass().getName();
-        registerParticipants(idPrefix);
+
+        //Register Service's participant
+        registerParticipants(serviceImpl, idPrefix);
+
+        //Register internal participant for tidy up at end of TX
+        registerParticipants(new WSATInternalParticipant(), WSATInternalParticipant.class.getName());
 
         atTxControl = new ATTxControlImpl();
         injectTxManagement(atTxControl);
@@ -65,16 +78,29 @@ public class WSATHandler implements ProtocolHandler
         }
     }
 
-    private void registerParticipants(String idPrefix) throws ParticipantRegistrationException
+    private void registerParticipants(Object participant, String idPrefix) throws ParticipantRegistrationException
     {
         try
         {
-            Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(serviceImpl);
-            Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(serviceImpl);
+            synchronized (participantRegistry)
+            {
+                String txid = UserTransactionFactory.userTransaction().toString();
 
-            TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
-            transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + new Uid().toString());
-            transactionManager.enlistForDurableTwoPhase(durableParticipant, idPrefix + new Uid().toString());
+                //Only create participant if there is not already a participant for this ServiceImpl and this transaction
+                if (!participantRegistry.isRegistered(txid, participant.getClass()))
+                {
+                    //Internal participant for doing tidy up at the end of the transaction
+                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(participant);
+                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(participant);
+
+
+                    TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
+                    transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + new Uid().toString());
+                    transactionManager.enlistForDurableTwoPhase(durableParticipant, idPrefix + new Uid().toString());
+
+                    participantRegistry.register(txid, participant.getClass());
+                }
+            }
         }
         catch (WrongStateException e)
         {

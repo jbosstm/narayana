@@ -53,6 +53,17 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest
     }
 
     @Test
+    public void testMultiInvoke() throws Exception
+    {
+        uba.begin();
+        client.saveData();
+        client.saveData();
+        uba.close();
+
+        assertOrder(Complete.class, ConfirmCompleted.class, Close.class);
+    }
+
+    @Test
     public void testClientDrivenCancel() throws Exception
     {
         uba.begin();

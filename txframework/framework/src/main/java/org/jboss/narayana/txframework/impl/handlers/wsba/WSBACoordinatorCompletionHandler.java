@@ -13,23 +13,55 @@ import java.lang.reflect.Method;
 
 public class WSBACoordinatorCompletionHandler extends WSBAHandler
 {
-    private WSBACoordinatorCompletionParticipant participant;
-
     public WSBACoordinatorCompletionHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
     {
         super(serviceImpl, serviceMethod);
     }
 
     @Override
-    protected BAParticipantManager registerParticipants(Object serviceImpl, Method serviceMethod) throws ParticipantRegistrationException
+    protected BAParticipantManager registerParticipants(Object participant, Method serviceMethod) throws ParticipantRegistrationException
     {
         try
         {
-            participant = new WSBACoordinatorCompletionParticipant(serviceImpl);
+            register(new WSBAInternalParticipant()).completed();
+        }
+        catch (Exception e)
+        {
+            throw new ParticipantRegistrationException("", e);
+        }
 
-            Class serviceClass = serviceImpl.getClass();
-            BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
-            return businessActivityManager.enlistForBusinessAgreementWithCoordinatorCompletion(participant, serviceClass.getName() + new Uid().toString());
+        return register(participant);
+    }
+
+    private BAParticipantManager register(Object participantObject) throws ParticipantRegistrationException
+    {
+        try
+        {
+            BAParticipantManager baParticipantManager = null;
+
+            synchronized (participantRegistry)
+            {
+                BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
+                String txid = businessActivityManager.currentTransaction().toString();
+
+                //Only create participant if there is not already a participant for this ServiceImpl and this transaction
+                Class participantClass = participantObject.getClass();
+                if (!participantRegistry.isRegistered(txid, participantClass))
+                {
+
+                    WSBACoordinatorCompletionParticipant coordinatorCompletionParticipant = new WSBACoordinatorCompletionParticipant(participantObject);
+
+                    baParticipantManager = businessActivityManager.enlistForBusinessAgreementWithCoordinatorCompletion(coordinatorCompletionParticipant, participantClass.getName() + new Uid().toString());
+
+                    participantRegistry.register(txid, participantClass, baParticipantManager);
+                }
+                else
+                {
+                    baParticipantManager = participantRegistry.lookupBAParticipantManager(txid, participantClass);
+                }
+            }
+
+            return baParticipantManager;
         }
         catch (WrongStateException e)
         {

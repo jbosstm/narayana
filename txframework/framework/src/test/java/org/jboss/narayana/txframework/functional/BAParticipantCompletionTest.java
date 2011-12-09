@@ -6,6 +6,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.Assert;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Complete;
 import org.jboss.narayana.txframework.functional.clients.BAParticipantCompletionClient;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
@@ -61,28 +62,16 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
         assertOrder(ConfirmCompleted.class, Close.class);
     }
 
-    //todo: support multi invocation
-    /*@Test
-    public void testManualCompleteMultiInvoke() throws Exception
+    @Test
+    public void testMultiInvoke() throws Exception
     {
-        UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
-        BAParticipantCompletion client = BAParticipantCompletionClient.newInstance();
-
-        Assert.assertTrue(!client.contains());
-        Assert.assertTrue(!client.contains("b"));
-
         uba.begin();
         client.saveDataManualComplete();
-        client.saveDataManualComplete("b", ServiceCommand.COMPLETE);
+        client.saveDataManualComplete(ServiceCommand.COMPLETE);
         uba.close();
 
-        Assert.assertTrue(client.contains());
-        Assert.assertTrue(client.contains("b"));
-
-        client.clearData();
-        Assert.assertTrue(!client.contains());
-        Assert.assertTrue(!client.contains("b"));
-    }*/
+        assertOrder(ConfirmCompleted.class, Close.class);
+    }
 
     @Test
     public void testClientDrivenCompensate() throws Exception
@@ -123,7 +112,6 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
         uba.close();
         assertOrder();
     }
-
 
     private void assertOrder(Class<? extends Annotation>... expectedOrder)
     {

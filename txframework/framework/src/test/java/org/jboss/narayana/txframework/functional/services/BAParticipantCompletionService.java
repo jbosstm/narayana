@@ -156,7 +156,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion
     @WebMethod(exclude = true)
     public void error()
     {
-        logEvent(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
+        logEvent(Error.class);
     }
 
     @Status

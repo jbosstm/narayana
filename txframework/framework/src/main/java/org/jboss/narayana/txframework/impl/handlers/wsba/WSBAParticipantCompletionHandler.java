@@ -21,16 +21,61 @@ public class WSBAParticipantCompletionHandler extends WSBAHandler
     }
 
     @Override
-    protected BAParticipantManager registerParticipants(Object serviceImpl, Method serviceMethod) throws ParticipantRegistrationException
+    protected BAParticipantManager registerParticipants(Object participant, Method serviceMethod) throws ParticipantRegistrationException
+    {
+        registerInternalParticipant();
+        return register(participant);
+    }
+
+    private void registerInternalParticipant() throws ParticipantRegistrationException
     {
         try
         {
-            Class serviceClass = serviceImpl.getClass();
+            BAParticipantManager participantManager = register(new WSBAInternalParticipant());
+            //This particular participant does no work, so notify Completed
+            participantManager.completed();
+        }
+        catch (WrongStateException e)
+        {
+            throw new ParticipantRegistrationException("Error registering internal participant", e);
+        }
+        catch (UnknownTransactionException e)
+        {
+            throw new ParticipantRegistrationException("Error registering internal participant", e);
+        }
+        catch (SystemException e)
+        {
+            throw new ParticipantRegistrationException("Error registering internal participant", e);
+        }
+    }
 
-            participant = new WSBAParticipantCompletionParticipant(serviceImpl);
+    protected BAParticipantManager register(Object participantObject) throws ParticipantRegistrationException
+    {
+        try
+        {
+            BAParticipantManager baParticipantManager = null;
 
-            BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
-            return businessActivityManager.enlistForBusinessAgreementWithParticipantCompletion(participant, serviceClass.getName() + new Uid().toString());
+            synchronized (participantRegistry)
+            {
+                BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
+                String txid = businessActivityManager.currentTransaction().toString();
+
+                //Only create participant if there is not already a participant for this ServiceImpl and this transaction
+                Class participantClass = participantObject.getClass();
+                if (!participantRegistry.isRegistered(txid, participantClass))
+                {
+
+                    WSBAParticipantCompletionParticipant participantCompletionParticipant = new WSBAParticipantCompletionParticipant(participantObject);
+                    baParticipantManager = businessActivityManager.enlistForBusinessAgreementWithParticipantCompletion(participantCompletionParticipant, participantClass.getName() + new Uid().toString());
+                    participantRegistry.register(txid, participantClass, baParticipantManager);
+                }
+                else
+                {
+                    baParticipantManager = participantRegistry.lookupBAParticipantManager(txid, participantClass);
+                }
+            }
+
+            return baParticipantManager;
         }
         catch (WrongStateException e)
         {

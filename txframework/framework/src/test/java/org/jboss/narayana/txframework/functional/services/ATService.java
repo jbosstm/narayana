@@ -110,11 +110,26 @@ public class ATService implements AT
         logEvent(Commit.class);
     }
 
+    @PostCommit
+    @WebMethod(exclude = true)
+    public void postCommit()
+    {
+        logEvent(PostCommit.class);
+    }
+
     @Rollback
     @WebMethod(exclude = true)
     public void rollback()
     {
         logEvent(Rollback.class);
+    }
+
+    @PrePrepare
+    @WebMethod(exclude = true)
+    public Vote prePrepare()
+    {
+        logEvent(PrePrepare.class);
+        return new Prepared();
     }
 
     @Prepare

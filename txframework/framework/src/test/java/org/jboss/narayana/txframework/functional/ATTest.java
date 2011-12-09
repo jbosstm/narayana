@@ -3,10 +3,9 @@ package org.jboss.narayana.txframework.functional;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Commit;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Prepare;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Rollback;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
 import org.jboss.narayana.txframework.functional.clients.ATClient;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.junit.After;
@@ -49,7 +48,18 @@ public class ATTest extends BaseFunctionalTest
         client.invoke();
         ut.commit();
 
-        assertOrder(Prepare.class, Commit.class);
+        assertOrder(PrePrepare.class, Prepare.class, Commit.class, PostCommit.class);
+    }
+
+    @Test
+    public void testMultiInvoke() throws Exception
+    {
+        ut.begin();
+        client.invoke();
+        client.invoke();
+        ut.commit();
+
+        assertOrder(PrePrepare.class, Prepare.class, Commit.class, PostCommit.class);
     }
 
     @Test
@@ -76,7 +86,7 @@ public class ATTest extends BaseFunctionalTest
         catch (TransactionRolledBackException e)
         {
             //todo: should rollback be called twice? once for volatile and once for durable
-            assertOrder(Prepare.class, Rollback.class);
+            assertOrder(PrePrepare.class, Prepare.class, Rollback.class);
             throw e;
         }
     }
@@ -118,25 +128,3 @@ public class ATTest extends BaseFunctionalTest
     }
 }
 
-//todo: support multi invocation
-/*@Test
-public void testManualCompleteMultiInvoke() throws Exception
-{
-    UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
-    BAParticipantCompletion client = BAParticipantCompletionClient.newInstance();
-
-    Assert.assertTrue(!client.contains("a"));
-    Assert.assertTrue(!client.contains("b"));
-
-    uba.begin();
-    client.saveDataManualComplete("a");
-    client.saveDataManualComplete("b", ServiceCommand.COMPLETE);
-    uba.close();
-
-    Assert.assertTrue(client.contains("a"));
-    Assert.assertTrue(client.contains("b"));
-
-    client.clearData();
-    Assert.assertTrue(!client.contains("a"));
-    Assert.assertTrue(!client.contains("b"));
-}*/

@@ -1,5 +1,11 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Completes;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
@@ -10,6 +16,9 @@ import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationExcep
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class WSBAHandler implements ProtocolHandler
 {
@@ -17,6 +26,8 @@ public abstract class WSBAHandler implements ProtocolHandler
     private Object serviceImpl;
     private WSBATxControl wsbaTxControl;
     private BAParticipantManager participantManager;
+
+    protected final WSBAParticipantRegistry participantRegistry = new WSBAParticipantRegistry();
 
     public WSBAHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
     {
