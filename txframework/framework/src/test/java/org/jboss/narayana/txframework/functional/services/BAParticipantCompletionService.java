@@ -119,49 +119,49 @@ public class BAParticipantCompletionService implements BAParticipantCompletion
 
     @Compensate
     @WebMethod(exclude = true)
-    public void compensate()
+    private void compensate()
     {
         logEvent(Compensate.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    public void confirmCompleted(Boolean success)
+    private void confirmCompleted(Boolean success)
     {
         logEvent(ConfirmCompleted.class);
     }
 
     @Cancel
     @WebMethod(exclude = true)
-    public void cancel()
+    private void cancel()
     {
         logEvent(Cancel.class);
     }
 
     @Close
     @WebMethod(exclude = true)
-    public void close()
+    private void close()
     {
         logEvent(Close.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    public void confirmCompleted(boolean success)
+    private void confirmCompleted(boolean success)
     {
         logEvent(ConfirmCompleted.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    public void error()
+    private void error()
     {
         logEvent(Error.class);
     }
 
     @Status
     @WebMethod(exclude = true)
-    public String status()
+    private String status()
     {
         logEvent(Status.class);
         return null;
@@ -169,7 +169,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion
 
     @Unknown
     @WebMethod(exclude = true)
-    public void unknown()
+    private void unknown()
     {
         logEvent(Unknown.class);
     }

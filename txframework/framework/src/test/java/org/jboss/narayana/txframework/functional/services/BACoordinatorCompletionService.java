@@ -104,56 +104,56 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
     //todo: why is this never invoked? Always true for CoordinationCompletion?
     @Compensate
     @WebMethod(exclude = true)
-    public void compensate()
+    private void compensate()
     {
         logEvent(Compensate.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    public void confirmCompleted(Boolean success)
+    private void confirmCompleted(Boolean success)
     {
         logEvent(ConfirmCompleted.class);
     }
 
     @Cancel
     @WebMethod(exclude = true)
-    public void cancel()
+    private void cancel()
     {
         logEvent(Cancel.class);
     }
 
     @Close
     @WebMethod(exclude = true)
-    public void close()
+    private void close()
     {
         logEvent(Close.class);
     }
 
     @Complete
     @WebMethod(exclude = true)
-    public void complete()
+    private void complete()
     {
         logEvent(Complete.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    public void confirmCompleted(boolean success)
+    private void confirmCompleted(boolean success)
     {
         logEvent(ConfirmCompleted.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    public void error()
+    private void error()
     {
         logEvent(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
     }
 
     @Status
     @WebMethod(exclude = true)
-    public String status()
+    private String status()
     {
         logEvent(Status.class);
         return null;
@@ -161,7 +161,7 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
 
     @Unknown
     @WebMethod(exclude = true)
-    public void unknown()
+    private void unknown()
     {
         logEvent(Unknown.class);
     }

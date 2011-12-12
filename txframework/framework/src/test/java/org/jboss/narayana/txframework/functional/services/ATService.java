@@ -105,28 +105,28 @@ public class ATService implements AT
 
     @Commit
     @WebMethod(exclude = true)
-    public void commit()
+    private void commit()
     {
         logEvent(Commit.class);
     }
 
     @PostCommit
     @WebMethod(exclude = true)
-    public void postCommit()
+    private void postCommit()
     {
         logEvent(PostCommit.class);
     }
 
     @Rollback
     @WebMethod(exclude = true)
-    public void rollback()
+    private void rollback()
     {
         logEvent(Rollback.class);
     }
 
     @PrePrepare
     @WebMethod(exclude = true)
-    public Vote prePrepare()
+    private Vote prePrepare()
     {
         logEvent(PrePrepare.class);
         return new Prepared();
@@ -134,7 +134,7 @@ public class ATService implements AT
 
     @Prepare
     @WebMethod(exclude = true)
-    public Vote prepare()
+    private Vote prepare()
     {
         logEvent(Prepare.class);
         if (rollback)
@@ -149,14 +149,14 @@ public class ATService implements AT
 
     @Unknown
     @WebMethod(exclude = true)
-    public void unknown() throws SystemException
+    private void unknown() throws SystemException
     {
         logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    public void error() throws SystemException
+    private void error() throws SystemException
     {
         logEvent(Error.class);
     }
