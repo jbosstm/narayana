@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ServerControl.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -52,12 +52,12 @@ import org.omg.CORBA.BAD_PARAM;
 /**
  * As with ControlImple, the transaction is maintained until the control object
  * is deleted.
- * 
+ *
  * This class maintains a handle on the current server-side transaction, and
  * also references to the original transaction it is "mirroring". This allows us
  * to have a single place to hold both sets of information which is accessible
  * to interposed resources, synchronizations, and transactions.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ServerControl.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
@@ -90,14 +90,14 @@ public class ServerControl extends ControlImple
 		 * that is the case, then why create a new transaction to manage it -
 		 * this will only add to the disk access? However, currently we cannot
 		 * do this optimisation because:
-		 * 
+		 *
 		 * (i) if the original control is being terminated from a remote
 		 * process, it will not be able to force thread-to-transaction
 		 * association (ArjunaTransactionImple et al don't do that.)
-		 * 
+		 *
 		 * (ii) certain AIT records require thread-to-transaction association in
 		 * order to work (e.g., LockRecord).
-		 * 
+		 *
 		 * What this means is that if we do this optimisation and an application
 		 * uses AIT, all AIT records will be added to the parent (original)
 		 * transaction and not the interposed transaction (which does do
@@ -216,6 +216,8 @@ public class ServerControl extends ControlImple
 
 		_transactionHandle = stx;
 		_theUid = stx.get_uid();
+
+        _transactionHandle.setControlHandle(this); // JBTM-957
 
 		createTransactionHandle();
 

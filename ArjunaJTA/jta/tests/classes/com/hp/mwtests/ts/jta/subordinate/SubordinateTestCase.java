@@ -54,8 +54,8 @@ public class SubordinateTestCase
 		{
 			final SubordinateTransaction tm = createTransaction();
 
-			tm.doPrepare();
-			tm.doCommit();
+			assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
+			// don't call commit for read only case.
 		}
 
 		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
@@ -81,8 +81,8 @@ public class SubordinateTestCase
 		{
 			final SubordinateTransaction tm = createTransaction();
 
-			tm.doPrepare();
-			tm.doRollback();
+			assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
+			// don't call rollback for read only case
 		}
 
 		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
@@ -203,7 +203,7 @@ public class SubordinateTestCase
         final TestSynchronization sync = new TestSynchronization();
         tm.registerSynchronization(sync);
         assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
-        tm.doCommit();
+        // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
@@ -218,7 +218,7 @@ public class SubordinateTestCase
         t.registerSynchronization(sync);
         final XATerminator xaTerminator = SubordinationManager.getXATerminator();
         assertEquals(XAResource.XA_RDONLY, xaTerminator.prepare(xid));
-        // note that unlike the above test we don't call commit - the XA_RDONLY means its finished, per XA semantics.
+        // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
@@ -406,7 +406,7 @@ public class SubordinateTestCase
         tm.registerSynchronization(sync);
         tm.doBeforeCompletion();
         assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
-        tm.doCommit();
+        // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
@@ -423,7 +423,7 @@ public class SubordinateTestCase
         final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
         xaTerminatorExtensions.beforeCompletion(xid);
         assertEquals(XAResource.XA_RDONLY, xaTerminator.prepare(xid));
-        // note that unlike the above test we don't call commit - the XA_RDONLY means its finished, per XA semantics.
+        // don't call commit for read only case
         assertTrue(sync.isBeforeCompletionDone());
         assertTrue(sync.isAfterCompletionDone());
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
@@ -528,13 +528,13 @@ public class SubordinateTestCase
         catch (final XAException ex)
         {
             // success!
-            
+
             return;
         }
 
         assertTrue("commit should throw an exception and not get to here", false);
     }
-    
+
     @Test
     public void testFailOnCommitRetry () throws Exception
     {
@@ -550,17 +550,17 @@ public class SubordinateTestCase
         final XATerminator xaTerminator = SubordinationManager.getXATerminator();
 
         xaTerminator.prepare(xid);
-        
+
         /*
          * This should not cause problems. The transaction really has committed, or will once
          * recovery kicks off. So nothing for the parent to do. The subordinate log will
          * maintain enough information to drive recovery locally if we get to the point of
          * issuing a commit call from parent to child.
          */
-        
+
         xaTerminator.commit(xid, false);
     }
-    
+
     @Test
     public void testFailOnCommit() throws Exception
     {
@@ -585,10 +585,10 @@ public class SubordinateTestCase
         catch (final XAException ex)
         {
             // success!!
-            
+
             return;
         }
-        
+
         assertTrue("commit should throw an exception and not get to here", false);
     }
 }
