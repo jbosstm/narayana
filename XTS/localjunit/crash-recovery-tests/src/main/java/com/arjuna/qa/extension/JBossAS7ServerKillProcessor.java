@@ -44,6 +44,7 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 				killed = true;
 				break;
 			}
+			checkn ++;
 		} while(checkn < numofCheck);
 		
 		if(killed) {
