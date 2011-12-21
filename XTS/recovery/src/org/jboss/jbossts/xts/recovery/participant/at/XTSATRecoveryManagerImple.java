@@ -260,7 +260,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
 
         SubordinateATCoordinator[] coordinators = SubordinateATCoordinator.listRecoveredCoordinators();
         for (SubordinateATCoordinator coordinator : coordinators) {
-            if (coordinator.getSubordinateType() == SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT && coordinator.isOrphaned()) {
+            if (coordinator.getSubordinateType().equals(SubordinateATCoordinator.SUBORDINATE_TX_TYPE_AT_AT) && coordinator.isOrphaned()) {
                 RecoveryLogger.i18NLogger.warn_participant_at_XTSATRecoveryModule_5(coordinator.get_uid());
                 coordinator.rollback();
             }

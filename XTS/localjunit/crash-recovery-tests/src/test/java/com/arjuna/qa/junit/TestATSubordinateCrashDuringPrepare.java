@@ -1,7 +1,6 @@
 package com.arjuna.qa.junit;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -11,7 +10,6 @@ public class TestATSubordinateCrashDuringPrepare extends BaseCrashTest {
 		scriptName = "ATSubordinateCrashDuringPrepare";
 	}
 	
-	@Ignore("Not stop with byteman when recovering")
 	@Test
 	public void subordinateMultiParticipantPrepareAndCommitTest() throws Exception {
 		testName = "subordinate.MultiParticipantPrepareAndCommitTest";
