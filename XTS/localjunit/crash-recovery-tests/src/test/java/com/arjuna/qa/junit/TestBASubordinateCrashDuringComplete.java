@@ -1,7 +1,6 @@
 package com.arjuna.qa.junit;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -11,7 +10,6 @@ public class TestBASubordinateCrashDuringComplete extends BaseCrashTest {
 		scriptName = "BASubordinateCrashDuringComplete";
 	}
 	
-	@Ignore("Not complete")
 	@Test
 	public void subordinateMultiParticipantCoordinatorCompletionParticipantCloseTest() throws Exception {
 		testName = "subordinate.MultiParticipantCoordinatorCompletionParticipantCloseTest";
@@ -19,7 +17,6 @@ public class TestBASubordinateCrashDuringComplete extends BaseCrashTest {
 		runTest(testClass);
 	}
 	
-	@Ignore("Not complete")
 	@Test
 	public void subordinateMultiParticipantParticipantCompletionParticipantCloseTest() throws Exception {
 		testName = "subordinate.MultiParticipantParticipantCompletionParticipantCloseTest";

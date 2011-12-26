@@ -690,7 +690,7 @@ AT ENTRY
 BIND engine:CoordinatorCompletionParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId(),
-     status = $1.getState().toString
+     status = $1.getState().toString()
 IF recovered
 DO debug("received status " + status + " for recovered CC coordinator engine " + identifier),
    traceln("log", "received status " + status + " for recovered CC coordinator engine " + identifier)
@@ -709,7 +709,7 @@ AT ENTRY
 BIND engine:ParticipantCompletionParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId(),
-     status = $1.getState().toString
+     status = $1.getState().toString()
 IF recovered
 DO debug("received status " + status + " for recovered PC coordinator engine " + identifier),
    traceln("log", "received status " + status + " for recovered PC coordinator engine " + identifier)
@@ -857,7 +857,7 @@ ENDRULE
 RULE trace subordinate participant stub compensate with no coordinator
 CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
 METHOD compensate
-AT THROW 3
+AT THROW 1
 BIND NOTHING
 IF TRUE
 DO debug("throw during compensate for pseudo-participant " + $0 + " with no subordinate coordinator"),
@@ -874,7 +874,7 @@ ENDRULE
 RULE trace subordinate participant stub compensate with unactivated coordinator
 CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
 METHOD compensate
-AT THROW 4
+AT THROW 2
 BIND NOTHING
 IF TRUE
 DO debug("throw during compensate for pseudo-participant " + $0 + " with unactivated subordinate coordinator"),
@@ -888,15 +888,15 @@ ENDRULE
 # traces the throw.
 
 
-RULE trace subordinate participant stub compensate with system exception from coordinator
-CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
-METHOD compensate
-AT THROW 5
-BIND NOTHING
-IF TRUE
-DO debug("throw during compensate for pseudo-participant " + $0 + " with system exception from subordinate coordinator"),
-   traceln("log", "throw during compensate for pseudo-participant " + $0 + " with system exception from subordinate coordinator")
-ENDRULE
+#RULE trace subordinate participant stub compensate with system exception from coordinator
+#CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
+#METHOD compensate
+#AT THROW 3
+#BIND NOTHING
+#IF TRUE
+#DO debug("throw during compensate for pseudo-participant " + $0 + " with system exception from subordinate coordinator"),
+#   traceln("log", "throw during compensate for pseudo-participant " + $0 + " with system exception from subordinate coordinator")
+#ENDRULE
 
 #######################################################################
 # This rule is triggered when a subordinate pseudo participant
