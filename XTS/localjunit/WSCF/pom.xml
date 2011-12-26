@@ -35,6 +35,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -45,7 +46,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-container</artifactId>
-			<version>1.0.0.CR5</version>
+			<version>1.0.0.CR7</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -74,7 +75,7 @@
 			 <dependency>
 				 <groupId>org.jboss.as</groupId>
 				 <artifactId>jboss-as-arquillian-container-managed</artifactId>
-				 <version>7.0.2.Final</version>
+				 <version>7.1.0.CR1-SNAPSHOT</version>
 				 <scope>test</scope>
 			 </dependency>
 		 </dependencies>
