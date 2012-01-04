@@ -57,7 +57,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public TransactionManagerService() {}
 
-    public void create() throws Exception
+    public void create()
     {
         String tag = ConfigurationInfo.getSourceId();
 

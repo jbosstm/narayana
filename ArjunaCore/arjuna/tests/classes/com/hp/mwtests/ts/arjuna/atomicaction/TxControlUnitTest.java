@@ -64,10 +64,10 @@ public class TxControlUnitTest
         
         assertEquals(TxControl.getMaintainHeuristics(), arjPropertyManager.getCoordinatorEnvironmentBean().isMaintainHeuristics());
         
-        String nodeName = "NodeName";
+        String nodeName = "1";
         
-        TxControl.setXANodeName(nodeName.getBytes());
+        TxControl.setXANodeName(nodeName);
         
-        assertEquals(new String(TxControl.getXANodeName()), nodeName);
+        assertTrue(TxControl.getXANodeName().equals(nodeName));
     }
 }

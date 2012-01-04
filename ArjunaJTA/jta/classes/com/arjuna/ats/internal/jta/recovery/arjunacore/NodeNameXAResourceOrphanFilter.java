@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class NodeNameXAResourceOrphanFilter implements XAResourceOrphanFilter
 {
-    private static final String RECOVER_ALL_NODES = "*";
+    public static final String RECOVER_ALL_NODES = "*";
 
     @Override
     public Vote checkXid(Xid xid)

@@ -31,42 +31,46 @@
 
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.ats.jta.recovery.*;
-
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
-import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.logging.*;
-import com.arjuna.ats.jta.resources.StartXAResource;
-import com.arjuna.ats.jta.resources.EndXAResource;
-
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.jta.xa.TxInfo;
-import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-
-import java.util.Vector;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
-
-import java.io.*;
-
-import javax.transaction.xa.Xid;
-import javax.transaction.xa.XAResource;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
+import com.arjuna.ats.jta.resources.EndXAResource;
+import com.arjuna.ats.jta.resources.StartXAResource;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * @author Mark Little (mark_little@hp.com)
@@ -826,6 +830,8 @@ public class XAResourceRecord extends AbstractRecord
                         o.close();
 
                         os.packBoolean(true);
+                        String name = _theXAResource.getClass().getName();
+                        os.packString(name);
 
                         os.packBytes(s.toByteArray());
                     }
@@ -892,12 +898,29 @@ public class XAResourceRecord extends AbstractRecord
 				{
 					try
 					{
+						// Read the classname of the serialized XAResource
+						String className = os.unpackString();
+						
 						byte[] b = os.unpackBytes();
 
 						ByteArrayInputStream s = new ByteArrayInputStream(b);
 						ObjectInputStream o = new ObjectInputStream(s);
+						
+						// Give the list of deserializers a chance to deserialize the record
+						boolean deserialized = false;
+						Iterator<SerializableXAResourceDeserializer> iterator = seriablizableXAResourceDeserializers.iterator();
+						while (iterator.hasNext()) {
+							SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
+							if (proxyXAResourceDeserializer.canDeserialze(className)) {
+								_theXAResource = proxyXAResourceDeserializer.deserialze(o);
+								deserialized = true;
+							}
+						}
 
-						_theXAResource = (XAResource) o.readObject();
+						// Give it a go ourselves
+						if (!deserialized) {
+							_theXAResource = (XAResource) o.readObject();
+						}
 						o.close();
 
 						if (jtaLogger.logger.isTraceEnabled()) {
@@ -1079,6 +1102,14 @@ public class XAResourceRecord extends AbstractRecord
 		_valid = true;
 		_theTransaction = null;
 		_recovered = true;
+		
+		for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
+			if (recoveryModule instanceof XARecoveryModule) {
+				XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
+				seriablizableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
+				break;
+			}
+		}
 	}
 
 	public XAResourceRecord(Uid u)
@@ -1207,6 +1238,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	private static boolean _rollbackOptimization = false;
     private static boolean _assumedComplete = false;
+    
+	private List<SerializableXAResourceDeserializer> seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
 
 	static
 	{

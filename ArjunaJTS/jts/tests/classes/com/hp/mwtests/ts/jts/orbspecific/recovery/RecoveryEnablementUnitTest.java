@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.recovery;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,6 +46,11 @@ public class RecoveryEnablementUnitTest extends TestBase
     public static void setupClass() {
         // persistent POAs can't be anonymous, need a name:
         System.setProperty("jacorb.implname", "arjuna");
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+        System.clearProperty("jacorb.implname");
     }
 
 

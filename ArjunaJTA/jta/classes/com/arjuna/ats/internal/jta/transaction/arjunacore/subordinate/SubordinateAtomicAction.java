@@ -28,6 +28,8 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
+import javax.transaction.Status;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -121,6 +123,11 @@ public class SubordinateAtomicAction extends
 	public int doPrepare ()
 	{
         int status = super.status();
+        
+        // JBTM-927 it is possible this transaction has been aborted by the TransactionReaper
+        if (status == ActionStatus.ABORTED) {
+        	return TwoPhaseOutcome.PREPARE_NOTOK;
+        }
 
         // In JTA spec, beforeCompletions are run on commit attempts only, not rollbacks.
         // We attempt to mimic that here, even though we are outside the scope of the spec.
@@ -141,6 +148,7 @@ public class SubordinateAtomicAction extends
 		else
 		{
 			super.phase2Abort(true);
+			super.afterCompletion(Status.STATUS_ROLLEDBACK);
 
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
@@ -175,6 +183,8 @@ public class SubordinateAtomicAction extends
 
 		super.afterCompletion(toReturn);
 
+		TransactionReaper.transactionReaper().remove(this);
+
 		return toReturn;
 	}
 
@@ -207,6 +217,8 @@ public class SubordinateAtomicAction extends
 
 		super.afterCompletion(toReturn);
 
+		TransactionReaper.transactionReaper().remove(this);
+
 		return toReturn;
 	}
 
@@ -230,10 +242,15 @@ public class SubordinateAtomicAction extends
 	    }
 
 	    afterCompletion(status);
+
+		TransactionReaper.transactionReaper().remove(this);
 	    
 	    return status;
 	}
 
+	/**
+	 * @deprecated Only called via tests
+	 */
 	public void doForget ()
 	{
 		super.forgetHeuristics();

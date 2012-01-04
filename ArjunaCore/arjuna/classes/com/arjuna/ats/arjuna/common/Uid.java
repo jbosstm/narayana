@@ -763,5 +763,5 @@ public class Uid implements Cloneable, Serializable
     private static final Uid MIN_UID = new Uid(
             "-80000000:-80000000:-80000000:-80000000:-80000000");
     
-    private static final int UID_SIZE = 2*8 + 3*4; // in bytes
+    public static final int UID_SIZE = 2*8 + 3*4; // in bytes
 }

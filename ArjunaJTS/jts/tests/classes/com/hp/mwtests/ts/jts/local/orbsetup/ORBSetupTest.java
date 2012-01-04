@@ -91,8 +91,8 @@ public class ORBSetupTest
                 }
             }
 
-            myOA.destroy();
             myORB.destroy();
+            myOA.destroy();
         }
         catch (Throwable e)
         {

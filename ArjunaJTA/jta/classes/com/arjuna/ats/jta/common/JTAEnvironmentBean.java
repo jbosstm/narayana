@@ -20,20 +20,23 @@
  */
 package com.arjuna.ats.jta.common;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jta.resources.XAResourceMap;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
-
-import java.util.List;
-import java.util.ArrayList;
+import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * A JavaBean containing configuration properties for the JTA subsystem.
@@ -368,6 +371,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
        return new ArrayList<String>(xaRecoveryNodes);
     }
 
+
+	
     /**
      * Sets the node identifiers for which recovery will be performed.
      * The provided list will be copied, not retained.

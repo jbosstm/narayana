@@ -35,6 +35,7 @@ import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.state.*;
 
@@ -46,88 +47,80 @@ import java.io.IOException;
 
 /**
  * Implementation of javax.transaction.xa.Xid.
- *
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: XidImple.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: XidImple.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.2.4.
  */
 
-public class XidImple implements javax.transaction.xa.Xid, Serializable
-{
+public class XidImple implements javax.transaction.xa.Xid, Serializable {
 	private static final long serialVersionUID = -8922505475867377266L;
 
-	public XidImple ()
-	{
+	public XidImple() {
 		_theXid = null;
-		hashCode = getHash(_theXid) ;
+		hashCode = getHash(_theXid);
 	}
 
-	public XidImple (Xid xid)
-	{
+	public XidImple(Xid xid) {
 		_theXid = null;
 
 		copy(xid);
+		
 		hashCode = getHash(_theXid) ;
 	}
 
-	public XidImple (AtomicAction c)
-	{
+	public XidImple(AtomicAction c) {
 		this(c.get_uid(), false, null);
 	}
 
-	public XidImple (AtomicAction c, boolean branch, String eisName)
-	{
-		this(c.get_uid(), branch, eisName);
+	public XidImple(Xid xid, boolean branch, Integer eisName) {
+		this(xid);
+		if (branch) {
+			XATxConverter.setBranchUID(_theXid, new Uid());
+		}
+		XATxConverter.setEisName(_theXid, eisName);
 	}
 
-	public XidImple (Uid id)
-	{
+	/**
+	 * @deprecated This is only used by test code
+	 */
+	public XidImple(Uid id) {
 		this(id, false, null);
 	}
 
-	public XidImple (Uid id, boolean branch, String eisName)
-	{
-		try
-		{
+	public XidImple(Uid id, boolean branch, Integer eisName) {
+		try {
 			_theXid = XATxConverter.getXid(id, branch, eisName);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			_theXid = null;
+			e.printStackTrace();
 
 			// abort or throw exception?
 		}
-		hashCode = getHash(_theXid) ;
+		hashCode = getHash(_theXid);
 	}
 
-	public XidImple (XID x)
-	{
+	public XidImple(XID x) {
 		_theXid = x;
-		hashCode = getHash(_theXid) ;
+		hashCode = getHash(_theXid);
 	}
 
-	public final boolean isSameTransaction (Xid xid)
-	{
+	public final boolean isSameTransaction(Xid xid) {
 		if (xid == null)
 			return false;
 
-		if (xid instanceof XidImple)
-		{
+		if (xid instanceof XidImple) {
 			return _theXid.isSameTransaction(((XidImple) xid)._theXid);
 		}
 
-		if (getFormatId() == xid.getFormatId())
-		{
+		if (getFormatId() == xid.getFormatId()) {
 			byte[] gtx = xid.getGlobalTransactionId();
 
-			if (_theXid.gtrid_length == gtx.length)
-			{
+			if (_theXid.gtrid_length == gtx.length) {
 				if (equals(xid))
 					return true;
-				else
-				{
-					for (int i = 0; i < _theXid.gtrid_length; i++)
-					{
+				else {
+					for (int i = 0; i < _theXid.gtrid_length; i++) {
 						if (_theXid.data[i] != gtx[i])
 							return false;
 					}
@@ -140,13 +133,10 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		return false;
 	}
 
-	public int getFormatId ()
-	{
-		if (_theXid != null)
-		{
+	public int getFormatId() {
+		if (_theXid != null) {
 			return _theXid.formatID;
-		}
-		else
+		} else
 			return -1;
 	}
 
@@ -155,108 +145,87 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 	 * the order we packed it!
 	 */
 
-	public byte[] getGlobalTransactionId ()
-	{
-		if (_theXid != null)
-		{
+	public byte[] getGlobalTransactionId() {
+		if (_theXid != null) {
 			byte b[] = new byte[_theXid.gtrid_length];
 
 			System.arraycopy(_theXid.data, 0, b, 0, b.length);
 
 			return b;
-		}
-		else
+		} else
 			return null;
 	}
 
-	public byte[] getBranchQualifier ()
-	{
-		if (_theXid != null)
-		{
+	public byte[] getBranchQualifier() {
+		if (_theXid != null) {
 			byte b[] = new byte[_theXid.bqual_length];
 
 			System.arraycopy(_theXid.data, _theXid.gtrid_length, b, 0, b.length);
 
 			return b;
-		}
-		else
+		} else
 			return null;
 	}
 
-    public final Uid getTransactionUid() {
-        return XATxConverter.getUid(_theXid);
-    }
+	public final Uid getTransactionUid() {
+		return XATxConverter.getUid(_theXid);
+	}
 
-    public final String getNodeName() {
-        return XATxConverter.getNodeName(_theXid);
-    }
-
-	public final XID getXID ()
-	{
+	public final XID getXID() {
 		return _theXid;
 	}
 
-	public final void copy (Xid xid)
-	{
+	public final void copy(Xid xid) {
 		_theXid = new XID();
 
-		if (xid != null)
-		{
+		if (xid != null) {
 			if (xid instanceof XidImple)
 				_theXid.copy(((XidImple) xid)._theXid);
-			else
-			{
+			else {
 				_theXid.formatID = xid.getFormatId();
 
 				byte[] gtx = xid.getGlobalTransactionId();
 				byte[] bql = xid.getBranchQualifier();
-                final int bqlength = (bql == null ? 0 : bql.length) ;
+				final int bqlength = (bql == null ? 0 : bql.length);
 
 				_theXid.gtrid_length = gtx.length;
 				_theXid.bqual_length = bqlength;
 
 				System.arraycopy(gtx, 0, _theXid.data, 0, gtx.length);
-                if (bqlength > 0)
-                {
-                    System.arraycopy(bql, 0, _theXid.data, gtx.length, bql.length);
-                }
+				if (bqlength > 0) {
+					System.arraycopy(bql, 0, _theXid.data, gtx.length,
+							bql.length);
+				}
 			}
 		}
 	}
 
-	public boolean equals (Xid xid)
-	{
+	public boolean equals(Xid xid) {
 		if (xid == null)
 			return false;
 
 		if (xid == this)
 			return true;
-		else
-		{
+		else {
 			if (xid instanceof XidImple)
 				return ((XidImple) xid)._theXid.equals(_theXid);
-			else
-			{
-				if (xid.getFormatId() == _theXid.formatID)
-				{
+			else {
+				if (xid.getFormatId() == _theXid.formatID) {
 					byte[] gtx = xid.getGlobalTransactionId();
 					byte[] bql = xid.getBranchQualifier();
-                    final int bqlength = (bql == null ? 0 : bql.length) ;
+					final int bqlength = (bql == null ? 0 : bql.length);
 
 					if ((_theXid.gtrid_length == gtx.length)
-							&& (_theXid.bqual_length == bqlength))
-					{
+							&& (_theXid.bqual_length == bqlength)) {
 						int i;
 
-						for (i = 0; i < _theXid.gtrid_length; i++)
-						{
+						for (i = 0; i < _theXid.gtrid_length; i++) {
 							if (_theXid.data[i] != gtx[i])
 								return false;
 						}
 
 						for (i = _theXid.gtrid_length; i < _theXid.gtrid_length
-								+ _theXid.bqual_length; i++)
-						{
+								+ _theXid.bqual_length; i++) {
 							if (_theXid.data[i] != bql[i])
 								return false;
 						}
@@ -270,21 +239,17 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		return false;
 	}
 
-	public final boolean packInto (OutputObjectState os)
-	{
+	public final boolean packInto(OutputObjectState os) {
 		boolean result = false;
 
-		try
-		{
+		try {
 			os.packInt(_theXid.formatID);
 			os.packInt(_theXid.gtrid_length);
 			os.packInt(_theXid.bqual_length);
 			os.packBytes(_theXid.data);
 
 			result = true;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 
 			result = false;
@@ -293,12 +258,10 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		return result;
 	}
 
-	public final boolean unpackFrom (InputObjectState os)
-	{
+	public final boolean unpackFrom(InputObjectState os) {
 		boolean result = false;
 
-		try
-		{
+		try {
 			if (_theXid == null)
 				_theXid = new XID();
 
@@ -310,29 +273,23 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 			hashCode = getHash(_theXid);
 
 			result = true;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			result = false;
 		}
 
 		return result;
 	}
 
-	public static final void pack (OutputObjectState os, Xid xid)
-			throws IOException
-	{
-		if (xid instanceof XidImple)
-		{
+	public static final void pack(OutputObjectState os, Xid xid)
+			throws IOException {
+		if (xid instanceof XidImple) {
 			XidImple x = (XidImple) xid;
 
 			os.packBoolean(true);
 
 			if (!x.packInto(os))
-				throw new IOException( jtaLogger.i18NLogger.get_xid_packerror() );
-		}
-		else
-		{
+				throw new IOException(jtaLogger.i18NLogger.get_xid_packerror());
+		} else {
 			os.packBoolean(false);
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
@@ -345,20 +302,15 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		}
 	}
 
-	public static final Xid unpack (InputObjectState os) throws IOException
-	{
-		if (os.unpackBoolean())
-		{
+	public static final Xid unpack(InputObjectState os) throws IOException {
+		if (os.unpackBoolean()) {
 			XidImple x = new XidImple();
 
 			x.unpackFrom(os);
 
 			return x;
-		}
-		else
-		{
-			try
-			{
+		} else {
+			try {
 				byte[] b = os.unpackBytes();
 
 				ByteArrayInputStream s = new ByteArrayInputStream(b);
@@ -367,18 +319,15 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 				Xid x = (Xid) o.readObject();
 
 				return x;
-			}
-			catch (Exception e)
-			{
-                IOException ioException = new IOException(e.toString());
-                ioException.initCause(e);
-                throw ioException;
+			} catch (Exception e) {
+				IOException ioException = new IOException(e.toString());
+				ioException.initCause(e);
+				throw ioException;
 			}
 		}
 	}
 
-	public String toString ()
-	{
+	public String toString() {
 		if (_theXid != null)
 			return _theXid.toString();
 		else
@@ -387,57 +336,60 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 
 	/**
 	 * Is the specified object equal to this one?
-	 * @param obj The object to test.
+	 * 
+	 * @param obj
+	 *            The object to test.
 	 * @return true if they are equal, false otherwise.
 	 */
-    public boolean equals(final Object obj)
-    {
-        if (obj instanceof Xid)
-        {
-        	return equals((Xid)obj) ;
-        }
-        return false ;
-    }
+	public boolean equals(final Object obj) {
+		if (obj instanceof Xid) {
+			return equals((Xid) obj);
+		}
+		return false;
+	}
 
-    /**
-     * Return the hash code for this Xid.
-     * @return the hash code.
-     */
-    public int hashCode()
-    {
-        return hashCode ;
-    }
+	/**
+	 * Return the hash code for this Xid.
+	 * 
+	 * @return the hash code.
+	 */
+	public int hashCode() {
+		return hashCode;
+	}
 
-    /**
-     * Generate the hash code for the xid.
-     * @param xid The xid.
-     * @return The hash code.
-     */
-    private static int getHash(final XID xid)
-    {
-    	if (xid == null)
-    	{
-    		return 0 ;
-    	}
-    	final int hash = generateHash(xid.formatID, xid.data, 0, xid.gtrid_length) ;
-        return generateHash(hash, xid.data, xid.gtrid_length, xid.bqual_length) ;
-    }
+	/**
+	 * Generate the hash code for the xid.
+	 * 
+	 * @param xid
+	 *            The xid.
+	 * @return The hash code.
+	 */
+	protected int getHash(final XID xid) {
+		if (xid == null) {
+			return 0;
+		}
+		final int hash = generateHash(xid.formatID, xid.data, 0,
+				xid.gtrid_length);
+		return generateHash(hash, xid.data, xid.gtrid_length, xid.bqual_length);
+	}
 
 	/**
 	 * Generate a hash code for the specified bytes.
-	 * @param hash The initial hash.
-	 * @param bytes The bytes to include in the hash.
+	 * 
+	 * @param hash
+	 *            The initial hash.
+	 * @param bytes
+	 *            The bytes to include in the hash.
 	 * @return The new hash code.
 	 */
-    private static int generateHash(int hash, final byte[] bytes, final int start, final int length)
-    {
-        for(int count = start ; count < length ; count++)
-        {
-            hash = 31 * hash + bytes[count] ;
-        }
-        return hash ;
-    }
+	protected static int generateHash(int hash, final byte[] bytes,
+			final int start, final int length) {
+		for (int count = start; count < length; count++) {
+			hash = 31 * hash + bytes[count];
+		}
+		return hash;
+	}
 
-	private XID _theXid;
-    private int hashCode ;
+	protected XID _theXid;
+	private int hashCode;
 }

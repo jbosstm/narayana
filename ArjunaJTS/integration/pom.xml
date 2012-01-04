@@ -25,6 +25,17 @@
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>../../atsintegration/classes</sourceDirectory>
+<!--
+    <testSourceDirectory>../../atsintegration/tests</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>../../atsintegration/tests/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>../../atsintegration/tests/byteman-scripts</directory>
+      </testResource>
+    </testResources>
+-->
     <plugins>
       <plugin>
         <inherited>false</inherited>

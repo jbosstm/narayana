@@ -20,17 +20,18 @@
  */
 package com.arjuna.ats.jbossatx.jta;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
-import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
-import com.arjuna.common.util.ConfigurationInfo;
+import java.util.Vector;
 
 import org.jboss.tm.XAResourceRecovery;
 import org.jboss.tm.XAResourceRecoveryRegistry;
 
-import java.util.Vector;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
+import com.arjuna.common.util.ConfigurationInfo;
 
 /**
  * JBoss Transaction Recovery Service.
@@ -42,7 +43,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
 {
     private RecoveryManager _recoveryManager;
 
-    public void create() throws Exception
+    public void create()
     {
         String tag = ConfigurationInfo.getSourceId();
 
@@ -115,4 +116,22 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
 
         xaRecoveryModule.removeXAResourceRecoveryHelper(new XAResourceRecoveryHelperWrapper(xaResourceRecovery));
     }
+
+	public void addSerializableXAResourceDeserializer(SerializableXAResourceDeserializer serializableXAResourceDeserializer) {
+
+        XARecoveryModule xaRecoveryModule = null;
+        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)_recoveryManager.getModules())) {
+            if(recoveryModule instanceof XARecoveryModule) {
+                xaRecoveryModule = (XARecoveryModule)recoveryModule;
+                break;
+            }
+        }
+
+        if(xaRecoveryModule == null) {
+            throw new IllegalStateException(jbossatxLogger.i18NLogger.get_jta_RecoveryManagerService_norecoverymodule());
+        }
+
+        xaRecoveryModule.addSerializableXAResourceDeserializer(serializableXAResourceDeserializer);
+		
+	}
 }

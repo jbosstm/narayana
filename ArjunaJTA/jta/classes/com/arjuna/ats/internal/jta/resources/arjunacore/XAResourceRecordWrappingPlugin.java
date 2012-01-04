@@ -20,7 +20,11 @@
  */
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
+import java.io.IOException;
+
 import javax.transaction.xa.XAResource;
+
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 /**
  * Callback interface to allow customisable population of XAResourceRecord metadata.
@@ -31,5 +35,7 @@ public interface XAResourceRecordWrappingPlugin
 {
     public void transcribeWrapperData(XAResourceRecord record);
 
-    public String getEISName(XAResource xaResource);
+    public Integer getEISName(XAResource xaResource) throws IOException, ObjectStoreException;
+
+	public String getEISName(Integer eisName);
 }

@@ -160,14 +160,14 @@ public class TxControl
         return readonlyOptimisation;
     }
 
-    public static final byte[] getXANodeName()
+    public static final String getXANodeName()
 	{
 		return xaNodeName;
 	}
 
-	public static void setXANodeName(byte[] name)
+	public static void setXANodeName(String name)
 	{
-	    if (name.length > NODE_NAME_SIZE) {
+	    if (name.getBytes().length > 36) {
             tsLogger.i18NLogger.warn_coordinator_toolong();
 
             throw new IllegalArgumentException();
@@ -229,7 +229,7 @@ public class TxControl
 
 	private static TransactionStatusManager transactionStatusManager = null;
 
-	static byte[] xaNodeName = null;
+	static String xaNodeName = null;
 
 	static int _defaultTimeout = 60; // 60 seconds
 
@@ -266,7 +266,7 @@ public class TxControl
 
 		if (env != null)
 		{
-			xaNodeName = env.getBytes();
+			xaNodeName = env;
 		}
 		else {
             /*
@@ -279,17 +279,17 @@ public class TxControl
 
             tsLogger.i18NLogger.warn_coordinator_TxControl_1(nodeName);
 
-            xaNodeName = nodeName.getBytes();
+            xaNodeName = nodeName;
 
             writeNodeName = true;
         }
 
-		if (xaNodeName.length > NODE_NAME_SIZE) {
+		if (xaNodeName.getBytes().length > NODE_NAME_SIZE) {
             String nodeName = DEFAULT_NODE_NAME + Utility.getpid();
 
             tsLogger.i18NLogger.warn_coordinator_TxControl_2(nodeName);
 
-            xaNodeName = nodeName.getBytes();
+            xaNodeName = nodeName;
 
             writeNodeName = true;
         }
@@ -299,7 +299,7 @@ public class TxControl
 
             tsLogger.i18NLogger.warn_coordinator_TxControl_3(nodeName);
 
-            xaNodeName = nodeName.getBytes();
+            xaNodeName = nodeName;
 
             writeNodeName = true;
         }
@@ -308,6 +308,7 @@ public class TxControl
 		{
             arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier( new String(xaNodeName) );
 		}
+
 
         _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();
 

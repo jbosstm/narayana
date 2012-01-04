@@ -2,6 +2,7 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 /**
@@ -14,6 +15,7 @@ public interface ActionBeanWrapperInterface {
 	Uid get_uid();
 	Uid getUid(AbstractRecord rec);
 	StringBuilder toString(String prefix, StringBuilder sb);
+    BasicAction getAction();
 
     void clearHeuristicDecision(int newDecision);
 }

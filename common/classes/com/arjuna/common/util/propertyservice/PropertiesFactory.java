@@ -80,8 +80,7 @@ public class PropertiesFactory
             // in cases where the .jar comes before the etc dir on the classpath.
             URL url = PropertiesFactory.class.getResource("/default-"+propertyFileName);
             if(url == null) {
-                // No properties file this is OK, we will run with defaults 
-            	// throw new RuntimeException("missing property file "+propertyFileName);
+                throw new RuntimeException("missing property file "+propertyFileName);
             } else {
                 propertiesSourceUri = url.toString();
             }
@@ -93,18 +92,13 @@ public class PropertiesFactory
 
         Properties properties = null;
 
-		if (propertiesSourceUri != null) {
-			try {
-				properties = loadFromFile(propertiesSourceUri);
-				properties = applySystemProperties(properties);
+        try {
+            properties = loadFromFile(propertiesSourceUri);
+            properties = applySystemProperties(properties);
 
-			} catch (Exception e) {
-				throw new RuntimeException("unable to load properties from "
-						+ propertiesSourceUri, e);
-			}
-		} else {
-			properties = new Properties();
-		}
+        } catch(Exception e) {
+            throw new RuntimeException("unable to load properties from "+propertiesSourceUri, e);
+        }
 
         return properties;
     }

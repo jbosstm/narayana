@@ -58,10 +58,8 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	private ObjStoreBrowser createObjStoreBrowser() {
 		ObjStoreBrowser osb = new ObjStoreBrowser();
 
-		osb.setTypes( new HashMap<String, String>() {{
-			put("StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
-			put("StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
-		}});
+		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
+		osb.setType("com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
 
 		return osb;
 	}

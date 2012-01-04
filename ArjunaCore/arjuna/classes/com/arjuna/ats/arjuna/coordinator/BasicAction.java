@@ -1767,9 +1767,11 @@ public class BasicAction extends StateManager
      *
      * Note that at this point the pendingList SHOULD be empty due to the prior
      * invocation of prepare().
+     * 
+     * @throws Error JBTM-895 tests, byteman limitation
      */
 
-    protected synchronized final void phase2Commit (boolean reportHeuristics)
+    protected synchronized final void phase2Commit (boolean reportHeuristics) throws Error
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("BasicAction::phase2Commit() for action-id "

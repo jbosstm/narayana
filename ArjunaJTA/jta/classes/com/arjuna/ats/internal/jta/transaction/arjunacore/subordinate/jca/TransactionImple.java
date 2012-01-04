@@ -44,6 +44,8 @@ public class TransactionImple
 
 	/**
 	 * Create a new transaction with the specified timeout.
+	 * 
+	 * @deprecated Only used by tests
 	 */
 
 	public TransactionImple(int timeout)
@@ -70,6 +72,10 @@ public class TransactionImple
 		super(new SubordinateAtomicAction(actId));
 
 		// don't put it into list here: it may already be there!
+	}
+	
+	public String getParentNodeName() {
+		return ((SubordinateAtomicAction)_theTransaction).getParentNodeName();
 	}
 
 	public final void recordTransaction()

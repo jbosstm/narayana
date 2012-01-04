@@ -25,6 +25,17 @@
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>../../atsintegration/classes</sourceDirectory>
+<!--
+    <testSourceDirectory>../../atsintegration/tests</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>../../atsintegration/tests/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>../../atsintegration/tests/byteman-scripts</directory>
+      </testResource>
+    </testResources>
+-->
     <plugins>
       <plugin>
         <inherited>false</inherited>
@@ -107,6 +118,32 @@
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-install</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-submit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-bmunit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

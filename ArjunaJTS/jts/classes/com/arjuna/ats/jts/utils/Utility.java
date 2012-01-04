@@ -175,7 +175,7 @@ public class Utility
 
 	otid_t otid = new otid_t();
 	byte[] b = theUid.getBytes();
-	byte[] nodeName = TxControl.getXANodeName();
+	byte[] nodeName = TxControl.getXANodeName().getBytes();
 
 	otid.formatID = 0;
 	otid.tid = new byte[b.length+nodeName.length];

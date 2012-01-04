@@ -31,12 +31,16 @@
 
 package com.arjuna.ats.jta.xa;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.internal.jta.xa.XID;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import javax.transaction.xa.Xid;
-import java.io.UnsupportedEncodingException;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
+import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,9 +50,15 @@ import java.io.UnsupportedEncodingException;
 
 public class XATxConverter
 {
-    public static final int FORMAT_ID = 131076; // different from JTS ones.
+	private static XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
+    public static final int FORMAT_ID = 131077; // different from JTS ones.
 
-    static XID getXid (Uid uid, boolean branch, String eisName) throws IllegalStateException
+
+	static {
+        xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
+	}
+	
+    static XID getXid (Uid uid, boolean branch, Integer eisName) throws IllegalStateException
     {
         if (branch)
             return getXid(uid, new Uid(), FORMAT_ID, eisName);
@@ -67,7 +77,7 @@ public class XATxConverter
         return new XidImple(xid);
     }
 
-    private static XID getXid(Uid uid, Uid branch, int formatId, String eisNameString) throws IllegalStateException
+    private static XID getXid(Uid uid, Uid branch, int formatId, Integer eisName) throws IllegalStateException
     {
         if (uid == null) {
     	    throw new IllegalStateException();
@@ -79,22 +89,19 @@ public class XATxConverter
         // gtrid is uid byte form followed by as many chars of the node name as will fit.
         byte[] gtridUid = uid.getBytes();
 
-        if (gtridUid.length > XID.MAXBQUALSIZE) {
+        if (gtridUid.length > XID.MAXGTRIDSIZE) {
             throw new IllegalStateException(); // Uid is too long!!!!
         }
 
-        int spareGtridBytes = XID.MAXGTRIDSIZE - gtridUid.length;
-        byte[] nodeName = TxControl.getXANodeName();
-        int nodeNameLengthToUse =  nodeName.length;
-        if( nodeName.length > spareGtridBytes) {
-            nodeNameLengthToUse = spareGtridBytes;
-        }
+        String nodeName = TxControl.getXANodeName();
+        int nodeNameLengthToUse =  nodeName.getBytes().length;
         xid.gtrid_length = gtridUid.length+nodeNameLengthToUse;
 
         // src, srcPos, dest, destPos, length
         System.arraycopy(gtridUid, 0, xid.data, 0, gtridUid.length);
-        System.arraycopy(nodeName, 0, xid.data, gtridUid.length, nodeNameLengthToUse);
+        System.arraycopy(nodeName.getBytes(), 0, xid.data, gtridUid.length, nodeNameLengthToUse);
 
+        
         
         if (branch.notEquals(Uid.nullUid()))
 		{
@@ -105,23 +112,14 @@ public class XATxConverter
                 throw new IllegalStateException(); // Uid is too long!!!!
             }
 
-            int spareBqualBytes = XID.MAXBQUALSIZE - bqualUid.length;
-            byte[] eisName;
-            try {
-                // caution: we may truncate the byte[] to fit, so double byte encodings are best avoided.
-                eisName = (eisNameString == null ? new byte[0] : eisNameString.getBytes("US-ASCII"));
-            } catch(UnsupportedEncodingException e) {
-                eisName = new byte[0];
-            }
-            int eisNameLengthToUse = eisName.length;
-            if( eisName.length > spareBqualBytes) {
-                eisNameLengthToUse = spareBqualBytes;
-            }
-            xid.bqual_length = bqualUid.length+eisNameLengthToUse;
+            int spareBqualBytes = XID.MAXBQUALSIZE - (bqualUid.length + 4);
+           
+            xid.bqual_length = bqualUid.length+4+4;
 
             // src, srcPos, dest, destPos, length
-            System.arraycopy (bqualUid, 0, xid.data, xid.gtrid_length, bqualUid.length);
-            System.arraycopy (eisName, 0, xid.data, xid.gtrid_length+bqualUid.length, eisNameLengthToUse);
+            int offset = xid.gtrid_length;
+            System.arraycopy (bqualUid, 0, xid.data, offset, bqualUid.length);
+            setEisName(xid, eisName);
         }
 		else
 		{
@@ -151,27 +149,75 @@ public class XATxConverter
         return tx;
     }
 
-    public static String getNodeName(XID xid)
-    {
-        // don't check the formatId - it may differ e.g. JTA vs. JTS.
-        
-        // the node name follows the Uid with no separator, so the only
-        // way to tell where it starts is to figure out how long the Uid is.
-        Uid uid = getUid(xid);
-        int uidLength = uid.getBytes().length;
-        int nameLength = xid.gtrid_length-uidLength;
-        byte[] nodeName = new byte[nameLength];
-        System.arraycopy(xid.data, uidLength, nodeName, 0, nodeName.length);
-        
-        try {
-            return new String(nodeName, "US-ASCII");
-        } catch(UnsupportedEncodingException e) {
-            // should never happen, we use a required charset.
-            return "<failed to get nodename>";
-        }
-    }
+	public static String getNodeName(XID xid) {
+		// Arjuna.XID()
+		// don't check the formatId - it may differ e.g. JTA vs. JTS.
+		if (xid.formatID != FORMAT_ID && xid.formatID != 131072
+				&& xid.formatID != 131080) {
+			return null;
+		}
 
-    private static Uid getBranchUid(XID xid)
+		// the node name follows the Uid with no separator, so the only
+		// way to tell where it starts is to figure out how long the Uid is.
+		int offset = Uid.UID_SIZE;
+
+		return new String(Arrays.copyOfRange(xid.data, offset, xid.gtrid_length));
+	}
+
+	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
+		if (theXid == null || theXid.formatID != FORMAT_ID) {
+			return;
+		}
+		int length = 0;
+		if (xaNodeName != null) {
+			length = xaNodeName.length();
+		}
+		int offset = theXid.gtrid_length + Uid.UID_SIZE + 4;
+		theXid.data[offset++] = (byte) (length >>> 24);
+		theXid.data[offset++] = (byte) (length >>> 16);
+		theXid.data[offset++] = (byte) (length >>> 8);
+		theXid.data[offset++] = (byte) (length >>> 0);
+		if (length > 0) {
+			byte[] nameAsBytes = xaNodeName.getBytes();
+			System.arraycopy(nameAsBytes, 0, theXid.data, offset, length);
+		}
+		for (int i = offset+length; i < theXid.bqual_length; i++) {
+			theXid.data[i] = 0;
+		}
+	}
+	public static String getSubordinateNodeName(XID xid) {
+		// Arjuna.XID()
+		// don't check the formatId - it may differ e.g. JTA vs. JTS.
+		if (xid.formatID != FORMAT_ID) {
+			return null;
+		}
+
+		// the node name follows the Uid with no separator, so the only
+		// way to tell where it starts is to figure out how long the Uid is.
+		int offset = xid.gtrid_length + Uid.UID_SIZE + 4;
+
+		int length = (xid.data[offset++] << 24)
+				+ ((xid.data[offset++] & 0xFF) << 16)
+				+ ((xid.data[offset++] & 0xFF) << 8)
+				+ (xid.data[offset++] & 0xFF);
+		if (length > 0) {
+			return new String(Arrays.copyOfRange(xid.data, offset, offset+length));
+		} else {
+			return null;
+		}
+	}
+
+
+	public static void setBranchUID(XID xid, Uid uid) {
+		if (xid == null || xid.formatID != FORMAT_ID) {
+			return;
+		}
+
+		byte[] bqual = uid.getBytes();
+		System.arraycopy(bqual, 0, xid.data, xid.gtrid_length, Uid.UID_SIZE);
+	}
+	
+    public static Uid getBranchUid(XID xid)
     {
         if (xid == null || xid.formatID != FORMAT_ID) {
             return Uid.nullUid();
@@ -186,29 +232,35 @@ public class XATxConverter
         return tx;
     }
 
-    private static String getEISName(XID xid)
+
+	public static void setEisName(XID theXid, Integer eisName) {
+		if (theXid == null || theXid.formatID != FORMAT_ID) {
+			return;
+		}
+		if (eisName == null) {
+			eisName = 0;
+		}
+		int offset = theXid.gtrid_length + Uid.UID_SIZE;
+		theXid.data[offset + 0] = (byte) (eisName >>> 24);
+		theXid.data[offset + 1] = (byte) (eisName >>> 16);
+		theXid.data[offset + 2] = (byte) (eisName >>> 8);
+		theXid.data[offset + 3] = (byte) (eisName >>> 0);
+	}
+	
+    public static Integer getEISName(XID xid)
     {
         if(xid == null || xid.formatID != FORMAT_ID) {
-            return "unknown eis name";
+            return -1;
         }
 
-        Uid uid = getUid(xid);
-        int uidLength = uid.getBytes().length;
-        int nameLength = xid.bqual_length-uidLength;
+		// the node name follows the Uid with no separator, so the only
+		// way to tell where it starts is to figure out how long the Uid is.
+		int offset = xid.gtrid_length + Uid.UID_SIZE;
 
-        if(nameLength == 0) {
-            return "unknown eis name";
-        }
-
-        byte[] eisName = new byte[nameLength];
-        System.arraycopy(xid.data, xid.gtrid_length+uidLength, eisName, 0, eisName.length);
-
-        try {
-            return new String(eisName, "US-ASCII");
-        } catch(UnsupportedEncodingException e) {
-            // should never happen, we use a required charset.
-            return "<failed to get eisName>";
-        }
+		return (xid.data[offset + 0] << 24)
+				+ ((xid.data[offset + 1] & 0xFF) << 16)
+				+ ((xid.data[offset + 2] & 0xFF) << 8)
+				+ (xid.data[offset + 3] & 0xFF);
     }
 
     public static String getXIDString(XID xid)
@@ -227,9 +279,15 @@ public class XATxConverter
         stringBuilder.append(", node_name=");
         stringBuilder.append(getNodeName(xid));
         stringBuilder.append(", branch_uid=");
-        stringBuilder.append(getBranchUid(xid));
+        stringBuilder.append(getBranchUid(xid));;
+        stringBuilder.append(", subordinatenodename=");
+        stringBuilder.append(getSubordinateNodeName(xid));
         stringBuilder.append(", eis_name=");
-        stringBuilder.append(getEISName(xid));
+        if (xaResourceRecordWrappingPlugin != null) {
+        	stringBuilder.append(xaResourceRecordWrappingPlugin.getEISName(getEISName(xid)));
+        } else {
+        	stringBuilder.append(getEISName(xid));
+        }
         stringBuilder.append(" >");
 
         return stringBuilder.toString();

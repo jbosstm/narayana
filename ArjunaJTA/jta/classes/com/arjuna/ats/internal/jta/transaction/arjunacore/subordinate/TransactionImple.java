@@ -33,22 +33,28 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.jta.xa.XAModifier;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
+import java.io.IOException;
 import java.lang.IllegalStateException;
 
 import javax.transaction.*;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 // https://jira.jboss.org/jira/browse/JBTM-384
 
 public class TransactionImple extends
 		com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple
 {
-
 	/**
 	 * Create a new transaction with the specified timeout.
 	 */
@@ -204,7 +210,8 @@ public class TransactionImple extends
                 jtaLogger.i18NLogger.warn_transaction_arjunacore_endsuspendfailed1();
 			}
 
-			int res = subAct.doRollback();
+			// JBTM-927 the transaction reaper may have aborted this transaction already
+			int res = subAct.status() == ActionStatus.ABORTED ? ActionStatus.ABORTED : subAct.doRollback();
 
 			switch (res)
 			{
@@ -234,6 +241,12 @@ public class TransactionImple extends
 		}
 	}
 
+	/**
+	 * 
+	 * @throws IllegalStateException
+	 * 
+	 * @deprecated Only called from a test
+	 */
 	public void doForget () throws IllegalStateException
 	{
 		try
@@ -355,5 +368,37 @@ public class TransactionImple extends
     {
     	return true;
     }
+
+	@Override
+	protected Xid createXid(boolean branch, XAModifier theModifier, XAResource xaResource) throws IOException, ObjectStoreException
+	{
+		Xid xid = baseXid();
+
+		// We can have subordinate XIDs that can be editted
+		if (xid.getFormatId() != XATxConverter.FORMAT_ID)
+			return xid;
+
+		Integer eisName = null;
+        if(branch) {
+            if(_xaResourceRecordWrappingPlugin != null) {
+                eisName = _xaResourceRecordWrappingPlugin.getEISName(xaResource);
+            }
+        }
+		xid = new XidImple(xid, branch, eisName);
+
+		if (theModifier != null)
+		{
+			try
+			{
+				xid = theModifier.createXid((XidImple) xid);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return xid;
+	}
 
 }

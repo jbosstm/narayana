@@ -48,11 +48,9 @@ public class RecoveryTest
     public void test()
     {
         Vector xaRecoveryNodes = new Vector();
-        Uid bogusNodeName = new Uid();
+        xaRecoveryNodes.add("2");
 
-        xaRecoveryNodes.add(bogusNodeName.stringForm());
-
-        System.err.println("Bogus XA node name: "+bogusNodeName);
+        System.err.println("Bogus XA node name: "+"2");
 
         XidImple xid = new XidImple(new Uid());
         String nodeName = XAUtils.getXANodeName(xid);

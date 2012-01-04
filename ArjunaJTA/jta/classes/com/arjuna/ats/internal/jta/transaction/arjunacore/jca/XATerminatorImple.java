@@ -32,20 +32,36 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Stack;
 
-import javax.transaction.*;
-import javax.transaction.xa.*;
+import javax.transaction.HeuristicCommitException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
+import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * The XATerminator implementation.
@@ -200,10 +216,19 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
     public int prepare (Xid xid) throws XAException
     {
+
+    	// JBTM-927 this can happen if the transaction has been rolled back by the TransactionReaper
+		SubordinateTransaction tx = null;
+		try {
+			tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
+		} catch (XAException xae) {
+			if (xae.errorCode == XAException.XA_RBROLLBACK) {
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+			}
+			throw xae;
+		}
         try
         {
-            SubordinateTransaction tx = SubordinationManager
-                    .getTransactionImporter().getImportedTransaction(xid);
 
             if (tx == null)
                 throw new XAException(XAException.XAER_INVAL);
@@ -313,6 +338,28 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
 
         // if we are here, then check the object store
+        return doRecover(null, null);
+    }
+    
+    /**
+     * Return a list of indoubt transactions. This may include those
+     * transactions that are currently in-flight and running 2PC and do not need
+     * recovery invoked on them.
+     * 
+     * @param nodeName
+     * 				Only recover transactions for this node (unless set to NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES)
+     * @throws XAException
+     *             thrown if any error occurs.
+     * @return a list of potentially indoubt transactions or <code>null</code>.
+     */
+
+    public Xid[] doRecover (Xid xid, String parentNodeName) throws XAException
+    {
+        /*
+         * Requires going through the objectstore for the states of imported
+         * transactions. Our own crash recovery takes care of transactions
+         * imported via CORBA, Web Services etc.
+         */
 
         Xid[] indoubt = null;
 
@@ -326,7 +373,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             if (recoveryStore.allObjUids(SubordinateAtomicAction.getType(), states)
                     && (states.notempty()))
             {
-                Stack values = new Stack();
+                Stack<Xid> values = new Stack<Xid>();
                 boolean finished = false;
 
                 do
@@ -346,19 +393,53 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
                     if (uid.notEquals(Uid.nullUid()))
                     {
-                        Transaction tx = SubordinationManager
-                                .getTransactionImporter().recoverTransaction(
-                                        uid);
+						if (parentNodeName != null) {
+							SubordinateAtomicAction saa = new SubordinateAtomicAction(uid, true);
+							XidImple loadedXid = (XidImple) saa.getXid();
+							if (loadedXid.getFormatId() == XATxConverter.FORMAT_ID) {
+								String loadedXidSubordinateNodeName = XATxConverter.getSubordinateNodeName(loadedXid.getXID());
+								if (TxControl.getXANodeName().equals(loadedXidSubordinateNodeName)) {
+									if (parentNodeName.equals(saa.getParentNodeName())) {
+										if (jtaLogger.logger.isDebugEnabled()) {
+											jtaLogger.logger.debug("Found record for " + saa);
+										}
+//										TransactionImple tx = (TransactionImple) SubordinationManager.getTransactionImporter().recoverTransaction(uid);
 
-                        if (tx != null)
-                            values.push(tx);
+										values.push(loadedXid);
+									}
+								}
+							}
+
+						} else if (xid == null) {
+							TransactionImple tx = (TransactionImple) SubordinationManager.getTransactionImporter().recoverTransaction(uid);
+
+							if (tx != null)
+								values.push(tx.baseXid());
+						} else {
+							SubordinateAtomicAction saa = new SubordinateAtomicAction(uid, true);
+							XidImple loadedXid = (XidImple) saa.getXid();
+							if (loadedXid.getFormatId() == XATxConverter.FORMAT_ID) {
+								String loadedXidSubordinateNodeName = XATxConverter.getSubordinateNodeName(loadedXid.getXID());
+								if (XATxConverter.getSubordinateNodeName(new XidImple(xid).getXID()).equals(loadedXidSubordinateNodeName)) {
+									if (Arrays.equals(loadedXid.getGlobalTransactionId(), xid.getGlobalTransactionId())) {
+										if (jtaLogger.logger.isDebugEnabled()) {
+											jtaLogger.logger.debug("Found record for " + saa);
+										}
+										TransactionImple tx = (TransactionImple) SubordinationManager.getTransactionImporter().recoverTransaction(uid);
+
+										values.push(loadedXid);
+									}
+								}
+							}
+						}
+
                     }
                     else
                         finished = true;
 
                 }
                 while (!finished);
-
+                
                 if (values.size() > 0)
                 {
                     int index = 0;
@@ -367,10 +448,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
                     while (!values.empty())
                     {
-                        com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple tx = (com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple) values
-                                .pop();
-
-                        indoubt[index] = tx.baseXid();
+                        indoubt[index] = values.pop();
                         index++;
                     }
                 }
@@ -395,10 +473,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
     public void rollback (Xid xid) throws XAException
     {
+		// JBTM-927 this can happen if the transaction has been rolled back by
+		// the TransactionReaper
+		SubordinateTransaction tx = null;
+		try {
+			tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
+		} catch (XAException xae) {
+			if (xae.errorCode == XAException.XA_RBROLLBACK) {
+				// do nothing as already rolled back
+				return;
+			}
+			throw xae;
+		}
         try
         {
-            SubordinateTransaction tx = SubordinationManager
-                    .getTransactionImporter().getImportedTransaction(xid);
 
             if (tx == null)
                 throw new XAException(XAException.XAER_INVAL);

@@ -31,29 +31,38 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.StateStatus;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
-
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.recovery.*;
-import com.arjuna.ats.jta.utils.XAHelper;
-
-import java.util.*;
-import javax.transaction.xa.*;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
+import com.arjuna.ats.jta.recovery.XARecoveryResourceManager;
+import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import com.arjuna.ats.jta.utils.XAHelper;
 
 /**
  * Designed to be able to recover any XAResource.
@@ -61,7 +70,7 @@ import javax.transaction.xa.XAException;
 
 public class XARecoveryModule implements RecoveryModule
 {
-    public XARecoveryModule()
+	public XARecoveryModule()
 	{
 		this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(),
                 "Local XARecoveryModule");
@@ -97,6 +106,14 @@ public class XARecoveryModule implements RecoveryModule
             _xaResourceOrphanFilters.remove(xaResourceOrphanFilter);
         }
     }
+    
+	public void addSerializableXAResourceDeserializer(SerializableXAResourceDeserializer serializableXAResourceDeserializer) {
+		_seriablizableXAResourceDeserializers.add(serializableXAResourceDeserializer);		
+	}
+	
+	public List<SerializableXAResourceDeserializer> getSeriablizableXAResourceDeserializers() {
+		return _seriablizableXAResourceDeserializers;
+	}
 
 
 	public void periodicWorkFirstPass()
@@ -179,6 +196,10 @@ public class XARecoveryModule implements RecoveryModule
 			bottomUpRecovery();
         }
 
+		// JBTM-895 updated so that retrieving an XAResource triggers garbage collection, this is required because garbage collecting
+		// The XA resources in a bottom up scenario (e.g. resourceInitiatedRecoveryForRecoveryHelpers) means that any xids that are
+		// not eligible for recovery after the first scan may be removed as stale and due to the undocumented _xidScans check above will not be
+		// reloaded
         if (_xidScans != null)
 		{
 			Enumeration<XAResource> keys = _xidScans.keys();
@@ -188,8 +209,12 @@ public class XARecoveryModule implements RecoveryModule
 				XAResource theKey = keys.nextElement();
 				RecoveryXids xids = _xidScans.get(theKey);
 
-				if (xids.contains(xid))
+				if (xids.remove(xid)) {
+					if (xids.isEmpty()) {
+						_xidScans.remove(theKey);
+					}
 					return theKey;
+				}
 			}
 		}
 
@@ -347,6 +372,11 @@ public class XARecoveryModule implements RecoveryModule
 		return true;
 	}
 
+	/**
+	 * 
+	 * JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
+	 * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
+	 */
     private void bottomUpRecovery() {
 
         // scan using statically configured plugins;
@@ -354,16 +384,7 @@ public class XARecoveryModule implements RecoveryModule
         // scan using dynamically configured plugins:
         resourceInitiatedRecoveryForRecoveryHelpers();
 
-        // garbage collection:
-        if (_xidScans != null) {
-            Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
-            for(XAResource theKey : keys) {
-                RecoveryXids recoveryXids = _xidScans.get(theKey);
-                if(recoveryXids.isStale()) {
-                    _xidScans.remove(theKey);
-                }
-            }
-        }
+        // JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
     }
 
 	/**
@@ -849,5 +870,7 @@ public class XARecoveryModule implements RecoveryModule
 	private XARecoveryResourceManager _recoveryManagerClass = null;
 
 	private String _logName = null;
+
+	private List<SerializableXAResourceDeserializer> _seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
 
 }

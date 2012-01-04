@@ -69,6 +69,8 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
         {
             orb.shutdown();
         }
+        System.clearProperty("com.arjuna.ats.jta.jtaTMImplementation");
+        System.clearProperty("com.arjuna.ats.jta.jtaUTImplementation");
     }
     
     @Override

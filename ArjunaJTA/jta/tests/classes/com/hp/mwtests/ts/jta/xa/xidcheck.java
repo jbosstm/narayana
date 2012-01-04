@@ -33,9 +33,11 @@ package com.hp.mwtests.ts.jta.xa;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
 import org.junit.Test;
@@ -82,7 +84,7 @@ public class xidcheck
         
         assertEquals(xid1.getTransactionUid(), A.get_uid());
         
-        assertTrue(xid1.getNodeName() != null);
+        assertTrue(XATxConverter.getNodeName(xid1.getXID()).equals(TxControl.getXANodeName()));
         
         assertTrue(xid1.getXID() != null);
         

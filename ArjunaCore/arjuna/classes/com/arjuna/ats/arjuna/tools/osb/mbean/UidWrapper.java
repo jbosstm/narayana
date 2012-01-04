@@ -13,6 +13,7 @@ public class UidWrapper {
 	private String name;
 	private ObjStoreBrowser browser;
 	private String beantype;
+    private String className;
 	private String ostype;
 	private Uid uid;
 	private long tstamp;
@@ -23,19 +24,22 @@ public class UidWrapper {
 		this.name = "";
 		this.beantype = "";
 		this.ostype = "";
+        this.className = null;
 	}
 
 	public OSEntryBean getMBean() {
 		return mbean;
 	}
 
-	public UidWrapper(ObjStoreBrowser browser, String beantype, String ostype, Uid uid) {
+	public UidWrapper(ObjStoreBrowser browser, String beantype, String ostype, String className, Uid uid) {
 		this.browser = browser;
 		this.ostype = ostype;
 		this.beantype = beantype;
+        this.className = className;
 		this.uid = uid;
 		this.tstamp = 0L;
 		this.name = "jboss.jta:type=ObjectStore,itype=" + ostype + ",uid=" + uid.fileStringForm(); // + ",participant=false";
+
 	}
 
     /**
@@ -51,6 +55,10 @@ public class UidWrapper {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getClassName() {
+		return className;
 	}
 
 	void register() {

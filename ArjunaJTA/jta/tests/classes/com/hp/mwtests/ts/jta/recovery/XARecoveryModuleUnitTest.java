@@ -44,7 +44,7 @@ import org.junit.Test;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
 

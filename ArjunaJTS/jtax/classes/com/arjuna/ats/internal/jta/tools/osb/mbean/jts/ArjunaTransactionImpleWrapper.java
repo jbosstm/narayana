@@ -2,6 +2,7 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.tools.osb.mbean.*;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
@@ -16,6 +17,9 @@ public class ArjunaTransactionImpleWrapper extends ArjunaTransactionImple implem
     ActionBean action;
     boolean activated;
 
+    public ArjunaTransactionImpleWrapper () {
+        super(Uid.nullUid());
+    }
     public ArjunaTransactionImpleWrapper (ActionBean action, UidWrapper w) {
         super(w.getUid());
         this.action = action;
@@ -58,6 +62,10 @@ public class ArjunaTransactionImpleWrapper extends ArjunaTransactionImple implem
     public StringBuilder toString(String prefix, StringBuilder sb) {
         prefix += '\t';
         return sb.append('\n').append(prefix).append(get_uid());
+    }
+
+    public BasicAction getAction() {
+        return null;
     }
 
     public void clearHeuristicDecision(int newDecision) {

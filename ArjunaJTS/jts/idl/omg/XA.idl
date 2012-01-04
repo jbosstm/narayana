@@ -82,8 +82,7 @@ module XA
 			  in long rmid, in unsigned long flags);
     };
 	    
-    /*local interface CurrentConnection*/
-    interface CurrentConnection
+    local interface CurrentConnection
     {
 	void start( // xa_start(TMNOFLAGS) or xa_start(TMJOIN)
 		   in CosTransactions::Coordinator tx,
@@ -124,8 +123,7 @@ module XA
 	void unregister_before_completion_callback(in unsigned long key);
     };
 
-    /*local interface Connector*/
-    interface Connector
+    local interface Connector
     {
 	ResourceManager create_resource_manager(in string resource_manager_name,
 						in XASwitch xa_switch,

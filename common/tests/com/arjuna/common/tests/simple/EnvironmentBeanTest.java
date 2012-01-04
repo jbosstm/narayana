@@ -105,7 +105,7 @@ public class EnvironmentBeanTest
         } else {
 
             inputValue = new ArrayList<String>();
-            ((List)inputValue).add("testValue");
+            ((List)inputValue).add("1");
             
         }
 

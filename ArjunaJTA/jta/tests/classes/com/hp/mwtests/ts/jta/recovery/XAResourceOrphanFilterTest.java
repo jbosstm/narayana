@@ -24,6 +24,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.xa.XATxConverter;
@@ -53,23 +54,23 @@ public class XAResourceOrphanFilterTest
         assertEquals(XAResourceOrphanFilter.Vote.ABSTAIN, orphanFilter.checkXid(notJTAFormatId));
 
         List<String> recoveryNodes = new LinkedList<String>();
-        recoveryNodes.add("AA");
+        recoveryNodes.add("1");
         jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(recoveryNodes);
 
-        byte[] notRecoverableNodeName = new byte[] { 'A', 'B' };
+        String notRecoverableNodeName ="2";
         TxControl.setXANodeName(notRecoverableNodeName);
         Xid jtaNotRecoverableNodeName = XATxConverter.getXid(new Uid(), false, XATxConverter.FORMAT_ID);
 
         assertEquals(XAResourceOrphanFilter.Vote.ABSTAIN, orphanFilter.checkXid(jtaNotRecoverableNodeName));
 
-        byte[] recoverableNodeName = new byte[] { 'A', 'A' };
+        String recoverableNodeName ="1";
         TxControl.setXANodeName(recoverableNodeName);
         Xid jtaRecoverableNodeName = XATxConverter.getXid(new Uid(), false, XATxConverter.FORMAT_ID);
 
         assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(jtaRecoverableNodeName));
 
         recoveryNodes.clear();
-        recoveryNodes.add("*");
+        recoveryNodes.add(NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES);
         jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(recoveryNodes);
 
         assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(jtaNotRecoverableNodeName));

@@ -8,7 +8,7 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapperMBean;
 public interface XAResourceMBean extends LogRecordWrapperMBean {
 	@MXBeanPropertyDescription("The java type that implements this XAResource")
 	String getClassName();
-	@MXBeanPropertyDescription("JNDI name of the JCA resource")
+	@MXBeanPropertyDescription("JCA product name")
 	String getEisProductName();
 	@MXBeanPropertyDescription("JNDI Name of the datasource")
 	String getJndiName();

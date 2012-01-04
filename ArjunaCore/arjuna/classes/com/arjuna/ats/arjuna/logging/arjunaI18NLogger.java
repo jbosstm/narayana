@@ -578,7 +578,7 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_coordinator_notrunning();
 
-	@Message(id = 12138, value = "Node name cannot exceed 64 bytes!", format = MESSAGE_FORMAT)
+	@Message(id = 12138, value = "Node name cannot exceed 36 bytes!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_coordinator_toolong();
 
@@ -1445,6 +1445,12 @@ public interface arjunaI18NLogger {
 
     @Message(id = 12367, value = "Failed to create store dir {0}", format = MESSAGE_FORMAT)
     public String get_dir_create_failed(String arg0);
+
+    @Message(id = 12368, value = "Node identifiers must be an integer and must be 1 or greater: {0}", format = MESSAGE_FORMAT)
+	public String get_node_identifier_invalid(int nodeIdentifier);
+
+    @Message(id = 12369, value = "The node identifier was already set", format = MESSAGE_FORMAT)
+	public String get_node_identifier_reset_attempt();
 
     /*
         Allocate new messages directly above this notice.

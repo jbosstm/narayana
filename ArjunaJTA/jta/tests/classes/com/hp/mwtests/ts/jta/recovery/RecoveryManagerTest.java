@@ -50,5 +50,7 @@ public class RecoveryManagerTest
 
         manager.scan();
         manager.scan();
+        System.clearProperty("com.arjuna.ats.jta.xaRecoveryNode");
+        System.clearProperty("XAResourceRecovery1");
     }
 }

@@ -153,4 +153,8 @@ public class StoreManager
     public static ObjectStoreAPI getTxOJStore() {
         return (ObjectStoreAPI) setupStore(null, StateType.OS_UNSHARED);
     }
+
+    public static ObjectStoreAPI getEISNameStore() {
+        return (ObjectStoreAPI) setupStore(null, StateType.OS_UNSHARED);
+    }
 }

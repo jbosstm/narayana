@@ -39,6 +39,7 @@ import javax.transaction.xa.XAException;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -72,7 +73,7 @@ public class XAUtilsUnitTest
         
         assertFalse(XAUtils.mustEndSuspendedRMs(xa));
         assertTrue(XAUtils.canOptimizeDelist(xa));      
-        assertTrue(XAUtils.getXANodeName(new XidImple(new Uid())) != null);
+        assertEquals(XAUtils.getXANodeName(new XidImple(new Uid())), TxControl.getXANodeName());
     }
     
     @Test

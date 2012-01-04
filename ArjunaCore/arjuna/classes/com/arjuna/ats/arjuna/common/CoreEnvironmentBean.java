@@ -23,6 +23,7 @@ package com.arjuna.ats.arjuna.common;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.common.util.ConfigurationInfo;
 import com.arjuna.ats.arjuna.utils.Process;
@@ -99,10 +100,11 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
      * Sets the node identifier. Should be uniq amongst all instances that share resource managers or an objectstore.
      *
      * @param nodeIdentifier the Node Identifier.
+     * @throws CoreEnvironmentBeanException 
      */
-    public void setNodeIdentifier(String nodeIdentifier)
+    public void setNodeIdentifier(String nodeIdentifierAsString)
     {
-        this.nodeIdentifier = nodeIdentifier;
+    	this.nodeIdentifier = nodeIdentifierAsString;
     }
 
     /**

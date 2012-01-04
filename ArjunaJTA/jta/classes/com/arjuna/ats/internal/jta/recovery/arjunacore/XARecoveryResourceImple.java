@@ -56,6 +56,9 @@ public class XARecoveryResourceImple extends XAResourceRecord implements XARecov
 	super._theXAResource = res;
     }
 
+    /**
+     * @deprecated Only used by a test
+     */
     public final XAResource getXAResource ()
     {
 	return super._theXAResource;

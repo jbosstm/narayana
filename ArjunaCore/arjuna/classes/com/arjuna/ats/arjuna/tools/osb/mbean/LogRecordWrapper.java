@@ -65,11 +65,18 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 	}
 
 	public String setStatus(ParticipantStatus newState) {
+        if (getListType().equals(newState))
+            return "participant is prepared for recovery";
+
 		if (parent != null && parent.setStatus(this, newState)) {
 			listType = newState;
-			return "status change was successful";
+
+            if (newState == ParticipantStatus.PREPARED )
+			    return "participant recovery will be attempted during the next recovery pass";
+
+            return "participant status change was successful";
 		} else {
-			return "failed";
+			return "participant status change failed";
 		}
 	}
 

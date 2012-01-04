@@ -31,13 +31,17 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.transaction.xa.*;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
-import com.arjuna.ats.jta.xa.XidImple;
 
 public class TransactionImporterImple implements TransactionImporter
 {
@@ -86,13 +90,13 @@ public class TransactionImporterImple implements TransactionImporter
 		 * Check to see if we haven't already imported this thing.
 		 */
 
-		SubordinateTransaction imported = getImportedTransaction(xid);
+		TransactionImple imported = (TransactionImple) getImportedTransaction(xid);
 
 		if (imported == null)
 		{
 			imported = new TransactionImple(timeout, xid);
-
-			_transactions.put(new XidImple(xid), imported);
+			
+			_transactions.put(new SubordinateXidImple(imported.baseXid()), imported);
 		}
 
 		return imported;
@@ -130,8 +134,9 @@ public class TransactionImporterImple implements TransactionImporter
 
 		if (tx == null)
 		{
-			_transactions.put(recovered.baseXid(), recovered);
 
+			Xid baseXid = recovered.baseXid();
+			_transactions.put(new SubordinateXidImple(baseXid), recovered);
 			recovered.recordTransaction();
 
 			return recovered;
@@ -162,10 +167,20 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		SubordinateTransaction tx = _transactions.get(new XidImple(xid));
+		SubordinateTransaction tx = _transactions.get(new SubordinateXidImple(xid));
 
 		if (tx == null)
 			return null;
+		
+		// https://issues.jboss.org/browse/JBTM-927
+		try {
+			if (tx.getStatus() == javax.transaction.Status.STATUS_ROLLEDBACK) {
+				throw new XAException(XAException.XA_RBROLLBACK);
+			}
+		} catch (SystemException e) {
+			e.printStackTrace();
+			throw new XAException(XAException.XA_RBROLLBACK);
+		}
 
 		if (!tx.activated())
 		{
@@ -192,9 +207,21 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		_transactions.remove(new XidImple(xid));
+		_transactions.remove(new SubordinateXidImple(xid));
+	}
+	
+	public Set<Xid> getInflightXids(String parentNodeName) {
+		Iterator<TransactionImple> iterator = _transactions.values().iterator();
+		Set<Xid> toReturn = new HashSet<Xid>();
+		while (iterator.hasNext()) {
+			TransactionImple next = iterator.next();
+			if (next.getParentNodeName().equals(parentNodeName)) {
+				toReturn.add(next.baseXid());
+			}
+		}
+		return toReturn;
 	}
 
-	private static ConcurrentHashMap<Xid, SubordinateTransaction> _transactions = new ConcurrentHashMap<Xid, SubordinateTransaction>();
-
+	private static ConcurrentHashMap<SubordinateXidImple, TransactionImple> _transactions = new ConcurrentHashMap<SubordinateXidImple, TransactionImple>();
 }
+

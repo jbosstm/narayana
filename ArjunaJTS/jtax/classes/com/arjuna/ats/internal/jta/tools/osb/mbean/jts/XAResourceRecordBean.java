@@ -44,8 +44,9 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
             if (_theXAResource != null) {
                 XAResourceRecordBean.this.className = _theXAResource.getClass().getName();
-                XAResourceRecordBean.this.eisProductName =  callMethod(_theXAResource, "getEisProductName");
-                XAResourceRecordBean.this.eisProductVersion = callMethod(_theXAResource, "getEisProductVersion");
+                XAResourceRecordBean.this.jndiName =  callMethod(_theXAResource, "getJndiName");
+                XAResourceRecordBean.this.eisProductName =  callMethod(_theXAResource, "getProductName");
+                XAResourceRecordBean.this.eisProductVersion = callMethod(_theXAResource, "getProductVersion");
 
                 try {
                     timeout = _theXAResource.getTransactionTimeout();
