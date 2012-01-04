@@ -31,18 +31,16 @@
 
 package com.arjuna.orbportability;
 
-import org.omg.CORBA.OBJECT_NOT_EXIST;
-import org.omg.PortableServer.Servant;
-import org.omg.CORBA.SystemException;
-
-import com.arjuna.orbportability.oa.PreShutdown;
-import com.arjuna.orbportability.oa.PostShutdown;
-import com.arjuna.orbportability.event.EventManager;
-import com.arjuna.orbportability.logging.*;
-
-
-
 import java.util.Enumeration;
+
+import org.omg.CORBA.OBJECT_NOT_EXIST;
+import org.omg.CORBA.SystemException;
+import org.omg.PortableServer.Servant;
+
+import com.arjuna.orbportability.event.EventManager;
+import com.arjuna.orbportability.logging.opLogger;
+import com.arjuna.orbportability.oa.PostShutdown;
+import com.arjuna.orbportability.oa.PreShutdown;
 
 /**
  * RootOA class which represents a RootPOA

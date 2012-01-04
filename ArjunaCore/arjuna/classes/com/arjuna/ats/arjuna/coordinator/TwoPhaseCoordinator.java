@@ -31,14 +31,13 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Iterator;
+import java.util.SortedSet;
 import java.util.Stack;
+import java.util.TreeSet;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Adds support for synchronizations to BasicAction. It does not change thread

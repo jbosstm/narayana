@@ -31,8 +31,11 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
-import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Vote;
@@ -42,8 +45,6 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerTopLevelAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ServerTopLevelActionUnitTest extends TestBase
 {

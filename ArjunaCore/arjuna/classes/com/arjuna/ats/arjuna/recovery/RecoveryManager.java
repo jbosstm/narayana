@@ -31,16 +31,16 @@
 
 package com.arjuna.ats.arjuna.recovery;
 
-import java.util.Vector;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.io.IOException;
+import java.util.Vector;
 
-import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
-import com.arjuna.ats.arjuna.utils.Utility;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.common.util.ConfigurationInfo;
 
 class ScanThread extends Thread

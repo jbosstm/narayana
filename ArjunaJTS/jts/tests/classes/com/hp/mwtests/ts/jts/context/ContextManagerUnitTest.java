@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jts.context;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
 
@@ -39,8 +41,6 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.context.ContextManager;
 import com.arjuna.ats.internal.jts.context.ContextPropagationManager;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ContextManagerUnitTest extends TestBase
 {

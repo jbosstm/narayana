@@ -31,16 +31,25 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import com.hp.mwtests.ts.jts.utils.ResourceTrace;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.NotSubtransaction;
+import org.omg.CosTransactions.SubtransactionAwareResource;
+import org.omg.CosTransactions.SubtransactionAwareResourceHelper;
+import org.omg.CosTransactions.Unavailable;
+import org.omg.CosTransactions.Vote;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.hp.mwtests.ts.jts.utils.ResourceTrace;
 
 public class DemoSubTranResource extends org.omg.CosTransactions.SubtransactionAwareResourcePOA
 {

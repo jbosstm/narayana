@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.thread.OTSThread;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 class DummyThread extends OTSThread
 {

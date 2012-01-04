@@ -31,18 +31,16 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import javax.transaction.Status;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
-import com.arjuna.ats.internal.jta.utils.XAUtils;
-import com.arjuna.ats.jta.xa.XidImple;
-import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.Synchronization;
-
-import static org.junit.Assert.*;
 
 public class SynchronizationUnitTest
 {

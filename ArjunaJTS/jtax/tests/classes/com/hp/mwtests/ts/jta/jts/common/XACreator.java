@@ -31,7 +31,7 @@
 
 package com.hp.mwtests.ts.jta.jts.common;
 
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 public interface XACreator
 {

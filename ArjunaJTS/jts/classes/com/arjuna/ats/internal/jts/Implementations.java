@@ -34,11 +34,6 @@ package com.arjuna.ats.internal.jts;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-
-/*
- * Slightly different for historical reasons.
- */
-
 import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 import com.arjuna.ats.internal.jts.resources.ResourceRecord;
 

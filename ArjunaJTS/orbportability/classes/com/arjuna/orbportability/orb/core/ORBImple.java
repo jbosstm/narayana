@@ -31,9 +31,8 @@
 
 package com.arjuna.orbportability.orb.core;
 
-import java.util.*;
 import java.applet.Applet;
-import java.io.*;
+import java.util.Properties;
 
 import org.omg.CORBA.SystemException;
 

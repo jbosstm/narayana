@@ -31,15 +31,17 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi;
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.*;
-import com.arjuna.ats.internal.jts.interposition.resources.osi.*;
-
-import org.omg.CosTransactions.*;
-
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.NotPrepared;
+
+import com.arjuna.ats.internal.jts.interposition.resources.osi.OTIDMap;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ServerStrictTopLevelAction;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ServerOSITopLevelAction extends ServerStrictTopLevelAction
 {

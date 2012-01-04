@@ -31,37 +31,34 @@
 
 package com.arjuna.ats.internal.jts.context;
 
-import org.omg.CosTransactions.*;
+import java.util.EmptyStackException;
+import java.util.Hashtable;
+import java.util.Stack;
 
-import com.arjuna.ArjunaOTS.*;
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TCKind;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.PropagationContext;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.TransactionFactory;
+import org.omg.PortableInterceptor.InvalidSlot;
 
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
+import com.arjuna.ArjunaOTS.ActionControl;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-
 import com.arjuna.ats.jts.OTSManager;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import java.util.*;
-import java.lang.Object;
-import org.omg.CORBA.*;
-
-import org.omg.PortableInterceptor.*;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.utils.ThreadUtil;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.BAD_OPERATION;
-import java.util.EmptyStackException;
-import org.omg.CORBA.ORBPackage.InvalidName;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This class is responsible for managing the thread-to-transaction

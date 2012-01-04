@@ -30,14 +30,15 @@
  */
 package com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations;
 
-import com.arjuna.orbportability.internal.orbspecific.oa.implementations.POABase;
-import com.arjuna.orbportability.logging.opLogger;
 import org.omg.CORBA.Policy;
 import org.omg.CORBA.SystemException;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
 import org.omg.PortableServer.POAPackage.InvalidPolicy;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
-import org.omg.PortableServer.POA;
+
+import com.arjuna.orbportability.internal.orbspecific.oa.implementations.POABase;
+import com.arjuna.orbportability.logging.opLogger;
 
 public class jacorb_2_0 extends POABase
 {

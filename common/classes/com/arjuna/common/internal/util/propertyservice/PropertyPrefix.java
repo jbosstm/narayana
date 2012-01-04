@@ -20,10 +20,10 @@
  */
 package com.arjuna.common.internal.util.propertyservice;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
 
 /**
  * Annotation used to set the default property name prefix for EnvironmentBean classes

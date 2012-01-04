@@ -31,13 +31,14 @@
 
 package com.hp.mwtests.ts.jts.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class OTSManagerUnitTest extends TestBase
 {

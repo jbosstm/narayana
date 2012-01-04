@@ -20,12 +20,14 @@
  */
 package com.hp.mwtests.ts.jdbc.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import java.util.Hashtable;
 
-import com.arjuna.ats.jdbc.common.JDBCEnvironmentBean;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.jdbc.common.JDBCEnvironmentBean;
 
 /**
  * Unit tests for EnvironmentBean classes.

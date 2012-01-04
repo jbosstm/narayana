@@ -31,18 +31,18 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
+import static org.junit.Assert.fail;
 
-import com.arjuna.ats.jta.common.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
-
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jta.jts.common.XACreator;
 
 public class JTATest
 {

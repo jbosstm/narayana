@@ -20,10 +20,12 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
-import com.arjuna.ats.arjuna.coordinator.TxControl;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 
 public class TxControlUnitTest
 {

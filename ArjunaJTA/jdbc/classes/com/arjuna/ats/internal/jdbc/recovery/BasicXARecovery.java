@@ -31,18 +31,15 @@
 
 package com.arjuna.ats.internal.jdbc.recovery;
 
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.transaction.xa.XAResource;
+
 import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
-
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
-
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
-
-import java.sql.*;
-import javax.transaction.xa.*;
-import java.util.*;
-
-import java.lang.NumberFormatException;
 
 /**
  * This class implements the XAResourceRecovery interface for XAResources. The

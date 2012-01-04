@@ -31,12 +31,12 @@ package com.hp.mwtests.ts.jdbc.utils;
  * $Id: JNDISetup.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import javax.sql.*;
-import javax.naming.*;
+import static org.junit.Assert.assertNotNull;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.*;
 
 public class JNDISetup
 {

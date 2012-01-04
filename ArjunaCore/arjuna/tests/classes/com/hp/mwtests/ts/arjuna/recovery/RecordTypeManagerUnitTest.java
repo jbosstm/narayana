@@ -31,14 +31,14 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
-
-import static org.junit.Assert.*;
 
 
 class DummyMap implements RecordTypeMap

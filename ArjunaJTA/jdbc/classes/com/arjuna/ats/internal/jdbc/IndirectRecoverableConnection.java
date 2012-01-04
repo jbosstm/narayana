@@ -31,21 +31,22 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
-import com.arjuna.ats.jdbc.logging.*;
+import java.sql.SQLException;
+import java.util.Hashtable;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
-
-import com.arjuna.ats.arjuna.state.*;
-
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-
-import java.util.*;
-import java.sql.*;
-import javax.sql.*;
-import javax.transaction.*;
-import javax.transaction.xa.*;
-import javax.naming.*;
 
 /**
  * This class is responsible for maintaining connection information

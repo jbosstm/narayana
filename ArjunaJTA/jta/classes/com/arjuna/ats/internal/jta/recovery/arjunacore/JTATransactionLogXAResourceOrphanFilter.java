@@ -20,8 +20,9 @@
  */
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.arjuna.common.Uid;
+import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -31,10 +32,6 @@ import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
-
-
-
-import javax.transaction.xa.Xid;
 
 /**
  * An XAResourceOrphanFilter which vetos rollback for xids owned by top level JTA transactions.

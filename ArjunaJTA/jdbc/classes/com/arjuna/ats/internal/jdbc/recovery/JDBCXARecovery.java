@@ -31,17 +31,20 @@
 
 package com.arjuna.ats.internal.jdbc.recovery;
 
-import java.util.*;
-import java.sql.*;
+import java.sql.SQLException;
+import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.sql.*;
-import javax.transaction.xa.*;
-
-import com.arjuna.common.util.propertyservice.PropertiesFactory;
+import javax.sql.ConnectionEvent;
+import javax.sql.ConnectionEventListener;
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 /**
  * This provides recovery for compliant JDBC drivers. It is not meant to be

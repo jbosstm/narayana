@@ -36,8 +36,6 @@ import org.junit.Test;
 import com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
-import static org.junit.Assert.*;
-
 public class TopLevelTransactionUnitTest extends TestBase
 {
     @Test

@@ -31,6 +31,11 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
@@ -41,8 +46,6 @@ import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoSubTranResource;
 import com.hp.mwtests.ts.jts.orbspecific.resources.demosync;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 
 public class AtomicTransactionUnitTest extends TestBase

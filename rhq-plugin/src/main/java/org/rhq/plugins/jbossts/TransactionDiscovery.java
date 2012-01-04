@@ -1,13 +1,13 @@
 package org.rhq.plugins.jbossts;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.mc4j.ems.connection.bean.EmsBean;
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class for discovering transactions known to the parent Transaction Manager

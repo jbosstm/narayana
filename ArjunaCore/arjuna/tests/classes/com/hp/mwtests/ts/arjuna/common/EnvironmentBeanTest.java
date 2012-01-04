@@ -20,11 +20,12 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
 import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
-import org.junit.Test;
 
 /**
  * Unit tests for EnvironmentBean classes.

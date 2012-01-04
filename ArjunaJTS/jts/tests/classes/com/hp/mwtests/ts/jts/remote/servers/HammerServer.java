@@ -31,14 +31,15 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.HammerPOATie;
-import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
-import com.hp.mwtests.ts.jts.resources.TestUtility;
-
-import com.arjuna.orbportability.*;
-
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
+import com.hp.mwtests.ts.jts.TestModule.HammerPOATie;
+import com.hp.mwtests.ts.jts.orbspecific.resources.HammerObject;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 
 public class HammerServer

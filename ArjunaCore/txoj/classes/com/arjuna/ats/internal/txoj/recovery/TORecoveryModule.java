@@ -31,20 +31,19 @@
 
 package com.arjuna.ats.internal.txoj.recovery;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
-import com.arjuna.ats.txoj.logging.txojLogger;
-
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
-import java.util.*;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /**
  * This class is a plug-in module for the recovery manager. This class is

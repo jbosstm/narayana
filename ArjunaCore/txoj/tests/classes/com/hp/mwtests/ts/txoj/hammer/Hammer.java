@@ -31,13 +31,10 @@ package com.hp.mwtests.ts.txoj.hammer;
  * $Id: Hammer.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import org.junit.Test;
+
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.HammerThreadedObject;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import java.lang.InterruptedException;
 
 public class Hammer
 {

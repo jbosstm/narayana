@@ -20,10 +20,15 @@
  */
 package com.arjuna.orbportability.logging;
 
-import org.jboss.logging.*;
+import static org.jboss.logging.Logger.Level.FATAL;
+import static org.jboss.logging.Logger.Level.INFO;
+import static org.jboss.logging.Logger.Level.WARN;
+import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;
 
-import static org.jboss.logging.Logger.Level.*;
-import static org.jboss.logging.Message.Format.*;
+import org.jboss.logging.Cause;
+import org.jboss.logging.LogMessage;
+import org.jboss.logging.Message;
+import org.jboss.logging.MessageLogger;
 
 /**
  * i18n log messages for the orbportability module.

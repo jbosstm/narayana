@@ -31,9 +31,8 @@
 
 package com.arjuna.ats.internal.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Class to record transactions with non-zero timeout values, and

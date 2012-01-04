@@ -20,6 +20,15 @@
  */
 package com.hp.mwtests.ts.jta.recovery;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.transaction.xa.Xid;
+
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
@@ -28,15 +37,6 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanF
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.xa.XATxConverter;
-
-import javax.transaction.xa.Xid;
-
-import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Unit tests for JTA package XAResourceOrphanFilter implementations.

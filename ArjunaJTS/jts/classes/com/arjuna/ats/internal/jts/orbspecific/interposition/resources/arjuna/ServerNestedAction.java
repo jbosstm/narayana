@@ -31,25 +31,29 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna;
 
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import org.omg.CosTransactions.*;
+import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicCommit;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.NotSubtransaction;
+import org.omg.CosTransactions.SubtransactionAwareResource;
+
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.interposition.resources.arjuna.ServerResource;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This looks like an atomic action, but is not actually derived from

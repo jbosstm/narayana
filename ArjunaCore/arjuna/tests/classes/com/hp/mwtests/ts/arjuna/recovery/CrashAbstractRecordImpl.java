@@ -31,13 +31,13 @@ package com.hp.mwtests.ts.arjuna.recovery;
  * $Id: CrashAbstractRecordImpl.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import java.io.*;
+import java.io.IOException;
 
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 

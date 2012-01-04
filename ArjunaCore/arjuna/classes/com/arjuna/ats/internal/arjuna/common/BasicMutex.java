@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.common;
 
-import java.lang.InterruptedException;
-
 import com.arjuna.ats.arjuna.common.Mutex;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 

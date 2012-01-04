@@ -31,29 +31,16 @@
 
 package com.arjuna.ats.internal.jts.recovery.recoverycoordinators;
 
-import org.omg.CosTransactions.*;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.Resource;
 
-import com.arjuna.ats.jts.logging.jtsLogger;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.jts.utils.Utility;
-
-import com.arjuna.orbportability.orb.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-
-import com.arjuna.ats.jts.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
-
-import com.arjuna.ats.internal.jts.recovery.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.*;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.*;
-import com.arjuna.ArjunaOTS.*;
-
-import java.lang.ClassCastException;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Implementation of {@link com.arjuna.ats.internal.jts.recovery.RecoveryCreator}.

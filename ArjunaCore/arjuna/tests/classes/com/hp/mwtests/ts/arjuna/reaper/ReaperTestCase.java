@@ -20,10 +20,8 @@
  */
 package com.hp.mwtests.ts.arjuna.reaper;
 
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,7 +31,10 @@ import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.Reapable;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
 
 /**
  * Exercises some aspects of the TransactionReaper functionality.

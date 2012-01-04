@@ -21,13 +21,14 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import javax.transaction.xa.XAException;
 
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jta.resources.errorhandlers.tibco;
-
-import static org.junit.Assert.*;
 
 public class ErrorHandlerUnitTest
 {

@@ -32,14 +32,13 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 
-import com.arjuna.ats.arjuna.common.*;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
 
-import com.arjuna.ats.jta.recovery.*;
-import com.arjuna.ats.jta.logging.jtaLogger;
-
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-
-import javax.transaction.xa.*;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
 
 public class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryResource
 {

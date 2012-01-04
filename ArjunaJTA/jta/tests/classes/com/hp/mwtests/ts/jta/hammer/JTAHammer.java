@@ -31,14 +31,13 @@
 
 package com.hp.mwtests.ts.jta.hammer;
 
-import com.hp.mwtests.ts.jta.common.*;
+import java.util.Calendar;
 
-import javax.transaction.xa.*;
-
-import java.util.*;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.hp.mwtests.ts.jta.common.XACreator;
 
 class Worker extends Thread
 {

@@ -30,6 +30,10 @@
  */
 
 package com.hp.mwtests.ts.jta.recovery;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import javax.transaction.xa.Xid;
 
 import org.junit.Test;
@@ -39,8 +43,6 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.TestResource;
-
-import static org.junit.Assert.*;
 
 
 public class RecoveryXidsUnitTest

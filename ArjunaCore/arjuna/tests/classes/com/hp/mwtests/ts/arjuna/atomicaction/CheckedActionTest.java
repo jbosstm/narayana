@@ -20,11 +20,13 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 
 

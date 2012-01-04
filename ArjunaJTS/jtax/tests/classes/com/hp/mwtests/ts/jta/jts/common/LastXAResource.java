@@ -20,11 +20,11 @@
  */
 package com.hp.mwtests.ts.jta.jts.common;
 
-import com.arjuna.ats.jta.resources.EndXAResource;
-
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.jta.resources.EndXAResource;
 
 public class LastXAResource implements XAResource, EndXAResource
 {

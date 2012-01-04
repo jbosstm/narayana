@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import java.util.*;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 /**
  * Keep track of any "modifiers" we may require to run

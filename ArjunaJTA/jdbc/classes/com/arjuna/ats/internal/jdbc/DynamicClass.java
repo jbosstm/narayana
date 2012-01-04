@@ -31,11 +31,9 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import java.util.*;
-import java.sql.*;
-import javax.sql.*;
-
 import java.sql.SQLException;
+
+import javax.sql.XADataSource;
 
 /**
  * This class is responsible for maintaining connection information

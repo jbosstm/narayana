@@ -31,14 +31,19 @@
 
 package com.hp.mwtests.ts.jdbc.basic;
 
-import com.arjuna.ats.jdbc.*;
+import static org.junit.Assert.fail;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
-import java.sql.*;
 
-import org.junit.Test;
 import org.junit.Before;
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import com.arjuna.ats.jdbc.TransactionalDriver;
 
 public class JDBC2Test
 {

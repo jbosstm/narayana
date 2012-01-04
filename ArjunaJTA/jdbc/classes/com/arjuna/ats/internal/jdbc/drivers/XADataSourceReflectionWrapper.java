@@ -20,9 +20,10 @@
  */
 package com.arjuna.ats.internal.jdbc.drivers;
 
-import javax.sql.XADataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import javax.sql.XADataSource;
 
 /**
  * A simple wrapper class that uses reflection to load and configure an XADataSource.

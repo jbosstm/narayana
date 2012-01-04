@@ -20,6 +20,8 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -27,8 +29,6 @@ import com.arjuna.ats.internal.arjuna.utils.ExecProcessId;
 import com.arjuna.ats.internal.arjuna.utils.FileProcessId;
 import com.arjuna.ats.internal.arjuna.utils.MBeanProcessId;
 import com.arjuna.ats.internal.arjuna.utils.ManualProcessId;
-
-import static org.junit.Assert.*;
 
 public class ProcessIdUnitTest
 {

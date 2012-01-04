@@ -20,18 +20,20 @@
  */
 package com.hp.mwtests.ts.arjuna.uid;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 public class UidUnitTest
 {

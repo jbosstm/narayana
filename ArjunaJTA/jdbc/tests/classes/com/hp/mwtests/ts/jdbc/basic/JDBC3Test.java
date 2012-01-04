@@ -23,10 +23,15 @@
 
 package com.hp.mwtests.ts.jdbc.basic;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
+
+import org.junit.Test;
 
 /**
  * Exercises the JDBC3.0 specific methods on the transactional JDBC wrapper.

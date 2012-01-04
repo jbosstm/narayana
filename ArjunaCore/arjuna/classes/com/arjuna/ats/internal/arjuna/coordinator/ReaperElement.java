@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.internal.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.arjuna.ats.arjuna.coordinator.Reapable;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class ReaperElement implements Comparable<ReaperElement>
 {

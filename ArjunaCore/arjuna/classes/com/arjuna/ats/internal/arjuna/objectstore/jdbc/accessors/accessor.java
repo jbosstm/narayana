@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors;
 
-import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import java.sql.SQLException;
+import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 /**
  * Do not return a connection which participates within the

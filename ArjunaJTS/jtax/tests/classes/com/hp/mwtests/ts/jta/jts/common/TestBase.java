@@ -31,16 +31,13 @@
 
 package com.hp.mwtests.ts.jta.jts.common;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
-
-import static org.junit.Assert.*;
 
 public class TestBase
 {   

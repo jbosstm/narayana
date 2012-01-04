@@ -31,11 +31,12 @@
  
 package com.arjuna.ats.internal.arjuna.recovery;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import com.arjuna.ats.arjuna.recovery.Service;
 
 public class Connection extends Thread

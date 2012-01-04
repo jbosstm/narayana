@@ -20,18 +20,17 @@
  */
 package org.jboss.jbossts.star.test;
 
-import junit.framework.Assert;
-import org.jboss.jbossts.star.provider.*;
-import org.jboss.jbossts.star.util.LinkHolder;
-import org.jboss.jbossts.star.util.TxSupport;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.net.HttpURLConnection;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.Assert;
+
+import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.util.LinkHolder;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /*
  * The comments that are preceded by line numbers refer to text in version 4

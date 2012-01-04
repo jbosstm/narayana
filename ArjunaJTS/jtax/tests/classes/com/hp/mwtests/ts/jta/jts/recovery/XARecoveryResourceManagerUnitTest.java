@@ -31,17 +31,13 @@
 
 package com.hp.mwtests.ts.jta.jts.recovery;
 
-import java.util.ArrayList;
-
-import javax.transaction.xa.XAException;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceManagerImple;
 import com.hp.mwtests.ts.jta.jts.common.DummyXA;
-
-import static org.junit.Assert.*;
 
 
 public class XARecoveryResourceManagerUnitTest

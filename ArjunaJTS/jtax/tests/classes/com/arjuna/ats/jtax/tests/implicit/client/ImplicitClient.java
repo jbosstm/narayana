@@ -31,12 +31,12 @@ package com.arjuna.ats.jtax.tests.implicit.client;
  * $Id: ImplicitClient.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.*;
-
 import org.junit.Test;
+
+import com.arjuna.ats.jta.TransactionManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
 
 public class ImplicitClient
 {

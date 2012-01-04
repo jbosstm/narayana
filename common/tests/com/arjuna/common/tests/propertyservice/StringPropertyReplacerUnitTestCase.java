@@ -27,14 +27,15 @@ package com.arjuna.common.tests.propertyservice;
 // original version is jboss-common-core 2.2.8.GA
 // svn.jboss.org/repos/common/common-core/tags/2.2.8.GA/src/test/java/org/jboss/test/util/test/StringPropertyReplacerUnitTestCase.java
 
-import static com.arjuna.common.util.propertyservice.StringPropertyReplacer.*;
-
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import static org.junit.Assert.*;
+import static com.arjuna.common.util.propertyservice.StringPropertyReplacer.replaceProperties;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Properties;
+
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * A StringPropertyReplacerUnitTestCase.

@@ -31,12 +31,13 @@
 
 package com.hp.mwtests.ts.jta.common;
 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.jta.xa.*;
-
-import javax.transaction.xa.*;
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class RecoveryXAResource implements XAResource
 {

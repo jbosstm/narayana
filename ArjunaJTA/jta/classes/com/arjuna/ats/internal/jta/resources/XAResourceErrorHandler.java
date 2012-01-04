@@ -28,14 +28,13 @@
 
 package com.arjuna.ats.internal.jta.resources;
 
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.XAException;
+import java.util.HashMap;
 
-import com.arjuna.ats.jta.resources.XAResourceMap;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-
-import java.util.HashMap;
+import com.arjuna.ats.jta.resources.XAResourceMap;
 
 public class XAResourceErrorHandler
 {

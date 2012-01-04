@@ -31,7 +31,8 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
-import javax.transaction.xa.XAException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -46,11 +47,9 @@ import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
-import com.hp.mwtests.ts.jta.common.TestResource;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailType;
-
-import static org.junit.Assert.*;
+import com.hp.mwtests.ts.jta.common.TestResource;
 
 public class XAResourceRecordUnitTest
 {

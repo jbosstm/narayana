@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.jts.extensions.DebugTxAssociation;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class TxAssociationUnitTest extends TestBase
 {

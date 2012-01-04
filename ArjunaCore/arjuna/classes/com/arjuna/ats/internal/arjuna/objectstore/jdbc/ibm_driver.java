@@ -20,8 +20,8 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * JDBC store implementation driver-specific code.

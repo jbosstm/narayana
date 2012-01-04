@@ -31,15 +31,18 @@ package com.hp.mwtests.ts.arjuna.file;
  * $Id: FileLocking.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.utils.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.io.*;
-
-import java.io.IOException;
-import java.lang.InterruptedException;
+import com.arjuna.ats.arjuna.utils.FileLock;
 
 /*
  * A simple test of file locking. Create 2 threads and have them

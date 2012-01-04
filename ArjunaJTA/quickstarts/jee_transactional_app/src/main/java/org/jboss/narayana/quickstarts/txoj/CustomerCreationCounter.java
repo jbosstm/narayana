@@ -22,7 +22,6 @@ package org.jboss.narayana.quickstarts.txoj;
 
 import java.io.IOException;
 
-import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.txoj.Lock;

@@ -32,19 +32,18 @@
 package com.arjuna.ats.internal.jts.interposition;
 
 
-import com.arjuna.ats.jts.extensions.Arjuna;
-import com.arjuna.ats.jts.logging.*;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.PropagationContext;
 
 import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 import com.arjuna.ats.internal.jts.interposition.resources.arjuna.InterpositionCreator;
-import com.arjuna.ats.internal.jts.interposition.resources.strict.StrictInterpositionCreator;
-import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterpositionCreator;
 import com.arjuna.ats.internal.jts.interposition.resources.osi.OSIInterpositionCreator;
+import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterpositionCreator;
+import com.arjuna.ats.internal.jts.interposition.resources.strict.StrictInterpositionCreator;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
+import com.arjuna.ats.jts.extensions.Arjuna;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /*
  * Default visibility.

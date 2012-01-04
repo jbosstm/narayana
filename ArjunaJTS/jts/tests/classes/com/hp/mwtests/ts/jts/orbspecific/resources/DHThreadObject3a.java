@@ -31,10 +31,9 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.hp.mwtests.ts.jts.utils.Util;
-
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.hp.mwtests.ts.jts.utils.Util;
 
 public class DHThreadObject3a extends Thread
 {

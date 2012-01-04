@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.jts.recovery;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ExpiredContactUnitTest extends TestBase
 {

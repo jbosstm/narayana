@@ -31,40 +31,43 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
-import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
-import com.arjuna.ats.internal.jta.xa.TxInfo;
-import com.arjuna.ats.internal.jta.utils.*;
-import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
-import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
-import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
-import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
-import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.xa.XATxConverter;
-import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.ats.jta.logging.*;
-import com.arjuna.ats.jta.xa.XAModifier;
-
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import javax.transaction.xa.*;
-
-import java.util.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
-import java.io.IOException;
-import java.lang.IllegalStateException;
-
-import java.util.concurrent.ConcurrentHashMap;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
+import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.XAModifier;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /*
  * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it to

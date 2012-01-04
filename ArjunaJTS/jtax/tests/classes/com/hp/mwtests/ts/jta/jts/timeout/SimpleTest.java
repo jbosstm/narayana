@@ -31,12 +31,14 @@
 
 package com.hp.mwtests.ts.jta.jts.timeout;
 
-import com.arjuna.ats.internal.jts.ORBManager;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import com.arjuna.orbportability.*;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class SimpleTest
 {

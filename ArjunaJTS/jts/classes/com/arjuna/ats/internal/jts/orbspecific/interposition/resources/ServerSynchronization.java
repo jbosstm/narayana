@@ -31,18 +31,17 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources;
 
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.jts.utils.Utility;
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.Synchronization;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 public class ServerSynchronization extends
 		org.omg.CosTransactions.SynchronizationPOA

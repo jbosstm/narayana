@@ -32,24 +32,20 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
+import org.omg.CORBA.NO_IMPLEMENT;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.RecoveryCoordinatorHelper;
+import org.omg.PortableServer.POA;
+
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import org.omg.CORBA.*;
-import org.omg.PortableServer.*;
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.logging.jtsLogger;
-
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.GenericRecoveryCoordinator;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RcvCoManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Implementation of RecoveryCreator for JacOrb

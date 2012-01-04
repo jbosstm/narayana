@@ -31,10 +31,9 @@
 
 package com.arjuna.ats.arjuna.recovery ;
 
-import com.arjuna.ats.arjuna.AtomicAction ;
-import com.arjuna.ats.arjuna.common.Uid ;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
-
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner;
 

@@ -20,10 +20,11 @@
  */
 package com.hp.mwtests.ts.txoj.basic;
 
-import com.arjuna.ats.txoj.common.TxojEnvironmentBean;
+import java.util.HashMap;
+
 import org.junit.Test;
 
-import java.util.HashMap;
+import com.arjuna.ats.txoj.common.TxojEnvironmentBean;
 
 /**
  * Unit tests for EnvironmentBean classes.

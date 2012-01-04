@@ -28,14 +28,14 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
+import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;

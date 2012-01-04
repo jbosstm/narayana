@@ -21,9 +21,8 @@
 
 package com.arjuna.ats.internal.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Class to reap timed out transactions on behalf of the transaction reaper

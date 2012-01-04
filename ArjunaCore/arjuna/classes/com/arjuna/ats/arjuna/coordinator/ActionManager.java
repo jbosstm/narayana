@@ -31,12 +31,10 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.arjuna.ats.arjuna.common.Uid;
 
 /*
  * @author Mark Little (mark_little@hp.com)

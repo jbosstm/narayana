@@ -31,27 +31,27 @@
 
 package com.arjuna.orbportability;
 
-import com.arjuna.orbportability.oa.*;
-import com.arjuna.orbportability.logging.opLogger;
-import com.arjuna.orbportability.exceptions.FatalError;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
 
-import com.arjuna.orbportability.logging.*;
-
-
-
-import com.arjuna.orbportability.internal.utils.PreInitLoader;
-import com.arjuna.orbportability.internal.utils.PostInitLoader;
-import com.arjuna.orbportability.internal.utils.PostSetLoader;
-
-import java.util.*;
-import org.omg.PortableServer.*;
 import org.omg.CORBA.Policy;
-
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.Servant;
+import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
 import org.omg.PortableServer.POAPackage.InvalidPolicy;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
+
+import com.arjuna.orbportability.exceptions.FatalError;
+import com.arjuna.orbportability.internal.utils.PostInitLoader;
+import com.arjuna.orbportability.internal.utils.PostSetLoader;
+import com.arjuna.orbportability.internal.utils.PreInitLoader;
+import com.arjuna.orbportability.logging.opLogger;
+import com.arjuna.orbportability.oa.Attribute;
+import com.arjuna.orbportability.oa.PostShutdown;
+import com.arjuna.orbportability.oa.PreShutdown;
 
 /**
  * An attempt at some ORB portable ways of interacting with the OA. NOTE:

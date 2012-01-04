@@ -20,10 +20,14 @@
  */
 package com.arjuna.common.tests.simple;
 
-import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
-
-import java.util.*;
 import java.lang.reflect.Field;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
+
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 
 /**
  * Dummy Properties handler for EnvironmentBean test purposes.

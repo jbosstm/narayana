@@ -31,15 +31,17 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.resources.TestUtility;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.orbspecific.resources.trangrid_i;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 public class TranGridServer
 {

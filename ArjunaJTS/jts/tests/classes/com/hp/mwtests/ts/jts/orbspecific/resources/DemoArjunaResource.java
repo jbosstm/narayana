@@ -31,17 +31,26 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.NotSubtransaction;
+import org.omg.CosTransactions.Unavailable;
+import org.omg.CosTransactions.Vote;
+
+import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResource;
+import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResourceHelper;
+import com.arjuna.ArjunaOTS.OTSAbstractRecord;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 public class DemoArjunaResource extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 {

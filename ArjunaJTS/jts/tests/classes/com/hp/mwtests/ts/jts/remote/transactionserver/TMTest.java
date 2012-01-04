@@ -31,14 +31,18 @@
 
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.TransactionFactory;
+import org.omg.CosTransactions.TransactionFactoryHelper;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
 
 public class TMTest
 {

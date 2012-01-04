@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
-
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 
 /**
  * This interface gives access to the Arjuna specific extensions

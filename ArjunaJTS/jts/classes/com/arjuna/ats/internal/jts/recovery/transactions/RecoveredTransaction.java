@@ -31,24 +31,27 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.jts.utils.Utility;
-
-import com.arjuna.ats.internal.arjuna.Header;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
-import com.arjuna.ats.arjuna.exceptions.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.state.*;
-
-import com.arjuna.ats.jts.logging.jtsLogger;
-
-import org.omg.CosTransactions.*;
 import java.io.IOException;
 import java.util.Date;
 
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.Header;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * Transaction type only instantiated at recovery time. This is used to

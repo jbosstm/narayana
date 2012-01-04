@@ -31,8 +31,7 @@
 
 package com.arjuna.ats.internal.jts.recovery.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.common.*;
-import org.omg.CosTransactions.*;
+import org.omg.CosTransactions.Resource;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 

@@ -31,10 +31,12 @@ package com.hp.mwtests.ts.arjuna.uid;
  * $Id: UidUniqueness.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.common.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.arjuna.ats.arjuna.common.Uid;
 
 public class UidUniqueness
 {

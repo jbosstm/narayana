@@ -31,11 +31,7 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import org.omg.CosTransactions.*;
-
 import com.arjuna.ats.internal.jts.ControlWrapper;
-
-import java.util.*;
 
 /**
  * Used to process thread associations.

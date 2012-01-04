@@ -32,9 +32,8 @@
 package com.arjuna.common.util.propertyservice;
 
 import java.io.File;
-import java.net.URL;
-
 import java.io.FileNotFoundException;
+import java.net.URL;
 
 /**
  * The FileLocator class provides a common method for locating files.

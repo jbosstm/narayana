@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.jta;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 
 class ExtendedXAResourceRecordMap implements RecordTypeMap

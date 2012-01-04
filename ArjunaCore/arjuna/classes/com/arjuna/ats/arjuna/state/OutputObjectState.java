@@ -31,12 +31,11 @@
 
 package com.arjuna.ats.arjuna.state;
 
-import com.arjuna.ats.arjuna.common.*;
+import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.io.IOException;
-
-import com.arjuna.ats.arjuna.logging.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 

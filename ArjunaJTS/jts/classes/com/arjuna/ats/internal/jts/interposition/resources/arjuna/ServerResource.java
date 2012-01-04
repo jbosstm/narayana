@@ -31,21 +31,15 @@
 
 package com.arjuna.ats.internal.jts.interposition.resources.arjuna;
 
-import com.arjuna.ats.jts.logging.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.interposition.ServerFactory;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
-
-import org.omg.CosTransactions.*;
-import java.io.PrintWriter;
-import java.util.*;
-
-import org.omg.CORBA.SystemException;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerNestedAction;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * The base class from which interposed resources derive.

@@ -31,8 +31,9 @@
 
 package com.arjuna.ats.jta.recovery;
 
-import java.sql.*;
-import javax.transaction.xa.*;
+import java.sql.SQLException;
+
+import javax.transaction.xa.XAResource;
 
 /**
  * To perform recovery on arbitrary XAResources we may need

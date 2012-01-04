@@ -31,25 +31,22 @@
 
 package com.arjuna.ats.internal.jts;
 
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.logging.*;
+import java.io.IOException;
 
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.common.opPropertyManager;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.UserException;
 import org.omg.CORBA.ORBPackage.InvalidName;
-import java.io.IOException;
+import org.omg.CosTransactions.TransactionFactory;
+
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.orbportability.Services;
+import com.arjuna.orbportability.common.opPropertyManager;
 
 /**
  * This class is responsible for managing the various implementations that are

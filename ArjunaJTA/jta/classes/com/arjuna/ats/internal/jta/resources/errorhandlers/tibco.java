@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.internal.jta.resources.errorhandlers;
 
-import com.arjuna.ats.jta.resources.XAResourceMap;
-
 import javax.transaction.xa.XAException;
+
+import com.arjuna.ats.jta.resources.XAResourceMap;
 
 public class tibco implements XAResourceMap
 {

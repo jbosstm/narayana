@@ -21,6 +21,10 @@
 
 package com.hp.mwtests.ts.jta.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import javax.transaction.Status;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
@@ -34,8 +38,6 @@ import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
-
-import static org.junit.Assert.*;
 
 class DummyXid implements Xid
 {

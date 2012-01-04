@@ -20,10 +20,15 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import javax.transaction.*;
+import javax.transaction.HeuristicCommitException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.common.Uid;
 
 /**
  * Subordinate transactions are those designed to be driven by a foreign controller,

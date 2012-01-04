@@ -20,7 +20,11 @@
  */
 package com.hp.mwtests.ts.jts.resources;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Useful util functions for JTS tests.

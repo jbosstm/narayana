@@ -30,20 +30,22 @@
  */
 package com.hp.mwtests.orbportability.initialisation;
 
-import com.arjuna.orbportability.internal.utils.PreInitLoader;
-import com.arjuna.orbportability.internal.utils.PostInitLoader;
-import com.arjuna.orbportability.ORB;
-import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
-import com.hp.mwtests.orbportability.initialisation.preinit.AllPreInitialisation;
-import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
-import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation2;
-import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation;
-import com.hp.mwtests.orbportability.initialisation.postinit.AllPostInitialisation;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Properties;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.internal.utils.PostInitLoader;
+import com.arjuna.orbportability.internal.utils.PreInitLoader;
+import com.hp.mwtests.orbportability.initialisation.postinit.AllPostInitialisation;
+import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation;
+import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation2;
+import com.hp.mwtests.orbportability.initialisation.preinit.AllPreInitialisation;
+import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
+import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
 
 public class PropertyInitTest
 {

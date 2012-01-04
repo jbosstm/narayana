@@ -31,21 +31,29 @@
 
 package com.hp.mwtests.ts.jts.remote.recovery;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.AtomicResource;
 
 public class RCTest
 {

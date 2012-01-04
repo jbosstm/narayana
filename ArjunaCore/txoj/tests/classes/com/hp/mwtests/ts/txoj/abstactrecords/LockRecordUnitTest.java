@@ -20,6 +20,10 @@
  */
 package com.hp.mwtests.ts.txoj.abstactrecords;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
@@ -32,8 +36,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-
-import static org.junit.Assert.*;
 
 public class LockRecordUnitTest
 {

@@ -31,16 +31,16 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CosTransactions.Control;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class TransactionTest4
 {

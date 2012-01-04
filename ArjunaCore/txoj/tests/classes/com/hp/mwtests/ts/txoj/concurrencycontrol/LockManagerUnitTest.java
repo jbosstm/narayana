@@ -31,18 +31,17 @@
 
 package com.hp.mwtests.ts.txoj.concurrencycontrol;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import org.junit.Test;
 
-import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.LockResult;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-
-import static org.junit.Assert.*;
 
 public class LockManagerUnitTest
 {

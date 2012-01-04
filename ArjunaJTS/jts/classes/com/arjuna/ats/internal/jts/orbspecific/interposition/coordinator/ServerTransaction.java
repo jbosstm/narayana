@@ -31,28 +31,37 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator;
 
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.ServerSynchronization;
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import java.io.IOException;
+
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.RecoveryCoordinatorHelper;
+import org.omg.CosTransactions.Synchronization;
+import org.omg.CosTransactions.SynchronizationUnavailable;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionManager;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.ServerSynchronization;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * This looks like an Transaction, but is only created for interposition

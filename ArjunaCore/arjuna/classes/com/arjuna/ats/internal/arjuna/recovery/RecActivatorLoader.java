@@ -21,12 +21,12 @@
 
 package com.arjuna.ats.internal.arjuna.recovery ;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryActivator ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 /**

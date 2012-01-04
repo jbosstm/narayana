@@ -31,19 +31,18 @@
 
 package com.hp.mwtests.ts.jta.jts.hammer;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
+import java.util.Calendar;
 
-import com.arjuna.ats.jta.common.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
-
-import javax.transaction.xa.*;
-
-import java.util.*;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jta.jts.common.XACreator;
 
 class Worker extends Thread
 {

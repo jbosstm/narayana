@@ -31,20 +31,16 @@
 
 package com.arjuna.ats.jts.tx;
 
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.jts.*;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
 import java.util.Hashtable;
 
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.NoTransaction;
+
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 /*
  * @author Mark Little (mark_little@hp.com)

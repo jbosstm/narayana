@@ -31,17 +31,18 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.hp.mwtests.ts.jta.jts.common.*;
-
-import com.arjuna.ats.jta.common.*;
-
-import com.arjuna.orbportability.*;
-
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jta.jts.common.FirstXAResource;
+import com.hp.mwtests.ts.jta.jts.common.LastXAResource;
+import com.hp.mwtests.ts.jta.jts.common.TestResource;
 
 public class JTAOrder
 {

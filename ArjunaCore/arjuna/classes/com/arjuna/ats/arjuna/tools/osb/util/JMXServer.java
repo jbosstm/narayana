@@ -20,14 +20,23 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.util;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
-
-import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Set;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.QueryExp;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
 
 /**
  * Simple wrapper for accessing the JMX server

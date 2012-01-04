@@ -31,11 +31,13 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.SystemException;
 import java.util.Date;
+
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
 
 /**
  * interface for cachable recoveredtransactions

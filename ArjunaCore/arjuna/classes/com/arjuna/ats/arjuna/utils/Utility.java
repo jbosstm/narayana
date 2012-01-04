@@ -31,16 +31,13 @@
 
 package com.arjuna.ats.arjuna.utils;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-
 import java.net.Inet6Address;
 import java.net.InetAddress;
-
 import java.net.UnknownHostException;
-import java.lang.NumberFormatException;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Various useful functions that we wrap in a single class. Some of these

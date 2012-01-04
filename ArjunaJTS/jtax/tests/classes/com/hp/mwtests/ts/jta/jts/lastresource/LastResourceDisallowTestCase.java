@@ -20,17 +20,19 @@
  */
 package com.hp.mwtests.ts.jta.jts.lastresource;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
+import org.junit.Test;
+
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.hp.mwtests.ts.jta.jts.JTSTestCase;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class LastResourceDisallowTestCase extends JTSTestCase
 {

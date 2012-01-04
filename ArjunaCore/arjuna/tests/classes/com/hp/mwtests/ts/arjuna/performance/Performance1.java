@@ -31,12 +31,11 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import com.arjuna.ats.arjuna.AtomicAction;
+import java.util.Calendar;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.*;
+import com.arjuna.ats.arjuna.AtomicAction;
 
 public class Performance1
 {

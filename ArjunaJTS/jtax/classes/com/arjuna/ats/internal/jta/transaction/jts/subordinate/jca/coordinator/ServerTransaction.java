@@ -31,14 +31,14 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator;
 
-import com.arjuna.ats.jta.xa.XidImple;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
 import java.io.IOException;
 
 import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * This looks like an Transaction, but is only created for importing

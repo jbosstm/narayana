@@ -31,17 +31,19 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import com.arjuna.orbportability.internal.utils.PreInitLoader;
-import com.arjuna.orbportability.internal.utils.PostInitLoader;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface;
-import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
+
+import org.junit.Test;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.internal.utils.PostInitLoader;
+import com.arjuna.orbportability.internal.utils.PreInitLoader;
+import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface;
+import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface;
 
 public class PropertyInitTest4
 {

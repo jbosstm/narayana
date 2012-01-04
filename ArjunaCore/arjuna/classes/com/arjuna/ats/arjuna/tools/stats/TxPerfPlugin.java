@@ -24,13 +24,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import com.sun.tools.jconsole.JConsolePlugin;
 import com.sun.tools.jconsole.JConsoleContext;
 import com.sun.tools.jconsole.JConsoleContext.ConnectionState;
-import javax.swing.JFrame;
+import com.sun.tools.jconsole.JConsolePlugin;
 
 public class TxPerfPlugin extends JConsolePlugin implements PropertyChangeListener
 {

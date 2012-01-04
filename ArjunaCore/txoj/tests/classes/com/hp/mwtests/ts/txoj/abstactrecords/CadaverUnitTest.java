@@ -20,6 +20,9 @@
  */
 package com.hp.mwtests.ts.txoj.abstactrecords;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
@@ -29,12 +32,9 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.internal.txoj.abstractrecords.CadaverLockRecord;
 import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-
-import static org.junit.Assert.*;
 
 public class CadaverUnitTest
 {

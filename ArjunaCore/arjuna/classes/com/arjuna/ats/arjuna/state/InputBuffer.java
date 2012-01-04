@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.arjuna.state;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.*;
-
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * An InputBuffer is used to retrieve various Java types from a byte stream

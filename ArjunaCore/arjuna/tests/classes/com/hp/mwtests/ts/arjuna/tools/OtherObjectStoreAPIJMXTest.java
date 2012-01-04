@@ -20,6 +20,11 @@
  */
 package com.hp.mwtests.ts.arjuna.tools;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
@@ -32,11 +37,12 @@ import com.arjuna.ats.arjuna.tools.osb.api.mbeans.RecoveryStoreBean;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.ParticipantStoreProxy;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.RecoveryStoreProxy;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.StoreManagerProxy;
-import com.arjuna.ats.internal.arjuna.objectstore.*;
-import org.junit.After;
-import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
+import com.arjuna.ats.internal.arjuna.objectstore.ActionStore;
+import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
+import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
+import com.arjuna.ats.internal.arjuna.objectstore.NullActionStore;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
+import com.arjuna.ats.internal.arjuna.objectstore.VolatileStore;
 
 public class OtherObjectStoreAPIJMXTest {
     private RecoveryStoreBean rsb;

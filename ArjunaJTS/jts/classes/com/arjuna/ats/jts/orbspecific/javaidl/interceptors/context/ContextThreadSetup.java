@@ -31,13 +31,9 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context;
 
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.arjuna.thread.ThreadSetup;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-
-import com.arjuna.ats.jts.*;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 class ContextThreadSetup implements ThreadSetup
 {

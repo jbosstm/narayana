@@ -31,15 +31,19 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.Vote;
+
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.hp.mwtests.ts.jts.TestModule.TranGridHelper;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.hp.mwtests.ts.jts.TestModule.TranGrid;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
+import com.hp.mwtests.ts.jts.TestModule.TranGridHelper;
 
 public class trangrid_i extends com.hp.mwtests.ts.jts.TestModule.TranGridPOA
 {

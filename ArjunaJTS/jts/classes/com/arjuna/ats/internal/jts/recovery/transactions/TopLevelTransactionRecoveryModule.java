@@ -31,10 +31,8 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 

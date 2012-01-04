@@ -31,24 +31,23 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
-import com.arjuna.ats.arjuna.state.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.HashMap;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
+import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
-import com.arjuna.ats.arjuna.common.*;
-
-import java.sql.*;
-import java.util.HashMap;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-
-import java.io.IOException;
+import com.arjuna.ats.arjuna.state.InputBuffer;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputBuffer;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * An object store implementation which uses a JDBC database for maintaining

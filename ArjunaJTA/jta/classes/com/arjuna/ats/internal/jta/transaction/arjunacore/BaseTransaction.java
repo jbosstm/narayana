@@ -31,13 +31,11 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.logging.*;
-
 import javax.transaction.NotSupportedException;
 
-import java.lang.IllegalStateException;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class BaseTransaction
 {

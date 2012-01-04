@@ -20,11 +20,10 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import javax.transaction.TransactionManager;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
+import org.junit.Test;
 
 /*
  * Copyright (C) 2001, 2002, 2003

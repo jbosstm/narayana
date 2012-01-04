@@ -31,18 +31,17 @@ package com.hp.mwtests.ts.txoj.atomicobject;
  * $Id: AtomicObjectTest3.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import java.util.Random;
-import java.lang.Math;
+import static org.junit.Assert.assertEquals;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import java.util.Random;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.lang.InterruptedException;
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
+import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 public class AtomicObjectTest4
 {

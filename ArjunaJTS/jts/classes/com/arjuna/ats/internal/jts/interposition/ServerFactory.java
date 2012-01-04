@@ -31,24 +31,26 @@
 
 package com.arjuna.ats.internal.jts.interposition;
 
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.jts.logging.*;
+import java.util.Enumeration;
 
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.Terminator;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import org.omg.CosTransactions.*;
-import java.util.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This is a server-side factory used for creating server transactions.

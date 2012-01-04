@@ -31,9 +31,14 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
-import javax.naming.*;
 import java.io.Serializable;
 import java.util.Hashtable;
+
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.Referenceable;
 
 /**
  * An implementation of javax.transaction.UserTransaction.

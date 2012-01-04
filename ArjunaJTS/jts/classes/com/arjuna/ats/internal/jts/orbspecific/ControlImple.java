@@ -31,25 +31,28 @@
 
 package com.arjuna.ats.internal.jts.orbspecific;
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.utils.Helper;
-import com.arjuna.ats.internal.jts.*;
-
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-
-import java.util.*;
+import java.util.Hashtable;
 
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.Unavailable;
+
+import com.arjuna.ArjunaOTS.ActiveThreads;
+import com.arjuna.ArjunaOTS.ActiveTransaction;
+import com.arjuna.ArjunaOTS.ArjunaTransaction;
+import com.arjuna.ArjunaOTS.BadControl;
+import com.arjuna.ArjunaOTS.Destroyed;
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.utils.Helper;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /*
  * Although a transaction may have a timeout associated with it,

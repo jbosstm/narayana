@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 
 public class CheckedActionsUnitTest extends TestBase

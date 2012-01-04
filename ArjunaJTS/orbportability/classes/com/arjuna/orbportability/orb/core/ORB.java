@@ -33,13 +33,13 @@ package com.arjuna.orbportability.orb.core;
 
 
 
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.logging.*;
-
-import java.util.*;
 import java.applet.Applet;
+import java.util.Properties;
 
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.logging.opLogger;
 
 /**
  * An instance of this class provides access to the ORB specific

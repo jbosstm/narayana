@@ -36,8 +36,6 @@ import org.junit.Test;
 import com.arjuna.ats.jts.exceptions.TxError;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
-import static org.junit.Assert.*;
-
 public class TxErrorUnitTest extends TestBase
 {
     @Test

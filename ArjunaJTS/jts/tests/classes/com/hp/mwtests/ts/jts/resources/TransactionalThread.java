@@ -31,10 +31,10 @@
 
 package com.hp.mwtests.ts.jts.resources;
 
+import org.omg.CosTransactions.Control;
+
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import org.omg.CosTransactions.*;
 
 public class TransactionalThread extends Thread
 {

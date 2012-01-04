@@ -32,17 +32,14 @@
 package com.arjuna.ats.internal.txoj.recovery;
 
 import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
-import com.arjuna.ats.txoj.logging.txojLogger;
-
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.Header;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /**
  * TransactionalObject shell instantiated at recovery time.

@@ -20,9 +20,13 @@
  */
 package com.hp.mwtests.ts.arjuna.objectstore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.SQLException;
 
-import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStoreEnvironmentBean;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -30,6 +34,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStoreEnvironmentBean;
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.accessor;
 import com.hp.mwtests.ts.arjuna.resources.mock.MockAccessor;
 import com.hp.mwtests.ts.arjuna.resources.mock.MockConnection;
@@ -41,8 +46,6 @@ import com.hp.mwtests.ts.arjuna.resources.mock.MockMySqlDriver;
 import com.hp.mwtests.ts.arjuna.resources.mock.MockOracleDriver;
 import com.hp.mwtests.ts.arjuna.resources.mock.MockPostgresDriver;
 import com.hp.mwtests.ts.arjuna.resources.mock.MockStatement;
-
-import static org.junit.Assert.*;
 
 
 public class JDBCObjectStoreTest

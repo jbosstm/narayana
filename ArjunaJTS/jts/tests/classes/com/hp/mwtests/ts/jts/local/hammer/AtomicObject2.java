@@ -31,14 +31,19 @@
 
 package com.hp.mwtests.ts.jts.local.hammer;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.AtomicObject;
+import com.hp.mwtests.ts.jts.orbspecific.resources.AtomicWorker2;
+import com.hp.mwtests.ts.jts.orbspecific.resources.ThreadObject2;
 
 public class AtomicObject2
 {

@@ -20,14 +20,15 @@
  */
 package com.hp.mwtests.ts.jta.jts.subordinate;
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
-import com.arjuna.orbportability.OA;
-import com.arjuna.ats.internal.jts.ORBManager;
+import org.junit.After;
+import org.junit.Before;
+
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
-import org.junit.Before;
-import org.junit.After;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 /**
  * JTAX version of the Subordinate transaction tests.

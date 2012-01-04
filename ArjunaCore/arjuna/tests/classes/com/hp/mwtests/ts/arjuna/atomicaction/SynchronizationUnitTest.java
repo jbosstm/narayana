@@ -20,14 +20,14 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.TopLevelAction;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.AddOutcome;
-import com.hp.mwtests.ts.arjuna.resources.SyncRecord;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.hp.mwtests.ts.arjuna.resources.SyncRecord;
 
 public class SynchronizationUnitTest
 {

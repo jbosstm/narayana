@@ -31,9 +31,9 @@ package com.hp.mwtests.ts.jdbc.utils.plugins;
  * $Id: BasePlugin.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.hp.mwtests.ts.jdbc.utils.DBPlugin;
-
 import javax.sql.DataSource;
+
+import com.hp.mwtests.ts.jdbc.utils.DBPlugin;
 
 public abstract class BasePlugin implements DBPlugin
 {

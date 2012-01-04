@@ -31,6 +31,12 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 
@@ -48,16 +54,12 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
-import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
+import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
 import com.hp.mwtests.ts.jta.common.Synchronization;
-import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
-
-import static org.junit.Assert.*;
 
 class TxImpleOverride extends TransactionImple
 {

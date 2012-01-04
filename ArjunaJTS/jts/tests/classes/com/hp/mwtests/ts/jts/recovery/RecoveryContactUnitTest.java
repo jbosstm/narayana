@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.jts.recovery;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class RecoveryContactUnitTest extends TestBase
 {

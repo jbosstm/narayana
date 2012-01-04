@@ -31,34 +31,39 @@
 
 package com.arjuna.ats.internal.jts;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.utils.*;
-import com.arjuna.ats.internal.jts.orbspecific.*;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-
-import com.arjuna.ArjunaOTS.*;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import java.lang.NullPointerException;
 import java.util.Collections;
 
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NoTransaction;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.NotSubtransaction;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.SubtransactionAwareResource;
+import org.omg.CosTransactions.SubtransactionsUnavailable;
+import org.omg.CosTransactions.Synchronization;
+import org.omg.CosTransactions.SynchronizationUnavailable;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.Unavailable;
+
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.Reapable;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.utils.Helper;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This class attempts to mask the local/remote control issue. We try to use

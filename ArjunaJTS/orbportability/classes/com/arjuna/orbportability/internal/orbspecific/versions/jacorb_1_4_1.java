@@ -30,8 +30,8 @@
  */
 package com.arjuna.orbportability.internal.orbspecific.versions;
 
-import com.arjuna.orbportability.ORBType;
 import com.arjuna.orbportability.ORBData;
+import com.arjuna.orbportability.ORBType;
 
 public class jacorb_1_4_1 implements ORBData
 {

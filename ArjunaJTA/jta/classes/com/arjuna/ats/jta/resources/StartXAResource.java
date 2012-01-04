@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.jta.resources;
 
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 public interface StartXAResource extends XAResource
 {

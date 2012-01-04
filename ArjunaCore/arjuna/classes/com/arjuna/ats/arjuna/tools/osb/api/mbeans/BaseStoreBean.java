@@ -20,10 +20,13 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.api.mbeans;
 
+import javax.management.AttributeChangeNotification;
+import javax.management.MBeanNotificationInfo;
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.ObjectName;
+
 import com.arjuna.ats.arjuna.objectstore.BaseStore;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.StoreManagerProxy;
-
-import javax.management.*;
 
 /**
  * abstract MBean implementation of a BaseStore MBean

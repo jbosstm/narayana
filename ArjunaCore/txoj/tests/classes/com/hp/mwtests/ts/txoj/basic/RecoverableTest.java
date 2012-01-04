@@ -31,12 +31,12 @@ package com.hp.mwtests.ts.txoj.basic;
  * $Id: RecoverableTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-
-import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
 
 public class RecoverableTest
 {

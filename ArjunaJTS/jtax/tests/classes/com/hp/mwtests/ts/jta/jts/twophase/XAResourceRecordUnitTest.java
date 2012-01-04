@@ -31,13 +31,17 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.UNKNOWN;
-import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NotPrepared;
 import org.omg.CosTransactions.Vote;
@@ -54,8 +58,6 @@ import com.hp.mwtests.ts.jta.common.FailureXAResource;
 import com.hp.mwtests.ts.jta.common.TestResource;
 import com.hp.mwtests.ts.jta.jts.common.DummyXA;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 class DummyXAResourceRecord extends XAResourceRecord
 {

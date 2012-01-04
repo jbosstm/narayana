@@ -32,7 +32,6 @@
 package com.arjuna.ats.arjuna.objectstore.jdbc;
 
 import java.sql.Connection;
-
 import java.sql.SQLException;
 
 /**

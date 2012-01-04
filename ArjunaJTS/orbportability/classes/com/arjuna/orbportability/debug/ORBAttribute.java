@@ -31,7 +31,7 @@
 
 package com.arjuna.orbportability.debug;
 
-import com.arjuna.orbportability.logging.*;
+import com.arjuna.orbportability.logging.opLogger;
 
 
 

@@ -32,7 +32,6 @@
 package com.hp.mwtests.ts.jta.timeout;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class SimpleTest
 {

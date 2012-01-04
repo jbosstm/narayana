@@ -31,16 +31,12 @@
 
 package com.arjuna.orbportability.internal.utils;
 
+import java.util.Map;
+
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.utils.InitClassInterface;
-
-import java.util.Map;
-
-import java.lang.ClassNotFoundException;
-import java.lang.IllegalAccessException;
-import java.lang.InstantiationException;
 
 /*
  * This class allows the programmer (and us!) to register classes

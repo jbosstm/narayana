@@ -26,8 +26,8 @@ package com.arjuna.common.util.propertyservice;
 // original version is jboss-common-core 2.2.8.GA
 // https://svn.jboss.org/repos/common/common-core/tags/2.2.8.GA/src/main/java/org/jboss/util/StringPropertyReplacer.java
 
-import java.util.Properties;
 import java.io.File;
+import java.util.Properties;
 
 /**
  * A utility class for replacing properties in strings.

@@ -31,8 +31,9 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import javax.transaction.*;
-import java.sql.*;
+import java.sql.Connection;
+
+import javax.transaction.Synchronization;
 
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 

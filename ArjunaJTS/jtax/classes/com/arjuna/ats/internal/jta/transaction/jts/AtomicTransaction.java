@@ -31,19 +31,22 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.ats.internal.jts.ControlWrapper;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
-
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import org.omg.CosTransactions.*;
+import javax.transaction.xa.Xid;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.Unavailable;
+import org.omg.CosTransactions.WrongTransaction;
 
-import javax.transaction.xa.Xid;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 /**
  * An extension of the AtomicTransaction class so we can create new instances

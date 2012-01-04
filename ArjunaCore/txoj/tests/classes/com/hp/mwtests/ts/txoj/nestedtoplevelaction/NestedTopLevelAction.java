@@ -31,13 +31,15 @@ package com.hp.mwtests.ts.txoj.nestedtoplevelaction;
  * $Id: NestedTopLevelAction.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.TopLevelAction;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
+import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 public class NestedTopLevelAction
 {

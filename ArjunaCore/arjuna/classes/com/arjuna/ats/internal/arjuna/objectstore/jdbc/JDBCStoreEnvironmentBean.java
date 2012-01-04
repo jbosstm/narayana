@@ -21,8 +21,8 @@
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 
 import com.arjuna.ats.arjuna.objectstore.StateType;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 
 /**
  * A JavaBean containing configuration properties for the JDBC based objectstore implementation.

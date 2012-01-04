@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jta.xa;
 
-import com.arjuna.ats.arjuna.common.*;
-
 import javax.transaction.xa.Xid;
 
 public class TxInfo

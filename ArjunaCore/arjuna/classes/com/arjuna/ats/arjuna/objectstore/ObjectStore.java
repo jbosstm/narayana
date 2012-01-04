@@ -31,13 +31,12 @@
 
 package com.arjuna.ats.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
 import java.io.File;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import java.io.IOException;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 
 /**
  * The object store interface is the application's route to using

@@ -31,11 +31,12 @@
 
 package com.arjuna.ats.arjuna.state;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import java.io.*;
-
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * An OuptputBuffer is used to store various Java types as a byte stream.

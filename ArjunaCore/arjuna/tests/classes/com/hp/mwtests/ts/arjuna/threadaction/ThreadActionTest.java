@@ -31,18 +31,16 @@ package com.hp.mwtests.ts.arjuna.threadaction;
  * $Id: ThreadActionTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.hp.mwtests.ts.arjuna.resources.BasicThreadedObject;
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-import com.arjuna.ats.internal.arjuna.thread.ThreadSetup;
-
-import java.lang.Thread;
-
-import java.lang.InterruptedException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import com.arjuna.ats.internal.arjuna.thread.ThreadSetup;
+import com.hp.mwtests.ts.arjuna.resources.BasicThreadedObject;
 
 class DummySetup implements ThreadSetup
 {

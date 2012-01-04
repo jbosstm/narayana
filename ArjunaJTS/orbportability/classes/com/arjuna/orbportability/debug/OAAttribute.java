@@ -33,8 +33,6 @@ package com.arjuna.orbportability.debug;
 
 import com.arjuna.orbportability.logging.opLogger;
 
-import com.arjuna.orbportability.logging.*;
-
 
 
 /**

@@ -30,19 +30,20 @@
  */
 package com.hp.mwtests.ts.jts.local.orbsetup;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.internal.utils.PostInitLoader;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Map;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.Properties;
-import java.util.Map;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.internal.utils.PostInitLoader;
 
 public class ORBSetupTest
 {

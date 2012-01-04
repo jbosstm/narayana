@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import com.arjuna.ats.internal.jts.ControlWrapper;
-
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.ats.internal.jts.ControlWrapper;
 
 /**
  * Instances of these classes are informed whenever a

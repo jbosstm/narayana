@@ -31,11 +31,12 @@
 
 package com.hp.mwtests.orbportability.shutdown;
 
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.ORB;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 /**
  * @author Richard Begg

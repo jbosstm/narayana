@@ -32,28 +32,30 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.common.*;
+import java.util.Properties;
+
+import org.omg.CORBA.Policy;
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.CosTransactions.RecoveryCoordinatorHelper;
+import org.omg.PortableServer.IdAssignmentPolicyValue;
+import org.omg.PortableServer.IdUniquenessPolicyValue;
+import org.omg.PortableServer.LifespanPolicyValue;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.RequestProcessingPolicyValue;
+import org.omg.PortableServer.ServantRetentionPolicyValue;
+
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.objectstore.TxLog;
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-
-import com.arjuna.ats.jts.logging.*;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.ORBManager;
-
-
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryServiceInit;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-
-import com.arjuna.orbportability.*;
-
-import org.omg.CORBA.*;
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.PortableServer.*;
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.arjuna.state.*;
-
-import java.util.Properties;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.RootOA;
 
 /**
  * Initialises JacORB RecoveryCoordinator creation subsystem

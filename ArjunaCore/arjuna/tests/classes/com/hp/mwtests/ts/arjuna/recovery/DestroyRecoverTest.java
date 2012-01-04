@@ -31,13 +31,14 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.*;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.hp.mwtests.ts.arjuna.resources.BasicObject;
 
 public class DestroyRecoverTest
 {

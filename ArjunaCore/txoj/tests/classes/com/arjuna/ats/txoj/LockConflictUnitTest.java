@@ -31,11 +31,9 @@
 
 package com.arjuna.ats.txoj;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-
-import com.arjuna.ats.txoj.LockConflictManager;
-
-import static org.junit.Assert.*;
 
 public class LockConflictUnitTest
 {

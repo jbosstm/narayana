@@ -31,8 +31,10 @@
 
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
-import java.sql.*;
-import javax.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.XAConnection;
 
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
 

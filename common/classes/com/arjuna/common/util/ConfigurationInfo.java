@@ -20,14 +20,13 @@
  */
 package com.arjuna.common.util;
 
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.util.Properties;
-import java.util.jar.Manifest;
-import java.util.jar.Attributes;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * Utility class providing access to build time and runtime configuration reporting functions.

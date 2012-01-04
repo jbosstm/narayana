@@ -31,11 +31,14 @@
 
 package com.hp.mwtests.ts.jta.jts.recovery;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
@@ -47,8 +50,6 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
-
-import static org.junit.Assert.*;
 
 public class XARecoveryModuleUnitTest
 {

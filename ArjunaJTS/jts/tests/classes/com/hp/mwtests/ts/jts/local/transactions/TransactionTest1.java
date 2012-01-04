@@ -31,19 +31,20 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.TransactionFactory;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class TransactionTest1
 {

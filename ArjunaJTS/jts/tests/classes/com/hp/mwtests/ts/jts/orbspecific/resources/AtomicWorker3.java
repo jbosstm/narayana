@@ -32,13 +32,9 @@
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-
-import com.hp.mwtests.ts.jts.utils.Util;
-import com.hp.mwtests.ts.jts.exceptions.TestException;
-
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import java.lang.InterruptedException;
+import com.hp.mwtests.ts.jts.exceptions.TestException;
+import com.hp.mwtests.ts.jts.utils.Util;
 
 public class AtomicWorker3
 {

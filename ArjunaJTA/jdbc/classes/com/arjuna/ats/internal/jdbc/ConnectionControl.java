@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
-
 import javax.transaction.Transaction;
+
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 
 interface ConnectionControl
 {

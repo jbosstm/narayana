@@ -33,14 +33,13 @@ package com.arjuna.ats.internal.jts.recovery.transactions;
 
 import java.util.Hashtable;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.jts.logging.jtsLogger;
-
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * The transaction cache ensures that there is no interference between

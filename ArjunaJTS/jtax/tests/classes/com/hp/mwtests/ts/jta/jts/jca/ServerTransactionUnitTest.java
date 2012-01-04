@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jta.jts.jca;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.ObjectType;
@@ -40,8 +42,6 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ServerTransactionUnitTest extends TestBase
 {

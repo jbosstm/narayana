@@ -21,14 +21,13 @@
 
 package com.arjuna.ats.internal.jts;
 
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
 
-import com.arjuna.ArjunaOTS.*;
-
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.utils.Helper;
-import com.arjuna.ats.arjuna.common.Uid;
 
 /**
  * a wrapper used to wrap a ControlImple or a Control when attempting to remove it from the TransactionReaper

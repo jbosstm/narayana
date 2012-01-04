@@ -26,8 +26,6 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-import static org.junit.Assert.*;
-
 public class ExceptionsUnitTest
 {
     @Test

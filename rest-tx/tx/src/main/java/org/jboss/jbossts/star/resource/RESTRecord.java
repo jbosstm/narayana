@@ -20,19 +20,19 @@
  */
 package org.jboss.jbossts.star.resource;
 
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.arjuna.state.InputObjectState;
+import java.net.HttpURLConnection;
 
-import org.jboss.jbossts.star.util.LinkHolder;
 import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.util.LinkHolder;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 
-import java.net.HttpURLConnection;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * Log record for driving participants through 2PC and recoverery

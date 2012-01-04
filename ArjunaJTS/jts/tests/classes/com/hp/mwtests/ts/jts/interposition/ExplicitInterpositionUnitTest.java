@@ -31,15 +31,14 @@
 
 package com.hp.mwtests.ts.jts.interposition;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import com.arjuna.ArjunaOTS.InterpositionFailed;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.ExplicitInterposition;
 import com.hp.mwtests.ts.jts.orbspecific.resources.ExplicitStackImple;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ExplicitInterpositionUnitTest extends TestBase
 {

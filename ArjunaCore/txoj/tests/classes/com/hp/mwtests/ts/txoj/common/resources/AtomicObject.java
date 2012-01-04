@@ -31,14 +31,20 @@
 
 package com.hp.mwtests.ts.txoj.common.resources;
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.txoj.*;
-
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import java.io.IOException;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.txoj.Lock;
+import com.arjuna.ats.txoj.LockManager;
+import com.arjuna.ats.txoj.LockMode;
+import com.arjuna.ats.txoj.LockResult;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 
 public class AtomicObject extends LockManager
 {

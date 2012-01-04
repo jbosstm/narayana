@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.internal.jts.interposition.resources.osi;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import org.omg.CosTransactions.*;
-
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+
+import org.omg.CosTransactions.otid_t;
+
+import com.arjuna.ats.arjuna.common.Uid;
 
 /*
  * Class which maintains a mapping of otid to Uid.

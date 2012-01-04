@@ -31,20 +31,20 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.common.*;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-
-import java.util.*;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
-import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
+import java.io.IOException;
+import java.util.Calendar;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 
 public class PersistenceTest
 {

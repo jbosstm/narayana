@@ -25,17 +25,17 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import com.arjuna.ats.internal.jts.ORBManager;
+import java.util.List;
 
-import org.jacorb.orb.iiop.*;
+import org.jacorb.orb.CDROutputStream;
 import org.jacorb.orb.ORB;
 import org.jacorb.orb.ParsedIOR;
-import org.jacorb.orb.CDROutputStream;
+import org.jacorb.orb.iiop.IIOPProfile;
+import org.omg.IOP.IOR;
 import org.omg.IOP.TaggedProfile;
 import org.omg.IOP.TaggedProfileHolder;
-import org.omg.IOP.IOR;
 
-import java.util.List;
+import com.arjuna.ats.internal.jts.ORBManager;
 
 public class RecoverIOR
 {

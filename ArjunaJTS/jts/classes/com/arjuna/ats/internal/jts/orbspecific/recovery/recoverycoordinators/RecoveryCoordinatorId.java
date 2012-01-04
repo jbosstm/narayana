@@ -31,27 +31,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-
-import com.arjuna.orbportability.orb.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jts.logging.jtsLogger;
-
-import com.arjuna.ats.internal.jts.recovery.*;
-import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
-
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
 
 /**
  * Holds and manipulates the fields used to identify which branch of which transaction

@@ -31,7 +31,8 @@
 
 package com.arjuna.ats.jta.xa;
 
-import java.sql.*;
+import java.sql.SQLException;
+
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.jta.exceptions.NotImplementedException;

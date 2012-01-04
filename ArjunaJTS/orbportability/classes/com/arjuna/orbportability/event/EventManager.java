@@ -31,10 +31,11 @@
 
 package com.arjuna.orbportability.event;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
-
-import java.util.*;
 
 /**
  * The current implementation will invoke all registered handlers

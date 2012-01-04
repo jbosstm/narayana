@@ -31,8 +31,13 @@
 
 package com.arjuna.ats.arjuna.recovery;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 

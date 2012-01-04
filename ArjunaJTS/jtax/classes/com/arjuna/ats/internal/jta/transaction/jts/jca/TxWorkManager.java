@@ -32,8 +32,8 @@
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;

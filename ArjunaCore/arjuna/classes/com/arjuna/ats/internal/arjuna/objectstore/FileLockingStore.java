@@ -31,15 +31,15 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.utils.*;
-import com.arjuna.ats.arjuna.state.*;
+import java.io.File;
 
-import java.io.*;
-
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.utils.FileLock;
 
 /**
  * An refinement of the basic FileSystemStore which provides file-level locking.

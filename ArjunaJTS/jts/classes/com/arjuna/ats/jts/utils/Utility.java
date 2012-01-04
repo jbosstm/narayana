@@ -31,20 +31,18 @@
 
 package com.arjuna.ats.jts.utils;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-
-import com.arjuna.ats.internal.jts.utils.Helper;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
 import java.io.PrintWriter;
 
-import org.omg.CosTransactions.Unavailable;
-
 import org.omg.CORBA.BAD_PARAM;
+import org.omg.CosTransactions.PropagationContext;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.Vote;
+import org.omg.CosTransactions.otid_t;
+
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.jts.utils.Helper;
 
 /**
  * Some useful utility functions for the OTS. Use with care!

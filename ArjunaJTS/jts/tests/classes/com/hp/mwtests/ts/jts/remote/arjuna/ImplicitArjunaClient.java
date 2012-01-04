@@ -31,16 +31,18 @@
 
 package com.hp.mwtests.ts.jts.remote.arjuna;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.hp.mwtests.ts.jts.resources.TestUtility;
-import com.hp.mwtests.ts.jts.TestModule.stackHelper;
-import com.hp.mwtests.ts.jts.TestModule.stack;
-
 import org.omg.CORBA.IntHolder;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.TestModule.stack;
+import com.hp.mwtests.ts.jts.TestModule.stackHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 public class ImplicitArjunaClient
 {

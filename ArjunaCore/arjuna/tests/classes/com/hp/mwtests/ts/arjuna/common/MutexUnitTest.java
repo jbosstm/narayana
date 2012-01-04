@@ -20,11 +20,13 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.common.BasicMutex;
-
-import static org.junit.Assert.*;
 
 class MutexThread extends Thread
 {

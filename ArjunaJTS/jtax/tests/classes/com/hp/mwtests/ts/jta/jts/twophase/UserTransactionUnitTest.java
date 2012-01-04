@@ -31,13 +31,16 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.naming.InitialContext;
-import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple;
@@ -46,8 +49,6 @@ import com.arjuna.ats.jta.UserTransaction;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
-
-import static org.junit.Assert.*;
 
 
 public class UserTransactionUnitTest

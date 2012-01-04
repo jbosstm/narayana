@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.arjuna.exceptions;
 
-import java.lang.Error;
 
 /**
  * Error that can be thrown when attempting to access

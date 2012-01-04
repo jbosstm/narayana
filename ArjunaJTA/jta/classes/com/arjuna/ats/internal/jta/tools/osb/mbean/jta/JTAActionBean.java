@@ -1,11 +1,10 @@
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.tools.osb.mbean.*;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 
 /**
  * JTA specific version of an ActionBean that knows when a participant record

@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.internal.jts.recovery;
 
-import com.arjuna.ats.jts.logging.*;
-
-import org.omg.CosTransactions.*;
-
 import org.omg.CORBA.NO_IMPLEMENT;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.Resource;
+
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /*
  * Default visibility.

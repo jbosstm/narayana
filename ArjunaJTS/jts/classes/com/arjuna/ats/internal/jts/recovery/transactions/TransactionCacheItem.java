@@ -32,13 +32,11 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import org.omg.CosTransactions.*;
-
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**

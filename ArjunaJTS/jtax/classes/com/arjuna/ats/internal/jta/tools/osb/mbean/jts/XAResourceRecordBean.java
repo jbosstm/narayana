@@ -3,10 +3,9 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
 import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 
 /**
  * MBean implementation of a transaction participant corresponding to a JTA XAResource

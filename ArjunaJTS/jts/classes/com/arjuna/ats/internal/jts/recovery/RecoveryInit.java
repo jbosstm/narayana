@@ -31,15 +31,13 @@
 
 package com.arjuna.ats.internal.jts.recovery;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.*;
-
-
-
 import java.util.List;
+
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.orbportability.ORBInfo;
+import com.arjuna.orbportability.ORBType;
+import com.arjuna.orbportability.common.opPropertyManager;
 
 /**
  * Registers the appropriate classes with the ORB.

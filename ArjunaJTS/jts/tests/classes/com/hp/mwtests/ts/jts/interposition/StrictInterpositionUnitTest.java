@@ -31,16 +31,14 @@
 
 package com.hp.mwtests.ts.jts.interposition;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.PropagationContext;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.interposition.resources.strict.StrictInterpositionCreator;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class StrictInterpositionUnitTest extends TestBase
 {

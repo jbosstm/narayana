@@ -31,8 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.internal.arjuna.thread.*;
-import java.lang.Thread;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 /**
  * Instances of this class are responsible for performing asynchronous

@@ -31,13 +31,12 @@
 
 package com.arjuna.ats.internal.txoj.lockstore;
 
-import com.arjuna.ats.txoj.lockstore.LockStore;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.*;
-
-import com.arjuna.ats.txoj.logging.txojLogger;
-
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
+import com.arjuna.ats.txoj.lockstore.LockStore;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /**
  * A very basic lock store implementation. It saves the locks in process, i.e.,

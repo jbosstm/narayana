@@ -31,10 +31,11 @@
 
 package com.arjuna.ats.jta.utils;
 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
+
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.xa.XidImple;
-
-import javax.transaction.xa.*;
 
 /**
  * Some useful utility routines.

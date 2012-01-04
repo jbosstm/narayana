@@ -31,13 +31,12 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict;
 
-import com.arjuna.ats.jts.logging.*;
+import org.omg.CosTransactions.Coordinator;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-
-import org.omg.CosTransactions.*;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerTopLevelAction;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ServerStrictTopLevelAction extends ServerTopLevelAction
 {

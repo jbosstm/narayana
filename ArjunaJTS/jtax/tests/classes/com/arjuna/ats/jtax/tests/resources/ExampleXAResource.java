@@ -20,9 +20,9 @@
  */
 package com.arjuna.ats.jtax.tests.resources;
 
-import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004

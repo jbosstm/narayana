@@ -31,17 +31,14 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import com.arjuna.ats.jts.logging.*;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import com.arjuna.ats.internal.jts.ControlWrapper;
-
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Instances of TxAssociation can be added on

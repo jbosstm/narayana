@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.txoj.basic;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.PrintWriter;
 
 import org.junit.Test;
@@ -39,8 +41,6 @@ import com.arjuna.ats.txoj.ConflictType;
 import com.arjuna.ats.txoj.LockMode;
 import com.arjuna.ats.txoj.LockResult;
 import com.arjuna.ats.txoj.LockStatus;
-
-import static org.junit.Assert.*;
 
 public class TypesUnitTest
 {

@@ -31,12 +31,10 @@
 
 package com.arjuna.ats.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import java.io.IOException;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * Transactional participants MUST use this type of ObjectStore. It allows

@@ -20,10 +20,14 @@
  */
 package org.jboss.narayana.jta.quickstarts.recovery;
 
-import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
-import org.jboss.narayana.jta.quickstarts.util.Util;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
-import javax.transaction.*;
+import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
 
 public class BasicXAExample extends RecoverySetup {
     public static void main(String[] args) throws Exception {

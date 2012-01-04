@@ -31,11 +31,10 @@
 
 package com.arjuna.ats.internal.arjuna.utils;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import java.lang.management.ManagementFactory;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Obtains a unique value to represent the process id via ManagementFactory.getRuntimeMXBean().getName().

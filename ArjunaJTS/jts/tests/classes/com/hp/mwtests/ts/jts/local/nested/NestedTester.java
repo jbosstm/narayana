@@ -31,20 +31,20 @@
 
 package com.hp.mwtests.ts.jts.local.nested;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.utils.ResourceTrace;
+import static org.junit.Assert.fail;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
+import org.junit.Test;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DemoSubTranResource;
+import com.hp.mwtests.ts.jts.utils.ResourceTrace;
 
 public class NestedTester
 {

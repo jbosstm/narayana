@@ -31,11 +31,7 @@
 
 package com.arjuna.orbportability.oa;
 
-import com.arjuna.orbportability.logging.*;
-
-
-
-import java.io.*;
+import com.arjuna.orbportability.logging.opLogger;
 
 /**
  * Common methods for OA shutdown.

@@ -31,13 +31,16 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.hp.mwtests.ts.jta.common.*;
+import static org.junit.Assert.assertEquals;
 
-import javax.transaction.xa.*;
 import javax.transaction.Status;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.hp.mwtests.ts.jta.common.FirstXAResource;
+import com.hp.mwtests.ts.jta.common.LastXAResource;
+import com.hp.mwtests.ts.jta.common.TestResource;
 
 public class JTAOrder
 {

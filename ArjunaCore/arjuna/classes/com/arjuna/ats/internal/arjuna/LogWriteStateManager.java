@@ -31,16 +31,15 @@
 
 package com.arjuna.ats.internal.arjuna;
 
-import com.arjuna.ats.arjuna.StateManager;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectModel;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * @author Mark Little (mark@arjuna.com)

@@ -20,10 +20,10 @@
  */
 package com.arjuna.ats.jts.common;
 
+import java.net.InetAddress;
+
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-
-import java.net.InetAddress;
 
 /**
  * A JavaBean containing configuration properties for the JTS system.

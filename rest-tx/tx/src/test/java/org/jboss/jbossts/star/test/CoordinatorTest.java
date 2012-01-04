@@ -20,14 +20,13 @@
  */
 package org.jboss.jbossts.star.test;
 
-import org.jboss.jbossts.star.util.TxSupport;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
+import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
 
 public class CoordinatorTest extends BaseTest {
     @BeforeClass

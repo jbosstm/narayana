@@ -20,9 +20,9 @@
  */
 package com.hp.mwtests.ts.jta.subordinate;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import javax.transaction.xa.XAException;
 
 /**
  * Created by IntelliJ IDEA.

@@ -20,10 +20,10 @@
  */
 package com.arjuna.ats.jdbc.common;
 
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-
 import java.sql.Connection;
 import java.util.Hashtable;
+
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * A JavaBean containing configuration properties for the JDBC subsystem.

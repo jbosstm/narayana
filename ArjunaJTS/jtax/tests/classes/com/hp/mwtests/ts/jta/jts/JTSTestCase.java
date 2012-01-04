@@ -20,15 +20,13 @@
  */
 package com.hp.mwtests.ts.jta.jts;
 
+import org.junit.After;
+import org.junit.Before;
+
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
-
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import static org.junit.Assert.*;
 
 
 public class JTSTestCase

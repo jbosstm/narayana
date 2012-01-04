@@ -32,9 +32,8 @@
 package com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadSetup;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 class ContextThreadSetup implements ThreadSetup
 {

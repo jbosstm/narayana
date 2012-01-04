@@ -31,16 +31,7 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import org.omg.CosTransactions.*;
-
-import java.util.*;
-import java.io.PrintWriter;
-import java.text.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.recovery.*;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 
 /**
  * Refinement of the expired assumed scanner for toplevel transactions.

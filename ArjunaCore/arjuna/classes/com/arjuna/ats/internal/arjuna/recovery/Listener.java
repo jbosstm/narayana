@@ -31,14 +31,16 @@
  
 package com.arjuna.ats.internal.arjuna.recovery;
 
-import java.io.*;
-import java.net.*;
-import java.util.List;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
+import java.util.List;
 
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import com.arjuna.ats.arjuna.recovery.Service;
 
 public class Listener extends Thread

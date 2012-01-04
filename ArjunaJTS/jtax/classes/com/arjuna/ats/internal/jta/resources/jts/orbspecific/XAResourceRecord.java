@@ -31,51 +31,53 @@
 
 package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
-import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.ats.jta.recovery.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.jta.xa.*;
-import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.resources.StartXAResource;
-import com.arjuna.ats.jta.resources.EndXAResource;
-
-import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
-import com.arjuna.ats.internal.jta.xa.TxInfo;
-import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.coordinator.RecordType;
-
-import com.arjuna.ats.jts.utils.Utility;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import javax.transaction.xa.*;
-
-import java.io.*;
-
-import org.omg.CosTransactions.NotPrepared;
-import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.HeuristicRollback;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.RecoveryCoordinatorHelper;
+import org.omg.CosTransactions.Vote;
+
+import com.arjuna.ArjunaOTS.OTSAbstractRecord;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
+import com.arjuna.ats.jta.resources.EndXAResource;
+import com.arjuna.ats.jta.resources.StartXAResource;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jts.utils.Utility;
 
 public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 {

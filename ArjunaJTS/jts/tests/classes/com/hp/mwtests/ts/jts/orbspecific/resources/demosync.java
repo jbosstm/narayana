@@ -31,14 +31,13 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.jts.utils.Utility;
-
-import org.omg.CosTransactions.*;
-
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Synchronization;
+import org.omg.CosTransactions.SynchronizationHelper;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.utils.Utility;
 
 public class demosync extends org.omg.CosTransactions.SynchronizationPOA
 {

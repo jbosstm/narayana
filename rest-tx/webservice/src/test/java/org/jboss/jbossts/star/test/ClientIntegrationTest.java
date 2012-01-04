@@ -21,8 +21,6 @@
 package org.jboss.jbossts.star.test;
 
 import org.jboss.jbossts.star.util.TxSupport;
-import org.jboss.jbossts.star.test.BaseTest;
-import org.jboss.jbossts.star.test.SpecTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -31,27 +31,29 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
-import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
-import com.arjuna.ats.jta.xa.XidImple;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
-
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-
-import static org.junit.Assert.*;
 
 public class XARecoveryModuleUnitTest
 {

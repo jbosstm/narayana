@@ -31,28 +31,24 @@
 
 package com.arjuna.ats.internal.jts.interposition.resources.arjuna;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.interposition.ServerFactory;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import com.arjuna.ArjunaOTS.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.PropagationContext;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.TransIdentity;
 
-import java.util.List;
-import java.util.LinkedList;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.interposition.ServerFactory;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerNestedAction;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerTopLevelAction;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 public class Interposition
 {

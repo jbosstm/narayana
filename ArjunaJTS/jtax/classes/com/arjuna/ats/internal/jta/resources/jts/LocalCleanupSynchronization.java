@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.jta.resources.jts;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
-
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 
 /**

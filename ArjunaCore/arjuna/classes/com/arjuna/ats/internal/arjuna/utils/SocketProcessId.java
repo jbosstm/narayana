@@ -31,15 +31,14 @@
 
 package com.arjuna.ats.internal.arjuna.utils;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
-import com.arjuna.ats.arjuna.utils.Utility;
-
-import java.net.*;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.utils.Utility;
 
 /**
  * Obtains a unique value to represent the process id via sockets and

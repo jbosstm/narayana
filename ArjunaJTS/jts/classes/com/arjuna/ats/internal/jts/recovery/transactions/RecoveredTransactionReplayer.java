@@ -32,11 +32,12 @@
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-
-import org.omg.CosTransactions.*;
 import java.util.Hashtable;
+
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
 
 
 

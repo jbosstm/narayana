@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.jts.participants;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
@@ -46,8 +50,6 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoArjunaResource;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ExtendedResourceUnitTest extends TestBase
 {

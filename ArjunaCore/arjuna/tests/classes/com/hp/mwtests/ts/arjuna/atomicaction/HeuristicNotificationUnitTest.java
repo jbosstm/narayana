@@ -20,17 +20,15 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.TopLevelAction;
-import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.HeuristicNotification;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 import com.hp.mwtests.ts.arjuna.resources.HeuristicRecord;
-import com.hp.mwtests.ts.arjuna.resources.SyncRecord;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class HeuristicNotificationUnitTest
 {

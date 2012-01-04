@@ -32,9 +32,11 @@
 package com.arjuna.ats.jts;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
 import com.arjuna.common.util.ConfigurationInfo;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
 
 public class TransactionServer
 {

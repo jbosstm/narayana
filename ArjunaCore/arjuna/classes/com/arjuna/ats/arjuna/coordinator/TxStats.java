@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 /**
  * This class is used to maintain statistics on transactions that have been

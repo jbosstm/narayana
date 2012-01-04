@@ -31,11 +31,13 @@
 
 package com.hp.mwtests.ts.jts.remote.implicit;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
 import com.hp.mwtests.ts.jts.TestModule.TranGrid;
 import com.hp.mwtests.ts.jts.TestModule.TranGridHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;

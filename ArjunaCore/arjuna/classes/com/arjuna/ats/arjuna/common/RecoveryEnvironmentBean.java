@@ -20,19 +20,19 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
-import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
-import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 import com.arjuna.ats.arjuna.utils.Utility;
-
-import java.net.InetAddress;
-import java.util.List;
-import java.util.ArrayList;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * A JavaBean containing configuration properties for the recovery system.

@@ -31,6 +31,9 @@
 
 package com.hp.mwtests.ts.jta.jca;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.ObjectType;
@@ -39,8 +42,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
-
-import static org.junit.Assert.*;
 
 public class SubordinateTxUnitTest
 {

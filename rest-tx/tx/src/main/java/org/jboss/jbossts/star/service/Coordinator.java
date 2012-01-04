@@ -20,23 +20,42 @@
  */
 package org.jboss.jbossts.star.service;
 
-import org.jboss.jbossts.star.provider.ResourceNotFoundException;
-import org.jboss.jbossts.star.resource.Transaction;
-import org.jboss.jbossts.star.provider.TransactionStatusException;
-import org.jboss.jbossts.star.util.LinkHolder;
-import org.jboss.jbossts.star.util.TxSupport;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import org.jboss.jbossts.star.provider.ResourceNotFoundException;
+import org.jboss.jbossts.star.provider.TransactionStatusException;
+import org.jboss.jbossts.star.resource.Transaction;
+import org.jboss.jbossts.star.util.LinkHolder;
+import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 @Path(TxSupport.TX_PATH)
 public class Coordinator

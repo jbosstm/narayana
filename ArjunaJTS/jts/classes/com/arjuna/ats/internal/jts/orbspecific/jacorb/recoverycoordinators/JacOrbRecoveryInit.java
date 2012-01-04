@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-
-import com.arjuna.ats.jts.logging.*;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RcvCoManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Initialises JacORB RecoveryCoordinator IOR creation mechanism

@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.jts.xa;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.jts.tx.tx;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class TxUnitTest extends TestBase
 {

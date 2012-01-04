@@ -31,12 +31,16 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.hp.mwtests.ts.jta.common.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.hp.mwtests.ts.jta.common.XACreator;
 
 public class JTATest
 {

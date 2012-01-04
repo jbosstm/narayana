@@ -35,8 +35,6 @@ import org.junit.Test;
 
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
 
-import static org.junit.Assert.*;
-
 public class LockStoreExceptionUnitTest
 {
     @Test

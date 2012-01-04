@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.jta.exceptions;
 
-import java.lang.Exception;
 
 /**
  * Exception may be thrown under certain circumstances.

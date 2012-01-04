@@ -31,20 +31,20 @@
 
 package com.arjuna.ats.arjuna.recovery ;
 
-import java.util.* ;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import com.arjuna.ats.arjuna.common.Uid ;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
-import com.arjuna.ats.arjuna.coordinator.TxControl ;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.state.InputObjectState ;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector ;
-import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector;
+import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem;
 
 public class TransactionStatusConnectionManager
 {

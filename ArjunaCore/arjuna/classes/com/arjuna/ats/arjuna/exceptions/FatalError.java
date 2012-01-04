@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.arjuna.exceptions;
 
-import java.lang.Error;
 
 /**
  * This error is thrown if a fatal error occurs which would prevent further

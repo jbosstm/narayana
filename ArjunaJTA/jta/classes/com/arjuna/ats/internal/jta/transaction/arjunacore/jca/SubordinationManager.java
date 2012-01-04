@@ -20,12 +20,10 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import com.arjuna.ats.jta.logging.jtaLogger;
-
-
-
-import javax.transaction.TransactionManager;
 import javax.resource.spi.XATerminator;
+import javax.transaction.TransactionManager;
+
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 /**
  * Utility factory class to return appropriate implementations of the TransactionImporter and

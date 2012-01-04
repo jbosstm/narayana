@@ -20,8 +20,13 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.annotation;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import javax.management.DescriptorKey;
-import java.lang.annotation.*;
 
 /**
  * Annotation for adding a description to the MBeanInfo of an MBean

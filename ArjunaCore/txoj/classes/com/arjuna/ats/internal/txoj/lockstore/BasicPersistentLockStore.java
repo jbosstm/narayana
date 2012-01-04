@@ -32,17 +32,15 @@
 package com.arjuna.ats.internal.txoj.lockstore;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
-import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
-import com.arjuna.ats.txoj.lockstore.LockStore;
-import com.arjuna.ats.txoj.common.txojPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.*;
-
-import com.arjuna.ats.txoj.logging.txojLogger;
-
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
+import com.arjuna.ats.txoj.lockstore.LockStore;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /**
  * An implementation of the lock store which saves locks into files on the local

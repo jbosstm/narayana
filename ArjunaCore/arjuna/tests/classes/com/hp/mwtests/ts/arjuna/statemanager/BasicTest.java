@@ -31,14 +31,15 @@
 
 package com.hp.mwtests.ts.arjuna.statemanager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.common.Uid;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.hp.mwtests.ts.arjuna.resources.BasicObject;
 
 public class BasicTest
 {

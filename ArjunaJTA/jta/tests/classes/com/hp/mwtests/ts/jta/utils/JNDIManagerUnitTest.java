@@ -21,11 +21,11 @@
 
 package com.hp.mwtests.ts.jta.utils;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import com.arjuna.ats.jta.utils.JNDIManager;
-
-import static org.junit.Assert.*;
 
 public class JNDIManagerUnitTest
 {

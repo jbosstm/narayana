@@ -20,13 +20,14 @@
  */
 package org.jboss.narayana.jta.quickstarts;
 
+import java.io.File;
+
+import javax.transaction.UserTransaction;
+
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import javax.transaction.UserTransaction;
-import java.io.File;
 
 public class HornetqStoreExample {
     private static final String storeClassName =  com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqObjectStoreAdaptor.class.getName();

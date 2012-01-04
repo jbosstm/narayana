@@ -20,10 +20,10 @@
  */
 package com.arjuna.ats.txoj.common;
 
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
-
 import java.io.File;
+
+import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * A JavaBean containing configuration properties for the transactional object system.

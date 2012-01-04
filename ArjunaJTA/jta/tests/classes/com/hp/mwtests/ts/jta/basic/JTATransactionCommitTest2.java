@@ -20,13 +20,15 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.Transaction;
-import javax.transaction.Status;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import javax.transaction.NotSupportedException;
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /*
  * Copyright (C) 2001, 2002, 2003

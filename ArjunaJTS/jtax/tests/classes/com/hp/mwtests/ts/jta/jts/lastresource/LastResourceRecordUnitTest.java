@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.jta.jts.lastresource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.omg.CosTransactions.Vote;
 
@@ -38,8 +42,6 @@ import com.arjuna.ats.internal.jta.resources.jts.orbspecific.LastResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.hp.mwtests.ts.jta.jts.common.DummyXA;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 public class LastResourceRecordUnitTest extends TestBase
 {

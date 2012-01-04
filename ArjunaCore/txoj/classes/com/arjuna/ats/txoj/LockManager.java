@@ -31,16 +31,25 @@
 
 package com.arjuna.ats.txoj;
 
-import com.arjuna.ats.txoj.lockstore.*;
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.common.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
-
-import com.arjuna.ats.txoj.logging.txojLogger;
-
-import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.common.Mutex;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ActionHierarchy;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.txoj.LockList;
 import com.arjuna.ats.internal.txoj.LockListIterator;
@@ -49,12 +58,9 @@ import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
 import com.arjuna.ats.internal.txoj.lockstore.BasicPersistentLockStore;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
-import java.io.PrintWriter;
-import java.util.*;
-
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
-import java.lang.InterruptedException;
-import java.io.IOException;
+import com.arjuna.ats.txoj.lockstore.LockStore;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /**
  * This class provides (transactional) concurrency control for application

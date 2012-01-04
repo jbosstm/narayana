@@ -31,9 +31,11 @@
 
 package com.hp.mwtests.ts.arjuna.resources;
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 public class BasicObject extends StateManager
 {

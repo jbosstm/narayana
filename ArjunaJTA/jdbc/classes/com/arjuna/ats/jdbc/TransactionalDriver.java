@@ -31,18 +31,17 @@
 
 package com.arjuna.ats.jdbc;
 
-import com.arjuna.ats.jdbc.logging.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 import com.arjuna.ats.internal.jdbc.ConnectionManager;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import java.util.*;
-import java.sql.*;
-
-import java.sql.SQLException;
-import java.lang.ExceptionInInitializerError;
-import java.util.logging.Logger;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
 /**
  * Transactional JDBC 2.0 driver. This returns transactional JDBC connections

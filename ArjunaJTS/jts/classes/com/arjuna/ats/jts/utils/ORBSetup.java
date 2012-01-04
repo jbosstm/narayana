@@ -31,14 +31,12 @@
 
 package com.arjuna.ats.jts.utils;
 
-import com.arjuna.orbportability.utils.InitClassInterface;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.RootOA;
-import com.arjuna.ats.jts.logging.jtsLogger;
-
-
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.utils.InitClassInterface;
 
 /**
  * Setup the ORB and POA used by the transaction system.

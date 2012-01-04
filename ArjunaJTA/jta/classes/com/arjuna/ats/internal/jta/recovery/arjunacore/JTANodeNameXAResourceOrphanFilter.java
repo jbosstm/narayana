@@ -20,10 +20,10 @@
  */
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
+import javax.transaction.xa.Xid;
+
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.xa.XATxConverter;
-
-import javax.transaction.xa.Xid;
 
 /**
  * An XAResourceOrphanFilter for JTA top level transactions, which uses node name information

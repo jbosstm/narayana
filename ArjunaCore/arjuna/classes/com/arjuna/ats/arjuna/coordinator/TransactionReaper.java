@@ -31,17 +31,20 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
-
-import com.arjuna.ats.internal.arjuna.coordinator.*;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
+import com.arjuna.ats.internal.arjuna.coordinator.ReaperElementManager;
+import com.arjuna.ats.internal.arjuna.coordinator.ReaperThread;
+import com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread;
 
 /**
  * Class to record transactions with non-zero timeout values, and class to

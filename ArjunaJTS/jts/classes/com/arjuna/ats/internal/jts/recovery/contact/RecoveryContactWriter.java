@@ -32,11 +32,10 @@
 
 package com.arjuna.ats.internal.jts.recovery.contact;
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import com.arjuna.orbportability.event.*;
+import com.arjuna.ArjunaOTS.ArjunaFactory;
+import com.arjuna.ArjunaOTS.ArjunaFactoryHelper;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.orbportability.event.EventManager;
 
 
 /**

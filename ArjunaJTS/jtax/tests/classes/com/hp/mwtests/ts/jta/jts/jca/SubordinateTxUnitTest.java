@@ -31,6 +31,11 @@
 
 package com.hp.mwtests.ts.jta.jts.jca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.omg.CosTransactions.WrongTransaction;
 
@@ -39,8 +44,6 @@ import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.SubordinateAt
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 class DummySubordinateAtomicTransaction extends SubordinateAtomicTransaction
 {

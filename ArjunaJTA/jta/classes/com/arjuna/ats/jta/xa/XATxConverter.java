@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.jta.xa;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import javax.transaction.xa.Xid;

@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 
-import static org.junit.Assert.*;
-
 public class RecoveryModuleUnitTest
 {
     @Test

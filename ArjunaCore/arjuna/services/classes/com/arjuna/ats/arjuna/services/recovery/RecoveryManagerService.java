@@ -20,11 +20,11 @@
  */
 package com.arjuna.ats.arjuna.services.recovery;
 
-import com.arjuna.ats.internal.arjuna.recovery.*;
-import com.arjuna.ats.arjuna.common.Uid;
-
 import org.tanukisoftware.wrapper.WrapperListener;
 import org.tanukisoftware.wrapper.WrapperManager;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004

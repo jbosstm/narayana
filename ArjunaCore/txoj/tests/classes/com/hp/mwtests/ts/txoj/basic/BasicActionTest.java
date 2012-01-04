@@ -31,14 +31,15 @@ package com.hp.mwtests.ts.txoj.basic;
  * $Id: BasicActionTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.common.*;
-
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
+import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 public class BasicActionTest
 {

@@ -20,11 +20,12 @@
  */
 package com.hp.mwtests.orbportability.orbspecific.orbinstance;
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class SimpleServer
 {

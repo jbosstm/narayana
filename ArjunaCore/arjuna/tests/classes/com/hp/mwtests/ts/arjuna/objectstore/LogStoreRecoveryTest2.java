@@ -31,15 +31,14 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
 public class LogStoreRecoveryTest2
 {

@@ -31,14 +31,15 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.arjuna.ats.jta.common.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class SuspendResume
 {

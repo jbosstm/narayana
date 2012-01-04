@@ -31,16 +31,14 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import java.util.*;
-import java.text.*;
-
-import com.arjuna.ats.arjuna.common.Uid ;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
-import com.arjuna.ats.arjuna.state.InputObjectState ;
-
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
 

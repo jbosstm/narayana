@@ -31,12 +31,14 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import com.arjuna.orbportability.orb.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.ORB;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.orb.Attribute;
 
 /**
  * @author Richard Begg

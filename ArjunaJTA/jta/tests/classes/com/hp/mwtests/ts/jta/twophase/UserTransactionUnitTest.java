@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.naming.InitialContext;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
@@ -40,8 +44,6 @@ import org.junit.Test;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple;
 import com.arjuna.ats.jta.UserTransaction;
-
-import static org.junit.Assert.*;
 
 
 public class UserTransactionUnitTest

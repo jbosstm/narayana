@@ -20,14 +20,18 @@
  */
 package org.jboss.narayana.jta.quickstarts.recovery;
 
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+
 import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
 import org.jboss.narayana.jta.quickstarts.util.Util;
 
-import javax.transaction.*;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 public class DummyRecovery extends RecoverySetup {
 

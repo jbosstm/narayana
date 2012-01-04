@@ -20,22 +20,23 @@
  */
 package org.jboss.jbossts.star.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.core.Application;
+
+import org.jboss.jbossts.star.provider.HttpResponseMapper;
+import org.jboss.jbossts.star.provider.NotFoundMapper;
+import org.jboss.jbossts.star.provider.TMUnavailableMapper;
+import org.jboss.jbossts.star.provider.TransactionStatusMapper;
+import org.jboss.jbossts.star.resource.RESTRecord;
+import org.jboss.logging.Logger;
+
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-
-import javax.ws.rs.core.Application;
-import java.util.Set;
-import java.util.HashSet;
-import org.jboss.logging.Logger;
-
-import org.jboss.jbossts.star.provider.NotFoundMapper;
-import org.jboss.jbossts.star.resource.RESTRecord;
-import org.jboss.jbossts.star.provider.TMUnavailableMapper;
-import org.jboss.jbossts.star.provider.TransactionStatusMapper;
-import org.jboss.jbossts.star.provider.HttpResponseMapper;
 
 public class TMApplication extends Application
 {

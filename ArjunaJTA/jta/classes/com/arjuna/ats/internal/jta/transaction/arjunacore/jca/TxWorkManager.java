@@ -32,15 +32,15 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkException;
 import javax.transaction.Transaction;
 
-import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class TxWorkManager
 {

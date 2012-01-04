@@ -31,15 +31,13 @@
 
 package com.arjuna.ats.internal.arjuna.thread;
 
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.utils.ThreadUtil;
-
-import java.lang.Thread;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
-import java.util.NoSuchElementException;
-import java.util.EmptyStackException;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
 /**
  * This class maintains a mapping between a thread and its notion of the current

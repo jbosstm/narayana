@@ -31,22 +31,21 @@
 
 package com.hp.mwtests.ts.jta.jts.jca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import javax.resource.spi.work.Work;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.TxWorkManager;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.WorkSynchronization;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction;
-
-import static org.junit.Assert.*;
 
 public class WorkUnitTest extends TestBase
 {

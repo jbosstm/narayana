@@ -20,14 +20,15 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-
-import static org.junit.Assert.*;
 
 public class TxControlUnitTest
 {

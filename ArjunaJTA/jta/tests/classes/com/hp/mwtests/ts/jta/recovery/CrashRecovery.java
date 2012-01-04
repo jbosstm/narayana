@@ -31,18 +31,16 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import com.hp.mwtests.ts.jta.common.*;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
 
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.hp.mwtests.ts.jta.common.CrashXAResource;
 
 @RunWith(BMUnitRunner.class)
 @BMScript("recovery")

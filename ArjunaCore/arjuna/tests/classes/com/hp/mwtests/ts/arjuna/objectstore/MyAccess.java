@@ -31,7 +31,8 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: MyAccess.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MyAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess
 {

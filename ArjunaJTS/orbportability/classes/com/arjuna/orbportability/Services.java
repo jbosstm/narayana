@@ -31,28 +31,27 @@
 
 package com.arjuna.orbportability;
 
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.logging.*;
-
-
-
-import org.omg.CosNaming.NamingContext;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextHelper;
-
-import java.io.*;
 import java.io.File;
-import java.io.LineNumberReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.util.Vector;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.UserException;
 import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
+import org.omg.CosNaming.NameComponent;
+import org.omg.CosNaming.NamingContext;
+import org.omg.CosNaming.NamingContextHelper;
+
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.logging.opLogger;
 
 /**
  * An attempt at some ORB portable ways of accessing ORB services.

@@ -20,8 +20,9 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import org.junit.Test;
+
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 
 /**
  * Unit tests for EnvironmentBean classes.

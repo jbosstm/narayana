@@ -30,9 +30,9 @@
  */
 package com.arjuna.orbportability.common.ant;
 
-import org.apache.tools.ant.*;
-
-import java.util.ArrayList;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 public class IDLBuildListElement extends Task
 {

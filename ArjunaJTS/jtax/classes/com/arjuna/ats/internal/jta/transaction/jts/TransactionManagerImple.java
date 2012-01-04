@@ -31,19 +31,19 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
+import java.util.Hashtable;
+
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.Transaction;
+
+import org.omg.CosTransactions.Control;
+
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-
-import javax.transaction.*;
-
-import javax.naming.*;
-import java.lang.NullPointerException;
-import java.util.Hashtable;
+import com.arjuna.ats.jts.OTSManager;
 
 /**
  * An implementation of javax.transaction.TransactionManager.

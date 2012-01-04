@@ -31,19 +31,18 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.common.*;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
 
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
-import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
-
+import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.ResourceCompletor;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 

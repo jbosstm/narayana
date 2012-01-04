@@ -1,8 +1,8 @@
 package com.hp.mwtests.ts.arjuna.reaper;
 
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.Reapable;
 
 /**
  * class which provides control methods inherited by the reaper test classes. these methods can be

@@ -31,8 +31,11 @@
 
 package com.hp.mwtests.ts.jta.common;
 
-import javax.transaction.xa.*;
-import java.io.*;
+import java.io.Serializable;
+
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /*
  * Currently XAResources must be serializable so we can

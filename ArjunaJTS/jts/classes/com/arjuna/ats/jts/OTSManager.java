@@ -31,21 +31,23 @@
 
 package com.arjuna.ats.jts;
 
-import com.arjuna.ats.jts.logging.*;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.TransactionFactory;
 
+import com.arjuna.ArjunaOTS.ActionControl;
+import com.arjuna.ArjunaOTS.ActiveThreads;
+import com.arjuna.ArjunaOTS.ActiveTransaction;
+import com.arjuna.ArjunaOTS.BadControl;
+import com.arjuna.ArjunaOTS.Destroyed;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
+import com.arjuna.ats.internal.jts.PseudoControlWrapper;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.PseudoControlWrapper;
 import com.arjuna.ats.internal.jts.utils.Helper;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This class is essentially here for convenience purposes, and until

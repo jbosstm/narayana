@@ -28,8 +28,6 @@ import com.arjuna.ats.jta.exceptions.NotImplementedException;
 import com.arjuna.ats.jta.exceptions.RollbackException;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 
-import static org.junit.Assert.*;
-
 public class ExceptionsUnitTest
 {
     @Test

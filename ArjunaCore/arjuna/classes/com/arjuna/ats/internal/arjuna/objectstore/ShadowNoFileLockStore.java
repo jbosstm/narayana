@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
+import java.io.File;
+
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import java.io.File;
 
 /**
  * Almost the same as the ShadowingStore implementation, but assumes all

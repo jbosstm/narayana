@@ -31,14 +31,12 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 
 public class TransactionManagerImpleUnitTest extends TestBase

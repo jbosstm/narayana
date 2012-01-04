@@ -31,13 +31,16 @@
 
 package com.hp.mwtests.ts.jta.jca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple;
@@ -46,8 +49,6 @@ import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.FailureXAResource;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailType;
-
-import static org.junit.Assert.*;
 
 public class XATerminatorUnitTest
 {

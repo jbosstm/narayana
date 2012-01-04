@@ -31,15 +31,6 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context;
 
-import com.arjuna.ats.internal.jts.ControlWrapper;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.jts.OTSManager;
-import com.arjuna.ats.jts.common.InterceptorInfo;
-import com.arjuna.ats.jts.logging.jtsLogger;
-
-
-
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
@@ -54,6 +45,13 @@ import org.omg.IOP.ServiceContext;
 import org.omg.PortableInterceptor.InvalidSlot;
 import org.omg.PortableInterceptor.ServerRequestInfo;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
+
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.common.InterceptorInfo;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * PortableInterceptor::ServerRequestInterceptor implementation which checks 

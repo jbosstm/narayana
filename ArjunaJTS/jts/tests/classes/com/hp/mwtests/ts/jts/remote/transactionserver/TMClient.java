@@ -31,19 +31,22 @@
 
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.IntHolder;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.IntHolder;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.TransactionFactory;
+import org.omg.CosTransactions.TransactionFactoryHelper;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DistributedHammerWorker1;
 
 public class TMClient
 {

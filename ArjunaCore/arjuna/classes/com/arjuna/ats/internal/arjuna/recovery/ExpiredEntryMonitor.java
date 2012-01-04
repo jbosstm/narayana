@@ -31,15 +31,14 @@
 
 package com.arjuna.ats.internal.arjuna.recovery;
 
-import java.text.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 
 /**
  * Threaded object to run {@link ExpiryScanner} implementations to scan 

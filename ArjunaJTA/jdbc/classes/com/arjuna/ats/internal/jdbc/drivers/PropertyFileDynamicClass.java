@@ -20,14 +20,15 @@
  */
 package com.arjuna.ats.internal.jdbc.drivers;
 
-import com.arjuna.ats.internal.jdbc.DynamicClass;
-
-import javax.sql.XADataSource;
-import java.sql.SQLException;
-import java.util.Properties;
-import java.util.Enumeration;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Properties;
+
+import javax.sql.XADataSource;
+
+import com.arjuna.ats.internal.jdbc.DynamicClass;
 
 /**
  * A dynamic class that reads from a properties file and uses the information to

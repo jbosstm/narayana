@@ -31,16 +31,23 @@ package com.hp.mwtests.ts.arjuna.recovery;
  * $Id: ActionTestServer.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import java.io.*;
-import java.net.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.AddOutcome;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.utils.Utility;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.utils.Utility;
 
 public class ActionTestServer
 {

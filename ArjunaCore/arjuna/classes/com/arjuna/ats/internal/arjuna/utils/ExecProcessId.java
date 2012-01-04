@@ -39,9 +39,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.StringTokenizer;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Obtains a unique value to represent the process id via reflection.

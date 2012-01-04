@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import java.io.*;
+import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.internal.arjuna.TxLogWritePersistenceRecord;

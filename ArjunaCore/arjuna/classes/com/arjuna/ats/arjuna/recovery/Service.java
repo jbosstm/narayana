@@ -31,7 +31,9 @@
  
 package com.arjuna.ats.arjuna.recovery ;
 
-import java.io.* ;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * a service is used to serve one or more requests from an input stream and post results on an output stream.

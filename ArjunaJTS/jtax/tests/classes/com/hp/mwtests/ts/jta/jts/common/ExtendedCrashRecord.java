@@ -31,14 +31,14 @@
 
 package com.hp.mwtests.ts.jta.jts.common;
 
+import java.io.IOException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-
-import java.io.IOException;
 
 // Mostly a duplication of com.hp.mwtests.ts.arjuna.resources.CrashRecord
 

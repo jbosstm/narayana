@@ -31,17 +31,12 @@
 
 package com.arjuna.orbportability.oa.core;
 
-import org.omg.PortableServer.*;
 import org.omg.CORBA.Policy;
-import java.util.*;
-import java.applet.Applet;
-import java.io.*;
-
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
 import org.omg.PortableServer.POAPackage.InvalidPolicy;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 
 /**
  * The Portable Object Adapter interface.

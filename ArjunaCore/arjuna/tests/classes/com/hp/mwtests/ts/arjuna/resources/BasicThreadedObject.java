@@ -32,10 +32,8 @@
 package com.hp.mwtests.ts.arjuna.resources;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-
-import java.lang.Thread;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
 public class BasicThreadedObject extends Thread
 {

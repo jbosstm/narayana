@@ -20,13 +20,13 @@
  */
 package com.arjuna.ats.internal.jta.utils.jts;
 
-import com.arjuna.ats.jta.xa.XATxConverter;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.jts.utils.Utility;
-
 import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * Utility functions for JTS (i.e. jtax) Xid handling.

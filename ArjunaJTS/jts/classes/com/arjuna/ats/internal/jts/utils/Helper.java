@@ -31,25 +31,17 @@
 
 package com.arjuna.ats.internal.jts.utils;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.ActionManager;
-
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
-import org.omg.CosTransactions.*;
-import com.arjuna.ArjunaOTS.*;
-
-import java.io.PrintStream;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.CompletionStatus;
 import org.omg.CORBA.NO_MEMORY;
-import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Coordinator;
+
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionManager;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 
 public class Helper
 {

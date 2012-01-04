@@ -20,11 +20,11 @@
  */
 package com.hp.mwtests.ts.arjuna.recovery;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner;
-
-import static org.junit.Assert.*;
 
 public class ExpiryScannerUnitTest
 {

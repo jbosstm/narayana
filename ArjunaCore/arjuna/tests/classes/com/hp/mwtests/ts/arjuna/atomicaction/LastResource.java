@@ -31,14 +31,15 @@
 
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.hp.mwtests.ts.arjuna.resources.OnePhase;
+import com.hp.mwtests.ts.arjuna.resources.ShutdownRecord;
 
 public class LastResource
 {

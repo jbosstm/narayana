@@ -31,14 +31,12 @@
 
 package com.arjuna.ats.internal.jts.interposition.resources.arjuna;
 
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.PropagationContext;
 
 import com.arjuna.ats.internal.jts.interposition.FactoryCreator;
-
-import org.omg.CosTransactions.PropagationContext;
-import org.omg.CosTransactions.Control;
-
-import org.omg.CORBA.SystemException;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 public class InterpositionCreator implements FactoryCreator
 {

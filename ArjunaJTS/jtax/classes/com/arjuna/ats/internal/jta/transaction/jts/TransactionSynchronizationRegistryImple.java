@@ -22,18 +22,23 @@
  */
 package com.arjuna.ats.internal.jta.transaction.jts;
 
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.JTAInterposedSynchronizationImple;
-
-
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.spi.ObjectFactory;
-import javax.transaction.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Hashtable;
+
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.spi.ObjectFactory;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionSynchronizationRegistry;
+
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.JTAInterposedSynchronizationImple;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 
 /**
  * Implementation of the TransactionSynchronizationRegistry interface, in line with the JTA 1.1 specification.

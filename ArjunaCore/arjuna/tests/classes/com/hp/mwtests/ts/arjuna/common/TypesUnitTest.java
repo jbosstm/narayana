@@ -20,6 +20,9 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -37,8 +40,6 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.internal.arjuna.abstractrecords.ActivationRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
-
-import static org.junit.Assert.*;
 
 public class TypesUnitTest
 {

@@ -31,13 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /*
  * Run with the log store for N hours and make sure there are

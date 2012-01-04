@@ -28,13 +28,15 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
-import com.arjuna.ats.jta.logging.*;
-import com.arjuna.ats.arjuna.AtomicAction;
-
 import java.util.Hashtable;
 
-import javax.transaction.*;
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.Transaction;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class TransactionManagerImple extends BaseTransaction implements
 		javax.transaction.TransactionManager, javax.naming.spi.ObjectFactory

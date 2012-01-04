@@ -31,15 +31,16 @@ package com.hp.mwtests.ts.txoj.objectmodeltest;
  * $Id: ObjectModelTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-
-import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+
+import org.junit.Test;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
+import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
 public class ObjectModelTest
 {

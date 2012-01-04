@@ -31,15 +31,12 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.hp.mwtests.ts.jts.utils.Util;
+import org.omg.CORBA.IntHolder;
+import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-
 import com.hp.mwtests.ts.jts.TestModule.Hammer;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.IntHolder;
+import com.hp.mwtests.ts.jts.utils.Util;
 
 public class DistributedHammerWorker2
 {

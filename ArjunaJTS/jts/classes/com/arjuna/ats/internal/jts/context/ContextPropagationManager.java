@@ -32,10 +32,9 @@
 package com.arjuna.ats.internal.jts.context;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.orbportability.ORBType;
+import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.orbportability.ORBInfo;
+import com.arjuna.orbportability.ORBType;
 
 /**
  * Registers the appropriate filter with the ORB.

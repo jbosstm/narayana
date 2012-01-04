@@ -31,13 +31,12 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import com.arjuna.ats.jta.recovery.*;
+import java.sql.SQLException;
 
-import com.hp.mwtests.ts.jta.common.*;
+import javax.transaction.xa.XAResource;
 
-import java.sql.*;
-
-import javax.transaction.xa.*;
+import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
 
 public class DummyXARecoveryResource implements XAResourceRecovery
 {

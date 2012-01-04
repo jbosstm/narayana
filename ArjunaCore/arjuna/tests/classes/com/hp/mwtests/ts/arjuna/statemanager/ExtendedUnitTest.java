@@ -31,8 +31,13 @@
 
 package com.hp.mwtests.ts.arjuna.statemanager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectStatus;
@@ -40,11 +45,7 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.hp.mwtests.ts.arjuna.resources.ExtendedObject;
 
 public class ExtendedUnitTest
 {

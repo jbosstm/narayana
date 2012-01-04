@@ -31,12 +31,11 @@
 
 package com.arjuna.ats.internal.jts.interposition;
 
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
+import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.PropagationContext;
 
-import org.omg.CORBA.SystemException;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 /**
  * Different transaction factories can be added dynamically

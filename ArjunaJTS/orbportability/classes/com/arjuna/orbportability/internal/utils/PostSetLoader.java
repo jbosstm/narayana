@@ -31,11 +31,6 @@
 
 package com.arjuna.orbportability.internal.utils;
 
-import java.util.Properties;
-import java.util.Enumeration;
-import java.lang.ClassLoader;
-
-import java.lang.ClassNotFoundException;
 
 /*
  * This class allows the programmer (and us!) to register classes

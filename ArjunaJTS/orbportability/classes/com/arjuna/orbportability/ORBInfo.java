@@ -32,8 +32,8 @@
 package com.arjuna.orbportability;
 
 import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.internal.utils.SimpleXMLParser;
+import com.arjuna.orbportability.logging.opLogger;
 
 /**
  * This class queries the ORB specific ORBData object for information

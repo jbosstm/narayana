@@ -31,18 +31,22 @@
 
 package com.hp.mwtests.ts.jts.remote.grid;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.hp.mwtests.ts.jts.TestModule.grid;
-import com.hp.mwtests.ts.jts.TestModule.gridHelper;
-
-import org.omg.CosTransactions.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Terminator;
+import org.omg.CosTransactions.TransactionFactory;
+import org.omg.CosTransactions.TransactionFactoryHelper;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.TestModule.grid;
+import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 
 public class GridClient
 {

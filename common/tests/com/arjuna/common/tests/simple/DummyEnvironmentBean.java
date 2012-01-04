@@ -20,13 +20,13 @@
  */
 package com.arjuna.common.tests.simple;
 
-import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * Basic EnvironmentBean for test purposes

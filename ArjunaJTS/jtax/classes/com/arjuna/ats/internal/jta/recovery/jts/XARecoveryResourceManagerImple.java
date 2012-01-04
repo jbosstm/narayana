@@ -31,11 +31,11 @@
 
 package com.arjuna.ats.internal.jta.recovery.jts;
 
-import com.arjuna.ats.jta.recovery.*;
+import javax.transaction.xa.XAResource;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import javax.transaction.xa.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jta.recovery.XARecoveryResource;
+import com.arjuna.ats.jta.recovery.XARecoveryResourceManager;
 
 public class XARecoveryResourceManagerImple implements XARecoveryResourceManager
 {

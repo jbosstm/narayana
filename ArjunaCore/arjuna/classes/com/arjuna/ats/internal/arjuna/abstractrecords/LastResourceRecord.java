@@ -31,12 +31,15 @@
 
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-
 import java.io.PrintWriter;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.OnePhaseResource;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * AbstractRecord that helps us do the last resource commit optimization.

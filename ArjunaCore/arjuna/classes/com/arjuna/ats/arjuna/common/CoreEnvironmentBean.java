@@ -20,15 +20,14 @@
  */
 package com.arjuna.ats.arjuna.common;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.utils.Utility;
-import com.arjuna.common.util.ConfigurationInfo;
-import com.arjuna.ats.arjuna.utils.Process;
-
 import java.io.File;
+
+import com.arjuna.ats.arjuna.utils.Process;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
+import com.arjuna.common.util.ConfigurationInfo;
 
 /**
  * A JavaBean containing assorted configuration properties for the core transaction system.

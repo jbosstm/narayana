@@ -31,10 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.resources;
 
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-
 import java.io.IOException;
+
+import com.arjuna.ats.arjuna.coordinator.OnePhaseResource;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 public class OnePhase implements OnePhaseResource
 {

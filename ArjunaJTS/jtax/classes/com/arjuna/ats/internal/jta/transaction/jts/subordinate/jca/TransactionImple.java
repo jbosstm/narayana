@@ -31,12 +31,11 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca;
 
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
-
-import javax.transaction.xa.Xid;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 
 public class TransactionImple extends
 		com.arjuna.ats.internal.jta.transaction.jts.subordinate.TransactionImple implements SubordinateTransaction

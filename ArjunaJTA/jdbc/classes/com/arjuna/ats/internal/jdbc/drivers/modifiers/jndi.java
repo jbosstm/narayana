@@ -31,15 +31,16 @@
 
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
-import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.exceptions.NotImplementedException;
-import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 
-import java.sql.*;
-import javax.sql.*;
+import javax.sql.XAConnection;
 import javax.transaction.xa.Xid;
 
-import java.sql.SQLException;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.jta.exceptions.NotImplementedException;
+import com.arjuna.ats.jta.xa.XAModifier;
 
 public class jndi implements XAModifier
 {

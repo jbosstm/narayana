@@ -31,14 +31,25 @@ package com.hp.mwtests.ts.arjuna.recovery;
  * $Id: ListenerTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import java.io.*;
-import java.net.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.recovery.Service;
 import com.arjuna.ats.internal.arjuna.recovery.Listener;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 class ListenerTestService implements Service
 {

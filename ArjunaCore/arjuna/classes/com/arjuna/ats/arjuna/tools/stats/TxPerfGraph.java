@@ -20,34 +20,38 @@
  */
 package com.arjuna.ats.arjuna.tools.stats;
 
-import java.lang.reflect.InvocationTargetException;
-import javax.swing.JMenuBar;
-import com.arjuna.ats.arjuna.coordinator.TxStatsMBean;
-import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBeanMBean;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
-
 import java.util.TimeZone;
-import javax.management.*;
+
+import javax.management.JMX;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBeanMBean;
+import com.arjuna.ats.arjuna.coordinator.TxStatsMBean;
 
 public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
     private final static int NUMBER_OF_SAMPLES = 100;

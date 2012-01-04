@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.jta.recovery;
 
+import javax.transaction.xa.Xid;
+
 import com.arjuna.ats.arjuna.common.Uid;
- 
-import javax.transaction.xa.*;
 
 public interface XARecoveryResource
 {

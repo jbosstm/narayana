@@ -20,10 +20,11 @@
  */
 package org.jboss.narayana.jta.quickstarts.util;
 
+import java.io.Serializable;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import java.io.Serializable;
 
 public class DummyXAResource implements XAResource, Serializable {
     static final long serialVersionUID = 1;

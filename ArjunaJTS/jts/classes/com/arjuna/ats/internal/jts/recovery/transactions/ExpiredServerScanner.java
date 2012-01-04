@@ -31,10 +31,7 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.recovery.*;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 
 /**
  * Refinement of the expired assumed scanner for Server transactions.

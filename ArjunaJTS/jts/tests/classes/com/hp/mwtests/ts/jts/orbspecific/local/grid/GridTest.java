@@ -31,24 +31,26 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.grid;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.UserException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.Terminator;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.grid_i;
+import com.hp.mwtests.ts.jts.resources.TransactionalThread;
 
 public class GridTest
 {

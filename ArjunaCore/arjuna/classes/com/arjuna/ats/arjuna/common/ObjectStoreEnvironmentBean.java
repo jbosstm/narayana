@@ -20,13 +20,13 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import java.io.File;
+
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-
-import java.io.File;
 
 /**
  * A JavaBean containing configuration properties for the objectstore and various implementations thereof.

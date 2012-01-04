@@ -39,37 +39,37 @@ package com.arjuna.ats.internal.jts.resources;
  *
  */
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
+import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.INVALID_TRANSACTION;
-
-import org.omg.CosTransactions.NotPrepared;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Coordinator;
 import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.HeuristicRollback;
-import java.io.IOException;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.Vote;
+
+import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResource;
+import com.arjuna.ArjunaOTS.OTSAbstractRecord;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This abstract record is used whenever resources are derived from the

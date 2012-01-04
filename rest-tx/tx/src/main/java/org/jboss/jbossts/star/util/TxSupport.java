@@ -20,22 +20,29 @@
  */
 package org.jboss.jbossts.star.util;
 
-import org.jboss.logging.Logger;
-
-import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.resteasy.spi.Link;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.spi.Link;
 
 /**
  * Various utilities for sending HTTP messages

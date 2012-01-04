@@ -31,6 +31,9 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.recovery;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.omg.CosTransactions.RecoveryCoordinator;
 
@@ -41,8 +44,6 @@ import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOr
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.RecoverIOR;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class JacORBRecoveryUnitTest extends TestBase
 {

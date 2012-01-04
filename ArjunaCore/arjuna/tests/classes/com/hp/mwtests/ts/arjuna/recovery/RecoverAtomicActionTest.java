@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -40,9 +44,6 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class RecoverAtomicActionTest
 {

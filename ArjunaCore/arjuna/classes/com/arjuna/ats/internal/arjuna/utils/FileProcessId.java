@@ -31,13 +31,11 @@
 
 package com.arjuna.ats.internal.arjuna.utils;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
-import java.io.*;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
+import java.io.File;
 import java.io.IOException;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**

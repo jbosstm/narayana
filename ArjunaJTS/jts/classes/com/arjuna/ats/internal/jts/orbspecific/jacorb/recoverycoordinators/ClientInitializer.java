@@ -31,18 +31,10 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import org.omg.PortableInterceptor.*;
-import org.omg.CosNaming.*;
-import org.omg.CORBA.Any;
-import org.omg.CosTransactions.*;
+import org.omg.PortableInterceptor.ORBInitInfo;
+import org.omg.PortableInterceptor.ORBInitializer;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.logging.*;
-
-import org.jacorb.orb.ORB;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This class registers the ClientForwardInterceptor 

@@ -31,14 +31,13 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
  * $Id: BadAction.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord.CrashLocation;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord.CrashType;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class CrashAction
 {

@@ -31,10 +31,17 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import com.arjuna.ats.jta.xa.XidImple;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class RecoveryXids
 {

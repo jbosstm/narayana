@@ -30,14 +30,16 @@
 
 package com.hp.mwtests.orbportability.orbinstance;
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.RootOA;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class MultipleORBInstances
 {

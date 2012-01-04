@@ -20,11 +20,11 @@
  */
  package org.jboss.jbossts.star.provider;
 
-import org.jboss.resteasy.util.HttpResponseCodes;
-
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import javax.ws.rs.core.Response;
+
+import org.jboss.resteasy.util.HttpResponseCodes;
 
 /**
  * 404 mapper

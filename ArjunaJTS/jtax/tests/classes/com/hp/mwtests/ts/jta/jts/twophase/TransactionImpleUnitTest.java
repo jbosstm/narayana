@@ -31,6 +31,11 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
@@ -38,16 +43,15 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jta.TransactionManager;
-import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
@@ -55,8 +59,6 @@ import com.hp.mwtests.ts.jta.common.FailureXAResource;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.jts.common.DummyXA;
 import com.hp.mwtests.ts.jta.jts.common.Synchronization;
-
-import static org.junit.Assert.*;
 
 
 public class TransactionImpleUnitTest

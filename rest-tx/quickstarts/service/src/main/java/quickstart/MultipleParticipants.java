@@ -20,8 +20,9 @@
  */
 package quickstart;
 
-import org.jboss.jbossts.star.util.TxSupport;
 import java.net.HttpURLConnection;
+
+import org.jboss.jbossts.star.util.TxSupport;
 
 public class MultipleParticipants {
     // construct the endpoint for the example web service that will take part in a transaction

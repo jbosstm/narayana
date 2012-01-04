@@ -31,14 +31,11 @@
 
 package com.hp.mwtests.ts.txoj.common.resources;
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.common.*;
-import java.lang.Thread;
 import java.util.Random;
 
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
-
-import java.lang.InterruptedException;
 
 public class HammerThreadedObject extends Thread
 {

@@ -32,18 +32,13 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import java.util.Hashtable;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-
-import org.omg.CosTransactions.*;
-import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
-
-import com.arjuna.ats.jts.logging.jtsLogger;
-
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * Any transaction that is identified by the recovery system to

@@ -20,14 +20,15 @@
  */
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.hp.mwtests.ts.jta.jts.JTSTestCase;
+import static org.junit.Assert.fail;
 
-import javax.transaction.TransactionManager;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
 /*
  * Copyright (C) 2001, 2002, 2003

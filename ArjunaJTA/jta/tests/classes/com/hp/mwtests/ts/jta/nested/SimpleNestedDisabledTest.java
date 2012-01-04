@@ -31,15 +31,13 @@
 
 package com.hp.mwtests.ts.jta.nested;
 
-import com.hp.mwtests.ts.jta.common.TestResource;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
+import static org.junit.Assert.fail;
 
 import javax.transaction.NotSupportedException;
-import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 public class SimpleNestedDisabledTest
 {

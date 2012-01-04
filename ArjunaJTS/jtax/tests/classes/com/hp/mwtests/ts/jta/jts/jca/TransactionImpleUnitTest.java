@@ -31,12 +31,13 @@
 
 package com.hp.mwtests.ts.jta.jts.jca;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 public class TransactionImpleUnitTest extends TestBase
 {   

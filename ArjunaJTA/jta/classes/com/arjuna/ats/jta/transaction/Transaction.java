@@ -31,15 +31,14 @@
 
 package com.arjuna.ats.jta.transaction;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jta.xa.TxInfo;
-
-import javax.transaction.xa.*;
+import java.util.Map;
 
 import javax.transaction.RollbackException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
-import java.lang.IllegalStateException;
-import java.util.Map;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
 
 /*
  * Extended methods.

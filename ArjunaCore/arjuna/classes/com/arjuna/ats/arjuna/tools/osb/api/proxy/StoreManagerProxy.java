@@ -20,16 +20,26 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.api.proxy;
 
-import com.arjuna.ats.arjuna.tools.osb.api.mbeans.ParticipantStoreBeanMBean;
-import com.arjuna.ats.arjuna.tools.osb.api.mbeans.RecoveryStoreBeanMBean;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
-
-import javax.management.*;
-import javax.management.remote.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.management.JMException;
+import javax.management.JMX;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+
+import com.arjuna.ats.arjuna.tools.osb.api.mbeans.ParticipantStoreBeanMBean;
+import com.arjuna.ats.arjuna.tools.osb.api.mbeans.RecoveryStoreBeanMBean;
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
 /**
  * Miscellaneous methods for obtaining remote proxies to the JBossTS Recovery and Participant stores

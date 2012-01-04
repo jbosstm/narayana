@@ -20,15 +20,18 @@
  */
 package com.arjuna.orbportability.common;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.orbportability.ORBData;
 import com.arjuna.orbportability.event.EventHandler;
 import com.arjuna.orbportability.oa.core.POAImple;
 import com.arjuna.orbportability.orb.core.ORBImple;
-
-import java.util.*;
 
 /**
  * A JavaBean containing assorted configuration properties for the Orb Portability layer.

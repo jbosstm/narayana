@@ -20,12 +20,12 @@
  */
 package com.hp.mwtests.ts.arjuna.resources;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
 import java.io.File;
 
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 /**
  * handy utility functions for unit tests.

@@ -20,11 +20,11 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.api.mbeans;
 
+import javax.management.ObjectName;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.TxLog;
-
-import javax.management.ObjectName;
 
 /**
  * abstract implementation of the TxLog MBean

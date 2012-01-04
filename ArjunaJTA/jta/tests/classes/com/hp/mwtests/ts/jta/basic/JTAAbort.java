@@ -31,12 +31,11 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.arjuna.ats.jta.utils.*;
+import static org.junit.Assert.assertEquals;
 
-import javax.transaction.*;
+import javax.transaction.Status;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class JTAAbort
 {

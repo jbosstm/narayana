@@ -31,18 +31,16 @@
 
 package com.hp.mwtests.ts.txoj.recovery;
 
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-
-import static org.junit.Assert.*;
 
 public class RecoveryModuleUnitTest
 {

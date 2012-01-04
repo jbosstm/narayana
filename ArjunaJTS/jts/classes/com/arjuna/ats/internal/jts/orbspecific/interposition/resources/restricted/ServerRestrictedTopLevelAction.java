@@ -31,25 +31,14 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted;
 
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.exceptions.TxError;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.interposition.*;
-import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
-
 import java.util.List;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerNestedAction;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerTopLevelAction;
+import com.arjuna.ats.jts.exceptions.TxError;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /*
  * This looks like an atomic action, but is not actually derived from

@@ -31,24 +31,29 @@
 
 package com.hp.mwtests.ts.jts.local.heuristics;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.utils.ResourceTrace;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.jts.utils.Utility;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.Current;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.utils.Utility;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.AtomicResource;
+import com.hp.mwtests.ts.jts.orbspecific.resources.heuristic;
+import com.hp.mwtests.ts.jts.utils.ResourceTrace;
 
 public class HeuristicTest
 {

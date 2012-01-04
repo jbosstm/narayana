@@ -31,21 +31,14 @@
 
 package com.hp.mwtests.ts.arjuna.statemanager;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectModel;
-import com.arjuna.ats.arjuna.ObjectStatus;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.LogWriteStateManager;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 class TxStateManager extends LogWriteStateManager
 {

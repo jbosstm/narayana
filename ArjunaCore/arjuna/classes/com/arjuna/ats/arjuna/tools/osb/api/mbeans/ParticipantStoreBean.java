@@ -20,15 +20,15 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.api.mbeans;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.StoreManagerProxy;
-
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 /**
  * implementation of the JMX interface to the JBossTS participant store

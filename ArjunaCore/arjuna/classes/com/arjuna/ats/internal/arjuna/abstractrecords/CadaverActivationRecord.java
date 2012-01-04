@@ -33,9 +33,10 @@ package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.ats.arjuna.coordinator.*;
 
 /*
  * This constructor is used to create a new instance of an

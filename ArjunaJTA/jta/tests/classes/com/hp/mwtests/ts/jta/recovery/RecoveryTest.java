@@ -31,16 +31,15 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.jta.xa.*;
-
-import com.arjuna.ats.internal.jta.utils.*;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Vector;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class RecoveryTest
 {

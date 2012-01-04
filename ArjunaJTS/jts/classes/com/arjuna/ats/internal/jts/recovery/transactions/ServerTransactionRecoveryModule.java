@@ -31,19 +31,17 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import org.omg.CosTransactions.*;
+import java.util.Enumeration;
 
-import java.util.*;
+import org.omg.CosTransactions.Status;
 
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.jts.utils.*;
-import com.arjuna.ats.arjuna.exceptions.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * This class is a plug-in module for the recovery manager.

@@ -31,12 +31,15 @@
 
 package com.arjuna.ats.arjuna.utils;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import java.io.*;
-
-import java.io.IOException;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.InterruptedException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Sometimes it is necessary to lock a file at the disk level. Since there is no

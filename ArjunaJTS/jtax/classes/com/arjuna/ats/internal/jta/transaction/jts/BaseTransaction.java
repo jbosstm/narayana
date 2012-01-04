@@ -31,18 +31,15 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-
 import javax.transaction.NotSupportedException;
-import java.lang.IllegalStateException;
-import java.lang.NullPointerException;
+
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jts.OTSManager;
 
 /**
  * Some common methods for UserTransaction and TransactionManager.

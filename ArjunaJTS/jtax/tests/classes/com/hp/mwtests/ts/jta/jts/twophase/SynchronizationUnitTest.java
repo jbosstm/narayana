@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jta.jts.twophase;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -38,8 +40,6 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.internal.jta.resources.jts.LocalCleanupSynchronization;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import static org.junit.Assert.*;
 
 public class SynchronizationUnitTest extends TestBase
 {

@@ -20,8 +20,9 @@
  */
 package quickstart;
 
-import org.jboss.jbossts.star.util.TxSupport;
 import java.net.HttpURLConnection;
+
+import org.jboss.jbossts.star.util.TxSupport;
 
 public class ParticipantRecovery {
     private static final int host = 0;

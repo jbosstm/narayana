@@ -20,11 +20,11 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import java.util.Hashtable;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
-
-import java.util.Hashtable;
 
 public class DummyCheckedAction extends CheckedAction implements CheckedActionFactory
 {

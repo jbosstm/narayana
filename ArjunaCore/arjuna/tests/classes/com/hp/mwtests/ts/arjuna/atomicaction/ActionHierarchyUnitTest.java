@@ -20,20 +20,18 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintWriter;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.TopLevelAction;
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionHierarchy;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.ActionType;
 import com.arjuna.ats.arjuna.state.InputBuffer;
 import com.arjuna.ats.arjuna.state.OutputBuffer;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ActionHierarchyUnitTest
 {

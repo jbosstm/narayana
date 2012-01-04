@@ -20,8 +20,27 @@
  */
 package org.jboss.narayana.jta.quickstarts.recovery;
 
-import com.arjuna.ats.jta.common.JTAEnvironmentBean;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.jms.XAConnection;
+import javax.jms.XASession;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.api.jms.HornetQJMSClient;
 import org.hornetq.api.jms.JMSFactoryType;
@@ -46,13 +65,8 @@ import org.jboss.narayana.jta.quickstarts.util.DummyXAResource;
 import org.jboss.narayana.jta.quickstarts.util.DummyXid;
 import org.jboss.narayana.jta.quickstarts.util.Util;
 
-import javax.jms.*;
-import javax.transaction.*;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-import java.util.ArrayList;
-import java.util.List;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 public class JmsRecovery extends RecoverySetup {
     private static EmbeddedJMS jmsServer;

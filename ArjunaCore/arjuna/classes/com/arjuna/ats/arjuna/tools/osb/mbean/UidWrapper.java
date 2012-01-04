@@ -1,10 +1,10 @@
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.common.Uid;
-
 import java.lang.reflect.Constructor;
 import java.util.List;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Base class MBean implementation wrapper for MBeans corresponding to a Uid

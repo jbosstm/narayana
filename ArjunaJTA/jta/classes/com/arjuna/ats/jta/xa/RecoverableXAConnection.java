@@ -31,11 +31,14 @@
 
 package com.arjuna.ats.jta.xa;
 
-import com.arjuna.ats.arjuna.state.*;
+import java.sql.SQLException;
 
-import java.sql.*;
-import javax.sql.*;
-import javax.transaction.xa.*;
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import javax.transaction.xa.XAResource;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * XA connection implementations must provide an implementation

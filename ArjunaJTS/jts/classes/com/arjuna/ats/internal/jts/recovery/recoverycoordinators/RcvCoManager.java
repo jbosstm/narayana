@@ -30,8 +30,8 @@
  */
 package com.arjuna.ats.internal.jts.recovery.recoverycoordinators;
 
-import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.RecoveryCoordinator;
 
 import com.arjuna.ats.arjuna.common.Uid;
 

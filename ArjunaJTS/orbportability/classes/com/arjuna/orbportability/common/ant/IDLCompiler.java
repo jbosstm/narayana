@@ -30,19 +30,26 @@
  */
 package com.arjuna.orbportability.common.ant;
 
-import org.apache.tools.ant.*;
-import org.apache.tools.ant.types.FileSet;
-
-import java.util.*;
-
-import java.io.InputStream;
-import java.io.FileOutputStream;
-
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
-import org.w3c.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import javax.xml.parsers.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Ant task to compile IDL across multiple ORB's.

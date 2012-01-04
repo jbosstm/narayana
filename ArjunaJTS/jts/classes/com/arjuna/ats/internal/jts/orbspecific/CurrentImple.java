@@ -31,41 +31,39 @@
 
 package com.arjuna.ats.internal.jts.orbspecific;
 
-import org.omg.CosTransactions.*;
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.LocalObject;
+import org.omg.CORBA.NO_MEMORY;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.UserException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.InvalidControl;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.SubtransactionsUnavailable;
+import org.omg.CosTransactions.Unavailable;
 
-import com.arjuna.ArjunaOTS.*;
-
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.*;
-import com.arjuna.ats.internal.jts.context.ContextManager;
-import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-
+import com.arjuna.ArjunaOTS.ActionControl;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-
-import org.omg.CORBA.*;
-
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NoTransaction;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.InvalidControl;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.NO_MEMORY;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
-import java.lang.OutOfMemoryError;
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.context.ContextManager;
+import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.extensions.ThreadAssociationControl;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * The implementation of CosTransactions::Current.

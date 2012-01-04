@@ -1,13 +1,13 @@
 package org.rhq.plugins.jbossts;
 
+import java.util.Collection;
+
 import org.mc4j.ems.connection.EmsConnection;
 import org.mc4j.ems.connection.bean.EmsBean;
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.measurement.AvailabilityType;
 import org.rhq.core.pluginapi.inventory.DeleteResourceFacet;
 import org.rhq.core.pluginapi.operation.OperationResult;
-
-import java.util.Collection;
 
 /**
  * RHQ representation of a single transaction

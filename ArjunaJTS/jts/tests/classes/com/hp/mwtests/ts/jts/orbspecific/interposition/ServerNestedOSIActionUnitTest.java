@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
 
@@ -39,8 +41,6 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.osi.ServerOSINestedAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ServerNestedOSIActionUnitTest extends TestBase
 {

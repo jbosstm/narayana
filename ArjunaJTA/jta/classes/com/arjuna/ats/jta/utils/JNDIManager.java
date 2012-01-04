@@ -30,14 +30,13 @@
  */
 package com.arjuna.ats.jta.utils;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
-import com.arjuna.ats.jta.logging.jtaLogger;
-
-import javax.naming.InitialContext;
-import javax.naming.Reference;
-import javax.naming.NamingException;
 import javax.naming.ConfigurationException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class JNDIManager
 {

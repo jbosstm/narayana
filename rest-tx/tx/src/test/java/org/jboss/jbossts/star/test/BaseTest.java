@@ -20,29 +20,46 @@
  */
 package org.jboss.jbossts.star.test;
 
-import com.sun.grizzly.http.SelectorThread;
-import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
-import org.jboss.logging.Logger;
-
-import org.jboss.jbossts.star.provider.*;
-import org.jboss.jbossts.star.service.Coordinator;
-import org.jboss.jbossts.star.util.LinkHolder;
-import org.jboss.jbossts.star.util.TxSupport;
-import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
-import org.jboss.resteasy.spi.Registry;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.*;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.provider.HttpResponseMapper;
+import org.jboss.jbossts.star.provider.NotFoundMapper;
+import org.jboss.jbossts.star.provider.TMUnavailableMapper;
+import org.jboss.jbossts.star.provider.TransactionStatusMapper;
+import org.jboss.jbossts.star.service.Coordinator;
+import org.jboss.jbossts.star.util.LinkHolder;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
+import org.jboss.resteasy.spi.Registry;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.sun.grizzly.http.SelectorThread;
+import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 public class BaseTest {
     protected final static Logger log = Logger.getLogger(BaseTest.class);

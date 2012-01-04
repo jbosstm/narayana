@@ -31,13 +31,10 @@ package com.hp.mwtests.ts.txoj.threadaction;
  * $Id: ThreadActionTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.coordinator.*;
-
-import com.hp.mwtests.ts.txoj.common.resources.BasicThreadedObject;
-
-import java.lang.InterruptedException;
-
 import org.junit.Test;
+
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.hp.mwtests.ts.txoj.common.resources.BasicThreadedObject;
 
 public class ThreadActionTest
 {

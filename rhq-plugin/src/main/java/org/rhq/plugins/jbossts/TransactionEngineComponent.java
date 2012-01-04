@@ -22,6 +22,9 @@
 */
 package org.rhq.plugins.jbossts;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.mc4j.ems.connection.bean.EmsBean;
 import org.mc4j.ems.connection.bean.operation.EmsOperation;
 import org.rhq.core.domain.configuration.Configuration;
@@ -30,9 +33,6 @@ import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 import org.rhq.core.pluginapi.operation.OperationResult;
 import org.rhq.plugins.jmx.MBeanResourceComponent;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * The management view of a Transaction Manager instance. By extending from MBeanResourceComponent

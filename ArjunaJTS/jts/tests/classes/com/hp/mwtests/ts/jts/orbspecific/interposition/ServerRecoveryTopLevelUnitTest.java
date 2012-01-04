@@ -32,17 +32,13 @@
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
 import org.junit.Test;
-import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerNestedAction;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerRecoveryTopLevelAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 class DummyServerRecovery extends ServerRecoveryTopLevelAction
 {

@@ -31,31 +31,10 @@
 
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
-import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
-
-import com.arjuna.ats.jta.logging.*;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
-import com.arjuna.ats.arjuna.common.*;
-
-import java.util.Hashtable;
-import java.util.Comparator;
-
-import javax.transaction.*;
-
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.SystemException;
-import java.lang.SecurityException;
-import java.lang.IllegalStateException;
-import java.lang.NullPointerException;
+import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 /**
  * Whenever a synchronization is registered, an instance of this class

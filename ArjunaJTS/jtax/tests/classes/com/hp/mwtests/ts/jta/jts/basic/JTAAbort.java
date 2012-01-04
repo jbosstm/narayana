@@ -31,14 +31,14 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.utils.*;
-
-import com.arjuna.orbportability.*;
-
 import org.junit.Test;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.utils.JTAHelper;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class JTAAbort
 {

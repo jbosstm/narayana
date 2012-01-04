@@ -41,7 +41,6 @@ import org.omg.PortableInterceptor.ClientRequestInfo;
 import org.omg.PortableInterceptor.ClientRequestInterceptor;
 import org.omg.PortableInterceptor.ForwardRequest;
 
-
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 

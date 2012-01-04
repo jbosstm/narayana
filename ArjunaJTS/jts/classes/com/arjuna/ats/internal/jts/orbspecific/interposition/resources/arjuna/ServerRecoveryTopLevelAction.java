@@ -31,27 +31,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.jts.*;
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.CompletionStatus;
-
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.UNKNOWN;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ServerRecoveryTopLevelAction extends ServerTopLevelAction
 {

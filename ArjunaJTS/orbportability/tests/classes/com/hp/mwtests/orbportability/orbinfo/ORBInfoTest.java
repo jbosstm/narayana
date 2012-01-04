@@ -20,12 +20,11 @@
  */
 package com.hp.mwtests.orbportability.orbinfo;
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORBInfo;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.ORBInfo;
 
 public class ORBInfoTest
 {

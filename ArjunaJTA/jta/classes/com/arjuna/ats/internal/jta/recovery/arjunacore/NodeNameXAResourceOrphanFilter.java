@@ -21,15 +21,14 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 
+import java.util.List;
+
+import javax.transaction.xa.Xid;
+
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
-
-
-
-import javax.transaction.xa.Xid;
-import java.util.List;
 
 /**
  * An XAResourceOrphanFilter which uses node name information encoded in the xid to determine if

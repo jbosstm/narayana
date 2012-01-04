@@ -31,11 +31,12 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
  * $Id: ActionScope.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 public class ActionScope
 {

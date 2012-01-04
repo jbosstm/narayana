@@ -31,15 +31,17 @@
 
 package com.hp.mwtests.ts.jts.remote.hammer;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
-import com.hp.mwtests.ts.jts.resources.TestUtility;
-
-import com.arjuna.orbportability.*;
+import org.omg.CORBA.IntHolder;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CORBA.IntHolder;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DHThreadObject3b;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DistributedHammerWorker3;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 public class DistributedHammer3
 {

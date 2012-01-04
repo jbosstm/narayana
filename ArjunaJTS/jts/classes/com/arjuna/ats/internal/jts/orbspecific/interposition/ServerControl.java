@@ -31,23 +31,24 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition;
 
-import com.arjuna.ats.jts.logging.*;
+import java.util.Hashtable;
 
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.Terminator;
+
+import com.arjuna.ArjunaOTS.ActiveThreads;
+import com.arjuna.ArjunaOTS.ActiveTransaction;
+import com.arjuna.ArjunaOTS.BadControl;
+import com.arjuna.ArjunaOTS.Destroyed;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-
-import com.arjuna.ArjunaOTS.*;
-
-import com.arjuna.ats.arjuna.common.Uid;
-
-import org.omg.CosTransactions.*;
-import java.util.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * As with ControlImple, the transaction is maintained until the control object

@@ -20,10 +20,10 @@
  */
 package org.jboss.narayana.jta.quickstarts.util;
 
+import java.io.File;
+
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.io.File;
 
 public class Util {
     public static final String dataDir = "target/data";

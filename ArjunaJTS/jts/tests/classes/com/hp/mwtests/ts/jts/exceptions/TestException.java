@@ -31,7 +31,6 @@
 
 package com.hp.mwtests.ts.jts.exceptions;
 
-import java.lang.Exception;
 
 public class TestException extends Exception
 {

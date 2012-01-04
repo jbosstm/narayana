@@ -20,13 +20,13 @@
  */
 package com.hp.mwtests.ts.arjuna.recovery;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-
-import static org.junit.Assert.*;
 
 /*
  * This class does get tested mostly through other tests that we run. This test

@@ -31,26 +31,26 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.FileLock;
-import com.arjuna.ats.arjuna.utils.Utility;
-
-import java.util.Hashtable;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import java.lang.NumberFormatException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Hashtable;
+
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.utils.FileLock;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
  * The basic class for file system object stores. This is not actually

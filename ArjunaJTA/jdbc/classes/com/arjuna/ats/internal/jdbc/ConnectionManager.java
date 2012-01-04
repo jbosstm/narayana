@@ -31,16 +31,16 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.jdbc.TransactionalDriver;
-import com.arjuna.ats.jdbc.logging.jdbcLogger;
-
-import java.util.*;
-
-import java.sql.SQLException;
 import java.sql.Connection;
-import java.lang.reflect.Constructor;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+
+import com.arjuna.ats.jdbc.TransactionalDriver;
 
 /*
  * Only ever create a single instance of a given connection, based upon the

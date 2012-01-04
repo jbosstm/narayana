@@ -31,19 +31,15 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import org.omg.CORBA.*;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-import org.omg.CosTransactions.*;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
 
-import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.*;
-
-import org.omg.PortableServer.Current;
-import org.omg.PortableServer.CurrentHelper;
-
+import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.GenericRecoveryCoordinator;
+import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.RecoveryCoordinatorId;
 import com.arjuna.ats.jts.logging.jtsLogger;
-
-import java.lang.Object;
 
 
 public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator

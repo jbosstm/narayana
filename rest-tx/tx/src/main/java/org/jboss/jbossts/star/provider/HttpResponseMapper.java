@@ -20,9 +20,9 @@
  */
 package org.jboss.jbossts.star.provider;
 
-import javax.ws.rs.ext.Provider;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
  * Maps an HttpResponseException to the HTTP code embedded in the exception

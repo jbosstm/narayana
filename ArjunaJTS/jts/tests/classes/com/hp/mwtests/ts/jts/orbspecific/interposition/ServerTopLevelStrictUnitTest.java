@@ -31,18 +31,16 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CosTransactions.Control;
-import org.omg.CosTransactions.Vote;
 
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.strict.ServerStrictTopLevelAction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ServerTopLevelStrictUnitTest extends TestBase
 {

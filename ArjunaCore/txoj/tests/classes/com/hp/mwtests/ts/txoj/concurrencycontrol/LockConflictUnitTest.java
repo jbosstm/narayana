@@ -36,8 +36,6 @@ import org.junit.Test;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.HammerThreadedObject;
 
-import static org.junit.Assert.*;
-
 public class LockConflictUnitTest
 {
     @Test

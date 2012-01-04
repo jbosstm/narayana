@@ -31,16 +31,18 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
-import com.arjuna.orbportability.*;
+import static org.junit.Assert.fail;
 
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import java.util.*;
+import java.util.Date;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class Performance1
 {

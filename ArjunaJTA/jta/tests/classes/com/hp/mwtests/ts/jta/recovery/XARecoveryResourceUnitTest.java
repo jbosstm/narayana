@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import javax.transaction.xa.XAException;
 
 import org.junit.Test;
@@ -40,8 +44,6 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceImple;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple;
 import com.arjuna.ats.jta.recovery.XARecoveryResource;
 import com.hp.mwtests.ts.jta.common.DummyXA;
-
-import static org.junit.Assert.*;
 
 class DummyImple extends XARecoveryResourceImple
 {

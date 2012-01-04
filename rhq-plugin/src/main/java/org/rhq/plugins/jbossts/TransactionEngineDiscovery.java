@@ -1,13 +1,13 @@
 package org.rhq.plugins.jbossts;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 import org.rhq.plugins.jmx.MBeanResourceComponent;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A discovery class for transaction managers - there should generally be only one

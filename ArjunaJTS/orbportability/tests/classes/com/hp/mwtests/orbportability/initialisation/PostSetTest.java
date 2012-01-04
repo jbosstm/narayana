@@ -31,16 +31,18 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import com.arjuna.orbportability.internal.utils.PostSetLoader;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.hp.mwtests.orbportability.initialisation.postset.AllPostSet;
-import com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.internal.utils.PostSetLoader;
+import com.hp.mwtests.orbportability.initialisation.postset.AllPostSet;
+import com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface;
 
 public class PostSetTest
 {

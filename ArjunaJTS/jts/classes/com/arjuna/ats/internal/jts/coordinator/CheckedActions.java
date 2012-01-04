@@ -31,12 +31,12 @@
 
 package com.arjuna.ats.internal.jts.coordinator;
 
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
-import com.arjuna.ats.arjuna.utils.ThreadUtil;
-
 import java.util.Hashtable;
 
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
 public class CheckedActions
 {

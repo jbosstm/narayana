@@ -21,14 +21,18 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.transaction.Status;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
 import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
 import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
@@ -37,10 +41,6 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
-
-import org.omg.CosTransactions.*;
-
-import static org.junit.Assert.*;
 
 public class UtilsUnitTest
 {

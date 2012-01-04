@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.otid_t;
@@ -39,8 +41,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.interposition.resources.osi.OTIDMap;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class OTIDMapUnitTest extends TestBase
 {

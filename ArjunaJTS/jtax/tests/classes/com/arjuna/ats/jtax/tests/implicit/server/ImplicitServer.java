@@ -31,12 +31,12 @@ package com.arjuna.ats.jtax.tests.implicit.server;
  * $Id: ImplicitServer.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jtax.tests.implicit.impl.*;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
 import org.junit.Test;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jtax.tests.implicit.impl.RemoteImpl;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
 
 public class ImplicitServer
 {

@@ -32,34 +32,26 @@
 
 package com.arjuna.ats.internal.jts.recovery.contact;
 
-import com.arjuna.ats.jts.logging.jtsLogger;
-
 import java.util.Hashtable;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import com.arjuna.orbportability.orb.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-
-import com.arjuna.ats.jts.utils.Utility;
-
-import com.arjuna.ats.jts.OTSManager;
-
-
-
-import org.omg.CosTransactions.*;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.COMM_FAILURE;
 import org.omg.CORBA.NO_IMPLEMENT;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
-import org.omg.CORBA.COMM_FAILURE;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.TRANSIENT;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSIENT;
 import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.otid_t;
+
+import com.arjuna.ArjunaOTS.ArjunaFactory;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
+import com.arjuna.orbportability.ORBInfo;
+import com.arjuna.orbportability.ORBType;
 
 /**
  * Checks the status of a transaction as known to the original process that

@@ -21,19 +21,19 @@
 
 package com.hp.mwtests.ts.arjuna.tools;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
 import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
-
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 class DummyMap2 implements RecordTypeMap
 {

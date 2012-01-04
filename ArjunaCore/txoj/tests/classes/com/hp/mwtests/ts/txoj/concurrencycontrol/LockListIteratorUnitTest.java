@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.txoj.concurrencycontrol;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.internal.txoj.LockList;
 import com.arjuna.ats.internal.txoj.LockListIterator;
-
-import static org.junit.Assert.*;
 
 public class LockListIteratorUnitTest
 {

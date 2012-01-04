@@ -31,12 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.destroy;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-
-import com.hp.mwtests.ts.arjuna.resources.*;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.hp.mwtests.ts.arjuna.resources.BasicObject;
 
 public class DestroyTest
 {

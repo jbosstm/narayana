@@ -31,8 +31,8 @@
 
 package com.hp.mwtests.ts.arjuna.resources;
 
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
 
 public class SyncRecord implements SynchronizationRecord
 {

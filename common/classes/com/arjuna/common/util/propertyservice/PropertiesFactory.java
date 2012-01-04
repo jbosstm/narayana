@@ -20,12 +20,16 @@
  */
 package com.arjuna.common.util.propertyservice;
 
-import com.arjuna.common.util.ConfigurationInfo;
-
-import java.util.Properties;
-import java.util.Enumeration;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
+
+import com.arjuna.common.util.ConfigurationInfo;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003

@@ -31,23 +31,19 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.arjuna.common.*;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.SubtransactionsUnavailable;
+import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.NoTransaction;
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.InvalidControl;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Creates a nested top-level transaction.

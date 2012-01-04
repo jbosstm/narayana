@@ -31,18 +31,18 @@
 
 package com.arjuna.ats.internal.txoj.abstractrecords;
 
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.txoj.LockManager;
-import com.arjuna.ats.txoj.logging.txojLogger;
-
-import com.arjuna.ats.txoj.lockstore.*;
 import java.io.PrintWriter;
 
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.txoj.LockManager;
+import com.arjuna.ats.txoj.lockstore.LockStore;
+import com.arjuna.ats.txoj.logging.txojLogger;
 
 /*
  *

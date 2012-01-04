@@ -31,8 +31,6 @@
 package com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations;
 
 import com.arjuna.orbportability.internal.orbspecific.orb.implementations.ORBBase;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.Services;
 
 public class javaidl_1_4 extends ORBBase
 {

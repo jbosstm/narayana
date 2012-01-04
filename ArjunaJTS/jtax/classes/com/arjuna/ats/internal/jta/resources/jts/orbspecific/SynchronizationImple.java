@@ -31,45 +31,11 @@
 
 package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.xa.*;
-import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.logging.*;
-
-import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
-import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.ArjunaOTS.JTAInterposedSynchronizationHelper;
-
-import org.omg.CosTransactions.*;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-import java.io.*;
-
-import org.omg.CosTransactions.NotPrepared;
-import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CosTransactions.HeuristicRollback;
-import java.io.IOException;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
-import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
+import com.arjuna.ats.internal.jts.ORBManager;
 
 /**
  * Whenever a synchronization is registered, an instance of this class

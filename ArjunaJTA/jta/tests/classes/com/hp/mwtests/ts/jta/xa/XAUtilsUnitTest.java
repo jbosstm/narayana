@@ -31,7 +31,10 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Stack;
 
 import javax.transaction.xa.XAException;
@@ -46,8 +49,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.resources.XAResourceMap;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
-
-import static org.junit.Assert.*;
 
 public class XAUtilsUnitTest
 {

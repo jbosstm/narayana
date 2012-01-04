@@ -31,13 +31,12 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted;
 
-import com.arjuna.ats.jts.exceptions.TxError;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-
 import java.util.List;
+
+import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ServerNestedAction;
+import com.arjuna.ats.jts.exceptions.TxError;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ServerRestrictedNestedAction extends ServerNestedAction
 {

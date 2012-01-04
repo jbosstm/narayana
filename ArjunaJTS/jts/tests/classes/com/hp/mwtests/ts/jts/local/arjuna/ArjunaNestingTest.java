@@ -31,19 +31,18 @@
 
 package com.hp.mwtests.ts.jts.local.arjuna;
 
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
+import static org.junit.Assert.fail;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-
+import org.junit.Test;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jts.orbspecific.resources.DemoArjunaResource;
 
 public class ArjunaNestingTest
 {

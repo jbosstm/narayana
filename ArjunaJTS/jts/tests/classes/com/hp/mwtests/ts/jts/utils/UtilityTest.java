@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.jts.utils;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.jts.utils.Utility;
-
-import org.omg.CosTransactions.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CosTransactions.otid_t;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jts.utils.Utility;
 
 public class UtilityTest
 {

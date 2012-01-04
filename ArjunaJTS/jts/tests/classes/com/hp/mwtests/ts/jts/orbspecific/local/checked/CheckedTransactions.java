@@ -31,20 +31,20 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.checked;
 
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
-import com.arjuna.ats.arjuna.common.Uid;
+import static org.junit.Assert.fail;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
-import java.util.*;
+import java.util.Hashtable;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CosTransactions.Control;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 class MyCheckedAction extends CheckedAction
 {

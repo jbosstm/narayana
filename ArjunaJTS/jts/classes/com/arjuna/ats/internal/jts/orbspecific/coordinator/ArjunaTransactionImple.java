@@ -31,44 +31,74 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.coordinator;
 
-import com.arjuna.ats.jts.extensions.Arjuna;
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.utils.Utility;
-import com.arjuna.ats.jts.OTSManager;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.logging.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.Stack;
+import java.util.TreeSet;
 
-import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.utils.Helper;
-import com.arjuna.ats.internal.jts.ORBManager;
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.NO_IMPLEMENT;
+import org.omg.CORBA.NO_PERMISSION;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.Inactive;
+import org.omg.CosTransactions.NotSubtransaction;
+import org.omg.CosTransactions.PropagationContext;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.Status;
+import org.omg.CosTransactions.SubtransactionAwareResource;
+import org.omg.CosTransactions.SubtransactionsUnavailable;
+import org.omg.CosTransactions.Synchronization;
+import org.omg.CosTransactions.SynchronizationUnavailable;
+import org.omg.CosTransactions.TransIdentity;
+import org.omg.CosTransactions.Unavailable;
+
+import com.arjuna.ArjunaOTS.ActionControl;
+import com.arjuna.ArjunaOTS.ActiveThreads;
+import com.arjuna.ArjunaOTS.ActiveTransaction;
+import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResource;
+import com.arjuna.ArjunaOTS.BadControl;
+import com.arjuna.ArjunaOTS.Destroyed;
+import com.arjuna.ArjunaOTS.JTAInterposedSynchronizationHelper;
+import com.arjuna.ArjunaOTS.ManagedSynchronization;
+import com.arjuna.ArjunaOTS.ManagedSynchronizationHelper;
+import com.arjuna.ArjunaOTS.OTSAbstractRecord;
+import com.arjuna.ArjunaOTS.UidCoordinator;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.resources.SynchronizationRecord;
-import com.arjuna.ats.internal.jts.resources.ResourceRecord;
+import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
 import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
-import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
-
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import org.omg.CORBA.CompletionStatus;
-
-import java.util.*;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.NO_PERMISSION;
-import org.omg.CORBA.NO_IMPLEMENT;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import com.arjuna.ats.internal.jts.resources.ResourceRecord;
+import com.arjuna.ats.internal.jts.resources.SynchronizationRecord;
+import com.arjuna.ats.internal.jts.utils.Helper;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.extensions.Arjuna;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.ats.jts.utils.Utility;
 
 /**
  * OTS implementation class.

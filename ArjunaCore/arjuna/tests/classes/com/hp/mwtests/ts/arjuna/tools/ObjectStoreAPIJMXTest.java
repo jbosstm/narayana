@@ -20,23 +20,26 @@
  */
 package com.hp.mwtests.ts.arjuna.tools;
 
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.management.Notification;
+import javax.management.NotificationListener;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.api.mbeans.ParticipantStoreBean;
+import com.arjuna.ats.arjuna.tools.osb.api.mbeans.RecoveryStoreBean;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.ParticipantStoreProxy;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.RecoveryStoreProxy;
 import com.arjuna.ats.arjuna.tools.osb.api.proxy.StoreManagerProxy;
-import javax.management.*;
-
-import com.arjuna.ats.arjuna.tools.osb.api.mbeans.*;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ObjectStoreAPIJMXTest {
 	private RecoveryStoreBean rsb;

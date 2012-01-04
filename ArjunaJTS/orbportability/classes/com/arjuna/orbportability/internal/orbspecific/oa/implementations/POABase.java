@@ -31,16 +31,16 @@
 
 package com.arjuna.orbportability.internal.orbspecific.oa.implementations;
 
-import com.arjuna.orbportability.oa.core.POAImple;
+import java.util.Hashtable;
 
-import org.omg.PortableServer.*;
-import java.util.*;
-
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.PortableServer.POAHelper;
 import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
+
+import com.arjuna.orbportability.oa.core.POAImple;
 
 public abstract class POABase implements POAImple
 {

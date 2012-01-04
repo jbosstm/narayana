@@ -31,55 +31,50 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
-import com.arjuna.ats.internal.jta.utils.*;
-import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
-import com.arjuna.ats.internal.jta.resources.jts.CleanupSynchronization;
-import com.arjuna.ats.internal.jta.resources.jts.LocalCleanupSynchronization;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.LastResourceRecord;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.SynchronizationImple;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
-import com.arjuna.ats.internal.jta.resources.jts.orbspecific.ManagedSynchronizationImple;
-
-import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
-import com.arjuna.ats.jta.utils.XAHelper;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import com.arjuna.ats.jta.xa.*;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
-import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
-import com.arjuna.ats.jta.logging.*;
-
-import com.arjuna.ats.internal.jta.xa.TxInfo;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ControlWrapper;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-
-import javax.transaction.xa.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import java.util.*;
-
-import javax.transaction.RollbackException;
 import javax.transaction.HeuristicMixedException;
+import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
-import java.lang.SecurityException;
-import java.lang.IllegalStateException;
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NoTransaction;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.NoTransaction;
+import org.omg.CosTransactions.RecoveryCoordinator;
+import org.omg.CosTransactions.SubtransactionsUnavailable;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
+import com.arjuna.ats.internal.jta.resources.jts.CleanupSynchronization;
+import com.arjuna.ats.internal.jta.resources.jts.LocalCleanupSynchronization;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.LastResourceRecord;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.ManagedSynchronizationImple;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.SynchronizationImple;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
+import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.XAModifier;
 
 /**
  * An implementation of javax.transaction.Transaction.

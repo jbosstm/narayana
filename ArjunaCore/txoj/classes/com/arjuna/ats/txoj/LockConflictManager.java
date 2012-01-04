@@ -34,8 +34,6 @@ package com.arjuna.ats.txoj;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.lang.InterruptedException;
-
 /**
  * An instance of this class is used to determine what to do in the event of a
  * lock conflict for a given object. If the timeout and retry values are >=0

@@ -31,7 +31,6 @@
 
 package com.arjuna.orbportability.event;
 
-import org.omg.CORBA.Object;
 
 /*
  * @author Mark Little (mark@arjuna.com)

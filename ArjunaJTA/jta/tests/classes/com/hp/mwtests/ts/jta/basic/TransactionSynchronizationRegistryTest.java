@@ -20,13 +20,18 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.transaction.TransactionSynchronizationRegistry;
 
-import com.hp.mwtests.ts.jta.common.Synchronization;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
+import com.hp.mwtests.ts.jta.common.Synchronization;
 
 /**
  * Exercise the TransactionSynchronizationRegistry implementation.

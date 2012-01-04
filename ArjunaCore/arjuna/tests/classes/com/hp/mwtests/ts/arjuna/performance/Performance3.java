@@ -31,12 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import com.arjuna.ats.arjuna.coordinator.*;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
+import com.hp.mwtests.ts.arjuna.resources.SyncRecord;
 
 public class Performance3
 {

@@ -31,10 +31,9 @@
 
 package com.arjuna.ats.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * All transaction logs MUST implement this interface.

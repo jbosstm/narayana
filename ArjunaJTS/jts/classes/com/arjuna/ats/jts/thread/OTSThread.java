@@ -31,18 +31,12 @@
 
 package com.arjuna.ats.jts.thread;
 
-import com.arjuna.ats.jts.logging.*;
+import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-
-import org.omg.CosTransactions.*;
-
-import java.lang.Thread;
-
-import java.lang.IllegalArgumentException;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * Create an OTS transactional thread. When the thread is created it is

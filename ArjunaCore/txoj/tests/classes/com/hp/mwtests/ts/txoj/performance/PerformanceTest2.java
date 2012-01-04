@@ -31,16 +31,14 @@ package com.hp.mwtests.ts.txoj.performance;
  * $Id: PerformanceTest2.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
+import static org.junit.Assert.fail;
 
+import org.junit.Test;
+
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
-
-import java.lang.NumberFormatException;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class PerformanceTest2
 {

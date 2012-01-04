@@ -31,18 +31,21 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context;
 
+import org.omg.CORBA.LocalObject;
+import org.omg.IOP.Codec;
+import org.omg.IOP.ENCODING_CDR_ENCAPS;
+import org.omg.IOP.Encoding;
+import org.omg.IOP.CodecFactoryPackage.UnknownEncoding;
+import org.omg.PortableInterceptor.ClientRequestInterceptor;
+import org.omg.PortableInterceptor.ORBInitInfo;
+import org.omg.PortableInterceptor.ORBInitializer;
+import org.omg.PortableInterceptor.ServerRequestInterceptor;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
+
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-
-import com.arjuna.ats.jts.*;
-import com.arjuna.ats.jts.logging.*;
-
-import org.omg.CORBA.*;
-import org.omg.PortableInterceptor.*;
-import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
-import org.omg.IOP.*;
-import org.omg.IOP.CodecFactoryPackage.*;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ContextORBInitializerImpl extends LocalObject implements ORBInitializer
 {

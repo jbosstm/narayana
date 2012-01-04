@@ -31,24 +31,38 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
-
-import com.arjuna.ats.jdbc.TransactionalDriver;
-import com.arjuna.ats.jdbc.logging.*;
-import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
-
-import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-import javax.sql.*;
-import java.util.*;
-import java.sql.*;
-import javax.transaction.RollbackException;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
+
+import javax.sql.XAConnection;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAResource;
+
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
+import com.arjuna.ats.jdbc.TransactionalDriver;
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.ats.jta.xa.XAModifier;
 
 /**
  * A transactional JDBC connection. This wraps the real connection and

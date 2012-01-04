@@ -31,23 +31,22 @@
 
 package com.arjuna.ats.jts;
 
-import com.arjuna.ats.jts.exceptions.ExceptionCodes;
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.ControlWrapper;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-
-import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
-
-import com.arjuna.ArjunaOTS.InterpositionFailed;
-
-import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.Control;
+import org.omg.CosTransactions.Coordinator;
+import org.omg.CosTransactions.PropagationContext;
+
+import com.arjuna.ArjunaOTS.InterpositionFailed;
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This class is responsible for doing interposition in the case where implicit

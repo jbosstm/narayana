@@ -31,6 +31,9 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.interposition;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.omg.CosTransactions.Status;
 
@@ -42,8 +45,6 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 import com.hp.mwtests.ts.jts.orbspecific.resources.demosync;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class ServerTransactionUnitTest extends TestBase
 {

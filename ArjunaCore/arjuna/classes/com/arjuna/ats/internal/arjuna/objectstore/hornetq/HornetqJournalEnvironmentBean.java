@@ -20,9 +20,9 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.hornetq;
 
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-
 import java.io.File;
+
+import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
  * A JavaBean containing assorted configuration properties for the HornetQ Journal based transaction logging system.

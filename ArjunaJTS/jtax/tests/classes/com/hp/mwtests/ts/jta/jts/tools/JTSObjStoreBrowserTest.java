@@ -1,5 +1,16 @@
 package com.hp.mwtests.ts.jta.jts.tools;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.omg.CosTransactions.HeuristicHazard;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -10,23 +21,18 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.tools.osb.mbean.*;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-import org.omg.CosTransactions.HeuristicHazard;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.*;
 
 /**
  * Test the the ObjStoreBrowser MBean in a JTS environment.

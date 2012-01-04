@@ -31,9 +31,9 @@
 
 package com.arjuna.ats.jts.extensions;
 
-import com.arjuna.ats.internal.jts.ControlWrapper;
-
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.ats.internal.jts.ControlWrapper;
 
 /**
  * Whereas TxAssociation classes are on a per

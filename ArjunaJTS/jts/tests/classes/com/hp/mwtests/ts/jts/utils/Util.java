@@ -31,7 +31,6 @@
 
 package com.hp.mwtests.ts.jts.utils;
 
-import java.lang.Thread;
 import java.util.Random;
 
 public class Util

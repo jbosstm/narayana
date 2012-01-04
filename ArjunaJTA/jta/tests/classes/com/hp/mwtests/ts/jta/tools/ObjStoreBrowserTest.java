@@ -1,25 +1,32 @@
 package com.hp.mwtests.ts.jta.tools;
 
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.*;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean;
-import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean;
-import com.hp.mwtests.ts.jta.common.DummyXA;
-import com.hp.mwtests.ts.jta.common.FailureXAResource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import java.util.Collection;
 
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean;
+import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.hp.mwtests.ts.jta.common.DummyXA;
+import com.hp.mwtests.ts.jta.common.FailureXAResource;
 
 class ExtendedFailureXAResource extends FailureXAResource {
 	boolean forgotten;

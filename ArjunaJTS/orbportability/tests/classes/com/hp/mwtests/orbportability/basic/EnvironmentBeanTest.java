@@ -20,8 +20,9 @@
  */
 package com.hp.mwtests.orbportability.basic;
 
-import com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean;
 import org.junit.Test;
+
+import com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean;
 
 /**
  * Unit tests for EnvironmentBean classes.

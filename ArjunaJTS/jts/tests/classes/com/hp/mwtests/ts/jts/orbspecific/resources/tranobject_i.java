@@ -31,11 +31,17 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-
-import org.omg.CosTransactions.*;
-
 import org.omg.CORBA.SystemException;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.Resource;
+import org.omg.CosTransactions.ResourceHelper;
+import org.omg.CosTransactions.Vote;
+
+import com.arjuna.ats.internal.jts.ORBManager;
 
 public class tranobject_i extends org.omg.CosTransactions.ResourcePOA
 {

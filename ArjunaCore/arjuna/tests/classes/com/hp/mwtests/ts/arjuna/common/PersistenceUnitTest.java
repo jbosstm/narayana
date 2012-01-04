@@ -20,11 +20,12 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.hp.mwtests.ts.arjuna.resources.BasicObject;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.hp.mwtests.ts.arjuna.resources.BasicObject;
 
 public class PersistenceUnitTest
 {

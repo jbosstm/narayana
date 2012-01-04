@@ -31,9 +31,10 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.state.*;
-
 import java.io.IOException;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /*
  * @author Mark Little (mark@arjuna.com)

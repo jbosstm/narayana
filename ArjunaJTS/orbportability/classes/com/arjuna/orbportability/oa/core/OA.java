@@ -34,17 +34,15 @@ package com.arjuna.orbportability.oa.core;
 
 
 
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.logging.*;
-
 import org.omg.CORBA.Policy;
-
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CORBA.SystemException;
-
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
 import org.omg.PortableServer.POAPackage.InvalidPolicy;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
+
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.logging.opLogger;
 
 /**
  * An instance of this class provides access to the ORB specific Object Adapter

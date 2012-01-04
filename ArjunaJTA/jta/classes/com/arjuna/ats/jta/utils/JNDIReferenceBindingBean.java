@@ -20,9 +20,9 @@
  */
 package com.arjuna.ats.jta.utils;
 
-import javax.naming.Reference;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.Reference;
 
 /**
  * JavaBean for binding a Reference into JNDI.

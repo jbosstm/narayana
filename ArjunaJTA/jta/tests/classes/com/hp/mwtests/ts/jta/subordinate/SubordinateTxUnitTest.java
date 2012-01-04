@@ -31,6 +31,11 @@
 
 package com.hp.mwtests.ts.jta.subordinate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -39,8 +44,6 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.SubordinateAtomicAction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
-
-import static org.junit.Assert.*;
 
 class DummyTransactionImple extends TransactionImple
 {

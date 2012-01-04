@@ -31,13 +31,13 @@
 
 package com.arjuna.orbportability;
 
+import org.omg.CORBA.BAD_PARAM;
+import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.Servant;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
 
 import com.arjuna.orbportability.event.EventManager;
-import com.arjuna.orbportability.logging.*;
+import com.arjuna.orbportability.logging.opLogger;
 
 
 /**

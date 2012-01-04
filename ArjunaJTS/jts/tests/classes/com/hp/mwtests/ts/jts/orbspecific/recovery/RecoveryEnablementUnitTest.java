@@ -31,14 +31,15 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.recovery;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class RecoveryEnablementUnitTest extends TestBase
 {

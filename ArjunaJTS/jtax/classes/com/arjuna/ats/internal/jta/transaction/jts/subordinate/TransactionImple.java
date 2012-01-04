@@ -31,23 +31,19 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
-
-import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
-import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
-import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
-import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
-
-import java.lang.IllegalStateException;
-
 import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
-import javax.transaction.SystemException;
 import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
+import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 
 public class TransactionImple extends
                 com.arjuna.ats.internal.jta.transaction.jts.TransactionImple

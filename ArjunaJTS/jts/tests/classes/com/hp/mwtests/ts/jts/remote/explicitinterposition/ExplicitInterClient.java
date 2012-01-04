@@ -31,16 +31,18 @@
 
 package com.hp.mwtests.ts.jts.remote.explicitinterposition;
 
-import com.arjuna.orbportability.*;
+import org.omg.CosTransactions.Control;
 
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.Services;
 import com.hp.mwtests.ts.jts.TestModule.SetGet;
 import com.hp.mwtests.ts.jts.TestModule.SetGetHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;
-
-import org.omg.CosTransactions.*;
 
 public class ExplicitInterClient
 {

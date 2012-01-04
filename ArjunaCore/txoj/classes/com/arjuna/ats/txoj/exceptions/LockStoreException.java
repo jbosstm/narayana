@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.txoj.exceptions;
 
-import java.lang.Exception;
 
 /**
  * Exception that can be thrown when attempting to access

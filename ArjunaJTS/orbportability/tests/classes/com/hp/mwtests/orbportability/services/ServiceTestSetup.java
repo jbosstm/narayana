@@ -30,13 +30,12 @@
  */
 package com.hp.mwtests.orbportability.services;
 
-import com.arjuna.orbportability.Services;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleObjectImpl;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.Services;
+import com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleObjectImpl;
 
 public class ServiceTestSetup
 {

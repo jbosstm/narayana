@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.arjuna.exceptions;
 
-import java.lang.Exception;
 import java.io.Serializable;
 
 /**

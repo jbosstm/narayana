@@ -30,21 +30,22 @@
  */
 package com.hp.mwtests.orbportability.initialisation;
 
-import com.arjuna.orbportability.internal.utils.PreInitLoader;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.RootOA;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
-import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import org.omg.PortableServer.ImplicitActivationPolicyValue;
-import org.omg.CORBA.Policy;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.omg.CORBA.Policy;
+import org.omg.PortableServer.ImplicitActivationPolicyValue;
+
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.common.opPropertyManager;
+import com.arjuna.orbportability.internal.utils.PreInitLoader;
+import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
+import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
 
 public class PropertyInitTest2
 {

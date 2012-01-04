@@ -31,17 +31,14 @@
 
 package com.hp.mwtests.ts.jts.local.timeout;
 
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 public class DefaultTimeout
 {

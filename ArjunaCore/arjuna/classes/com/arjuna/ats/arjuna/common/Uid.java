@@ -31,25 +31,19 @@
 
 package com.arjuna.ats.arjuna.common;
 
-import com.arjuna.ats.arjuna.utils.Utility;
-
-import java.lang.Cloneable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.Serializable;
-import java.io.PrintStream;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Serializable;
 import java.net.UnknownHostException;
-import java.lang.StringIndexOutOfBoundsException;
-import java.lang.NumberFormatException;
-import java.lang.CloneNotSupportedException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.utils.Utility;
 
 /**
  * Implements a unique identity class. Since 4.9 each instance is immutable.

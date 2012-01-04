@@ -20,6 +20,11 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.hornetq;
 
+import java.io.IOException;
+import java.io.SyncFailedException;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -29,11 +34,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.io.IOException;
-import java.io.SyncFailedException;
-import java.util.HashSet;
-import java.util.Set;
 
 /* transaction-jboss-beans.xml:
 

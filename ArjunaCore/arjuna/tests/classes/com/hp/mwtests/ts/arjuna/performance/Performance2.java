@@ -31,15 +31,13 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.*;
+import java.util.Calendar;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.*;
+import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
 class Worker extends Thread
 {

@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.jta;
 
-import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
 import javax.naming.InitialContext;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 public class UserTransaction
 {

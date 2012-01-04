@@ -33,7 +33,12 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import java.io.Serializable;
 import java.util.Hashtable;
-import javax.naming.*;
+
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.Referenceable;
 
 public class UserTransactionImple extends BaseTransaction
 		implements javax.transaction.UserTransaction, javax.naming.spi.ObjectFactory, Serializable, Referenceable {

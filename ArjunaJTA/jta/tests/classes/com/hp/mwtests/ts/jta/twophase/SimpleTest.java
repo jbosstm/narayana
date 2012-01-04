@@ -31,13 +31,12 @@
 
 package com.hp.mwtests.ts.jta.twophase;
 
-import com.hp.mwtests.ts.jta.common.TestResource;
-
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.hp.mwtests.ts.jta.common.TestResource;
 
 public class SimpleTest
 {

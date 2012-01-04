@@ -20,14 +20,14 @@
  */
 package com.arjuna.ats.internal.arjuna.common;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * Utility functions, used mainly by the EnvironmentBeans, for managing dynamic classloading.

@@ -20,12 +20,11 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import org.junit.Test;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class AsyncUnitTest
 {

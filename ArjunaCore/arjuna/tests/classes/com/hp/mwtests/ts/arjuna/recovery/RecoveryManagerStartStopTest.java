@@ -21,27 +21,25 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
 
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
-import org.jboss.byteman.rule.helper.Helper;
-import org.jboss.byteman.rule.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
 /**
  * test to ensure that the recovery manager cleans up all its threads when terminated

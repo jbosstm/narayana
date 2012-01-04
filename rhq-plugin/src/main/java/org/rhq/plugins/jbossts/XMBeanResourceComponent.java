@@ -1,12 +1,12 @@
 package org.rhq.plugins.jbossts;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.rhq.core.domain.configuration.Property;
 import org.rhq.core.domain.configuration.definition.PropertyDefinition;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 import org.rhq.plugins.jmx.MBeanResourceComponent;
-
-import java.util.Iterator;
-import java.util.Map;
 
 public class XMBeanResourceComponent extends MBeanResourceComponent<MBeanResourceComponent> {
     @Override

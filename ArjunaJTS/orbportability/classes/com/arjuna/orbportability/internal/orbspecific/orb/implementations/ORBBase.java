@@ -31,13 +31,12 @@
 
 package com.arjuna.orbportability.internal.orbspecific.orb.implementations;
 
-import com.arjuna.orbportability.orb.core.ORBImple;
-
-import java.util.*;
 import java.applet.Applet;
-import java.io.*;
+import java.util.Properties;
 
 import org.omg.CORBA.SystemException;
+
+import com.arjuna.orbportability.orb.core.ORBImple;
 
 /**
  * The base class from which all ORB implementations are derived. Each

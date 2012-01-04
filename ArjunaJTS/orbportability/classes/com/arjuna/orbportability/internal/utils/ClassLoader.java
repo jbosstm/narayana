@@ -33,8 +33,6 @@ package com.arjuna.orbportability.internal.utils;
 
 import java.util.Hashtable;
 
-import java.lang.ClassNotFoundException;
-
 class ClassLoader extends java.lang.ClassLoader
 {
 

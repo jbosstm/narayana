@@ -31,8 +31,11 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
-import java.io.NotSerializableException;
 
 import org.junit.Test;
 
@@ -47,8 +50,6 @@ import com.hp.mwtests.ts.jta.common.DummyRecoverableXAConnection;
 import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource.ErrorType;
-
-import static org.junit.Assert.*;
 
 public class OnePhaseUnitTest
 {

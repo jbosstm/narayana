@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.internal.jdbc.recovery;
 
-import com.arjuna.ats.internal.jdbc.ConnectionImple;
-
+import java.sql.SQLException;
 import java.util.Properties;
-import java.sql.*;
+
+import com.arjuna.ats.internal.jdbc.ConnectionImple;
 
 /**
  * To perform recovery on arbitrary connections we may need to recreate those

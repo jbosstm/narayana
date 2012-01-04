@@ -20,7 +20,6 @@
  */
 package com.hp.mwtests.ts.txoj.atomicobject;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 
 /*
  * Copyright (C) 1998, 1999, 2000,

@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.jts.exceptions;
 
-import java.lang.Error;
 
 /**
  * Error that may be thrown during transaction processing.

@@ -31,11 +31,10 @@
 
 package com.arjuna.ats.internal.jts.resources;
 
-import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
 import org.omg.CosTransactions.Synchronization;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * CosTransactions::Synchronizations are maintained in a separate list

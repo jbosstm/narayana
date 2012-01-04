@@ -31,17 +31,19 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import com.arjuna.ats.jta.common.*;
+import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 class TWorker extends Thread
 {

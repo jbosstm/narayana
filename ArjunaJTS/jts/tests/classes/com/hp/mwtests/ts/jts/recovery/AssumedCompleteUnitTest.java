@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.jts.recovery;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.omg.CosTransactions.Status;
 
@@ -41,8 +45,6 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction;
 import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
-
-import static org.junit.Assert.*;
 
 public class AssumedCompleteUnitTest extends TestBase
 {

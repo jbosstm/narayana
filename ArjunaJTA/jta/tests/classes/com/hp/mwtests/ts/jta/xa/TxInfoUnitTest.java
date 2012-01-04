@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.jta.xa.XidImple;
-
-import static org.junit.Assert.*;
 
 public class TxInfoUnitTest
 {
