@@ -383,7 +383,7 @@
         <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Final/jboss-as-parent-7.0.0.Final.pom -->
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-parent</artifactId>
-        <version>7.0.0.Final</version>
+        <version>7.1.0.Beta1b</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -676,18 +676,6 @@
         <groupId>org.jboss.narayana</groupId>
         <artifactId>jbosstxbridge</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging</artifactId>
-        <version>3.0.0.Beta5</version>
-        <!-- TODO AS7 -->
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging-processor</artifactId>
-        <version>1.0.0.Beta6</version>
-        <!-- TODO AS7 -->
       </dependency>
       <dependency>
         <groupId>org.jboss.byteman</groupId>

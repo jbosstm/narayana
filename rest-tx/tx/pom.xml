@@ -190,6 +190,7 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>3.0.0.Beta5</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
