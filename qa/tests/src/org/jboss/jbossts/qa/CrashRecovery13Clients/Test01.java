@@ -53,6 +53,8 @@ public class Test01
 		{
 			System.out.println("Failed.");
 		}
+		System.clearProperty("com.arjuna.ats.jta.xaRecoveryNode");
+		System.clearProperty("XAResourceRecovery1");
 	}
 
 }

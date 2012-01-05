@@ -45,7 +45,7 @@ public class Test02
 		boolean passed = false;
 		Uid bogusNodeName = new Uid();
 
-		xaRecoveryNodes.add(bogusNodeName.stringForm());
+		xaRecoveryNodes.add("2");
 
 		System.err.println("Bogus XA node name: " + bogusNodeName);
 

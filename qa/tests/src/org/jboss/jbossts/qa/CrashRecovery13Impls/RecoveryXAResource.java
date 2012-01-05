@@ -52,11 +52,9 @@ public class RecoveryXAResource implements XAResource
 
 			xids[0] = new XidImple(a);
 
-			byte[] c = com.arjuna.ats.arjuna.coordinator.TxControl.getXANodeName();
+			String c = com.arjuna.ats.arjuna.coordinator.TxControl.getXANodeName();
 
-			byte[] b = new byte[1];
-
-			b[0] = 'c';
+			String b = "2";
 
 			com.arjuna.ats.arjuna.coordinator.TxControl.setXANodeName(b);
 
