@@ -32,7 +32,6 @@
   <modules>
     <module>tx</module>
     <module>webservice</module>
-    <module>quickstarts</module>
   </modules>
   <properties>
     <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
