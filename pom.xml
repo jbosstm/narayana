@@ -92,9 +92,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/labs/labs/jbosstm/</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/labs/labs/jbosstm/</developerConnection>
-    <url>http://fisheye.jboss.org/browse/JBossTS/</url>
+    <connection>scm:git:git@github.com:jbosstm/narayana.git</connection>
+    <developerConnection>scm:git:git@github.com:jbosstm/narayana.git</developerConnection>
+    <url>https://github.com/jbosstm/narayana</url>
   </scm>
   <pluginRepositories>
     <pluginRepository>
