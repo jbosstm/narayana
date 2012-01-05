@@ -1,4 +1,4 @@
-NOTE: PATCHED EMMA JAR 
+NOTE: PATCHED EMMA JAR  
 This build uses a patch of the EMMA Jar, the source code for the patch is available from:
 https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
 The latest version of the patched emma is available from /ext
