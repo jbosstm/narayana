@@ -1,0 +1,16 @@
+Creating transaction with 2 second timeout.
+Sleeping for 5 seconds.
+Attempting to commit transaction. Should fail!
+Caught SystemException: org.omg.CORBA.INVALID_TRANSACTION:   minor code: 0  completed: No
+Transaction status: CosTransactions::StatusRolledBack
+
+Now creating current transaction with 2 second timeout.
+Sleeping for 5 seconds.
+Abort of action id -7f0f69ac:471e30:3833e3d6:1 invoked while multiple threads active within it.
+
+WARNING CheckedAction::check - atomic action -7f0f69ac:471e30:3833e3d6:1 aborting with 1 threads active!
+
+Attempting to commit transaction. Should fail!
+Caught SystemException: org.omg.CORBA.INVALID_TRANSACTION:   minor code: 0  completed: No
+Transaction status: CosTransactions::StatusRolledBack
+Test completed successfully.

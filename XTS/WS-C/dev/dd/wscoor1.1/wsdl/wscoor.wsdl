@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS President.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS President.
+Copyright OASIS Open 2006. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself must not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+--> 
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06">
+        <wsdl:types>
+          <xs:schema>
+	    <!--
+            <xs:import
+                namespace='http://www.w3.org/2005/08/addressing'
+                schemaLocation='ws-addr.xsd' />
+	    -->
+            <xs:import
+                namespace='http://docs.oasis-open.org/ws-tx/wscoor/2006/06'
+                schemaLocation='wscoor.xsd' />
+          </xs:schema>
+        </wsdl:types> 
+  <!-- Messages -->
+  <wsdl:message name="CreateCoordinationContext">
+    <wsdl:part name="parameters" element="wscoor:CreateCoordinationContext"/>
+  </wsdl:message>
+  <wsdl:message name="CreateCoordinationContextResponse">
+    <wsdl:part name="parameters" element="wscoor:CreateCoordinationContextResponse"/>
+  </wsdl:message>
+  <wsdl:message name="Register">
+    <wsdl:part name="parameters" element="wscoor:Register"/>
+  </wsdl:message>
+  <wsdl:message name="RegisterResponse">
+    <wsdl:part name="parameters" element="wscoor:RegisterResponse"/>
+  </wsdl:message>
+  <!-- Port Types -->
+  <wsdl:portType name="ActivationPortType">
+    <wsdl:operation name="CreateCoordinationContextOperation">
+      <wsdl:input message="wscoor:CreateCoordinationContext"/>
+      <wsdl:output message="wscoor:CreateCoordinationContextResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="RegistrationPortType">
+    <wsdl:operation name="RegisterOperation">
+      <wsdl:input message="wscoor:Register"/>
+      <wsdl:output message="wscoor:RegisterResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

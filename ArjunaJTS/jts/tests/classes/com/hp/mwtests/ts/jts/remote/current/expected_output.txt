@@ -1,0 +1,13 @@
+From Server:
+
+**Grid server started**
+GRID : COMMIT_ONE_PHASE
+
+From Client:
+
+Beginning transaction.
+height is 100
+width  is 100
+grid[2,4] is 123
+Committing transaction.
+Test completed successfully.

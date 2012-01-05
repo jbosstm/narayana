@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="com.arjuna.ats.arjuna.Test">Test</entry>
+    <entry key="com.arjuna.ats.txoj.Test">Test2</entry>
+</properties>

@@ -1,0 +1,2 @@
+Dependencies: org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export
+

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    a specification for a service which can be used to dispatch a SOAP 1.1 SoapFault
+    to an arbitrary client
+-->
+<definitions
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://jbossts.jboss.org/xts/soapfault"
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl"
+        targetNamespace="http://jbossts.jboss.org/xts/soapfault"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <s:schema>
+<!--
+            <s:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                      schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"
+            />
+-->
+            <s:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                      schemaLocation="envelope.xsd"
+            />
+
+        </s:schema>
+    </types>
+    <message name="SoapFault">
+         <part name="fault" element="soapenv:Fault" />
+    </message>
+
+    <portType name="SoapFaultPortType">
+        <operation name="SoapFault">
+            <input message="tns:SoapFault" />
+        </operation>
+    </portType>
+
+    <binding name="SoapFault_SOAPBinding" type="tns:SoapFaultPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="SoapFault">
+        <input message="tns:SoapFault">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+    </binding>
+
+    <service name="SoapFaultService">
+      <port binding="tns:SoapFault_SOAPBinding" name="SoapFaultPortType">
+	<wsaw:UsingAddressing required="true"/>
+	<soap:address location="http://localhost:9000/interopat/SoapFaultService"/>
+      </port>
+    </service>
+
+</definitions>

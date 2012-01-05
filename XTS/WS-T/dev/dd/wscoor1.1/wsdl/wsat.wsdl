@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS President.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS President.
+Copyright OASIS Open 2006. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself must not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+-->
+<wsdl:definitions
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+        xmlns:wsa="http://www.w3.org/2005/08/addressing"
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+        >
+    <wsdl:types>
+        <xs:schema>
+            <xs:import
+                namespace="http://www.w3.org/2005/08/addressing"
+                schemaLocation="ws-addr.xsd" />
+            <xs:import
+                namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+                schemaLocation="wsat.xsd" />
+            <xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                      schemaLocation="envelope.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+    <!-- Messages -->
+    <wsdl:message name="Prepare">
+        <wsdl:part name="parameters" element="wsat:Prepare"/>
+    </wsdl:message>
+    <wsdl:message name="Prepared">
+        <wsdl:part name="parameters" element="wsat:Prepared"/>
+    </wsdl:message>
+    <wsdl:message name="Aborted">
+        <wsdl:part name="parameters" element="wsat:Aborted"/>
+    </wsdl:message>
+    <wsdl:message name="ReadOnly">
+        <wsdl:part name="parameters" element="wsat:ReadOnly"/>
+    </wsdl:message>
+    <wsdl:message name="Commit">
+        <wsdl:part name="parameters" element="wsat:Commit"/>
+    </wsdl:message>
+    <wsdl:message name="Rollback">
+        <wsdl:part name="parameters" element="wsat:Rollback"/>
+    </wsdl:message>
+    <wsdl:message name="Committed">
+        <wsdl:part name="parameters" element="wsat:Committed"/>
+    </wsdl:message>
+    <!--
+    the WS-TX spec requires us to deliver asynchronous soap faults as a one way message payload
+    directed to the service endpoints but it does not specify any operations or messages in the
+    wsdl for this purpose. this message is used to define a soapenv:Fault payload which is used
+    by SoapFault operations added to the 3 WS-T ports which need to be able to receive an incoming
+    soap fault.
+    -->
+    <wsdl:message name="FaultWrapper">
+        <wsdl:part name="parameters" element="soapenv:Fault"/>
+    </wsdl:message>
+    <!-- Port Types -->
+    <wsdl:portType name="CompletionCoordinatorPortType">
+        <wsdl:operation name="CommitOperation">
+            <wsdl:input message="wsat:Commit"/>
+        </wsdl:operation>
+        <wsdl:operation name="RollbackOperation">
+            <wsdl:input message="wsat:Rollback"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CompletionInitiatorPortType">
+        <wsdl:operation name="CommittedOperation">
+            <wsdl:input message="wsat:Committed"/>
+        </wsdl:operation>
+        <wsdl:operation name="AbortedOperation">
+            <wsdl:input message="wsat:Aborted"/>
+        </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:FaultWrapper"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CoordinatorPortType">
+        <wsdl:operation name="PreparedOperation">
+            <wsdl:input message="wsat:Prepared"/>
+        </wsdl:operation>
+        <wsdl:operation name="AbortedOperation">
+            <wsdl:input message="wsat:Aborted"/>
+        </wsdl:operation>
+        <wsdl:operation name="ReadOnlyOperation">
+            <wsdl:input message="wsat:ReadOnly"/>
+        </wsdl:operation>
+        <wsdl:operation name="CommittedOperation">
+            <wsdl:input message="wsat:Committed"/>
+        </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:FaultWrapper"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="ParticipantPortType">
+        <wsdl:operation name="PrepareOperation">
+            <wsdl:input message="wsat:Prepare"/>
+        </wsdl:operation>
+        <wsdl:operation name="CommitOperation">
+            <wsdl:input message="wsat:Commit"/>
+        </wsdl:operation>
+        <wsdl:operation name="RollbackOperation">
+            <wsdl:input message="wsat:Rollback"/>
+        </wsdl:operation>
+        <wsdl:operation name="SoapFault">
+            <wsdl:input message="wsat:FaultWrapper"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

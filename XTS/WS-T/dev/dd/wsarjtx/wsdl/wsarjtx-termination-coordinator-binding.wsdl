@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2007 JBoss -->
+<wsdl:definitions name="WSARJTX-COORDINATOR-BINDING"
+		  targetNamespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+		  xmlns="http://schemas.xmlsoap.org/wsdl/" 
+		  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+		  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+		  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		  xmlns:wsarjtx="http://schemas.arjuna.com/ws/2005/10/wsarjtx">
+    <wsdl:import
+        namespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+        location="wsarjtx.wsdl" />
+
+	<!-- SOAP bindings for termination coordinator port -->
+	<wsdl:binding name="TerminationCoordinator_SOAPBinding" type="wsarjtx:TerminationCoordinatorPortType">
+	        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="CompleteOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Complete" style="document"/>
+		    <wsdl:input name="Complete">
+		        <soap:body use="literal"/>
+		    </wsdl:input>
+		</wsdl:operation>
+
+		<wsdl:operation name="CloseOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Close" style="document"/>
+			<wsdl:input name="Close">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="CancelOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Cancel" style="document"/>
+			<wsdl:input name="Cancel">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<!-- termination coordinator service definition -->
+	<wsdl:service name="TerminationCoordinatorService">
+	    <wsdl:port binding="wsarjtx:TerminationCoordinator_SOAPBinding" name="TerminationCoordinatorPortType">
+                <soap:address location="http://localhost:9000/wst11/TerminationCoordinatorService"/>
+	    </wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

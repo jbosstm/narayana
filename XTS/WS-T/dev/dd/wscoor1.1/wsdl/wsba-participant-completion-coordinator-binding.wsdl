@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06" xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+
+  <wsdl:import
+      namespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06"
+      location="wsba.wsdl" />
+
+  <wsdl:binding name="BusinessAgreementWithParticipantCompletionCoordinator_SOAPBinding" type="wsba:BusinessAgreementWithParticipantCompletionCoordinatorPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CompletedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Completed" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="FailOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="CompensatedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Compensated" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="ClosedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Closed" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="CanceledOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Canceled" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="ExitOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Exit" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="CannotComplete">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/CannotComplete" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    
+    <wsdl:operation name="GetStatusOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/GetStatus" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="StatusOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Status" style="document"/>
+      <wsdl:input>
+	<soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="SoapFault">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="BusinessAgreementWithParticipantCompletionCoordinatorService">
+    <wsdl:port binding="wsba:BusinessAgreementWithParticipantCompletionCoordinator_SOAPBinding" name="BusinessAgreementWithParticipantCompletionCoordinatorPortType">
+      <soap:address location="http://localhost:9000/wst11/BusinessAgreementWithParticipantCompletionCoordinatorService"/>
+       <wsaw:UsingAddressing required="true"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

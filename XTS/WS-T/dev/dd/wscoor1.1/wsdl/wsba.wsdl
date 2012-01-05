@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright OASIS Open 2006. All Rights Reserved. -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  targetNamespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06">
+  <wsdl:types>
+    <xs:schema>
+      <xs:import namespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06" schemaLocation="wsba.xsd"/>
+      <xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                 schemaLocation="envelope.xsd"/>
+    </xs:schema>
+  </wsdl:types>
+  <!-- Messages -->
+  <wsdl:message name="Complete">
+    <wsdl:part name="parameters" element="wsba:Complete"/>
+  </wsdl:message>
+  <wsdl:message name="Completed">
+    <wsdl:part name="parameters" element="wsba:Completed"/>
+  </wsdl:message>
+  <wsdl:message name="Close">
+    <wsdl:part name="parameters" element="wsba:Close"/>
+  </wsdl:message>
+  <wsdl:message name="Closed">
+    <wsdl:part name="parameters" element="wsba:Closed"/>
+  </wsdl:message>
+  <wsdl:message name="Cancel">
+    <wsdl:part name="parameters" element="wsba:Cancel"/>
+  </wsdl:message>
+  <wsdl:message name="Canceled">
+    <wsdl:part name="parameters" element="wsba:Canceled"/>
+  </wsdl:message>
+  <wsdl:message name="Compensate">
+    <wsdl:part name="parameters" element="wsba:Compensate"/>
+  </wsdl:message>
+  <wsdl:message name="Compensated">
+    <wsdl:part name="parameters" element="wsba:Compensated"/>
+  </wsdl:message>
+  <wsdl:message name="Fail">
+    <wsdl:part name="parameters" element="wsba:Fail"/>
+  </wsdl:message>
+  <wsdl:message name="Failed">
+    <wsdl:part name="parameters" element="wsba:Failed"/>
+  </wsdl:message>
+  <wsdl:message name="Exit">
+    <wsdl:part name="parameters" element="wsba:Exit"/>
+  </wsdl:message>
+  <wsdl:message name="Exited">
+    <wsdl:part name="parameters" element="wsba:Exited"/>
+  </wsdl:message>
+  <wsdl:message name="CannotComplete">
+    <wsdl:part name="parameters" element="wsba:CannotComplete"/>
+  </wsdl:message>
+  <wsdl:message name="NotCompleted">
+    <wsdl:part name="parameters" element="wsba:NotCompleted"/>
+  </wsdl:message>
+  <wsdl:message name="GetStatus">
+    <wsdl:part name="parameters" element="wsba:GetStatus"/>
+  </wsdl:message>
+  <wsdl:message name="Status">
+    <wsdl:part name="parameters" element="wsba:Status"/>
+  </wsdl:message>
+  <wsdl:message name="SoapFault">
+    <wsdl:part name="parameters" element="soapenv:Fault"/>
+  </wsdl:message>
+  <!-- BusinessAgreement Service -->
+  <wsdl:portType name="BusinessAgreementWithParticipantCompletionCoordinatorPortType">
+    <wsdl:operation name="CompletedOperation">
+      <wsdl:input message="wsba:Completed"/>
+    </wsdl:operation>
+    <wsdl:operation name="FailOperation">
+      <wsdl:input message="wsba:Fail"/>
+    </wsdl:operation>
+    <wsdl:operation name="CompensatedOperation">
+      <wsdl:input message="wsba:Compensated"/>
+    </wsdl:operation>
+    <wsdl:operation name="ClosedOperation">
+      <wsdl:input message="wsba:Closed"/>
+    </wsdl:operation>
+    <wsdl:operation name="CanceledOperation">
+      <wsdl:input message="wsba:Canceled"/>
+    </wsdl:operation>
+    <wsdl:operation name="ExitOperation">
+      <wsdl:input message="wsba:Exit"/>
+    </wsdl:operation>
+    <wsdl:operation name="CannotComplete">
+      <wsdl:input message="wsba:CannotComplete"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetStatusOperation">
+      <wsdl:input message="wsba:GetStatus"/>
+    </wsdl:operation>
+    <wsdl:operation name="StatusOperation">
+      <wsdl:input message="wsba:Status"/>
+    </wsdl:operation>
+    <wsdl:operation name="SoapFault">
+      <wsdl:input message="wsba:SoapFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="BusinessAgreementWithParticipantCompletionParticipantPortType">
+    <wsdl:operation name="CloseOperation">
+      <wsdl:input message="wsba:Close"/>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOperation">
+      <wsdl:input message="wsba:Cancel"/>
+    </wsdl:operation>
+    <wsdl:operation name="CompensateOperation">
+      <wsdl:input message="wsba:Compensate"/>
+    </wsdl:operation>
+    <wsdl:operation name="FailedOperation">
+      <wsdl:input message="wsba:Failed"/>
+    </wsdl:operation>
+    <wsdl:operation name="ExitedOperation">
+      <wsdl:input message="wsba:Exited"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotCompleted">
+      <wsdl:input message="wsba:NotCompleted"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetStatusOperation">
+      <wsdl:input message="wsba:GetStatus"/>
+    </wsdl:operation>
+    <wsdl:operation name="StatusOperation">
+      <wsdl:input message="wsba:Status"/>
+    </wsdl:operation>
+    <wsdl:operation name="SoapFault">
+      <wsdl:input message="wsba:SoapFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <!-- BusinessAgreementWithComplete Service -->
+  <wsdl:portType name="BusinessAgreementWithCoordinatorCompletionCoordinatorPortType">
+    <wsdl:operation name="CompletedOperation">
+      <wsdl:input message="wsba:Completed"/>
+    </wsdl:operation>
+    <wsdl:operation name="FailOperation">
+      <wsdl:input message="wsba:Fail"/>
+    </wsdl:operation>
+    <wsdl:operation name="CompensatedOperation">
+      <wsdl:input message="wsba:Compensated"/>
+    </wsdl:operation>
+    <wsdl:operation name="ClosedOperation">
+      <wsdl:input message="wsba:Closed"/>
+    </wsdl:operation>
+    <wsdl:operation name="CanceledOperation">
+      <wsdl:input message="wsba:Canceled"/>
+    </wsdl:operation>
+    <wsdl:operation name="ExitOperation">
+      <wsdl:input message="wsba:Exit"/>
+    </wsdl:operation>
+    <wsdl:operation name="CannotComplete">
+      <wsdl:input message="wsba:CannotComplete"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetStatusOperation">
+      <wsdl:input message="wsba:GetStatus"/>
+    </wsdl:operation>
+    <wsdl:operation name="StatusOperation">
+      <wsdl:input message="wsba:Status"/>
+    </wsdl:operation>
+    <wsdl:operation name="SoapFault">
+      <wsdl:input message="wsba:SoapFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="BusinessAgreementWithCoordinatorCompletionParticipantPortType">
+    <wsdl:operation name="CompleteOperation">
+      <wsdl:input message="wsba:Complete"/>
+    </wsdl:operation>
+    <wsdl:operation name="CloseOperation">
+      <wsdl:input message="wsba:Close"/>
+    </wsdl:operation>
+    <wsdl:operation name="CancelOperation">
+      <wsdl:input message="wsba:Cancel"/>
+    </wsdl:operation>
+    <wsdl:operation name="CompensateOperation">
+      <wsdl:input message="wsba:Compensate"/>
+    </wsdl:operation>
+    <wsdl:operation name="FailedOperation">
+      <wsdl:input message="wsba:Failed"/>
+    </wsdl:operation>
+    <wsdl:operation name="ExitedOperation">
+      <wsdl:input message="wsba:Exited"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotCompleted">
+      <wsdl:input message="wsba:NotCompleted"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetStatusOperation">
+      <wsdl:input message="wsba:GetStatus"/>
+    </wsdl:operation>
+    <wsdl:operation name="StatusOperation">
+      <wsdl:input message="wsba:Status"/>
+    </wsdl:operation>
+    <wsdl:operation name="SoapFault">
+      <wsdl:input message="wsba:SoapFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

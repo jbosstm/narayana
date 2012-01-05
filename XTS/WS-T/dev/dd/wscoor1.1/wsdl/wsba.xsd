@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright OASIS Open 2006. All Rights Reserved. -->
+<xsd:schema targetNamespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06" xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:complexType name="NotificationType">
+		<xsd:sequence>
+			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:complexType name="ExceptionType">
+		<xsd:sequence>
+			<xsd:element name="ExceptionIdentifier" type="xsd:QName"/>
+			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<!-- Coordinator accepts -->
+	<xsd:element name="Canceled" type="wsba:NotificationType"/>
+	<xsd:element name="Closed" type="wsba:NotificationType"/>
+	<xsd:element name="Compensated" type="wsba:NotificationType"/>
+	<xsd:element name="Completed" type="wsba:NotificationType"/>
+	<xsd:element name="Exit" type="wsba:NotificationType"/>
+      <xsd:element name="CannotComplete" type="wsba:NotificationType"/>
+	<xsd:element name="Fail" type="wsba:ExceptionType"/>
+	<!-- Participant accepts -->
+	<xsd:element name="Cancel" type="wsba:NotificationType"/>
+	<xsd:element name="Close" type="wsba:NotificationType"/>
+	<xsd:element name="Compensate" type="wsba:NotificationType"/>
+	<xsd:element name="Complete" type="wsba:NotificationType"/>
+	<xsd:element name="Failed" type="wsba:NotificationType"/>
+      <xsd:element name="NotCompleted" type="wsba:NotificationType"/>
+	<xsd:element name="Exited" type="wsba:NotificationType"/>
+	<!-- Both accept -->
+	<xsd:element name="GetStatus" type="wsba:NotificationType"/>
+	<xsd:complexType name="StatusType">
+		<xsd:sequence>
+			<xsd:element name="State" type="wsba:StateType"/>
+			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="Status" type="wsba:StatusType"/>
+	<xsd:simpleType name="StateType">
+		<xsd:restriction base="xsd:QName">
+			<xsd:enumeration value="wsba:Active"/>
+			<xsd:enumeration value="wsba:Canceling"/>
+			<xsd:enumeration value="wsba:Canceling-Active"/>
+			<xsd:enumeration value="wsba:Canceling-Completing"/>
+			<xsd:enumeration value="wsba:Completing"/>
+			<xsd:enumeration value="wsba:Completed"/>
+			<xsd:enumeration value="wsba:Closing"/>
+			<xsd:enumeration value="wsba:Compensating"/>
+			<xsd:enumeration value="wsba:Failing-Active"/>
+                  <xsd:enumeration value="wsba:Failing-Canceling"/>
+                  <xsd:enumeration value="wsba:Failing-Completing"/>
+			<xsd:enumeration value="wsba:Failing-Compensating"/>
+                  <xsd:enumeration value="wsba:Exiting"/>
+                  <xsd:enumeration value="wsba:NotCompleting"/>
+			<xsd:enumeration value="wsba:Ended"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <!-- Policy assertions -->
+    <xsd:element name="BAAtomicOutcomeAssertion">
+		<xsd:complexType>
+			<xsd:sequence>
+                   <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+               </xsd:sequence>
+               <xsd:anyAttribute namespace="##other" processContents="lax"/>
+		</xsd:complexType>
+    </xsd:element>
+    <xsd:element name="BAMixedOutcomeAssertion">
+		<xsd:complexType>
+			<xsd:sequence>
+                   <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+               </xsd:sequence>
+               <xsd:anyAttribute namespace="##other" processContents="lax"/>
+		</xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

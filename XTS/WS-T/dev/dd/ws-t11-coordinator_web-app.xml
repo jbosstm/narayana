@@ -1,0 +1,110 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false">
+
+    <display-name>Arjuna Web Services Transaction 1.1 Coordinator Services</display-name>
+
+    <description>Arjuna Web Services Transaction 1.1 Coordinator Services</description>
+
+    <!-- Coordinator Side Endpoints -->
+    <servlet>
+      <servlet-name>Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>CompletionCoordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>CompletionCoordinatorRPC</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorRPCPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>TerminationCoordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>TerminationCoordinatorRPC</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorRPCPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Coordinator Side Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Coordinator</servlet-name>
+      <url-pattern>/CoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>CompletionCoordinator</servlet-name>
+      <url-pattern>/CompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>CompletionCoordinatorRPC</servlet-name>
+      <url-pattern>/CompletionCoordinatorRPCService</url-pattern>
+    </servlet-mapping>
+
+    <!-- Define WSBA 1.1 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
+      <url-pattern>/BusinessAgreementWithCoordinatorCompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
+      <url-pattern>/BusinessAgreementWithParticipantCompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>TerminationCoordinator</servlet-name>
+      <url-pattern>/TerminationCoordinatorService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>TerminationCoordinatorRPC</servlet-name>
+      <url-pattern>/TerminationCoordinatorRPCService</url-pattern>
+    </servlet-mapping>
+</web-app>

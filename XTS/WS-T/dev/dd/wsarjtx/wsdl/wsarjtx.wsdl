@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2007 JBoss -->
+<wsdl:definitions name="WSARJTX"
+		  targetNamespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+		  xmlns="http://schemas.xmlsoap.org/wsdl/" 
+		  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+		  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+          xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+		  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		  xmlns:wsarjtx="http://schemas.arjuna.com/ws/2005/10/wsarjtx">
+        <wsdl:types>
+            <xsd:schema>
+                <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                          schemaLocation="envelope.xsd"/>
+            </xsd:schema>
+	  <schema targetNamespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+		  xmlns="http://www.w3.org/2001/XMLSchema"
+		  elementFormDefault="qualified">
+	    <complexType name="NotificationType">
+		<sequence>
+		    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<anyAttribute namespace="##other" processContents="lax"/>
+	    </complexType>
+          <!--
+	    <complexType name="ExceptionType">
+		<sequence>
+		    <element name="soapFaultType" type="string"/>
+		    <element name="subCode" type="QName"/>
+		    <element name="reason" type="string"/>
+		    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<anyAttribute namespace="##other" processContents="lax"/>
+	    </complexType>
+	    -->
+	    <!-- Coordinator accepts -->
+	    <element name="Complete" type="wsarjtx:NotificationType"/>
+	    <element name="Close" type="wsarjtx:NotificationType"/>
+	    <element name="Cancel" type="wsarjtx:NotificationType"/>
+	    <!-- Participant accepts -->
+	    <element name="Completed" type="wsarjtx:NotificationType"/>
+	    <element name="Closed" type="wsarjtx:NotificationType"/>
+	    <element name="Cancelled" type="wsarjtx:NotificationType"/>
+	    <element name="Faulted" type="wsarjtx:NotificationType"/>
+	  </schema>
+        </wsdl:types> 
+	<!-- Messages -->
+	<wsdl:message name="CompleteMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Complete"/>
+	</wsdl:message>
+	<wsdl:message name="CloseMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Close"/>
+	</wsdl:message>
+	<wsdl:message name="CancelMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Cancel"/>
+	</wsdl:message>
+	<wsdl:message name="CompletedMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Completed"/>
+	</wsdl:message>
+	<wsdl:message name="ClosedMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Closed"/>
+	</wsdl:message>
+	<wsdl:message name="CancelledMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Cancelled"/>
+	</wsdl:message>
+	<wsdl:message name="FaultedMessage">
+		<wsdl:part name="parameters" element="wsarjtx:Faulted"/>
+	</wsdl:message>
+	<wsdl:message name="FaultWrapper">
+		<wsdl:part name="parameters" element="soapenv:Fault"/>
+	</wsdl:message>
+	<!-- Asynchronous Messaging PortTypes -->
+	<wsdl:portType name="TerminationCoordinatorPortType">
+		<wsdl:operation name="CompleteOperation">
+			<wsdl:input message="wsarjtx:CompleteMessage" name="Complete"/>
+		</wsdl:operation>
+		<wsdl:operation name="CloseOperation">
+			<wsdl:input message="wsarjtx:CloseMessage" name="Close"/>
+		</wsdl:operation>
+		<wsdl:operation name="CancelOperation">
+			<wsdl:input message="wsarjtx:CancelMessage" name="Cancel"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:portType name="TerminationParticipantPortType">
+		<wsdl:operation name="CompletedOperation">
+			<wsdl:input message="wsarjtx:CompletedMessage" name="Completed"/>
+		</wsdl:operation>
+		<wsdl:operation name="ClosedOperation">
+			<wsdl:input message="wsarjtx:ClosedMessage" name="Closed"/>
+		</wsdl:operation>
+		<wsdl:operation name="CancelledOperation">
+			<wsdl:input message="wsarjtx:CancelledMessage" name="Cancelled"/>
+		</wsdl:operation>
+		<wsdl:operation name="FaultedOperation">
+			<wsdl:input message="wsarjtx:FaultedMessage" name="Faulted"/>
+		</wsdl:operation>
+		<wsdl:operation name="FaultOperation">
+			<wsdl:input message="wsarjtx:FaultWrapper" name="Fault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+    <wsdl:portType name="TerminationCoordinatorRPCPortType">
+        <wsdl:operation name="CompleteOperation">
+            <wsdl:input message="wsarjtx:CompleteMessage" name="Complete"/>
+            <wsdl:output message="wsarjtx:CompletedMessage" name="Completed"/>
+        </wsdl:operation>
+        <wsdl:operation name="CloseOperation">
+            <wsdl:input message="wsarjtx:CloseMessage" name="Close"/>
+            <wsdl:output message="wsarjtx:ClosedMessage" name="Closed"/>
+        </wsdl:operation>
+        <wsdl:operation name="CancelOperation">
+            <wsdl:input message="wsarjtx:CancelMessage" name="Cancel"/>
+            <wsdl:output message="wsarjtx:CancelledMessage" name="Cancelled"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

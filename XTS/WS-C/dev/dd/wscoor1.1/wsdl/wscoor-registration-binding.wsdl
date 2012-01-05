@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+
+  <wsdl:import
+      namespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06"
+      location="wscoor.wsdl" />
+
+  <wsdl:binding name="Registration_SOAPBinding" type="wscoor:RegistrationPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="RegisterOperation">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="RegistrationService">
+    <wsdl:port binding="wscoor:Registration_SOAPBinding" name="RegistrationPortType">
+      <soap:address location="http://localhost:9000/ws-c11/RegistrationService"/>
+       <wsaw:UsingAddressing required="true"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

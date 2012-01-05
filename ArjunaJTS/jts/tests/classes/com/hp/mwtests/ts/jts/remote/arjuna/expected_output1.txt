@@ -1,0 +1,41 @@
+From Server:
+
+**ExplicitStackServer started**
+Created push interposed transaction: -7f0f69f8:1dc60de2:36ad85d1:0
+Created push interposed transaction: -7f0f69f8:1dc60de2:36ad85d1:0
+Created pop interposed transaction: -7f0f69f8:1dc60de2:36ad85d1:4
+Created push interposed transaction: -7f0f69f8:1dc60de2:36ad85d1:8
+Created pop interposed transaction: -7f0f69f8:1dc60de2:36ad85d1:4
+printStack: could not set WRITE lock.
+
+Stack is empty.
+
+From Client:
+
+Starting initialising top-level transaction.
+Initialising transaction name: -7f0f69f8:1dc60de2:36ad85d1:0
+pushing 1 onto stack
+
+pushing 2 onto stack
+Committed top-level transaction
+
+Beginning top-level transaction
+Top-level name: -7f0f69f8:1dc60de2:36ad85d1:4
+popped top of stack 2
+
+beginning nested transaction
+nested name: -7f0f69f8:1dc60de2:36ad85d1:8
+pushed 3 onto stack. Aborting nested action.
+current transaction name: -7f0f69f8:1dc60de2:36ad85d1:4
+rolledback nested transaction
+
+popped top of stack is 1
+
+Trying to print stack contents - should fail.
+
+Committed top-level transaction
+current transaction name: null
+
+This is correct.
+
+Printing stack contents (should be empty).

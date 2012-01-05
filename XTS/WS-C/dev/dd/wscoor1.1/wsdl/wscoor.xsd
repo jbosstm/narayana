@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS President.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS President.
+Copyright OASIS Open 2006. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself must not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+-->
+<xsd:schema targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+  <!--
+  <xsd:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+  -->
+  <xsd:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="ws-addr.xsd"/>
+  <xsd:element name="Expires">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:unsignedInt">
+          <xsd:anyAttribute namespace="##other" />
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="CoordinationContextType">
+    <xsd:sequence>
+      <xsd:element name="Identifier">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="xsd:anyURI">
+              <xsd:anyAttribute namespace="##other" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element ref="wscoor:Expires" minOccurs="0" />
+      <xsd:element name="CoordinationType" type="xsd:anyURI" />
+      <xsd:element name="RegistrationService" type="wsa:EndpointReferenceType" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax" />
+  </xsd:complexType>
+  <xsd:element name="CoordinationContext">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wscoor:CoordinationContextType">
+          <xsd:sequence>
+            <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="CreateCoordinationContextType">
+    <xsd:sequence>
+      <xsd:element ref="wscoor:Expires" minOccurs="0" />
+      <xsd:element name="CurrentContext" minOccurs="0">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="wscoor:CoordinationContextType">
+              <xsd:sequence>
+                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+              </xsd:sequence>
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CoordinationType" type="xsd:anyURI" />
+      <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax" />
+  </xsd:complexType>
+  <xsd:element name="CreateCoordinationContext" type="wscoor:CreateCoordinationContextType" />
+  <xsd:complexType name="CreateCoordinationContextResponseType">
+    <xsd:sequence>
+      <xsd:element ref="wscoor:CoordinationContext" />
+      <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax" />
+  </xsd:complexType>
+  <xsd:element name="CreateCoordinationContextResponse" type="wscoor:CreateCoordinationContextResponseType" />
+  <xsd:complexType name="RegisterType">
+    <xsd:sequence>
+      <xsd:element name="ProtocolIdentifier" type="xsd:anyURI" />
+      <xsd:element name="ParticipantProtocolService" type="wsa:EndpointReferenceType" />
+      <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax" />
+  </xsd:complexType>
+  <xsd:element name="Register" type="wscoor:RegisterType" />
+  <xsd:complexType name="RegisterResponseType">
+    <xsd:sequence>
+      <xsd:element name="CoordinatorProtocolService" type="wsa:EndpointReferenceType" />
+      <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax" />
+  </xsd:complexType>
+  <xsd:element name="RegisterResponse" type="wscoor:RegisterResponseType" />
+  <xsd:simpleType name="ErrorCodes">
+    <xsd:restriction base="xsd:QName">
+      <xsd:enumeration value="wscoor:InvalidParameters" />
+      <xsd:enumeration value="wscoor:InvalidProtocol" />
+      <xsd:enumeration value="wscoor:InvalidState" />
+      <xsd:enumeration value="wscoor:CannotCreateContext" />
+      <xsd:enumeration value="wscoor:CannotRegisterParticipant" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

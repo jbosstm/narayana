@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsa="http://www.w3.org/2005/08/addressing"
+                  xmlns:wsat="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+                  targetNamespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+                  xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+
+  <wsdl:import
+      namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
+      location="wsat.wsdl" />
+
+  <wsdl:binding name="Coordinator_SOAPBinding" type="wsat:CoordinatorPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="PreparedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Prepared" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="AbortedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Aborted" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="ReadOnlyOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/ReadOnly" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="CommittedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/Committed" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+     <wsdl:operation name="SoapFault">
+        <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+     </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="CoordinatorService">
+    <wsdl:port binding="wsat:Coordinator_SOAPBinding" name="CoordinatorPortType">
+      <soap:address location="http://localhost:9000/wst11/CoordinatorService"/>
+       <wsaw:UsingAddressing required="true"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

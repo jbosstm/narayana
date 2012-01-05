@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2010, Red Hat and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2010,
+  @author JBoss, a division of Red Hat.
+-->
+<properties>
+    <!--
+    This is the XTS configuration file for the supported configuration where only the 1.1 protocol
+    implementation is deployed. The original file is called xts-properties11.xml but it is deployed
+    as xts-properties.xml. This file is only needed if you are deploying XTS outside of JBoss AS.
+    When deployed inside JBoss AS the XTS the beans.xml file in the XTS service archive configures
+    the relevant properties using micro-container injection.
+
+    These properties define values which configure operation of all 3 components of the XTS
+    implementation, the client services, participant (transactional web service) services and
+    the XTS coordinator services. Normally all three components are deployed and configured in a
+    single container so one property file serves to configure the behaviour of all three deployments.
+    By redefining certain of these properties to have empty values it is possible  to avoid loading
+    implementations classes used by the client or coordinator components. In order to fully remove any
+    of these three components from a deployment it is also necessary to modify the war deployments which
+    expose the service endpoints.
+    -->
+
+    <!--
+	bind address/ports
+	the following entries are used by the XTS components to construct
+	the URLS handed out when they need to provide a reference to the
+	service. These URLs refer to services deployed in the client,
+	coordinator or participant web service container so the bind
+	properties must always be configured in any XTS deployment.
+
+	In JBoss AS these properties will be injected by the
+	microcontainer using values derived from service JBoss Web as
+	specified in file jboss-beans.xml. So bind.address will be set
+	using the bind address supplied when JBoss AS is started while
+	the ports will be derived from the configuration file in the
+	server's config directory.
+    -->
+
+    <!-- these are the values employed by the 1.1 implementation
+    -->
+    <entry key="org.jboss.jbossts.xts11.bind.address">localhost</entry>
+    <entry key="org.jboss.jbossts.xts11.bind.port">8080</entry>
+    <entry key="org.jboss.jbossts.xts11.bind.port.secure">8443</entry>
+
+    <!-- transport timeouts
+    these properties configure timings in the transport layer which manages messages between client
+    and coordinator or participant (web service) and coordinator. This layer is common to all 3 XTS components
+    so these properties may be set in all deployments. The example settings below specify the default values
+    which are all calibrated in milliseconds.
+
+    transportTimeout determines the maximum time a participant or coordinator service will wait for a response
+    to a protocol message before assuming that the service at the other end has crashed. Note that in some cases,
+    particularly in the case of participants a timeout can only be handled by resending the message. However,
+    in other cases a timeout may lead to a transaction start transition e.g. to aborting. n.b. transportTimeout
+    should be significantly greater than initialTransportPeriod which determines how frequently messages are
+    resent. The default timeout is 30 seconds which should never be exceeded on a local network because of
+     message delivery delays. If your service and coordinator are distributed across internet domains then you
+     may possibly need to increase this value.
+
+    initialTransportPeriod is the initial period for which a participant or coordinator service will wait before
+    resending a protocol message if it does not receive a reply. In cases where a wait is performed the first
+    resend will only happen after the initial wait timeout and this property is used to determine the period
+    before the second resend. In cases where a wait is not performed the resend happens automatically on the
+    assumption that the first message must not have reached its destination. Where a response is mandated by the
+    transaction protocol resends continue indefinitely at gradually increasing intervals - the period roughly
+    doubling every two resends. The default period is 5 seconds which should never be exceeded on a local
+    network because of message delivery delays.If your service and coordinator are distributed across internet
+    domains then you may possibly need to increase this value.
+
+    maximumTransportPeriod is the maximum value which the resend period can be increased to. It should be
+    significantly larger than initialTransportPeriod since there is no point resending messages with high
+    frequency if a the server at the other end has been down for a long time. The default maximum period is 300
+    seconds which will only be reached after a message has been sent approximately 15 times.
+    -->
+    <!-- uncomment to configure transport timing properties -->
+    <!--
+    <property name="org.jboss.jbossts.xts.transport.initialTransportPeriod">5000</property>
+    <property name="org.jboss.jbossts.xts.transport.maximumTransportPeriod">300000</property>
+    <property name="org.jboss.jbossts.xts.transport.transportTimeout">30000</property>
+    -->
+
+    <!-- coordinator URL
+	the following entries are used in the client container only to
+	identify the URL used to address the ActivationCoordinator service.
+	This is the XTS service which is contacted when a begin operation
+	is invoked to start a  WS-AT or WS-BA transaction.
+
+	If a full URL is provide then it will be used as given.
+	Otherwise a URL will be constructed using any URL components
+	such as scheme, host etc which have been specified as properties
+	and defaulting any remaining unspecified properties.
+	if no URL or components are specified the URL defaults to that
+	of the local coordinator service.
+    -->
+
+    <!-- 1.1 properties : only set if you want to use a non-local coordinator
+    -->
+    <!--
+    <entry key="org.jboss.jbossts.xts11.coordinatorURL">http://localhost:8080/ws-c11/ActivationService</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.scheme">http</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.address">localhost</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.port">8080</entry>
+    <entry key="org.jboss.jbossts.xts11.coordinator.path">ws-c11/ActivationService</entry>
+    -->
+
+    <!-- user transaction and transaction manager implementation
+         mappings.
+	these are used in the client or web service container to identify the
+	classes used to implement the WSAT and WSBA client and web service APIs. they
+	will not normally be reconfigured since doing so requires modifying the
+	implementation to include new versions of these classes.
+
+	if you are deploying XTS to a coordinator container which does
+	not need to operate as a client or web service
+	then you can leave these properties unset and the corresponding
+	classes will  not be loaded.
+
+	Note that in the client container you must define both the UserXX and XXManager classes.
+	In the participant container you do not have to define the UserXXX class unless you also
+	want it to operate as a client container
+    -->
+    <!--  client mappings for the 1.1 implementation
+    -->
+    <entry key="org.jboss.jbossts.xts11.wsat.UserTransaction">com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple</entry>
+    <entry key="org.jboss.jbossts.xts11.wsba.UserBusinessActivity">com.arjuna.mwlabs.wst11.ba.remote.UserBusinessActivityImple</entry>
+    <!--  participant mappings for the 1.1 implementation
+    -->
+    <entry key="org.jboss.jbossts.xts11.wsat.TransactionManager">com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple</entry>
+    <entry key="org.jboss.jbossts.xts11.wsba.BusinessActivityManager">com.arjuna.mwlabs.wst11.ba.remote.BusinessActivityManagerImple</entry>
+
+    <!-- protocol mappings.
+
+	these are used in the coordinator container only to determine
+	which classes to use to implement the coordination
+	services. they are used to establish mappings from
+	coordination service types to their implementation classes and
+	from coordination types to coordination context factories.
+	they will not normally be reconfigured since this also
+	requires providing alternative implementations.
+
+	if you are deploying XTS to a client or participant (web
+	service) container which uses a coordinator located in
+	a remote container then you can omit these properties and
+	no coordinator implementations will be loaded.
+
+    coordination service implementation classes must be tagged
+    with an HLSProvider annotation identifying the implemented
+    service type. the annotation must also declare the
+    coordination type of the coordination protocol supported by
+    the service.
+
+	context factory classes must be tagged with a ContextProvider
+	annotation identifying the coordination type and
+	implementation class of the contexts created by the
+	factory. the annotation must also declare the service type
+	for which the context is appropriate.
+    -->
+
+    <!-- protocol definitions for 1.1 implementation
+	 first the HLS services and then the context factories
+    -->
+    <entry key="org.jboss.jbossts.xts.protocolImplementation1">com.arjuna.mwlabs.wscf11.model.twophase.arjunacore.TwoPhaseHLSImple</entry>
+    <entry key="org.jboss.jbossts.xts.protocolImplementation2">com.arjuna.mwlabs.wscf11.model.sagas.arjunacore.SagasHLSImple</entry>
+    <entry key="org.jboss.jbossts.xts.protocolImplementation3">com.arjuna.mwlabs.wst11.at.ContextFactoryImple</entry>
+    <entry key="org.jboss.jbossts.xts.protocolImplementation4">com.arjuna.mwlabs.wst11.ba.ContextFactoryImple</entry>
+
+    <!-- XTS recovery modules to be deployed either in the coordinator or participant. you should
+        never need to change these values or add new ones. howver you may want to remove participant modules
+        if you are only deploying coordinator services or remove coordinator modules if you are only deploying
+        participant services. If you are only deploying a client then you can remove all these modules.
+
+        Note that these are the modules which implement XTS recovery and are not the same as the application
+        defined recovery modules registered by participant web services. The latter are called when the AT and BA
+        participant modules in the list below get run.
+
+        n.b. the 1.0 and 1.1 implementations both use the same recovery module.
+    -->
+
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule1">org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule2">org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule3">org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.coordinatorRecoveryModule4">org.jboss.jbossts.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule</entry>
+
+    <entry key="org.jboss.jbossts.xts.recovery.participantRecoveryModule1">org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule</entry>
+    <entry key="org.jboss.jbossts.xts.recovery.participantRecoveryModule2">org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule</entry>
+
+    <!-- initialisations
+	 these are classes which implement the startup and shutdown operations defined by the XTSInitialisation lifecycle
+	 interface. For 1.1 here are 3 such classes performing all initialisation relevant to the coordinator side, participant
+	 side and client side services. You may want to delete some of these entries if you only wish to deploy a subset
+	 of the 1.1 XTS services.
+    -->
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_1">org.jboss.jbossts.xts.initialisation.CoordinatorSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_2">org.jboss.jbossts.xts.initialisation.ParticipantSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_3">org.jboss.jbossts.xts.initialisation.ClientSideInitialisation</entry>
+
+    <!--
+     if you are deploying XTS outside of JBoss then you may not be able to map the WS-C and WS-T service
+     endpoints to the same URLs as those employed by JBossWS. The services need to know where the endpoints
+     have been mapped because they need to insert their endpoint URLs into protocol messages. The following
+     properties can be set to identify the URL path element of the service. So, for example, with these
+     configuration settings the default URL for the WS-T Participant service
+     http://<webhost>:<webport>/ws-t11-participant/ParticipantService would be remapped to
+     http://<webhost>:<webport>/participant/services/ParticipantService. These properties are normally
+     left unset so that the JBoss default URLs are employed.
+    <entry key="org.jboss.jbossts.xts11.wsc.serviceURLPath.">/coord/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.coordinatorServiceURLPath.">/coord/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.clientServiceURLPath.">/client/services</entry>
+    <entry key="org.jboss.jbossts.xts11.wst.participantServiceURLPath.">/participant/services</entry>
+    -->
+
+</properties>

@@ -1,0 +1,13 @@
+From Server:
+
+**Grid server started**
+GRID : PREPARE
+GRID : COMMIT
+
+From Client:
+
+height is 100
+width  is 100
+calling set
+calling get
+grid[2,4] is 123

@@ -1,0 +1,70 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Arjuna Web Services Transaction</display-name>
+
+    <description>Arjuna Web Services Transaction</description>
+
+    <!-- Initialise Arjuna TX services -->
+    <listener>
+        <listener-class>com.arjuna.webservices.wsarjtx.server.TerminationParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsarjtx.server.TerminationCoordinatorInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-AT services -->
+    <listener>
+        <listener-class>com.arjuna.webservices.wsat.server.CompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsat.server.CompletionInitiatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsat.server.CoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsat.server.ParticipantInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-BA services -->
+    <listener>
+        <listener-class>com.arjuna.webservices.wsba.server.CoordinatorCompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsba.server.CoordinatorCompletionParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsba.server.ParticipantCompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices.wsba.server.ParticipantCompletionParticipantInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-T  -->
+    <listener>
+        <listener-class>com.arjuna.wst.messaging.deploy.TransactionInitialisation</listener-class>
+    </listener>
+</web-app>
