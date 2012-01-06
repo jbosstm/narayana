@@ -50,3 +50,69 @@ http://maven.apache.org/
 
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
+
+
+------------------------------------------------------------------
+To build and deploy into AS (note, this applies to AS6 - not AS7):
+export JAVA_HOME=/usr/local/jdk1.6.0_17
+export PATH=$PATH:/usr/local/apache-maven-2.1.0/bin
+
+if [ -d jbossas ]; then
+  rm -r jbossas
+fi
+
+if [ -f jbossas.tgz ]; then
+  rm jbossas.tgz
+fi
+
+# don't use fs link, use http
+wget http://albany/job/jbossas-trunk/lastSuccessfulBuild/artifact/jbossas.tgz
+
+mkdir jbossas
+cd jbossas
+tar -xzf ../jbossas.tgz
+cd build/target/jboss*
+export JBOSS_HOME=`pwd`
+cd $WORKSPACE
+
+cd trunk
+/usr/local/apache-ant-1.7.1/bin/ant jbossall
+
+# install TS trunk to AS
+cd $WORKSPACE
+cp trunk/install/lib/jbossjts*.jar jbossas/build/target/jboss*/common/lib
+cp trunk/install/lib/jbossjts*.jar jbossas/build/target/jboss*/client
+cp trunk/XTS/xts-install/sar/jbossxts.sar jbossas/build/target/jboss-6.0.0-SNAPSHOT/docs/examples/transactions
+
+cd $WORKSPACE/jbossas/testsuite
+./build.sh clean
+./build.sh
+./build.sh -Dtest=jca -Dserver=default test-with-server
+./build.sh -Dtest=tm -Dserver=default test-with-server
+
+# TODO: jts mode rpt of above
+
+# xts tests:
+
+# deploy xts into the server
+(cd $JBOSS_HOME/docs/examples/transactions; /usr/local/apache-ant-1.7.1/bin/ant -Dtarget.server.dir=../../../server/default xts)
+# localjunit unit tests
+cp $WORKSPACE/trunk/XTS/xts-install/tests/*.ear $JBOSS_HOME/server/default/deploy
+# interop11.war and sc007.war
+cp $WORKSPACE/trunk/XTS/xts-install/interop-tests/*.war $JBOSS_HOME/server/default/deploy
+
+export MYTESTIP_1=localhost
+cd $JBOSS_HOME/bin
+./run.sh -c default -b ${MYTESTIP_1} &> ../../localjunitserver.log &
+sleep 60
+cd $WORKSPACE/trunk/XTS/localjunit
+/usr/local/apache-ant-1.7.1/bin/ant -f run-tests.xml tests-11
+/usr/local/apache-ant-1.7.1/bin/ant -f run-interop-tests.xml
+cd $JBOSS_HOME/bin
+./shutdown.sh -s jnp://${MYTESTIP_1}:1099 --shutdown
+sleep 60
+
+
+
+
+
