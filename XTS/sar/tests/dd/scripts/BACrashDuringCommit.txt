@@ -165,7 +165,7 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCoordinatorCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCoordinatorCompletionParticipantCloseAndExitTest
 # this test invokes a single service registering 3 coordinator completion participants
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining a system property:
@@ -173,7 +173,7 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantParticipantCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantParticipantCompletionParticipantCloseAndExitTest
 # this test invokes a single service registering 3 participant completion participants
 # it sends an exit to the first participant and completed to the other participants
 # before closing the activity
@@ -277,6 +277,20 @@
 #   received closed message for XXXXXXX completion participant stub XXXXXX
 #   removed committed activity XXXXXX
 #
+#######################################################################
+# This rule resets the periodic recovery wait period to 10 seconds
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
+#
+RULE reset periodic recovery wait time
+CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean
+METHOD getPeriodicRecoveryPeriod()
+AT ENTRY
+IF TRUE
+DO return 10
+ENDRULE
+
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
@@ -506,7 +520,7 @@ AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
-IF NOT recovered
+IF recovered
 DO debug("received closed message for participant completion participant stub " + identifier),
    traceln("log", "received closed message for participant completion participant stub " + identifier)
 ENDRULE
@@ -523,7 +537,7 @@ AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
-IF NOT recovered
+IF recovered
 DO debug("received closed message for coordinator completion participant stub " + identifier),
    traceln("log", "received closed message for coordinator completion participant stub " + identifier)
 ENDRULE
@@ -535,7 +549,7 @@ ENDRULE
 # progressed as expected.
 
 RULE trace prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverACCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoveryBACoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,

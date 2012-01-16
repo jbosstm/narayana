@@ -193,6 +193,20 @@
 #   JVM exit
 #
 #######################################################################
+# This rule resets the periodic recovery wait period to 10 seconds
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
+#
+RULE reset periodic recovery wait time
+CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean
+METHOD getPeriodicRecoveryPeriod()
+AT ENTRY
+IF TRUE
+DO return 10
+ENDRULE
+
+
+#######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
 # will go to this file

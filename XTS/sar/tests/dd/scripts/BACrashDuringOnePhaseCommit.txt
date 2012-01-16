@@ -179,14 +179,14 @@
 # After the first boot AS1 should exit leaving output in the following
 # format in file testlog
 #
-#   sent complete message for XXXXXXX completion engine XXXXXX
+#   sent complete message for XXXXXXX completion engine XXXXXX (Coordinator Completion only)
 #   received completed message for XXXXXXX completion engine XXXXXX
-#   sent close message for XXXXXXX completion engine XXXXXX
+#   sent close message for XXXXXXX completion engine XXXXXX (2 x VM scenario only)
 #   JVM exit
 #
 # AS2 should exit leaving output in the following format in file testlog
 #
-#   received complete message for XXXXXXX completion participant XXXXXX
+#   received complete message for XXXXXXX completion participant XXXXXX (Coordinator Completion only)
 #   sent completed message for XXXXXXX completion participant XXXXXX
 #   received close message for XXXXXXX completion participant XXXXXX
 #   JVM exit
@@ -194,7 +194,7 @@
 # After reboot AS1 should exit leaving output in the following format in file
 # testlog
 #
-#   sent complete message for XXXXXXX completion engine XXXXXX
+#   sent complete message for XXXXXXX completion engine XXXXXX (Coordinator Completion only)
 #   received completed message for XXXXXXX completion engine XXXXXX
 #   sent close message for XXXXXXX completion engine XXXXXX
 #   JVM exit
@@ -204,16 +204,30 @@
 #
 # AS2 should exit leaving output in the following format in file testlog
 #
-#   received complete message for XXXXXXX completion participant XXXXXX
+#   received complete message for XXXXXXX completion participant XXXXXX (Coordinator Completion only)
 #   sent completed message for XXXXXXX completion participant XXXXXX
 #   received close message for XXXXXXX completion participant XXXXXX
 #   JVM exit
-#   recreated XXXXXXX completion participant XXXXXX
+#   created recovered XXXXXXX completion participant XXXXXX
 #   sent getstatus for XXXXXXX completion participant XXXXXX
 #   received invalidstate fault for XXXXXXX completion participant XXXXXX
 #   compensated recovered XXXXXXX completion participant XXXXXX
 #   JVM exit
 #
+#######################################################################
+# This rule resets the periodic recovery wait period to 10 seconds
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
+#
+RULE reset periodic recovery wait time
+CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean
+METHOD getPeriodicRecoveryPeriod()
+AT ENTRY
+IF TRUE
+DO return 10
+ENDRULE
+
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
@@ -667,7 +681,7 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   killJVM()
+   #killJVM()
 ENDRULE
 
 #######################################################################
@@ -683,6 +697,6 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   killJVM()
+   #killJVM()
 ENDRULE
 

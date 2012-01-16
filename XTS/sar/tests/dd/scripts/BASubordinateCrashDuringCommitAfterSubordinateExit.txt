@@ -252,6 +252,7 @@
 #   removed transaction XXXXXX
 #   JVM exit
 #
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
@@ -267,7 +268,8 @@ ENDRULE
 
 #######################################################################
 # This rule resets the periodic recovery wait period to 10 seconds
-# in order to speed up the test
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
 #
 RULE reset periodic recovery wait time
 CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean

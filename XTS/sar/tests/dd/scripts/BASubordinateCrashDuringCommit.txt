@@ -279,27 +279,27 @@
 #   created recovered CC/PC coordinator engine XXXXXX
 #   reinstated prepared subordinate transaction XXXXXX
 #   replaying commit for prepared transaction XXXXXX
-#   close sent for participant engine XXXXXX
-#   close received for participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
-#   close sent for participant engine XXXXXX
-#   close received for participant XXXXXX
+#   send close for participant engine XXXXXX
+#   received close for participant XXXXXX
+#   send closed for participant XXXXXX
+#   received closed for participant engine XXXXXX
+#   send close for participant engine XXXXXX
+#   received close for participant XXXXXX
 #   close called for pseudo participant XXXXXX
 #   close called for subordinate coordinator XXXXXX
-#   close sent for participant engine XXXXXX
-#   close received for participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
-#   close sent for participant engine XXXXXX
-#   close received for participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
+#   send close for participant engine XXXXXX
+#   received close for participant XXXXXX
+#   send closed for participant XXXXXX
+#   received closed for participant engine XXXXXX
+#   send close for participant engine XXXXXX
+#   received close for participant XXXXXX
+#   send closed for participant XXXXXX
+#   received closed for participant engine XXXXXX
 #   removed transaction XXXXXX
 #   close returned for subordinate coordinator XXXXXX
 #   close completed for pseudo participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
+#   send closed for participant XXXXXX
+#   received closed for participant engine XXXXXX
 #   removed transaction XXXXXX
 #   JVM exit after removing both transactions
 #
@@ -318,7 +318,8 @@ ENDRULE
 
 #######################################################################
 # This rule resets the periodic recovery wait period to 10 seconds
-# in order to speed up the test
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
 #
 RULE reset periodic recovery wait time
 CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean

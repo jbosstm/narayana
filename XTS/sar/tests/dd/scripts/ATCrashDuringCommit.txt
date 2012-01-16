@@ -161,7 +161,7 @@
 # After the first boot the JVM should exit leaving the following in file testlog
 #
 #   prepare on non recovered coordinator engine XXXXXX
-#   prepared received for participant XXXXXX
+#   received prepared message for coordinator engine XXXXXX
 #   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
 #   prepare on non recovered coordinator engine XXXXXX
@@ -178,10 +178,27 @@
 #   prepared received for participant XXXXXX
 #   prepared received for participant XXXXXX
 #   JVM exit
+#   created recovered coordinator engine XXXXXX
+#   created recovered coordinator engine XXXXXX
+#   created recovered coordinator engine XXXXXX
 #   commit on recovered coordinator engine XXXXXX
 #   commit on recovered coordinator engine XXXXXX
 #   commit on recovered coordinator engine XXXXXX
+#   removed committed transaction XXXXXX
 #
+#######################################################################
+# This rule resets the periodic recovery wait period to 10 seconds
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
+#
+RULE reset periodic recovery wait time
+CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean
+METHOD getPeriodicRecoveryPeriod()
+AT ENTRY
+IF TRUE
+DO return 10
+ENDRULE
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
@@ -295,7 +312,7 @@ ENDRULE
 # progressed as expected.
 
 RULE trace prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,

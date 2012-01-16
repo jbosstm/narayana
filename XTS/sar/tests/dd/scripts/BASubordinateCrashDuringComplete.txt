@@ -101,7 +101,7 @@
 # ** Rule system traces create
 #
 # (parallel optional)
-# getStatus sent for P2/P3 and ignored during recovery
+# sent getStatus for P2/P3 and ignored during recovery
 # ** Rule system traces dispatch of getStatus
 # (parallel)
 # Recovery system detects missing proxy P2 for transaction T2
@@ -125,9 +125,9 @@
 # Recovery system removes transaction T2
 # ** Rule system traces removal of transaction
 # (parallel)
-# getStatus sent for P1
+# sent getStatus for P1
 # ** Rule system traces dispatch of getStatus
-# soap fault sent to P1
+# sent soap fault to P1
 # ** Rule system traces dispatch of soap fault
 # ** Rule system detects removal of P1
 # (end parallel)
@@ -253,15 +253,13 @@
 #   reinstated prepared subordinate transaction XXXXXX
 #
 #   (parallel -- optional and may be repeated depending upon timing)
-#   getstatus sent for CC participant P1/P2/P3
-#   getstatus received for CC participant P1/P2/P3
-#   status(COMPLETED) sent for CC participant P2/P3
-#   status(COMPLETED) received for CC participant P3
+#   sent getStatus for CC participant P1/P2/P3
+#   received getStatus for CC participant P1/P2/P3
 #   (parallel)
-#   getstatus sent for CC/PC participant P1
-#   getstatus received for CC/PC participant P1
-#   soap fault sent for CC/PC participant P1
-#   soap fault received for CC/PC participant P1
+#   sent getStatus for CC/PC participant P1
+#   received getStatus for CC/PC participant P1
+#   sent soap fault for CC/PC participant P1
+#   received soap fault for CC/PC participant P1
 #   (parallel)
 #   compensate called for pseudo participant XXXXXX
 #   cancel called for subordinate transaction XXX
@@ -306,7 +304,8 @@ ENDRULE
 
 #######################################################################
 # This rule resets the periodic recovery wait period to 10 seconds
-# in order to speed up the test
+# in order to speed up the test. Setting this any lower may result
+# in unexpected behaviour
 #
 RULE reset periodic recovery wait time
 CLASS com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean
@@ -657,8 +656,8 @@ METHOD getStatus(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
-DO debug("receieved getStatus for CC coordinator engine " + identifier),
-   traceln("log", "receieved getStatus for CC coordinator engine " + identifier)
+DO debug("received getStatus for CC coordinator engine " + identifier),
+   traceln("log", "received getStatus for CC coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
@@ -673,8 +672,8 @@ METHOD getStatus(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
-DO debug("receieved getStatus for PC coordinator engine " + identifier),
-   traceln("log", "receieved getStatus for PC coordinator engine " + identifier)
+DO debug("received getStatus for PC coordinator engine " + identifier),
+   traceln("log", "received getStatus for PC coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
@@ -690,7 +689,7 @@ AT ENTRY
 BIND engine:CoordinatorCompletionParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId(),
-     status = $1.getState().toString
+     status = $1.getState().toString()
 IF recovered
 DO debug("received status " + status + " for recovered CC coordinator engine " + identifier),
    traceln("log", "received status " + status + " for recovered CC coordinator engine " + identifier)
@@ -709,7 +708,7 @@ AT ENTRY
 BIND engine:ParticipantCompletionParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId(),
-     status = $1.getState().toString
+     status = $1.getState().toString()
 IF recovered
 DO debug("received status " + status + " for recovered PC coordinator engine " + identifier),
    traceln("log", "received status " + status + " for recovered PC coordinator engine " + identifier)
@@ -857,7 +856,7 @@ ENDRULE
 RULE trace subordinate participant stub compensate with no coordinator
 CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
 METHOD compensate
-AT THROW 3
+AT THROW 2
 BIND NOTHING
 IF TRUE
 DO debug("throw during compensate for pseudo-participant " + $0 + " with no subordinate coordinator"),
@@ -874,7 +873,7 @@ ENDRULE
 RULE trace subordinate participant stub compensate with unactivated coordinator
 CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
 METHOD compensate
-AT THROW 4
+AT THROW 3
 BIND NOTHING
 IF TRUE
 DO debug("throw during compensate for pseudo-participant " + $0 + " with unactivated subordinate coordinator"),
@@ -891,7 +890,7 @@ ENDRULE
 RULE trace subordinate participant stub compensate with system exception from coordinator
 CLASS com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub
 METHOD compensate
-AT THROW 5
+AT THROW 4
 BIND NOTHING
 IF TRUE
 DO debug("throw during compensate for pseudo-participant " + $0 + " with system exception from subordinate coordinator"),
