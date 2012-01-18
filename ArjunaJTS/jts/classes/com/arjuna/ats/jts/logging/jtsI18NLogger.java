@@ -1051,6 +1051,10 @@ public interface jtsI18NLogger {
     @LogMessage(level = WARN)
     public void warn_orbspecific_coordinator_ipunknown(String arg0, String arg1);
 
+    @Message(id = 22259, value = "ExtendedResourceRecord detected that the remote side had cleaned up, assuming 1PC resource", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_1pc_commit_one();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

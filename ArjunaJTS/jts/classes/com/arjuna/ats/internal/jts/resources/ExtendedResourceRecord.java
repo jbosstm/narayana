@@ -517,8 +517,11 @@ public class ExtendedResourceRecord extends
 		{
 			return TwoPhaseOutcome.HEURISTIC_HAZARD;
 		}
-		catch (SystemException e5) {
-            jtsLogger.i18NLogger.warn_resources_errgenerr("ExtendedResourceRecord.topLevelCommit", e5);
+        catch (OBJECT_NOT_EXIST e5) {
+            jtsLogger.i18NLogger.warn_1pc_commit_one();
+        }
+		catch (SystemException e6) {
+            jtsLogger.i18NLogger.warn_resources_errgenerr("ExtendedResourceRecord.topLevelCommit", e6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
