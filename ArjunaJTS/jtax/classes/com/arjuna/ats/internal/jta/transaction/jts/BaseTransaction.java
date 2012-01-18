@@ -198,6 +198,10 @@ public class BaseTransaction
 	            return javax.transaction.Status.STATUS_NO_TRANSACTION;
 		    }
 		}
+		
+		if (theTransaction == null) {
+		    return javax.transaction.Status.STATUS_NO_TRANSACTION;
+		}
 
 		try
 		{
