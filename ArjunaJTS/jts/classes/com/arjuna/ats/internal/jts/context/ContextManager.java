@@ -39,6 +39,7 @@ import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
+import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosTransactions.Control;
