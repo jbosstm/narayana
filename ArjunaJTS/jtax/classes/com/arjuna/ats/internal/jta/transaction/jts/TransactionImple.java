@@ -47,6 +47,7 @@ import javax.transaction.xa.Xid;
 
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.RecoveryCoordinator;
@@ -1121,6 +1122,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		TransactionImple tx = null;
 
+		try {
 		ControlWrapper otx = OTSImpleManager.current().getControlWrapper();
 
 		if (otx != null)
@@ -1159,6 +1161,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 		        }
 		    }
 		}
+		} catch (TRANSACTION_UNAVAILABLE e) {
+            if (e.minor != 1) {
+                throw e;
+            }
+        }
+        
 
 		return tx;
 	}

@@ -18,7 +18,7 @@
  * (C) 2010,
  * @author JBoss, by Red Hat.
  */
-package com.hp.mwtests.ts.jta.basic;
+package com.hp.mwtests.ts.jta.jts.basic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,20 +26,52 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.transaction.Synchronization;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.ORBPackage.InvalidName;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
-import com.hp.mwtests.ts.jta.common.Synchronization;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.RootOA;
 
 /**
  * Exercise the TransactionSynchronizationRegistry implementation.
- *
- * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-public class TransactionSynchronizationRegistryTest
-{
+public class TransactionSynchronizationRegistryTest {
+    private ORB myORB;
+    private RootOA myOA;
+
+    @Before
+    public void setup() throws InvalidName, SystemException {
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
+
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
+
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+
+        jtaPropertyManager.getJTAEnvironmentBean().setTransactionManagerClassName(
+                com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setUserTransactionClassName(
+                com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+    }
+
+    @After
+    public void teardown() {
+        myOA.destroy();
+        myORB.shutdown();
+    }
+
     @Test
     public void testTSR() throws Exception {
 
@@ -62,7 +94,7 @@ public class TransactionSynchronizationRegistryTest
         tsr.putResource(key, value);
         assertEquals(value, tsr.getResource(key));
 
-        Synchronization synchronization = new com.hp.mwtests.ts.jta.common.Synchronization();
+        Synchronization synchronization = new com.hp.mwtests.ts.jta.jts.common.Synchronization();
         tsr.registerInterposedSynchronization(synchronization);
 
         assertFalse(tsr.getRollbackOnly());
