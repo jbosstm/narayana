@@ -1051,9 +1051,20 @@ public interface jtsI18NLogger {
     @LogMessage(level = WARN)
     public void warn_orbspecific_coordinator_ipunknown(String arg0, String arg1);
 
+    @Message(id = 22258, value = "Transaction was inactive", format = MESSAGE_FORMAT)
+    public String get_transaction_was_inactive();
+
     @Message(id = 22259, value = "ExtendedResourceRecord detected that the remote side had cleaned up, assuming 1PC resource", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_1pc_commit_one();
+    
+    @Message(id = 22260, value = "{0} caught exception", format = MESSAGE_FORMAT)
+    @LogMessage(level = DEBUG)
+    public void debug_orbspecific_interposition_resources_arjuna_generror(String arg0, @Cause() Throwable arg1);
+ 
+    @Message(id = 22261, value = "ServerTopLevelAction detected that the transaction was inactive", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_server_top_level_action_inactive();
 
     /*
         Allocate new messages directly above this notice.

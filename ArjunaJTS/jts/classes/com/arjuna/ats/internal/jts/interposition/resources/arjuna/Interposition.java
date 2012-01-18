@@ -36,6 +36,7 @@ import java.util.List;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CosTransactions.Coordinator;
 import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.Terminator;
@@ -183,7 +184,11 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 	    {
 	    }
 
-	    throw new TRANSACTION_ROLLEDBACK();
+        if (((ServerTopLevelAction)action).isTransactionInactive()) {
+            throw new TRANSACTION_UNAVAILABLE(jtsLogger.i18NLogger.get_transaction_was_inactive(), 1, CompletionStatus.COMPLETED_NO);
+        } else {
+            throw new TRANSACTION_ROLLEDBACK();
+        }
 	}
 
 	ServerTopLevelAction newElement = (ServerTopLevelAction)action;

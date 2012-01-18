@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.jta.transaction.jts;
 
 import javax.transaction.NotSupportedException;
 
+import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Coordinator;
 
@@ -188,7 +189,15 @@ public class BaseTransaction
             jtaxLogger.logger.trace("BaseTransaction.getStatus");
         }
 
-		TransactionImple theTransaction = TransactionImple.getTransaction();
+		TransactionImple theTransaction = null;
+	
+		try {
+		theTransaction = TransactionImple.getTransaction();
+		} catch (TRANSACTION_UNAVAILABLE e) {
+		    if (e.minor == 1) {
+	            return javax.transaction.Status.STATUS_NO_TRANSACTION;
+		    }
+		}
 
 		try
 		{
