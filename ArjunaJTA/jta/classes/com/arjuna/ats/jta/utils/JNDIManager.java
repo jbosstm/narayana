@@ -38,6 +38,9 @@ import javax.naming.Reference;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
+/**
+ * @deprecated Only used by tests
+ */
 public class JNDIManager
 {
 	/**

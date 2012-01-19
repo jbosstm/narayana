@@ -339,7 +339,15 @@ public abstract class FileSystemStore extends ObjectStore
         {
             if (ifile != null)
                 ifile.close();
-            else
+        }
+        catch (Exception e)
+        {
+            closedOk = false;
+        }
+
+        try
+        {
+            if (ofile != null)
                 ofile.close();
         }
         catch (Exception e)
@@ -766,7 +774,7 @@ public abstract class FileSystemStore extends ObjectStore
     protected volatile boolean doSync = true;
 
     // global values (some of which may be reset on a per instance basis).
-    
+
     private static Hashtable fileCache = new Hashtable();
     private static int       createRetry = 100;
     private static int       createTimeout = 100;

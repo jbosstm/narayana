@@ -62,7 +62,7 @@ public class TransactionSynchronizationRegistryTest
         tsr.putResource(key, value);
         assertEquals(value, tsr.getResource(key));
 
-        Synchronization synchronization = new Synchronization();
+        Synchronization synchronization = new com.hp.mwtests.ts.jta.common.Synchronization();
         tsr.registerInterposedSynchronization(synchronization);
 
         assertFalse(tsr.getRollbackOnly());
@@ -72,7 +72,7 @@ public class TransactionSynchronizationRegistryTest
         boolean gotExpectedException = false;
         try {
             tsr.registerInterposedSynchronization(synchronization);
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             gotExpectedException = true;
         }
         assertTrue(gotExpectedException);
@@ -80,6 +80,74 @@ public class TransactionSynchronizationRegistryTest
         tm.rollback();
 
         assertEquals(tm.getStatus(), tsr.getTransactionStatus());
-        
+    }
+
+    @Test
+    public void testTSRUseAfterCompletion() throws Exception {
+
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        final CompletionCountLock ccl = new CompletionCountLock(2);
+        tm.begin();
+        final TransactionSynchronizationRegistry tsr = new TransactionSynchronizationRegistryImple();
+        tsr.registerInterposedSynchronization(new Synchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                String key = "key";
+                Object value = new Object();
+                try {
+                    tsr.getResource(key);
+                    ccl.incrementFailedCount();
+                } catch (IllegalStateException ise) {
+                    // Expected
+                    ccl.incrementCount();
+                }
+                try {
+                    tsr.putResource(key, value);
+                    ccl.incrementFailedCount();
+                } catch (IllegalStateException ise) {
+                    // Expected
+                    ccl.incrementCount();
+                }
+            }
+
+            @Override
+            public void beforeCompletion() {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+        tm.commit();
+
+        assertTrue(ccl.waitForCompletion());
+
+    }
+
+    private class CompletionCountLock {
+        private int successCount;
+        private int failedCount;
+        private int maxCount;
+
+        public CompletionCountLock(int maxCount) {
+            this.maxCount = maxCount;
+        }
+
+        public synchronized boolean waitForCompletion() throws InterruptedException {
+            while (successCount + failedCount < maxCount) {
+                wait();
+            }
+            return failedCount == 0;
+        }
+
+        public synchronized void incrementCount() {
+            this.successCount++;
+            this.notify();
+        }
+
+        public synchronized void incrementFailedCount() {
+            this.failedCount++;
+            this.notify();
+        }
     }
 }

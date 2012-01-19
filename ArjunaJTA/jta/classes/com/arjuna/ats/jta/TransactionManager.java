@@ -43,6 +43,8 @@ public class TransactionManager
 	 * @param ctx The JNDI initial context to lookup the Transaction Manager reference from.
 	 * @return The transaction manager bound to the appropriate JNDI context.  Returns null
      * if the transaction manager cannot be found.
+     * 
+     * @deprecated This is only used by tests
 	 */
     public static javax.transaction.TransactionManager transactionManager (InitialContext ctx)
     {

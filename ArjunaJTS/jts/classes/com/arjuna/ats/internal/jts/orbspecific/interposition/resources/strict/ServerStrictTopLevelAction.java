@@ -88,7 +88,7 @@ public boolean interposeResource ()
 		Coordinator realCoordinator = _theControl.originalCoordinator();
 
 		if (!(_valid = registerResource(realCoordinator))) {
-            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_strict_iptlfailed("ServerStrictNestedAction");
+//            jtsLogger.i18NLogger.warn_orbspecific_interposition_resources_strict_iptlfailed("ServerStrictNestedAction");
 
             /*
                 * Failed to register. Valid is set, and the interposition
