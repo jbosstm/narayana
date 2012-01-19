@@ -23,10 +23,15 @@
   <packaging>pom</packaging>
   <name>JBossJTA Documentation</name>
   <description>jta docs</description>
-  <modules>
-    <module>administration_guide</module>
-    <module>development_guide</module>
-    <module>installation_guide</module>
-    <module>quick_start_guide</module>
-  </modules>
+  <profiles>
+    <profile>
+      <id>docs</id>
+      <modules>
+        <module>administration_guide</module>
+        <module>development_guide</module>
+        <module>installation_guide</module>
+        <module>quick_start_guide</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

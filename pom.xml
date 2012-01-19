@@ -266,6 +266,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.7.2</version>
+            <configuration>
+              <forkMode>pertest</forkMode>
+              <workingDirectory>target/test-classes</workingDirectory>
+              <runOrder>alphabetical</runOrder>
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+              <inherited>true</inherited>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+            </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -808,30 +818,6 @@
   </properties>
   <profiles>
     <profile>
-      <id>jacorb</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <forkMode>pertest</forkMode>
-              <workingDirectory>target/test-classes</workingDirectory>
-              <runOrder>alphabetical</runOrder>
-              <redirectTestOutputToFile>true</redirectTestOutputToFile>
-              <inherited>true</inherited>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>idlj</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -860,18 +846,57 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>XTS</module>
+        <module>ArjunaJTS</module>
+        <module>rest-tx</module>
+        <module>rhq-plugin</module>
+        <module>txbridge</module>
+        <module>docs</module>
+        <module>narayana-full</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>docs</id>
+      <modules>
+        <module>docs</module>
+        <module>ArjunaCore/docs</module>
+        <module>ArjunaJTA/docs</module>
+        <module>ArjunaJTS/docs</module>
+        <module>XTS/docs</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>core</id>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>jta</id>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>jts</id>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>ArjunaJTS</module>
+      </modules>
+    </profile>
   </profiles>
-
-  <modules>
-    <module>docs</module>
-    <module>common</module>
-    <module>ArjunaCore</module>
-    <module>ArjunaJTA</module>
-    <module>XTS</module>
-    <module>ArjunaJTS</module>
-    <module>rest-tx</module>
-    <module>rhq-plugin</module>
-    <module>txbridge</module>
-    <module>narayana-full</module>
-  </modules>
 </project>
