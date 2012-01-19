@@ -337,7 +337,7 @@
             </options>
           </configuration>
         </plugin>
-      </plugins>
+	</plugins>
     </pluginManagement>
     <plugins>
       <plugin>
@@ -383,13 +383,44 @@
           </dependency>
         </dependencies>
       </plugin>
-      <!-- <plugin> <inherited>true</inherited> <groupId>org.apache.maven.plugins</groupId> 
+	  <!-- <plugin> <inherited>true</inherited> <groupId>org.apache.maven.plugins</groupId> 
 				<artifactId>maven-enforcer-plugin</artifactId> <version>1.0-beta-1</version> 
 				<executions> <execution> <id>enforce-property</id> <goals> <goal>enforce</goal> 
 				</goals> <configuration> <rules> <requireProperty> <property>TS_EMMA_JAR</property> 
 				<message>"You must tell me where emma is located - set the -DTS_EMMA_JAR 
 				property"</message> </requireProperty> </rules> <fail>true</fail> </configuration> 
 				</execution> </executions> </plugin> -->
+	  <plugin>
+		  <groupId>org.codehaus.mojo</groupId>
+		  <artifactId>findbugs-maven-plugin</artifactId>
+		  <configuration>
+			  <skip>${findbugs.skip}</skip>
+		  </configuration>
+		  <version>2.3.3</version>
+		  <executions>
+			  <execution>
+				  <id>findbugs</id>
+				  <phase>compile</phase>
+				  <goals>
+					  <goal>check</goal>
+				  </goals>
+			  </execution>
+		  </executions>
+	  </plugin>
+	  <plugin>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-site-plugin</artifactId>
+		  <version>3.0</version>
+		  <configuration>
+			  <reportPlugins>
+				  <plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>findbugs-maven-plugin</artifactId>
+					  <version>2.3.3</version>
+				  </plugin>
+			  </reportPlugins>
+		  </configuration>
+	  </plugin>
     </plugins>
   </build>
   <dependencyManagement>
@@ -820,6 +851,7 @@
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <findbugs.skip>true</findbugs.skip>
   </properties>
   <profiles>
     <profile>
