@@ -681,7 +681,7 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   #killJVM()
+   killJVM()
 ENDRULE
 
 #######################################################################
@@ -697,6 +697,6 @@ BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
    traceln("log", "JVM exit"),
-   #killJVM()
+   killJVM()
 ENDRULE
 
