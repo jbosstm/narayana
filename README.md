@@ -1,18 +1,31 @@
+Narayana
+========
+
 NOTE: PATCHED EMMA JAR
+----------------------
 This build uses a patch of the EMMA Jar, the source code for the patch is available from:
-https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
+
+	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
+
 The latest version of the patched emma is available from /ext
 
 
-------------------------------------------
+Building Naryana
+----------------
 To build Narayana you should call:
-./build.[sh|bat] <maven_goals>
+
+	./build.[sh|bat] <maven_goals>
 
 To use this wrapper to build an individual module (say arjuna) you would type:
-	[./]build.[sh|bat] clean install -pl :arjuna
+
+	./build.[sh|bat] clean install -pl :arjuna
+
 If you are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
+
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
+
 If you want to be able to cd into a folder to call our shipped maven or a version of maven not shipped with our project (on linux):
+
 	1. Create a file called $HOME/bin/txmvn (assuming $HOME/bin is in the path)
 	2. Add the following contents to this file:
 	#!/bin/bash
@@ -22,11 +35,28 @@ If you want to be able to cd into a folder to call our shipped maven or a versio
 	mvn $EXT_JARS $@
 	3. Ensure that $HOME/bin/txmvn is executable
 	4. type something like "txmvn clean install"
+
 NOTE: This does not set the memory options etc that build.[sh|bat] does so you will need to update this script to reflect our changes in build.[sh|bat]
-------------------------------------------
+
+Build Profiles
+--------------
+To speed up the build, several profiles are provided to restrict what is built. The available options are:
+
+1. all  This builds everything
+2. docs  This builds the documentation only
+3. core  This builds the common and arjunacore modules
+4. jta  This builds common, arjunacore and JTA
+5. jts  This builds common, arjunacore, JTA and JTS
+6. xts  This builds common, arjunacore, JTA and XTS
+7. stm  This builds common, arjuna, txoj and the STM module
+
+So, for example, to build stm you can type:
+
+	./build.[sh|bat] clean install -P stm
+
 
 Now The Gory Details.
-
+---------------------
 Each module contains a set of maven build scripts, which chiefly just inherits and selectively overrides the parent
  pom.xml  Understanding this approach requires some knowledge of maven's inheritance.
 
@@ -52,67 +82,8 @@ A handful of unit tests build and run as part of the normal build. Most test cov
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
 
 
-------------------------------------------------------------------
-To build and deploy into AS (note, this applies to AS6 - not AS7):
-export JAVA_HOME=/usr/local/jdk1.6.0_17
-export PATH=$PATH:/usr/local/apache-maven-2.1.0/bin
-
-if [ -d jbossas ]; then
-  rm -r jbossas
-fi
-
-if [ -f jbossas.tgz ]; then
-  rm jbossas.tgz
-fi
-
-# don't use fs link, use http
-wget http://albany/job/jbossas-trunk/lastSuccessfulBuild/artifact/jbossas.tgz
-
-mkdir jbossas
-cd jbossas
-tar -xzf ../jbossas.tgz
-cd build/target/jboss*
-export JBOSS_HOME=`pwd`
-cd $WORKSPACE
-
-cd trunk
-/usr/local/apache-ant-1.7.1/bin/ant jbossall
-
-# install TS trunk to AS
-cd $WORKSPACE
-cp trunk/install/lib/jbossjts*.jar jbossas/build/target/jboss*/common/lib
-cp trunk/install/lib/jbossjts*.jar jbossas/build/target/jboss*/client
-cp trunk/XTS/xts-install/sar/jbossxts.sar jbossas/build/target/jboss-6.0.0-SNAPSHOT/docs/examples/transactions
-
-cd $WORKSPACE/jbossas/testsuite
-./build.sh clean
-./build.sh
-./build.sh -Dtest=jca -Dserver=default test-with-server
-./build.sh -Dtest=tm -Dserver=default test-with-server
-
-# TODO: jts mode rpt of above
-
-# xts tests:
-
-# deploy xts into the server
-(cd $JBOSS_HOME/docs/examples/transactions; /usr/local/apache-ant-1.7.1/bin/ant -Dtarget.server.dir=../../../server/default xts)
-# localjunit unit tests
-cp $WORKSPACE/trunk/XTS/xts-install/tests/*.ear $JBOSS_HOME/server/default/deploy
-# interop11.war and sc007.war
-cp $WORKSPACE/trunk/XTS/xts-install/interop-tests/*.war $JBOSS_HOME/server/default/deploy
-
-export MYTESTIP_1=localhost
-cd $JBOSS_HOME/bin
-./run.sh -c default -b ${MYTESTIP_1} &> ../../localjunitserver.log &
-sleep 60
-cd $WORKSPACE/trunk/XTS/localjunit
-/usr/local/apache-ant-1.7.1/bin/ant -f run-tests.xml tests-11
-/usr/local/apache-ant-1.7.1/bin/ant -f run-interop-tests.xml
-cd $JBOSS_HOME/bin
-./shutdown.sh -s jnp://${MYTESTIP_1}:1099 --shutdown
-sleep 60
-
-
-
-
-
+Developing Narayana
+-------------------
+Please see the following JIRA for details on how to configure your IDE for developing with the Narayana code styles:
+	
+	https://issues.jboss.org/browse/JBTM-989
