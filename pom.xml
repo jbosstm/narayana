@@ -898,5 +898,14 @@
         <module>ArjunaJTS</module>
       </modules>
     </profile>
+    <profile>
+      <id>stm</id>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore/arjuna</module>
+        <module>ArjunaCore/txoj</module>
+        <module>STM</module>
+      </modules>
+    </profile>
   </profiles>
 </project>

@@ -35,6 +35,7 @@ import org.jboss.stm.types.AtomicArray;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 // TODO maybe pull all of this into a separate jar
 
@@ -147,7 +148,7 @@ public class AtomicArrayImpl<E> implements AtomicArray<E>
                    
                    try
                    {
-                       temp.pack(os);
+                       UidHelper.packInto(temp, os);
                    }
                    catch (final Exception ex)
                    {
@@ -206,9 +207,7 @@ public class AtomicArrayImpl<E> implements AtomicArray<E>
                     
                     try
                     {
-                        Uid temp = new Uid(Uid.nullUid());
-                        
-                        temp.unpack(os);
+                        Uid temp = UidHelper.unpackFrom(os);
                         
                         _array.set(i, _container.getHandle(temp));
                     }

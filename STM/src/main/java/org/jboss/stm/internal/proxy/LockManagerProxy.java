@@ -36,6 +36,7 @@ import org.jboss.stm.annotations.Transactional;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.txoj.LockManager;
 
 public class LockManagerProxy<T> extends LockManager
@@ -329,7 +330,7 @@ public class LockManagerProxy<T> extends LockManager
             else
             {
                 os.packBoolean(true);
-                _container.getUidForHandle((T) ptr).pack(os);
+                UidHelper.packInto(_container.getUidForHandle((T) ptr), os);
             }
         }
         catch (final ClassCastException ex)
@@ -537,8 +538,6 @@ public class LockManagerProxy<T> extends LockManager
     
     private boolean unpackTransactionalInstance (final Field afield, InputObjectState os)
     {
-        Uid u = new Uid(Uid.nullUid());
-        
         try
         {
             boolean ptr = os.unpackBoolean();
@@ -547,7 +546,7 @@ public class LockManagerProxy<T> extends LockManager
                 afield.set(_theObject, null);
             else
             {
-                u.unpack(os);
+                Uid u = UidHelper.unpackFrom(os);
                 
                 afield.set(_theObject, _container.getHandle(u));
             }

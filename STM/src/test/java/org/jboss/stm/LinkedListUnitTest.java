@@ -39,6 +39,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.txoj.Lock;
 import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.LockMode;
@@ -111,7 +112,7 @@ public class LinkedListUnitTest extends TestCase
             else
             {
                 os.packBoolean(true);
-                theContainer.getUidForHandle(_prev).pack(os);
+                UidHelper.packInto(theContainer.getUidForHandle(_prev), os);
             }
             
             if (_next == null)
@@ -119,7 +120,7 @@ public class LinkedListUnitTest extends TestCase
             else
             {
                 os.packBoolean(true); 
-                theContainer.getUidForHandle(_next).pack(os);
+                UidHelper.packInto(theContainer.getUidForHandle(_next), os);
             }
 
             os.packString(_nodeName);
@@ -128,14 +129,13 @@ public class LinkedListUnitTest extends TestCase
         @RestoreState
         public void restore_state (InputObjectState os) throws IOException
         {
-            Uid id = new Uid(Uid.nullUid());
             boolean ptr = os.unpackBoolean();
             
             if (ptr == false)
                 _prev = null;
             else
             {
-                id.unpack(os);
+            	Uid id = UidHelper.unpackFrom(os);
                 _prev = theContainer.getHandle(id);
             }
 
@@ -145,7 +145,7 @@ public class LinkedListUnitTest extends TestCase
                 _next = null;
             else
             {
-                id.unpack(os);
+            	Uid id = UidHelper.unpackFrom(os);
                 _next = theContainer.getHandle(id);
             }
 
