@@ -860,9 +860,13 @@
         <module>rest-tx</module>
         <module>rhq-plugin</module>
         <module>txbridge</module>
+        <module>STM</module>
         <module>docs</module>
         <module>narayana-full</module>
       </modules>
+      <properties>
+        <docs>true</docs>
+      </properties>
     </profile>
     <profile>
       <id>docs</id>

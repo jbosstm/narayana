@@ -26,6 +26,9 @@
   <profiles>
     <profile>
       <id>docs</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <modules>
         <module>administration_guide</module>
         <module>development_guide</module>

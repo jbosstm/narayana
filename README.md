@@ -54,6 +54,10 @@ So, for example, to build stm you can type:
 
 	./build.[sh|bat] clean install -P stm
 
+Note that by default, if a parent module has documentation, it will be built, to disable this you can deactive the docs profile as follows:
+
+	./build.[sh|bat] clean install -P !docs
+
 
 Now The Gory Details.
 ---------------------
