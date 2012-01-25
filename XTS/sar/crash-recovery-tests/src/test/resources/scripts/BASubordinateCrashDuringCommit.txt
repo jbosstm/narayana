@@ -281,25 +281,25 @@
 #   replaying commit for prepared transaction XXXXXX
 #   send close for participant engine XXXXXX
 #   received close for participant XXXXXX
-#   send closed for participant XXXXXX
-#   received closed for participant engine XXXXXX
+#   send close for recovered CC/PC coordinator engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   send close for participant engine XXXXXX
 #   received close for participant XXXXXX
 #   close called for pseudo participant XXXXXX
 #   close called for subordinate coordinator XXXXXX
 #   send close for participant engine XXXXXX
 #   received close for participant XXXXXX
-#   send closed for participant XXXXXX
-#   received closed for participant engine XXXXXX
+#   send close for recovered CC/PC coordinator engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   send close for participant engine XXXXXX
 #   received close for participant XXXXXX
-#   send closed for participant XXXXXX
-#   received closed for participant engine XXXXXX
+#   send close for recovered CC/PC coordinator engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   removed transaction XXXXXX
 #   close returned for subordinate coordinator XXXXXX
 #   close completed for pseudo participant XXXXXX
-#   send closed for participant XXXXXX
-#   received closed for participant engine XXXXXX
+#   send close for recovered CC/PC coordinator engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   removed transaction XXXXXX
 #   JVM exit after removing both transactions
 #

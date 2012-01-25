@@ -240,15 +240,15 @@
 #   replaying commit for prepared transaction XXXXXX
 #   close sent for participant engine XXXXXX
 #   close received for participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
+#   send closed for recovered CC/PC participant engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   close sent for participant engine XXXXXX
 #   close received for participant XXXXXX
 #   close called for pseudo participant XXXXXX
 #
-#   close completed for pseudo participant XXXXXX
-#   closed sent for participant XXXXXX
-#   closed received for participant engine XXXXXX
+#   received close for recovered CC/PC participant engine XXXXXX
+#   send closed for recovered CC/PC participant engine XXXXXX
+#   received closed for recovered CC/PC coordinator engine XXXXXX
 #   removed transaction XXXXXX
 #   JVM exit
 #

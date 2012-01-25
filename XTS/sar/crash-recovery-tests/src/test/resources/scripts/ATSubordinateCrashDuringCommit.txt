@@ -159,14 +159,14 @@
 # After reboot the JVM should exit leaving output in the following format in file
 # testlog.
 #
-#   prepare sent for participant engine XXXXXX
+#   prepare sent for coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
 #   prepare called for pseudo-participant XXXXXX
 #   prepare completed for pseudo-participant XXXXXX
 #   prepare received for participant XXXXXX
 #   prepare called for pseudo participant XXXXXX
-#   prepare sent for participant engine XXXXXX
+#   prepare sent for coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for coordinator engine XXXXXX
 #   prepared sent for coordinator engine XXXXXX
@@ -190,7 +190,7 @@
 #   commit completed for pseudo-participant XXXXXX
 #   send committed for recovered participant engine XXXXXX
 #   removed committed transaction XXXXXX
-#   JVM exit
+#   JVM exit after removing both transactions
 #
 #######################################################################
 # This rule resets the periodic recovery wait period to 10 seconds
