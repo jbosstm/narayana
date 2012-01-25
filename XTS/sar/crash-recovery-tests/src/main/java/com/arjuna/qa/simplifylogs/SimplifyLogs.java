@@ -23,6 +23,12 @@ public class SimplifyLogs
 
         for (File file : logDir.listFiles())
         {
+            if (file.isDirectory())
+            {
+                continue;
+            }
+
+            System.out.println("Processing: '" + file.getName() + "'");
             List<String> log = loadLog(file);
             
             if (log.size() == 0)
