@@ -199,20 +199,19 @@
 # (the number and order of entries depends upon how many and which type of participants
 # are enlisted)
 #
-#   complete sent for CC participant XXXXXX ***
+#   complete sent for CC coordinator engine XXXXXX ***
 #   complete received for CC participant XXXXXX  ***
 #   completed sent for CC/PC participant XXXXXX
 #   completed received for CC/PC participant XXXXXX
-#   complete sent for CC participant XXXXXX
+#   complete sent for CC coordinator engine XXXXXX
 #   complete received for CC participant XXXXXX
 #   complete called for pseudo participant XXXXXX
-#   complete sent for CC participant XXXXXX ***
+#   complete sent for CC coordinator engine XXXXXX ***
 #   complete received for CC participant XXXXXX ***
 #   completed sent for CC participant XXXXXX
 #   completed received for CC participant XXXXXX
 #   prepare for transaction XXXXXX
 #   saved to disk transaction XXXXXX
-#   complete returned for pseudo participant XXXXXX
 #   JVM exit
 #
 # n.b. *** indicates trace which may be omitted
@@ -227,20 +226,19 @@
 # After reboot the JVM should exit leaving output in the following format in file
 # testlog.
 #
-#   complete sent for CC participant XXXXXX ***
+#   complete sent for CC coordinator engine XXXXXX ***
 #   complete received for CC participant XXXXXX  ***
 #   completed sent for CC/PC participant XXXXXX
 #   completed received for CC/PC participant XXXXXX
-#   complete sent for CC participant XXXXXX
+#   complete sent for CC coordinator engine XXXXXX
 #   complete received for CC participant XXXXXX
 #   complete called for pseudo participant XXXXXX
-#   complete sent for CC participant XXXXXX ***
+#   complete sent for CC coordinator engine XXXXXX ***
 #   complete received for CC participant XXXXXX ***
 #   completed sent for CC participant XXXXXX
 #   completed received for CC participant XXXXXX
 #   prepare for transaction XXXXXX
 #   saved to disk transaction XXXXXX
-#   complete returned for pseudo participant XXXXXX
 #   JVM exit
 #   created recovered CC/PC participant engine XXXXXX
 #   created recovered CC/PC participant engine XXXXXX
@@ -253,27 +251,28 @@
 #   reinstated prepared subordinate transaction XXXXXX
 #
 #   (parallel -- optional and may be repeated depending upon timing)
-#   sent getStatus for CC participant P1/P2/P3
+#   sent getStatus for recovered CC coordinator engine P1/P2/P3
 #   received getStatus for CC participant P1/P2/P3
 #   (parallel)
-#   sent getStatus for CC/PC participant P1
+#   sent getStatus for recovered CC/PC coordinator engine P1
 #   received getStatus for CC/PC participant P1
-#   sent soap fault for CC/PC participant P1
+#   sent soap fault for unknown CC/PC participant P1
 #   received soap fault for CC/PC participant P1
 #   (parallel)
 #   compensate called for pseudo participant XXXXXX
-#   cancel called for subordinate transaction XXX
-#   compensate sent for PC/CC participant XXXXXX
+#   cancel called for subordinate coordinator XXX
+#   compensate sent for PC/CC coordinator engine XXXXXX
 #   compensate received for PC/CC participant XXXXXX
 #   compensated sent for PC/CC participant XXXXXX
 #   compensated received for PC/CC participant XXXXXX
-#   compensate sent for PC/CC participant XXXXXX
+#   compensate sent for PC/CC coordinator engine XXXXXX
 #   compensate received for PC/CC participant XXXXXX
 #   compensated sent for PC/CC participant XXXXXX
 #   compensated received for PC/CC participant XXXXXX
 #   cancel returned for subordinate transaction XXX
 #   compensate completed for pseudo participant XXXXXX
-#   removed transaction XXXXXX
+#   sent status {http://docs.oasis-open.org/ws-tx/wsba/2006/06}Completed for recovered PC/CC coordinator engine XXXX
+#   received status {http://docs.oasis-open.org/ws-tx/wsba/2006/06}Completed for recovered PC/CC coordinator engine XXXX
 #   (end parallel)
 #
 #   JVM exit

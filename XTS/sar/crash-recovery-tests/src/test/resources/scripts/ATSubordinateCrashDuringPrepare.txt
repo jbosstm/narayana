@@ -182,7 +182,6 @@
 #   prepared received for participant XXXXXX
 #   prepare returned for subordinate transaction XXXXXX
 #   saved to disk transaction XXXXXX
-#   prepare returned for pseudo participant XXXXXX
 #   JVM exit
 #
 # n.b. there should be at least one prepare/prepared sent/received message received for each participant
@@ -207,7 +206,6 @@
 #   prepared received for participant XXXXXX
 #   prepare returned for subordinate transaction XXXXXX
 #   saved to disk transaction XXXXXX
-#   prepare returned for pseudo participant XXXXXX
 #   JVM exit
 #   created recovered Participant engine XXXXXX
 #   created recovered Participant engine XXXXXX
