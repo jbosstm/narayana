@@ -17,24 +17,12 @@ Building:
 ---------
 
 Build the bridge:
-ant
+mvn install
 
-Build and deploy the demo:
+Demo
+----
 
-cd demo
-set jbossas.home and jbossas.server in build.xml
-ant dist
-ant deploy-service
-ant deploy-client
-
-Start JBoss AS:
----------------
-
-ensure JBoss AS is started with XTS enabled. This can be done by specifying the standalone-xts configuration when starting JBoss AS:
-
-cd $JBOSS_HOME
-./bin/standalone.sh --server-config=standalone-xts.xml
-
+A demo of how to use the bridge is available as part of the Narayana quickstarts project. 
 
 See docs/TransactionBridgingGuide for further details on the demo app.
 
