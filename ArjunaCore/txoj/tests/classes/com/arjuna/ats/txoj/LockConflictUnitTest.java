@@ -35,6 +35,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.arjuna.ats.internal.txoj.LockConflictManager;
+
 public class LockConflictUnitTest
 {
     @Test

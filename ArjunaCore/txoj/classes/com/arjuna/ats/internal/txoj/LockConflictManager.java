@@ -29,10 +29,12 @@
  * $Id: LockConflictManager.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import com.arjuna.ats.txoj.LockManager;
 
 /**
  * An instance of this class is used to determine what to do in the event of a
@@ -43,9 +45,9 @@ import java.util.Date;
  * or when the lock is actually released.
  */
 
-class LockConflictManager
+public class LockConflictManager
 {
-    LockConflictManager()
+    public LockConflictManager()
     {
         _lock = new Object();
     }
@@ -55,7 +57,7 @@ class LockConflictManager
      * or block it on a mutex. Returns the time taken to wait.
      */
 
-    int wait (int retry, int waitTime)
+    public int wait (int retry, int waitTime)
     {
         Date d1 = Calendar.getInstance().getTime();
         
@@ -92,7 +94,7 @@ class LockConflictManager
      * Signal that the lock has been released.
      */
 
-    void signal ()
+    public void signal ()
     {
         synchronized (_lock)
         {
