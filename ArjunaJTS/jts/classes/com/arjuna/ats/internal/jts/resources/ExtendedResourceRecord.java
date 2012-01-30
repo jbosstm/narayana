@@ -89,7 +89,8 @@ public class ExtendedResourceRecord extends
 		com.arjuna.ats.arjuna.coordinator.AbstractRecord
 {
 
-	/**
+	private boolean lastRecord;
+    /**
 	 * @param propagate
 	 *            tells us whether to propagate the resource at nested commit or
 	 *            not.
@@ -492,6 +493,8 @@ public class ExtendedResourceRecord extends
 			jtsLogger.logger.trace("ExtendedResourceRecord::topLevelCommit() for " + order());
 		}
 
+		if (!lastRecord) {
+            
 		try
 		{
 			if (resourceHandle() != null)
@@ -517,14 +520,12 @@ public class ExtendedResourceRecord extends
 		{
 			return TwoPhaseOutcome.HEURISTIC_HAZARD;
 		}
-        catch (OBJECT_NOT_EXIST e5) {
-            jtsLogger.i18NLogger.warn_1pc_commit_one();
-        }
-		catch (SystemException e6) {
+        catch (SystemException e6) {
             jtsLogger.i18NLogger.warn_resources_errgenerr("ExtendedResourceRecord.topLevelCommit", e6);
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
+		}
 
 		return TwoPhaseOutcome.FINISH_OK;
 	}
@@ -723,6 +724,8 @@ public class ExtendedResourceRecord extends
 			}
 			else
 				_stringifiedResourceHandle = null;
+			
+			lastRecord = os.unpackBoolean();
 		}
 		catch (IOException e)
 		{
@@ -829,6 +832,8 @@ public class ExtendedResourceRecord extends
 						jtsLogger.logger.trace("Packed rec co uid of " + _recCoordUid);
 					}
 				}
+				
+				os.packBoolean(lastRecord);
 			}
 		}
 		catch (IOException e)
@@ -1161,8 +1166,10 @@ public class ExtendedResourceRecord extends
 	{
 		try
 		{
-		    if (_otsARHandle == null)
+		    if (_otsARHandle == null) {
 		        _otsARHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.narrow(_resourceHandle);
+		        lastRecord = RecordType.LASTRESOURCE == _otsARHandle.type_id();
+		    }
 
 		    if (_otsARHandle == null)
 		        throw new BAD_PARAM();
