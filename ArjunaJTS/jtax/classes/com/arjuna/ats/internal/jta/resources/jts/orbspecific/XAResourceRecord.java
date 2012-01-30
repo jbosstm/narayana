@@ -1029,6 +1029,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_recoveryCoordinator = recCoord;
 	}
 
+	/**
+	 * @deprecated Only used in tests
+	 */
 	public final RecoveryCoordinator getRecoveryCoordinator()
 	{
 		return _recoveryCoordinator;
