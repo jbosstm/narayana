@@ -33,9 +33,9 @@ public class BaseCrashTest
     public static Archive<?> createTestArchive()
     {
         WebArchive archive = ShrinkWrap.
-                createFromZipFile(WebArchive.class, new File(xtstestWar));
+        createFromZipFile(WebArchive.class, new File(xtstestWar));
         final String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
+            + "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
@@ -85,6 +85,14 @@ public class BaseCrashTest
     {
         String log = "target/log";
 
+        String jbossHome = System.getenv().get("JBOSS_HOME");
+        if(jbossHome == null) {
+            Assert.fail("$JBOSS_HOME not set");
+        }
+        String dir = jbossHome + "/standalone/data/tx-object-store/ShadowNoFileLockStore/defaultStore/XTS/";
+        File objectStore = new File(dir);
+        Assert.assertTrue(checkTxObjectStore(objectStore));
+
         if (testName != null && scriptName != null)
         {
             String logFileName = scriptName + "." + testName;
@@ -131,7 +139,7 @@ public class BaseCrashTest
         controller.kill("jboss-as");
     }
 
-    private boolean deleteDirectory(File path)
+    private boolean deleteDirectory(File path) 
     {
         if (path.exists())
         {
@@ -149,5 +157,25 @@ public class BaseCrashTest
             }
         }
         return (path.delete());
+    }
+
+    private boolean checkTxObjectStore(File objectStore) 
+    {    
+        if(objectStore.exists() && objectStore.isDirectory())
+        {
+            File[] files = objectStore.listFiles();
+            if(files != null) {
+                int i = 0;
+                for(i=0;i<files.length;i++) {
+                    if(files[i].isDirectory()) {
+                        if (checkTxObjectStore(files[i]) == false)
+                            return false;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
