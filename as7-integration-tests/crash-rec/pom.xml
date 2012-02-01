@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
+	LLC, and individual contributors as indicated by the @author tags. See the 
+	copyright.txt in the distribution for a full listing of individual contributors. 
+	This copyrighted material is made available to anyone wishing to use, modify, 
+	copy, or redistribute it subject to the terms and conditions of the GNU Lesser 
+	General Public License, v. 2.1. This program is distributed in the hope that 
+	it will be useful, but WITHOUT A WARRANTY; without even the implied warranty 
+	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
+	General Public License for more details. You should have received a copy 
+	of the GNU Lesser General Public License, v.2.1 along with this distribution; 
+	if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
+	Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.as.quickstarts</groupId>
+	<artifactId>jboss-as-jts-crash-rec</artifactId>
+	<version>7.1.0.Final-SNAPSHOT</version>
+	<name>JBoss AS Quickstarts: Java Transaction Service</name>
+	<description>Using CMT with JTS</description>
+	<packaging>war</packaging>
+
+	<url>http://jboss.org/jbossas</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<!-- Define the version of JBoss' Java EE 6 APIs we want to import. Any 
+			dependencies from org.jboss.spec will have their version defined by this 
+			BOM -->
+		<javaee6.spec.version>3.0.0.Beta1</javaee6.spec.version>
+
+		<!-- Explicitly declaring the source encoding eliminates the following 
+			message: -->
+		<!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
+			resources, i.e. build is platform dependent! -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<BYTEMAN_HOME>${env.BYTEMAN_HOME}</BYTEMAN_HOME>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
+				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+				of artifacts. We use this here so that we always get the correct versions 
+				of artifacts. Here we use the jboss-javaee-6.0 stack (you can read this as 
+				the JBoss stack of the Java EE 6 APIs) -->
+			<dependency>
+				<groupId>org.jboss.spec</groupId>
+				<artifactId>jboss-javaee-6.0</artifactId>
+				<version>${javaee6.spec.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- Import the JPA API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.transaction</groupId>
+			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Import the JSF API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.faces</groupId>
+			<artifactId>jboss-jsf-api_2.0_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Import the JMS API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Import the EJB API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Import the JPA API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Import the injection annotations -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- We will provide some tests to check the quickstart deploys ok -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Optional, but highly recommended -->
+		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) 
+			JPA from JUnit/TestNG -->
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<version>1.0.0.CR7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<version>1.0.0.CR7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.as</groupId>
+			<artifactId>jboss-as-arquillian-container-managed</artifactId>
+			<version>7.1.0.Final-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!-- Maven will append the version to the finalName (which is the name 
+			given to the generated war, and hence the context root) -->
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<workingDirectory>${basedir}/target/workdir</workingDirectory> <!-- Work in submodule's own dir. -->
+					<systemPropertyVariables>
+						<BYTEMAN_HOME>${env.BYTEMAN_HOME}</BYTEMAN_HOME>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>build-clustering.server</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+
+							<target>
+								<!-- Build server configutation: * Copy from distribution directory 
+									(TODO: Copy from ${basedir}target/jbossas to pick up changes by Maven! * 
+									Overwrite some config files, replace tokens. -->
+								<macrodef name="build-server-config" description="Builds a server configuration">
+
+									<attribute name="name" default="jbossas" />
+									<attribute name="output.dir" default="${project.build.directory}" />
+									<attribute name="jboss.dist" default="${jboss.dist}" />
+									<element name="filter-elements" optional="yes"
+										description="additional filter elements" />
+
+									<sequential>
+
+										<echo
+											message="Building AS instance &quot;@{name}&quot; from @{jboss.dist} to @{output.dir}" />
+
+										<!-- copy the base distribution -->
+										<!-- we exclude modules and bundles as they are read-only and we 
+											locate the via sys props -->
+										<copy todir="@{output.dir}/jbossas-@{name}">
+											<fileset dir="@{jboss.dist}">
+												<exclude name="**/modules/**" />
+												<exclude name="**/bundles/**" />
+											</fileset>
+										</copy>
+									</sequential>
+								</macrodef>
+
+								<!-- Change IP adresses, including multicast. This macro makes use 
+									of saxon via ${net.sf.saxon:saxon:jar}. -->
+								<macrodef name="change-ip-multicast-addresses"
+									description="Changes the IP *and* multicast addresses of a node configuration">
+
+									<attribute name="name" default="jbossas" />
+									<attribute name="output.dir" default="${project.build.directory}" />
+									<attribute name="config.dir.name" default="standalone/configuration" />
+									<attribute name="node" default="${node0}" />
+									<attribute name="mcastaddr" default="${udpGroup}" />
+
+									<sequential>
+										<echo message="Changing IP addresses for config @{name}" />
+
+										<!-- Process *.xml to *.xml.mod. -->
+										<xslt destdir="@{output.dir}/jbossas-@{name}/@{config.dir.name}"
+											style="${basedir}/src/test/xslt/changeIPAddresses.xsl"
+											extension=".xml.mod" useImplicitFileset="false">
+											<!-- Can't get this to work. -->
+											<!-- classpath path="${net.sf.saxon:saxon:jar}"/ -->
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-full.xml" />
+												<include name="**/standalone-ha.xml" />
+												<include name="**/standalone.xml" />
+											</fileset>
+											<param name="managementIPAddress" expression="@{node}" />
+											<param name="publicIPAddress" expression="@{node}" />
+											<param name="udpMcastAddress" expression="@{mcastaddr}" />
+										</xslt>
+
+										<!-- Move processed files back. -->
+										<move todir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml.mod" />
+												<include name="**/standalone.xml.mod" />
+												<include name="**/standalone-full.xml.mod" />
+											</fileset>
+											<mapper type="glob" from="*.mod" to="*" />
+										</move>
+									</sequential>
+								</macrodef>
+
+
+
+								<!-- Configure port offset. This macro makes use of saxon via ${net.sf.saxon:saxon:jar}. -->
+								<macrodef name="add-port-offset"
+									description="Add a port offeset a node configuration">
+
+									<attribute name="name" default="jbossas" />
+									<attribute name="output.dir" default="${project.build.directory}" />
+									<attribute name="config.dir.name" default="standalone/configuration" />
+									<attribute name="offset" default="0" />
+									<attribute name="nativePort" default="9999" />
+									<attribute name="httpPort" default="9990" />
+
+									<sequential>
+										<echo message="Adding port offset for config @{name}" />
+
+										<!-- Process *.xml to *.xml.mod. -->
+										<xslt destdir="@{output.dir}/jbossas-@{name}/@{config.dir.name}"
+											style="${basedir}/src/test/xslt/addPortOffset.xsl" extension=".xml.mod"
+											useImplicitFileset="false">
+											<!-- can't get this to work -->
+											<!-- classpath path="${net.sf.saxon:saxon:jar}"/ -->
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml" />
+												<include name="**/standalone.xml" />
+												<include name="**/standalone-full.xml" />
+											</fileset>
+											<param name="portOffset" expression="@{offset}" />
+											<param name="nativeInterfaceManagementPort" expression="@{nativePort}" />
+											<param name="httpInterfaceManagementPort" expression="@{httpPort}" />
+										</xslt>
+
+										<!-- Move processed files back. -->
+										<move todir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml.mod" />
+												<include name="**/standalone.xml.mod" />
+												<include name="**/standalone-full.xml.mod" />
+											</fileset>
+											<mapper type="glob" from="*.mod" to="*" />
+										</move>
+									</sequential>
+								</macrodef>
+
+
+
+								<!-- Enable JTS. This macro makes use of saxon via ${net.sf.saxon:saxon:jar}. -->
+								<macrodef name="add-jts" description="Enable JTS">
+
+									<attribute name="name" default="jbossas" />
+									<attribute name="output.dir" default="${project.build.directory}" />
+									<attribute name="config.dir.name" default="standalone/configuration" />
+
+									<sequential>
+										<echo message="Enabling JTS for config @{name}" />
+
+										<!-- Process *.xml to *.xml.mod. -->
+										<xslt destdir="@{output.dir}/jbossas-@{name}/@{config.dir.name}"
+											style="${basedir}/src/test/xslt/enableJTS.xsl" extension=".xml.mod"
+											useImplicitFileset="false">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml" />
+												<include name="**/standalone.xml" />
+												<include name="**/standalone-full.xml" />
+											</fileset>
+										</xslt>
+
+										<!-- Move processed files back. -->
+										<move todir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml.mod" />
+												<include name="**/standalone.xml.mod" />
+												<include name="**/standalone-full.xml.mod" />
+											</fileset>
+											<mapper type="glob" from="*.mod" to="*" />
+										</move>
+									</sequential>
+								</macrodef>
+
+								<!-- Enable JTS. This macro makes use of saxon via ${net.sf.saxon:saxon:jar}. -->
+								<macrodef name="add-xa-datasource" description="Add XA Datasource">
+
+									<attribute name="name" default="jbossas" />
+									<attribute name="output.dir" default="${project.build.directory}" />
+									<attribute name="config.dir.name" default="standalone/configuration" />
+
+									<sequential>
+										<echo message="Enabling XA datasource for config @{name}" />
+
+										<!-- Process *.xml to *.xml.mod. -->
+										<xslt destdir="@{output.dir}/jbossas-@{name}/@{config.dir.name}"
+											style="${basedir}/src/test/xslt/enableXADatasource.xsl"
+											extension=".xml.mod" useImplicitFileset="false">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml" />
+												<include name="**/standalone.xml" />
+												<include name="**/standalone-full.xml" />
+											</fileset>
+										</xslt>
+
+										<!-- Move processed files back. -->
+										<move todir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+											<fileset dir="@{output.dir}/jbossas-@{name}/@{config.dir.name}">
+												<include name="**/standalone-ha.xml.mod" />
+												<include name="**/standalone.xml.mod" />
+												<include name="**/standalone-full.xml.mod" />
+											</fileset>
+											<mapper type="glob" from="*.mod" to="*" />
+										</move>
+									</sequential>
+								</macrodef>
+
+
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+
+								<if>
+									<available file="${project.build.directory}/jbossas-iiop-client"
+										type="dir" />
+									<else>
+										<echo message="Building config iiop-client" />
+
+										<build-server-config name="iiop-client" />
+										<change-ip-multicast-addresses
+											name="iiop-client" node="${node0}" mcastaddr="${udpGroup}" />
+										<add-port-offset name="iiop-client" />
+										<add-jts name="iiop-client" />
+										<add-xa-datasource name="iiop-client" />
+									</else>
+								</if>
+
+
+<!-- 
+								<if>
+									<available file="${project.build.directory}/jbossas-iiop-server"
+										type="dir" />
+									<else>
+										<echo message="Building config iiop-server" />
+
+										<build-server-config name="iiop-server" />
+										<change-ip-multicast-addresses
+											name="iiop-server" node="${node1}" mcastaddr="${udpGroup}" />
+										<add-port-offset name="iiop-server" offset="100"
+											nativePort="9999" httpPort="9990" />
+										<add-jts name="iiop-server" />
+										<add-xa-datasource name="iiop-server" />
+									</else>
+								</if>
+								 -->
+							</target>
+						</configuration>
+
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- Compiler plugin enforces Java 1.6 compatibility and activates annotation 
+				processors -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+			<!-- The JBoss AS plugin deploys your war to a local JBoss AS container -->
+			<!-- To use, set the JBOSS_HOME environment variable and run: mvn package 
+				jboss-as:deploy -->
+			<plugin>
+				<groupId>org.jboss.as.plugins</groupId>
+				<artifactId>jboss-as-maven-plugin</artifactId>
+				<version>7.1.0.Beta1b</version>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<!-- We add the JBoss repository as we need the JBoss AS connectors for 
+		Arquillian -->
+	<repositories>
+		<!-- The JBoss Community public repository is a composite repository of 
+			several major repositories -->
+		<!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
+		<repository>
+			<id>jboss-public-repository</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/nexus/content/groups/public</url>
+			<!-- These optional flags are designed to speed up your builds by reducing 
+				remote server calls -->
+			<releases>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jboss-public-repository</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/nexus/content/groups/public</url>
+			<releases>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
