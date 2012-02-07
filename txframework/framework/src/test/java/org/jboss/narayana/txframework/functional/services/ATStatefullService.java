@@ -20,19 +20,23 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
-import com.arjuna.wst.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
+import com.arjuna.wst.Aborted;
+import com.arjuna.wst.Prepared;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.Vote;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
 import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.api.management.DataControl;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.interfaces.ATStatefull;
 import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -46,12 +50,13 @@ import java.lang.annotation.Annotation;
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
-@Remote(AT.class)
+@Remote(ATStatefull.class)
 @WSAT(bridgeType = BridgeType.NONE)
 @Stateless
-@WebService(serviceName = "ATService", portName = "AT", name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
+@WebService(serviceName = "ATStatefullService", portName = "ATStatefull",
+        name = "AT", targetNamespace = "http://www.jboss.com/functional/atstatefull/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-public class ATService implements AT
+public class ATStatefullService implements ATStatefull
 {
     @Inject
     DataControl dataControl;
@@ -62,9 +67,48 @@ public class ATService implements AT
 
     @WebMethod
     @ServiceRequest
-    public void invoke(ServiceCommand[] serviceCommands) throws SomeApplicationException
+    public void invoke1(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
+        //Check data is unavailable
+        if (dataControl.get("data") != null)
+        {
+            throw new RuntimeException("data should be clear when invoke1 is called");
+        }
+
         dataControl.put("data", "data");
+        try
+        {
+            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
+            {
+                throw new SomeApplicationException("Intentionally thrown Exception");
+            }
+
+            if (isPresent(ServiceCommand.READ_ONLY, serviceCommands))
+            {
+                //todo: is this right?
+                txControl.readOnly();
+            }
+
+            if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
+            {
+                rollback = true;
+            }
+        }
+        catch (TXControlException e)
+        {
+            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+        }
+    }
+
+    @WebMethod
+    @ServiceRequest
+    public void invoke2(ServiceCommand[] serviceCommands) throws SomeApplicationException
+    {
+        //Check data is available
+        if (dataControl.get("data") == null)
+        {
+            throw new RuntimeException("data set in call to 'invoke' was unavailable in call to 'invoke2'");
+        }
         try
         {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
@@ -103,36 +147,21 @@ public class ATService implements AT
 
     @Commit
     @WebMethod(exclude = true)
-    private void commit()
+    public void commit()
     {
         logEvent(Commit.class);
     }
 
-    @PostCommit
-    @WebMethod(exclude = true)
-    private void postCommit()
-    {
-        logEvent(PostCommit.class);
-    }
-
     @Rollback
     @WebMethod(exclude = true)
-    private void rollback()
+    public void rollback()
     {
         logEvent(Rollback.class);
     }
 
-    @PrePrepare
-    @WebMethod(exclude = true)
-    private Vote prePrepare()
-    {
-        logEvent(PrePrepare.class);
-        return new Prepared();
-    }
-
     @Prepare
     @WebMethod(exclude = true)
-    private Vote prepare()
+    public Vote prepare()
     {
         logEvent(Prepare.class);
         if (rollback)
@@ -147,14 +176,14 @@ public class ATService implements AT
 
     @Unknown
     @WebMethod(exclude = true)
-    private void unknown() throws SystemException
+    public void unknown() throws SystemException
     {
         logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    private void error() throws SystemException
+    public void error() throws SystemException
     {
         logEvent(Error.class);
     }

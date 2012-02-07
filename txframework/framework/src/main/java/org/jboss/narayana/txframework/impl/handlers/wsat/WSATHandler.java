@@ -12,13 +12,8 @@ import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
 import javax.interceptor.InvocationContext;
-import javax.transaction.Transaction;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class WSATHandler implements ProtocolHandler
 {
