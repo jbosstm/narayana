@@ -20,7 +20,7 @@ package org.jboss.narayana.txframework.functional.clients;
  * @author JBoss Inc.
  */
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
+import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
@@ -29,22 +29,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BACoordinatorCompletionClient
+public class ATBridgeClient
 {
-    public static BACoordinatorCompletion newInstance() throws Exception
+    public static ATBridge newInstance() throws Exception
     {
-        URL wsdlLocation = new URL("http://localhost:8080/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
-        QName portName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
+        URL wsdlLocation = new URL("http://localhost:8080/test/ATBridgeService/ATBridge?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridgeService");
+        QName portName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridge");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        BACoordinatorCompletion client = service.getPort(portName, BACoordinatorCompletion.class);
+        ATBridge client = service.getPort(portName, ATBridge.class);
 
         /*
            Add client handler chain
         */
         BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
+        List<Handler> handlers = new ArrayList<Handler>();
         handlers.add(new JaxWSHeaderContextProcessor());
         bindingProvider.getBinding().setHandlerChain(handlers);
 
