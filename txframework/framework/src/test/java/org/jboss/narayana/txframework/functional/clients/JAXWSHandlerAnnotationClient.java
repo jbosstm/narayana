@@ -19,8 +19,11 @@ package org.jboss.narayana.txframework.functional.clients;
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
+
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
+import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.interfaces.JAXWSHandlerAnnotation;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
@@ -29,24 +32,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BACoordinatorCompletionClient
-{
-    public static BACoordinatorCompletion newInstance() throws Exception
-    {
-        URL wsdlLocation = new URL("http://localhost:8080/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
-        QName portName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
+public class JAXWSHandlerAnnotationClient {
+
+    public static JAXWSHandlerAnnotation newInstance() throws Exception {
+
+        URL wsdlLocation = new URL("http://localhost:8080/test/JAXWSHandlerAnnotatonService/JAXWSHandlerAnnotatonImpl?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/JAXWSHandlerAnnotatonImpl", "JAXWSHandlerAnnotatonService");
+        QName portName = new QName("http://www.jboss.com/functional/JAXWSHandlerAnnotatonImpl", "JAXWSHandlerAnnotatonPort");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        BACoordinatorCompletion client = service.getPort(portName, BACoordinatorCompletion.class);
-
-        /*
-           Add client handler chain
-        */
-        BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
-        handlers.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlers);
+        JAXWSHandlerAnnotation client = service.getPort(portName, JAXWSHandlerAnnotation.class);
 
         return client;
     }

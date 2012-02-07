@@ -50,8 +50,6 @@ import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 @Stateless
 @WebService(serviceName = "BAParticipantCompletionService", portName = "BAParticipantCompletionService",
         name = "BAParticipantCompletion", targetNamespace = "http://www.jboss.com/functional/ba/participantcompletion/")
-//todo: Can the framework specify the handlerchain if not present? Would have to be added earlier in the chain than we currently intercept
-@HandlerChain(file = "/context-handlers.xml", name = "Context Handlers")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @WSBA(completionType = CompletionType.PARTICIPANT)
 public class BAParticipantCompletionService implements BAParticipantCompletion

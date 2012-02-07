@@ -14,9 +14,9 @@
     <description>txframework</description>
     <version>5.0.0.M2-SNAPSHOT</version>
     <properties>
-        <narayana.version>4.16.0.Beta1</narayana.version>
-        <arquillian.version>1.0.0.CR6</arquillian.version>
-        <jboss.version>7.1.0.Beta1</jboss.version>
+        <narayana.version>4.16.1.Final</narayana.version>
+        <arquillian.version>1.0.0.CR7</arquillian.version>
+        <jboss.version>7.1.0.Final-SNAPSHOT</jboss.version>
     </properties>
 
     <build>
@@ -31,7 +31,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencyManagement>
         <dependencies>
             <!-- Define the version of JBoss' Java EE 6 APIs we want to import. Any
@@ -47,8 +47,8 @@
                    JBoss AS 7! -->
             <dependency>
                 <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-web-6.0</artifactId>
-                <version>2.0.0.CR1</version>
+                <artifactId>jboss-javaee-6.0</artifactId>
+                <version>3.0.0.Beta1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -82,12 +82,11 @@
             <version>${arquillian.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>jbossxts-api</artifactId>
-            <version>${narayana.version}</version>
-            <scope>compile</scope>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>jts</artifactId>
+            <version>5.0.0.M2-SNAPSHOT</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.logging</groupId>
@@ -96,16 +95,34 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
-            <artifactId>jbossjta</artifactId>
-            <version>${narayana.version}</version>
-            <scope>compile</scope>
+            <groupId>org.jboss.narayana</groupId>
+            <artifactId>jbosstxbridge</artifactId>
+            <version>5.0.0.M2-SNAPSHOT</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.logging</groupId>
                     <artifactId>jboss-logging-spi</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.xts</groupId>
+            <artifactId>jbossxts</artifactId>
+            <classifier>api</classifier>
+            <version>5.0.0.M2-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-spi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
         </dependency>
     </dependencies>
 
