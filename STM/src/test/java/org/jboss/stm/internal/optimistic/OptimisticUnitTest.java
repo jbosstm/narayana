@@ -285,14 +285,6 @@ public class OptimisticUnitTest extends TestCase
                         doCommit = false;
                         fault = true;
                     }
-
-                    try
-                    {
-                        Thread.sleep(500);
-                    }
-                    catch (final Throwable ex)
-                    {                        
-                    }
                     
                     if (doCommit)
                     {
