@@ -31,18 +31,30 @@
 
 package org.jboss.stm.internal.optimistic;
 
+import com.arjuna.ats.arjuna.ObjectModel;
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.RecoveryRecord;
 import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.arjuna.ats.txoj.ConflictType;
 import com.arjuna.ats.txoj.Lock;
 import com.arjuna.ats.txoj.LockManager;
+import com.arjuna.ats.txoj.LockMode;
 import com.arjuna.ats.txoj.LockResult;
 import com.arjuna.ats.txoj.logging.txojLogger;
 
 public class OptimisticLockManager extends LockManager
-{   
+{
     /*
      * All of this is here to prevent us grabbing a copy of the state of the object when we lock it.
+     * 
+     * WARNING HERE BE DRAGONS.
      * 
      * (non-Javadoc)
      * @see com.arjuna.ats.txoj.LockManager#setlock(com.arjuna.ats.txoj.Lock, int, int)
@@ -121,12 +133,12 @@ public class OptimisticLockManager extends LockManager
                         modifyRequired = toSet.modifiesObject();
     
                         /* trigger object load from store */
-    
+
                         if (super.activate())
                         {
                             returnStatus = LockResult.GRANTED;
     
-                            if ((conflict == ConflictType.COMPATIBLE) && (!modifyRequired))
+                            if (conflict == ConflictType.COMPATIBLE)
                             {
                                 int lrStatus = AddOutcome.AR_ADDED;
     
@@ -134,20 +146,16 @@ public class OptimisticLockManager extends LockManager
                                 {
                                     /* add new lock record to action list */
     
-                                    newLockR = new OptimisticLockRecord(this, (modifyRequired ? false : true), currAct);
-                                    
-                                    if (newLockR == null)
-                                        returnStatus = LockResult.REFUSED;
-                                    else
+                                    newLockR = new OptimisticLockRecord(this, (modifyRequired ? false : true), currAct, true);
+
+                                    if ((lrStatus = currAct.add(newLockR)) != AddOutcome.AR_ADDED)
                                     {
-                                        if ((lrStatus = currAct.add(newLockR)) != AddOutcome.AR_ADDED)
-                                        {
-                                            newLockR = null;
-        
-                                            if (lrStatus == AddOutcome.AR_REJECTED)
-                                                returnStatus = LockResult.REFUSED;
-                                        }
+                                        newLockR = null;
+
+                                        if (lrStatus == AddOutcome.AR_REJECTED)
+                                            returnStatus = LockResult.REFUSED;
                                     }
+
                                 }
     
                                 if (returnStatus == LockResult.GRANTED)
@@ -204,7 +212,9 @@ public class OptimisticLockManager extends LockManager
                         if (modifyRequired)
                         {
                             if (super.modified())
+                            {
                                 hasBeenLocked = true;
+                            }
                             else
                             {
                                 conflict = ConflictType.CONFLICT;
@@ -243,33 +253,6 @@ public class OptimisticLockManager extends LockManager
         return returnStatus;
     }
     
-    protected synchronized boolean modified ()
-    {
-        BasicAction currAct = BasicAction.Current();
-        int lrStatus;
-        boolean returnStatus = true;
-        
-        if (currAct != null)
-        {
-            /* add new lock record to action list */
-
-            OptimisticLockRecord newLockR = new OptimisticLockRecord(this, false, currAct);
-
-            if ((lrStatus = currAct.add(newLockR)) != AddOutcome.AR_ADDED)
-            {
-                newLockR = null;
-
-                if (lrStatus == AddOutcome.AR_REJECTED)
-                    returnStatus = false;
-            }
-        }
-        
-        if (returnStatus)
-            return super.modified();
-        else
-            return false;
-    }
-
     /**
      * Overload StateManager.type()
      */
@@ -277,5 +260,30 @@ public class OptimisticLockManager extends LockManager
     public String type ()
     {
         return "StateManager/LockManager/OptimisticLockManager";
+    }
+    
+    protected OptimisticLockManager ()
+    {
+        super();
+    }
+    
+    protected OptimisticLockManager (int ot)
+    {
+        super(ot);
+    }
+    
+    protected OptimisticLockManager (int ot, int om)
+    {
+        super(ot, om);
+    }
+    
+    protected OptimisticLockManager (Uid u)
+    {
+        super(u);
+    }
+    
+    protected OptimisticLockManager (Uid u, int objectModel)
+    {
+        super(u, ObjectType.ANDPERSISTENT, objectModel);
     }
 }

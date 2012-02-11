@@ -32,58 +32,74 @@ import org.jboss.stm.annotations.NotState;
 import org.jboss.stm.annotations.RestoreState;
 import org.jboss.stm.annotations.SaveState;
 import org.jboss.stm.annotations.Transactional;
+import org.jboss.stm.internal.optimistic.OptimisticLockManager;
 
+import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.txoj.LockManager;
 
-public class LockManagerProxy<T> extends LockManager
+public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
 {
-    public LockManagerProxy (T candidate)
+    public OptimisticLockManagerProxy (T candidate)
     {
         this(candidate, (RecoverableContainer<T>) null);
     }
     
-    public LockManagerProxy (T candidate, RecoverableContainer<T> cont)
+    public OptimisticLockManagerProxy (T candidate, RecoverableContainer<T> cont)
     {
-        this(candidate, com.arjuna.ats.arjuna.ObjectType.RECOVERABLE, cont);
+        this(candidate, com.arjuna.ats.arjuna.ObjectType.ANDPERSISTENT, cont);
     }
     
-    public LockManagerProxy (T candidate, int ot)
+    public OptimisticLockManagerProxy (T candidate, int ot)
     {
         this(candidate, ot, null);
-
     }
-    public LockManagerProxy (T candidate, int ot, RecoverableContainer<T> cont)
+
+    public OptimisticLockManagerProxy (T candidate, int ot, RecoverableContainer<T> cont)
     {
-        super(ot);
+        this(candidate, ot, ObjectModel.SINGLE, cont);
+    }
+      
+    public OptimisticLockManagerProxy (T candidate, int ot, int om, RecoverableContainer<T> cont)
+    {
+        super(ot, om);
         
         _theObject = candidate;
         _container = cont;
     }
-    
-    public LockManagerProxy (T candidate, Uid u)
+       
+    public OptimisticLockManagerProxy (T candidate, Uid u)
     {
-        this(candidate, u, null);
+        this(candidate, u, ObjectModel.SINGLE);
+    }
+    
+    public OptimisticLockManagerProxy (T candidate, Uid u, int om)
+    {
+        this(candidate, u, om, null);
     }
     
     // if there's a Uid then this is a persistent object
     
-    public LockManagerProxy (T candidate, Uid u, RecoverableContainer<T> cont)
+    public OptimisticLockManagerProxy (T candidate, Uid u, RecoverableContainer<T> cont)
     {
-        super(u);  // TODO make configurable through annotation
+        this(candidate, u, ObjectModel.SINGLE, cont);
+    }
+    
+    public OptimisticLockManagerProxy (T candidate, Uid u, int om, RecoverableContainer<T> cont)
+    {
+        super(u, om);  // TODO make configurable through annotation
         
         _theObject = candidate;
         _container = cont;
     }
     
-    public boolean save_state (OutputObjectState os, int ot)
+    public synchronized boolean save_state (OutputObjectState os, int ot)
     {
         if (!super.save_state(os, ot))
-            return false;   
-        
+            return false;
+
         boolean res = false;
         
         try
@@ -135,20 +151,23 @@ public class LockManagerProxy<T> extends LockManager
                 {
                     Field afield = _fields.get(i);
                     
-                    afield.setAccessible(true);
-    
-                    /*
-                     * TODO check that the user hasn't marked statics, finals etc.
-                     */
-    
-                    if (afield.getType().isPrimitive())
+                    synchronized (afield)
                     {
-                        res = packPrimitive(afield, os);
+                        afield.setAccessible(true);
+        
+                        /*
+                         * TODO check that the user hasn't marked statics, finals etc.
+                         */
+        
+                        if (afield.getType().isPrimitive())
+                        {
+                            res = packPrimitive(afield, os);
+                        }
+                        else
+                            res = packObjectType(afield, os);
+        
+                        afield.setAccessible(false);
                     }
-                    else
-                        res = packObjectType(afield, os);
-    
-                    afield.setAccessible(false);
                 }
             }
         }
@@ -160,10 +179,10 @@ public class LockManagerProxy<T> extends LockManager
         return res;
     }
     
-    public boolean restore_state (InputObjectState os, int ot)
+    public synchronized boolean restore_state (InputObjectState os, int ot)
     {
         if (!super.restore_state(os, ot))
-            return false;      
+            return false;
         
         boolean res = false;
         
@@ -214,20 +233,23 @@ public class LockManagerProxy<T> extends LockManager
                 {
                     Field afield = _fields.get(i);
                     
-                    afield.setAccessible(true);
-                    
-                    /*
-                     * TODO check that the user hasn't marked statics, finals etc.
-                     */
-                    
-                    if (afield.getType().isPrimitive())
+                    synchronized (afield)
                     {
-                        res = unpackPrimitive(afield, os);
+                        afield.setAccessible(true);
+                        
+                        /*
+                         * TODO check that the user hasn't marked statics, finals etc.
+                         */
+                        
+                        if (afield.getType().isPrimitive())
+                        {
+                            res = unpackPrimitive(afield, os);
+                        }
+                        else
+                            res = unpackObjectType(afield, os);
+                        
+                        afield.setAccessible(false);
                     }
-                    else
-                        res = unpackObjectType(afield, os);
-                    
-                    afield.setAccessible(false);
                 }
             }
         }
@@ -241,7 +263,7 @@ public class LockManagerProxy<T> extends LockManager
     
     public String type ()
     {
-        return "/StateManager/LockManager/"+_theObject.getClass().getCanonicalName();
+        return "/StateManager/LockManager/OptimisticLockManager/"+_theObject.getClass().getCanonicalName();
     }
     
     private boolean packPrimitive (final Field afield, OutputObjectState os)
@@ -409,8 +431,7 @@ public class LockManagerProxy<T> extends LockManager
         return res;
     }
     
-    @SuppressWarnings("unchecked")
-    private void checkValidity (Class toCheck) throws InvalidAnnotationException
+    private void checkValidity (Class<?> toCheck) throws InvalidAnnotationException
     {
         if (_checkSaveRestore)
             return;
@@ -443,7 +464,7 @@ public class LockManagerProxy<T> extends LockManager
             {
                 if ((_restoreState == null) && (_saveState == null))
                 {
-                    Class superClass = toCheck.getSuperclass();
+                    Class<?> superClass = toCheck.getSuperclass();
     
                     if (superClass != Object.class)
                         checkValidity(superClass);

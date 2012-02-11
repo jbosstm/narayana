@@ -106,6 +106,48 @@ public class RecoverableContainer<T>
     }
     
     /**
+     * Given an identified for an existing object, create another handle. This is particularly
+     * useful when using pessimistic concurrency control and we need one object instance per
+     * thread to ensure that state is safely managed.
+     * 
+     * @param member the instance of type T that you want to be made transactional and persistent.
+     * @param id the Uid of the object.
+     * @return a handle into the transactional memory that the application should use to manipulate the object.
+     */
+    
+    @SuppressWarnings("unchecked")
+    public synchronized T enlist (T member, Uid id)
+    {
+        if (id == null)
+            return null;
+        
+        /*
+         * Everything that is transactional needs to be explicitly marked as such in
+         * the public API, even if the private methods are the ones that do the
+         * real work.
+         */
+
+        checkObjectType(member);
+        
+        /*
+         * Is it already registered? If so just return the same instance.
+         */
+        
+        T proxy = _transactionalProxies.get(member);
+        
+        if (proxy == null)
+        {
+            Class<?> c = member.getClass();
+            
+            proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member, id));
+            
+            _transactionalProxies.put(member, proxy);
+        }
+        
+        return proxy;
+    }
+    
+    /**
      * Return a handle through which the object should be used, rather than the one
      * passed in. Can specify the type of the object (recoverable, persistent, neither).
      */
@@ -129,7 +171,7 @@ public class RecoverableContainer<T>
         
         if (proxy == null)
         {
-            Class c = member.getClass();
+            Class<?> c = member.getClass();
             
             proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member, ot));
             
@@ -239,14 +281,13 @@ public class RecoverableContainer<T>
         return "RecoverableContainer "+_name;
     }
     
-    @SuppressWarnings(value={"unchecked"})
     protected final void checkObjectType (Object member)
     {
         if ((member instanceof LockManager) || (member instanceof StateManager))
             throw new IllegalArgumentException(
                     "Object type not supported by this transactional container!");
 
-        Class c = member.getClass().getSuperclass();
+        Class<?> c = member.getClass().getSuperclass();
 
         while (c != null)
         {
@@ -258,9 +299,9 @@ public class RecoverableContainer<T>
             c = c.getSuperclass();
         }
         
-        Class[] interfaces = member.getClass().getInterfaces();
+        Class<?>[] interfaces = member.getClass().getInterfaces();
 
-        for (Class i : interfaces)
+        for (Class<?> i : interfaces)
         {
             if (i.getAnnotation(Transactional.class) != null)
             {
