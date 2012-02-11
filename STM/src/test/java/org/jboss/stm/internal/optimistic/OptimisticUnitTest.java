@@ -393,7 +393,7 @@ public class OptimisticUnitTest extends TestCase
         
         assertEquals(obj.get(), 345);
     }
-
+/*
     public void testRecoverableHammer () throws Exception
     {
         init();
@@ -416,7 +416,7 @@ public class OptimisticUnitTest extends TestCase
         }
         
         assertEquals(obj1.get(), 90);
-    }
+    }*/
 
     private static synchronized void init () throws Exception
     {
