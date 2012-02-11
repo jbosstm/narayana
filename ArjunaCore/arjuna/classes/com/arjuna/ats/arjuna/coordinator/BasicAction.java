@@ -78,7 +78,7 @@ public class BasicAction extends StateManager
         heuristicList = null;
 
         currentHierarchy = null;
-        participantStore = null;
+        transactionStore = null;
         savedIntentionList = false;
 
         actionStatus = ActionStatus.CREATED;
@@ -115,7 +115,7 @@ public class BasicAction extends StateManager
         heuristicList = null;
 
         currentHierarchy = null;
-        participantStore = null;
+        transactionStore = null;
         savedIntentionList = false;
 
         actionStatus = ActionStatus.CREATED;
@@ -202,7 +202,7 @@ public class BasicAction extends StateManager
         failedList = null;
         heuristicList = null;
 
-        participantStore = null;
+        transactionStore = null;
         currentHierarchy = null;
 
         _checkedAction = null;
@@ -332,7 +332,7 @@ public class BasicAction extends StateManager
     public final boolean isAncestor (Uid ancestor)
     {
         boolean res = false;
-
+        
         if (get_uid().equals(ancestor)) /* actions are their own ancestors */
             res = true;
         else
@@ -388,12 +388,12 @@ public class BasicAction extends StateManager
 
     public ParticipantStore getStore ()
     {
-        if (participantStore == null)
+        if (transactionStore == null)
         {
-            participantStore = StoreManager.getParticipantStore();
+            transactionStore = StoreManager.getParticipantStore();
         }
 
-        return participantStore;
+        return transactionStore;
     }
 
     /**
@@ -1342,7 +1342,7 @@ public class BasicAction extends StateManager
             tsLogger.logger.trace("BasicAction::Begin() for action-id "
                     + get_uid());
         }
-
+        
         // check to see if transaction system is enabled
 
         if (!TxControl.isEnabled()) {
@@ -1649,7 +1649,7 @@ public class BasicAction extends StateManager
         heuristicList = null;
 
         currentHierarchy = null;
-        participantStore = null;
+        transactionStore = null;
         savedIntentionList = false;
 
         actionStatus = ActionStatus.CREATED;
@@ -1679,7 +1679,7 @@ public class BasicAction extends StateManager
         heuristicList = null;
 
         currentHierarchy = null;
-        participantStore = null;
+        transactionStore = null;
         savedIntentionList = false;
 
         actionStatus = ActionStatus.CREATED;
@@ -2211,7 +2211,7 @@ public class BasicAction extends StateManager
             {
                 try
                 {
-                    if (!participantStore.write_committed(u, tn, state)) {
+                    if (!transactionStore.write_committed(u, tn, state)) {
                         tsLogger.i18NLogger.warn_coordinator_BasicAction_46(get_uid());
 
                         criticalEnd();
@@ -3116,7 +3116,7 @@ public class BasicAction extends StateManager
                 {
                     try
                     {
-                        if (!participantStore.write_committed(u, tn, state)) {
+                        if (!transactionStore.write_committed(u, tn, state)) {
                             tsLogger.i18NLogger.warn_coordinator_BasicAction_65();
                         }
                     }
@@ -3132,7 +3132,7 @@ public class BasicAction extends StateManager
                 {
                     if (savedIntentionList)
                     {
-                        if (participantStore.remove_committed(getSavingUid(), type()))
+                        if (transactionStore.remove_committed(getSavingUid(), type()))
                         {
                             savedIntentionList = false;
                         }
@@ -3544,7 +3544,7 @@ public class BasicAction extends StateManager
     protected boolean savedIntentionList;
 
     private ActionHierarchy currentHierarchy;
-    private ParticipantStore participantStore;
+    private ParticipantStore transactionStore;  // a ParticipantStore is also a TxLog
 
     //    private boolean savedIntentionList;
 

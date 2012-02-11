@@ -85,7 +85,7 @@ public class StateManager
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
 
-    public boolean save_state (OutputObjectState os, int ot)
+    public synchronized boolean save_state (OutputObjectState os, int ot)
     {
         /*
          * Only pack additional information if this is for a persistent state
@@ -122,7 +122,7 @@ public class StateManager
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
 
-    public boolean restore_state (InputObjectState os, int ot)
+    public synchronized boolean restore_state (InputObjectState os, int ot)
     {
         if (ot == ObjectType.ANDPERSISTENT)
         {
@@ -248,7 +248,7 @@ public class StateManager
             {
                 setupStore(rootName);
             }
-
+            
             /* Only really activate if object is PASSIVE */
 
             if (currentStatus == ObjectStatus.PASSIVE)
@@ -1257,7 +1257,12 @@ public class StateManager
                             }
                         }
                         else
-                            currentStatus = initialStatus;
+                        {
+                            if (objectModel == ObjectModel.SINGLE)
+                                currentStatus = initialStatus;
+                            else
+                                initialStatus = currentStatus = ObjectStatus.PASSIVE;
+                        }
                     }
                 }
             }

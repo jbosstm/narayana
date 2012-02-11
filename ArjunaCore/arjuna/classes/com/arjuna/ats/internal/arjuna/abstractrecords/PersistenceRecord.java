@@ -95,47 +95,47 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelAbort ()
 	{
-		if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("PersistenceRecord::topLevelAbort() for "
-                    + order());
-        }
+	    if (tsLogger.logger.isTraceEnabled()) {
+	        tsLogger.logger.trace("PersistenceRecord::topLevelAbort() for "
+	                + order());
+	    }
 
-		Uid uid = null;
-		String type = null;
+	    Uid uid = null;
+	    String type = null;
 
-		if (shadowMade) // state written by StateManager instance
-		{
-			uid = order();
-			type = getTypeOfObject();
-		}
-		else
-		{
-			if (topLevelState == null) // hasn't been prepared, so no state
-			{
-				return nestedAbort();
-			}
-			else
-			{
-				uid = topLevelState.stateUid();
-				type = topLevelState.type();
-			}
-		}
+	    if (shadowMade) // state written by StateManager instance
+	    {
+	        uid = order();
+	        type = getTypeOfObject();
+	    }
+	    else
+	    {
+	        if (topLevelState == null) // hasn't been prepared, so no state
+	        {
+	            return nestedAbort();
+	        }
+	        else
+	        {
+	            uid = topLevelState.stateUid();
+	            type = topLevelState.type();
+	        }
+	    }
 
-		try
-		{
-			if (!targetParticipantStore.remove_uncommitted(uid, type)) {
-                tsLogger.i18NLogger.warn_PersistenceRecord_19();
+	    try
+	    {
+	        if (!targetParticipantStore.remove_uncommitted(uid, type)) {
+	            tsLogger.i18NLogger.warn_PersistenceRecord_19();
 
-                return TwoPhaseOutcome.FINISH_ERROR;
-            }
-		}
-		catch (ObjectStoreException e) {
-            tsLogger.i18NLogger.warn_PersistenceRecord_20(e);
+	            return TwoPhaseOutcome.FINISH_ERROR;
+	        }
+	    }
+	    catch (ObjectStoreException e) {
+	        tsLogger.i18NLogger.warn_PersistenceRecord_20(e);
 
-            return TwoPhaseOutcome.FINISH_ERROR;
-        }
+	        return TwoPhaseOutcome.FINISH_ERROR;
+	    }
 
-		return nestedAbort();
+	    return nestedAbort();
 	}
 
 	/**
@@ -259,8 +259,12 @@ public class PersistenceRecord extends RecoveryRecord
 
 					try
 					{
-						targetParticipantStore.write_uncommitted(sm.get_uid(), sm.type(), dummy);
-						result = TwoPhaseOutcome.PREPARE_OK;
+						if (targetParticipantStore.write_uncommitted(sm.get_uid(), sm.type(), dummy))
+						    result = TwoPhaseOutcome.PREPARE_OK;
+						else
+						{
+						    result = TwoPhaseOutcome.PREPARE_NOTOK;
+						}
 					}
 					catch (ObjectStoreException e) {
                         tsLogger.i18NLogger.warn_PersistenceRecord_21(e);
@@ -279,15 +283,18 @@ public class PersistenceRecord extends RecoveryRecord
 			}
 			else
 			{
-				if (sm.deactivate(targetParticipantStore.getStoreName(), false))
-				{
-					shadowMade = true;
+			    if (sm.deactivate(targetParticipantStore.getStoreName(), false))
+			    {
+			        shadowMade = true;
 
-					result = TwoPhaseOutcome.PREPARE_OK;
-				}
-				else {
-                    tsLogger.i18NLogger.warn_PersistenceRecord_7();
-                }
+			        result = TwoPhaseOutcome.PREPARE_OK;
+			    }
+			    else 
+			    {
+			        topLevelState = null;
+			        
+			        tsLogger.i18NLogger.warn_PersistenceRecord_7();
+			    }
 			}
 		}
 		else {
@@ -476,7 +483,7 @@ public class PersistenceRecord extends RecoveryRecord
 	protected ParticipantStore targetParticipantStore;
 	protected OutputObjectState topLevelState;
 	protected static boolean classicPrepare = false;
-
+	
 	private static boolean writeOptimisation = false;
 
 	static

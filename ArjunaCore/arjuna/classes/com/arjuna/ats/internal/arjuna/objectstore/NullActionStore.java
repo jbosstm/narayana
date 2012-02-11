@@ -39,9 +39,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
- * The basic transaction log implementation. Uses the no file-level locking
- * implementation of the file system store since only a single user (the
- * coordinator) can ever be manipulating the action's state.
+ * A null implementation. Useful for performance tuning.
  * 
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: NullActionStore.java 2342 2006-03-30 13:06:17Z $

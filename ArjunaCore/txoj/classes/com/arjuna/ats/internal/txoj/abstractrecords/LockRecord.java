@@ -93,7 +93,7 @@ public class LockRecord extends AbstractRecord
 	}
 	
 	/* default constructor problem. */
-
+	
 	if (managerAddress == null)
 	    return TwoPhaseOutcome.FINISH_ERROR;
 
@@ -175,7 +175,7 @@ public class LockRecord extends AbstractRecord
 
 	if (managerAddress == null)
 	    return TwoPhaseOutcome.FINISH_ERROR;
-
+        
 	if (actionHandle != null)
 	{
 	    if (!managerAddress.releaseAll(actionHandle.get_uid()))
@@ -201,7 +201,7 @@ public class LockRecord extends AbstractRecord
 	{
 	    txojLogger.logger.trace("LockRecord::topLevelPrepare() for "+order());
 	}
-	
+
 	if (readOnly)
 	{
 	    if (topLevelCommit() == TwoPhaseOutcome.FINISH_OK)

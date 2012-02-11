@@ -730,128 +730,130 @@ public class LockManager extends StateManager
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::doRelease(" + u + ", " + all + ")");
         }
-
+        
         Lock previous = null;
         Lock current = null;
         boolean deleted = false;
         boolean result = false;
         int retryCount = 10;
         boolean loaded = false;
-
-        do
-        {
-            synchronized (locksHeldLockObject)
-            {
-                if (loadState())
-                {
-                    loaded = true;
-
-                    /*
-                     * Must declare iterator after loadstate or it sees an empty
-                     * list!
-                     */
-
-                    LockListIterator next = new LockListIterator(locksHeld);
-
-                    /*
-                     * Now scan through held lock list to find which locks to
-                     * release u is either the unique id of the lock owner
-                     * (oneOrAll = ALL_LOCKS) or the uid of the actual lock
-                     * itself (oneOrAll = SINGLE_LOCK).
-                     */
-
-                    previous = null;
-
-                    while ((current = next.iterate()) != null)
-                    {
-                        Uid checkUid = null;
-
-                        if (all)
-                            checkUid = current.getCurrentOwner();
-                        else
-                            checkUid = current.get_uid();
-
-                        /*
-                         * Is this the right lock?
-                         */
-
-                        if (u.equals(checkUid))
-                        {
-                            locksHeld.forgetNext(previous);
-                            current = null;
-                            deleted = true;
-
-                            if (!all)
-                            {
-                                break;
-                            }
-                        }
-                        else
-                            previous = current;
-                    }
-
-                    result = true;
-                }
-                else
-                {
-                    /*
-                     * Free state while we still have the lock.
-                     */
-
-                    freeState();
-
-                    result = false;
-                }
-            }
-
-            if (!result)
-            {
-                try
-                {
-                    Thread.sleep(LockManager.DOZE_TIME);
-                }
-                catch (InterruptedException e)
-                {
-                }
-            }
-
-        }
-        while ((!result) && (--retryCount > 0));
-
         boolean releasedOK = false;
-
-        // if (!stateLoaded)
-        if (!loaded)
+        BasicAction currAct = BasicAction.Current();
+        Object syncObject = ((currAct == null) ? getMutex() : currAct);
+        
+        synchronized (syncObject)
         {
-            txojLogger.i18NLogger.warn_LockManager_7();
-            /*
-             * No need to freeState since we will have done that by now.
-             */
-        }
-        else
-        {
-            if (!deleted)
-            {
-                if (txojLogger.logger.isTraceEnabled()) {
-                    txojLogger.logger.trace(" *** CANNOT locate locks  ***");
-                }
-            }
-
-            retryCount = 10;
-
             synchronized (locksHeldLockObject)
             {
                 do
                 {
-                    if (!unloadState())
+                    if (loadState())
                     {
-                        txojLogger.i18NLogger.warn_LockManager_8();
+                        loaded = true;
+    
+                        /*
+                         * Must declare iterator after loadstate or it sees an empty
+                         * list!
+                         */
+    
+                        LockListIterator next = new LockListIterator(locksHeld);
+                        
+                        /*
+                         * Now scan through held lock list to find which locks to
+                         * release u is either the unique id of the lock owner
+                         * (oneOrAll = ALL_LOCKS) or the uid of the actual lock
+                         * itself (oneOrAll = SINGLE_LOCK).
+                         */
+    
+                        previous = null;
+    
+                        while ((current = next.iterate()) != null)
+                        {
+                            Uid checkUid = null;
+    
+                            if (all)
+                                checkUid = current.getCurrentOwner();
+                            else
+                                checkUid = current.get_uid();
+
+                            /*
+                             * Is this the right lock?
+                             */
+
+                            if (u.equals(checkUid))
+                            {
+                                locksHeld.forgetNext(previous);
+                                current = null;
+                                deleted = true;
+    
+                                if (!all)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                                previous = current;
+                        }
+    
+                        result = true;
                     }
                     else
-                        releasedOK = true;
+                    {
+                        /*
+                         * Free state while we still have the lock.
+                         */
+    
+                        freeState();
+    
+                        result = false;
+                    }
+                    
+                    if (!result)
+                    {
+                        try
+                        {
+                            Thread.sleep(LockManager.DOZE_TIME);
+                        }
+                        catch (InterruptedException e)
+                        {
+                        }
+                    }
+                    else
+                    {
+                        // if (!stateLoaded)
+                        if (!loaded)
+                        {
+                            txojLogger.i18NLogger.warn_LockManager_7();
+                            /*
+                             * No need to freeState since we will have done that by now.
+                             */
+                        }
+                        else
+                        {
+                            if (!deleted)
+                            {
+                                if (txojLogger.logger.isTraceEnabled()) {
+                                    txojLogger.logger.trace(" *** CANNOT locate locks  ***");
+                                }
+                            }
+    
+                            int unloadRetryCount = 10;
 
+                            do
+                            {
+                                if (!unloadState())
+                                {
+                                    txojLogger.i18NLogger.warn_LockManager_8();
+                                }
+                                else
+                                    releasedOK = true;
+    
+                            }
+                            while ((--unloadRetryCount > 0) && (!releasedOK));
+                        }
+                    }
                 }
-                while ((--retryCount > 0) && (!releasedOK));
+                while ((!result) && (--retryCount > 0));
             }
         }
 
@@ -1144,9 +1146,7 @@ public class LockManager extends StateManager
                 if (LockManager.nestedLocking)
                 {
                     if (!isAncestorOf(heldLock)) /* not quite Moss's rules */
-                    {
                         return ConflictType.CONFLICT;
-                    }
                 }
                 else
                     return ConflictType.CONFLICT;

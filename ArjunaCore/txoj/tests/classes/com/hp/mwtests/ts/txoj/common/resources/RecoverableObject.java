@@ -45,129 +45,128 @@ import com.arjuna.ats.txoj.LockResult;
 public class RecoverableObject extends LockManager
 {
 
-public RecoverableObject ()
+    public RecoverableObject()
     {
-	AtomicAction A = new AtomicAction();
+        AtomicAction A = new AtomicAction();
 
-	A.begin();
+        A.begin();
 
-	if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
-	{
-	    state = 0;
+        if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+        {
+            state = 0;
 
-	    if (A.commit() == ActionStatus.COMMITTED)
-		System.out.println("Created recoverable object "+get_uid());
-	    else
-		System.out.println("Action.commit error.");
-	}
-	else
-	{
-	    A.abort();
-	    
-	    System.out.println("setlock error.");
-	}
+            if (A.commit() == ActionStatus.COMMITTED)
+                System.out.println("Created recoverable object " + get_uid());
+            else
+                System.out.println("Action.commit error.");
+        }
+        else
+        {
+            A.abort();
+
+            System.out.println("setlock error.");
+        }
     }
 
-public void finalize ()
+    public void finalize ()
     {
-	super.terminate();
+        super.terminate();
 
-	try
-	{
-	    super.finalize();
-	}
-	catch (Throwable e)
-	{
-	}
+        try
+        {
+            super.finalize();
+        }
+        catch (Throwable e)
+        {
+        }
     }
 
-public boolean set (int value)
+    public boolean set (int value)
     {
-	AtomicAction A = new AtomicAction();
+        AtomicAction A = new AtomicAction();
 
-	A.begin();
+        A.begin();
 
-	if (setlock(new Lock(LockMode.WRITE)) == LockResult.GRANTED)
-	{
-	    state = value;
+        if (setlock(new Lock(LockMode.WRITE)) == LockResult.GRANTED)
+        {
+            state = value;
 
-	    if (A.commit() == ActionStatus.COMMITTED)
-		return true;
-	    else
-		return false;
-	}
+            if (A.commit() == ActionStatus.COMMITTED)
+                return true;
+            else
+                return false;
+        }
 
-	A.abort();
+        A.abort();
 
-	return false;
+        return false;
     }
 
-public int get ()
+    public int get ()
     {
-	AtomicAction A = new AtomicAction();
-	int value = -1;
+        AtomicAction A = new AtomicAction();
+        int value = -1;
 
-	A.begin();
+        A.begin();
 
-	if (setlock(new Lock(LockMode.READ)) == LockResult.GRANTED)
-	{
-	    value = state;
+        if (setlock(new Lock(LockMode.READ)) == LockResult.GRANTED)
+        {
+            value = state;
 
-	    if (A.commit() == ActionStatus.COMMITTED)
-		return value;
-	    else
-		return -1;
-	}
+            if (A.commit() == ActionStatus.COMMITTED)
+                return value;
+            else
+                return -1;
+        }
 
-	A.abort();
+        A.abort();
 
-	return -1;
+        return -1;
     }
 
-public boolean save_state (OutputObjectState os, int ot)
+    public boolean save_state (OutputObjectState os, int ot)
     {
-	boolean result = super.save_state(os, ot);
+        boolean result = super.save_state(os, ot);
 
-	if (!result)
-	    return false;
-	
-	try
-	{
-	    os.packInt(state);
-	}
-	catch (IOException e)
-	{
-	    result = false;
-	}
+        if (!result)
+            return false;
 
-	return result;
+        try
+        {
+            os.packInt(state);
+        }
+        catch (IOException e)
+        {
+            result = false;
+        }
+
+        return result;
     }
 
-public boolean restore_state (InputObjectState os, int ot)
+    public boolean restore_state (InputObjectState os, int ot)
     {
-	boolean result = super.restore_state(os, ot);
+        boolean result = super.restore_state(os, ot);
 
-	if (!result)
-	    return false;
-	
-	try
-	{
-	    state = os.unpackInt();
-	}
-	catch (IOException e)
-	{
-	    result = false;
-	}
+        if (!result)
+            return false;
 
-	return result;
+        try
+        {
+            state = os.unpackInt();
+        }
+        catch (IOException e)
+        {
+            result = false;
+        }
+
+        return result;
     }
-    
-public String type ()
+
+    public String type ()
     {
-	return "/StateManager/LockManager/RecoverableObject";
+        return "/StateManager/LockManager/RecoverableObject";
     }
-    
-private int state;
-    
+
+    private int state;
+
 }
-
