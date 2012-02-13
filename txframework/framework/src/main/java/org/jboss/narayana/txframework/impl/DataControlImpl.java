@@ -1,6 +1,8 @@
 package org.jboss.narayana.txframework.impl;
 
 import org.jboss.narayana.txframework.api.management.DataControl;
+
+import javax.inject.Named;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -24,10 +24,12 @@
 package org.jboss.narayana.txframework.functional.services;
 
 
+import com.arjuna.ats.jta.UserTransaction;
 import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 
 import javax.ejb.*;
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
