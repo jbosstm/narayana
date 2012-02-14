@@ -40,6 +40,7 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest
     {
         assertDataAvailable();
         client.clearEventLog();
+        cancelIfActive(uba);
     }
 
     @Test
