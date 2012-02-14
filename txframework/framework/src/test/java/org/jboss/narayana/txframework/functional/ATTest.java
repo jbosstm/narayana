@@ -39,6 +39,7 @@ public class ATTest extends BaseFunctionalTest
     {
         assertDataAvailable();
         client.clearLogs();
+        rollbackIfActive(ut);
     }
 
     @Test

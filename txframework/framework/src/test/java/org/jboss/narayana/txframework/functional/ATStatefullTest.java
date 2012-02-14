@@ -42,6 +42,7 @@ public class ATStatefullTest extends BaseFunctionalTest
     {
         assertDataAvailable();
         client.clearLogs();
+        rollbackIfActive(ut);
     }
 
     @Test
