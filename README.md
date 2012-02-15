@@ -7,7 +7,7 @@ This build uses a patch of the EMMA Jar, the source code for the patch is availa
 
 	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
 
-The latest version of the patched emma is available from /ext
+The latest version of the patched emma is available from /ext folder.
 
 
 Building Naryana
