@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware LLC, and others contributors as indicated by the @authors tag. All rights reserved. See the copyright.txt in the distribution 
+	for a full listing of individual contributors. This copyrighted material is made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the GNU Lesser 
+	General Public License, v. 2.1. This program is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
+	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jboss.narayana.xts</groupId>
+		<artifactId>xts-all</artifactId>
+		<version>5.0.0.M2-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>interop11</artifactId>
+	<packaging>war</packaging>
+	<name>interop11</name>
+	<description>JBoss Transactions WS-Addressing interop test</description>
+	<version>5.0.0.M2-SNAPSHOT</version>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<archive>
+						<manifestEntries>
+					   		<Dependencies>org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.narayana.xts</groupId>
+			<artifactId>jbossxts</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging-processor</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<profiles>
+		<profile>
+			<!-- The default profile skips all tests, though you can tune it 
+			to run just unit tests based on a custom pattern -->
+			<!-- Seperate profiles are provided for running all tests, including 
+			Arquillian tests that execute in the specified container -->
+		 <id>default</id>
+		 <activation>
+			 <activeByDefault>true</activeByDefault>
+		 </activation>
+		 <build>
+			 <plugins>
+				 <plugin>
+					 <artifactId>maven-surefire-plugin</artifactId>
+					 <configuration>
+						 <skip>false</skip>
+					 </configuration>
+				 </plugin>
+			 </plugins>
+		 </build>
+		 <dependencies>
+			 <dependency>
+				 <groupId>org.jboss.as</groupId>
+				 <artifactId>jboss-as-arquillian-container-managed</artifactId>
+				 <version>7.1.0.CR1-SNAPSHOT</version>
+				 <scope>test</scope>
+			 </dependency>
+		 </dependencies>
+	 </profile>
+ </profiles>
+</project>

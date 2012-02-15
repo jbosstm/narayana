@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ -->
+
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false">
+
+    <description>JBoss WSTX1.1 interop</description>
+
+    <!-- hmm, how do we do this with the JaxWS services?
+    <filter>
+      	<filter-name>HTTP Content Type filter</filter-name>
+      	<filter-class>com.arjuna.webservices.transport.http.HttpContentTypeFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+      	<filter-name>HTTP Content Type filter</filter-name>
+        <servlet-name>HTTP SOAP Service Multiplexor Servlet</servlet-name>
+    </filter-mapping>
+    -->
+
+    <!-- base URL for location of Interop 1.1 services -->
+    <context-param>
+        <param-name>BaseURI</param-name>
+        <param-value>http://localhost:8080/interop11</param-value>
+    </context-param>
+
+    <!-- Initialise Interop 11 services -->
+    <listener>
+        <listener-class>com.jboss.transaction.txinterop.webservices.atinterop.server.ATParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.jboss.transaction.txinterop.webservices.atinterop.server.ATInitiatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.jboss.transaction.txinterop.webservices.bainterop.server.BAParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.jboss.transaction.txinterop.webservices.bainterop.server.BAInitiatorInitialisation</listener-class>
+    </listener>
+
+    <!-- Define Interop 11 Server Endpoints -->
+    <servlet>
+      <servlet-name>Interop11ATInitiatorService</servlet-name>
+      <servlet-class>com.jboss.transaction.txinterop.webservices.atinterop.sei.InitiatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Interop11ATParticipantService</servlet-name>
+      <servlet-class>com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+      <servlet-name>Interop11BAInitiatorService</servlet-name>
+      <servlet-class>com.jboss.transaction.txinterop.webservices.bainterop.sei.InitiatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Interop11BAParticipantService</servlet-name>
+      <servlet-class>com.jboss.transaction.txinterop.webservices.bainterop.sei.ParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- define proxy, logging and junit test runner servlets -->
+    <servlet>
+        <servlet-name>HTTPProxyServlet</servlet-name>
+        <servlet-class>com.jboss.transaction.txinterop.proxy.ProxyListenerService</servlet-class>
+        <!--
+          The base URI of the proxy servlet.
+         -->
+        <init-param>
+            <param-name>proxyServiceURI</param-name>
+            <param-value>http://localhost:8080/interop11/proxy</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+	<!-- 
+    <servlet>
+        <servlet-name>JUnittestservlet</servlet-name>
+        <servlet-class>com.jboss.transaction.txinterop.test.TestServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+     -->
+
+    <servlet>
+        <servlet-name>XMLresultsservlet</servlet-name>
+        <servlet-class>com.jboss.transaction.txinterop.test.XMLResultsServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Logservlet</servlet-name>
+        <servlet-class>com.jboss.transaction.txinterop.test.TestLogServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define Interop 11 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Interop11ATInitiatorService</servlet-name>
+      <url-pattern>/ATInitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Interop11ATParticipantService</servlet-name>
+      <url-pattern>/ATParticipantService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>Interop11BAInitiatorService</servlet-name>
+      <url-pattern>/BAInitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Interop11BAParticipantService</servlet-name>
+      <url-pattern>/BAParticipantService</url-pattern>
+    </servlet-mapping>
+
+	<!-- servlet mappings -->
+    <servlet-mapping>
+        <servlet-name>HTTPProxyServlet</servlet-name>
+        <url-pattern>/proxy/*</url-pattern>
+    </servlet-mapping>
+    <!-- 
+    <servlet-mapping>
+        <servlet-name>JUnittestservlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+     -->
+
+    <servlet-mapping>
+        <servlet-name>XMLresultsservlet</servlet-name>
+        <url-pattern>/xmlresults</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Logservlet</servlet-name>
+        <url-pattern>/logs/*</url-pattern>
+    </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>
