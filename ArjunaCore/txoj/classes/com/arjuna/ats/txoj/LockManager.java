@@ -166,7 +166,7 @@ public class LockManager extends StateManager
      * new, propagating en route.
      */
 
-    public final boolean propagate (Uid from, Uid to)
+    public boolean propagate (Uid from, Uid to)
     {
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::propagate(" + from + ", " + to + ")");
@@ -179,53 +179,60 @@ public class LockManager extends StateManager
         {
             try
             {
-                synchronized (locksHeldLockObject)
+                Object syncObject = ((BasicAction.Current() == null) ? getMutex() : BasicAction.Current());
+                
+                synchronized (syncObject)
                 {
-                    if (loadState())
+                    synchronized (locksHeldLockObject)
                     {
-                        LockList oldlist = locksHeld;
-                        Lock current = null;
-
-                        locksHeld = new LockList(); /* create a new one */
-
-                        if (locksHeld != null)
+                        if (loadState())
                         {
-                            /*
-                             * scan through old list of held locks and propagate
-                             * to parent.
-                             */
-
-                            while ((current = oldlist.pop()) != null)
+                            LockList oldlist = locksHeld;
+                            Lock current = null;
+    
+                            locksHeld = new LockList(); /* create a new one */
+    
+                            if (locksHeld != null)
                             {
-                                if (current.getCurrentOwner().equals(from))
+                                /*
+                                 * scan through old list of held locks and propagate
+                                 * to parent.
+                                 */
+    
+                                while ((current = oldlist.pop()) != null)
                                 {
-                                    current.propagate();
+                                    if (current.getCurrentOwner().equals(from))
+                                    {
+                                        current.propagate();
+                                    }
+    
+                                    if (!locksHeld.insert(current))
+                                    {
+                                        current = null;
+                                    }
                                 }
-
-                                if (!locksHeld.insert(current))
-                                {
-                                    current = null;
-                                }
+    
+                                oldlist = null; /* get rid of old lock list */
+    
+                                result = true;
                             }
-
-                            oldlist = null; /* get rid of old lock list */
-
-                            result = true;
+                            else
+                            {
+                                /*
+                                 * Cannot create new locklist - abort and try again.
+                                 */
+    
+                                freeState();
+    
+                                throw new NullPointerException();
+                            }
                         }
-                        else
+    
+                        if (result)
                         {
-                            /*
-                             * Cannot create new locklist - abort and try again.
-                             */
-
-                            freeState();
-
-                            throw new NullPointerException();
+                            result = unloadState();
                         }
                     }
-
-                    if (result)
-                        result = unloadState();
                 }
             }
             catch (NullPointerException e)
@@ -271,7 +278,7 @@ public class LockManager extends StateManager
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::releaseAll(" + actionUid + ")");
         }
-
+        
         return doRelease(actionUid, true);
     }
 
@@ -725,7 +732,7 @@ public class LockManager extends StateManager
      * appropriate.
      */
 
-    protected final boolean doRelease (Uid u, boolean all)
+    protected boolean doRelease (Uid u, boolean all)
     {
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::doRelease(" + u + ", " + all + ")");
@@ -918,7 +925,7 @@ public class LockManager extends StateManager
      * object model is used.
      */
 
-    private final boolean initialise ()
+    protected final boolean initialise ()
     {
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::initialise()");
