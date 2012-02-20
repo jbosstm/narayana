@@ -1,10 +1,15 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
-import com.arjuna.wst.*;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.Volatile2PCParticipant;
+import com.arjuna.wst.WrongStateException;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.api.management.ATTxControl;
@@ -59,18 +64,20 @@ public class WSATHandler implements ProtocolHandler
         //didn't find an injection point. No problem as this is optional
     }
 
+    @Override
     public Object proceed(InvocationContext ic) throws Exception
     {
-        try
-        {
-            return ic.proceed();
-        }
-        //todo: Should this not be throwable?
-        catch (Exception e)
-        {
-            //todo: Something went wrong, so ensure TX rollback
-            throw e;
-        }
+        return ic.proceed();
+    }
+
+    @Override
+    public void notifySuccess() {
+        //do nothing
+    }
+
+    @Override
+    public void notifyFailure() {
+        //Todo: ensure transaction rolled back
     }
 
     private void registerParticipants(Object participant, String idPrefix) throws ParticipantRegistrationException

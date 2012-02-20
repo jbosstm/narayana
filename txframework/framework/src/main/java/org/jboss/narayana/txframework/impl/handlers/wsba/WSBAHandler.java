@@ -1,8 +1,5 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
@@ -16,9 +13,6 @@ import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationExcep
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public abstract class WSBAHandler implements ProtocolHandler
 {
@@ -65,23 +59,37 @@ public abstract class WSBAHandler implements ProtocolHandler
 
     public Object proceed(InvocationContext ic) throws Exception
     {
-        try
+        return ic.proceed();
+    }
+
+    @Override
+    public void notifySuccess() throws TXFrameworkException{
+        //todo: find a better way of getting the current status of the TX
+        if (shouldComplete(serviceMethod) && !((WSBATxControlImpl) wsbaTxControl).isCannotComplete())
         {
-            Object result = ic.proceed();
-            //todo: find a better way of getting the current status of the TX
-            if (shouldComplete(serviceMethod) && !((WSBATxControlImpl) wsbaTxControl).isCannotComplete())
-            {
+            try {
                 participantManager.completed();
+            } catch (WrongStateException e) {
+                throw new TXFrameworkException("Error notifying completion on participant manager.", e);
+            } catch (UnknownTransactionException e) {
+                throw new TXFrameworkException("Error notifying completion on participant manager.", e);
+            } catch (SystemException e) {
+                throw new TXFrameworkException("Error notifying completion on participant manager.", e);
             }
-            return result;
         }
-        //todo: Should this not be throwable?
-        catch (Exception e)
-        {
-            //Something went wrong, so notify cannot completed
-            participantManager.cannotComplete();
-            throw e;
-        }
+    }
+
+    @Override
+    public void notifyFailure() throws TXFrameworkException {
+        try {
+                participantManager.cannotComplete();
+            } catch (WrongStateException e) {
+                throw new TXFrameworkException("Error notifying cannotComplete on participant manager.", e);
+            } catch (UnknownTransactionException e) {
+                throw new TXFrameworkException("Error notifying cannotComplete on participant manager.", e);
+            } catch (SystemException e) {
+                throw new TXFrameworkException("Error notifying cannotComplete on participant manager.", e);
+            }
     }
 
     private boolean shouldComplete(Method serviceMethod)
