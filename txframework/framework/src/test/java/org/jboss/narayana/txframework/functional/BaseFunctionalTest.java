@@ -3,6 +3,9 @@ package org.jboss.narayana.txframework.functional;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.narayana.txframework.functional.clients.ATClient;
+import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.services.ATService;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -11,7 +14,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public class BaseFunctionalTest {
 
-    @Deployment
+    @Deployment()
     public static JavaArchive createTestArchive() {
         //todo: Does the application developer have to specify the interceptor?
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
@@ -24,7 +27,7 @@ public class BaseFunctionalTest {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.narayana.txframework,org.jboss.as.xts,org.jboss.xts,org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts\n";
+                + "Dependencies: org.jboss.narayana.txframework\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
