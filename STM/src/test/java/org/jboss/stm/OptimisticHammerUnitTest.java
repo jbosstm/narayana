@@ -29,6 +29,7 @@ import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
@@ -139,6 +140,14 @@ public class OptimisticHammerUnitTest extends TestCase
         RecoverableContainer<Sample> theContainer = new RecoverableContainer<Sample>();
         Sample obj1 = theContainer.enlist(new SampleLockable(10));
         Sample obj2 = theContainer.enlist(new SampleLockable(10));
+        
+        // todo make it easier to create and share objects.
+        
+        /*
+         * Make sharing of objects like this the default even for pessimistic. Just pass back the
+         * same instance in that case. Also hide getUidForHandle by simply passing the obj instance.fr
+         */
+        
         Sample obj3 = theContainer.enlist(new SampleLockable(0), theContainer.getUidForHandle(obj1));
         Sample obj4 = theContainer.enlist(new SampleLockable(0), theContainer.getUidForHandle(obj1));
         int workers = 2;

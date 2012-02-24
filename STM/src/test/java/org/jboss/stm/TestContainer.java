@@ -24,6 +24,7 @@ package org.jboss.stm;
 import java.lang.reflect.Proxy;
 import java.util.WeakHashMap;
 
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.reflect.InvocationHandler;
 
 /**

@@ -21,7 +21,7 @@
 
 package org.jboss.stm.types;
 
-import org.jboss.stm.RecoverableContainer;
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.types.AtomicArrayImpl;
 
 // TODO maybe pull all of this into a separate jar

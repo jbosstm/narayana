@@ -45,6 +45,8 @@ import com.arjuna.ats.txoj.Lock;
  * @since JTS 1.0.
  */
 
+// todo different lock mode instead of WRITE and READ?
+
 public class OptimisticLock extends Lock
 {
     public OptimisticLock ()

@@ -24,28 +24,24 @@ package org.jboss.stm;
 
 import java.util.Random;
 
-import org.jboss.stm.annotations.Retry;
-import org.jboss.stm.annotations.Timeout;
+import org.jboss.stm.annotations.Optimistic;
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
-import org.jboss.stm.internal.PersistentContainer;
-import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
 import junit.framework.TestCase;
 
 /**
- * Hammer equivalent test.
- * 
  * @author Mark Little
  */
 
-public class TimeoutRetryUnitTest extends TestCase
+public class ContainerUnitTest extends TestCase
 {   
     @Transactional
+    @Optimistic
     public interface Sample
     {
        public void increment ();
@@ -55,6 +51,7 @@ public class TimeoutRetryUnitTest extends TestCase
     }
     
     @Transactional
+    @Optimistic
     public class SampleLockable implements Sample
     {
         public SampleLockable (int init)
@@ -63,24 +60,18 @@ public class TimeoutRetryUnitTest extends TestCase
         }
         
         @ReadLock
-        @Timeout(period=0)
-        @Retry(count=0)
         public int value ()
         {
             return _isState;
         }
 
         @WriteLock
-        @Timeout(period=0)
-        @Retry(count=0)
         public void increment ()
         {
             _isState++;
         }
         
         @WriteLock
-        @Timeout(period=0)
-        @Retry(count=0)
         public void decrement ()
         {
             _isState--;
@@ -102,7 +93,7 @@ public class TimeoutRetryUnitTest extends TestCase
         {
             Random rand = new Random();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
                 AtomicAction A = new AtomicAction();
                 boolean doCommit = true;
@@ -112,14 +103,14 @@ public class TimeoutRetryUnitTest extends TestCase
                 try
                 {
                     // always keep the two objects in sync.
-                    
-                    _obj1.increment();
-                    _obj2.decrement();
-                    
-                    Thread.sleep(1000);
+
+                   _obj1.increment();
+                   _obj2.decrement();
                 }
                 catch (final Throwable ex)
                 {
+                    ex.printStackTrace();
+                    
                     doCommit = false;
                 }
                 
@@ -127,9 +118,13 @@ public class TimeoutRetryUnitTest extends TestCase
                     doCommit = false;
                 
                 if (doCommit)
+                {
                     A.commit();
+                }
                 else
+                {
                     A.abort();
+                }
             }
         }
         
@@ -139,42 +134,24 @@ public class TimeoutRetryUnitTest extends TestCase
 
     public void testRecoverableHammer ()
     {
-        RecoverableContainer<Sample> theContainer = new RecoverableContainer<Sample>();
-        Sample obj1 = theContainer.enlist(new SampleLockable(10));
-        Sample obj2 = theContainer.enlist(new SampleLockable(10));
-        Worker worker1 = new Worker(obj1, obj2);
-        Worker worker2 = new Worker(obj1, obj2);
+        Container<Sample> theContainer = new Container<Sample>();
+        Sample obj1 = theContainer.create(new SampleLockable(10));
+        Sample obj2 = theContainer.create(new SampleLockable(10));
+        Sample obj3 = theContainer.clone(SampleLockable.class, obj1);
+        Sample obj4 = theContainer.clone(SampleLockable.class, obj2);
+        int workers = 2;
+        Worker[] worker = new Worker[workers];
         
-        worker1.start();
-        worker2.start();
-        
-        try
-        {
-            worker1.join();
-            worker2.join();
-        }
-        catch (final Throwable ex)
-        {
-        }
-        
-        assertEquals(obj1.value()+obj2.value(), 20);
-    }
-    
-    public void testPersistentHammer ()
-    {
-        PersistentContainer<Sample> theContainer = new PersistentContainer<Sample>();
-        Sample obj1 = theContainer.enlist(new SampleLockable(10));
-        Sample obj2 = theContainer.enlist(new SampleLockable(10));
-        Worker worker1 = new Worker(obj1, obj2);
-        Worker worker2 = new Worker(obj1, obj2);
-        
-        worker1.start();
-        worker2.start();
+        worker[0] = new Worker(obj1, obj2);
+        worker[1] = new Worker(obj3, obj4);
+       
+        for (int j = 0; j < workers; j++)
+            worker[j].start();
         
         try
         {
-            worker1.join();
-            worker2.join();
+            for (int k = 0; k < workers; k++)
+                worker[k].join();
         }
         catch (final Throwable ex)
         {

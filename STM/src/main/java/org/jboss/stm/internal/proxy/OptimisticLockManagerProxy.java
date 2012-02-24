@@ -27,11 +27,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.jboss.stm.InvalidAnnotationException;
-import org.jboss.stm.RecoverableContainer;
 import org.jboss.stm.annotations.NotState;
 import org.jboss.stm.annotations.RestoreState;
 import org.jboss.stm.annotations.SaveState;
 import org.jboss.stm.annotations.Transactional;
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.optimistic.OptimisticLockManager;
 
 import com.arjuna.ats.arjuna.ObjectModel;

@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.jboss.stm.LockException;
-import org.jboss.stm.RecoverableContainer;
 import org.jboss.stm.TransactionException;
 import org.jboss.stm.annotations.Optimistic;
 import org.jboss.stm.annotations.Retry;
@@ -35,6 +34,7 @@ import org.jboss.stm.annotations.TransactionFree;
 import org.jboss.stm.annotations.Nested;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.proxy.LockManagerProxy;
 import org.jboss.stm.internal.proxy.OptimisticLockManagerProxy;
 

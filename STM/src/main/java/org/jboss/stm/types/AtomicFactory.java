@@ -21,7 +21,7 @@
 
 package org.jboss.stm.types;
 
-import org.jboss.stm.RecoverableContainer;
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.types.AtomicBooleanImpl;
 import org.jboss.stm.internal.types.AtomicDoubleImpl;
 import org.jboss.stm.internal.types.AtomicFloatImpl;

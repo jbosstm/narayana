@@ -24,12 +24,12 @@ package org.jboss.stm.internal.types;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.jboss.stm.RecoverableContainer;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.RestoreState;
 import org.jboss.stm.annotations.SaveState;
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.types.AtomicArray;
 
 import com.arjuna.ats.arjuna.common.Uid;

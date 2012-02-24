@@ -28,6 +28,8 @@ import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.PersistentContainer;
+import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 

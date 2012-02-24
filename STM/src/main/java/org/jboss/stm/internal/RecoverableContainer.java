@@ -19,7 +19,7 @@
  * @author mark.little@jboss.com
  */
 
-package org.jboss.stm;
+package org.jboss.stm.internal;
 
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
@@ -74,7 +74,8 @@ public class RecoverableContainer<T>
     
     public RecoverableContainer (final String name)
     {
-        _name = name;
+        _name = name;       
+        _type = ObjectType.RECOVERABLE;
     }
     
     /**
@@ -281,6 +282,11 @@ public class RecoverableContainer<T>
         return "RecoverableContainer "+_name;
     }
     
+    public final int objectType ()
+    {
+        return _type;
+    }
+    
     protected final void checkObjectType (Object member)
     {
         if ((member instanceof LockManager) || (member instanceof StateManager))
@@ -313,6 +319,7 @@ public class RecoverableContainer<T>
     }
     
     protected WeakHashMap<T, T> _transactionalProxies = new WeakHashMap<T, T>();
+    protected int _type;
     
     private final String _name;
 }

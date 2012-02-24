@@ -25,13 +25,13 @@ package org.jboss.stm;
 import java.io.IOException;
 import java.util.Hashtable;
 
-import org.jboss.stm.RecoverableContainer;
 import org.jboss.stm.annotations.RestoreState;
 import org.jboss.stm.annotations.SaveState;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectType;
