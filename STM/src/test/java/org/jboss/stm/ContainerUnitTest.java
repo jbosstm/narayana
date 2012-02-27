@@ -54,6 +54,11 @@ public class ContainerUnitTest extends TestCase
     @Optimistic
     public class SampleLockable implements Sample
     {
+        public SampleLockable ()
+        {
+            this(0);
+        }
+        
         public SampleLockable (int init)
         {
             _isState = init;
@@ -132,15 +137,44 @@ public class ContainerUnitTest extends TestCase
         private Sample _obj2;
     }
 
-    public void testRecoverableHammer ()
+    public void testHammer ()
     {
         Container<Sample> theContainer = new Container<Sample>();
         Sample obj1 = theContainer.create(new SampleLockable(10));
         Sample obj2 = theContainer.create(new SampleLockable(10));
-        Sample obj3 = theContainer.clone(SampleLockable.class, obj1);
-        Sample obj4 = theContainer.clone(SampleLockable.class, obj2);
+        Sample obj3 = theContainer.clone(new SampleLockable(), obj1);
+        Sample obj4 = theContainer.clone(new SampleLockable(), obj2);
         int workers = 2;
         Worker[] worker = new Worker[workers];
+        
+        assertTrue(obj3 != null);
+        assertTrue(obj4 != null);
+        
+        AtomicAction A = new AtomicAction();
+        
+        A.begin();
+        
+        obj1.increment();
+        obj2.increment();
+        
+        A.commit();
+        
+        /*
+         * TODO cannot share state until the state is written, and it isn't written
+         * until an explicit set is called. What we want is for the state to be in the
+         * store when create (clone) returns.
+         */
+        
+        assertEquals(obj1.value(), 11);
+        assertEquals(obj2.value(), 11);
+        
+        A = new AtomicAction();
+        
+        A.begin();
+        
+        assertEquals(obj3.value(), 11);
+        
+        A.commit();
         
         worker[0] = new Worker(obj1, obj2);
         worker[1] = new Worker(obj3, obj4);
@@ -156,7 +190,7 @@ public class ContainerUnitTest extends TestCase
         catch (final Throwable ex)
         {
         }
-        
-        assertEquals(obj1.value()+obj2.value(), 20);
+
+        assertEquals(obj1.value()+obj2.value(), 22);
     }
 }

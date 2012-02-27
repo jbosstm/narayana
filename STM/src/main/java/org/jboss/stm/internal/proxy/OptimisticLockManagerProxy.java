@@ -211,6 +211,8 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
                 {
                     Field[] fields = _theObject.getClass().getDeclaredFields(); // get all fields including private
                     
+                    _fields = new ArrayList<Field>();
+                    
                     try
                     {
                         for (Field afield : fields)
@@ -225,6 +227,8 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
                     }
                     catch (final Throwable ex)
                     {
+                        ex.printStackTrace();
+                        
                         res = false;
                     }
                 }
@@ -255,6 +259,8 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
         }
         catch (final Throwable ex)
         {
+            ex.printStackTrace();
+            
             res = false;
         }
         

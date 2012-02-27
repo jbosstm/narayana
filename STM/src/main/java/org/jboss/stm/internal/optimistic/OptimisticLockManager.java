@@ -95,7 +95,7 @@ public class OptimisticLockManager extends LockManager
                 txojLogger.i18NLogger.warn_LockManager_3();
 
                 toSet = null;
-
+                
                 return LockResult.REFUSED;
             }
         }
@@ -124,7 +124,7 @@ public class OptimisticLockManager extends LockManager
                         {
                             txojLogger.i18NLogger.warn_LockManager_4();
                         }
-        
+                        
                         if (conflict != ConflictType.CONFLICT)
                         {
                             /*
@@ -157,7 +157,9 @@ public class OptimisticLockManager extends LockManager
                                             newLockR = null;
     
                                             if (lrStatus == AddOutcome.AR_REJECTED)
+                                            {
                                                 returnStatus = LockResult.REFUSED;
+                                            }
                                         }
     
                                     }

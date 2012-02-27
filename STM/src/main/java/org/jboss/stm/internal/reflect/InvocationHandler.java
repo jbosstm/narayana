@@ -54,6 +54,17 @@ import com.arjuna.ats.txoj.LockResult;
 
 public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
 {
+    /*
+     * If no locks are defined in annotations then we try to use the
+     * names of the methods to infer a lock type to use.
+     * 
+     * todo do we need a "disable inference" annotation/rule? Maybe not since you
+     * can always either explicitly define the lock or change the method name!
+     */
+    
+    private static final String GETTER_NAME = "GET";
+    private static final String SETTER_NAME = "SET";
+    
     class LockInformation
     {
         public LockInformation (int lockType)
@@ -135,18 +146,21 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
             }
         }
 
+        if (_optimistic)
+        {
+            if (!initialiseStore())
+            {
+                _txObject = null;
+                
+                return;
+            }
+        }
+        
         if (u != null)
         {
             if (_optimistic)
             {
-                if (initialiseStore())
-                    _txObject = new OptimisticLockManagerProxy<T>(obj, u, ObjectModel.MULTIPLE, cont);
-                else
-                {
-                    _txObject = null;
-                    
-                    return;
-                }
+                _txObject = new OptimisticLockManagerProxy<T>(obj, u, ObjectModel.MULTIPLE, cont);
             }
             else
                 _txObject = new LockManagerProxy<T>(obj, u, cont);
@@ -162,14 +176,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
             
             if (_optimistic)
             {
-                if (initialiseStore())                
-                    _txObject = new OptimisticLockManagerProxy<T>(obj, ObjectType.ANDPERSISTENT, ObjectModel.MULTIPLE, cont);  // recoverable or persistent
-                else
-                {
-                    _txObject = null;
-                    
-                    return;
-                }
+                _txObject = new OptimisticLockManagerProxy<T>(obj, ObjectType.ANDPERSISTENT, ObjectModel.MULTIPLE, cont);  // recoverable or persistent
             }
             else
                 _txObject = new LockManagerProxy<T>(obj, ot, cont);  // recoverable or persistent
@@ -235,112 +242,112 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
         {
             synchronized (_theObject)
             {
-            AtomicAction act = null;
-            
-            if (_nestedTransactions)
-            {
-                act = new AtomicAction();
-            
-                act.begin();
-            }
-            
-            try
-            {
-                LockInformation cachedLock = _cachedMethods.get(method);
-    
+                AtomicAction act = null;
                 
-                // todo allow null transaction context - not an issue for now with STM though!
-                
-                if (BasicAction.Current() != null)
+                if (_nestedTransactions)
                 {
-                    Method theMethod = null;
-    
-                    /*
-                     * Look for the corresponding method in the original object and
-                     * check the annotations applied there.
-                     * 
-                     * Check to see if we've cached this before.
-                     */
-    
-                    int lockType = -1;
-                    boolean lockFree = false;
-    
-                    if (cachedLock == null)
+                    act = new AtomicAction();
+                
+                    act.begin();
+                }
+                
+                try
+                {
+                    LockInformation cachedLock = _cachedMethods.get(method);
+        
+                    
+                    // todo allow null transaction context - not an issue for now with STM though!
+                    
+                    if (BasicAction.Current() != null)
                     {
-                        for (Method mt : _methods)
+                        Method theMethod = null;
+        
+                        /*
+                         * Look for the corresponding method in the original object and
+                         * check the annotations applied there.
+                         * 
+                         * Check to see if we've cached this before.
+                         */
+        
+                        int lockType = -1;
+                        boolean lockFree = false;
+        
+                        if (cachedLock == null)
                         {
-                            if (mt.getName().equals(method.getName()))
+                            for (Method mt : _methods)
                             {
-                                if (mt.getReturnType().equals(method.getReturnType()))
+                                if (mt.getName().equals(method.getName()))
                                 {
-                                    if (Arrays.equals(mt.getParameterTypes(), method.getParameterTypes()))
-                                        theMethod = mt;
+                                    if (mt.getReturnType().equals(method.getReturnType()))
+                                    {
+                                        if (Arrays.equals(mt.getParameterTypes(), method.getParameterTypes()))
+                                            theMethod = mt;
+                                    }
                                 }
                             }
-                        }
-    
-                        /*
-                         * Should we catch common methods, like equals, and call Object... automatically?
-                         */
-    
-                        if (theMethod == null)
-                            throw new LockException("Could not locate method "+method);
-    
-                        /*
-                         * What about other lock types?
-                         */
-    
-                        if (theMethod.isAnnotationPresent(ReadLock.class))
-                            lockType = LockMode.READ;
-                        else
-                        {
-                            if (theMethod.isAnnotationPresent(WriteLock.class))
-                                lockType = LockMode.WRITE;
+        
+                            /*
+                             * Should we catch common methods, like equals, and call Object... automatically?
+                             */
+        
+                            if (theMethod == null)
+                                throw new LockException("Could not locate method "+method);
+        
+                            /*
+                             * What about other lock types?
+                             */
+        
+                            if (theMethod.isAnnotationPresent(ReadLock.class))
+                                lockType = LockMode.READ;
                             else
                             {
-                                if (theMethod.isAnnotationPresent(TransactionFree.class))
-                                    lockFree = true;
+                                if (theMethod.isAnnotationPresent(WriteLock.class))
+                                    lockType = LockMode.WRITE;
+                                else
+                                {
+                                    if (theMethod.isAnnotationPresent(TransactionFree.class))
+                                        lockFree = true;
+                                }
                             }
+        
+                            int timeout = LockManager.defaultSleepTime;
+                            int retry = LockManager.defaultRetry;
+        
+                            if (theMethod.isAnnotationPresent(Timeout.class))
+                                timeout = theMethod.getAnnotation(Timeout.class).period();
+        
+                            if (theMethod.isAnnotationPresent(Retry.class))
+                                retry = theMethod.getAnnotation(Retry.class).count();
+        
+                            if ((lockType == -1) && (!lockFree)) // default to WRITE
+                                lockType = LockMode.WRITE;
+        
+                            cachedLock = new LockInformation(lockType, timeout, retry);
+                            _cachedMethods.put(method, cachedLock);
+                        }          
+        
+                        // TODO type specific concurrency control (define Lock class in annotation?)
+        
+                        int result = _txObject.setlock(new Lock(cachedLock._lockType), cachedLock._retry, cachedLock._timeout);
+        
+                        if (result != LockResult.GRANTED)
+                        {
+                            throw new LockException("Could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));
                         }
+                    }
     
-                        int timeout = LockManager.defaultSleepTime;
-                        int retry = LockManager.defaultRetry;
-    
-                        if (theMethod.isAnnotationPresent(Timeout.class))
-                            timeout = theMethod.getAnnotation(Timeout.class).period();
-    
-                        if (theMethod.isAnnotationPresent(Retry.class))
-                            retry = theMethod.getAnnotation(Retry.class).count();
-    
-                        if ((lockType == -1) && (!lockFree)) // default to WRITE
-                            lockType = LockMode.WRITE;
-    
-                        cachedLock = new LockInformation(lockType, timeout, retry);
-                        _cachedMethods.put(method, cachedLock);
-                    }          
-    
-                    // TODO type specific concurrency control (define Lock class in annotation?)
-    
-                    int result = _txObject.setlock(new Lock(cachedLock._lockType), cachedLock._retry, cachedLock._timeout);
-    
-                    if (result != LockResult.GRANTED)
+                    return method.invoke(_theObject, args);
+                }
+                finally
+                {
+                    if (act != null)
                     {
-                        throw new LockException("Could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));
+                        int status = act.commit();
+                        
+                        if ((status != ActionStatus.COMMITTED) && (status != ActionStatus.COMMITTING))
+                            throw new TransactionException("Failed to commit container transaction!", status);
                     }
                 }
-
-                return method.invoke(_theObject, args);
-            }
-            finally
-            {
-                if (act != null)
-                {
-                    int status = act.commit();
-                    
-                    if ((status != ActionStatus.COMMITTED) && (status != ActionStatus.COMMITTING))
-                        throw new TransactionException("Failed to commit container transaction!", status);
-                }
-            }
             }
         }
     }
@@ -349,7 +356,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
     {
         synchronized (InvocationHandler.class)
         {
-            if (_storeManager != null)
+            if (_storeManager == null)
             {
                 try
                 {
@@ -373,7 +380,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
     private LockManager _txObject;
     private Method[] _methods;
     private HashMap<Method, InvocationHandler<T>.LockInformation> _cachedMethods = new HashMap<Method, InvocationHandler<T>.LockInformation>();
-    private boolean _nestedTransactions = false;
+    private boolean _nestedTransactions = false;  // todo change default?
     private boolean _optimistic = false;
     
     private static StoreManager _storeManager = null;

@@ -271,6 +271,8 @@ public class StateManager
                     }
                     catch (ObjectStoreException e)
                     {
+                        e.printStackTrace();
+                        
                         oldState = null;
                     }
 

@@ -393,30 +393,29 @@ public class OptimisticUnitTest extends TestCase
         
         assertEquals(obj.get(), 345);
     }
-/*
-    public void testRecoverableHammer () throws Exception
+
+    public void testShared () throws Exception
     {
         init();
 
         AtomicObject obj1 = new AtomicObject();
         AtomicObject obj2 = new AtomicObject(obj1.get_uid(), ObjectModel.MULTIPLE);
-        Worker worker1 = new Worker(obj1);
-        Worker worker2 = new Worker(obj2);
+        AtomicAction A = new AtomicAction();
         
-        worker1.start();
-        worker2.start();
+        A.begin();
         
-        try
-        {
-            worker1.join();
-            worker2.join();
-        }
-        catch (final Throwable ex)
-        {
-        }
+        obj1.set(10);
         
-        assertEquals(obj1.get(), 90);
-    }*/
+        A.commit();
+        
+        A = new AtomicAction();
+        
+        A.begin();
+        
+        assertEquals(obj2.get(), obj1.get());
+        
+        A.commit();
+    }
 
     private static synchronized void init () throws Exception
     {

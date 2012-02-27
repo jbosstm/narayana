@@ -83,7 +83,7 @@ public class TestContainer<T> extends RecoverableContainer<T>
         
         if (proxy == null)
         {
-            Class c = member.getClass();
+            Class<?> c = member.getClass();
             
             proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member));
             
