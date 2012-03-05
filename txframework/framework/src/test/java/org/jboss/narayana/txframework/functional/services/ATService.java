@@ -32,12 +32,8 @@ import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.narayana.txframework.impl.TXControlException;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -46,12 +42,10 @@ import java.lang.annotation.Annotation;
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
-@Remote(AT.class)
 @WSAT(bridgeType = BridgeType.NONE)
-@Stateless
 @WebService(serviceName = "ATService", portName = "AT", name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-public class ATService implements AT
+public class ATService
 {
     @Inject
     DataControl dataControl;

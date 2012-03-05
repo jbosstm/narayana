@@ -21,7 +21,7 @@ public class WSBAInternalParticipant
         }
         catch (SystemException e)
         {
-            throw new ParticipantRegistrationException("Unable to lookup current tranaction id", e);
+            throw new ParticipantRegistrationException("Unable to lookup current transaction id", e);
         }
     }
 
