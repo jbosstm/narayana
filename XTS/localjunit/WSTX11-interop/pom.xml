@@ -5,23 +5,23 @@
 	PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License, v.2.1 along with this distribution; if not, write to the Free 
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jboss.narayana.xts</groupId>
-		<artifactId>xts-all</artifactId>
-		<version>5.0.0.M2-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
+    <groupId>org.jboss.narayana.xts</groupId>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>interop11</artifactId>
 	<packaging>war</packaging>
 	<name>interop11</name>
 	<description>JBoss Transactions WS-Addressing interop test</description>
 	<version>5.0.0.M2-SNAPSHOT</version>
+    <properties>
+        <arquillian.version>1.0.0.CR7</arquillian.version>
+        <jboss.version>7.1.1.Final</jboss.version>
+    </properties>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -45,8 +45,16 @@
 		<dependency>
 			<groupId>org.jboss.narayana.xts</groupId>
 			<artifactId>jbossxts</artifactId>
+            <version>5.0.0.M2-SNAPSHOT</version>
 			<scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-spi</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
@@ -57,14 +65,17 @@
 			<artifactId>jboss-logging-processor</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+            <version>4.8.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -76,6 +87,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-container</artifactId>
+            <version>${arquillian.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -85,14 +97,15 @@
 			to run just unit tests based on a custom pattern -->
 			<!-- Seperate profiles are provided for running all tests, including 
 			Arquillian tests that execute in the specified container -->
-		 <id>default</id>
+		 <id>arq</id>
 		 <activation>
-			 <activeByDefault>true</activeByDefault>
+			 <activeByDefault>false</activeByDefault>
 		 </activation>
 		 <build>
 			 <plugins>
 				 <plugin>
 					 <artifactId>maven-surefire-plugin</artifactId>
+                	 <version>2.7.2</version>
 					 <configuration>
 						 <skip>false</skip>
 					 </configuration>
@@ -103,7 +116,7 @@
 			 <dependency>
 				 <groupId>org.jboss.as</groupId>
 				 <artifactId>jboss-as-arquillian-container-managed</artifactId>
-				 <version>7.1.0.CR1-SNAPSHOT</version>
+                 <version>${jboss.version}</version>
 				 <scope>test</scope>
 			 </dependency>
 		 </dependencies>
