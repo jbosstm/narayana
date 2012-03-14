@@ -97,13 +97,11 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-	<!-- 
     <servlet>
         <servlet-name>JUnittestservlet</servlet-name>
         <servlet-class>com.jboss.transaction.txinterop.test.TestServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-     -->
 
     <servlet>
         <servlet-name>XMLresultsservlet</servlet-name>
@@ -140,12 +138,11 @@
         <servlet-name>HTTPProxyServlet</servlet-name>
         <url-pattern>/proxy/*</url-pattern>
     </servlet-mapping>
-    <!-- 
+
     <servlet-mapping>
         <servlet-name>JUnittestservlet</servlet-name>
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
-     -->
 
     <servlet-mapping>
         <servlet-name>XMLresultsservlet</servlet-name>
