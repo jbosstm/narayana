@@ -14,15 +14,15 @@ public class TxSupportTest extends BaseTest {
         startContainer(TXN_MGR_URL);
     }
 
-    // This test needs to be run in isolation so that previously running/incomplete txns don't affect the results
-    // Needs to be considered before adding new tests here
     @Test
     public void testListTransactionsWhenNoActiveTxns() throws IOException {
         TxSupport txn = new TxSupport();
 
-        // This should be a collection of size 0.
         Collection<String> transactionsInProgress = txn.getTransactions();
 
+        // There should be no txns in progress, since none were started in this test
+        Assert.assertEquals(0, txn.txCount());
+        
         Assert.assertEquals(0, transactionsInProgress.size());
     }
 
