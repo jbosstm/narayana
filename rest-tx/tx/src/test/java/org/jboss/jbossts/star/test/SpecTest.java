@@ -149,13 +149,13 @@ public class SpecTest extends BaseTest {
         /*
         242 If the transaction no longer exists then an implementation MAY return 410 if the implementation
         243 records information about transactions that have rolled back, (not necessary for presumed
-        244 rollback semantics) but at a minimum MUST return 401.
+        244 rollback semantics) but at a minimum MUST return 404.
         */
 
         try {
             Assert.assertEquals(txn.commitTx(), TxSupport.TX_ABORTED);
         } catch (HttpResponseException e) {
-            Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE);
+            Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE || e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
