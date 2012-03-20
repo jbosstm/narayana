@@ -18,7 +18,7 @@ import org.junit.Assert;
 public class BaseCrashTest
 {
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
-    protected String BytemanArgs = "-Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
+    protected String BytemanArgs = "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
     protected String javaVmArguments;
     protected String testName;
     protected String scriptName;
@@ -117,7 +117,7 @@ public class BaseCrashTest
         config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
 
         controller.start("jboss-as", config.map());
-        deployer.undeploy("xtstest");
+        //deployer.undeploy("xtstest");
         deployer.deploy("xtstest");
 
         //Waiting for crashing
