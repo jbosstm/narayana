@@ -17,6 +17,10 @@
 	<name>localjunit tests for xts</name>
 	<description>localjunit tests for xts</description>
 	<modules>
-		<module>tests</module>
+		<module>WSAS</module>
+		<module>WSCF</module>
+		<module>WSTX</module>
+		<module>WS-C</module>
+		<module>WS-T</module>
 	</modules>
 </project>
