@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<project name="narayana-dependencies">
+    <target name="initializeJBoss">
+        <get src="http://172.17.131.2/userContent/jboss-as-7.1.1.Final.zip" dest="./jboss-as-7.1.1.Final.zip" verbose="true" usetimestamp="true" skipexisting="true"/>
+        <delete dir="jboss-as-7.1.1.Final"/>
+        <unzip src="jboss-as-7.1.1.Final.zip" dest="."/>
+    </target>
+</project>
