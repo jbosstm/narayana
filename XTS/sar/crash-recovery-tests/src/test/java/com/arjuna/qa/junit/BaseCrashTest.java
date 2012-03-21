@@ -22,7 +22,7 @@ public class BaseCrashTest
     protected String javaVmArguments;
     protected String testName;
     protected String scriptName;
-    private final static String xtstestWar = "../tests/build/webapps/xtstest.war";
+    private final static String xtstestWar = "../tests/target/xtstest.war";
     @ArquillianResource
     private ContainerController controller;
     @ArquillianResource
