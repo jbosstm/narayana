@@ -4,7 +4,7 @@ if [ -z "${WORKSPACE}" ]; then
 fi
 
 #BUILD NARAYANA WITH FINDBUGS
-./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false install
+./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false clean install
 
 #RUN QA TESTS
 cd qa
@@ -24,7 +24,7 @@ export JBOSS_HOME=${WORKSPACE}/jboss-as-7.1.1.Final
 ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -Parq test 
 
 #2.XTS UNIT TESTS
-./build.sh -f XTS/localjunit/pom.xml test
+./build.sh -f XTS/localjunit/pom.xml -Parq test
 
 #3.XTS CRASH RECOVERY TESTS
 ./build.sh -f XTS/sar/crash-recovery-tests/pom.xml test
