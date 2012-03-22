@@ -20,11 +20,12 @@
  */
 package org.jboss.jbossts.star.service;
 
+import java.util.Map.Entry;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -202,6 +203,8 @@ public class Coordinator
         }
 		
         int status = tx.begin(timeout);
+        
+        tx.addSynchronization(new CoordinatorCleanupSynchronization(this, tx));
 
         try
         {
@@ -279,13 +282,10 @@ public class Coordinator
         log.trace("coordinator: commit: transaction-manager/" + txId + "/terminate : content: " + content);
 
         Transaction tx = getTransaction(txId);
-        Collection<String> enlistmentIds = new ArrayList<String>();
         String how = TxSupport.getStringValue(content, TxSupport.STATUS_PROPERTY);
         String status;
         int scRes;
 		int ihow;
-
-        tx.getParticipants(enlistmentIds);
 
 		/*
 			ABORT_ONLY is not in the spec for the same reasons as it's not in the WS-TX and WS-CAF where
@@ -325,11 +325,7 @@ public class Coordinator
             throw new TransactionStatusException("Transaction failed to terminate");
 
         if (!tx.isAlive()) {
-            transactions.remove(txId);
-
-            for (String enlistmentId : enlistmentIds) {
-                participants.remove(enlistmentId);
-            }
+            // Cleanup is done as part of the org.jboss.jbossts.star.service.CoordinatorCleanupSynchronization.afterCompletion()
         } else if (tx.isFinishing()) {
             // TODO who cleans up in this case
             log.debug("transaction is still terminating: " + status);
@@ -341,6 +337,31 @@ public class Coordinator
             scRes = HttpURLConnection.HTTP_OK;
 
         return Response.status(scRes).entity(TxSupport.toStatusContent(status)).build();
+    }
+    
+    protected void removeTxState(Transaction tx, final Collection<String> enlistmentIds) {
+
+        String txId = tx.get_uid().fileStringForm();
+        transactions.remove(txId);
+        
+        if(enlistmentIds == null) {
+            // Cleanup synchronization could not pass in the participants (tx timed out)
+            // locate the enlistment ids
+            Iterator<Entry<String, LinkHolder>> j = participants.entrySet().iterator();
+            while (j.hasNext()) {
+                Map.Entry<java.lang.String, LinkHolder> entry = j.next();
+                LinkHolder linkHolder = entry.getValue();
+                String participantTxId = linkHolder.get("txid");
+                if (participantTxId.equals(txId)) {
+                    j.remove();
+                }
+            }
+        }
+        else {
+            for (String enlistmentId : enlistmentIds) {
+                participants.remove(enlistmentId);
+            }
+        }
     }
 
     /**

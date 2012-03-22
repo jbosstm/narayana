@@ -163,4 +163,17 @@ public class CoordinatorTest extends BaseTest {
         // commit it properly
         txn.commitTx();
     }
+    
+    @Test
+    public void testTimeoutCleanup() throws InterruptedException {
+        TxSupport txn = new TxSupport();
+        int txnCount = txn.txCount();
+        txn.startTx(1000);
+        txn.enlist(PURL);
+
+        // Let the txn timeout
+        Thread.sleep(2000);
+        
+        Assert.assertEquals(txnCount, txn.txCount());
+    }
 }
