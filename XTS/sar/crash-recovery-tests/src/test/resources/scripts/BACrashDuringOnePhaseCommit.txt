@@ -191,23 +191,15 @@
 #   received close message for XXXXXXX completion participant XXXXXX
 #   JVM exit
 #
-# After reboot AS1 should exit leaving output in the following format in file
+# After reboot AS1 should exit leaving additional output in the following format in file
 # testlog
 #
-#   sent complete message for XXXXXXX completion engine XXXXXX (Coordinator Completion only)
-#   received completed message for XXXXXXX completion engine XXXXXX
-#   sent close message for XXXXXXX completion engine XXXXXX
-#   JVM exit
 #   received getstatus for unknown XXXXXXX completion participant XXXXXX
 #   sent invalidstate fault for unknown XXXXXXX completion participant XXXXXX
 #   JVM exit
 #
-# AS2 should exit leaving output in the following format in file testlog
+# AS2 should exit leaving additional output in the following format in file testlog
 #
-#   received complete message for XXXXXXX completion participant XXXXXX (Coordinator Completion only)
-#   sent completed message for XXXXXXX completion participant XXXXXX
-#   received close message for XXXXXXX completion participant XXXXXX
-#   JVM exit
 #   created recovered XXXXXXX completion participant XXXXXX
 #   sent getstatus for XXXXXXX completion participant XXXXXX
 #   received invalidstate fault for XXXXXXX completion participant XXXXXX
