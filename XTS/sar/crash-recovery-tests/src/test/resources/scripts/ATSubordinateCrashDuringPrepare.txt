@@ -171,9 +171,11 @@
 #   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
+#   prepared received for Coordinator engine XXXXXX
 #   prepare sent for Coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
+#   prepared received for Coordinator engine XXXXXX
 #   prepare sent for Coordinator engine XXXXXX
 #   prepare called for pseudo participant XXXXXX
 #   prepare sent for participant XXXXXX
@@ -189,24 +191,9 @@
 #
 # and in some cases there may be repeat messages
 #
-# After reboot the JVM should exit leaving output in the following format in file
+# After reboot the JVM should exit leaving additional output in the following format in file
 # testlog.
 #
-#   prepare sent for Coordinator engine XXXXXX
-#   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepare sent for Coordinator engine XXXXXX
-#   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepare sent for Coordinator engine XXXXXX
-#   prepare called for pseudo participant XXXXXX
-#   prepare sent for participant XXXXXX
-#   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepared received for participant XXXXXX
-#   prepare returned for subordinate transaction XXXXXX
-#   saved to disk transaction XXXXXX
-#   JVM exit
 #   created recovered Participant engine XXXXXX
 #   created recovered Participant engine XXXXXX
 #   created recovered Participant engine XXXXXX
@@ -234,7 +221,7 @@
 #   rollback returned for subordinate coordinator XXX
 #   rollback completed for pseudo-participant XXXXXX
 
-#   removed transaction XXXXXX
+#   removed transaction XXXXXX (Optional, the JVM may exit before this happens)
 #   (end parallel)
 #
 #   JVM exit

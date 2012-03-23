@@ -465,7 +465,7 @@ ENDRULE
 
 RULE trace send CC participant compensated
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
-METHOD sendCompensated(boolean)
+METHOD sendCompensated
 AT INVOKE sendCompensated
 BIND engine:CoordinatorCompletionParticipantEngine = $0,
      identifier:String = engine.getId()
@@ -496,7 +496,7 @@ ENDRULE
 
 RULE trace send participant compensated
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
-METHOD sendCompensated(boolean)
+METHOD sendCompensated
 AT INVOKE sendCompensated
 BIND engine:ParticipantCompletionParticipantEngine = $0,
      identifier:String = engine.getId()

@@ -143,25 +143,10 @@
 #
 # After the first boot the JVM should exit leaving the following in file testlog
 #
-#   prepare received for participant XXXXXX
-#   prepared sent for participant XXXXXX
-#   prepare called for pseudo-participant XXXXXX
-#   prepare completed for pseudo-participant XXXXXX
-#   prepare received for participant XXXXXX
-#   prepare received for participant XXXXXX
-#   prepared sent for coordinator engine XXXXXX
-#   prepared sent for coordinator engine XXXXXX
-#   JVM exit
-#
-# n.b. there should be at least one prepared message received for each participant
-# and in some cases there may be repeat messages
-#
-# After reboot the JVM should exit leaving output in the following format in file
-# testlog.
-#
 #   prepare sent for coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for participant XXXXXX
+#   prepared received for coordinator engine XXXXXX
 #   prepare called for pseudo-participant XXXXXX
 #   prepare completed for pseudo-participant XXXXXX
 #   prepare received for participant XXXXXX
@@ -169,8 +154,16 @@
 #   prepare sent for coordinator engine XXXXXX
 #   prepare received for participant XXXXXX
 #   prepared sent for coordinator engine XXXXXX
+#   prepared received for coordinator engine XXXXXX
 #   prepared sent for coordinator engine XXXXXX
 #   JVM exit
+#
+# n.b. there should be at least one prepared message received for each participant
+# and in some cases there may be repeat messages
+#
+# After reboot the JVM should exit leaving additional output in the following format in file
+# testlog.
+#
 #   created recovered participant engine XXXXXX
 #   created recovered participant engine XXXXXX
 #   created recovered participant engine XXXXXX
@@ -394,24 +387,6 @@ DO debug("send commit for recovered coordinator engine " + identifier),
 ENDRULE
 
 #######################################################################
-# This rule is triggered when a recovered coordinator engine
-# (CoordinatorEngine) receives a committed message. This
-# happens during replay of a prepared TX from
-# the log. It traces the call.
-
-RULE trace receive recovered participant committed
-CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD committed
-AFTER SYNCHRONIZE
-BIND engine:CoordinatorEngine = $0,
-     recovered:boolean = engine.isRecovered(),
-     identifier:String = engine.getId()
-IF recovered
-DO debug("received committed for recovered coordinator engine " + identifier),
-   traceln("log", "received committed for recovered coordinator engine " + identifier)
-ENDRULE
-
-#######################################################################
 # This rule is triggered when a recovered participant engine
 # (ParticipantEngine) is requested to send a committed message. This
 # happens during replay of a prepared TX from
@@ -551,8 +526,7 @@ METHOD commit
 AT EXIT
 BIND NOTHING
 IF TRUE
-DO debug("commit completed for subordinate coordinator " + $0),
-   traceln("log", "commit completed for subordinate coordinator " + $0)
+DO debug("commit completed for subordinate coordinator " + $0)
 ENDRULE
 
 #######################################################################
