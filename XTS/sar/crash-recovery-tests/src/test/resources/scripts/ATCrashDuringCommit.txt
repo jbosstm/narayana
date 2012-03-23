@@ -174,13 +174,17 @@
 # After reboot the JVM should exit leaving output in the following format in file
 # testlog.
 #
+#   prepare on non recovered coordinator engine XXXXXX
+#   received prepared message for coordinator engine XXXXXX
+#   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
-#   prepared received for participant XXXXXX
+#   prepare on non recovered coordinator engine XXXXXX
 #   prepared received for participant XXXXXX
 #   JVM exit
 #   created recovered coordinator engine XXXXXX
 #   created recovered coordinator engine XXXXXX
-#   created recovered coordinator engine XXXXXX
+#   created recovered coordinator engine XXXXX
+#   replaying commit for prepared transaction XXXX
 #   commit on recovered coordinator engine XXXXXX
 #   commit on recovered coordinator engine XXXXXX
 #   commit on recovered coordinator engine XXXXXX

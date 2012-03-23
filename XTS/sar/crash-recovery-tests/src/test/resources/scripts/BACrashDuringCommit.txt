@@ -258,13 +258,9 @@
 #   complete on recovered XXXXXXX completion participant engine XXXXXXX        (number of occcurences depends upon test)
 #   JVM exit
 #
-# After reboot the JVM should exit leaving output in the following format in file
+# After reboot the JVM should exit leaving additional output in the following format in file
 # testlog.
 #
-#   received exit message for XXXXXXX completion participant stub XXXXXX       (only for CloseAndExit tests)
-#   received completed message for XXXXXXX completion participant stub XXXXXX  (number of occcurences depends upon test)
-#   complete on recovered XXXXXXX completion participant engine XXXXXXX        (number of occcurences depends upon test)
-#   JVM exit
 #   created recovered XXXXXXX completion participant stub XXXXXX
 #   created recovered XXXXXXX completion participant stub XXXXXX
 #   created recovered XXXXXXX completion participant stub XXXXXX

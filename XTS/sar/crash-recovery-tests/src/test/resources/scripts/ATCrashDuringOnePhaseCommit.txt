@@ -172,9 +172,9 @@
 # After reboot file testlog written by the coordinator AS (AS1) should
 # contain output in the following format:
 #
-#   prepare sent for cordinator engine XXXXXX
+#   prepare sent for coordinator engine XXXXXX
 #   prepared received for cordinator engine XXXXXX
-#   commit sent for cordinator engine XXXXXX
+#   commit sent for coordinator engine XXXXXX (Only if running in two JVMs)
 #   JVM exit
 #   prepared received for unknown participant XXXXXX
 #   rollback sent for participant XXXXXX
@@ -182,7 +182,7 @@
 # After reboot file testlog written by the participant AS (AS2) should
 # contain output in the following format:
 #
-#   prepare received for participant XXXXXX
+#   prepare received for participant engine XXXXXX
 #   prepared sent for participant XXXXXX
 #   commit received for participant XXXXXX
 #   JVM exit
