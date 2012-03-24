@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.jboss.stm.annotations.Optimistic;
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.internal.reflect.InvocationHandler;
 
@@ -285,6 +286,33 @@ public class RecoverableContainer<T>
     public final int objectType ()
     {
         return _type;
+    }
+    
+    public final boolean isPessimistic (Object member)
+    {
+        Class<?> c = member.getClass().getSuperclass();
+
+        while (c != null)
+        {
+            if (c.getAnnotation(Optimistic.class) != null)
+            {
+                return false;
+            }
+
+            c = c.getSuperclass();
+        }
+        
+        Class<?>[] interfaces = member.getClass().getInterfaces();
+
+        for (Class<?> i : interfaces)
+        {
+            if (i.getAnnotation(Optimistic.class) != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
     
     protected final void checkObjectType (Object member)

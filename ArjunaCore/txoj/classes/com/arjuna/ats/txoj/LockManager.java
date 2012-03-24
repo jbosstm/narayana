@@ -371,7 +371,7 @@ public class LockManager extends StateManager
 
         if (super.loadObjectState())
             super.setupStore();
-
+        
         while ((conflict == ConflictType.CONFLICT)
                 && ((retry >= 0) || ((retry == LockManager.waitTotalTimeout) && (sleepTime > 0))))
         {
@@ -391,7 +391,7 @@ public class LockManager extends StateManager
                     {
                         txojLogger.i18NLogger.warn_LockManager_4();
                     }
-    
+                    
                     if (conflict != ConflictType.CONFLICT)
                     {
                         /*
