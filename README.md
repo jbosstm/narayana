@@ -58,6 +58,12 @@ Note that by default, if a parent module has documentation, it will be built, to
 
 	./build.[sh|bat] clean install -P !docs
 
+Build QA
+--------
+
+cd qa/
+ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
+ant -f run-tests.xml ci-tests
 
 Now The Gory Details.
 ---------------------
