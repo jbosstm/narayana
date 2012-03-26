@@ -8,7 +8,7 @@ fi
 
 #RUN QA TESTS
 cd qa
-sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=/usr/local/jdk1.6.0_26/bin/java#"
+sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}#"
 ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
 ant -f run-tests.xml ci-tests
 
