@@ -398,7 +398,7 @@
         <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Final/jboss-as-parent-7.0.0.Final.pom -->
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-parent</artifactId>
-        <version>7.1.0.Beta1b</version>
+        <version>7.1.1.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -812,8 +812,8 @@
         <artifactId>xts-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
-      </dependency>
-    </dependencies>
+	</dependency>
+</dependencies>
   </dependencyManagement>
   <properties>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>

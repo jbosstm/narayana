@@ -86,7 +86,7 @@
       <artifactId>arjuna</artifactId>
     </dependency>
     <dependency>
-      <groupId>jacorb</groupId>
+      <groupId>org.jacorb</groupId>
       <artifactId>jacorb</artifactId>
       <scope>provided</scope>
     </dependency>
