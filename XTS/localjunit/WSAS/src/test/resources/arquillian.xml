@@ -7,7 +7,7 @@
 			<property name="executionType">REMOTE</property>
 		</protocol>
 		<configuration>
-			<property name="serverConfig">standalone-xts.xml</property>
+			<property name="serverConfig">../../docs/examples/configs/standalone-xts.xml</property>
 		</configuration>
 	</container>
 </arquillian>
