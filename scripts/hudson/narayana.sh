@@ -34,6 +34,7 @@ fi
 #GET JBOSS
 cd ${WORKSPACE}
 ant -f scripts/hudson/initializeJBoss.xml -Dbasedir=. initializeJBoss -debug
+chmod u+x $WORKSPACE/jboss-as-7.1.1.Final/bin/jboss-cli.sh
 if [ "$?" != "0" ]; then
 	exit -1
 fi
