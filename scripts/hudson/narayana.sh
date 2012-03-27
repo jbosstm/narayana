@@ -15,7 +15,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}#"
+sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
 if [ "$?" != "0" ]; then
 	exit -1
 fi
