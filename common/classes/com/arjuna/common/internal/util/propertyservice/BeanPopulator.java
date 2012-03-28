@@ -49,6 +49,7 @@ public class BeanPopulator
         return getNamedInstance(beanClass, DEFAULT_NAME, null);
     }
 
+    @Deprecated
     public static <T> T getDefaultInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
         return getNamedInstance(beanClass, DEFAULT_NAME, properties);
     }
@@ -57,7 +58,7 @@ public class BeanPopulator
         return getNamedInstance(beanClass, name, null);
     }
 
-    public static <T> T getNamedInstance(Class<T> beanClass, String name, Properties properties) throws RuntimeException {
+    private static <T> T getNamedInstance(Class<T> beanClass, String name, Properties properties) throws RuntimeException {
 
         if(name == null) {
             name = DEFAULT_NAME;
@@ -85,6 +86,9 @@ public class BeanPopulator
         return (T) beanInstances.get(key);
     }
 
+    /**
+     * @Deprecated Only used in tests
+     */
     public static void configureFromProperties(Object bean, Properties properties) throws Exception {
         configureFromProperties(bean, DEFAULT_NAME, properties);
     }

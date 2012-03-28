@@ -507,6 +507,8 @@ public class BasicAction extends StateManager
      * this is being called during a transaction commit.
      *
      * @return <code>true</code> on success, <code>false</code> otherwise.
+     * 
+     * @deprecated Only called in tests
      */
 
     public boolean deactivate ()

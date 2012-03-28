@@ -51,6 +51,7 @@ public class TransactionStatusManagerItem
     /**
      * Create the instance of a Transaction Status Manager
      * contact item.
+     * @deprecated Only used in tests
      */
     public static boolean createAndSave( int port )
     {

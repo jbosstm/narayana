@@ -117,6 +117,8 @@ public class StoreManager
 
     /*
      * Why are rootName and shareStatus not used?
+     * 
+     * @param rootName ignored
      */
     
     public static ParticipantStore setupStore (String rootName, int sharedStatus)
