@@ -599,6 +599,7 @@ public class Uid implements Cloneable, Serializable
     {
         if (_valid)
         {
+            out.defaultWriteObject();
             out.writeLong(hostAddr[0]);
             out.writeLong(hostAddr[1]);
             out.writeInt(process);
@@ -620,6 +621,8 @@ public class Uid implements Cloneable, Serializable
     {
         try
         {
+            in.defaultReadObject();
+        	
             hostAddr = new long[2];
             
             hostAddr[0] = in.readLong();
