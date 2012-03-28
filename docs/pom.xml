@@ -27,7 +27,6 @@
   <modules>
     <module>development_guide</module>
     <module>failure_recovery_guide</module>
-    <module>release_notes</module>
     <module>transactions_overview_guide</module>
     <module>txbridge_guide</module>
   </modules>
