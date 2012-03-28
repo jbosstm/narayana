@@ -12,6 +12,7 @@
   <xi:include href="General_Transaction_Issues.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Configuration_Options.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="Important_Log_Messages.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <!-- <index /> -->
 </book>
