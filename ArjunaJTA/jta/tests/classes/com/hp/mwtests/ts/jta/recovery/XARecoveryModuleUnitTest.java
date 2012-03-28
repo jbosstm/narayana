@@ -32,12 +32,16 @@
 package com.hp.mwtests.ts.jta.recovery;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -45,9 +49,20 @@ import javax.transaction.xa.Xid;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
@@ -66,6 +81,73 @@ public class XARecoveryModuleUnitTest
         xarm.periodicWorkSecondPass();
         
         assertNotNull(xarm.id());
+    }
+
+    
+    @Test
+    public void testRecoverFromMultipleXAResourceRecovery() throws Exception {
+        // Make sure the file doesn't exist
+        assertFalse(new File("XARR.txt").exists());
+
+        ArrayList<String> r = new ArrayList<String>();
+
+        AtomicAction aa = new AtomicAction();
+        aa.begin();
+        assertEquals(AddOutcome.AR_ADDED, aa.add(new XAResourceRecord(null, new XARRTestResource(), new XidImple(aa), null)));
+
+        Class c = BasicAction.class;
+        Method method = c.getDeclaredMethod("prepare", boolean.class);
+        method.setAccessible(true);
+        int result = (Integer) method.invoke(aa, new Object[] { true });
+        assertEquals(result, TwoPhaseOutcome.PREPARE_OK);
+
+        // Make sure the file exists
+        assertTrue(new File("XARR.txt").exists());
+
+//        AtomicActionRecoveryModule aaRecoveryModule = new AtomicActionRecoveryModule();
+//        aaRecoveryModule.periodicWorkFirstPass();
+//        aaRecoveryModule.periodicWorkSecondPass();
+
+        RecordTypeManager.manager().add(new RecordTypeMap() {
+                @SuppressWarnings("unchecked")
+                public Class getRecordClass ()
+                {
+                    return XAResourceRecord.class;
+                }
+                
+                public int getType ()
+                {
+                    return RecordType.JTA_RECORD;
+                }
+        });
+        
+        List<String> xarn = new ArrayList<String>();
+        xarn.add(NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES);
+        
+        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xarn);
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
+        safetyIntervalMillis.setAccessible(true);
+        safetyIntervalMillis.set(null, 0);
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XARROne());
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XARRTwo());
+        xaRecoveryModule.addXAResourceOrphanFilter(new com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter());
+        xaRecoveryModule.addXAResourceOrphanFilter(new com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter());
+        RecoveryManager.manager().addModule(xaRecoveryModule);
+        
+        
+        // This is done rather than using the AtomicActionRecoveryModule as the transaction is inflight
+        RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(aa.get_uid(), ActionStatus.COMMITTED);
+        rcvAtomicAction.replayPhase2();
+        
+        // The XARM would execute next
+        xaRecoveryModule.periodicWorkFirstPass();
+        xaRecoveryModule.periodicWorkSecondPass();
+
+        // Make sure the file doesn't exist
+        assertFalse(new File("XARR.txt").exists());
+        
+        aa.abort();
     }
     
     @Test
