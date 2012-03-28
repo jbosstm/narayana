@@ -20,6 +20,7 @@
  */
 package com.arjuna.common.util.propertyservice;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +31,11 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import com.arjuna.common.util.ConfigurationInfo;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLResolver;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -136,10 +142,11 @@ public class PropertiesFactory
         }
 
         try {
-            inputProperties.loadFromXML(inputStream);
+            loadFromXML(inputProperties,inputStream);
         } finally {
             inputStream.close();
         }
+
 
         Enumeration namesEnumeration = inputProperties.propertyNames();
         while(namesEnumeration.hasMoreElements()) {
@@ -157,6 +164,50 @@ public class PropertiesFactory
         return outputProperties;
     }
 
+    private static Properties loadFromXML(Properties p, InputStream is) throws IOException {
+        try {
+            final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            inputFactory.setXMLResolver(new XMLResolver() {
+                @Override
+                public Object resolveEntity(String publicID, String systemID, String baseURI, String namespace)
+                        throws XMLStreamException {
+                    return new ByteArrayInputStream(new byte[0]);
+                }
+            });
+            XMLStreamReader parser = inputFactory.createXMLStreamReader(is);
+            /*
+             * xml looks like this <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+             */
+            int event = -1;
+            while (true) {
+                if (event == XMLStreamConstants.END_DOCUMENT) {
+                    parser.close();
+                    break;
+                }
+                if (event == XMLStreamConstants.START_ELEMENT && parser.getAttributeCount() > 0) {
+                    String key = parser.getAttributeValue(0);
+                    StringBuffer buffer = new StringBuffer();
+                    event = parser.next();
+                    for (; event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.COMMENT; event = parser.next()) {
+                        if (event != XMLStreamConstants.COMMENT) {
+                            String nextText = parser.getText();
+                            buffer.append(nextText);
+                        }
+                    }
+                    if (key != null) {
+                        String value = buffer.toString();
+                        p.put(key, value);
+                    }
+                } else {
+                    event = parser.next();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new IOException("Could not read xml", e);
+        }
+        return null;
+    }
+    
     private static synchronized void initDefaultProperties(String fileNamePropertyKey)
     {
         if(defaultProperties != null) {
