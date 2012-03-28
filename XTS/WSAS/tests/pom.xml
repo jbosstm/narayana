@@ -35,7 +35,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.junit,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
+							<Dependencies>org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export</Dependencies>
 						</manifestEntries>
 					</archive>
 					<webXml>
