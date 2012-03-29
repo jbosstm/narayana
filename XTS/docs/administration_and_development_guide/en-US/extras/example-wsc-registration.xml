@@ -1,7 +1,0 @@
-<!-- Registration Service portType Declaration --> 
-<wsdl:portType name="RegistrationCoordinatorPortType"> 
-  <wsdl:operation name="Register"> 
-    <wsdl:input message="wscoor:Register"/> 
-    <wsdl:output message="wscoor:RegisterResponse"/> 
-  </wsdl:operation> 
-</wsdl:portType> 

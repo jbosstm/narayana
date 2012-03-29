@@ -21,21 +21,6 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana*:jdocbook</include>
-			</includes>
-			<outputDirectory>docs/guides/${artifact.artifactId}</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-			<unpackOptions>
-				<excludes>
-					<exclude>META-INF/</exclude>
-					<exclude>html/</exclude>
-				</excludes>
-			</unpackOptions>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
 				<include>org.jboss.narayana.xts:xts-demo</include>
 			</includes>
 			<outputDirectory>docs/xts/demo</outputDirectory>

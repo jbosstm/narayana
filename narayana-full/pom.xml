@@ -42,14 +42,6 @@
           </descriptors>
           <tarLongFileMode>gnu</tarLongFileMode>
         </configuration>
-        <dependencies>
-          <dependency>
-            <!-- Entry needed to enable jdocbook unzipping -->
-            <groupId>org.jboss.maven.plugins</groupId>
-            <artifactId>maven-jdocbook-plugin</artifactId>
-            <version>2.3.5</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -167,81 +159,6 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>jbosstxbridge</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>administration-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>development-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>orbportability-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>quick-start-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>administration-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>development-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>installation-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>quick-start-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>development-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>failure-recovery-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.platform-docs</groupId>
-      <artifactId>development-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.platform-docs</groupId>
-      <artifactId>failure-recovery-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.platform-docs</groupId>
-      <artifactId>transactions-overview-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.platform-docs</groupId>
-      <artifactId>txbridge-guide</artifactId>
-      <type>jdocbook</type>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>xts-guide</artifactId>
-      <type>jdocbook</type>
     </dependency>
 
     <!-- Ensure these are in the distribution -->

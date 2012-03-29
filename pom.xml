@@ -228,20 +228,6 @@
                     <ignore/>
                   </action>
                 </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.jboss.maven.plugins</groupId>
-                    <artifactId>maven-jdocbook-plugin</artifactId>
-                    <versionRange>[1.0.0,)</versionRange>
-                    <goals>
-                      <goal>generate</goal>
-                      <goal>resources</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
@@ -313,56 +299,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.1.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.jboss.maven.plugins</groupId>
-          <artifactId>maven-jdocbook-plugin</artifactId>
-          <version>2.3.5</version>
-          <extensions>true</extensions>
-          <dependencies>
-            <dependency>
-              <groupId>org.jboss.pressgang</groupId>
-              <!--Non-namespaced version for DocBook 4.5 compatibility. For XSD 
-								namespaced version, use pressgang-xslt-ns -->
-              <artifactId>pressgang-xslt</artifactId>
-              <version>2.0.0</version>
-            </dependency>
-            <dependency>
-              <groupId>org.jboss.pressgang</groupId>
-              <artifactId>pressgang-jdocbook-style</artifactId>
-              <type>jdocbook-style</type>
-              <version>2.0.0</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <sourceDirectory>${project.basedir}</sourceDirectory>
-            <sourceDocumentName>${docname}.xml</sourceDocumentName>
-            <masterTranslation>en-US</masterTranslation>
-            <imageResource>
-              <directory>${project.basedir}/en-US</directory>
-              <includes>
-                <include>images/*.png</include>
-              </includes>
-            </imageResource>
-            <formats>
-              <format>
-                <formatName>pdf</formatName>
-                <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
-                <finalName>${docname}.pdf</finalName>
-              </format>
-              <format>
-                <formatName>html</formatName>
-                <stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
-                <finalName>index.html</finalName>
-              </format>
-            </formats>
-            <options>
-              <xmlTransformerType>saxon</xmlTransformerType>
-              <xincludeSupported>true</xincludeSupported>
-              <docbookVersion>1.72.0</docbookVersion>
-              <useRelativeImageUris>true</useRelativeImageUris>
-            </options>
-          </configuration>
         </plugin>
 	</plugins>
     </pluginManagement>
@@ -710,11 +646,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-docs</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-demo</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -775,97 +706,7 @@
         <artifactId>byteman-dtest</artifactId>
         <version>1.5.1</version>
       </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>administration-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>development-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>orbportability-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>quick-start-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>administration-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>development-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>installation-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>quick-start-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.arjunacore</groupId>
-        <artifactId>development-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.arjunacore</groupId>
-        <artifactId>failure-recovery-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.platform-docs</groupId>
-        <artifactId>development-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.platform-docs</groupId>
-        <artifactId>failure-recovery-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.platform-docs</groupId>
-        <artifactId>transactions-overview-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.platform-docs</groupId>
-        <artifactId>txbridge-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-guide</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-	</dependency>
-</dependencies>
+  </dependencies>
   </dependencyManagement>
   <properties>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
@@ -919,21 +760,7 @@
         <module>rhq-plugin</module>
         <module>txbridge</module>
         <module>STM</module>
-        <module>docs</module>
         <module>narayana-full</module>
-      </modules>
-      <properties>
-        <docs>true</docs>
-      </properties>
-    </profile>
-    <profile>
-      <id>docs</id>
-      <modules>
-        <module>docs</module>
-        <module>ArjunaCore/docs</module>
-        <module>ArjunaJTA/docs</module>
-        <module>ArjunaJTS/docs</module>
-        <module>XTS/docs</module>
       </modules>
     </profile>
     <profile>

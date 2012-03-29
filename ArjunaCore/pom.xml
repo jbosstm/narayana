@@ -41,6 +41,5 @@
     <module>arjuna/services</module>
     <module>txoj</module>
     <module>arjunacore</module>
-    <module>docs</module>
   </modules>
 </project>

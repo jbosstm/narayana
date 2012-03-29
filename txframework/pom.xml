@@ -16,7 +16,6 @@
     <description>txframework all</description>
 
     <modules>
-        <module>docs</module>
         <module>framework</module>
     </modules>
 
