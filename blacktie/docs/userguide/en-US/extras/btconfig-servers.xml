@@ -1,0 +1,11 @@
+<servers>
+	<server>
+		<name>[SERVER_NAME]</name>
+		<instances>
+			<instance>
+				<id>[ID]</id>
+				<status>[STATUS]</status>
+			</instance>
+		</instances>
+	</server>
+</servers>
