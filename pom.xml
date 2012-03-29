@@ -30,9 +30,20 @@
   </ciManagement>
   <developers>
     <developer>
-      <id>jhalliday</id>
-      <name>Jonathan Halliday</name>
-      <email>jonathan.halliday@redhat.com</email>
+      <id>nmcl</id>
+      <name>Mark Little</name>
+      <email>mlittle@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <roles>
+        <role>JBoss CTO</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>tomjenkinson</id>
+      <name>Tom Jenkinson</name>
+      <email>tom.jenkinson@redhat.com</email>
       <organization>JBoss</organization>
       <organizationUrl>http://www.jboss.org/</organizationUrl>
       <roles>
@@ -41,13 +52,13 @@
       <timezone>0</timezone>
     </developer>
     <developer>
-      <id>adinn</id>
-      <name>Andrew Dinn</name>
-      <email>adinn@redhat.com</email>
+      <id>paulrobinson</id>
+      <name>Paul Robinson</name>
+      <email>paul.robinson@redhat.com</email>
       <organization>JBoss</organization>
       <organizationUrl>http://www.jboss.org/</organizationUrl>
       <roles>
-        <role>XTS lead</role>
+        <role>xts lead</role>
       </roles>
       <timezone>0</timezone>
     </developer>
@@ -63,18 +74,18 @@
       <timezone>0</timezone>
     </developer>
     <developer>
-      <id>mark.little@jboss.com</id>
-      <name>Mark Little</name>
-      <email>mlittle@redhat.com</email>
+      <id>zhfeng</id>
+      <name>Amos Feng</name>
+      <email>zfeng@redhat.com</email>
       <organization>JBoss</organization>
       <organizationUrl>http://www.jboss.org/</organizationUrl>
       <roles>
-        <role>JBoss CTO</role>
+        <role>Core Developer</role>
       </roles>
       <timezone>0</timezone>
     </developer>
     <developer>
-      <id>istudens@redhat.com</id>
+      <id>istudens</id>
       <name>Ivo Studensky</name>
       <email>istudens@redhat.com</email>
       <organization>JBoss</organization>
@@ -82,6 +93,22 @@
       <roles>
         <role>QA lead</role>
       </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>jhalliday</id>
+      <name>Jonathan Halliday</name>
+      <email>jonathan.halliday@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>adinn</id>
+      <name>Andrew Dinn</name>
+      <email>adinn@redhat.com</email>
+      <organization>JBoss</organization>
+      <organizationUrl>http://www.jboss.org/</organizationUrl>
       <timezone>0</timezone>
     </developer>
   </developers>
