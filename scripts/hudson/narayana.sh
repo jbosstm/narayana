@@ -9,38 +9,36 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-#GET JBOSS
+#BUILD JBOSS-AS
 cd ${WORKSPACE}
-ant -f scripts/hudson/initializeJBoss.xml -Dbasedir=. initializeJBoss -debug
-chmod u+x $WORKSPACE/jboss-as-7.1.1.Final/bin/jboss-cli.sh
+rm -rf jboss-as
+git clone git://github.com/jbosstm/jboss-as.git
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-export JBOSS_HOME=${WORKSPACE}/jboss-as-7.1.1.Final
-
-#1.WSTX11 INTEROP
-#build interop11.war for testing
-./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml clean install -DskipTests 
+cd jboss-as
+git checkout -t origin/5_BRANCH
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-#running the tests
-./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -Parq test 
+./build.sh clean install
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
+export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/jboss-as-7.1.1.Final
+cd ${WORKSPACE}
 
-#2.XTS UNIT TESTS
+#1.WSTX11 INTEROP and UNIT TESTS
 ./build.sh -f XTS/localjunit/pom.xml -Parq test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-#3.XTS CRASH RECOVERY TESTS
-./build.sh -f XTS/sar/crash-recovery-tests/pom.xml test
+#2.XTS CRASH RECOVERY TESTS
+./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -Parq test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -70,4 +68,3 @@ ant -f run-tests.xml ci-tests
 if [ "$?" != "0" ]; then
 	exit -1
 fi
-
