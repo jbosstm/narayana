@@ -833,12 +833,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.narayana.platform-docs</groupId>
-        <artifactId>release-notes</artifactId>
-        <type>jdocbook</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-guide</artifactId>
         <type>jdocbook</type>
