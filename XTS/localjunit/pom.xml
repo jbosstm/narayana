@@ -35,7 +35,6 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-container</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<profiles>
@@ -78,7 +77,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-					<version>7.1.1.Final</version>
+					<version>${jboss-as.version}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -90,5 +89,6 @@
 		<module>WSTX</module>
 		<module>WS-C</module>
 		<module>WS-T</module>
+		<module>WSTX11-interop</module>
 	</modules>
 </project>
