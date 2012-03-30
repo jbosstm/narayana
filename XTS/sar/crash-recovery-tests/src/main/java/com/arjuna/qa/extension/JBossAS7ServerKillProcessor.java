@@ -14,7 +14,7 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			JBossAS7ServerKillProcessor.class.getName());
 	private static String killSequence = "[jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
 	private int checkDurableTime = 10;
-	private int numofCheck = 60;
+	private int numofCheck = 120;
 
 	@Override
 	public void kill(Container container) throws Exception {
