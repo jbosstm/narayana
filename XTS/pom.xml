@@ -52,7 +52,6 @@
     <module>bridge</module>
     <module>sar</module>
 	<module>sar/tests</module>
-    <module>demo</module>
     <module>jbossxts</module>
     <module>localjunit</module>
   </modules>
