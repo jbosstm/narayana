@@ -23,10 +23,10 @@ REM Ignore the users classpath, cause it might mess
 REM things up
 REM ******************************************************
 
-SETLOCAL
-
-
 set PWD=%~dp0
+
+
+SETLOCAL
 
 set CLASSPATH=
 set M2_HOME=
@@ -87,13 +87,11 @@ REM ************* Execute Batch file only once ***********
 REM ******************************************************
 
 :ExecuteBatch
-echo Calling %1 %2 %3 %4 %5 %6 %7 %8
 set GOAL=%2
 if "%GOAL%"=="" set GOAL=install
-
-call %1 %GOAL% %3 %4 %5 %6 %7 %8
+echo Calling %1 %MVN_OPTIONS% %GOAL% %3 %4 %5 %6 %7 %8
+call %1 %MVN_OPTIONS% %GOAL% %3 %4 %5 %6 %7 %8
 
 :end
 
 if "%NOPAUSE%" == "" pause
-
