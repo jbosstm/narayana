@@ -25,6 +25,9 @@ REM ******************************************************
 
 SETLOCAL
 
+
+set PWD=%~dp0
+
 set CLASSPATH=
 set M2_HOME=
 set MAVEN_HOME=
