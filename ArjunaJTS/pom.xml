@@ -42,6 +42,5 @@
     <module>jtax</module>
     <module>narayana-jts</module>
     <module>integration</module>
-    <module>trailmap</module>
   </modules>
 </project>
