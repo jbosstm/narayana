@@ -32,7 +32,7 @@ set CLASSPATH=
 set M2_HOME=
 set MAVEN_HOME=
 
-set MAVEN_OPTS=%MAVEN_OPTS% -Xms512m
+set MAVEN_OPTS=%MAVEN_OPTS% -Xms512m -XX:MaxPermSize=256m
 set MVN_OPTIONS=-gs tools\maven\conf\settings.xml -Dorson.jar.location=%PWD%\ext\orson-0.5.0.jar -Demma.jar.location=%PWD%\ext\emma.jar
 
 REM ******************************************************
