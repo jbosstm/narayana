@@ -9,28 +9,6 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-#RUN QA TESTS
-cd qa
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-ant -f run-tests.xml ci-tests
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-
 #GET JBOSS
 cd ${WORKSPACE}
 ant -f scripts/hudson/initializeJBoss.xml -Dbasedir=. initializeJBoss -debug
@@ -67,12 +45,28 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-cd XTS/sar/crash-recovery-tests
+(cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified
+#RUN QA TESTS
+cd $WORKSPACE/qa
+if [ "$?" != "0" ]; then
+	exit -1
+fi
+
+sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
+if [ "$?" != "0" ]; then
+	exit -1
+fi
+
+ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
+if [ "$?" != "0" ]; then
+	exit -1
+fi
+
+ant -f run-tests.xml ci-tests
 if [ "$?" != "0" ]; then
 	exit -1
 fi
