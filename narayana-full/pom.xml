@@ -93,10 +93,6 @@
       <artifactId>jbossts-jopr-plugin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>trailmap</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>rest-tx-web</artifactId>
       <type>war</type>
@@ -123,10 +119,6 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>xts-demo</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>

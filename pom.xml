@@ -508,11 +508,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>trailmap</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.narayana.admin</groupId>
         <artifactId>jbossts-jopr-plugin</artifactId>
         <version>${project.version}</version>
@@ -643,16 +638,6 @@
         <artifactId>jbossxts</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>xts-demo</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.narayana.xts</groupId>
-        <artifactId>trailmap</artifactId>
-        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.xts</groupId>

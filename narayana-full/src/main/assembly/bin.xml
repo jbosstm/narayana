@@ -21,20 +21,6 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana.xts:xts-demo</include>
-			</includes>
-			<outputDirectory>docs/xts/demo</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-			<unpackOptions>
-				<excludes>
-					<exclude>META-INF/</exclude>
-				</excludes>
-			</unpackOptions>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
 				<include>org.jboss.narayana.xts:jbossxts:*javadoc*</include>
 			</includes>
 			<outputDirectory>docs/api/xts</outputDirectory>
@@ -118,20 +104,6 @@
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.narayana.jts:trailmap</include>
-			</includes>
-			<outputDirectory>docs/jts/trailmap</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-			<unpackOptions>
-				<excludes>
-					<exclude>META-INF/</exclude>
-				</excludes>
-			</unpackOptions>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
