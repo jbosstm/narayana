@@ -60,12 +60,15 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 		int rc = p.exitValue();
 
 		if (rc != 0 && rc != 1) {
+			p.destroy();
 			throw new RuntimeException("Kill Sequence failed");
 		}
 		
 		InputStream out = p.getInputStream();
 		BufferedReader in = new BufferedReader(new InputStreamReader(out));
 		String result= in.readLine();
+		out.close();
+		p.destroy();
 		
 		return !(result != null && result.contains("The controller is not available"));
 	}

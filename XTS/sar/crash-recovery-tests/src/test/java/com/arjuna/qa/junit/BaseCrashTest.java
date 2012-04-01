@@ -128,8 +128,8 @@ public class BaseCrashTest
         controller.start("jboss-as", config.map());
 
         //redeploy xtstest
-        deployer.undeploy("xtstest");
-        deployer.deploy("xtstest");
+        //deployer.undeploy("xtstest");
+        //deployer.deploy("xtstest");
 
         //Waiting for recovery
         //Thread.sleep(waitForRecovery * 60 * 1000);
