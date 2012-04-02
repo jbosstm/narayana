@@ -12,6 +12,7 @@
    <xi:include href="Transactions_Overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Protocols_Overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Getting_Started.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   <xi:include href="XTS_Demo_Guide.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Participants.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="XTS_API.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Stand_Alone_Coordination.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
