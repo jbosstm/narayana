@@ -29,6 +29,32 @@
       <resource>
         <directory>dev/dd</directory>
       </resource>
+      <resource>
+        <directory>dev/dd/wscoor1.1/wsdl</directory>
+        <targetPath>org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl</targetPath>
+        <includes>
+            <include>**/wsat*</include>
+            <include>**/envelope.xsd</include>
+            <include>**/ws-addr.xsd</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>dev/dd/wscoor1.1/wsdl</directory>
+        <targetPath>org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl</targetPath>
+        <includes>
+            <include>**/wsba*</include>
+            <include>**/envelope.xsd</include>
+            <include>**/ws-addr.xsd</include>
+        </includes>
+      </resource>
+      <resource>
+	    <directory>dev/dd/wsarjtx/wsdl</directory>
+		<targetPath>com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl</targetPath>
+        <includes>
+            <include>**/*.wsdl</include>
+            <include>**/*.xsd</include>
+        </includes>
+	  </resource>
     </resources>
     <plugins>
       <plugin>
