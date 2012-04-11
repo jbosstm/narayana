@@ -23,7 +23,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-./build.sh clean install
+MAVEN_OPTS=-XX:MaxPermSize=256m ./build.sh clean install -DskipTests
 if [ "$?" != "0" ]; then
 	exit -1
 fi
