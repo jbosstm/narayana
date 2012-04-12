@@ -699,7 +699,7 @@
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <findbugs.skip>true</findbugs.skip>
-    <jboss-as.version>7.1.1.Final</jboss-as.version>
+    <jboss-as.version>7.1.2.Final-SNAPSHOT</jboss-as.version>
   </properties>
   <profiles>
     <profile>
