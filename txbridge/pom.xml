@@ -61,7 +61,7 @@
           <systemPropertyVariables>
             <JBOSS_HOME>${env.JBOSS_HOME}</JBOSS_HOME>
             <JAVA_HOME>${env.JAVA_HOME}</JAVA_HOME>
-            <BYTEMAN_HOME>${user.home}/.m2/repository/org/jboss/byteman/byteman/1.5.1/</BYTEMAN_HOME>
+            <BYTEMAN_HOME>${user.home}/.m2/repository/org/jboss/byteman/byteman/2.0.1/</BYTEMAN_HOME>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -108,7 +108,6 @@
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
-      <version>1.5.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
