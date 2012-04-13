@@ -13,8 +13,9 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 	private final Logger log = Logger.getLogger(
 			JBossAS7ServerKillProcessor.class.getName());
 	private static String killSequence = "[jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
+	private static String shutdownSequence = "[jbossHome]/bin/jboss-cli.[suffix] --connect command=:shutdown";
 	private int checkDurableTime = 10;
-	private int numofCheck = 120;
+	private int numofCheck = 60;
 
 	@Override
 	public void kill(Container container) throws Exception {
@@ -24,6 +25,7 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			jbossHome = container.getContainerConfiguration().getContainerProperties().get("jbossHome");
 		}
 		killSequence = killSequence.replace("[jbossHome]", jbossHome);
+		shutdownSequence = shutdownSequence.replace("[jbossHome]", jbossHome);
 
 		String suffix;
 		String os = System.getProperty("os.name").toLowerCase();
@@ -33,6 +35,7 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			suffix = "sh";
 		}
 		killSequence = killSequence.replace("[suffix]", suffix);
+		shutdownSequence = shutdownSequence.replace("[suffix]", suffix);
 		
 		int checkn = 0;
 		boolean killed = false;
@@ -50,7 +53,11 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 		if(killed) {
 			log.info("jboss-as killed by byteman scirpt");
 		} else {
-			throw new RuntimeException("jboss-as not killed");
+			log.info("jboss-as not killed and shutdown");
+			Process p = Runtime.getRuntime().exec(shutdownSequence);
+			p.waitFor();
+			p.destroy();
+			throw new RuntimeException("jboss-as not killed and shutdown");
 		}
 	}
 	
