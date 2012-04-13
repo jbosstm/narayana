@@ -29,6 +29,10 @@
       <resource>
         <directory>dev/dd</directory>
       </resource>
+      <resource>
+        <directory>dev/dd/wscoor1.1/wsdl</directory>
+        <targetPath>org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl</targetPath>
+      </resource>
     </resources>
     <plugins>
       <plugin>
