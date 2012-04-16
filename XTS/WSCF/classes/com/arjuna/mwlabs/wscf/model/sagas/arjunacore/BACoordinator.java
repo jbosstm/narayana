@@ -281,6 +281,8 @@ public class BACoordinator extends TwoPhaseCoordinator
         int status = status();
         // completed is only legitimate when the TX is in these states
         switch (status) {
+            case ActionStatus.ABORTED:
+                break;
             case ActionStatus.RUNNING:
             case ActionStatus.ABORT_ONLY:
                 changeParticipantStatus(participantId, COMPLETED);

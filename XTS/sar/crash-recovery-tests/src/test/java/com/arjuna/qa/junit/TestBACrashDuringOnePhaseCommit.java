@@ -20,7 +20,7 @@ public class TestBACrashDuringOnePhaseCommit extends BaseCrashTest {
 	@Test
 	public void SingleParticipantCompletionParticipantCloseTest() throws Exception {
 		testName = "SingleParticipantCompletionParticipantCloseTest";
-		String testClass = "org.jboss.jbossts.xts.servicetests.test.ba.SingleCoordinatorCompletionParticipantCloseTest";
+		String testClass = "org.jboss.jbossts.xts.servicetests.test.ba.SingleParticipantCompletionParticipantCloseTest";
 		runTest(testClass);
 
 	}

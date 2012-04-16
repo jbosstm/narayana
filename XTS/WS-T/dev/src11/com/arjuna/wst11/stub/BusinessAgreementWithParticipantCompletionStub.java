@@ -114,7 +114,12 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
          */
         final State state = participant.cancel() ;
 
-        if (state == State.STATE_CANCELING)
+        if (state == State.STATE_COMPLETED)
+        {
+            //Complete arrived, whilst the coordinator was trying to abort.
+            compensate();
+        }
+        else if (state == State.STATE_CANCELING)
         {
             throw new SystemException() ;
         }
