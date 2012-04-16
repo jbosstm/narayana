@@ -25,7 +25,7 @@ public class WSATDurable2PCParticipant extends org.jboss.narayana.txframework.im
 
     public void error() throws SystemException
     {
-        invoke(org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error.class);
+        invoke(Error.class);
     }
 
     public Vote prepare() throws WrongStateException, SystemException

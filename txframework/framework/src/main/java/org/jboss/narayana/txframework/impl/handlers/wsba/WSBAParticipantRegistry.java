@@ -4,6 +4,7 @@ import com.arjuna.wst11.BAParticipantManager;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class WSBAParticipantRegistry
 {
     protected static final Map<String, Map<Class, BAParticipantManager>> participantMap = new HashMap<String, Map<Class, BAParticipantManager>>();
@@ -29,12 +30,9 @@ public class WSBAParticipantRegistry
                 participantMap.put(txid, baParticipantManagerMap);
             }
 
-            synchronized (participantMap.get(txid))
+            if (baParticipantManagerMap.get(participant) == null)
             {
-                if (baParticipantManagerMap.get(participant) == null)
-                {
-                    baParticipantManagerMap.put(participant, baParticipantManager);
-                }
+                baParticipantManagerMap.put(participant, baParticipantManager);
             }
         }
     }

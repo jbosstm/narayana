@@ -9,7 +9,6 @@ public class WSATVolatile2PCParticipant extends org.jboss.narayana.txframework.i
     public WSATVolatile2PCParticipant(Object serviceImpl)
     {
         super(serviceImpl);
-
         registerEventsOfInterest(PrePrepare.class, PostCommit.class, Rollback.class, Error.class, Unknown.class);
     }
 
