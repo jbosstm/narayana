@@ -57,6 +57,8 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			Process p = Runtime.getRuntime().exec(shutdownSequence);
 			p.waitFor();
 			p.destroy();
+			// wait for jboss-as shutdown complete
+			Thread.sleep(5000);
 			throw new RuntimeException("jboss-as not killed and shutdown");
 		}
 	}
