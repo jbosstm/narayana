@@ -83,21 +83,29 @@ public class RecoveryInit
 		    // To determine the class to load use the ORBType
 
 		    int orbType = ORBInfo.getOrbEnumValue();
+		    String initClassName;
 
 		    switch (orbType)
 		    {
 		    case ORBType.JACORB:
-			{
-			    String initClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
-                Class recoveryCoordinatorInitialiser = ClassloadingUtility.loadClass(initClassName);
-                recoveryCoordinatorInitialiser.newInstance();
-			}
+			initClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
+			break;
+		    case ORBType.JAVAIDL:
+			initClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.JavaIdlRecoveryInit";
 			break;
 		    default: {
+                initClassName = null;
                 jtsLogger.i18NLogger.warn_recovery_recoveryinit_1();
             }
 			break;
 		    }
+
+            if (initClassName != null)
+            {
+                Class recoveryCoordinatorInitialiser = ClassloadingUtility.loadClass(initClassName);
+
+                recoveryCoordinatorInitialiser.newInstance();
+            }
 
 		    // register the ContactWriter to watch for the first ArjunaFactory construction
 

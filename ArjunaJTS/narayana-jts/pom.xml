@@ -204,4 +204,30 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>idlj</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
+                  <arjuna-properties-file>jbossts-idlj-properties.xml</arjuna-properties-file>
+                  <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
