@@ -714,7 +714,6 @@
         <module>XTS</module>
         <module>ArjunaJTS</module>
         <module>rest-tx</module>
-        <module>rhq-plugin</module>
         <module>txbridge</module>
         <module>STM</module>
         <module>narayana-full</module>
