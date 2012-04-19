@@ -154,6 +154,7 @@ public class MultiParticipantParticipantCompletionParticipantCloseAndExitTest ex
         // now close the activity
 
         try {
+            Thread.sleep(10000);
             ba.close();
         } catch (TransactionRolledBackException e) {
             exception = e;
@@ -162,6 +163,8 @@ public class MultiParticipantParticipantCompletionParticipantCloseAndExitTest ex
         } catch (SystemException e) {
             exception = e;
         } catch (WrongStateException e) {
+            exception = e;
+        } catch (InterruptedException e) {
             exception = e;
         }
 

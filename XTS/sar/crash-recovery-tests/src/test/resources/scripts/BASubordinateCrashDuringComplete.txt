@@ -277,6 +277,53 @@
 #
 #   JVM exit
 #
+
+
+#####################################################################
+#JBTM-1115 Rules
+#
+
+#####################################################################
+# Setup counter MultiParticipantParticipantCompletionParticipantCloseTest
+#
+RULE setup counter subordinate.MultiParticipantParticipantCompletionParticipantCloseTest
+CLASS org.jboss.jbossts.xts.servicetests.test.ba.subordinate.MultiParticipantParticipantCompletionParticipantCloseTest
+METHOD run()
+AT ENTRY
+IF TRUE
+DO debug("creating counter and rendezvous"),
+   createCounter("closes", 1),
+   createRendezvous("closes-complete", 2)
+ENDRULE
+
+#####################################################################
+# Trigger Rendezvous after three calls to BACoordinator.complete()
+#
+RULE trigger rendezvous on complete
+CLASS com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator
+METHOD participantCompleted(String)
+AT EXIT
+IF (debug("decrementing") AND decrementCounter("closes") == 0)
+DO debug("closes-complete, triggering rendezvous"),
+   rendezvous("closes-complete")
+ENDRULE
+
+#####################################################################
+# Wait on Rendezvous before calling uba.close() on MultiParticipantParticipantCompletionParticipantCloseTest
+#
+RULE wait for closes subordinate.MultiParticipantParticipantCompletionParticipantCloseTest
+CLASS org.jboss.jbossts.xts.servicetests.test.ba.subordinate.MultiParticipantParticipantCompletionParticipantCloseTest
+METHOD run()
+AT CALL UserBusinessActivity.close()
+IF TRUE
+DO debug("waiting to call close"),
+   rendezvous("closes-complete"),
+   debug("rendezvous complete, calling close")
+ENDRULE
+
+
+
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs

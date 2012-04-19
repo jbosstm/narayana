@@ -18,7 +18,7 @@ import org.junit.Assert;
 public class BaseCrashTest
 {
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
-    protected String BytemanArgs = "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
+    protected String BytemanArgs = "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
     protected String javaVmArguments;
     protected String testName;
     protected String scriptName;

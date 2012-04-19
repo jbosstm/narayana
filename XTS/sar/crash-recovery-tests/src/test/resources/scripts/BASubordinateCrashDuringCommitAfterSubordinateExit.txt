@@ -253,6 +253,7 @@
 #   JVM exit
 #
 
+
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
 # It will be opened for append at reboot so messages from both runs
