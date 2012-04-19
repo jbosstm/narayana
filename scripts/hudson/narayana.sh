@@ -3,6 +3,9 @@ if [ -z "${WORKSPACE}" ]; then
   exit -1;
 fi
 
+# FOR DEBUGGING SUBSEQUENT ISSUES
+free -m
+
 #BUILD NARAYANA WITH FINDBUGS
 ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false clean install
 if [ "$?" != "0" ]; then
