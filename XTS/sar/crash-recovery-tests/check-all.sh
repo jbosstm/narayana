@@ -9,13 +9,15 @@ fi
 
 SCRIPTS=$(find $DIR -name \*.txt)
 
-JARS=$(cd ../../..; find -name \*.jar)
+JARS=$(cd ../../..; find . -name \*.jar)
 
 for i in $JARS; do
 	CP="$CP:../../../$i";
 done
 
+CP="$CP:../../sar/tests/target/classes"
+
 for s in $SCRIPTS; do
 	echo $s
-	bmcheck.sh -cp $CP $s | grep TestScript
+	bmcheck.sh -cp $CP $s
 done
