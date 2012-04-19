@@ -181,17 +181,6 @@
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.narayana.admin:jbossts-jopr-plugin</include>
-			</includes>
-			<outputDirectory>bin</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
 				<exclude>org.jboss.narayana*</exclude>
 			</excludes>
