@@ -47,8 +47,9 @@ To speed up the build, several profiles are provided to restrict what is built. 
 3. core  This builds the common and arjunacore modules
 4. jta  This builds common, arjunacore and JTA
 5. jts  This builds common, arjunacore, JTA and JTS
-6. xts  This builds common, arjunacore, JTA and XTS
-7. stm  This builds common, arjuna, txoj and the STM module
+6. idlj When combine with the jts or all profiles the resulting jar will be configured to use the ORB bundled with the JDK
+7. xts  This builds common, arjunacore, JTA and XTS
+8. stm  This builds common, arjuna, txoj and the STM module
 
 So, for example, to build stm you can type:
 
