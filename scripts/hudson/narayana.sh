@@ -10,7 +10,7 @@ free -m
 for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10-15`; do echo $i; done
 
 #BUILD NARAYANA WITH FINDBUGS
-./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false clean install
+./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" clean install
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -35,7 +35,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-MAVEN_OPTS=-XX:MaxPermSize=256m ./build.sh clean install -DskipTests
+MAVEN_OPTS=-XX:MaxPermSize=256m ./build.sh "$@" clean install -DskipTests
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -44,13 +44,13 @@ export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/jboss-as-7.1.2.Final-SNAPSH
 cd ${WORKSPACE}
 
 #1.WSTX11 INTEROP and UNIT TESTS
-./build.sh -f XTS/localjunit/pom.xml -Parq clean test
+./build.sh -f XTS/localjunit/pom.xml -Parq "$@" clean test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
 #2.XTS CRASH RECOVERY TESTS
-./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -Parq clean test
+./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -Parq "$@" clean test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
