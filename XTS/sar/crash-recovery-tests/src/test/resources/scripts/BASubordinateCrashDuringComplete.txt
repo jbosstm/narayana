@@ -1085,7 +1085,6 @@ RULE trace delete participant and exit JVM
 CLASS org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManagerImple
 METHOD deleteParticipantRecoveryRecord
 AFTER CALL remove_committed
-BIND dummy = flag("tx removed")
 IF incrementCounter("participant deletes") == 3 &&
    flagged("tx removed")
 DO traceln("log", "JVM exit"),
