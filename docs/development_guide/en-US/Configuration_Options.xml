@@ -28,7 +28,7 @@
         <substeps>
           <step>
             <para>
-              If the properties file name property is set, its value is used as the file name.
+              If the properties file name property is set (<methodname>com.arjuna.ats.arjuna.common.propertiesFile</methodname>), its value is used as the file name.
             </para>
           </step>
           <step>
@@ -77,10 +77,14 @@
       </step>
       <step>
         <para>
-          The file is treated as being of standard java.util.Properties xml format and loaded accordingly. The entry
-          names are of the form EnvironmentBeanClass.propertyName:<code>&lt;entry
-          key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>. Valid values for Boolean
-          properties are case-insensitive, and may be one of:
+          The file is treated as being of standard java.util.Properties xml format and loaded accordingly.
+          The entry names are of the form EnvironmentBeanClass.propertyName: <code>&lt;entry
+          key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code> or
+          EnvironmentBeanClass.&lt;storeType&gt;propertyName: <code>&lt;entry
+          key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType"&gt;com.arjuna.ats.internal.arjuna.objectstore.VolatileStore&lt;/entry&gt;</code>
+          The second form is required if you want to set properties on configuration beans other that the
+          default bean instances.
+          Valid values for Boolean properties are case-insensitive, and may be one of:
         </para>
         <itemizedlist>
           <listitem>
