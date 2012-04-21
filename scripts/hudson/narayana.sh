@@ -44,7 +44,7 @@ export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/jboss-as-7.1.2.Final-SNAPSH
 cd ${WORKSPACE}
 
 #1.WSTX11 INTEROP and UNIT TESTS
-./build.sh -f XTS/localjunit/pom.xml -Parq "$@" clean test
+./build.sh -f XTS/localjunit/pom.xml -Parq "$@" test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
