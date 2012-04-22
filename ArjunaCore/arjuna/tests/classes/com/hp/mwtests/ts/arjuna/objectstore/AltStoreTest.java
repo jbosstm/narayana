@@ -79,34 +79,11 @@ public class AltStoreTest
      */
     private boolean removeContents(File directory)
     {
-        boolean emptied = true;
+        if (directory.isDirectory())
+            for (String entry : directory.list())
+                if (!removeContents(new File(directory, entry)))
+                    return false;
 
-        if ((directory != null) &&
-                directory.isDirectory() &&
-                (!directory.getName().equals("")) &&
-                (!directory.getName().equals("/")) &&
-                (!directory.getName().equals("\\")) &&
-                (!directory.getName().equals(".")) &&
-                (!directory.getName().equals("src/test")))
-        {
-            File[] contents = directory.listFiles();
-
-            for (File f : contents) {
-                if (f.isDirectory()) {
-                    removeContents(f);
-
-                    if (emptied)
-                        emptied = f.delete();
-                } else {
-                    if (emptied)
-                        emptied = f.delete();
-                }
-            }
-        }
-
-        if (directory != null && emptied)
-            emptied = directory.delete();
-
-        return emptied;
+        return directory.delete();
     }
 }
