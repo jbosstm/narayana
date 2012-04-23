@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.junit.Before;
 
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
@@ -31,6 +32,12 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
 public class RecoveryDriverUnitTest
 {
+    @Before
+    public void enableSocketBasedRecovery()
+    {
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
+    }
+
     @Test
     public void testInvalid () throws Exception
     {

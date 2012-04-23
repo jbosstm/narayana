@@ -44,6 +44,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	@Before
 	public void setUp () throws Exception
 	{
+		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 

@@ -132,6 +132,6 @@
       Caution: use of this property can allow multiple recovery processes to run on the same ObjectStore
       if you are not careful. That in turn can lead to incorrect transaction processing. Use with care.
     -->
-    <entry key="RecoveryEnvironmentBean.recoveryListener">YES</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryListener">NO</entry>
 
 </properties>

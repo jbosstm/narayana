@@ -58,6 +58,8 @@ public class ObjStoreBrowserTest {
 	@Before
 	public void setUp () throws Exception
 	{
+		// enable socket based recovery
+		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 

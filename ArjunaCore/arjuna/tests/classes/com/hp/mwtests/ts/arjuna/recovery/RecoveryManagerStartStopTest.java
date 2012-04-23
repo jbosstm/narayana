@@ -36,6 +36,7 @@ import java.util.List;
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
@@ -49,6 +50,12 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 @BMScript("recovery")
 public class RecoveryManagerStartStopTest
 {
+    @Before
+    public void enableSocketBasedRecovery()
+    {
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
+    }
+
     @Test
     public void testStartStop() throws Exception
     {
