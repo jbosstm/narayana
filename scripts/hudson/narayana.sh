@@ -7,7 +7,7 @@ fi
 free -m
 
 #Make sure no JBoss processes running
-for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10-15`; do echo $i; done
+for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10-15`; do kill $i; done
 
 #BUILD NARAYANA WITH FINDBUGS
 ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" clean install
