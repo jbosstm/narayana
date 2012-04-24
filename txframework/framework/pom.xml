@@ -16,7 +16,7 @@
     <properties>
         <narayana.version>4.16.1.Final</narayana.version>
         <arquillian.version>1.0.0.CR7</arquillian.version>
-        <jboss.version>7.1.1.Final-SNAPSHOT</jboss.version>
+        <jboss.version>7.1.1.Final</jboss.version>
     </properties>
 
     <build>
@@ -115,6 +115,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>rest-tx-api</artifactId>
+            <version>5.0.0.M2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
         </dependency>
@@ -134,8 +139,14 @@
             <version>2.0.2.GA</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>2.3.1.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

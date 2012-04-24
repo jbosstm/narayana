@@ -23,7 +23,9 @@ public class WSBACoordinatorCompletionHandler extends WSBAHandler
     {
         try
         {
-            register(new WSBAInternalParticipant()).completed();
+            BAParticipantManager participantManager = register(new WSBAInternalParticipant());
+            //This particular participant does no work, so notify Completed
+            participantManager.completed();
         }
         catch (Exception e)
         {

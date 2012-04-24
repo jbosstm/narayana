@@ -87,7 +87,6 @@ public class ATTest extends BaseFunctionalTestWar
         }
         catch (TransactionRolledBackException e)
         {
-            //todo: should rollback be called twice? once for volatile and once for durable
             assertOrder(PrePrepare.class, Prepare.class, Rollback.class);
             throw e;
         }

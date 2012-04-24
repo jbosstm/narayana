@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public class WSBAParticipantCompletionHandler extends WSBAHandler
 {
-    private WSBAParticipantCompletionParticipant participant;
-
     public WSBAParticipantCompletionHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
     {
         super(serviceImpl, serviceMethod);
