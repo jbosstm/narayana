@@ -57,6 +57,7 @@
 	    <param name="package" required="false"/>
 	    <param name="mapping" required="false" delimiter=";"/>
 	    <param name="filename" required="true"/>
+	    <param name="classpath" required="true" delimiter=";" classpath="true"/>
 	</in-parameters>
 
 	<idl-executable>idlj</idl-executable>

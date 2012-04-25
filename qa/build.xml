@@ -22,6 +22,7 @@
 <project name="JBossTS QA Suite Distribution" default="dist">
   <property environment="env"/>
   <property name="driver.home" value="dbdrivers"/>
+  <property name="isIdlj" value="0"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
@@ -111,9 +112,11 @@
   <target name="dist" depends="clean, init, buildtype">
     <!-- build the test suite -->
     <ant dir="tests" antfile="build-${buildtype}.xml">
+      <property name="isIdlj" value="${isIdlj}"/>
       <property name="org.jboss.jbossts.qa.server_manager_location" value="${org.jboss.jbossts.qa.server_manager_location}"/>
     </ant>
   </target>
+
   <target name="help">
     <echo>Supported targets:
   jta - build tests for the standalone jta transaction engine

@@ -48,7 +48,13 @@ then
 # Caution: JBossTS needs a specially patched version of JacORB.
 # Use $JBOSSTS_HOME/jacorb here unless you have a good reason not to.
 #
-JACORB_HOME=$NARAYANA_HOME/jacorb
+isIdlj=0
+
+if [ $isIdlj == 1 ]; then
+	JACORB_HOME=
+else
+	JACORB_HOME=$NARAYANA_HOME/jacorb
+fi
 
 # Find classpath separator
 
@@ -57,11 +63,12 @@ CPS=":"
 case `uname -a` in
     CYGWIN_* | Windows* )
         CPS=";"
-	JACORB_HOME=`echo $JACORB_HOME | sed -e 's;\\\;/;g'`
+	if [ $isIdlj == 0 ]; then
+		JACORB_HOME=`echo $JACORB_HOME | sed -e 's;\\\;/;g'`
+	fi
 	NARAYANA_HOME=`echo $NARAYANA_HOME | sed -e 's;\\\;/;g'`
     ;;
 esac
-
 
 # Setup EXT classpath
 
@@ -76,13 +83,18 @@ do
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$i"
 done
 
-for i in $JACORB_HOME/lib/*.jar
-do
-JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$i"
-done
-JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/etc"
+if [ $isIdlj == 0 ]; then
+	for i in $JACORB_HOME/lib/*.jar
+	do
+		JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$i"
+	done
+	JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/etc"
 
-CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH$CPS$JACORB_CLASSPATH"
+	CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH$CPS$JACORB_CLASSPATH"
+else
+	CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
+fi
+
 export CLASSPATH
 
 fi

@@ -3,6 +3,13 @@ if [ -z "${WORKSPACE}" ]; then
   exit -1;
 fi
 
+isIdlj=0
+for arg in "$@"; do
+  if [ `echo "$arg" |grep "idlj"` ]; then
+    isIdlj=1
+  fi
+done
+
 # FOR DEBUGGING SUBSEQUENT ISSUES
 free -m
 
@@ -71,7 +78,15 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
+if [ $isIdlj == 1 ]; then
+# delete lines containing jacorb
+	sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
+# set java properties for persistent IORs
+	sed -i TaskImpl.properties -e "s#^\#COMMAND_LINE_12=-D#COMMAND_LINE_12=-D#"
+	sed -i TaskImpl.properties -e "s#^\#COMMAND_LINE_13=-D#COMMAND_LINE_13=-D#"
+fi
+
+ant -DisIdlj=$isIdlj -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
 if [ "$?" != "0" ]; then
 	exit -1
 fi
