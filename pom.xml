@@ -401,19 +401,282 @@
   </build>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <!-- https://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/as/jboss-as-parent/7.0.0.Final/jboss-as-parent-7.0.0.Final.pom -->
-        <groupId>org.jboss.as</groupId>
-        <artifactId>jboss-as-parent</artifactId>
-		<version>${jboss-as.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId>
-        <version>1.5.6</version>
-      </dependency>
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-osgi</artifactId>
+              <version>${version.org.jboss.arquillian.osgi}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-spi</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-test-api</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-test-spi</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-container-test-impl-base</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-api</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-impl-base</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-spi</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-core</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testng</groupId>
+                <artifactId>arquillian-testng-core</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.junit</groupId>
+              <artifactId>arquillian-junit-container</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.testng</groupId>
+              <artifactId>arquillian-testng-container</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+                </exclusion>
+                  <exclusion>
+                      <groupId>org.jboss.logging</groupId>
+                      <artifactId>jboss-logging-tools</artifactId>
+                  </exclusion>
+              </exclusions>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.protocol</groupId>
+              <artifactId>arquillian-protocol-jmx</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jboss.arquillian.protocol</groupId>
+              <artifactId>arquillian-protocol-servlet</artifactId>
+              <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.test</groupId>
+                <artifactId>arquillian-test-spi</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.test</groupId>
+                <artifactId>arquillian-test-impl-base</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-cdi</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-ejb</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-initialcontext</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-osgi</artifactId>
+                <version>${version.org.jboss.arquillian.osgi}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-resource</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1-jbossorg-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ironjacamar</groupId>
+            <artifactId>ironjacamar-spec-api</artifactId>
+            <version>1.0.9.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+        </dependency>
+        <dependency>
+            <groupId>emma</groupId>
+            <artifactId>emma</artifactId>
+            <version>2.0.5312</version>
+        </dependency>
+        <dependency>
+            <groupId>emma</groupId>
+            <artifactId>emma_ant</artifactId>
+            <version>2.0.5312</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
+            <version>2.2.13.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.2.6.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>tanukisoft</groupId>
+            <artifactId>wrapper</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jacorb</groupId>
+            <artifactId>jacorb</artifactId>
+            <version>2.3.1.jbossorg-1</version>
+        </dependency>
+        <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>idl</artifactId>
+            <version>2.3.1jboss.patch01-brew</version><!-- TODO AS7 -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>1.2.2.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-transaction-spi</artifactId>
+            <version>7.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.integration</groupId>
+            <artifactId>jboss-corba-ots-spi</artifactId>
+            <version>6.0.0.CR1</version><!-- TODO AS7 src includes newer version of this, so its pom does not. -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-server-manager</artifactId>
+            <version>1.0.4.Final</version><!-- TODO AS7 -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>1.0.2.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.remoting</groupId>
+            <artifactId>jboss-remoting</artifactId>
+            <version>2.5.3</version><!-- TODO AS7 -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.1.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-processor</artifactId>
+            <version>1.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-api</artifactId>
+            <version>1.0.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
       <dependency>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>common</artifactId>
