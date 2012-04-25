@@ -162,7 +162,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jta:narayana-jta-integration</include>
+				<include>org.jboss.narayana.jta:narayana-jts-integration</include>
 			</includes>
 			<outputDirectory>lib/jta</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

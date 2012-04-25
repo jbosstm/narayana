@@ -65,7 +65,6 @@
   <target name="buildtype">
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar" property="buildtype" value="jts"/>
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar" property="buildtype" value="jta"/>
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta-integration.jar" property="integration.build"/>
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-integration.jar" property="integration.build"/>
     <condition property="dist.as">
       <and>
