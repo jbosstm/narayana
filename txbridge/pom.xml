@@ -26,7 +26,6 @@
     <properties>
         <version.jbossas>7.1.1.Final</version.jbossas>
         <version.jbossts>4.16.4.Final-SNAPSHOT</version.jbossts>
-        <version.arquillian.junit>1.0.0.CR7</version.arquillian.junit>
         <version.junit>4.8.2</version.junit>
         <version.byteman>2.0.1</version.byteman>
         <version.apache.httpcomponents>4.1.2</version.apache.httpcomponents>
@@ -202,7 +201,6 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-            <version>${version.arquillian.junit}</version>
             <scope>test</scope>
         </dependency>
 
