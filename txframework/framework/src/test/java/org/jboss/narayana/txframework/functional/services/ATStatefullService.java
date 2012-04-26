@@ -20,10 +20,6 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
-import com.arjuna.wst.Aborted;
-import com.arjuna.wst.Prepared;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.Vote;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
@@ -129,29 +125,29 @@ public class ATStatefullService implements ATStatefull
 
     @Prepare
     @WebMethod(exclude = true)
-    public Vote prepare()
+    public Boolean prepare()
     {
         logEvent(Prepare.class);
         if (rollback)
         {
-            return new Aborted();
+            return false;
         }
         else
         {
-            return new Prepared();
+            return true;
         }
     }
 
     @Unknown
     @WebMethod(exclude = true)
-    public void unknown() throws SystemException
+    public void unknown()
     {
         logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    public void error() throws SystemException
+    public void error()
     {
         logEvent(Error.class);
     }

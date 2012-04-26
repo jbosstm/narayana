@@ -32,22 +32,14 @@ public class RESTAT2PCParticipant extends org.jboss.narayana.txframework.impl.Pa
 
     public boolean prepare()
     {
-        Vote vote = (Vote) invoke(Prepare.class);
+        Boolean vote = (Boolean) invoke(Prepare.class);
         if (vote == null)
-        {
-            return true;
-        }
-        else if (vote instanceof Aborted)
-        {
-            return false;
-        }
-        else if (vote instanceof Prepared)
         {
             return true;
         }
         else
         {
-            throw new TXFrameworkRuntimeException("Unexpected vote type: " + vote.getClass().getName());
+            return vote;
         }
     }
 }
