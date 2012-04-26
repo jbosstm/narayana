@@ -1,7 +1,11 @@
 package org.jboss.narayana.txframework.impl;
 
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
+import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
+import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
+
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,10 +18,42 @@ public abstract class Participant
     protected Map<Class<? extends Annotation>, Method> lifecycleEventMap = new HashMap<Class<? extends Annotation>, Method>();
     protected List<Method> visibleMethods;
 
-    public Participant(Object serviceImpl)
+    private final Map txDataMap = new HashMap();
+
+    public Participant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
     {
         this.serviceImpl = serviceImpl;
         visibleMethods = getAllVisibleMethods(serviceImpl.getClass());
+
+        if (injectDataManagement)
+        {
+            injectTxDataMap(txDataMap, serviceImpl);
+        }
+    }
+
+    private void injectTxDataMap(Map txDataMap, Object serviceImpl) throws ParticipantRegistrationException
+    {
+        for (Field field : serviceImpl.getClass().getDeclaredFields())
+        {
+            if (field.getAnnotation(DataManagement.class) != null)
+            {
+                try
+                {
+                    if (!field.getType().equals(Map.class))
+                    {
+                        throw new ParticipantRegistrationException("Unable to inject data management Map into to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() +
+                                "': Field is not of type '" + Map.class + "'");
+                    }
+                    field.setAccessible(true);
+                    field.set(serviceImpl, txDataMap);
+                }
+                catch (IllegalAccessException e)
+                {
+                    throw new ParticipantRegistrationException("Unable to inject data management map impl to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() + "'", e);
+                }
+            }
+        }
+        //didn't find an injection point. No problem as this is optional
     }
 
     protected void registerEventsOfInterest(Class<? extends Annotation>... lifecycleEvents)

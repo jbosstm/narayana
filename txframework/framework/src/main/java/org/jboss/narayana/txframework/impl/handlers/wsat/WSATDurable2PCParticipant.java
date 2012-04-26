@@ -3,12 +3,14 @@ package org.jboss.narayana.txframework.impl.handlers.wsat;
 import com.arjuna.wst.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
 public class WSATDurable2PCParticipant extends org.jboss.narayana.txframework.impl.Participant implements Durable2PCParticipant
 {
-    public WSATDurable2PCParticipant(Object serviceImpl)
+    public WSATDurable2PCParticipant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
     {
-        super(serviceImpl);
+        super(serviceImpl, injectDataManagement);
 
         registerEventsOfInterest(Rollback.class, Commit.class, Prepare.class, Error.class, Unknown.class);
     }

@@ -58,9 +58,8 @@ public class WSATHandler implements ProtocolHandler
                 if (!participantRegistry.isRegistered(txid, participant.getClass()))
                 {
                     //Internal participant for doing tidy up at the end of the transaction
-                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(participant);
-                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(participant);
-
+                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(participant, false);
+                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(participant, true);
 
                     TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
                     transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + UUID.randomUUID());

@@ -21,7 +21,7 @@ public class WSATDurable2PCParticipantTest
     public void testCallbacks() throws Exception
     {
         LifecycleImpl lifecycle = new LifecycleImpl();
-        WSATDurable2PCParticipant participant = new WSATDurable2PCParticipant(lifecycle);
+        WSATDurable2PCParticipant participant = new WSATDurable2PCParticipant(lifecycle, false);
 
         participant.prepare();
         participant.commit();

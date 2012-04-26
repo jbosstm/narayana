@@ -39,7 +39,7 @@ public class RestParticipantEndpointImpl {
 
         final int pid = currentParticipantId.getAndIncrement();
 
-        participants.put(pid, new RESTAT2PCParticipant(serviceImpl));
+        participants.put(pid, new RESTAT2PCParticipant(serviceImpl, true));
 
         String path = info.getPath();
         if (path.startsWith("/")) {
