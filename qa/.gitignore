@@ -1,0 +1,10 @@
+TEST*
+dbdrivers
+testoutput
+transaction.log*
+CosServices.cfg
+ObjectStore
+dist
+idl-compiler.*
+value_1
+value_2
