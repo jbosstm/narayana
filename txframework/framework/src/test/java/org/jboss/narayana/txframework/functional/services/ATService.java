@@ -20,7 +20,6 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
-import com.arjuna.wst.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
@@ -102,37 +101,37 @@ public class ATService
 
     @PrePrepare
     @WebMethod(exclude = true)
-    private Vote prePrepare()
+    private Boolean prePrepare()
     {
         logEvent(PrePrepare.class);
-        return new Prepared();
+        return true;
     }
 
     @Prepare
     @WebMethod(exclude = true)
-    private Vote prepare()
+    private Boolean prepare()
     {
         logEvent(Prepare.class);
         if (rollback)
         {
-            return new Aborted();
+            return false;
         }
         else
         {
-            return new Prepared();
+            return true;
         }
     }
 
     @Unknown
     @WebMethod(exclude = true)
-    private void unknown() throws SystemException
+    private void unknown()
     {
         logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    private void error() throws SystemException
+    private void error()
     {
         logEvent(Error.class);
     }

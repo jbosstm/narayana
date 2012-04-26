@@ -31,14 +31,19 @@ public class WSATVolatile2PCParticipant extends org.jboss.narayana.txframework.i
 
     public Vote prepare() throws WrongStateException, SystemException
     {
-        Vote vote = (Vote) invoke(PrePrepare.class);
-        if (vote == null)
+        //todo check type
+        Boolean prepare = (Boolean) invoke(PrePrepare.class);
+        if (prepare == null)
+        {
+            return new Prepared();
+        }
+        else if (prepare)
         {
             return new Prepared();
         }
         else
         {
-            return vote;
+            return new Aborted();
         }
     }
 

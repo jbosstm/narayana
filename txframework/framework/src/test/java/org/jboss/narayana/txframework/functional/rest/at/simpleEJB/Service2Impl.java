@@ -1,8 +1,5 @@
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
-import com.arjuna.wst.Aborted;
-import com.arjuna.wst.Prepared;
-import com.arjuna.wst.Vote;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
@@ -70,23 +67,13 @@ public class Service2Impl implements Service2 {
     }
 
     @Prepare
-    private Vote prepare() {
+    private Boolean prepare() {
         logEvent(Prepare.class);
         if (rollback) {
-            return new Aborted();
+            return false;
         } else {
-            return new Prepared();
+            return true;
         }
-    }
-
-
-    private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands) {
-        for (ServiceCommand foundServiceCommand : serviceCommands) {
-            if (foundServiceCommand == expectedServiceCommand) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void logEvent(Class<? extends Annotation> event) {
