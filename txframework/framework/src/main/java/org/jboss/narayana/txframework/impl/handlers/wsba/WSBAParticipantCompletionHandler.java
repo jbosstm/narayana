@@ -63,7 +63,7 @@ public class WSBAParticipantCompletionHandler extends WSBAHandler
                 if (!participantRegistry.isRegistered(txid, participantClass))
                 {
 
-                    WSBAParticipantCompletionParticipant participantCompletionParticipant = new WSBAParticipantCompletionParticipant(participantObject);
+                    WSBAParticipantCompletionParticipant participantCompletionParticipant = new WSBAParticipantCompletionParticipant(participantObject, true);
                     baParticipantManager = businessActivityManager.enlistForBusinessAgreementWithParticipantCompletion(participantCompletionParticipant, participantClass.getName() + UUID.randomUUID());
                     participantRegistry.register(txid, participantClass, baParticipantManager);
                 }
@@ -86,7 +86,6 @@ public class WSBAParticipantCompletionHandler extends WSBAHandler
         catch (SystemException e)
         {
             throw new ParticipantRegistrationException("A SystemException occurred when attempting to register a participant", e);
-
         }
     }
 }

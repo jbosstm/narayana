@@ -22,11 +22,11 @@ package org.jboss.narayana.txframework.functional.services;
 
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.BA;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
-import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
@@ -34,11 +34,11 @@ import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -53,15 +53,15 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
     @TxManagement
     public WSBATxControl txControl;
     private EventLog eventLog = new EventLog();
-    @Inject
-    DataControl dataControl;
+    @DataManagement
+    private Map TXDataMap;
 
     @WebMethod
     @ServiceRequest
     //todo: batch up data and only addEvent during confirmCompleted
     public void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
-        dataControl.put("data", "data");
+        TXDataMap.put("data", "data");
         try
         {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
@@ -178,7 +178,7 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion
     private void logEvent(Class<? extends Annotation> event)
     {
         //Check data is available
-        if (dataControl == null ||  dataControl.get("data") == null)
+        if (TXDataMap == null ||  TXDataMap.get("data") == null)
         {
             eventLog.addDataUnavailable(event);
         }

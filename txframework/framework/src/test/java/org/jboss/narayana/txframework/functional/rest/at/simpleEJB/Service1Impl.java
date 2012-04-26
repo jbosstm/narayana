@@ -4,18 +4,18 @@ import com.arjuna.wst.Aborted;
 import com.arjuna.wst.Prepared;
 import com.arjuna.wst.Vote;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.AT;
-import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * @Author paul.robinson@redhat.com 06/04/2012
@@ -24,8 +24,8 @@ import java.lang.annotation.Annotation;
 @AT
 public class Service1Impl implements Service1 {
 
-    @Inject
-    DataControl dataControl;
+    @DataManagement
+    Map TXDataMap;
 
     @TxManagement
     private boolean rollback = false;
@@ -34,7 +34,7 @@ public class Service1Impl implements Service1 {
     @WebMethod
     @ServiceRequest
     public Response someServiceRequest(String serviceCommand) throws SomeApplicationException {
-        dataControl.put("data", "data");
+        TXDataMap.put("data", "data");
 
         if (Service1.THROW_APPLICATION_EXCEPTION.equals(serviceCommand)) {
             throw new SomeApplicationException("Intentionally thrown Exception");
@@ -89,7 +89,7 @@ public class Service1Impl implements Service1 {
 
     private void logEvent(Class<? extends Annotation> event) {
         //Check data is available
-        if (dataControl.get("data") == null) {
+        if (TXDataMap.get("data") == null) {
             eventLog.addDataUnavailable(event);
         }
 

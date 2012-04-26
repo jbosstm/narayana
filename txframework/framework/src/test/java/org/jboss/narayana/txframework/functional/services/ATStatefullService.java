@@ -26,22 +26,22 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
+import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.AT;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
-import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.ATStatefull;
-import org.jboss.narayana.txframework.impl.TXControlException;
+
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -54,8 +54,8 @@ import java.lang.annotation.Annotation;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATStatefullService implements ATStatefull
 {
-    @Inject
-    DataControl dataControl;
+    @DataManagement
+    private Map TXDataMap;
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
@@ -64,12 +64,12 @@ public class ATStatefullService implements ATStatefull
     public void invoke1(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
         //Check data is unavailable
-        if (dataControl.get("data") != null)
+        if (TXDataMap.get("data") != null)
         {
             throw new RuntimeException("data should be clear when invoke1 is called");
         }
 
-        dataControl.put("data", "data");
+        TXDataMap.put("data", "data");
         if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
         {
             throw new SomeApplicationException("Intentionally thrown Exception");
@@ -86,7 +86,7 @@ public class ATStatefullService implements ATStatefull
     public void invoke2(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
         //Check data is available
-        if (dataControl.get("data") == null)
+        if (TXDataMap.get("data") == null)
         {
             throw new RuntimeException("data set in call to 'invoke' was unavailable in call to 'invoke2'");
         }
@@ -171,7 +171,7 @@ public class ATStatefullService implements ATStatefull
     private void logEvent(Class<? extends Annotation> event)
     {
         //Check data is available
-        if (dataControl.get("data") == null)
+        if (TXDataMap.get("data") == null)
         {
             eventLog.addDataUnavailable(event);
         }

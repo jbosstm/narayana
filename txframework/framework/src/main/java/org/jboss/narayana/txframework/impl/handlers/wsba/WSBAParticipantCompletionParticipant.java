@@ -6,16 +6,19 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
+import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.Participant;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
+
 import java.io.Serializable;
 
 public class WSBAParticipantCompletionParticipant extends Participant implements BusinessAgreementWithParticipantCompletionParticipant,
         ConfirmCompletedParticipant, Serializable
 {
-    public WSBAParticipantCompletionParticipant(Object serviceImpl)
+    public WSBAParticipantCompletionParticipant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
     {
-        super(serviceImpl);
+        super(serviceImpl, injectDataManagement);
 
         registerEventsOfInterest(Cancel.class, Close.class, Compensate.class, ConfirmCompleted.class, Error.class, Status.class, Unknown.class);
     }
