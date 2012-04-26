@@ -1,7 +1,6 @@
 package org.jboss.narayana.txframework.api.annotation.transaction;
 
-import org.jboss.narayana.txframework.api.configuration.BridgeType;
-
+import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,10 +8,15 @@ import java.lang.annotation.Target;
 
 /**
  * Class level annotation used to declare that  a participant service will participate in lifecycle
- * processing for WSAT atomic transactions.
+ * processing for WSBA business activity transactions.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface RESTAT
+public @interface BA
 {
+    /**
+     * the specific WSBA completion protocol which should be used for a WSBA service participant
+     * @return
+     */
+    public CompletionType completionType() default CompletionType.COORDINATOR;
 }

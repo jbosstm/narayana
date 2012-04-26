@@ -1,11 +1,8 @@
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
-import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
-import org.jboss.narayana.txframework.impl.handlers.wsat.ATTxControlImpl;
 import org.jboss.narayana.txframework.impl.handlers.wsat.WSATParticipantRegistry;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
@@ -21,7 +18,6 @@ import java.lang.reflect.Method;
 public class RESTATHandler implements ProtocolHandler {
 
     private Object serviceImpl;
-    private ATTxControl atTxControl;
 
     private static final WSATParticipantRegistry participantRegistry = new WSATParticipantRegistry();
 
@@ -29,25 +25,6 @@ public class RESTATHandler implements ProtocolHandler {
         this.serviceImpl = serviceImpl;
 
         registerParticipant(serviceImpl);
-
-        atTxControl = new ATTxControlImpl();
-        injectTxManagement(atTxControl);
-    }
-
-    //todo: Use CDI to do injection
-    private void injectTxManagement(ATTxControl atTxControl) throws TXFrameworkException {
-        Field[] fields = serviceImpl.getClass().getFields();
-        for (Field field : serviceImpl.getClass().getFields()) {
-            if (field.getAnnotation(TxManagement.class) != null) {
-                try {
-                    //todo: check field type
-                    field.set(serviceImpl, atTxControl);
-                } catch (IllegalAccessException e) {
-                    throw new TXFrameworkException("Unable to inject TxManagement impl to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() + "'", e);
-                }
-            }
-        }
-        //didn't find an injection point. No problem as this is optional
     }
 
     @Override

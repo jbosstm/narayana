@@ -24,24 +24,20 @@ import com.arjuna.wst.Aborted;
 import com.arjuna.wst.Prepared;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
+import org.jboss.narayana.txframework.api.annotation.transaction.AT;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
-import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.narayana.txframework.functional.interfaces.ATStatefull;
 import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -51,7 +47,7 @@ import java.lang.annotation.Annotation;
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
 @Remote(ATStatefull.class)
-@WSAT(bridgeType = BridgeType.NONE)
+@AT(bridgeType = BridgeType.NONE)
 @Stateless
 @WebService(serviceName = "ATStatefullService", portName = "ATStatefull",
         name = "AT", targetNamespace = "http://www.jboss.com/functional/atstatefull/")
@@ -60,8 +56,6 @@ public class ATStatefullService implements ATStatefull
 {
     @Inject
     DataControl dataControl;
-    @TxManagement
-    public ATTxControl txControl;
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
@@ -76,27 +70,14 @@ public class ATStatefullService implements ATStatefull
         }
 
         dataControl.put("data", "data");
-        try
+        if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
         {
-            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
-            {
-                throw new SomeApplicationException("Intentionally thrown Exception");
-            }
-
-            if (isPresent(ServiceCommand.READ_ONLY, serviceCommands))
-            {
-                //todo: is this right?
-                txControl.readOnly();
-            }
-
-            if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
-            {
-                rollback = true;
-            }
+            throw new SomeApplicationException("Intentionally thrown Exception");
         }
-        catch (TXControlException e)
+
+        if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
         {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+            rollback = true;
         }
     }
 
@@ -109,27 +90,14 @@ public class ATStatefullService implements ATStatefull
         {
             throw new RuntimeException("data set in call to 'invoke' was unavailable in call to 'invoke2'");
         }
-        try
+        if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
         {
-            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
-            {
-                throw new SomeApplicationException("Intentionally thrown Exception");
-            }
-
-            if (isPresent(ServiceCommand.READ_ONLY, serviceCommands))
-            {
-                //todo: is this right?
-                txControl.readOnly();
-            }
-
-            if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
-            {
-                rollback = true;
-            }
+            throw new SomeApplicationException("Intentionally thrown Exception");
         }
-        catch (TXControlException e)
+
+        if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
         {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+            rollback = true;
         }
     }
 

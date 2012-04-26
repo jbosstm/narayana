@@ -2,9 +2,8 @@ package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.*;
-import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAParticipantCompletionParticipant;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
 import org.junit.Test;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class WSBAParticipantCompletionParticipantTest
         @Error
         public void error()
         {
-            executionOrder.add(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
+            executionOrder.add(org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error.class);
         }
 
 

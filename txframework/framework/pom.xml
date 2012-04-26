@@ -15,7 +15,7 @@
     <version>5.0.0.M2-SNAPSHOT</version>
     <properties>
         <narayana.version>4.16.1.Final</narayana.version>
-        <arquillian.version>1.0.0.CR7</arquillian.version>
+        <arquillian.version>1.0.0.Final</arquillian.version>
         <jboss.version>7.1.1.Final</jboss.version>
     </properties>
 

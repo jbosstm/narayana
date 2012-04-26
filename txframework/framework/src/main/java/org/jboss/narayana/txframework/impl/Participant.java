@@ -1,6 +1,6 @@
 package org.jboss.narayana.txframework.impl;
 
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.ConfirmCompleted;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;

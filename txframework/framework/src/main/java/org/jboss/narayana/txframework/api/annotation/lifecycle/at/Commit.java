@@ -1,4 +1,4 @@
-package org.jboss.narayana.txframework.api.annotation.lifecycle.wsba;
+package org.jboss.narayana.txframework.api.annotation.lifecycle.at;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Deprecated
-public @interface Unknown
+public @interface Commit
 {
 }

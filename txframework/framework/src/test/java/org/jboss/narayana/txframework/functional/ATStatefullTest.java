@@ -2,27 +2,20 @@ package org.jboss.narayana.txframework.functional;
 
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
-import com.arjuna.wst.TransactionRolledBackException;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Commit;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Prepare;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Rollback;
-import org.jboss.narayana.txframework.functional.clients.ATClient;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
 import org.jboss.narayana.txframework.functional.clients.ATStatefullClient;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.narayana.txframework.functional.interfaces.ATStatefull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import javax.xml.ws.soap.SOAPFaultException;
+
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.VOTE_ROLLBACK;
 
 @RunWith(Arquillian.class)
 public class ATStatefullTest extends BaseFunctionalTest

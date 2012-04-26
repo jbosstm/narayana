@@ -4,7 +4,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Completes;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Completes;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
