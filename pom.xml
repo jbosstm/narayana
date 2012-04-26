@@ -228,6 +228,19 @@
                     <ignore/>
                   </action>
                 </pluginExecution>
+                <pluginExecution>
+                	<pluginExecutionFilter>
+                		<groupId>org.codehaus.mojo</groupId>
+                		<artifactId>findbugs-maven-plugin</artifactId>
+                		<versionRange>[2.3.3,)</versionRange>
+                		<goals>
+                			<goal>check</goal>
+                		</goals>
+                	</pluginExecutionFilter>
+                	<action>
+                		<ignore></ignore>
+                	</action>
+                </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
