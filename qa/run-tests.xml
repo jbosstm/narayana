@@ -321,7 +321,7 @@
       <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
       <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
             the working dir is the same as the location of this script. -->
-      <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" errorproperty="failed-tests">
+      <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
         <classpath>
           <!--
                 This is the classpath for the test framework, not the test components e.g. clients/servers.
