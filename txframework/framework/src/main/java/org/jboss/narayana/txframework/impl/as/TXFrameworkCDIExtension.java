@@ -4,8 +4,6 @@ import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.impl.DataControlImpl;
 import org.jboss.narayana.txframework.impl.ServiceRequestInterceptor;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor;
-import org.jboss.narayana.txframework.impl.handlers.wsat.ATTxControlImpl;
-
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -30,9 +28,6 @@ public class TXFrameworkCDIExtension implements Extension {
 
         final AnnotatedType<DataControl> dataControl = bm.createAnnotatedType(DataControl.class);
         bbd.addAnnotatedType(dataControl);
-
-        final AnnotatedType<ATTxControlImpl> atTxControlImpl = bm.createAnnotatedType(ATTxControlImpl.class);
-        bbd.addAnnotatedType(atTxControlImpl);
 
         final AnnotatedType<ServiceRequestInterceptor> serviceRequestInterceptor = bm.createAnnotatedType(ServiceRequestInterceptor.class);
         bbd.addAnnotatedType(serviceRequestInterceptor);

@@ -1,19 +1,14 @@
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.WrongStateException;
 import org.jboss.jbossts.star.util.TxSupport;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Commit;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
-import javax.ejb.Singleton;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

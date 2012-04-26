@@ -1,8 +1,8 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.wst.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 
 public class WSATVolatile2PCParticipant extends org.jboss.narayana.txframework.impl.Participant implements Volatile2PCParticipant
 {
@@ -24,7 +24,7 @@ public class WSATVolatile2PCParticipant extends org.jboss.narayana.txframework.i
 
     public void error() throws SystemException
     {
-        invoke(org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error.class);
+        invoke(org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error.class);
     }
 
     public Vote prepare() throws WrongStateException, SystemException

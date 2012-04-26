@@ -1,4 +1,4 @@
-package org.jboss.narayana.txframework.api.annotation.lifecycle.wsat;
+package org.jboss.narayana.txframework.api.annotation.lifecycle.ba;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Rollback
+public @interface ConfirmCompleted
 {
 }

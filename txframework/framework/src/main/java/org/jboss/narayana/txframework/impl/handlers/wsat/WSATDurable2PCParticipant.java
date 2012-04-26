@@ -1,8 +1,8 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.wst.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 
 public class WSATDurable2PCParticipant extends org.jboss.narayana.txframework.impl.Participant implements Durable2PCParticipant
 {

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface WSAT
+public @interface AT
 {
     /**
      * attribute specifying whether automatic bridging to a JTA transaction should occur when a service

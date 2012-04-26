@@ -3,17 +3,14 @@ package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 import com.arjuna.wst.Aborted;
 import com.arjuna.wst.Prepared;
 import com.arjuna.wst.Vote;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.RESTAT;
-import org.jboss.narayana.txframework.api.management.ATTxControl;
+import org.jboss.narayana.txframework.api.annotation.transaction.AT;
 import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.impl.TXControlException;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
@@ -24,14 +21,13 @@ import java.lang.annotation.Annotation;
  * @Author paul.robinson@redhat.com 06/04/2012
  */
 @Stateless
-@RESTAT
+@AT
 public class Service1Impl implements Service1 {
 
     @Inject
     DataControl dataControl;
 
     @TxManagement
-    public ATTxControl txControl;
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
@@ -40,21 +36,12 @@ public class Service1Impl implements Service1 {
     public Response someServiceRequest(String serviceCommand) throws SomeApplicationException {
         dataControl.put("data", "data");
 
-        try {
-            if (Service1.THROW_APPLICATION_EXCEPTION.equals(serviceCommand)) {
-                throw new SomeApplicationException("Intentionally thrown Exception");
-            }
+        if (Service1.THROW_APPLICATION_EXCEPTION.equals(serviceCommand)) {
+            throw new SomeApplicationException("Intentionally thrown Exception");
+        }
 
-            if (Service1.READ_ONLY.equals(serviceCommand)) {
-                //todo: is this right?
-                txControl.readOnly();
-            }
-
-            if (VOTE_ROLLBACK.equals(serviceCommand)) {
-                rollback = true;
-            }
-        } catch (TXControlException e) {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+        if (VOTE_ROLLBACK.equals(serviceCommand)) {
+            rollback = true;
         }
         return Response.ok().build();
     }

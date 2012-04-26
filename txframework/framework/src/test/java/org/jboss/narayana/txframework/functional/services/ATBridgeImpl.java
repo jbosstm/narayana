@@ -24,16 +24,13 @@
 package org.jboss.narayana.txframework.functional.services;
 
 
-import com.arjuna.ats.jta.UserTransaction;
-import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
+import org.jboss.narayana.txframework.api.annotation.transaction.AT;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 
 import javax.ejb.*;
-import javax.inject.Inject;
 import javax.persistence.*;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
-import javax.jws.HandlerChain;
 import javax.jws.soap.SOAPBinding;
 
 /**
@@ -41,7 +38,7 @@ import javax.jws.soap.SOAPBinding;
  */
 @Stateless
 @Remote(ATBridge.class)
-@WSAT
+@AT
 @WebService(serviceName = "ATBridgeService", portName = "ATBridge",
         name = "ATBridge", targetNamespace = "http://www.jboss.com/functional/at/bridge")
 @SOAPBinding(style = SOAPBinding.Style.RPC)

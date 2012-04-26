@@ -1,7 +1,7 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Complete;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
 
 public class WSBACoordinatorCompletionParticipant  extends WSBAParticipantCompletionParticipant implements
         BusinessAgreementWithCoordinatorCompletionParticipant

@@ -5,9 +5,9 @@ import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
 import org.jboss.narayana.txframework.impl.Participant;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
 import java.io.Serializable;
 
 public class WSBAParticipantCompletionParticipant extends Participant implements BusinessAgreementWithParticipantCompletionParticipant,
@@ -22,7 +22,7 @@ public class WSBAParticipantCompletionParticipant extends Participant implements
 
     public void error() throws SystemException
     {
-        invoke(org.jboss.narayana.txframework.api.annotation.lifecycle.wsba.Error.class);
+        invoke(org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error.class);
     }
 
     public void close() throws WrongStateException, SystemException

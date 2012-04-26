@@ -21,18 +21,15 @@
 package org.jboss.narayana.txframework.functional.services;
 
 import com.arjuna.wst.*;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.wsat.*;
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.WSAT;
+import org.jboss.narayana.txframework.api.annotation.transaction.AT;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
-import org.jboss.narayana.txframework.api.management.ATTxControl;
 import org.jboss.narayana.txframework.api.management.DataControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.impl.TXControlException;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -42,15 +39,13 @@ import java.lang.annotation.Annotation;
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
-@WSAT(bridgeType = BridgeType.NONE)
+@AT(bridgeType = BridgeType.NONE)
 @WebService(serviceName = "ATService", portName = "AT", name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATService
 {
     @Inject
     DataControl dataControl;
-    @TxManagement
-    public ATTxControl txControl;
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
@@ -59,28 +54,15 @@ public class ATService
     public void invoke(ServiceCommand[] serviceCommands) throws SomeApplicationException
     {
         dataControl.put("data", "data");
-        try
-        {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands))
             {
                 throw new SomeApplicationException("Intentionally thrown Exception");
-            }
-
-            if (isPresent(ServiceCommand.READ_ONLY, serviceCommands))
-            {
-                //todo: is this right?
-                txControl.readOnly();
             }
 
             if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands))
             {
                 rollback = true;
             }
-        }
-        catch (TXControlException e)
-        {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
-        }
     }
 
     @WebMethod
