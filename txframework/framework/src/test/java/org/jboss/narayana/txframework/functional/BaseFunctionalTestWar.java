@@ -29,7 +29,7 @@ public class BaseFunctionalTestWar {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.narayana.txframework,org.jboss.as.xts,org.jboss.xts,org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts\n";
+                + "Dependencies: org.jboss.narayana.txframework\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
