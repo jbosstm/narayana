@@ -742,11 +742,6 @@
         <classifier>sources</classifier>
       </dependency>
       <dependency>
-        <groupId>org.jboss.narayana.jta</groupId>
-        <artifactId>narayana-jta-integration</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>orbportability</artifactId>
         <version>${project.version}</version>
