@@ -28,6 +28,8 @@ public class BaseFunctionalTest {
 
         String ManifestMF = "Manifest-Version: 1.0\n"
                 + "Dependencies: org.jboss.narayana.txframework\n";
+
+
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
