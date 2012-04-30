@@ -2,7 +2,6 @@ target
 .project
 .classpath
 .settings
-.DS_Store
 *.iml
 .idea
 jboss-as
