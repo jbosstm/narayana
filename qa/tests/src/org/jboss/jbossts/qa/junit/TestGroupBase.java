@@ -174,6 +174,7 @@ public class TestGroupBase
 
             additionalCommandLineElements.add("-DportOffsetId="+portOffsetId);
             additionalCommandLineElements.add("-DObjectStoreBaseDir="+objectStoreBaseDir.getCanonicalPath());
+            additionalCommandLineElements.add("-DRecoveryEnvironmentBean.recoveryListener=true"); // JBTM-810
 
             return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout, additionalCommandLineElements);
         } catch (Exception e) {
