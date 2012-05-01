@@ -68,7 +68,6 @@
             <exclude>**/GridTest.java</exclude>
             <exclude>**/remote/**</exclude>
             <exclude>**/DefaultTimeout.java</exclude>
-            <exclude>**/RecoveryEnablementUnitTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -349,16 +348,17 @@
               <excludes>
                 <!-- exclude tests which we don't want to run -->
                 <exclude>**/JacORBRecoveryUnitTest.java</exclude>
-                <!-- TODO why has this lot suddenly stopped working -->
-<exclude>**/TranGridServer.java</exclude>
-<exclude>**/CheckedTransactions.java</exclude>
-<exclude>**/GridTest.java</exclude>
-<exclude>**/Performance1.java</exclude>
-<exclude>**/RecoveryEnablementUnitTest.java</exclude>
-<exclude>**/GridClient.java</exclude>
-<exclude>**/RCTest.java</exclude>
-<exclude>**/TMClient.java</exclude>
-<exclude>**/TMTest.java</exclude>
+                <!-- TODO why are so many tests in the default profile disabled -->
+                <exclude>**/TransactionTest2.java</exclude>
+
+                <!-- These tests fail on both profiles -->
+                <exclude>**/TranGridServer.java</exclude>
+                <exclude>**/CheckedTransactions.java</exclude>
+                <exclude>**/GridTest.java</exclude>
+                <exclude>**/GridClient.java</exclude>
+                <exclude>**/RCTest.java</exclude>
+                <exclude>**/TMClient.java</exclude>
+                <exclude>**/TMTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>
