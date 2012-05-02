@@ -217,7 +217,7 @@
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>../ArjunaCore/arjuna/etc/log4j.properties</source>
+			<source>../common/etc/log4j.properties</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 		</file>
