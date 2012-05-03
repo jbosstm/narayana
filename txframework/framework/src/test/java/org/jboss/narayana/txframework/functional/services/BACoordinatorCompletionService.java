@@ -51,7 +51,7 @@ import java.util.Map;
 public class BACoordinatorCompletionService implements BACoordinatorCompletion
 {
     @TxManagement
-    public WSBATxControl txControl;
+    private WSBATxControl txControl;
     private EventLog eventLog = new EventLog();
     @DataManagement
     private Map TXDataMap;

@@ -29,6 +29,13 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -154,10 +161,10 @@
         <profile>
             <!-- This profile will start a new JBoss AS instance, and execute
      the test, shutting it down when done -->
-            <!-- Run with: mvn clean test -->
+            <!-- Run with: mvn clean test -Parq-jbossas-managed-->
             <id>arq-jbossas-managed</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
