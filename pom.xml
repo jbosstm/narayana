@@ -269,6 +269,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+                <Implementation-Title>${project.name}</Implementation-Title>
+                <Implementation-URL>http://www.jboss.org/</Implementation-URL>
+                <Implementation-Vendor>JBoss by Red Hat, Inc.</Implementation-Vendor>
+                <Implementation-Vendor-Id>http://www.jboss.org/</Implementation-Vendor-Id>
+            </manifestEntries>
+          </archive>
+        </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
