@@ -7,25 +7,25 @@
 	<author>
 		<firstname>Tom</firstname>
 		<surname>Jenkinson</surname>
-		<affiliation>
+		<!--affiliation>
 			<orgname>Red Hat</orgname>
-		</affiliation>
+		</affiliation-->
 		<email>tom.jenkinson@redhat.com</email>
 	</author>
 	<author>
 		<firstname>Michael</firstname>
 		<surname>Musgrove</surname>
-		<affiliation>
+		<!--affiliation>
 			<orgname>Red Hat</orgname>
-		</affiliation>
+		</affiliation-->
 		<email>mmusgrov@redhat.com</email>
 	</author>
 	<author>
 		<firstname>Amos</firstname>
 		<surname>Feng</surname>
-		<affiliation>
+		<!--affiliation>
 			<orgname>Red Hat</orgname>
-		</affiliation>
+		</affiliation-->
 		<email>zfeng@redhat.com</email>
 	</author>
 </authorgroup>

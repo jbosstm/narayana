@@ -6,9 +6,9 @@
   <author>
     <firstname>Jonathan</firstname>
     <surname>Halliday</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>jhallida@redhat.com</email>
   </author>
 </authorgroup>

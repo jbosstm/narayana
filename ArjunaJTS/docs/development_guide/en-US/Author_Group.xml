@@ -7,41 +7,41 @@
   <author>
     <firstname>Mark</firstname>
     <surname>Little</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>mlittle@redhat.com</email>
   </author>
   <author>
     <firstname>Jonathan</firstname>
     <surname>Halliday</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>jhallida@redhat.com</email>
   </author>
   <author>
     <firstname>Andrew</firstname>
     <surname>Dinn</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>adinn@redhat.com</email>
   </author>
   <author>
     <firstname>Kevin</firstname>
     <surname>Connor</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>kconnor@redhat.com</email>
   </author>
   <editor>
     <firstname>Misty</firstname>
     <surname>Stanley-Jones</surname>
-    <affiliation>
+    <!--affiliation>
       <orgname>Red Hat</orgname>
-    </affiliation>
+    </affiliation-->
     <email>misty@redhat.com</email>
   </editor>
 
