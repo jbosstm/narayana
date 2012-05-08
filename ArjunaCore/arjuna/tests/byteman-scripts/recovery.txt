@@ -101,7 +101,7 @@ CLASS com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest
 METHOD testStartStop
 AT ENTRY
 IF TRUE
-DO traceln("foo", "testStartStop entry")
+DO System.setOut(new PrintStream("foo.txt")); traceln("foo", "testStartStop entry")
 ENDRULE
 
 RULE Trace RecoveryManagerStartStopTest Exit
