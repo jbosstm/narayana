@@ -874,7 +874,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the name of the class implementing XAResourceRecordWrappingPlugin.
      */
-    public String getXAResourceRecordWrappingPluginClassName()
+    public String getXaResourceRecordWrappingPluginClassName()
     {
         return xaResourceRecordWrappingPluginClassName;
     }
@@ -884,7 +884,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @param xaResourceRecordWrappingPluginClassName the name of a class which implements XAResourceRecordWrappingPlugin.
      */
-    public void setXAResourceRecordWrappingPluginClassName(String xaResourceRecordWrappingPluginClassName)
+    public void setXaResourceRecordWrappingPluginClassName(String xaResourceRecordWrappingPluginClassName)
     {
         synchronized(this)
         {
