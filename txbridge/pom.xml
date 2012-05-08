@@ -261,7 +261,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-					<version>${jboss-as.version}</version>
+					<version>${version.jbossas}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
