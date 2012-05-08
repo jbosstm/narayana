@@ -22,10 +22,13 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
+GIT_URL="https://github.com/jbosstm/jboss-as.git"
+#GIT_URL="git://github.com/jbosstm/jboss-as.git"
+
 #BUILD JBOSS-AS
 cd ${WORKSPACE}
 rm -rf jboss-as
-git clone git://github.com/jbosstm/jboss-as.git
+git clone $GIT_URL
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -36,7 +39,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-git remote add upstream git://github.com/jbossas/jboss-as.git
+git remote add upstream $GIT_URL
 git pull --rebase --ff-only upstream master
 if [ "$?" != "0" ]; then
 	exit -1
