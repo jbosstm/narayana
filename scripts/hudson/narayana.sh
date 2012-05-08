@@ -67,6 +67,18 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
+#3.TXBRIDGE TESTS
+cd ${WORKSPACE}
+sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml
+if [ "$?" != "0" ]; then
+	exit -1
+fi
+
+./build.sh -f txbridge/pom.xml -Parq "$@" clean test
+if [ "$?" != "0" ]; then
+	exit -1
+fi
+
 #RUN QA TESTS
 cd $WORKSPACE/qa
 if [ "$?" != "0" ]; then
