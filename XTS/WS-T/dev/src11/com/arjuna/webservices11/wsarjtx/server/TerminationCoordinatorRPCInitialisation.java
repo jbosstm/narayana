@@ -46,7 +46,7 @@ public class TerminationCoordinatorRPCInitialisation
         }
 
         if (bindAddress == null) {
-            bindAddress = "127.0.0.1";
+            bindAddress = "localhost";
         }
 
         if (bindPort == 0) {

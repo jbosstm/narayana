@@ -67,7 +67,7 @@ public class BaseTest {
     protected static boolean USE_RESTEASY = false;
 
     protected static final int PORT = 58081;
-    protected static final String SURL = "http://127.0.0.1:" + PORT + '/';
+    protected static final String SURL = "http://localhost:" + PORT + '/';
     protected static final String PSEGMENT = "txresource";
     protected static final String PURL = SURL + PSEGMENT;
     protected static String TXN_MGR_URL = SURL + "tx/transaction-manager";

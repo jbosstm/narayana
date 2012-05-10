@@ -56,7 +56,7 @@ public class TxSupport
     private static Pattern LINK_PATTERN = Pattern.compile(LINK_REGEX);
 
     public static int PORT = 8080;
-    public static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
+    public static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "localhost");
     public static String BASE_URL = "http://" + BIND_ADDRESS + ':';
     public static final String TX_CONTEXT = System.getProperty("rest.tx.context.path", "/rest-tx");
     /**
