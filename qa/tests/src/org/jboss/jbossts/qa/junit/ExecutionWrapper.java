@@ -125,6 +125,7 @@ public class ExecutionWrapper
 
             final Properties p = new Properties();
             p.setProperty("OAPort", ""+recoveryOrbPort);
+            p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", ""+recoveryOrbPort);
 
             try {
                 ORBInterface.initORB(args, p);

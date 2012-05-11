@@ -98,7 +98,6 @@ if [ $isIdlj == 1 ]; then
 	sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 # set java properties for persistent IORs
 	sed -i TaskImpl.properties -e "s#^\#COMMAND_LINE_12=-D#COMMAND_LINE_12=-D#"
-	sed -i TaskImpl.properties -e "s#^\#COMMAND_LINE_13=-D#COMMAND_LINE_13=-D#"
 fi
 
 ant -DisIdlj=$isIdlj -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
