@@ -4,9 +4,13 @@ if [ -z "${WORKSPACE}" ]; then
 fi
 
 isIdlj=0
+isIPv6=0
 for arg in "$@"; do
   if [ `echo "$arg" |grep "idlj"` ]; then
     isIdlj=1
+  fi
+  if [ `echo "$arg" |grep "ipv6"` ]; then
+    isIPv6=1
   fi
 done
 
@@ -53,14 +57,20 @@ fi
 export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/jboss-as-7.1.2.Final-SNAPSHOT
 cd ${WORKSPACE}
 
+if [ $isIPv6 == 1 ]; then
+  mvn_arqprof="-ParqIPv6"
+else
+  mvn_arqprof="-Parq"
+fi
+
 #1.WSTX11 INTEROP and UNIT TESTS
-./build.sh -f XTS/localjunit/pom.xml -Parq "$@" test
+./build.sh -f XTS/localjunit/pom.xml $mvn_arqprof "$@" test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
 #2.XTS CRASH RECOVERY TESTS
-./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -Parq "$@" clean test
+./build.sh -f XTS/sar/crash-recovery-tests/pom.xml $mvn_arqprof "$@" clean test
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -77,7 +87,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-./build.sh -f txbridge/pom.xml -Parq "$@" clean test
+./build.sh -f txbridge/pom.xml $mvn_arqprof "$@" clean test
 if [ "$?" != "0" ]; then
 	exit -1
 fi

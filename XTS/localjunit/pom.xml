@@ -16,6 +16,7 @@
 	<packaging>pom</packaging>
 	<name>localjunit tests for xts</name>
 	<description>localjunit tests for xts</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.narayana.xts</groupId>
@@ -69,7 +70,43 @@
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
+							<forkMode>once</forkMode>
+							<systemPropertyVariables combine.children="append">
+							<!--
+							  Used in arquillian.xml
+							-->
+							  <server.jvm.args>${jvm.args.ip}</server.jvm.args>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<version>${jboss-as.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>arqIPv6</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
               				<forkMode>once</forkMode>
+							<systemPropertyVariables combine.children="append">
+							<!--
+							  Used in arquillian.xml
+							-->
+							  <server.jvm.args>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</server.jvm.args>
+							</systemPropertyVariables>
 						</configuration>
 					</plugin>
 				</plugins>

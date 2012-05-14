@@ -958,6 +958,8 @@
   </dependencies>
   </dependencyManagement>
   <properties>
+    <!-- IP stack configs. -->
+    <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
@@ -998,7 +1000,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <systemPropertyVariables>
+              <systemPropertyVariables combine.children="append">
                 <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
                 <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
                 <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
