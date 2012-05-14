@@ -96,8 +96,6 @@ fi
 if [ $isIdlj == 1 ]; then
 # delete lines containing jacorb
 	sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
-# set java properties for persistent IORs
-	sed -i TaskImpl.properties -e "s#^\#COMMAND_LINE_12=-D#COMMAND_LINE_12=-D#"
 fi
 
 ant -DisIdlj=$isIdlj -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist

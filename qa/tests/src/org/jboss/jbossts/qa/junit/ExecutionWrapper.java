@@ -125,7 +125,11 @@ public class ExecutionWrapper
 
             final Properties p = new Properties();
             p.setProperty("OAPort", ""+recoveryOrbPort);
+
+            // for persistent servers the JavaIdl orb requires you to explicitly define which port the 
+            // server will run on and to provide a unique id per server per machine:
             p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", ""+recoveryOrbPort);
+            p.setProperty("com.sun.CORBA.POA.ORBServerId", ""+recoveryOrbPort);
 
             try {
                 ORBInterface.initORB(args, p);

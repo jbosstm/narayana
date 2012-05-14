@@ -134,6 +134,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
 
             final Properties p = new Properties();
             p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", recoveryManagerPort);
+            p.setProperty("com.sun.CORBA.POA.ORBServerId", recoveryManagerPort);
 
             if (recoveryManagerAddr != null && recoveryManagerAddr.length() > 0)
             {
