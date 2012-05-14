@@ -121,7 +121,7 @@ public class Client03a
 
 			correct = correct && (resourceTrace1 == ResourceTrace.ResourceTraceCommit);
             if (!correct)
-                System.out.println("Gonna fail5");
+                System.out.println("Gonna fail5: " + resourceTrace1.toString());
 			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTraceCommit);
             if (!correct)
                 System.out.println("Gonna fail6");
