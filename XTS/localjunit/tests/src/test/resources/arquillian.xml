@@ -8,7 +8,6 @@
 		</protocol>
 		<configuration>
 			<property name="serverConfig">standalone-xts.xml</property>
-			<property name="javaVmArguments">${jvm.args.ip}</property>
 		</configuration>
 	</container>
 </arquillian>
