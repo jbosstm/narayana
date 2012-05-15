@@ -58,7 +58,9 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/jboss-as-7.1.2.Final-SNAPSHOT
+JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
+export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
+
 cd ${WORKSPACE}
 
 #1.WSTX11 INTEROP and UNIT TESTS
