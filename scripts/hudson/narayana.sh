@@ -27,7 +27,7 @@ if [ "$?" != "0" ]; then
 fi
 
 GIT_URL="https://github.com/jbosstm/jboss-as.git"
-#GIT_URL="git://github.com/jbosstm/jboss-as.git"
+UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
 
 #BUILD JBOSS-AS
 cd ${WORKSPACE}
@@ -43,7 +43,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-git remote add upstream $GIT_URL
+git remote add upstream $UPSTREAM_GIT_URL
 git pull --rebase --ff-only upstream master
 if [ "$?" != "0" ]; then
 	exit -1
