@@ -31,8 +31,11 @@
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
     <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
     <artifactId.name>rest-tx</artifactId.name>
-    <version.org.jboss.jbossas>6.0.0.20100721-M4</version.org.jboss.jbossas>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
+    <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
   </properties>
+
   <repositories>
     <repository>
       <id>jboss-public-repository-group</id>
@@ -54,12 +57,13 @@
     </repository>
     <!-- end Jersey -->
   </repositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jboss.jbossas</groupId>
-        <artifactId>jboss-as-component-matrix</artifactId>
-        <version>6.0.0.20100721-M4</version>
+        <groupId>org.jboss.bom</groupId>
+        <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+        <version>${javaee6.with.tools.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -129,21 +133,6 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
