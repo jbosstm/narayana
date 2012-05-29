@@ -48,7 +48,10 @@ import org.junit.runner.RunWith;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.recovery.ActionStatusService;
+import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -242,8 +245,9 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		assertTrue(secondResource.wasCommitted());
 
 		InputObjectState uids = new InputObjectState();
+		String type = new AtomicAction().type();
 		StoreManager.getRecoveryStore().allObjUids(
-				"/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
+				type,
 				uids);
 		boolean moreUids = true;
 
@@ -251,8 +255,14 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		while (moreUids) {
 			Uid theUid = UidHelper.unpackFrom(uids);
 			if (theUid.equals(txUid)) {
-				AtomicAction aa = new AtomicAction(theUid);
-				System.out.println(aa.status());
+	            ActionStatusService ass = new ActionStatusService();
+
+	            int theStatus = ass.getTransactionStatus(type, theUid.stringForm());
+	            System.out.println(ActionStatus.stringForm( theStatus )) ;
+	            RecoverAtomicAction rcvAtomicAction =
+	                    new RecoverAtomicAction( theUid, theStatus ) ;
+	            theStatus = rcvAtomicAction.status();
+	            System.out.println(ActionStatus.stringForm( theStatus )) ;
 				found = true;
 			} else if (theUid.equals(Uid.nullUid())) {
 				moreUids = false;
