@@ -28,11 +28,6 @@ public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
 	private Xid xid;
 	private boolean firstAttemptToCommit = true;
 	private boolean committed = false;
-	private Object toWakeUp;
-
-	public SimpleResourceXA_RETRYHeuristicRollback(Object toWakeUp) {
-		this.toWakeUp = toWakeUp;
-	}
 
 	public void commit(Xid xid, boolean onePhase) throws XAException {
 		System.out.println("SimpleResourceXA_RETRY commit called: " + xid);
@@ -43,9 +38,6 @@ public class SimpleResourceXA_RETRYHeuristicRollback implements XAResource {
 		}
 		xid = null;
 		committed = true;
-		synchronized (toWakeUp) {
-			toWakeUp.notify();
-		}
 		throw new XAException(XAException.XA_HEURRB);
 	}
 

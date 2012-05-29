@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.jta.recovery;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -49,6 +50,8 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.ActionStatusService;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
@@ -166,8 +169,8 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		RecoveryEnvironmentBean recoveryEnvironmentBean = BeanPopulator
 				.getDefaultInstance(RecoveryEnvironmentBean.class);
-		recoveryEnvironmentBean.setRecoveryBackoffPeriod(1);
-		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(1);
+		recoveryEnvironmentBean.setRecoveryBackoffPeriod(Integer.MAX_VALUE);
+		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(Integer.MAX_VALUE);
 
 		List<String> recoveryModuleClassNames = new ArrayList<String>();
 
@@ -202,8 +205,7 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		XAResource firstResource = new SimpleResource();
 		Object toWakeUp = new Object();
-		final SimpleResourceXA_RETRYHeuristicRollback secondResource = new SimpleResourceXA_RETRYHeuristicRollback(
-				toWakeUp);
+		final SimpleResourceXA_RETRYHeuristicRollback secondResource = new SimpleResourceXA_RETRYHeuristicRollback();
 
 		xaRecoveryModule
 				.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
@@ -239,36 +241,57 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		tm.commit();
 
-		synchronized (toWakeUp) {
-			toWakeUp.wait();
-		}
-		assertTrue(secondResource.wasCommitted());
-
 		InputObjectState uids = new InputObjectState();
 		String type = new AtomicAction().type();
-		StoreManager.getRecoveryStore().allObjUids(
-				type,
-				uids);
+		StoreManager.getRecoveryStore().allObjUids(type, uids);
 		boolean moreUids = true;
 
 		boolean found = false;
 		while (moreUids) {
 			Uid theUid = UidHelper.unpackFrom(uids);
 			if (theUid.equals(txUid)) {
-	            ActionStatusService ass = new ActionStatusService();
-
-	            int theStatus = ass.getTransactionStatus(type, theUid.stringForm());
-	            System.out.println(ActionStatus.stringForm( theStatus )) ;
-	            RecoverAtomicAction rcvAtomicAction =
-	                    new RecoverAtomicAction( theUid, theStatus ) ;
-	            theStatus = rcvAtomicAction.status();
-	            System.out.println(ActionStatus.stringForm( theStatus )) ;
 				found = true;
+				Field heuristicListField = BasicAction.class
+						.getDeclaredField("heuristicList");
+				heuristicListField.setAccessible(true);
+				ActionStatusService ass = new ActionStatusService();
+
+				{
+					int theStatus = ass.getTransactionStatus(type,
+							theUid.stringForm());
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+							theUid, theStatus);
+					theStatus = rcvAtomicAction.status();
+					rcvAtomicAction.replayPhase2();
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					assertTrue(secondResource.wasCommitted());
+					RecordList heuristicList = (RecordList) heuristicListField
+							.get(rcvAtomicAction);
+					assertTrue(
+							"Expected 1 heuristics: " + heuristicList.size(),
+							heuristicList.size() == 1);
+				}
+				{
+					int theStatus = ass.getTransactionStatus(type,
+							theUid.stringForm());
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+							theUid, theStatus);
+					theStatus = rcvAtomicAction.status();
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecordList heuristicList = (RecordList) heuristicListField
+							.get(rcvAtomicAction);
+					assertTrue(
+							"Expected 1 heuristics: " + heuristicList.size(),
+							heuristicList.size() == 1);
+					assertTrue(secondResource.wasCommitted());
+				}
 			} else if (theUid.equals(Uid.nullUid())) {
 				moreUids = false;
 			}
 		}
-		
+
 		if (!found) {
 			throw new Exception("Could not locate the Uid");
 		}
