@@ -4,11 +4,11 @@ try
         AtomicAction A = new AtomicAction();
         OnePhase opRes = new OnePhase();  // used OnePhase interface
        
-        System.err.println("Starting top-level action.");
+        System.out.println("Starting top-level action.");
 
         A.begin();
         A.add(new LastResourceRecord(opRes));
-        A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_PREPARE));
+        A.add( "other participants" );
        
         A.commit();
     }

@@ -16,8 +16,8 @@
     </para>
     <para>
       This release of JBoss Transaction Service contains several different implementations of a basic object store. Each
-      serves a particular purpose and is generally optimized for that purpose. Each of the implementations is derived
-      from the <interfacename>ObjectStore</interfacename> interface, which defines the minimum operations which must be
+      serves a particular purpose and is generally optimized for that purpose. Each of the implementations implements 
+      the <interfacename>ObjectStoreAPI</interfacename> interface, which defines the minimum operations which must be
       provided for an object store implementation to be used by the Transaction Service. You can override the default
       object store implementation at runtime by setting the
       <varname>com.arjuna.ats.arjuna.objectstore.objectStoreType</varname> property variable to one of the types

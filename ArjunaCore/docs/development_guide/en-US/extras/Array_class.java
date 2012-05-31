@@ -2,7 +2,7 @@ public class Array extends StateManager
 {
     public Array ();
     public Array (Uid objUid);
-    public void finalize ( super.terminate(); };
+    public void finalize ( super.terminate(); super.finalize(); };
 
     /* Class specific operations. */
 

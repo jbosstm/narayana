@@ -276,11 +276,11 @@
         </para>
         <variablelist>
           <varlistentry>
-            <term><type>boolean</type> <methodname>save_state</methodname>(<type>OutputObjectState</type> <varname>state</varname>, <type>int</type><varname>ObjectType</varname>)</term>
+            <term><type>boolean</type> <methodname>save_state</methodname>(<type>OutputObjectState</type> <varname>state</varname>, <type>int</type><varname>objectType</varname>)</term>
             <listitem>
               <para>
                 Invoked whenever the state of an object might need to be saved for future use, primarily for recovery
-                or persistence purposes. The <parameter>ObjectType</parameter> parameter indicates the reason that
+                or persistence purposes. The <parameter>objectType</parameter> parameter indicates the reason that
                 <methodname>save_state</methodname> was invoked by TxCore. This enables the programmer to save different
                 pieces of information into the <classname>OutputObjectState</classname> supplied as the first parameter
                 depending upon whether the state is needed for recovery or persistence purposes. For example, pointers
@@ -298,7 +298,7 @@
             </listitem>
           </varlistentry>
           <varlistentry>
-            <term><type>boolean</type> <methodname>restore_state</methodname> (<type>InputObjectState</type> <varname>state</varname>, <type>int</type> <varname>ObjectType</varname>)</term>
+            <term><type>boolean</type> <methodname>restore_state</methodname> (<type>InputObjectState</type> <varname>state</varname>, <type>int</type> <varname>objectType</varname>)</term>
             <listitem>
               <para>
                 Invoked whenever the state of an object needs to be restored to the one supplied. Once again the second
@@ -520,7 +520,7 @@
     </section>
 
     <section>
-      <title>Object constructor and destructor</title>
+      <title>Object constructor and finalizer</title>
       <para>
         Recall that TxCore objects can be recoverable, recoverable and persistent, or neither. Additionally each object
         possesses a unique internal name. These attributes can only be set when that object is constructed. Thus
@@ -538,12 +538,12 @@
           </listitem>
         </varlistentry>
         <varlistentry>
-          <term><methodname>LockManager</methodname> (<type>int</type> <varname>ObjectType</varname>, <type>int</type>
+          <term><methodname>LockManager</methodname> (<type>int</type> <varname>objectType</varname>, <type>int</type>
           <varname>objectModel)</varname></term>
           <listitem>
             <para>
               As above, this constructor allows the creation of new objects having no prior state.  exist. The
-              <varname>ObjectType</varname> parameter determines whether an object is simply recoverable (indicated by
+              <varname>objectType</varname> parameter determines whether an object is simply recoverable (indicated by
               <literal>RECOVERABLE</literal>), recoverable and persistent (indicated by
               <literal>ANDPERSISTENT</literal>), or neither (indicated by <literal>NEITHER</literal>). If an object is
               marked as being persistent then the state of the object will be stored in one of the object stores. The
@@ -586,7 +586,7 @@
         </varlistentry>
       </variablelist>
       <para>
-        The destructor of a programmer-defined class must invoke the inherited operation
+        The finalizer of a programmer-defined class must invoke the inherited operation
         <methodname>terminate</methodname> to inform the state management mechanism that the object is about to be
         destroyed. Otherwise, unpredictable results may occur.
       </para>

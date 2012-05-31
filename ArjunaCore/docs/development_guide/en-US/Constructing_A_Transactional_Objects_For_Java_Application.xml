@@ -58,7 +58,7 @@
   </section>
   
   <section>
-    <title>Constructors and destructors</title>
+    <title>Constructors and finalizers</title>
     <para>
       Using an existing persistent object requires the use of a special constructor
       that takes the Uid of the persistent object, as shown in <xref linkend="example-TransactionalQueue" />.
@@ -77,8 +77,9 @@
       committed, otherwise it is aborted.
     </para>
     <para>
-      The destructor of the <classname>queue</classname> class is only required to call the
-      <methodname>terminate</methodname> operation of <classname>LockManager</classname>.
+      The finalizer of the <classname>queue</classname> class is only required to call the
+      <methodname>terminate</methodname> and <methodname>finalizer</methodname> operations of
+      <classname>LockManager</classname>.
     </para>
     <programlisting language="Java" role="JAVA"><xi:include href="extras/example_queue_destructor.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     
