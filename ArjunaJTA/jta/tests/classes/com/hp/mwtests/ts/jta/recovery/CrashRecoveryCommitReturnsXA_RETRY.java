@@ -157,7 +157,7 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		assertTrue(secondResource.wasCommitted());
 	}
 
-	@Test
+	//@Test
 	public void testHeuristicRollback() throws Exception {
 		// this test is supposed to leave a record around in the log store
 		// during a commit long enough
