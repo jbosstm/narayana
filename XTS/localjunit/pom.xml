@@ -128,5 +128,6 @@
 		<module>WS-C</module>
 		<module>WS-T</module>
 		<module>WSTX11-interop</module>
+		<module>WSTFSC07-interop</module>
 	</modules>
 </project>
