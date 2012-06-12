@@ -25,7 +25,7 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.BA;
+import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
@@ -51,7 +51,7 @@ import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 @WebService(serviceName = "BAParticipantCompletionService", portName = "BAParticipantCompletionService",
         name = "BAParticipantCompletion", targetNamespace = "http://www.jboss.com/functional/ba/participantcompletion/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-@BA(completionType = CompletionType.PARTICIPANT)
+@Compensatable(completionType = CompletionType.PARTICIPANT)
 public class BAParticipantCompletionService implements BAParticipantCompletion
 {
     @TxManagement

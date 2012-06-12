@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface AT
+public @interface Transactional
 {
     /**
      * attribute specifying whether automatic bridging to a JTA transaction should occur when a service
