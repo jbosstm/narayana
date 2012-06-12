@@ -40,7 +40,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-@WebService()
+@WebService(targetNamespace = "http://client.outbound.tests.txbridge.jbossts.jboss.org/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @HandlerChain(file = "/jaxws-handlers-server.xml") // relative path from the class file
 @WebServlet(name="OutboundTestServiceServlet", urlPatterns=TestServiceImpl.URL_PATTERN)
