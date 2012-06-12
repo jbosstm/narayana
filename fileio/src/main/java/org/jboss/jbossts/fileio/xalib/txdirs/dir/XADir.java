@@ -131,7 +131,7 @@ public class XADir implements Serializable, Closeable
    */
   public synchronized void startTransactionOn(TransactionManager txnMngr)
       throws SystemException, RollbackException {
-    curTxId = "txDir-" + freMngr.getWorkDir().replace('/', '_') + "_" +
+    curTxId = "txDir-" + freMngr.getWorkDir().replace('/', '_').replace('\\', '_').replace(':', '_') + "_" +
         Thread.currentThread().getId() + "!" + System.nanoTime();
     XAFileResourceManager xafre = new XAFileResourceManager(freMngr, curTxId);
     Transaction tx = txnMngr.getTransaction();
