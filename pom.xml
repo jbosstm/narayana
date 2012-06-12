@@ -1023,6 +1023,7 @@
         <module>ArjunaJTS</module>
         <module>rest-tx</module>
         <module>txbridge</module>
+        <module>fileio</module>
         <module>STM</module>
         <module>narayana-full</module>
       </modules>
