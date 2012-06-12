@@ -2,8 +2,8 @@ package org.jboss.narayana.txframework.impl.handlers;
 
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
-import org.jboss.narayana.txframework.api.annotation.transaction.AT;
-import org.jboss.narayana.txframework.api.annotation.transaction.BA;
+import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
+import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.handlers.restat.service.RESTATHandler;
@@ -20,10 +20,10 @@ public class HandlerFactory
     {
         Class serviceClass = serviceImpl.getClass();
 
-        BA BA = (BA) serviceClass.getAnnotation(BA.class);
-        if (BA != null)
+        Compensatable Compensatable = (Compensatable) serviceClass.getAnnotation(Compensatable.class);
+        if (Compensatable != null)
         {
-            CompletionType completionType = BA.completionType();
+            CompletionType completionType = Compensatable.completionType();
             if (completionType == CompletionType.PARTICIPANT)
             {
                 return new WSBAParticipantCompletionHandler(serviceImpl, serviceMethod);
@@ -38,8 +38,8 @@ public class HandlerFactory
             }
         }
 
-        AT AT = (AT) serviceClass.getAnnotation(AT.class);
-        if (AT != null)
+        Transactional Transactional = (Transactional) serviceClass.getAnnotation(Transactional.class);
+        if (Transactional != null)
         {
             if (isWSATTransactionRunning())
             {

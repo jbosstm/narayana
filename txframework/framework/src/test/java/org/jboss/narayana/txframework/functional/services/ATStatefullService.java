@@ -24,7 +24,7 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.AT;
+import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
@@ -43,7 +43,7 @@ import java.util.Map;
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
 @Remote(ATStatefull.class)
-@AT(bridgeType = BridgeType.NONE)
+@Transactional(bridgeType = BridgeType.NONE)
 @Stateless
 @WebService(serviceName = "ATStatefullService", portName = "ATStatefull",
         name = "AT", targetNamespace = "http://www.jboss.com/functional/atstatefull/")

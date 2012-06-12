@@ -4,9 +4,8 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.AT;
+import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
@@ -18,7 +17,7 @@ import java.util.Map;
  * @Author paul.robinson@redhat.com 06/04/2012
  */
 @Stateless
-@AT
+@Transactional
 public class Service1Impl implements Service1 {
 
     @DataManagement

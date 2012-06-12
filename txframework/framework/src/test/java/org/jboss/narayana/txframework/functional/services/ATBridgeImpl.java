@@ -24,7 +24,7 @@
 package org.jboss.narayana.txframework.functional.services;
 
 
-import org.jboss.narayana.txframework.api.annotation.transaction.AT;
+import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 
 import javax.ejb.*;
@@ -38,7 +38,7 @@ import javax.jws.soap.SOAPBinding;
  */
 @Stateless
 @Remote(ATBridge.class)
-@AT
+@Transactional
 @WebService(serviceName = "ATBridgeService", portName = "ATBridge",
         name = "ATBridge", targetNamespace = "http://www.jboss.com/functional/at/bridge")
 @SOAPBinding(style = SOAPBinding.Style.RPC)

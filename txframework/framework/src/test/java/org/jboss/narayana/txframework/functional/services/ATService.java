@@ -24,7 +24,7 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
-import org.jboss.narayana.txframework.api.annotation.transaction.AT;
+import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
-@AT(bridgeType = BridgeType.NONE)
+@Transactional(bridgeType = BridgeType.NONE)
 @WebService(serviceName = "ATService", portName = "AT", name = "AT", targetNamespace = "http://www.jboss.com/functional/at/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATService

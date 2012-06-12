@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface BA
+public @interface Compensatable
 {
     /**
      * the specific WSBA completion protocol which should be used for a WSBA service participant
