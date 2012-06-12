@@ -223,6 +223,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.11</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>
@@ -239,6 +240,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.11</version>
 						<configuration>
 							<!-- Prevent test and server output appearing in console. -->
 							<redirectTestOutputToFile>true</redirectTestOutputToFile>

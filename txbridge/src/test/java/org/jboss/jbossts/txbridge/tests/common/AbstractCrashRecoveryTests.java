@@ -57,7 +57,7 @@ public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests {
     protected void rebootServer(ContainerController controller) throws Exception {
 
         instrumentor.removeLocalState();
-        File rulesFile = File.createTempFile("jbosstxbridgetests", ".btm");
+        File rulesFile = File.createTempFile("jbosstxbridgetests", "");
         rulesFile.deleteOnExit();
         instrumentor.setRedirectedSubmissionsFile(rulesFile);
 
