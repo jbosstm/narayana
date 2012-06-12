@@ -15,7 +15,6 @@
   <xi:include href="Trailmap.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="Failure_Recovery.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="JTA_And_JTS.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="Tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="ORB_Specific_Configurations.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="IDL_Definitions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="References.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
