@@ -28,8 +28,7 @@ import javax.jws.soap.SOAPBinding;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-03
  */
-@WebService(targetNamespace = "http://service.outbound.tests.txbridge.jbossts.jboss.org/",
-        portName = "TestServiceImplPort")
+@WebService(name = "TestServiceImpl", targetNamespace = "http://client.outbound.tests.txbridge.jbossts.jboss.org/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface TestService {
     public void doNothing();
