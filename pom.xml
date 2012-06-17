@@ -965,7 +965,7 @@
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <findbugs.skip>true</findbugs.skip>
-    <jboss-as.version>7.1.2.Final-SNAPSHOT</jboss-as.version>
+    <jboss-as.version>7.2.0.Alpha1-SNAPSHOT</jboss-as.version>
         <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
         <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>
   </properties>

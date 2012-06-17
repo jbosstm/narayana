@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.net.UnknownHostException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 
 public class JDBCProfileStore
 {
@@ -182,7 +184,11 @@ public class JDBCProfileStore
 
             if(!file.exists()) {
                 // no host specific profile, fallback to a default one
-                file = new File(baseDir + File.separator + "default" + File.separator + "JDBCProfiles");
+                if (isIPv6()) // placeholder for using a different config for IPv6 testing
+                    file = new File(baseDir + File.separator + "default" + File.separator + "JDBCProfiles");
+                else
+                    file = new File(baseDir + File.separator + "default" + File.separator + "JDBCProfiles");
+
             }
 
 			FileInputStream profileFileInputStream = new FileInputStream(file);
@@ -203,6 +209,16 @@ public class JDBCProfileStore
 		}
 
 		return hostName;
+	}
+
+	private static boolean isIPv6() throws UnknownHostException {
+		try {
+			if (InetAddress.getLocalHost() instanceof Inet6Address)
+				return true;
+		} catch (final UnknownHostException uhe) {
+		}
+
+		return false;
 	}
 
 	private static Properties _profile = null;

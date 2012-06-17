@@ -23,6 +23,12 @@
   <packaging>jar</packaging>
   <name>xts sar</name>
   <description>xts sar</description>
+  <properties>
+    <buildType>11</buildType>
+    <general.server.jvm.args>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</general.server.jvm.args>
+    <ipv4.server.jvm.args></ipv4.server.jvm.args>
+    <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
+  </properties>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -91,7 +97,4 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  <properties>
-    <buildType>11</buildType>
-  </properties>
 </project>
