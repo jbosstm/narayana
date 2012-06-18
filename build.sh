@@ -146,7 +146,7 @@ main() {
     fi
 
     #  Need to specify planet57/buildmagic protocol handler package.
-    MVN_OPTS="$MVN_OPTS -Djava.protocol.handler.pkgs=org.jboss.net.protocol"
+    MVN_OPTS="-Djava.protocol.handler.pkgs=org.jboss.net.protocol"
 
     #  Setup some build properties
     MVN_OPTS="$MVN_OPTS -Dbuild.script=$0"

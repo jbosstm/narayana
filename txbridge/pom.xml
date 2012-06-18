@@ -24,18 +24,15 @@
     <description>${project.artifactId}</description>
     <packaging>jar</packaging>
     <properties>
-<!--
         <version.jbossas>7.1.1.Final</version.jbossas>
--->
-        <version.jbossas>${jboss-as.version}</version.jbossas>
         <version.jbossts>4.16.4.Final-SNAPSHOT</version.jbossts>
         <version.junit>4.8.2</version.junit>
         <version.byteman>2.0.1</version.byteman>
         <version.apache.httpcomponents>4.1.2</version.apache.httpcomponents>
         <byteman.home>${project.build.directory}/byteman</byteman.home>
-        <ipv4.server.jvm.args></ipv4.server.jvm.args>
-        <general.server.jvm.args>-Xms64m -Xmx512m -XX:MaxPermSize=256m</general.server.jvm.args>
-        <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
+        <general.server.jvm.args>
+            -Xms64m -Xmx512m -XX:MaxPermSize=256m
+        </general.server.jvm.args>
         <byteman.server.jvm.args>
             -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true -Dorg.jboss.byteman.contrib.dtest.rmiregistry.port=1199
             -Djboss.modules.system.pkgs=org.jboss.byteman
@@ -255,44 +252,7 @@
 							<!-- System properties passed to test cases -->
 							<systemPropertyVariables>
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
-								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
-							</systemPropertyVariables>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-					<version>${version.jbossas}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>arqIPv6</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.11</version>
-						<configuration>
-							<!-- Prevent test and server output appearing in console. -->
-							<redirectTestOutputToFile>true</redirectTestOutputToFile>
-							<enableAssertions>true</enableAssertions>
-							<!-- Tests to execute. -->
-							<includes>
-								<include>**/*Tests.java</include>
-							</includes>
-							<!-- System properties passed to test cases -->
-							<systemPropertyVariables>
-								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
+								<server.jvm.args>${general.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 							</systemPropertyVariables>
 						</configuration>
