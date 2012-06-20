@@ -63,6 +63,13 @@ export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
 
 cd ${WORKSPACE}
 
+#0. TXFramework Tests
+cp ./rest-tx/webservice/target/rest-tx-web-*.war $JBOSS_HOME/standalone/deployments
+./build.sh -f ./txframework/pom.xml $mvn_arqprof "$@" test
+if [ "$?" != "0" ]; then
+        exit -1
+fi
+
 #1.WSTX11 INTEROP and UNIT TESTS
 ./build.sh -f XTS/localjunit/pom.xml $mvn_arqprof "$@" test
 if [ "$?" != "0" ]; then
