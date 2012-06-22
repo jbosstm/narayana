@@ -40,7 +40,8 @@ import com.jboss.transaction.txinterop.proxy.ProxyConversation;
  */
 @RunWith(Arquillian.class)
 public class BATest {
-    private String participantURI = "http://localhost:8080/interop11/BAParticipantService";
+    private String participantURI = "http://" + WarDeployment.getLocalHost() +
+        ":8080/interop11/BAParticipantService";
     private int testTimeout = 120000;
     private boolean asyncTest = true;
     private String name = "BATest";

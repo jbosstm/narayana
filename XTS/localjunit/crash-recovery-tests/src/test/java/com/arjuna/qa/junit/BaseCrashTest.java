@@ -1,6 +1,10 @@
 package com.arjuna.qa.junit;
 
 import java.io.File;
+import java.net.UnknownHostException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
@@ -19,6 +23,7 @@ public class BaseCrashTest
 {
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
     protected String BytemanArgs = "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
+    protected String iPv6Args = "-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] ";
     protected String javaVmArguments;
     protected String testName;
     protected String scriptName;
@@ -44,7 +49,13 @@ public class BaseCrashTest
     @Before
     public void setUp()
     {
-        javaVmArguments = BytemanArgs.replace("@BMScript@", scriptName);
+        if (isIPv6())
+            javaVmArguments = iPv6Args + BytemanArgs.replace("@BMScript@", scriptName);
+        else
+            javaVmArguments = BytemanArgs.replace("@BMScript@", scriptName);
+
+        System.out.println("Starting arquillian with java VM args: " +
+	    javaVmArguments + " isIPv6: " + isIPv6());
 
         File file = new File("testlog");
         if (file.isFile() && file.exists())
@@ -178,4 +189,15 @@ public class BaseCrashTest
         }
         return true;
     }
+
+    private static boolean isIPv6() {
+        try {
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
+                return true;
+        } catch (final UnknownHostException uhe) {
+        }
+
+        return false;
+    }
+
 }

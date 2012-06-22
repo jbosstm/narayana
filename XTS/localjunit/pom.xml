@@ -16,6 +16,13 @@
 	<packaging>pom</packaging>
 	<name>localjunit tests for xts</name>
 	<description>localjunit tests for xts</description>
+        <properties>
+            <buildType>11</buildType>
+            <general.server.jvm.args>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</general.server.jvm.args>
+            <ipv4.server.jvm.args></ipv4.server.jvm.args>
+            <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
+            <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
+        </properties>
 
 	<dependencies>
 		<dependency>
@@ -75,7 +82,8 @@
 							<!--
 							  Used in arquillian.xml
 							-->
-							  <server.jvm.args>${jvm.args.ip}</server.jvm.args>
+							  <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
+                                                          <node.address>127.0.0.1</node.address>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>
@@ -105,7 +113,8 @@
 							<!--
 							  Used in arquillian.xml
 							-->
-							  <server.jvm.args>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</server.jvm.args>
+							  <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
+                                                          <node.address>[::1]</node.address>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>
