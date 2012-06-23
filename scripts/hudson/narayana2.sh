@@ -88,9 +88,9 @@ function xts_tests {
   export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
   echo "JBOSS_HOME=$JBOSS_HOME"
 
-  [ $wstx11 = 1 ] && xts_wstx11_tests
-  [ $xts_crash_rec = 1 ] && xts_crash_rec_tests
-  [ $txbridge = 1 ] && tx_bridge_tests
+  [ $wstx11 = 1 ] && xts_wstx11_tests $@
+  [ $xts_crash_rec = 1 ] && xts_crash_rec_tests $@
+  [ $txbridge = 1 ] && tx_bridge_tests $@
 }
 
 function qa_tests {
