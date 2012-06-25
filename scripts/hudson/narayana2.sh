@@ -67,7 +67,7 @@ function xts_wstx11_tests {
 }
 function xts_crash_rec_tests {
   echo "#2 XTS CRASH RECOVERY TESTS"
-  ./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean test
+  ./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
   [ $? = 0 ] || fatal "XTS: XTS CRASH RECOVERY TESTS failed"
 
   (cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
@@ -79,7 +79,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean test
+  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 function xts_tests {
