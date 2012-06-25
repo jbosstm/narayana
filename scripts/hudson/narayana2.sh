@@ -75,7 +75,12 @@ function xts_crash_rec_tests {
 }
 function tx_bridge_tests {
   echo "XTS: TXBRIDGE TESTS"
-  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml
+  CONF="${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml"
+  grep recovery-listener "$CONF"
+  sed -e s/recovery-listener=\"true\"//g -i $CONF
+  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
+
+#  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"

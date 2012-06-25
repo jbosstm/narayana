@@ -54,6 +54,9 @@ public class BaseCrashTest
         else
             javaVmArguments = BytemanArgs.replace("@BMScript@", scriptName);
 
+        System.out.println("Starting arquillian with java VM args: " +
+	    javaVmArguments + " isIPv6: " + isIPv6());
+
         File file = new File("testlog");
         if (file.isFile() && file.exists())
         {
@@ -189,7 +192,7 @@ public class BaseCrashTest
 
     private static boolean isIPv6() {
         try {
-            if (InetAddress.getLocalHost() instanceof Inet6Address)
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
                 return true;
         } catch (final UnknownHostException uhe) {
         }
