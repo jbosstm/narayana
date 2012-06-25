@@ -131,12 +131,7 @@ public class ATTest {
     
     @Test
     public void testAT5_5() throws Exception {
-        if (WarDeployment.isIPv6()) {
-            // ARJUNA045035: comms timeout attempting to prepare WS-AT participant
-            System.out.println("TODO. WARNING: skipping testAT5_5 in IPv6 mode");
-        } else {
-            test.testAT5_5();
-        }
+        test.testAT5_5();
     }
     
     @Test
