@@ -28,7 +28,8 @@
         <version.jbossts>4.16.4.Final-SNAPSHOT</version.jbossts>
         <version.junit>4.8.2</version.junit>
         <version.byteman>2.0.1</version.byteman>
-        <version.apache.httpcomponents>4.1.2</version.apache.httpcomponents>
+        <!--<version.apache.httpcomponents>4.1.2</version.apache.httpcomponents>-->
+        <version.apache.httpcomponents>4.2.1</version.apache.httpcomponents>
         <byteman.home>${project.build.directory}/byteman</byteman.home>
         <general.server.jvm.args>
             -Xms64m -Xmx512m -XX:MaxPermSize=256m
@@ -297,7 +298,7 @@
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
 								<server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
-								<node.address>::1</node.address>
+								<node.address>[::1]</node.address>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>

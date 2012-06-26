@@ -78,7 +78,7 @@
                             <workingDirectory>.</workingDirectory>
                             <systemPropertyVariables combine.children="append">
                                 <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
-                                <node.address>::1</node.address>
+                                <node.address>[::1]</node.address>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
