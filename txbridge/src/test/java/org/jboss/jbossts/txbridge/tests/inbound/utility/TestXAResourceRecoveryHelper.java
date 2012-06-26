@@ -59,7 +59,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
         return instance;
     }
 
-    protected TestXAResourceRecoveryHelper() {
+    public TestXAResourceRecoveryHelper() {
     }
 
     /**
