@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class TestAll {
-	private String baseUrl = "http://localhost:8080";
+	private String baseUrl = "http://" + getLocalHost() + ":8080";
     private String reportDir = "target/surefire-reports";
 
 	private int timeout = 10 * 1000;
@@ -173,5 +173,20 @@ public class TestAll {
 			result = false;
 		}
 		assertTrue(result);
+	}
+
+	static String getLocalHost() {
+		return isIPv6() ? "[::1]" : "localhost";
+	}
+
+	static boolean isIPv6() {
+		try {
+			if (InetAddress.getLocalHost() instanceof Inet6Address
+			    || System.getenv("IPV6_OPTS") != null)
+				return true;
+		} catch (final UnknownHostException uhe) {
+		}
+
+		return false;
 	}
 }
