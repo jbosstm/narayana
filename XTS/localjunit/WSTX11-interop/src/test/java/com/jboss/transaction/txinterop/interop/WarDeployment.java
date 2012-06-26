@@ -111,7 +111,7 @@ public class WarDeployment {
 
     static boolean isIPv6() {
         try {
-            if (InetAddress.getLocalHost() instanceof Inet6Address)
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
                 return true;
         } catch (final UnknownHostException uhe) {
         }
