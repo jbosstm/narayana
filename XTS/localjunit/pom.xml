@@ -122,6 +122,7 @@
 		</profile>
 	</profiles>
 	<modules>
+		<module>tests</module>
 		<module>WSAS</module>
 		<module>WSCF</module>
 		<module>WSTX</module>

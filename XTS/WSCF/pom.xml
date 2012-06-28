@@ -24,27 +24,7 @@
   <name>wscf11</name>
   <description>wscf11</description>
   <build>
-    <sourceDirectory>classes11</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/classes</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <sourceDirectory>classes</sourceDirectory>
   </build>
   <dependencies>
     <dependency>

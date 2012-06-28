@@ -28,6 +28,7 @@
 					<target>1.6</target>
 					<includes>
 						<include>com/arjuna/wsc11/**/*.java</include>
+						<include>com/arjuna/wsc/tests/TestUtil.java</include>
 					</includes>
 				</configuration>
 			</plugin>
