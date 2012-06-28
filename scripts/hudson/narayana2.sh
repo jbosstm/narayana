@@ -58,9 +58,9 @@ function xts_wstx11_tests {
 
   if [ $WSTX_MODULES ]; then
     echo "BUILDING SPECIFIC WSTX11 modules"
-    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS test
+    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS clean test
   else
-    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
+    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean test
   fi
 
   [ $? = 0 ] || fatal "XTS: WSTX11 INTEROP and UNIT TESTS failed"

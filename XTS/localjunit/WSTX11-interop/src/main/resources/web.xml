@@ -44,7 +44,7 @@
     <!-- base URL for location of Interop 1.1 services -->
     <context-param>
         <param-name>BaseURI</param-name>
-        <param-value>http://localhost:8080/interop11</param-value>
+        <param-value>http://[::1]:8080/interop11</param-value>
     </context-param>
 
     <!-- Initialise Interop 11 services -->
@@ -93,7 +93,7 @@
          -->
         <init-param>
             <param-name>proxyServiceURI</param-name>
-            <param-value>http://localhost:8080/interop11/proxy</param-value>
+            <param-value>http://[::1]:8080/interop11/proxy</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
