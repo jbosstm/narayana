@@ -129,5 +129,7 @@
 		<module>WS-T</module>
 		<module>WSTX11-interop</module>
 		<module>WSTFSC07-interop</module>
+        <module>xtstest</module>
+        <module>crash-recovery-tests</module>
 	</modules>
 </project>

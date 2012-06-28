@@ -70,19 +70,14 @@ if [ "$?" != "0" ]; then
         exit -1
 fi
 
-#1.WSTX11 INTEROP and UNIT TESTS
-./build.sh -f XTS/localjunit/pom.xml $mvn_arqprof "$@" test
+#1.WSTX11 INTEROP and UNIT TESTS and CRASH RECOVERY TESTS
+./build.sh -f XTS/localjunit/pom.xml $mvn_arqprof "$@" clean install
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-#2.XTS CRASH RECOVERY TESTS
-./build.sh -f XTS/sar/crash-recovery-tests/pom.xml $mvn_arqprof "$@" clean test
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-(cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
+#2.CHECK CRASH REC OUTPUT
+(cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
 if [ "$?" != "0" ]; then
 	exit -1
 fi

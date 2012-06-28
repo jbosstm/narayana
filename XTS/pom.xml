@@ -51,7 +51,6 @@
     <module>recovery</module>
     <module>bridge</module>
     <module>sar</module>
-	<module>sar/tests</module>
     <module>jbossxts</module>
     <module>localjunit</module>
   </modules>
