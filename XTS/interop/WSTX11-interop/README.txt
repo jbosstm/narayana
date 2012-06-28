@@ -1,7 +1,5 @@
 This latest version of the WSTX11 test code uses the JaxWS based
-implementation of XTS 1.1 (JBossTS 4.4.CR1 onwards) which runs on
-JBoss AS 5.0.0.CR1 with the default deployed version of Web Services,
-JBossWS 3.0.2 Native.
+implementation of XTS which runs on AS7.
 
 Implementation of this version of the interop code required modifying
 the interop Initiator and Participant services so that they

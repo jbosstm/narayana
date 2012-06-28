@@ -10,8 +10,7 @@ A word on version compatibility:
 --------------------------------
 
 This version, like the JBossTS it is bundled with, targets JBossAS 7. It probably will not work on earlier releases.
-Ideally the txbridge should be used in conjunction with the JBossTS release it is included in, although it may
-work with JBossTS 4.13.1 or later. This version won't work on any earlier release of JBossTS.
+The txbridge should be used in conjunction with the JBossTS release it is included in.
 
 Building:
 ---------

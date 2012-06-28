@@ -22,20 +22,8 @@ Last update : $Id: Readme 2342 2006-03-30 13:06:17Z  $
 
 "3rd party" libraries:
 
-classes12.jar		Oracle 9.2
-commons-logging-1.1.jar	Apache Jakarta Commons Logging Framework version 1.1.0
-connector-api.jar
-jmxri.jar		JMX reference implementation
-jndi.jar		JNDI
-jta-1_1-classes.zip	JTA specification 1.1
-junit.jar		JUnit test framework, 3.8.2
-log4j-1.2.14.jar		LOG4j version 1.2.14
-wrapper.jar		Java Service Wrapper 3.2.3
-xalan.jar
-xercesImpl.jar		Xerces 2.3.0
-xmlParserAPIs.jar	Xerces 2.3.0
-byteman.jar		1.2.2
-emma.jar, emma_ant.jar  emma code coverage tool 2.0.5312 license: http://www.eclipse.org/legal/cpl-v10.html
+
+emma.jar  emma code coverage tool 2.0.5312 license: http://www.eclipse.org/legal/cpl-v10.html
 
 n.b. emma.jar has been patched to correct its handling of local
 variable tables. this incorporates a patch supplied by mdlavin

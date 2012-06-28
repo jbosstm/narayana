@@ -3,7 +3,7 @@ XTS Service Tests
 
 This directory contains code which supports testing of the XTS sar
 deployment. The build process produces a web archive which can be
-deployed into a JBoss AS 5.0. The deployed code is highly configurable
+deployed into a JBoss AS7. The deployed code is highly configurable
 allowing it to support a variety of different tests
 
 A system property can set to configure automatic execution of a
