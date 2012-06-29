@@ -59,7 +59,13 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
         return instance;
     }
 
-    protected TestXAResourceRecoveryHelper() {
+    /**
+     * This is required to be public (not protected) because of 
+     * Caused by: org.jboss.as.server.deployment.DeploymentUnitProcessingException: JBAS014227: EJB TestXAResourceRecoveryHelper of type org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResourceRecoveryHelper must have public default constructor
+     * Clearly two instances will be created, one by the container for postConstruct/preDestroy and one by ourselves but as they both use getInstance() the code should work fine. 
+     * This is not a new way of working it would have been like that before.
+     */
+    public TestXAResourceRecoveryHelper() {
     }
 
     /**
