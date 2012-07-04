@@ -12,7 +12,11 @@
 			<property name="executionType">REMOTE</property>
 		</protocol>
 		<configuration>
+			<property name="allowConnectingToRunningServer">true</property>
+                        <property name="javaVmArguments">${server.jvm.args}</property>
 			<property name="serverConfig">../../docs/examples/configs/standalone-xts.xml</property>
+                        <property name="managementAddress">${node.address}</property>
+
 			<!--
 			<property name="javaVmArguments">-Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/Running.txt,boot:target/test-classes/lib/byteman.jar,listener:true</property>
 			

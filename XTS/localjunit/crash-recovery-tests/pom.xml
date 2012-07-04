@@ -16,16 +16,74 @@
     <artifactId>localjunit-crash-recovery-tests</artifactId>
     <packaging>jar</packaging>
     <name>xts crash recovery tests</name>
-	<description>xts crash recovery tests</description>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<forkMode>once</forkMode>
-              		<workingDirectory>.</workingDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <description>xts crash recovery tests</description>
+    <properties>
+        <general.server.jvm.args>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</general.server.jvm.args>
+        <ipv4.server.jvm.args></ipv4.server.jvm.args>
+        <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
+        <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
+    </properties>
+
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>arq</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
+                            <systemPropertyVariables combine.children="append">
+                                <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
+                                <node.address>127.0.0.1</node.address>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>arqIPv6</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
+                            <systemPropertyVariables combine.children="append">
+                                <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
+                                <node.address>[::1]</node.address>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

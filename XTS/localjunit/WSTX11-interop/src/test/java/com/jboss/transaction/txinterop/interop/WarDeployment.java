@@ -49,6 +49,10 @@ import com.jboss.transaction.txinterop.webservices.bainterop.server.BAInitiatorI
 import com.jboss.transaction.txinterop.webservices.handlers.CoordinationContextHandler;
 import com.jboss.transaction.txinterop.webservices.soapfault.client.SoapFaultClient;
 
+import java.net.UnknownHostException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+
 /**
  * @author zhfeng
  *
@@ -99,5 +103,19 @@ public class WarDeployment {
                 .addAsWebInfResource("web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsManifestResource(new StringAsset("Dependencies: org.jboss.jts,org.jboss.ws.api,javax.xml.ws.api,org.jboss.xts,org.dom4j,org.jboss.ws.jaxws-client services export,org.jboss.ws.cxf.jbossws-cxf-client services export,com.sun.xml.bind services export\n"), "MANIFEST.MF");
+    }
+
+    static String getLocalHost() {
+        return isIPv6() ? "[::1]" : "localhost";
+    }
+
+    static boolean isIPv6() {
+        try {
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
+                return true;
+        } catch (final UnknownHostException uhe) {
+        }
+
+        return false;
     }
 }

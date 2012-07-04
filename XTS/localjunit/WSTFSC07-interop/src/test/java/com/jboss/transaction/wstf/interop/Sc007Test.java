@@ -36,6 +36,9 @@ import org.junit.runner.RunWith;
 
 import com.jboss.transaction.wstf.proxy.ProxyConversation;
 
+import java.net.UnknownHostException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 
 /**
  * @author zhfeng
@@ -43,7 +46,7 @@ import com.jboss.transaction.wstf.proxy.ProxyConversation;
  */
 @RunWith(Arquillian.class)
 public class Sc007Test {
-    private String participantURI = "http://localhost:8080/sc007/ParticipantService";
+    private String participantURI = "http://" + getLocalHost() + ":8080/sc007/ParticipantService";
     
     @Inject
     Sc007TestCase test;
@@ -161,4 +164,19 @@ public class Sc007Test {
     public void test3_11() throws Exception {
         test.test3_11();
     }
+
+    static String getLocalHost() {
+        return isIPv6() ? "[::1]" : "localhost";
+    }
+
+    static boolean isIPv6() {
+        try {
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
+                return true;
+        } catch (final UnknownHostException uhe) {
+        }
+
+        return false;
+    }
+
 }

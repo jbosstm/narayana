@@ -89,6 +89,7 @@ public class ProxyURIRewriting
         final StringBuffer result = new StringBuffer() ;
         final int length = uri.length() ;
         int separatorCount = 0 ;
+        boolean seenBracket = false;
         for(int count = 0 ; count < length ; count++)
         {
             final char ch = uri.charAt(count) ;
@@ -96,13 +97,19 @@ public class ProxyURIRewriting
             {
                 if (ch == '-')
                 {
-                    result.append("/") ;
+                    result.append('/') ;
                     separatorCount++ ;
                     continue ;
                 }
                 else if (ch == '_')
                 {
-                    result.append(":") ;
+                    result.append(':') ;
+                    continue ;
+                }
+                else if (ch == '~')
+                {
+                    result.append(seenBracket ? ']' : '[') ;
+                    seenBracket = !seenBracket;
                     continue ;
                 }
                 result.append(ch) ;
@@ -138,11 +145,15 @@ public class ProxyURIRewriting
                 if (ch == '/')
                 {
                     separatorCount++ ;
-                    result.append("-") ;
+                    result.append('-') ;
                 }
                 else if (ch == ':')
                 {
-                    result.append("_") ;
+                    result.append('_') ;
+                }
+                else if (ch == '[' || ch == ']')
+                {
+                    result.append('~') ;
                 }
                 else
                 {
