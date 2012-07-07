@@ -112,9 +112,10 @@ public class Transaction extends AtomicAction
         if (findParticipant(terminateUrl) != null)
             return null;    // already enlisted
 
-        RESTRecord p = new RESTRecord(coordinatorUrl, participantUrl, terminateUrl, get_uid().fileStringForm());
+        String txId = get_uid().fileStringForm();
+        RESTRecord p = new RESTRecord(coordinatorUrl, participantUrl, terminateUrl, txId);
         String coordinatorId = p.get_uid().fileStringForm();
-        recoveryUrl = recoveryUrlBase + coordinatorId;
+        recoveryUrl = recoveryUrlBase + txId + '/' + coordinatorId;
         p.setRecoveryUrl(recoveryUrl);
 
         if (add(p) != AddOutcome.AR_REJECTED)

@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>restat-util</artifactId>
   <packaging>jar</packaging>
-  <name>Support utils for using the REST API for Atomic Transactions</name>
+  <name>Support utils for using the REST-AT</name>
   <description>Provides Utility methods to support RESTAT</description>
   <properties>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
