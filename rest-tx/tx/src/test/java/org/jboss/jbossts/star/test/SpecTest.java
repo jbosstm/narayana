@@ -34,7 +34,7 @@ import org.junit.Test;
 
 /*
  * The comments that are preceded by line numbers refer to text in version 4
- * of the specification
+ * of the specification - TODO we are now at draft 8
  */
 public class SpecTest extends BaseTest {
     // jax-rs does not support TRACE, CONNECT and PATCH
@@ -421,7 +421,8 @@ public class SpecTest extends BaseTest {
             String er = txn.enlist(PURL);
             Assert.fail("Should not be able to enlist a resource after 2PC has started");
         } catch (HttpResponseException e) {
-            Assert.assertEquals(e.getActualResponse(), HttpURLConnection.HTTP_FORBIDDEN);
+            // changed assert to match version 7 of the specification
+            Assert.assertEquals(e.getActualResponse(), HttpURLConnection.HTTP_PRECON_FAILED);
         }
     }
 

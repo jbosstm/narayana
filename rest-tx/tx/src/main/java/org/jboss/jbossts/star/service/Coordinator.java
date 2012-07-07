@@ -20,15 +20,13 @@
  */
 package org.jboss.jbossts.star.service;
 
+import java.util.*;
 import java.util.Map.Entry;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -48,6 +46,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.jboss.jbossts.star.provider.ResourceNotFoundException;
 import org.jboss.jbossts.star.provider.TransactionStatusException;
 import org.jboss.jbossts.star.resource.Transaction;
@@ -62,6 +65,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 public class Coordinator
 {
     protected final static Logger log = Logger.getLogger(Coordinator.class);
+    private final static String REST_TXN_TYPE = new AtomicAction().type(); //"StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction";
 
     private static Map<String, Transaction> transactions = new ConcurrentHashMap<String, Transaction>();
     // each participant may only be enlisted in one transaction
@@ -104,7 +108,7 @@ public class Coordinator
 
     /**
      * Performing a GET on the transaction url returns its status
-     * @see org.jboss.jbossts.star.util.TxSupport.TX_ACTIVE
+     * @see org.jboss.jbossts.star.util.TxSupport#TX_ACTIVE
      *  etc for the format of the returned content
      * @param id URL template parameter for the id of the transaction
      * @return content representing the status of the transaction
@@ -128,6 +132,7 @@ public class Coordinator
      * @param id transaction id
      * @return 403
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     @DELETE
     @Path(TxSupport.TX_SEGMENT + "/{id}")
     public Response deleteTransaction(@PathParam("id") String id)
@@ -137,22 +142,27 @@ public class Coordinator
 
     // Performing HEAD, GET, POST, DELETE and OPTIONS on the transaction
     // url generates a 400 status code
+    @SuppressWarnings({"UnusedDeclaration"})
     @HEAD @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt1(@PathParam("TxId")String txId) {
         return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
+    @SuppressWarnings({"UnusedDeclaration"})
     @GET @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt2(@PathParam("TxId")String txId) {
         return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
+    @SuppressWarnings({"UnusedDeclaration"})
     @POST @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt3(@PathParam("TxId")String txId) {
         return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
+    @SuppressWarnings({"UnusedDeclaration"})
     @DELETE @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt4(@PathParam("TxId")String txId) {
         return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
     }
+    @SuppressWarnings({"UnusedDeclaration"})
     @OPTIONS @Path(TxSupport.TX_SEGMENT + "/{TxId}/terminate")
     public Response tt5(@PathParam("TxId")String txId) {
         return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
@@ -169,15 +179,16 @@ public class Coordinator
      * and one used for registering durable participation in the transaction (typically referred
      * to as the server). These linked URLs can be of arbitrary format.
      * The rel names for the links are:
-     * @see TxSupport.TERMINATOR_LINK and @see TxSupport.PARTICIPANT_LINK
+     * @see TxSupport#TERMINATOR_LINK and @see TxSupport.PARTICIPANT_LINK
      *
      * @param info uri context
      * @param headers http headers
      * @param content empty if no transaction timeout is required otherwise the number of milliseconds
      * after which the transaction is eligible for being timed out. The content should have the format
-     * @ see TxSupport.TIMEOUT_PROPERTY=<milliseconds>
+     * @ see TxSupport#TIMEOUT_PROPERTY=<milliseconds>
      * @return http status code
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     @POST
     @Path(TxSupport.TX_SEGMENT + "/")
     @Consumes(TxSupport.POST_MEDIA_TYPE)
@@ -194,11 +205,9 @@ public class Coordinator
 
         // round up the timeout from milliseconds to seconds
         if (timeout != 0) {
-            if (timeout == 0)
-                timeout = 1;
-            else if (timeout < 0)
+            if (timeout < 0)
                 timeout = 0;
-			else
+            else
             	timeout /= 1000;
         }
 		
@@ -247,9 +256,6 @@ public class Coordinator
         log.trace("coordinator txn head request for txn " + id);
         Transaction tx = getTransaction(id);
 
-        if (tx == null)
-            return Response.status(HttpURLConnection.HTTP_GONE).build();
-
         Response.ResponseBuilder builder = Response.ok();
 
         TxSupport.addLinkHeader(builder, info, TxSupport.TERMINATOR_LINK, TxSupport.TERMINATOR_LINK, "terminate");
@@ -272,7 +278,7 @@ public class Coordinator
      * @param txId URL template component containing the transaction identifier
      * @param fault mechanism for injecting faults TODO use byteman instead
      * @param content body of the request indicating a commit or abort request
-     *  @see TxSupport.COMMITTED etc
+     *  @see TxSupport#COMMITTED etc
      * @return http response code
     */
     @PUT
@@ -285,7 +291,15 @@ public class Coordinator
         String how = TxSupport.getStringValue(content, TxSupport.STATUS_PROPERTY);
         String status;
         int scRes;
-		int ihow;
+        int ihow;
+
+        /*
+         * 275If the transaction no longer exists then an implementation MAY return 410 if the implementation
+         * 276records information about transactions that have rolled back, (not necessary for presumed
+         * 277rollback semantics) but at a minimum MUST return 404.
+         */
+        if (!tx.isRunning())
+            return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
 
 		/*
 			ABORT_ONLY is not in the spec for the same reasons as it's not in the WS-TX and WS-CAF where
@@ -366,6 +380,7 @@ public class Coordinator
 
     /**
      * Register a participant in a tx
+     * @param info  URI info
      * @param txId id of transaction
      * @param content body of request containing URI for driving the participant through completion
      *  (the URI should be unique within the scope of txId)
@@ -377,13 +392,19 @@ public class Coordinator
     {
         log.trace("enlistParticipant request uri " + info.getRequestUri() + " txid: " + txId + " content: " + content);
         Transaction tx = getTransaction(txId);
-        if (tx == null)
-            return Response.status(HttpURLConnection.HTTP_GONE).build();
+
+        /*
+         * If the transaction is not TransactionActive then the implementation MUST return a 412 status
+         * code 
+         */
+        if (!tx.isRunning())
+            return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
+
+//        if (tx == null)
+//            return Response.status(HttpURLConnection.HTTP_GONE).build();
 
         LinkHolder links = new LinkHolder(content);
         String txURI = TxSupport.buildURI(info.getBaseUriBuilder(), info.getPathSegments().get(0).getPath(), info.getPathSegments().get(1).getPath());
-
-
 
         UriBuilder builder = info.getBaseUriBuilder();
         builder.path(info.getPathSegments().get(0).getPath());
@@ -415,8 +436,8 @@ public class Coordinator
      * @return the participant url
      */
     @GET
-    @Path(TxSupport.RC_SEGMENT + "/{RecCoordId}")
-    public Response lookupParticipant(@PathParam("RecCoordId")String enlistmentId)
+    @Path(TxSupport.RC_SEGMENT + "/{TxId}/{RecCoordId}")
+    public Response lookupParticipant(@PathParam("TxId")String txId, @PathParam("RecCoordId")String enlistmentId)
     {
         log.trace("coordinator: lookup: transaction-coordinator/" + enlistmentId);
 
@@ -440,8 +461,8 @@ public class Coordinator
      * @return http status code
      */
     @PUT
-    @Path(TxSupport.RC_SEGMENT + "/{RecCoordId}")
-    public Response replaceParticipant(@PathParam("RecCoordId")String enlistmentId, String content)
+    @Path(TxSupport.RC_SEGMENT + "/{TxId}/{RecCoordId}")
+    public Response replaceParticipant(@PathParam("TxId")String txId, @PathParam("RecCoordId")String enlistmentId, String content)
     {
         LinkHolder links = new LinkHolder(content);
         String terminator = links.get(TxSupport.TERMINATOR_LINK);
@@ -449,6 +470,10 @@ public class Coordinator
         log.trace("coordinator: replace: recovery-coordinator/" + enlistmentId + "?URL=" + terminator);
         if (terminator == null)
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
+
+        // check whether the transaction or log still exists
+        if (!recordExists(txId))
+            return Response.status(HttpURLConnection.HTTP_NOT_FOUND).build();
 
         participants.put(enlistmentId, links);
 
@@ -488,6 +513,60 @@ public class Coordinator
             throw new ResourceNotFoundException("Transaction id not found");
 
         return tx;
+    }
+
+    // Look up all log records for a given type
+    private Set<Uid> getUids(Set<Uid> uids, String type) {
+        try {
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+            InputObjectState states = new InputObjectState();
+
+            if (recoveryStore.allObjUids(type, states) && states.notempty()) {
+                boolean finished = false;
+
+                do {
+                    Uid uid = UidHelper.unpackFrom(states);
+
+                    if (uid.notEquals(Uid.nullUid())) {
+                        uids.add(uid);
+                    } else {
+                        finished = true;
+                    }
+
+                } while (!finished);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return uids;
+    }
+
+/*    private void getRecoveringTransactions(Map<String, Transaction> transactions) {
+        for (Uid uid : getUids(new HashSet<Uid>(), REST_TXN_TYPE)) {
+            Transaction raa = new Transaction(uid);
+
+            raa.activate(); // TODO when is this not safe
+
+            transactions.put(uid.fileStringForm(), raa);
+        }
+    }*/
+
+    // Check whether a participant is recovering
+    private boolean isRecovering(String id) {
+        Set<Uid> uids = getUids(new HashSet<Uid>(), REST_TXN_TYPE);
+
+        for (Uid uid : uids) {
+            if (id.equals(uid.fileStringForm()))
+                return true;
+        }
+
+        return false;
+    }
+
+    // check whether a transaction or log still exists
+    private boolean recordExists(String txId) {
+        return (transactions.containsKey(txId) || isRecovering(txId));
     }
 }
 
