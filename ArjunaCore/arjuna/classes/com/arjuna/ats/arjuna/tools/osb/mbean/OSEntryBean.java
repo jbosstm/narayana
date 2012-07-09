@@ -2,7 +2,9 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
 /**
@@ -70,5 +72,31 @@ public class OSEntryBean implements OSEntryBeanMBean {
 
 	public StringBuilder toString(String prefix, StringBuilder sb) {
 		return sb.append(prefix).append('\t').append(getId()).append('\n');
+	}
+
+	/**
+	 * Remove this record from the ObjectStore
+	 * @return a textual indication of whether the remove operation succeeded
+	 */
+	public String remove() {
+		try {
+			if (StoreManager.getRecoveryStore().remove_committed(getUid(), w.getType())) {
+				w.probe();
+
+				return "Record successfully removed";
+			}
+
+			if (tsLogger.logger.isDebugEnabled())
+				tsLogger.logger.debug("Remove committed failed for uid " + getUid());
+
+			return "Remove committed failed for uid " + getUid();
+		} catch (ObjectStoreException e) {
+			if (tsLogger.logger.isDebugEnabled())
+				tsLogger.logger.debug("Remove committed failed for uid " + getUid()
+				    + " - " + e.getMessage());
+
+			return "Remove committed failed for uid " + getUid()
+			    + " - " + e.getMessage();
+		}
 	}
 }

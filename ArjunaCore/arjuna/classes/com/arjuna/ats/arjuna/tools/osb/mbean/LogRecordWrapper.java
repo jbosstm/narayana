@@ -17,6 +17,11 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 		objName = "type=unitialised,puid=" + uid.fileStringForm();
 	}
 
+	public LogRecordWrapper(ActionBean parent, AbstractRecord rec, ParticipantStatus listType, UidWrapper wrapper) {
+		super(wrapper);
+		init(parent,  rec, listType);
+	}
+
 	public LogRecordWrapper(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
 		init(parent,  rec, listType);
 	}
