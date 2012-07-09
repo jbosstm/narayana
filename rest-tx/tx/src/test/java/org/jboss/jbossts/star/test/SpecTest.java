@@ -21,9 +21,12 @@
 package org.jboss.jbossts.star.test;
 
 import java.net.HttpURLConnection;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import junit.framework.Assert;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
@@ -475,6 +478,34 @@ public class SpecTest extends BaseTest {
     public void testRecoveryURL() throws Exception {
        recovery(true);
        recovery(false);
+    }
+
+    //@Test  // TODO need Arquillian to test this
+    public void testRecoveringParticipant1() throws Exception {
+        TxSupport txn = new TxSupport();
+
+        String[] pUrl = {
+                PURL,
+                PURL + "?fault=CDELAY",
+                PURL,
+        };
+
+        // start another transaction
+        txn.startTx();
+
+        // enlist transactional participants (one of which will delay during commit)
+        for (String url : pUrl)
+            txn.enlist(url);
+
+        AsynchronousCommit async = new AsynchronousCommit(txn);
+        Thread thr = new Thread(async);
+
+        thr.start();
+
+        Thread.sleep(1000); // read committed
+        OSRecordHolder recordHolder = readObjectStoreRecord(new AtomicAction().type());
+        thr.join();
+        writeObjectStoreRecord(recordHolder);
     }
 
     static class AsynchronousCommit implements Runnable {

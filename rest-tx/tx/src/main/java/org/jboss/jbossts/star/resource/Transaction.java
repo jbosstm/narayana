@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import org.jboss.jbossts.star.util.TxSupport;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -52,6 +53,10 @@ public class Transaction extends AtomicAction
         this.initiator = initiator;
     }
 
+    public Transaction(Uid uid) {
+        super(uid);
+    }
+
     @XmlElement
     public String getInitiator()
     {
@@ -67,7 +72,11 @@ public class Transaction extends AtomicAction
     @XmlAttribute
     public String getStatus()
     {
-        return getStatus(status());
+        return getStatus(lookupStatus());
+    }
+
+    protected int lookupStatus() {
+        return status();
     }
 
     public String getStatus(int status)
@@ -98,7 +107,7 @@ public class Transaction extends AtomicAction
         case ActionStatus.RUNNING:
             return TxSupport.RUNNING;
         default:
-            return ""; //ActionStatus.stringForm(super.status());
+            return ""; //ActionStatus.stringForm(lookupStatus());
         }
 
     }
@@ -180,7 +189,7 @@ public class Transaction extends AtomicAction
     }
     public boolean isGone()
     {
-         switch ( status() )
+         switch ( lookupStatus() )
         {
             case ActionStatus.COMMITTED  :
             case ActionStatus.ABORTED    :
@@ -192,7 +201,7 @@ public class Transaction extends AtomicAction
 
     public boolean isFinished()
     {
-        switch ( status() )
+        switch ( lookupStatus() )
         {
             case ActionStatus.COMMITTED  :
             case ActionStatus.H_COMMIT   :
@@ -210,7 +219,7 @@ public class Transaction extends AtomicAction
 
     public boolean isFinishing()
     {
-        switch ( status() )
+        switch ( lookupStatus() )
         {
             case ActionStatus.PREPARING  :
             case ActionStatus.COMMITTING   :
@@ -222,7 +231,7 @@ public class Transaction extends AtomicAction
     }
     public boolean isAlive()
     {
-        switch ( status() )
+        switch ( lookupStatus() )
         {
             case ActionStatus.RUNNING    :
             case ActionStatus.ABORT_ONLY :
@@ -240,7 +249,7 @@ public class Transaction extends AtomicAction
 
     public boolean isRunning()
     {
-        switch ( status() )
+        switch ( lookupStatus() )
         {
             case ActionStatus.RUNNING    :
                 return true;
@@ -251,7 +260,7 @@ public class Transaction extends AtomicAction
 
     public boolean hasHeuristic()
     {
-        switch ( status() )
+        switch ( lookupStatus() )
         {
             case ActionStatus.H_COMMIT   :
             case ActionStatus.H_MIXED    :
@@ -265,7 +274,7 @@ public class Transaction extends AtomicAction
     }
 
     public boolean isAborted() {
-        return status() == ActionStatus.ABORTED;
+        return lookupStatus() == ActionStatus.ABORTED;
     }
 
 

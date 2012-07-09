@@ -42,6 +42,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
@@ -105,7 +112,7 @@ public class BaseTest {
         try {
             threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.infof(e, "Error starting Grizzly");
         }
     }
 
@@ -124,6 +131,59 @@ public class BaseTest {
                 TransactionalResource.class, Coordinator.class);
     }
 
+    private static void clearObjectStore(String type) {
+        try {
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+            InputObjectState states = new InputObjectState();
+
+            if (recoveryStore.allObjUids(type, states) && states.notempty()) {
+                boolean finished = false;
+
+                do {
+                    Uid uid = UidHelper.unpackFrom(states);
+
+                    if (uid.notEquals(Uid.nullUid())) {
+                        recoveryStore.remove_committed(uid, type);
+                    } else {
+                        finished = true;
+                    }
+                } while (!finished);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected boolean writeObjectStoreRecord(OSRecordHolder holder) {
+        try {
+            return StoreManager.getRecoveryStore().write_committed(holder.uid, holder.type, holder.oos);
+        } catch (ObjectStoreException e) {
+            return false;
+        }
+    }
+
+    protected static OSRecordHolder readObjectStoreRecord(String type) {
+        try {
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+            InputObjectState states = new InputObjectState();
+
+            if (recoveryStore.allObjUids(type, states) && states.notempty()) {
+
+                Uid uid = UidHelper.unpackFrom(states);
+
+                if (uid.notEquals(Uid.nullUid())) {
+                    InputObjectState ios = recoveryStore.read_committed(uid, type);
+
+                    return new OSRecordHolder(uid, type, ios);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     @AfterClass
     public static void afterClass() throws Exception {
         if (server != null) {
@@ -140,6 +200,7 @@ public class BaseTest {
     @Before
     public void before() throws Exception {
         TransactionalResource.faults.clear();
+        clearObjectStore(new AtomicAction().type());
     }
 
     @Test
@@ -262,6 +323,7 @@ public class BaseTest {
             return nid;
         }
 
+        @SuppressWarnings({"UnusedDeclaration"})
         @GET
         public String getBasic(@QueryParam("pId") @DefaultValue("")String pId,
                                @QueryParam("context") @DefaultValue("")String ctx,
@@ -304,7 +366,7 @@ public class BaseTest {
                 res = work.recoveryUrl;
             else if ("status".equals(query))
                 res = work.status;
-            else if (res == null && work != null)
+            else if (res == null)
                 res = work.pUrls;
 
             return res; // null will generate a 204 status code (no content)
@@ -335,6 +397,7 @@ public class BaseTest {
             return work.id;
         }
 
+        @SuppressWarnings({"UnusedDeclaration"})
         @PUT
         @Path("{pId}/{tId}/terminate")
         public Response terminate(@PathParam("pId") @DefaultValue("")String pId, @PathParam("tId") @DefaultValue("")String tId, String content) {
@@ -373,8 +436,9 @@ public class BaseTest {
                 else {
                     if ("CDELAY".equals(fault)) {
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(3000);
                         } catch (InterruptedException e) {
+                            // ok
                         }
                     }
                     work.status = TxSupport.COMMITTED;
@@ -392,6 +456,7 @@ public class BaseTest {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
+                            // ok
                         }
                     }
                     work.status = TxSupport.ABORTED;
@@ -407,6 +472,7 @@ public class BaseTest {
             return Response.ok(TxSupport.toStatusContent(work.status)).build();
         }
 
+        @SuppressWarnings({"UnusedDeclaration"})
         @HEAD
         @Path("{pId}/{tId}/terminator")
         public Response getTerminator(@Context UriInfo info, @PathParam("pId") @DefaultValue("")String pId, @PathParam("tId") @DefaultValue("")String tId) {
@@ -417,14 +483,14 @@ public class BaseTest {
 
             Response.ResponseBuilder builder = Response.ok();
 
-            LinkHolder pUrls = new LinkHolder(work.pUrls);
-            String pTerminator = pUrls.get(TxSupport.TERMINATOR_LINK);
+            String pTerminator = new LinkHolder(work.pUrls).get(TxSupport.TERMINATOR_LINK);
 
             TxSupport.setLinkHeader(builder, TxSupport.TERMINATOR_LINK, TxSupport.TERMINATOR_LINK, pTerminator, null);
 
             return builder.build();
         }
 
+        @SuppressWarnings({"UnusedDeclaration"})
         @GET
         @Path("{pId}/{tId}/terminator")
         public String getStatus(@PathParam("pId") @DefaultValue("")String pId, @PathParam("tId") @DefaultValue("")String tId) {
@@ -437,6 +503,7 @@ public class BaseTest {
 
         }
 
+        @SuppressWarnings({"UnusedDeclaration"})
         @DELETE
         @Path("{pId}/{tId}/terminator")
         public void forgetWork(@PathParam("pId") String pId, @PathParam("tId") String tId) {

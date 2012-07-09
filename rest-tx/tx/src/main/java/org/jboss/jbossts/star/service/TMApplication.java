@@ -70,7 +70,7 @@ public class TMApplication extends Application
         }
         catch (Throwable e)
         {
-            log.warn("TM JAX-RS application failed to start: " + e.getMessage());
+            log.warnf("TM JAX-RS application failed to start: %s", e.getMessage());
         }
     }
 

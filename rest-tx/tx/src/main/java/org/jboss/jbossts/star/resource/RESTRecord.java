@@ -58,7 +58,7 @@ public class RESTRecord extends AbstractRecord
         super(new Uid());
 
         if (log.isTraceEnabled())
-            log.trace("RESTRecord(" + coordinatorUrl + ", " + participantUrl + ", " + terminateUrl + ", " + txId + ')');
+            log.tracef("RESTRecord(%s, %s, %s, %s)", coordinatorUrl, participantUrl, terminateUrl, txId);
 
         this.participantUrl = participantUrl;
         this.terminateUrl = terminateUrl;
@@ -113,7 +113,7 @@ public class RESTRecord extends AbstractRecord
 		{
             try
             {
-            	log.info(f + ": for 10 seconds");
+            	log.infof("%s: for 10 seconds", f);
                 Thread.sleep(10000);
             }
             catch (InterruptedException e)
@@ -127,7 +127,7 @@ public class RESTRecord extends AbstractRecord
 	{
         if (fault.equals(f))
 		{
-            log.info(f + ": halt VM");
+            log.infof("%s: halt VM", f);
             Runtime.getRuntime().halt(1);
 		}
 	}
@@ -178,7 +178,7 @@ public class RESTRecord extends AbstractRecord
 
     public boolean forgetHeuristic() {
         if (log.isTraceEnabled())
-            log.trace("forgetting heuristic for " + terminateUrl);
+            log.tracef("forgetting heuristic for %s", terminateUrl);
 
         try {
             new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NO_CONTENT},
@@ -194,7 +194,7 @@ public class RESTRecord extends AbstractRecord
     public int topLevelPrepare()
     {
         if (log.isTraceEnabled())
-            log.trace("prepare " + terminateUrl);
+            log.tracef("prepare %s", terminateUrl);
 
         check_halt(Fault.prepare_halt);
         check_suspend(Fault.prepare_suspend);
@@ -235,7 +235,7 @@ public class RESTRecord extends AbstractRecord
     public int topLevelAbort()
     {
         if (log.isTraceEnabled())
-            log.debug("trace " + terminateUrl);
+            log.debugf("trace %s", terminateUrl);
 
         check_halt(Fault.abort_halt);
         check_suspend(Fault.abort_suspend);
@@ -258,7 +258,7 @@ public class RESTRecord extends AbstractRecord
     public int topLevelCommit()
     {
         if (log.isTraceEnabled())
-            log.trace("commit " + terminateUrl);
+            log.tracef("commit %s", terminateUrl);
 
         if (terminateUrl == null || txId == null)
             return TwoPhaseOutcome.PREPARE_READONLY;
@@ -298,7 +298,7 @@ public class RESTRecord extends AbstractRecord
         try
         {
             if (log.isTraceEnabled())
-                log.trace("committing " + this.terminateUrl);
+                log.tracef("committing %s", this.terminateUrl);
   
             if (!TxSupport.isReadOnly(status)) {
                 txs = new TxSupport();
@@ -309,19 +309,18 @@ public class RESTRecord extends AbstractRecord
                 status = txs.getStatus(body);
 
             	if (log.isTraceEnabled())
-                	log.trace("commit http status: " + txs.getStatus() + " RTS status: " + status);
+                	log.tracef("commit http status: %s RTS status: %s", txs.getStatus(), status);
             } else {
                 status = TxSupport.COMMITTED;
 			}
 
             if (log.isTraceEnabled())
-                log.trace("COMMIT OK at terminateUrl: " + this.terminateUrl);
+                log.tracef("COMMIT OK at terminateUrl: %s", this.terminateUrl);
         }
         catch (HttpResponseException e)
         {
             if (log.isDebugEnabled())
-                log.debug("commit exception: " + e + " HTTP code: " + e.getActualResponse() +
-					" body: " + txs.getBody());
+                log.debugf(e, "commit exception: HTTP code: %s body: %s", e.getActualResponse(), txs.getBody());
 
 			// should result in the recovery system taking over
 			if (e.getActualResponse() == HttpURLConnection.HTTP_UNAVAILABLE) {
@@ -343,14 +342,14 @@ public class RESTRecord extends AbstractRecord
             if (hasParticipantMoved())
             {
                 if (log.isDebugEnabled())
-                    log.debug("participant has moved commit to new terminateUrl " + this.terminateUrl);
+                    log.debugf("participant has moved commit to new terminateUrl %s", this.terminateUrl);
 
                 try
                 {
                     TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
                         TxSupport.toStatusContent(commit ? TxSupport.COMMITTED : TxSupport.ABORTED), null));
                     if (log.isDebugEnabled())
-                        log.debug("Finish OK at new terminateUrl: " + this.terminateUrl);
+                        log.debug("Finish OK at new terminateUrl: %s" + this.terminateUrl);
 
                     status = (commit ? TxSupport.COMMITTED : TxSupport.ABORTED);
 
@@ -359,10 +358,10 @@ public class RESTRecord extends AbstractRecord
                 catch (HttpResponseException e1)
                 {
                     if (log.isTraceEnabled())
-                        log.trace("Finish still failing at new URI: " + e1);
+                        log.tracef(e1, "Finish still failing at new URI: ");
 
                     if (log.isInfoEnabled())
-                        log.debug("participant " + this.terminateUrl + " commit error: " + e1.getMessage());
+                        log.debugf("participant %s commit error: %s", this.terminateUrl, e1.getMessage());
                 }
             }
         }
@@ -383,7 +382,7 @@ public class RESTRecord extends AbstractRecord
         try
         {
             if (log.isTraceEnabled())
-                log.trace("seeing if participant has moved: " + coordinatorID + " recoveryUrl: " + recoveryUrl);
+                log.tracef("seeing if participant has moved: %s  recoveryUrl: %s", coordinatorID, recoveryUrl);
 
             if (recoveryUrl.length() == 0)
                     return false;
@@ -400,7 +399,7 @@ public class RESTRecord extends AbstractRecord
                 this.terminateUrl = terminator;
 
             	if (log.isTraceEnabled())
-                	log.trace("... yes it has - new terminateUrl is " + terminator);
+                	log.tracef("... yes it has - new terminateUrl is %s", terminator);
 
                 return true;
             }
@@ -408,7 +407,7 @@ public class RESTRecord extends AbstractRecord
         catch (HttpResponseException e)
         {
             if (log.isTraceEnabled())
-                log.trace("participant has not moved: " + e);
+                log.tracef(e, "participant has not moved: %s", e.getMessage());
         }
 
         return false;
@@ -451,7 +450,7 @@ public class RESTRecord extends AbstractRecord
             status = os.unpackString();
 
             if (log.isInfoEnabled())
-                log.info("restore_state " + terminateUrl);
+                log.infof("restore_state %s", terminateUrl);
 
             return super.restore_state(os, t);
         }
@@ -522,7 +521,7 @@ public class RESTRecord extends AbstractRecord
         {
             if (f.name().equals(name))
             {
-                log.trace("setFault: " + f + " terminateUrl: " + terminateUrl);
+                log.tracef("setFault: %s terminateUrl: %s", f, terminateUrl);
 
                 fault = f;
                 return;
