@@ -140,7 +140,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                     } else {
                         if (tsLogger.logger.isTraceEnabled())
                             tsLogger.logger.trace("participant record is not a LogRecordWrapper");
-                        lw = createParticipant(rec, listType);
+                        lw = createParticipant(rec, listType, recuids.get(i));
                     }
                 } else {
                     lw = createParticipant(rec, listType);
@@ -163,6 +163,9 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
         return new LogRecordWrapper(this, rec, listType);
     }
 
+    protected LogRecordWrapper createParticipant(AbstractRecord rec, ParticipantStatus listType, UidWrapper wrapper) {
+        return new LogRecordWrapper(this, rec, listType, wrapper);
+    }
     /**
      * See if there is participant Bean corresponding to the given record
      * @param rec the record for the target participant
