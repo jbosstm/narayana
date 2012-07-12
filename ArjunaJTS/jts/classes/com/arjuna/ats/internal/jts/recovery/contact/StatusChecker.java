@@ -257,11 +257,19 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    }
 
 	} catch ( COMM_FAILURE ex_comm) {
+	    if (ORBInfo.getOrbEnumValue() == ORBType.JAVAIDL)
+	    {
+		    // the original application has (probably) died
+		    if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - COMM_FAILURE = dead");
+            }
+		    originalDead = true;
+	    }
 	    /*
 	     * Probably the original application has died, but only just - do
 	     * not mark either way.
 	     */
-	    if (jtsLogger.logger.isDebugEnabled()) {
+	    else if (jtsLogger.logger.isDebugEnabled()) {
             jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - COMM_FAILURE = live");
         }
 
