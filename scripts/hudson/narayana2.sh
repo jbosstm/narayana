@@ -1,34 +1,38 @@
 function fatal {
-        echo "$1"
-        exit -1
+  echo "$1"
+  exit -1
 }
 
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
   echo "Building Narayana"
-  [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
+  cd $WORKSPACE
+  [ $NARAYANA_TESTS == 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
+  [ $IDLJ == 1 ] && NARAYANA_ARGS="$NARAYANA_ARGS -Pidlj"
+
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
 }
 
 function cp_narayana_to_as {
+  echo "Copying Narayana to AS"
   cd $WORKSPACE
   JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  [ $? = 0 ] || return 1
+  [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
   export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
+  [ -d $JBOSS_HOME ] || return 1
 
-  echo "WARNING - using narayana version ${NARAYANA_VERSION}"
+  echo "WARNING - check that narayana version ${NARAYANA_VERSION} is the one you want"
   JAR1=narayana-jts-integration-${NARAYANA_VERSION}.jar
   JAR2=narayana-jts-${NARAYANA_VERSION}.jar
 # TODO make sure ${JBOSS_HOME} doesn't already contain a different version of narayana
   echo "cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/"
   echo "cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/"
   cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/
+  [ $? = 0 ] || return 1
   cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/
-  return 0
 }
-
 
 function build_as {
   echo "Building AS"
@@ -38,7 +42,7 @@ function build_as {
   cd ${WORKSPACE}
   rm -rf jboss-as
   git clone $GIT_URL
-  [ $? = 0 ] || fatal "git clode $GIT_URL failed"
+  [ $? = 0 ] || fatal "git clone $GIT_URL failed"
 
   cd jboss-as
   git checkout -t origin/5_BRANCH
@@ -51,30 +55,51 @@ function build_as {
   MAVEN_OPTS="-XX:MaxPermSize=256m"
   ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS
   [ $? = 0 ] || fatal "AS build failed"
+  init_jboss_home
 }
 
-function xts_wstx11_tests {
-  echo "#1 XTS: WSTX11 INTEROP and UNIT TESTS"
+function init_jboss_home {
+  cd $WORKSPACE
+  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
+  [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
+  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
+  [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
+  echo "JBOSS_HOME=$JBOSS_HOME"
+}
+
+function txframework_tests {
+  echo "#0. TXFramework Test"
+  cp ./rest-tx/webservice/target/rest-tx-web-*.war $JBOSS_HOME/standalone/deployments
+  ./build.sh -f ./txframework/pom.xml $mvn_arqprof "$@" test
+  [ $? = 0 ] || fatal "TxFramework build failed"
+}
+
+function xts_tests {
+  echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS, xtstest and CRASH RECOVERY TESTS"
+
+  cd $WORKSPACE
+  ran_crt=0
 
   if [ $WSTX_MODULES ]; then
+    [[ $WSTX_MODULES = *crash-recovery-tests* ]] && ran_crt=1
     echo "BUILDING SPECIFIC WSTX11 modules"
     ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS clean test
   else
     ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean test
+    ran_crt=0
   fi
 
-  [ $? = 0 ] || fatal "XTS: WSTX11 INTEROP and UNIT TESTS failed"
-}
-function xts_crash_rec_tests {
-  echo "#2 XTS CRASH RECOVERY TESTS"
-  ./build.sh -f XTS/sar/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
-  [ $? = 0 ] || fatal "XTS: XTS CRASH RECOVERY TESTS failed"
+  [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
 
-  (cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-  [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
+  if [ $ran_crt = 1 ]; then
+    (cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
+    [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
+  fi
 }
+
 function tx_bridge_tests {
-  echo "XTS: TXBRIDGE TESTS"
+  echo "XTS: TXBRIDGE TESTS update conf"
+  cd $WORKSPACE
   CONF="${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml"
   grep recovery-listener "$CONF"
   sed -e s/recovery-listener=\"true\"//g -i $CONF
@@ -87,27 +112,18 @@ function tx_bridge_tests {
   ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
-function xts_tests {
-  cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
-  echo "JBOSS_HOME=$JBOSS_HOME"
-
-  [ $wstx11 = 1 ] && xts_wstx11_tests $@
-  [ $xts_crash_rec = 1 ] && xts_crash_rec_tests $@
-  [ $txbridge = 1 ] && tx_bridge_tests $@
-}
 
 function qa_tests {
+  echo "QA Test Suite"
   cd $WORKSPACE/qa
 
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
   # delete lines containing jacorb
-  [ $isIdlj == 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
+  [ $IDLJ == 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
-  ant -DisIdlj=$isIdlj "$QA_BUILD_ARGS" get.drivers dist
+  ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
   [ $? = 0 ] || fatal "qa build failed"
 
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
@@ -115,35 +131,23 @@ function qa_tests {
   [ $? = 0 ] || fatal "some qa tests failed"
 }
 
+# if the following env variables have not been set initialize them
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M2-SNAPSHOT"
+[ $ARQ_PROF ] || ARQ_PROF=arq
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1
 [ $AS_BUILD ] || AS_BUILD=1
+[ $TXF_TESTS ] || TXF_TESTS=1
 [ $XTS_TESTS ] || XTS_TESTS=1
 [ $QA_TESTS ] || QA_TESTS=1
-[ $wstx11 ] || wstx11=1
-[ $xts_crash_rec ] || xts_crash_rec=1
 [ $txbridge ] || txbridge=1
+[ $IDLJ ] || IDLJ=0
 
-[ $ARQ_PROF ] || ARQ_PROF=arq
+QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
 
-#QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
-QA_BUILD_ARGS=
-
-## IPv6 job
-#export ARQ_PROF=arqIPv6
-#export NARAYANA_TESTS=0
-#export NARAYANA_BUILD=0
-#export AS_BUILD=0
-#export XTS_TESTS=0
-#export QA_TESTS=0
-#export wstx11=0
-#export xts_crash_rec=0
-#export txbridge=0
-#export QA_BUILD_ARGS=
-#export WSTX_MODULES="WSAS,WSCF,WSTX,WS-C,WS-T"
-##
+#use export ARQ_PROF=arqIPv6 for IPv6 testing
+#use export WSTX_MODULES="WSAS,WSCF,WSTX,WS-C,WS-T,xtstest,crash-recovery-tests" to run a subset of XTS
 
 [ -z "${WORKSPACE}" ] && fatal "UNSET WORKSPACE"
 
@@ -153,16 +157,13 @@ free -m
 #Make sure no JBoss processes running
 for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10-15`; do kill $i; done
 
-isIdlj=0
-for arg in "$@"; do
-  [ `echo "$arg" |grep "idlj"` ] && isIdlj=1
-done
-
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_BUILD = 1 ] && build_as "$@"
+[ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
+[ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
+[ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
 exit 0
