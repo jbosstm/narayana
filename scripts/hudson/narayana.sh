@@ -25,7 +25,7 @@ free -m
 for i in `ps -eaf | grep java | grep "standalone" | grep -v grep | cut -c10-15`; do kill $i; done
 
 #BUILD NARAYANA WITH FINDBUGS
-./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" clean install
+./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" clean install -DskipTests=true
 if [ "$?" != "0" ]; then
 	exit -1
 fi
@@ -58,8 +58,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
+export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
 
 cd ${WORKSPACE}
 
@@ -70,52 +69,10 @@ cd ${WORKSPACE}
 #        exit -1
 #fi
 
+ps -eaf | grep java
+
 #1.WSTX11 INTEROP and UNIT TESTS and CRASH RECOVERY TESTS
-./build.sh -f XTS/localjunit/pom.xml $mvn_arqprof "$@" clean install
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-#2.CHECK CRASH REC OUTPUT
-(cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-#3.TXBRIDGE TESTS
-cd ${WORKSPACE}
-sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-./build.sh -f txbridge/pom.xml $mvn_arqprof "$@" clean test
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-#RUN QA TESTS
-cd $WORKSPACE/qa
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-if [ $isIdlj == 1 ]; then
-# delete lines containing jacorb
-	sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
-fi
-
-ant -DisIdlj=$isIdlj -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
-if [ "$?" != "0" ]; then
-	exit -1
-fi
-
-ant -f run-tests.xml ci-tests
+./build.sh -f XTS/localjunit/pom.xml --projects xtstest,crash-recovery-tests $mvn_arqprof "$@" clean install -Dtest=TestATCrashDuringCommit#MultiParticipantPrepareAndCommitTest
 if [ "$?" != "0" ]; then
 	exit -1
 fi
