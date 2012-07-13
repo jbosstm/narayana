@@ -13,13 +13,14 @@ function build_narayana {
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
+  return 0
 }
 
 function cp_narayana_to_as {
   echo "Copying Narayana to AS"
   cd $WORKSPACE
   JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
+  [ $? = 0 ] || return 1
   export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
   [ -d $JBOSS_HOME ] || return 1
 
@@ -52,7 +53,8 @@ function build_as {
   git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
-  MAVEN_OPTS="-XX:MaxPermSize=256m"
+  export MAVEN_OPTS="-XX:MaxPermSize=512m"
+  export JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
   ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS
   [ $? = 0 ] || fatal "AS build failed"
   init_jboss_home
