@@ -80,15 +80,14 @@ function xts_tests {
   echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS, xtstest and CRASH RECOVERY TESTS"
 
   cd $WORKSPACE
-  ran_crt=0
+  ran_crt=1
 
   if [ $WSTX_MODULES ]; then
-    [[ $WSTX_MODULES = *crash-recovery-tests* ]] && ran_crt=1
+    [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
     ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS clean test
   else
     ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean test
-    ran_crt=0
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
