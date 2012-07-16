@@ -514,8 +514,11 @@ public class SpecTest extends BaseTest {
         public AsynchronousCommit(TxSupport txn) { this.txn = txn; }
         public void run() {
             try {
+                Thread.sleep(500);
                 status = txn.commitTx();
             } catch (HttpResponseException e) {
+                status = "";
+            } catch (InterruptedException e) {
                 status = "";
             }
         }
