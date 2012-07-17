@@ -66,9 +66,9 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 @RunWith(BMUnitRunner.class)
 @BMScript("recovery")
-public class CrashRecoveryCommitReturnsXA_RETRY {
+public class CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback {
 	@Test
-	public void test() throws Exception {
+	public void testHeuristicRollback() throws Exception {
 		// this test is supposed to leave a record around in the log store
 		// during a commit long enough
 		// that the periodic recovery thread runs and detects it. rather than
@@ -79,8 +79,8 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		RecoveryEnvironmentBean recoveryEnvironmentBean = BeanPopulator
 				.getDefaultInstance(RecoveryEnvironmentBean.class);
-		recoveryEnvironmentBean.setRecoveryBackoffPeriod(1);
-		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(1);
+		recoveryEnvironmentBean.setRecoveryBackoffPeriod(Integer.MAX_VALUE);
+		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(Integer.MAX_VALUE);
 
 		List<String> recoveryModuleClassNames = new ArrayList<String>();
 
@@ -115,8 +115,7 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		XAResource firstResource = new SimpleResource();
 		Object toWakeUp = new Object();
-		final SimpleResourceXA_RETRY secondResource = new SimpleResourceXA_RETRY(
-				toWakeUp);
+		final SimpleResourceXA_RETRYHeuristicRollback secondResource = new SimpleResourceXA_RETRYHeuristicRollback();
 
 		xaRecoveryModule
 				.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
@@ -143,6 +142,7 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		tm.begin();
 
 		javax.transaction.Transaction theTransaction = tm.getTransaction();
+		Uid txUid = ((TransactionImple) theTransaction).get_uid();
 
 		theTransaction.enlistResource(firstResource);
 		theTransaction.enlistResource(secondResource);
@@ -151,9 +151,59 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		tm.commit();
 
-		synchronized (toWakeUp) {
-			toWakeUp.wait();
+		InputObjectState uids = new InputObjectState();
+		String type = new AtomicAction().type();
+		StoreManager.getRecoveryStore().allObjUids(type, uids);
+		boolean moreUids = true;
+
+		boolean found = false;
+		while (moreUids) {
+			Uid theUid = UidHelper.unpackFrom(uids);
+			if (theUid.equals(txUid)) {
+				found = true;
+				Field heuristicListField = BasicAction.class
+						.getDeclaredField("heuristicList");
+				heuristicListField.setAccessible(true);
+				ActionStatusService ass = new ActionStatusService();
+
+				{
+					int theStatus = ass.getTransactionStatus(type,
+							theUid.stringForm());
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+							theUid, theStatus);
+					theStatus = rcvAtomicAction.status();
+					rcvAtomicAction.replayPhase2();
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					assertTrue(secondResource.wasCommitted());
+					RecordList heuristicList = (RecordList) heuristicListField
+							.get(rcvAtomicAction);
+					assertTrue(
+							"Expected 1 heuristics: " + heuristicList.size(),
+							heuristicList.size() == 1);
+				}
+				{
+					int theStatus = ass.getTransactionStatus(type,
+							theUid.stringForm());
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecoverAtomicAction rcvAtomicAction = new RecoverAtomicAction(
+							theUid, theStatus);
+					theStatus = rcvAtomicAction.status();
+					assertTrue(theStatus == ActionStatus.COMMITTED);
+					RecordList heuristicList = (RecordList) heuristicListField
+							.get(rcvAtomicAction);
+					assertTrue(
+							"Expected 1 heuristics: " + heuristicList.size(),
+							heuristicList.size() == 1);
+					assertTrue(secondResource.wasCommitted());
+				}
+			} else if (theUid.equals(Uid.nullUid())) {
+				moreUids = false;
+			}
 		}
-		assertTrue(secondResource.wasCommitted());
+
+		if (!found) {
+			throw new Exception("Could not locate the Uid");
+		}
 	}
 }
