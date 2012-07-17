@@ -93,7 +93,7 @@ function xts_tests {
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
 
   if [ $ran_crt = 1 ]; then
-    (cd XTS/sar/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
+    (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
     [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
   fi
 }
