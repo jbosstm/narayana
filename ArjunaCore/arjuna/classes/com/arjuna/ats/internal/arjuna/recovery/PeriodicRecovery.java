@@ -654,7 +654,7 @@ public class PeriodicRecovery extends Thread
     private void doBackoffWait()
     {
         try {
-            _stateLock.wait(_backoffPeriod * 1000);
+            _stateLock.wait(_backoffPeriod * 1000L);
         } catch (InterruptedException e) {
             // we can ignore this exception
         }
