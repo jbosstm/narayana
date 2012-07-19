@@ -101,7 +101,7 @@ function xts_tests {
 function tx_bridge_tests {
   echo "XTS: TXBRIDGE TESTS update conf"
   cd $WORKSPACE
-  CONF="${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml"
+  CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
   grep recovery-listener "$CONF"
   sed -e s/recovery-listener=\"true\"//g -i $CONF
   sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
