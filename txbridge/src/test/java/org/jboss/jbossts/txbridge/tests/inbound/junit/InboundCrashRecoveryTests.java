@@ -134,9 +134,6 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
         rebootServer(controller);
 
-        deployer.deploy(INBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(INBOUND_CLIENT_DEPLOYMENT_NAME);
-
         doRecovery();
         doRecovery();
 
@@ -172,9 +169,6 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
         rebootServer(controller);
 
-        deployer.deploy(INBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(INBOUND_CLIENT_DEPLOYMENT_NAME);
-
         doRecovery();
         doRecovery();
 
@@ -209,9 +203,6 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("commit");
 
         rebootServer(controller);
-
-        deployer.deploy(INBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(INBOUND_CLIENT_DEPLOYMENT_NAME);
 
         doRecovery();
         doRecovery();

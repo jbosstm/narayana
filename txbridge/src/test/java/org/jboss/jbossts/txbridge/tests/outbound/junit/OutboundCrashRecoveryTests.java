@@ -132,9 +132,6 @@ public class OutboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
         rebootServer(controller);
 
-        deployer.deploy(OUTBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(OUTBOUND_CLIENT_DEPLOYMENT_NAME);
-
         doRecovery();
         doRecovery();
 
@@ -165,9 +162,6 @@ public class OutboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestDurableParticipant.assertMethodNotCalled("rollback");
 
         rebootServer(controller);
-
-        deployer.deploy(OUTBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(OUTBOUND_CLIENT_DEPLOYMENT_NAME);
 
         doRecovery();
         doRecovery();
@@ -201,9 +195,6 @@ public class OutboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestDurableParticipant.assertMethodNotCalled("rollback");
 
         rebootServer(controller);
-
-        deployer.deploy(OUTBOUND_SERVICE_DEPLOYMENT_NAME);
-        deployer.deploy(OUTBOUND_CLIENT_DEPLOYMENT_NAME);
 
         doRecovery();
         doRecovery();
