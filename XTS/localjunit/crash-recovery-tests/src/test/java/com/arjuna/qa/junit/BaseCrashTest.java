@@ -140,7 +140,7 @@ public class BaseCrashTest
 
         //redeploy xtstest
         //deployer.undeploy("xtstest");
-        deployer.deploy("xtstest");
+        //deployer.deploy("xtstest");
 
         //Waiting for recovery
         //Thread.sleep(waitForRecovery * 60 * 1000);
