@@ -72,7 +72,7 @@ function init_jboss_home {
 function txframework_tests {
   echo "#0. TXFramework Test"
   cp ./rest-tx/webservice/target/rest-tx-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml $mvn_arqprof "$@" test
+  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
 }
 
@@ -110,7 +110,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS test
+  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
