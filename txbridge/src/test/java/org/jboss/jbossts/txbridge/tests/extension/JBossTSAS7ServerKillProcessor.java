@@ -1,38 +1,93 @@
-/*
- * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
 package org.jboss.jbossts.txbridge.tests.extension;
+
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ServerKillProcessor;
 
-/**
- * Server extension for JBossTSAS7ServerKillProcessor.
- *
- * @author <a href="mailto:istudens@redhat.com">Ivo Studensky</a>
- */
 public class JBossTSAS7ServerKillProcessor implements ServerKillProcessor {
+	private final Logger log = Logger.getLogger(
+			JBossTSAS7ServerKillProcessor.class.getName());
+	private static String killSequence = "[jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
+	private static String shutdownSequence = "[jbossHome]/bin/jboss-cli.[suffix] --connect command=:shutdown";
+	private int checkDurableTime = 10;
+	private int numofCheck = 60;
 
-    public void kill(Container container) throws Exception {
-        // do nothing, just let Arquillian know that the container is down
-    }
+	@Override
+	public void kill(Container container) throws Exception {
+		log.info("waiting for byteman to kill server");
+		String jbossHome = System.getenv().get("JBOSS_HOME");
+		if(jbossHome == null) {
+			jbossHome = container.getContainerConfiguration().getContainerProperties().get("jbossHome");
+		}
+		killSequence = killSequence.replace("[jbossHome]", jbossHome);
+		shutdownSequence = shutdownSequence.replace("[jbossHome]", jbossHome);
+
+		String suffix;
+		String os = System.getProperty("os.name").toLowerCase();
+		if(os.indexOf("windows") > -1) {
+			suffix = "bat";
+		} else {
+			suffix = "sh";
+		}
+		killSequence = killSequence.replace("[suffix]", suffix);
+		shutdownSequence = shutdownSequence.replace("[suffix]", suffix);
+		
+		int checkn = 0;
+		boolean killed = false;
+		do {
+			if(checkJBossAlive()) {
+				Thread.sleep(checkDurableTime * 1000);
+				log.info("jboss-as is alive");
+			} else {
+				killed = true;
+				break;
+			}
+			checkn ++;
+		} while(checkn < numofCheck);
+		
+		if(killed) {
+			log.info("jboss-as killed by byteman scirpt");
+		} else {
+			log.info("jboss-as not killed and shutdown");
+			Process p = Runtime.getRuntime().exec(shutdownSequence);
+			p.waitFor();
+			p.destroy();
+			// wait 5 * 60 second for jboss-as shutdown complete
+			int checkn_s = 0;
+			do {
+				if(checkJBossAlive()) {
+					Thread.sleep(5000);
+				} else {
+					log.info("jboss-as shutdown");
+					break;
+				}
+				checkn_s ++;
+			} while (checkn_s < 60);
+			throw new RuntimeException("jboss-as not killed and shutdown");
+		}
+	}
+	
+	private boolean checkJBossAlive() throws Exception {
+		Process p = Runtime.getRuntime().exec(killSequence);
+		p.waitFor();
+		int rc = p.exitValue();
+
+		if (rc != 0 && rc != 1) {
+			p.destroy();
+			throw new RuntimeException("Kill Sequence failed");
+		}
+		
+		InputStream out = p.getInputStream();
+		BufferedReader in = new BufferedReader(new InputStreamReader(out));
+		String result= in.readLine();
+		out.close();
+		p.destroy();
+		
+		return !(result != null && result.contains("The controller is not available"));
+	}
 }
-
