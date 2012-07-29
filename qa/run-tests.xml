@@ -170,6 +170,14 @@
     <!-- crashrecovery12 : 7 tests, 2 minutes -->
     <junit-tests tests="crashrecovery12"/>
   </target>
+
+  <property name="test.name" value="otsserver"/>
+  <target name="onetest">
+    <echo message="Running a single test group ${test.name}"/>
+    <junit-tests tests="${test.name}"/>
+    <fail if="failed-tests" message="${test.name} - some tests failed"/>
+  </target>
+
   <!-- copy the selected db driver out of the available set into the classpath.
         See also build.xml get.drivers and TaskImpl.properties for classpath
      -->
@@ -337,6 +345,7 @@
             <include name="jbossts-*-qa.jar"/>
           </fileset>
           <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
+            <exclude name="narayana-jts-idlj.jar"/>
             <include name="*.jar"/>
           </fileset>
           <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">

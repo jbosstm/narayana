@@ -758,7 +758,36 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>jacorb-idl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>idlj-idl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>jacorb-idl</artifactId>
+        <type>test-jar</type>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>idlj-idl</artifactId>
+        <type>test-jar</type>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>jts</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>jts</artifactId>
+        <classifier>idlj</classifier>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -786,6 +815,11 @@
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>narayana-jts-integration</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>narayana-jts-idlj</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -973,46 +1007,6 @@
         <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>
   </properties>
   <profiles>
-    <profile>
-      <id>idlj</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-        <module>ArjunaJTA</module>
-        <module>XTS</module>
-        <module>ArjunaJTS</module>
-        <module>rest-tx</module>
-        <module>txbridge</module>
-        <module>STM</module>
-        <module>narayana-full</module>
-      </modules>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <forkMode>pertest</forkMode>
-              <workingDirectory>target/test-classes</workingDirectory>
-              <runOrder>alphabetical</runOrder>
-              <redirectTestOutputToFile>true</redirectTestOutputToFile>
-              <inherited>true</inherited>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <systemPropertyVariables combine.children="append">
-                <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
-                <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
-                <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>all</id>
       <activation>
