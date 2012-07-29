@@ -50,8 +50,8 @@
 		<property name="org.jboss.jbossts.qa.orb.classpath" value=""/>
 		<path id="jts.classpath">
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-				<include name="narayana-jts.jar"/>
-				<include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
+				<include name="narayana-jts-idlj.jar"/>
+				<!--include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/-->
 			</fileset>
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
 				<include name="jboss-transaction-api_1.1_spec.jar"/>
@@ -62,7 +62,7 @@
 			<pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 			<pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 		</path>
-		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/jts/tests/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 	</target>
 
@@ -87,7 +87,7 @@
 			<pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 		</path>
 
-		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/jacorb/idl/omg;../../ArjunaJTS/jts/tests/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/jacorb/idl/omg;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 	</target>
 
@@ -207,7 +207,7 @@
 				 classpathref="jts.classpath"/>
 
 		    <idl-build-list inproperty="idl.buildlist">
-            <element src="${org.jboss.jbossts.qa.ts.home}/../../ArjunaJTS/jts/tests/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
+            <element src="${org.jboss.jbossts.qa.ts.home}/../../ArjunaJTS/idl/src/test/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
                      mappings="CosTransactions=org.omg;TestModule=com.hp.mwtests.ts.jts;CORBA=org.omg"/>
         </idl-build-list>
 

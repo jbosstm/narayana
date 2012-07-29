@@ -107,6 +107,7 @@
   </target>
   <target name="init-jts" unless="init-jta">
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-idlj.jar"/>
   </target>
   <target name="dist" depends="clean, init, buildtype">
     <!-- build the test suite -->

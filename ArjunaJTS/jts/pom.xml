@@ -23,6 +23,12 @@
   <name>JBossJTS jts</name>
   <description>jts</description>
   <packaging>jar</packaging>
+  <properties>
+    <!-- This module builds two jars each holding different sets of IDL stubs (JacORB or Sun orb) -->
+    <classesDirectoryWithJacorb>${project.build.directory}/jts-jacorb</classesDirectoryWithJacorb>
+    <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
+  </properties>
+
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <resources>
@@ -50,29 +56,205 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- the next three maven plugins (dependency, antrun and jar) are to ensure that the
+        default stubs are packaged with the final artifact of this module. Putting the stubs
+        in the default classesDirectory fails because we need to run the maven surefire
+        plugin twice, once against the JacORB stubs and another run using the Sun ORB stubs
+        and the surefire plugin puts the classes dir on the classpath
+        -->
+
+      <!-- unpack the IDL stubs to alternate classes directories -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-jacorb</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jboss.narayana.jts</groupId>
+                  <artifactId>jacorb-idl</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${classesDirectoryWithJacorb}</outputDirectory>
+                  <includes>**/*.class,**/*.xml</includes>
+                  <excludes>**/META-INF/**</excludes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack-idlj</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jboss.narayana.jts</groupId>
+                  <artifactId>idlj-idl</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${classesDirectoryWithIdlj}</outputDirectory>
+                  <includes>**/*.class,**/*.xml</includes>
+                  <excludes>**/META-INF/**</excludes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- copy classes and resources to the alternate classes directories -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-jacorb</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${classesDirectoryWithJacorb}">
+                  <fileset dir="${project.build.outputDirectory}"/>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>copy-idlj</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${classesDirectoryWithIdlj}">
+                  <fileset dir="${project.build.outputDirectory}"/>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- assemble two jars one containing jts + JacORB stubs the other containing jts + Sun ORB stubs
+           NOTE: To change which stubs get packaged with the default jar simply swap usages of
+           classesDirectoryWithJacorb and classesDirectoryWithIdlj.
+        -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <!-- Specify which classes to include in the default jar artifact -->
+          <classesDirectory>${classesDirectoryWithJacorb}</classesDirectory>
+        </configuration>
+
+        <!-- define an execution for assembling the alternate jar artifact -->
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <!-- add a classifier to differentiate the jar from the default jar -->
+              <classifier>idlj</classifier>
+              <!-- Specify which classes to include in the alternate jar artifact -->
+              <classesDirectory>${classesDirectoryWithIdlj}</classesDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties combine.children="append"/>
-          <excludes>
-            <!-- exclude tests which we don't want to run -->
-            <exclude>**/common/**</exclude>
-            <exclude>**/exceptions/**</exclude>
-            <exclude>**/orbspecific/resources/**</exclude>
-            <exclude>**/resources/**</exclude>
-            <exclude>**/utils/ResourceTrace.java</exclude>
-            <exclude>**/utils/Util.java</exclude>
-            <exclude>**/TransactionTest2.java</exclude>
-            <exclude>**/CheckedTransactions.java</exclude>
-            <exclude>**/GridTest.java</exclude>
-            <exclude>**/remote/**</exclude>
-            <exclude>**/DefaultTimeout.java</exclude>
-          </excludes>
-        </configuration>
+          <executions>
+            <execution>
+              <!--id>surefire-jacorb</id-->
+              <id>default-test</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <skip>false</skip>
+                <excludes>
+                  <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                  <exclude>**/common/**</exclude>
+                  <exclude>**/exceptions/**</exclude>
+                  <exclude>**/orbspecific/resources/**</exclude>
+                  <exclude>**/resources/**</exclude>
+                  <exclude>**/utils/ResourceTrace.java</exclude>
+                  <exclude>**/utils/Util.java</exclude>
+                  <exclude>**/TransactionTest2.java</exclude>
+                  <exclude>**/CheckedTransactions.java</exclude>
+                  <exclude>**/GridTest.java</exclude>
+                  <exclude>**/remote/**</exclude>
+                  <exclude>**/DefaultTimeout.java</exclude>
+                </excludes>
+                <classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                </classpathDependencyExcludes>
+              </configuration>
+            </execution>
+
+            <execution>
+              <id>surefire-idlj</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <skip>false</skip>
+                <systemProperties combine.children="append"/>
+                <excludes>
+                  <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+
+                  <exclude>**/common/**</exclude>
+                  <exclude>**/exceptions/**</exclude>
+                  <exclude>**/orbspecific/resources/**</exclude>
+                  <exclude>**/resources/**</exclude>
+                  <exclude>**/utils/ResourceTrace.java</exclude>
+                  <exclude>**/utils/Util.java</exclude>
+                  <exclude>**/TransactionTest2.java</exclude>
+                  <exclude>**/CheckedTransactions.java</exclude>
+                  <exclude>**/GridTest.java</exclude>
+                  <exclude>**/remote/**</exclude>
+                  <exclude>**/DefaultTimeout.java</exclude>
+                </excludes>
+
+                <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+
+              </configuration>
+            </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>jacorb</groupId>
@@ -92,6 +274,29 @@
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
     </dependency>
+
+    <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jacorb-idl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jacorb-idl</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
@@ -113,257 +318,23 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>jacorb</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>idlj-maven-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.jacorb</groupId>
-                <artifactId>jacorb-idl-compiler</artifactId>
-                <version>2.2.3</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>generate-sources</id>
-                <phase>generate-sources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-                <configuration>
-                  <compiler>jacorb</compiler>
-                  <sourceDirectory>idl/</sourceDirectory>
-                  <outputDirectory>target/generated-sources/idl</outputDirectory>
-                  <sources>
-                    <source>
-                      <includes>
-                        <include>omg/CosTransactions.idl</include>
-                        <include>arjuna/ArjunaOTS.idl</include>
-                        <include>omg/XA.idl</include>
-                      </includes>
-                      <additionalArguments>
-                        <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-i2jpackage</additionalArgument>
-                        <additionalArgument>CosTransactions:org.omg.CosTransactions</additionalArgument>
-                        <additionalArgument>-i2jpackage</additionalArgument>
-                        <additionalArgument>XA:org.omg.XA</additionalArgument>
-                        <additionalArgument>-i2jpackage</additionalArgument>
-                        <additionalArgument>ArjunaOTS:com.arjuna.ArjunaOTS</additionalArgument>
-                      </additionalArguments>
-                    </source>
-                  </sources>
-                  <includeDirs>
-                    <includeDir>../jacorb/idl/omg</includeDir>
-                  </includeDirs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>generate-test-sources</id>
-                <phase>generate-test-sources</phase>
-                <goals>
-                  <goal>generate-test</goal>
-                </goals>
-                <configuration>
-                  <compiler>jacorb</compiler>
-                  <sourceDirectory>tests/idl/</sourceDirectory>
-                  <outputDirectory>target/generated-test-sources/idl</outputDirectory>
-                  <sources>
-                    <source>
-                      <includes>
-                        <include>TestModule.idl</include>
-                      </includes>
-                      <additionalArguments>
-                        <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-i2jpackage</additionalArgument>
-                        <additionalArgument>TestModule:com.hp.mwtests.ts.jts.TestModule</additionalArgument>
-                      </additionalArguments>
-                    </source>
-                  </sources>
-                  <includeDirs>
-                    <includeDir>idl/omg</includeDir>
-                    <includeDir>../jacorb/idl/omg</includeDir>
-                  </includeDirs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>idlj</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>idlj-maven-plugin</artifactId>
-            <executions>
-
-              <execution>
-                <id>generate-sources</id>
-                <phase>generate-sources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-                <configuration>
-                  <compiler>idlj</compiler>
-                  <sourceDirectory>idl/</sourceDirectory>
-                  <outputDirectory>target/generated-sources/idl</outputDirectory>
-                  <sources>
-                    <source>
-                      <includes>
-                        <include>omg/CosTransactions.idl</include>
-                        <include>arjuna/ArjunaOTS.idl</include>
-                        <include>omg/XA.idl</include>
-                      </includes>
-                      <compatible>false</compatible>
-                      <packagePrefixes>
-                        <packagePrefix>
-                          <type>CosTransactions</type>
-                          <prefix>org.omg</prefix>
-                        </packagePrefix>
-                        <packagePrefix>
-                          <type>XA</type>
-                          <prefix>org.omg</prefix>
-                        </packagePrefix>
-                        <packagePrefix>
-                          <type>ArjunaOTS</type>
-                          <prefix>com.arjuna</prefix>
-                        </packagePrefix>
-                      </packagePrefixes>
-                      <additionalArguments>
-                        <additionalArgument>-i</additionalArgument>
-                        <additionalArgument>${basedir}/idl/omg</additionalArgument>
-                        <additionalArgument>-i</additionalArgument>
-                        <additionalArgument>${env.JAVA_HOME}/lib</additionalArgument>
-
-                        <additionalArgument>-d</additionalArgument>
-                        <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-d</additionalArgument>
-                        <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-fallTIE</additionalArgument>
-                      </additionalArguments>
-                    </source>
-                  </sources>
-                  <includeDirs>
-<!-- broken in 1.1 (and 1.2-SNAPSHOT)
-                    <includeDir>idl/omg</includeDir>
-                    <includeDir>${env.JAVA_HOME}/lib</includeDir>
--->
-                  </includeDirs>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>generate-test-sources</id>
-                <phase>generate-test-sources</phase>
-                <goals>
-                  <goal>generate-test</goal>
-                </goals>
-                <configuration>
-                  <compiler>idlj</compiler>
-                  <sourceDirectory>tests/idl/</sourceDirectory>
-                  <outputDirectory>target/generated-test-sources/idl</outputDirectory>
-                  <sources>
-                    <source>
-                      <includes>
-                        <include>TestModule.idl</include>
-                      </includes>
-                      <compatible>false</compatible>
-                      <packagePrefixes>
-                        <packagePrefix>
-                          <type>TestModule</type>
-                          <prefix>com.hp.mwtests.ts.jts</prefix>
-                        </packagePrefix>
-                        <packagePrefix>
-                          <type>CosTransactions</type>
-                          <prefix>org.omg</prefix>
-                        </packagePrefix>
-                      </packagePrefixes>
-                      <additionalArguments>
-                        <additionalArgument>-i</additionalArgument>
-                        <additionalArgument>${basedir}/idl/omg</additionalArgument>
-                        <additionalArgument>-i</additionalArgument>
-                        <additionalArgument>${env.JAVA_HOME}/lib</additionalArgument>
-
-                        <additionalArgument>-d</additionalArgument>
-                        <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-d</additionalArgument>
-                        <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
-                        <additionalArgument>-fallTIE</additionalArgument>
-                      </additionalArguments>
-                    </source>
-                  </sources>
-                  <includeDirs>
-<!-- broken in 1.1 (and 1.2-SNAPSHOT)
-                    <includeDir>idl/omg</includeDir>
-                    <includeDir>${env.JAVA_HOME}/lib</includeDir>
--->
-                  </includeDirs>
-                </configuration>
-              </execution>
-
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <systemProperties combine.children="append"/>
-              <excludes>
-                <!-- exclude tests which we don't want to run -->
-                <exclude>**/JacORBRecoveryUnitTest.java</exclude>
-                <!-- TODO why are so many tests in the default profile disabled -->
-                <exclude>**/TransactionTest2.java</exclude>
-
-                <!-- These tests fail on both profiles -->
-                <exclude>**/TranGridServer.java</exclude>
-                <exclude>**/CheckedTransactions.java</exclude>
-                <exclude>**/GridTest.java</exclude>
-                <exclude>**/GridClient.java</exclude>
-                <exclude>**/RCTest.java</exclude>
-                <exclude>**/TMClient.java</exclude>
-                <exclude>**/TMTest.java</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

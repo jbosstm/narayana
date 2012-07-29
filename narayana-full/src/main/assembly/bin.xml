@@ -127,6 +127,20 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
+<!-- XXX-->
+	<dependencySet>
+		<useProjectArtifact>false</useProjectArtifact>
+		<includes>
+			<include>org.jboss.narayana.jts:narayana-jts-idlj</include>
+		</includes>
+		<excludes>
+			<exclude>*:javadoc</exclude>
+		</excludes>
+		<outputDirectory>lib/jts</outputDirectory>
+		<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+		</outputFileNameMapping>
+		<unpack>false</unpack>
+	</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
@@ -314,14 +328,14 @@
 			<outputDirectory>services/config</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../ArjunaJTS/jts/idl/arjuna</directory>
+			<directory>../ArjunaJTS/idl/src/main/idl/arjuna</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>ArjunaOTS.idl</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>../ArjunaJTS/jts/idl/omg</directory>
+			<directory>../ArjunaJTS/idl/src/main/idl/omg</directory>
 			<outputDirectory>idl</outputDirectory>
 			<includes>
 				<include>CosTransactions.idl</include>
