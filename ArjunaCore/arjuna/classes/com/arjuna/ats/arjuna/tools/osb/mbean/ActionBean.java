@@ -227,10 +227,6 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
         RecordList oldList = ra.getRecords(lt);
         RecordList newList = ra.getRecords(newStatus);
 
-        if (lt.equals(ParticipantStatus.HEURISTIC) && !targRecord.forgetHeuristic()) {
-            return false;
-        }
-
         // move the record from currList to targList
         if (oldList.remove(targRecord)) {
 
