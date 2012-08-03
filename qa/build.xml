@@ -38,6 +38,22 @@
   <property name="driver.url" value="http://www.qa.jboss.com/jdbc-drivers/"/>
   <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
   <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
+
+  <target name="which-jts-jar">
+    <condition property="cp-jacorb-jts">
+        <and>
+            <equals arg1="${isIdlj}" arg2="0"/>
+            <not><isset property="init-jta"/></not>
+        </and>
+    </condition>
+    <condition property="cp-idlj-jts">
+        <and>
+            <equals arg1="${isIdlj}" arg2="1"/>
+            <not><isset property="init-jta"/></not>
+        </and>
+    </condition>
+  </target>
+
   <target name="get.drivers" depends="clean-dbdrivers">
     <!--
         https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
@@ -102,13 +118,21 @@
     <antcall target="init-jta"/>
     <antcall target="init-jts"/>
   </target>
+
   <target name="init-jta" if="init-jta">
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jta/narayana-jta.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar"/>
   </target>
-  <target name="init-jts" unless="init-jta">
+
+  <target name="init-jts" depends="jts.cp.jacorb,jts.cp.idlj"/>
+  <target name="jts.cp.jacorb" depends="which-jts-jar" if="cp-jacorb-jts">
+    <echo>copying jacorb jts</echo>
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-idlj.jar"/>
   </target>
+  <target name="jts.cp.idlj" depends="which-jts-jar" if="cp-idlj-jts">
+    <echo>copying idlj jts</echo>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+  </target>
+
   <target name="dist" depends="clean, init, buildtype">
     <!-- build the test suite -->
     <ant dir="tests" antfile="build-${buildtype}.xml">
