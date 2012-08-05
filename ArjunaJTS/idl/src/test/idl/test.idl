@@ -20,6 +20,7 @@
  */
 #include <CosTransactions.idl>
 
+// used by the jtax module tests
 module Example
 {
     interface test : CosTransactions::TransactionalObject

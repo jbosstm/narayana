@@ -127,20 +127,19 @@
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 		</dependencySet>
-<!-- XXX-->
-	<dependencySet>
-		<useProjectArtifact>false</useProjectArtifact>
-		<includes>
-			<include>org.jboss.narayana.jts:narayana-jts-idlj</include>
-		</includes>
-		<excludes>
-			<exclude>*:javadoc</exclude>
-		</excludes>
-		<outputDirectory>lib/jts</outputDirectory>
-		<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-		</outputFileNameMapping>
-		<unpack>false</unpack>
-	</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<includes>
+				<include>org.jboss.narayana.jts:narayana-jts-idlj</include>
+			</includes>
+			<excludes>
+				<exclude>*:javadoc</exclude>
+			</excludes>
+			<outputDirectory>lib/jts</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>

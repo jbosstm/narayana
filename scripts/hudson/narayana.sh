@@ -8,7 +8,6 @@ function build_narayana {
   echo "Building Narayana"
   cd $WORKSPACE
   [ $NARAYANA_TESTS == 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
-  [ $IDLJ == 1 ] && NARAYANA_ARGS="$NARAYANA_ARGS -Pidlj"
 
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
@@ -116,11 +115,16 @@ function tx_bridge_tests {
 }
 
 function qa_tests {
-  echo "QA Test Suite"
+  echo "QA Test Suite $@"
   cd $WORKSPACE/qa
 
+  git checkout TaskImpl.properties
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
+
+  # check to see if we were called with orb=xyz as the first argument
+  [ ${1%%=*} = "orb" ] && orb=${1##*=}
+  [ x$orb = x"idlj" ] && IDLJ=1 || IDLJ=0
 
   # delete lines containing jacorb
   [ $IDLJ == 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
@@ -129,6 +133,8 @@ function qa_tests {
   [ $? = 0 ] || fatal "qa build failed"
 
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
+  [ $IDLJ == 1 ] && target="junit-jts-testsuite"
+
   ant -f run-tests.xml $target
   [ $? = 0 ] || fatal "some qa tests failed"
 }
@@ -144,7 +150,6 @@ function qa_tests {
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $txbridge ] || txbridge=1 # bridge tests
-[ $IDLJ ] || IDLJ=0 # use the Sun orb instead of the default JacORB
 
 QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
 
@@ -169,6 +174,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $QA_TESTS = 1 ] && qa_tests "$@"
+[ $QA_TESTS = 1 ] && qa_tests "$@"	# run qa against the default orb
+[ $QA_TESTS = 1 ] && qa_tests "orb=idlj" "$@"	# run qa against the Sun orb
 
 exit 0

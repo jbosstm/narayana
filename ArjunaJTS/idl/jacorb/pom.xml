@@ -77,8 +77,6 @@
                     <additionalArgument>XA:org.omg.XA</additionalArgument>
                     <additionalArgument>-i2jpackage</additionalArgument>
                     <additionalArgument>ArjunaOTS:com.arjuna.ArjunaOTS</additionalArgument>
-                    <additionalArgument>-generate_helper</additionalArgument>
-                    <additionalArgument>portable</additionalArgument>
                   </additionalArguments>
                 </source>
               </sources>
@@ -101,12 +99,16 @@
                 <source>
                   <includes>
                     <include>TestModule.idl</include>
+                    <include>test.idl</include>
+                    <include>orbtests.idl</include>
                   </includes>
                   <additionalArguments>
                     <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
                     <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
                     <additionalArgument>-i2jpackage</additionalArgument>
                     <additionalArgument>TestModule:com.hp.mwtests.ts.jts.TestModule</additionalArgument>
+                    <additionalArgument>-i2jpackage</additionalArgument>
+                    <additionalArgument>orbtests:com.hp.mwtests.orbportability.orbspecific.orbtests</additionalArgument>
                   </additionalArguments>
                 </source>
               </sources>

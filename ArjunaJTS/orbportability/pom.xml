@@ -56,23 +56,76 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties combine.children="append"/>
-          <excludes>
-            <!-- exclude tests which we don't want to run -->
-            <exclude>**/common/**</exclude>
-            <exclude>**/initialisation/postinit/**</exclude>
-            <exclude>**/initialisation/postset/**</exclude>
-            <exclude>**/initialisation/preinit/**</exclude>
-            <exclude>**/initialisation/TestAttributeCallback.java</exclude>
-            <exclude>**/SimpleObjectImpl.java</exclude>
-            <exclude>**/TestAttributeCallback.java</exclude>
-            <exclude>**/PrePostTestCallback.java</exclude>
-            <!-- these ones need fixing -->
-            <exclude>**/PropertyInitTest.java</exclude>
-            <exclude>**/PropertyInitTest3.java</exclude>
-          </excludes>
-        </configuration>
+         <executions>
+            <execution>
+              <!-- jacorb is the default (determined by what we exclude from the classpath) -->
+              <id>default-test</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <skip>false</skip>
+                <systemProperties combine.children="append"/>
+                <excludes>
+                  <!-- exclude tests which we don't want to run -->
+                  <exclude>**/common/**</exclude>
+                  <exclude>**/initialisation/postinit/**</exclude>
+                  <exclude>**/initialisation/postset/**</exclude>
+                  <exclude>**/initialisation/preinit/**</exclude>
+                  <exclude>**/initialisation/TestAttributeCallback.java</exclude>
+                  <exclude>**/SimpleObjectImpl.java</exclude>
+                  <exclude>**/TestAttributeCallback.java</exclude>
+                  <exclude>**/PrePostTestCallback.java</exclude>
+                  <!-- these ones need fixing -->
+                  <exclude>**/PropertyInitTest.java</exclude>
+                  <exclude>**/PropertyInitTest3.java</exclude>
+                </excludes>
+                <classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                </classpathDependencyExcludes>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- test against the Sun ORB stubs (determined by what we exclude from the classpath) -->
+              <id>surefire-idlj</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <skip>false</skip>
+                <systemProperties combine.children="append"/>
+                <excludes>
+                  <!-- exclude tests which we don't want to run -->
+                  <exclude>**/common/**</exclude>
+                  <exclude>**/initialisation/postinit/**</exclude>
+                  <exclude>**/initialisation/postset/**</exclude>
+                  <exclude>**/initialisation/preinit/**</exclude>
+                  <exclude>**/initialisation/TestAttributeCallback.java</exclude>
+                  <exclude>**/SimpleObjectImpl.java</exclude>
+                  <exclude>**/TestAttributeCallback.java</exclude>
+                  <exclude>**/PrePostTestCallback.java</exclude>
+                  <!-- these ones need fixing -->
+                  <exclude>**/PropertyInitTest.java</exclude>
+                  <exclude>**/PropertyInitTest3.java</exclude>
+                </excludes>
+                <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+
+              </configuration>
+            </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
@@ -90,6 +143,28 @@
       <artifactId>jacorb</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jacorb-idl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>jacorb-idl</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -133,102 +208,4 @@
             <scope>test</scope>
         </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>jacorb</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>idlj-maven-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.jacorb</groupId>
-                <artifactId>jacorb-idl-compiler</artifactId>
-                <version>2.2.3</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>generate-test</goal>
-                </goals>
-                <configuration>
-                  <sourceDirectory>tests/idl/</sourceDirectory>
-                </configuration>
-              </execution>
-                </executions>
-            <configuration>
-              <compiler>jacorb</compiler>
-              <sources>
-                <source>
-                  <includes>
-                    <include>orbtests.idl</include>
-                  </includes>
-                  <additionalArguments>
-                    <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
-                    <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
-                    <additionalArgument>-i2jpackage</additionalArgument>
-                    <additionalArgument>orbtests:com.hp.mwtests.orbportability.orbspecific.orbtests</additionalArgument>
-                  </additionalArguments>
-                </source>
-              </sources>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>idlj</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>idlj-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>generate-test</goal>
-                </goals>
-                <configuration>
-                  <sourceDirectory>tests/idl/</sourceDirectory>
-                </configuration>
-              </execution>
-                </executions>
-            <configuration>
-              <compiler>idlj</compiler>
-              <sources>
-                <source>
-                  <includes>
-                    <include>orbtests.idl</include>
-                  </includes>
-                  <packagePrefixes>
-                      <packagePrefix>
-                        <type>orbtests</type>
-                        <prefix>com.hp.mwtests.orbportability.orbspecific</prefix>
-                      </packagePrefix>
-                  </packagePrefixes>
-                  <compatible>false</compatible>
-                  <additionalArguments>
-                    <additionalArgument>-d</additionalArgument>
-                    <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
-                    <additionalArgument>-d</additionalArgument>
-                    <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
-                  </additionalArguments>
-                </source>
-              </sources>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
- 
 </project>
