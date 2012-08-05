@@ -109,6 +109,8 @@
                 <source>
                   <includes>
                     <include>TestModule.idl</include>
+                    <include>test.idl</include>
+                    <include>orbtests.idl</include>
                   </includes>
                   <compatible>false</compatible>
                   <packagePrefixes>
@@ -119,6 +121,10 @@
                     <packagePrefix>
                       <type>CosTransactions</type>
                       <prefix>org.omg</prefix>
+                    </packagePrefix>
+                    <packagePrefix>
+                      <type>orbtests</type>
+                      <prefix>com.hp.mwtests.orbportability.orbspecific</prefix>
                     </packagePrefix>
                   </packagePrefixes>
                   <additionalArguments>

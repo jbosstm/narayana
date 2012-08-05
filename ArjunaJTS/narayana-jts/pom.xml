@@ -150,6 +150,7 @@
                   <include>org.jboss.narayana.jta:jdbc</include>
                   <include>org.jboss.narayana.jts:orbportability</include>
                   <include>org.jboss.narayana.jts:jts</include>
+                  <include>org.jboss.narayana.jts:jacorb-idl</include>
                   <include>org.jboss.narayana.jts:jtax</include>
                 </includes>
               </artifactSet>

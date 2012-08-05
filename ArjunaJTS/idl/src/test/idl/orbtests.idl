@@ -22,6 +22,7 @@
 #pragma prefix "orbspecific.orbportability.mwtests.hp.com"
 #endif
 
+// used by the orbportability module tests
 module orbtests
 {
 	interface SimpleObject
