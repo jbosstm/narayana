@@ -3,6 +3,7 @@ package com.arjuna.qa.junit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
@@ -93,7 +94,56 @@ public class BaseCrashTest
                     System.out.println("remove tx-object-store: " + objectStore.getPath());
                 }
             }
+            //Remove the xts deployments under the content
+            File contentDir = new File(jbossHome + File.separator + "standalone" + File.separator + "data" + File.separator + "content");
+            if(contentDir.exists())
+            {
+                File[] files = contentDir.listFiles();
+                if(files != null) 
+                {
+                    int i = 0;
+                    for(i=0;i<files.length;i++) 
+                    {
+                        if(files[i].isDirectory()) 
+                        {
+                            deleteDirectory(files[i]);
+                            System.out.println("remove " + files[i].getPath());
+                        }
+                    }
+                }
+            }
+            
+            File exampleXTSconfig = new File(jbossHome + File.separator + "docs" + File.separator + "examples" + File.separator + "configs" + File.separator + "standalone-xts.xml");
+            File XTSconfig = new File(jbossHome + File.separator + "standalone" + File.separator + "configuration" + File.separator + "standalone-xts.xml");
+            if(exampleXTSconfig.exists()) 
+            {
+                //copy example config to configuration directory
+                try {
+                    FileInputStream in = new FileInputStream(exampleXTSconfig);
+                    FileOutputStream out = new FileOutputStream(XTSconfig);
+                    byte[] buffer = new byte[1024];
 
+                    int length;
+                    //copy the file content in bytes 
+                    while ((length = in.read(buffer)) > 0)
+                    {
+                        out.write(buffer, 0, length);
+
+                    }
+
+                    in.close();
+                    out.close();
+                    System.out.println("copy " + exampleXTSconfig.getPath() + " to " + XTSconfig.getPath());
+                }
+                catch(IOException e)
+                {
+                    Assert.fail("copy " + exampleXTSconfig.getPath() + " fail with " + e);
+                }
+            } 
+            else
+            {
+                Assert.fail(exampleXTSconfig.getPath() + " not exists");
+            }
         }
     }
 
@@ -137,7 +187,6 @@ public class BaseCrashTest
     {
         Config config = new Config();
         config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
-
         controller.start("jboss-as", config.map());
         deployer.deploy("xtstest");
 
@@ -147,7 +196,7 @@ public class BaseCrashTest
         //Boot jboss-as after crashing
         config.add("javaVmArguments", javaVmArguments);
         controller.start("jboss-as", config.map());
-        
+
         //Waiting for recovery happening
         controller.kill("jboss-as");
     }
