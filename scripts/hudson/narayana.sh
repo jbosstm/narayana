@@ -114,7 +114,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
-function qa_tests {
+function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
 
@@ -136,7 +136,21 @@ function qa_tests {
   [ $IDLJ == 1 ] && target="junit-jts-testsuite"
 
   ant -f run-tests.xml $target
-  [ $? = 0 ] || fatal "some qa tests failed"
+}
+
+function qa_tests {
+  qa_tests_once "$@"    # run qa against the default orb
+  ok1=$?
+  ok2=0;
+  if [ $SUN_ORB = 1 ]; then
+    qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
+    ok2=$?
+  fi
+
+  [ $ok1 = 0 ] || echo some jacorb QA tests failed
+  [ $ok2 = 0 ] || echo some Sun ORB QA tests failed
+
+  [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
 
 # if the following env variables have not been set initialize them to their defaults
@@ -149,6 +163,7 @@ function qa_tests {
 [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
+[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against both orbs
 [ $txbridge ] || txbridge=1 # bridge tests
 
 QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
@@ -174,7 +189,6 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $QA_TESTS = 1 ] && qa_tests "$@"	# run qa against the default orb
-[ $QA_TESTS = 1 ] && qa_tests "orb=idlj" "$@"	# run qa against the Sun orb
+[ $QA_TESTS = 1 ] && qa_tests "$@"
 
 exit 0
