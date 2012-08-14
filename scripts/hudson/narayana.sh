@@ -139,9 +139,12 @@ function qa_tests_once {
 }
 
 function qa_tests {
-  qa_tests_once "$@"    # run qa against the default orb
-  ok1=$?
+  ok1=0;
   ok2=0;
+  if [ $JAC_ORB = 1 ]; then
+    qa_tests_once "$@"    # run qa against the default orb
+    ok1=$?
+  fi
   if [ $SUN_ORB = 1 ]; then
     qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
     ok2=$?
@@ -163,7 +166,8 @@ function qa_tests {
 [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
-[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against both orbs
+[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+[ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
 [ $txbridge ] || txbridge=1 # bridge tests
 
 QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
