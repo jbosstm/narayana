@@ -190,6 +190,8 @@ for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
+QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
@@ -197,7 +199,5 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
-
-QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
 
 exit 0
