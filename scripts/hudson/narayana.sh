@@ -118,13 +118,16 @@ function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
 
+  for i in $@; do
+    [ ${i%%=*} = "orb" ] && orb=${i##*=}
+  done
+
+  # check to see if we were called with orb=idlj as one of the arguments
+  [ x$orb = x"idlj" ] && IDLJ=1 || IDLJ=0
+
   git checkout TaskImpl.properties
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
-
-  # check to see if we were called with orb=xyz as the first argument
-  [ ${1%%=*} = "orb" ] && orb=${1##*=}
-  [ x$orb = x"idlj" ] && IDLJ=1 || IDLJ=0
 
   # delete lines containing jacorb
   [ $IDLJ == 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
@@ -134,6 +137,7 @@ function qa_tests_once {
 
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
   [ $IDLJ == 1 ] && target="junit-jts-testsuite"
+  [ x$QA_TARGET = x ] || target=$QA_TARGET
 
   ant -f run-tests.xml $target
 }
@@ -146,7 +150,7 @@ function qa_tests {
     ok1=$?
   fi
   if [ $SUN_ORB = 1 ]; then
-    qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
+    qa_tests_once "$@" "orb=idlj" "$@" # run qa against the Sun orb
     ok2=$?
   fi
 
@@ -169,8 +173,7 @@ function qa_tests {
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
 [ $txbridge ] || txbridge=1 # bridge tests
-
-QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+# set QA_TARGET if you want to override the QA test ant target
 
 # for IPv6 testing use export ARQ_PROF=arqIPv6
 # if you don't want to run all the XTS tests set WSTX_MODULES to the ones you want, eg:
@@ -194,5 +197,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
+
+QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
 
 exit 0
