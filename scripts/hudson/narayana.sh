@@ -7,7 +7,7 @@ function fatal {
 function build_narayana {
   echo "Building Narayana"
   cd $WORKSPACE
-  [ $NARAYANA_TESTS == 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
+  [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
@@ -130,13 +130,13 @@ function qa_tests_once {
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
   # delete lines containing jacorb
-  [ $IDLJ == 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
+  [ $IDLJ = 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
   ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
   [ $? = 0 ] || fatal "qa build failed"
 
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
-  [ $IDLJ == 1 ] && target="junit-jts-testsuite"
+  [ $IDLJ = 1 ] && target="junit-jts-testsuite"
   [ x$QA_TARGET = x ] || target=$QA_TARGET
 
   ant -f run-tests.xml $target
@@ -145,13 +145,13 @@ function qa_tests_once {
 function qa_tests {
   ok1=0;
   ok2=0;
-  if [ $JAC_ORB = 1 ]; then
-    qa_tests_once "$@"    # run qa against the default orb
-    ok1=$?
-  fi
   if [ $SUN_ORB = 1 ]; then
     qa_tests_once "$@" "orb=idlj" "$@" # run qa against the Sun orb
     ok2=$?
+  fi
+  if [ $JAC_ORB = 1 ]; then
+    qa_tests_once "$@"    # run qa against the default orb
+    ok1=$?
   fi
 
   [ $ok1 = 0 ] || echo some jacorb QA tests failed
@@ -173,7 +173,11 @@ function qa_tests {
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
 [ $txbridge ] || txbridge=1 # bridge tests
-# set QA_TARGET if you want to override the QA test ant target
+# if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
+# default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
+[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+
+# Note: set QA_TARGET if you want to override the QA test ant target
 
 # for IPv6 testing use export ARQ_PROF=arqIPv6
 # if you don't want to run all the XTS tests set WSTX_MODULES to the ones you want, eg:
@@ -189,8 +193,6 @@ for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
-
-QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
