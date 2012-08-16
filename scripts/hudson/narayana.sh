@@ -117,6 +117,7 @@ function tx_bridge_tests {
 function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
+  unset orb
 
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
