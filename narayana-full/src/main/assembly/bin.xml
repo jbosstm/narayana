@@ -108,7 +108,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jts:narayana-jts:*:javadoc</include>
+				<include>org.jboss.narayana.jts:narayana-jts-jacorb:*:javadoc</include>
 			</includes>
 			<outputDirectory>docs/api/jts</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
@@ -117,7 +117,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jts:narayana-jts</include>
+				<include>org.jboss.narayana.jts:narayana-jts-jacorb</include>
 			</includes>
 			<excludes>
 				<exclude>*:javadoc</exclude>
@@ -247,7 +247,13 @@
 			<destName>default-jta-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../ArjunaJTS/narayana-jts/src/main/resources/jbossts-properties.xml</source>
+			<source>../ArjunaJTS/narayana-jts-jacorb/src/main/resources/jbossts-properties.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>etc</outputDirectory>
+			<destName>default-jts-jbossts-properties.xml</destName>
+		</file>
+		<file>
+			<source>../ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-idlj-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>default-jts-jbossts-properties.xml</destName>

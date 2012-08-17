@@ -49,8 +49,6 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <module>webservice</module>
   </modules>
   <properties>
-    <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
-    <artifactId.name>rest-tx</artifactId.name>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
   </properties>
 </project>

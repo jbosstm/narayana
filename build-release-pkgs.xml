@@ -76,6 +76,8 @@
   <property name="tag" value="5_0_0_M1"/>
   <!-- The file name base for the user downloadable files. Derive it from the tag -->
   <property name="version" value="5.0.0.M1"/>
+  <!-- which uber jar to use -->
+  <property name="orb" value="jacorb"/>
   <!-- the location the JBossTS web site content is copied to -->
   <property name="downloads.dir" value="${user.home}/narayana/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
   <property name="docs.dir" value="${user.home}/narayana/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
@@ -181,7 +183,7 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
+    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-${version}-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
     <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
     <copy file="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-${version}-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
     <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${version}-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
@@ -233,7 +235,7 @@
     <copy todir="tmp-docs-dir/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}/docs/txbridge_guide/target/docbook/publish/en-US/html"/>
     </copy>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts/target/narayana-jts-${version}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
+    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-${version}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
     <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${version}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
     <unzip src="${workdir}/${tag}/rest-tx/tx/target/rest-tx-api-${version}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
     <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${version}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>

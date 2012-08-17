@@ -797,18 +797,18 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>narayana-jts</artifactId>
+        <artifactId>narayana-jts-jacorb</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>narayana-jts</artifactId>
+        <artifactId>narayana-jts-jacorb</artifactId>
         <version>${project.version}</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>narayana-jts</artifactId>
+        <artifactId>narayana-jts-jacorb</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
@@ -1003,8 +1003,8 @@
     <jboss-as.version>7.1.2.Final-SNAPSHOT</jboss-as.version>
 -->
     <jboss-as.version>7.2.0.Alpha1-SNAPSHOT</jboss-as.version>
-        <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
-        <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>
+    <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>
   </properties>
   <profiles>
     <profile>
