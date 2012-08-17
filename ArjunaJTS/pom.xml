@@ -41,7 +41,7 @@
     <module>idl</module>
     <module>jts</module>
     <module>jtax</module>
-    <module>narayana-jts</module>
+    <module>narayana-jts-jacorb</module>
     <module>narayana-jts-idlj</module>
     <module>integration</module>
   </modules>

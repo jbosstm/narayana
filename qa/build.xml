@@ -126,7 +126,7 @@
   <target name="init-jts" depends="jts.cp.jacorb,jts.cp.idlj"/>
   <target name="jts.cp.jacorb" depends="which-jts-jar" if="cp-jacorb-jts">
     <echo>copying jacorb jts</echo>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-jacorb.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
   </target>
   <target name="jts.cp.idlj" depends="which-jts-jar" if="cp-idlj-jts">
     <echo>copying idlj jts</echo>

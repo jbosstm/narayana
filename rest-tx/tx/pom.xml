@@ -29,8 +29,6 @@
   <description>Provides Transactions for web applications</description>
   <properties>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-    <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
-    <artifactId.name>rest-tx</artifactId.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
@@ -73,7 +71,7 @@
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-util</artifactId>
-      <version>${version.artifactId}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -131,8 +129,8 @@
     </dependency>
     <!-- end Jersey -->
     <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>narayana-jts</artifactId>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
