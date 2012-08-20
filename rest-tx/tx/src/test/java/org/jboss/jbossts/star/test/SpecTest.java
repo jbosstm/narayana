@@ -85,11 +85,9 @@ public class SpecTest extends BaseTest {
         206 Performing a GET on the transaction-manager returns a list of all transaction URIs
         207 known to the coordinator (active and in recovery).
         */
-        int tcnt1 = txn.txCount();
-        int tcnt2 = txn.getTransactions().size();
-        log.info("Comparing (" + txn.txUrl() + "): " + tcnt1 + " vrs " + tcnt2 + " vrs " + (txnCount + 1));
-        Assert.assertEquals(tcnt1, tcnt2);
-        Assert.assertEquals(tcnt1, txnCount + 1);
+        Collection<String> txns = txn.getTransactions();
+        // assert that the returned list of transactions contains the new transaction:
+        Assert.assertTrue(txns.contains(txn.txUrl()));
 
         /*
         209 Performing a GET on /transaction-coordinator/1234 returns the current status of the transaction,
