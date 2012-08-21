@@ -114,7 +114,7 @@ public class Client08a
             if (!correct)
                 System.out.println("Gonna fail4");
 
-			CrashRecoveryDelays.awaitReplayCompletionCR05();
+			CrashRecoveryDelays.awaitReplayCompletionCR06();
 
 			ResourceTrace resourceTrace1 = service1.get_resource_trace(0);
 			ResourceTrace resourceTrace2 = service2.get_resource_trace(0);

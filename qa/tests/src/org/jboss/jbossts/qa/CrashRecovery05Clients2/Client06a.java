@@ -102,17 +102,29 @@ public class Client06a
 			service2.setup_oper(1);
 
 			correct = correct && service1.check_oper(checkBehaviors1);
+            if (!correct)
+                System.out.println("Gonna fail1");
 			correct = correct && service2.check_oper(checkBehaviors2);
+            if (!correct)
+                System.out.println("Gonna fail2");
 			correct = correct && service1.is_correct();
+            if (!correct)
+                System.out.println("Gonna fail3");
 			correct = correct && service2.is_correct();
+            if (!correct)
+                System.out.println("Gonna fail4");
 
-			CrashRecoveryDelays.awaitReplayCompletionCR05();
+			CrashRecoveryDelays.awaitReplayCompletionCR06();
 
 			ResourceTrace resourceTrace1 = service1.get_resource_trace(0);
 			ResourceTrace resourceTrace2 = service2.get_resource_trace(0);
 
 			correct = correct && (resourceTrace1 == ResourceTrace.ResourceTraceCommit);
+            if (!correct)
+                System.out.println("Gonna fail5");
 			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTraceCommit);
+            if (!correct)
+                System.out.println("Gonna fail6");
 
 			if (correct)
 			{
