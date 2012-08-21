@@ -175,9 +175,10 @@
   </target>
 
   <property name="test.name" value="otsserver"/>
+  <property name="test.methods" value=""/>
   <target name="onetest">
     <echo message="Running a single test group ${test.name}"/>
-    <junit-tests tests="${test.name}"/>
+    <junit-tests tests="${test.name}" methods="${test.methods}"/>
     <fail if="failed-tests" message="${test.name} - some tests failed"/>
   </target>
 
@@ -323,10 +324,19 @@
   <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
   <macrodef name="junit-tests">
     <attribute name="tests"/>
+    <attribute name="methods" default=""/>
     <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
     <!--<property name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
     <attribute name="additional.elements" default=""/>
+
     <sequential>
+      <condition property="m">
+        <not><equals arg1="@{methods}" arg2=""/></not>
+      </condition>
+      <condition property="n">
+        <equals arg1="@{methods}" arg2=""/>
+      </condition>
+
       <!-- TODO support JTA mode testing of JTS .jar files? -
             would need classpath munging for props file in TaskImpl.properties -->
       <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
@@ -364,7 +374,8 @@
           <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
         </classpath>
         <formatter type="plain"/>
-        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}"/>
+        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
+        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
         <sysproperty key="names" value=".*"/>
         <sysproperty key="additional.elements" value="@{additional.elements}"/>
         <!--<jvmarg value="-Xdebug"/>-->
