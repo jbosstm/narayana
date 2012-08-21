@@ -108,6 +108,7 @@
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
+							<argLine>${ipv6.server.jvm.args}</argLine>
               				<forkMode>once</forkMode>
 							<systemPropertyVariables combine.children="append">
 							<!--

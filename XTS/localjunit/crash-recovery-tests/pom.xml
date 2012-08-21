@@ -74,8 +74,12 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <argLine>${ipv6.server.jvm.args}</argLine>
                             <forkMode>once</forkMode>
                             <workingDirectory>.</workingDirectory>
+                            <environmentVariables>
+                            <CLI_IPV6_OPTS>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</CLI_IPV6_OPTS>
+                            </environmentVariables>
                             <systemPropertyVariables combine.children="append">
                                 <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                 <node.address>[::1]</node.address>
