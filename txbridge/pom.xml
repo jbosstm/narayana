@@ -285,6 +285,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.11</version>
 						<configuration>
+							<CLI_IPV6_OPTS>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</CLI_IPV6_OPTS> 
 							<!-- Prevent test and server output appearing in console. -->
 							<redirectTestOutputToFile>true</redirectTestOutputToFile>
 							<enableAssertions>true</enableAssertions>
