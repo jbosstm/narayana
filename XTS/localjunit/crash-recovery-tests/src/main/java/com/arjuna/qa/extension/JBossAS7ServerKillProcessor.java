@@ -54,8 +54,15 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			log.info("jboss-as killed by byteman scirpt");
 		} else {
 			String env = System.getenv().get("CLI_IPV6_OPTS");
+			Process p;
+
+                	if (env == null)
+				p = Runtime.getRuntime().exec(shutdownSequence);
+			else
+				p = Runtime.getRuntime().exec(shutdownSequence,
+					new String[] {"JAVA_OPTS="+env});
+
 			log.info("jboss-as not killed and shutdown");
-			Process p = Runtime.getRuntime().exec(shutdownSequence, new String[] {"JAVA_OPTS="+env});
 			p.waitFor();
 			p.destroy();
 			// wait 5 * 60 second for jboss-as shutdown complete
@@ -75,7 +82,13 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 	
 	private boolean checkJBossAlive() throws Exception {
 		String env = System.getenv().get("CLI_IPV6_OPTS");
-		Process p = Runtime.getRuntime().exec(killSequence, new String[] {"JAVA_OPTS="+env});
+		Process p;
+
+                if (env == null)
+			p = Runtime.getRuntime().exec(killSequence);
+		else
+			p = Runtime.getRuntime().exec(killSequence, new String[] {"JAVA_OPTS="+env});
+
 		p.waitFor();
 		int rc = p.exitValue();
 
