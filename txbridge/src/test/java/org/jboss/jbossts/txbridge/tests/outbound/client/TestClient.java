@@ -42,6 +42,9 @@ import javax.xml.ws.handler.Handler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +76,7 @@ public class TestClient extends HttpServlet {
             Context ic = new InitialContext();
             userTransaction = (UserTransaction) ic.lookup("java:comp/UserTransaction");
 
-            URL wsdlLocation = new URL("http://localhost:8080/txbridge-outbound-tests-service/TestServiceImpl?wsdl");
+            URL wsdlLocation = new URL("http://" + getLocalHost() + ":8080/txbridge-outbound-tests-service/TestServiceImpl?wsdl");
             QName serviceName = new QName("http://client.outbound.tests.txbridge.jbossts.jboss.org/", "TestServiceImplService");
 
             Service service = Service.create(wsdlLocation, serviceName);
@@ -126,5 +129,19 @@ public class TestClient extends HttpServlet {
         } else {
             userTransaction.rollback();
         }
+    }
+
+    static String getLocalHost() {
+        return isIPv6() ? "[::1]" : "localhost";
+    }
+
+    static boolean isIPv6() {
+        try {
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
+                return true;
+        } catch (final UnknownHostException uhe) {
+        }
+
+        return false;
     }
 }
