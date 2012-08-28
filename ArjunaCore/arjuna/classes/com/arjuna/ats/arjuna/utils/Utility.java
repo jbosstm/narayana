@@ -348,6 +348,37 @@ public class Utility
             throw new IllegalArgumentException("port value out of range "+port);
         }
     }
+    
+    public static synchronized String getDefaultProcessId ()
+    {
+        initialise();
+        
+        return defaultProcessId;
+    }
+    
+    public static synchronized boolean isAndroid ()
+    {
+        initialise();
+        
+        return _isAndroid;
+    }
+    
+    private static void initialise ()
+    {
+        if (defaultProcessId == null)
+        {
+            String t = System.getProperty("java.vm.vendor");
+            
+            if (t.toLowerCase().indexOf("android") != -1)
+            {
+                defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.AndroidProcessId";
+                
+                _isAndroid = true;
+            }
+            else
+                defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.SocketProcessId";
+        }
+    }
 
     private static volatile long[] myAddr = null;
 
@@ -357,8 +388,10 @@ public class Utility
 
     private static final String hexStart = "0x";
 
-    public static final String defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.SocketProcessId";
+    private static volatile String defaultProcessId = null;
 
+    private static boolean _isAndroid = false;
+    
     /**
      * The maximum queue length for incoming connection indications (a request
      * to connect)

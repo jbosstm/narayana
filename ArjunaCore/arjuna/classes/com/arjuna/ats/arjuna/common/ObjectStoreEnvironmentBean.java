@@ -21,8 +21,10 @@
 package com.arjuna.ats.arjuna.common;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import com.arjuna.ats.arjuna.objectstore.StateType;
+import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
@@ -69,6 +71,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.purgeTime")
     private volatile long purgeTime = 100000; // in milliseconds
 
+    private volatile boolean androidDirCheck = false;
+    
     /**
      * Returns the maximum allowed size, in bytes, of the cache store's in-memory cache.
      *
@@ -242,6 +246,36 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public String getObjectStoreDir()
     {
+        if (Utility.isAndroid() && !androidDirCheck)
+        {
+            try
+            {
+                /*
+                 * Use reflection so we can build this in an environment that does
+                 * not have the various Android libraries available.
+                 */
+                     
+                Class<?> instance = Class.forName("android.os.Environment");
+                
+                Method[] mthds = instance.getDeclaredMethods();
+                Method m = null;
+                
+                for (int i = 0; (i < mthds.length) && (m == null); i++)
+                {
+                    if ("getExternalStorageDirectory".equals(mthds[i].getName()))
+                        m = mthds[i];
+                }
+                
+                objectStoreDir = ((File) m.invoke(null)).toString() + File.separator + "ObjectStore";
+                
+                androidDirCheck = true;
+            }
+            catch (final Throwable ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        
         return objectStoreDir;
     }
 

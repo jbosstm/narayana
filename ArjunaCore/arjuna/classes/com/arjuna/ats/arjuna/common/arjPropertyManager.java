@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
@@ -42,16 +43,53 @@ public class arjPropertyManager
 {
     public static CoreEnvironmentBean getCoreEnvironmentBean()
     {
-        return BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class);
+        try
+        {
+            return BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class);
+        }
+        catch (final java.lang.RuntimeException ex)
+        {
+            /*
+             * See JBTM-1227
+             * 
+             * Once the XML parsing is updated, then this should no longer
+             * be necessary.
+             */
+            
+            if (Utility.isAndroid())
+                return new CoreEnvironmentBean();  // todo android
+            else
+                throw ex;
+        }
     }
 
     public static CoordinatorEnvironmentBean getCoordinatorEnvironmentBean()
     {
-        return BeanPopulator.getDefaultInstance(CoordinatorEnvironmentBean.class);
+        try
+        {
+            return BeanPopulator.getDefaultInstance(CoordinatorEnvironmentBean.class);
+        }
+        catch (final java.lang.RuntimeException ex)
+        {
+            if (Utility.isAndroid())
+                return new CoordinatorEnvironmentBean();  // todo android
+            else
+                throw new RuntimeException(ex);
+        }
     }
 
     public static ObjectStoreEnvironmentBean getObjectStoreEnvironmentBean()
     {
-        return BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
+        try
+        {
+            return BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
+        }
+        catch (final java.lang.RuntimeException ex)
+        {
+            if (Utility.isAndroid())
+                return new ObjectStoreEnvironmentBean();  // todo android
+            else
+                throw new RuntimeException(ex);
+        }
     }
 }

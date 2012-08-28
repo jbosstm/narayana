@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.internal.arjuna.utils.AndroidProcessId;
+
 import java.io.File;
 
 import com.arjuna.ats.arjuna.utils.Process;
@@ -49,7 +51,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     private volatile int socketProcessIdMaxPorts = 1;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.processImplementation")
-    private volatile String processImplementationClassName = Utility.defaultProcessId;
+    private volatile String processImplementationClassName = Utility.getDefaultProcessId();
     private volatile Process processImplementation = null;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.pid")
@@ -202,7 +204,17 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         {
             synchronized(this) {
                 if(processImplementation == null && processImplementationClassName != null) {
-                    processImplementation = ClassloadingUtility.loadAndInstantiateClass(Process.class, processImplementationClassName, null);
+                    try
+                    {
+                        processImplementation = ClassloadingUtility.loadAndInstantiateClass(Process.class, processImplementationClassName, null);
+                    }
+                    catch (final java.lang.NoClassDefFoundError ex)
+                    {
+                        if (Utility.isAndroid())  // todo android
+                            return new AndroidProcessId();
+                        else
+                            throw ex;
+                    }
                 }
             }
         }

@@ -22,7 +22,9 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
@@ -568,8 +570,18 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
         {
             synchronized (this) {
                 if(checkedActionFactory == null && checkedActionFactoryClassName != null) {
-                    CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName, null);
-                    checkedActionFactory = instance;
+                    try
+                    {
+                        CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName, null);
+                        checkedActionFactory = instance;
+                    }
+                    catch (final java.lang.RuntimeException ex) // todo android
+                    {
+                        if (Utility.isAndroid())
+                            checkedActionFactory = new CheckedActionFactoryImple();
+                        else
+                            throw ex;
+                    }
                 }
             }
         }

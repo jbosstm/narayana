@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
@@ -30,6 +31,16 @@ public class recoveryPropertyManager
 {
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class);
+        try
+        {
+            return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class);
+        }
+        catch (final java.lang.RuntimeException ex)  // todo android
+        {
+            if (Utility.isAndroid())
+                return new RecoveryEnvironmentBean();
+            else
+                throw ex;
+        }
     }
 }

@@ -77,7 +77,7 @@ public class BeanPopulator
                     Properties defaultProperties = PropertiesFactory.getDefaultProperties();
                     configureFromProperties(bean, name, defaultProperties);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
             beanInstances.putIfAbsent(key, bean);
