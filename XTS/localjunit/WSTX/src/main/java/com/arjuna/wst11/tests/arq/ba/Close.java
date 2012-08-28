@@ -67,6 +67,16 @@ public class Close
             throw eouter;
         }
 
+		//[JBTM-1202]
+		//the asynchronous call to bpm.completed() is taking too long 
+		//and then uba.close() is invoked before the coordinator has received word 
+		//that the participant has completed. 
+		//As the participant is not competed, the coordinator will cancel the participant
+		//and the UBA will throw a TransactionRolledBackException
+		//
+		//we add delay 10s before uba.close() to give the participant time to complete. 
+		//It's a hack and not guaranteed to work.
+		Thread.sleep(10*1000);
 	    uba.close();
 
 	    assertTrue(p.passed());
