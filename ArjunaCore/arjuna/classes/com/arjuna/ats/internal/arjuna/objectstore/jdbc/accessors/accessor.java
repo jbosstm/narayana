@@ -32,8 +32,11 @@
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
@@ -57,9 +60,9 @@ public class accessor implements JDBCAccess
 	_url = null;
     }
 
-    public Connection getConnection () throws SQLException
+    public Connection getConnection () throws SQLException, NamingException
     {
-	return DriverManager.getConnection(_url, null);
+	return ((DataSource)new InitialContext().lookup("java:/comp/env/jdbc/JDBCObjectStoreDS")).getConnection();
     }
 
     public void putConnection (Connection conn)
@@ -98,8 +101,8 @@ public class accessor implements JDBCAccess
         	}
         }
 
-	if (_url == null)
-	    throw new FatalError(toString()+" : invalid ObjectName parameter!");
+//	if (_url == null)
+//	    throw new FatalError(toString()+" : invalid ObjectName parameter!");
     }
 
     private String  _tableName;

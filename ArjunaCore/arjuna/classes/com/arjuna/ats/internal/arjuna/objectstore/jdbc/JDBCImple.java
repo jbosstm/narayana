@@ -39,6 +39,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
 
+import javax.naming.NamingException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -57,21 +59,11 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 public abstract class JDBCImple
 {
 
-	public final boolean storeValid()
-	{
-		return _isValid;
-	}
-
 	public boolean commit_state(Uid objUid, String typeName, String tableName)
 			throws ObjectStoreException
 	{
 		boolean result = false;
 		boolean cleanup = true;
-
-		/* Bail out if the object store is not set up */
-
-		if (!storeValid())
-			return false;
 
 		if (typeName != null)
 		{
@@ -134,20 +126,11 @@ public abstract class JDBCImple
 			}
 			catch (Throwable e)
 			{
-			    e.printStackTrace();
-			    
 			    if (true)
 			        return false;
 			    
 				cleanup = false;
-				if (retryConnection(e, pool))
-				{
-					return commit_state(objUid, typeName, tableName);
-				}
-				else
-				{
-					throw new ObjectStoreException(e.toString(), e);
-				}
+				throw new ObjectStoreException(e.toString(), e);
 			}
 			finally
 			{
@@ -168,10 +151,6 @@ public abstract class JDBCImple
 		boolean hiddenOk = true;
 		boolean cleanup = true;
 
-		/* Bail out if the object store is not set up */
-
-		if (storeValid())
-		{
 			int state = currentState(objUid, typeName, tableName);
 			int pool = getPool();
 			PreparedStatement pstmt = null;
@@ -229,25 +208,13 @@ public abstract class JDBCImple
 			catch (Throwable e)
 			{
 				cleanup = false;
-				if (retryConnection(e, pool))
-				{
-					hide_state(objUid, typeName, tableName);
-				}
-				else
-				{
-					throw new ObjectStoreException(e.toString(), e);
-				}
+				throw new ObjectStoreException(e.toString(), e);
 			}
 			finally
 			{
 				if (cleanup)
 					freePool(pool);
 			}
-		}
-		else
-		{
-			hiddenOk = false;
-		}
 
 		return hiddenOk;
 	}
@@ -258,8 +225,6 @@ public abstract class JDBCImple
 		boolean revealedOk = true;
 		boolean cleanup = true;
 
-		if (storeValid())
-		{
 			int state = currentState(objUid, typeName, tableName);
 
 			int pool = getPool();
@@ -317,25 +282,13 @@ public abstract class JDBCImple
 			catch (Throwable e)
 			{
 				cleanup = false;
-				if (retryConnection(e, pool))
-				{
-					reveal_state(objUid, typeName, tableName);
-				}
-				else
-				{
-					throw new ObjectStoreException(e.toString(), e);
-				}
+				throw new ObjectStoreException(e.toString(), e);
 			}
 			finally
 			{
 				if (cleanup)
 					freePool(pool);
 			}
-		}
-		else
-		{
-			revealedOk = false;
-		}
 
 		return revealedOk;
 	}
@@ -352,8 +305,6 @@ public abstract class JDBCImple
 		ResultSet rs = null;
 		boolean cleanup = true;
 
-		if (storeValid())
-		{
 			int pool = getPool();
 			try
 			{
@@ -434,16 +385,8 @@ public abstract class JDBCImple
 				{
 					// Just in case it's already closed
 				}
-				if (retryConnection(e, pool))
-				{
-					return currentState(objUid, typeName, tableName);
-				}
-				else
-				{
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
-
-					return StateStatus.OS_UNKNOWN;
-				}
+				tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
+				return StateStatus.OS_UNKNOWN;
 			}
 			finally
 			{
@@ -461,7 +404,6 @@ public abstract class JDBCImple
 					freePool(pool);
 				}
 			}
-		}
 
 		return theState;
 	}
@@ -517,24 +459,10 @@ public abstract class JDBCImple
             }
 			finally
 			{
-				try
-				{
 					if (rs != null)
 						rs.close();
-				}
-				catch (SQLException e)
-				{
-					// Just in case it's already closed
-				}
-				try
-				{
 					if (stmt != null)
 						stmt.close();
-				}
-				catch (SQLException e)
-				{
-					// Just in case it's already closed
-				}
 			}
 
 			try
@@ -608,24 +536,10 @@ public abstract class JDBCImple
             }
 			finally
 			{
-				try
-				{
 					if (rs != null)
 						rs.close();
-				}
-				catch (SQLException e)
-				{
-					// Just in case it's already closed
-				}
-				try
-				{
 					if (stmt != null)
 						stmt.close();
-				}
-				catch (SQLException e)
-				{
-					// Just in case it's already closed
-				}
 			}
 
 			try
@@ -657,9 +571,6 @@ public abstract class JDBCImple
 	{
 		boolean removeOk = false;
 		boolean cleanup = true;
-
-		if (!storeValid())
-			return false;
 
 		if (name != null)
 		{
@@ -693,15 +604,8 @@ public abstract class JDBCImple
 				catch (Throwable e)
 				{
 					cleanup = false;
-					if (retryConnection(e, pool))
-					{
-						return remove_state(objUid, name, ft, tableName);
-					}
-					else {
-                        tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
-
-                        removeOk = false;
-                    }
+					tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
+                    removeOk = false;
 				}
 				finally
 				{
@@ -727,9 +631,6 @@ public abstract class JDBCImple
 	public InputObjectState read_state (Uid objUid, String tName, int ft, String tableName) throws ObjectStoreException
 	{
 		InputObjectState newImage = null;
-
-		if (!storeValid())
-			return newImage;
 
 		if (tName != null)
 		{
@@ -771,13 +672,7 @@ public abstract class JDBCImple
 				}
 				catch (Throwable e)
 				{
-				    e.printStackTrace();
-				    
-					if(retryConnection(e, pool)) {
-						return read_state(objUid, tName, ft, tableName);
-					} else {
-						throw new ObjectStoreException(e.toString(), e);
-					}
+					throw new ObjectStoreException(e.toString(), e);
 				}
 				finally
 				{
@@ -786,7 +681,9 @@ public abstract class JDBCImple
 						rs.close();
 					}
 					// Ignore
-					catch (Exception re) {}
+					catch (Exception re) {
+						re.printStackTrace();
+					}
 					freePool(pool);
 				}
 			}
@@ -808,7 +705,7 @@ public abstract class JDBCImple
 
 		byte[] b = state.buffer();
 
-		if (imageSize > 0 && storeValid())
+		if (imageSize > 0)
 		{
 			int pool = getPool();
 			ResultSet rs = null;
@@ -858,11 +755,7 @@ public abstract class JDBCImple
 			}
 			catch(Throwable e)
 			{
-				if(retryConnection(e, pool)) {
-					return write_state(objUid, tName, state, s, tableName);
-				} else {
-                    tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
-                }
+				tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
 			}
 			finally
 			{
@@ -871,7 +764,9 @@ public abstract class JDBCImple
 					rs.close();
 				}
 				// Ignore
-				catch (Exception re) {}
+				catch (Exception re) {
+					re.printStackTrace();
+				}
 				freePool(pool);
 			}
 		}
@@ -880,9 +775,10 @@ public abstract class JDBCImple
 
 	/**
 	 * Set up the store for use.
+	 * @throws NamingException 
 	 */
-	public boolean initialise(Connection conn, JDBCAccess jdbcAccess,
-			String tableName, JDBCStoreEnvironmentBean jdbcStoreEnvironmentBean) throws SQLException
+	public void initialise(Connection conn, JDBCAccess jdbcAccess,
+			String tableName, JDBCStoreEnvironmentBean jdbcStoreEnvironmentBean) throws SQLException, NamingException
 	{
         shareStatus = jdbcStoreEnvironmentBean.getShare();
 
@@ -905,20 +801,11 @@ public abstract class JDBCImple
 		_theConnection[0] = conn;
         conn.setAutoCommit(true);
 
-		try
-		{
 			for (int i = 1; i < _poolSizeInit; i++)
 			{
 				_theConnection[i] = _jdbcAccess.getConnection();
 				_theConnection[i].setAutoCommit(true);
 			}
-		}
-		catch (Exception e) {
-            tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
-
-            _isValid = false;
-            return _isValid;
-        }
 
 		for (int i = _poolSizeInit; i < _poolSizeMax; i++)
 		{
@@ -941,8 +828,7 @@ public abstract class JDBCImple
 			}
 		}
 
-		try
-		{
+
 			Statement stmt = _theConnection[0].createStatement();
 
 			// table [type, object UID, format, blob]
@@ -957,9 +843,10 @@ public abstract class JDBCImple
 				}
 				catch (SQLException ex)
 				{
-					// don't want to print error - chances are it
-					// just reports that the table does not exist
-					// ex.printStackTrace();
+					// This means that it is a "UNDEFINED TABLE" from postgres
+					if (!ex.getSQLState().equals("42P01")) {
+						throw ex;
+					}
 				}
 			}
 
@@ -969,42 +856,11 @@ public abstract class JDBCImple
 			}
 			catch (SQLException ex)
 			{
-				// assume this is reporting that the table already exists:
+				// This means "DUPLICATE TABLE" in postgres
+				if (!ex.getSQLState().equals("42P07")) {
+					throw ex; 
+				}
 			}
-
-			_isValid = true;
-		}
-		catch (Exception e) {
-            tsLogger.i18NLogger.warn_objectstore_JDBCImple_13(e);
-
-            _isValid = false;
-        }
-
-		return _isValid;
-	}
-
-	/**
-	 * Add a new table to an existing implementation.
-	 *
-	 */
-	protected void addTable(String tableName) throws Exception
-	{
-		int pool = getPool();
-		Statement stmt = _theConnection[pool].createStatement();
-
-		try
-		{
-			createTable(stmt, tableName);
-		}
-		catch (SQLException ex)
-		{
-			// assume this is reporting that the table already exists:
-		}
-		finally
-		{
-			freePool(pool);
-		}
-
 	}
 
 	/**
@@ -1067,84 +923,6 @@ public abstract class JDBCImple
 	final void setShareStatus(int status)
 	{
 		shareStatus = status;
-	}
-
-	/**
-	 * retryConnection. Called in exeption handlers where the problem may be due
-	 * to use of a stale (broken) cached connection. If this is the case, we
-	 * re-establish the connection before returning.
-	 *
-	 * @param e
-	 *            The exception, which may be due to a bad connection.
-	 * @param pool
-	 *            The pooled connection which was in use when the exception was
-	 *            thrown and which is therfore suspect.
-	 * @return true if the connection was reestablished (in which case it is
-	 *         worth retrying the calling function), false is a broken
-	 *         connection was unlikely to be the problem.
-	 */
-	protected boolean retryConnection(Throwable e, int pool)
-	{
-		if (e instanceof SQLException)
-		{
-			// To do: Look for specific driver error codes here...
-			try
-			{
-				reconnect(pool);
-			}
-			catch (Exception e1)
-			{
-				return false;
-			}
-			synchronized (_inUse)
-			{
-				_inUse[pool] = true;
-			}
-			freePool(pool);
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * reconnect(int pool): re-establish a potentially failed cached connection.
-	 */
-	protected void reconnect(int pool) throws SQLException
-	{
-		Connection newConnection = _theConnection[pool];
-		_theConnection[pool] = null;
-
-		// just in case the connection is still live,
-		// attempt to clean it up nicely:
-		try
-		{
-			newConnection.close();
-		}
-		catch (SQLException e)
-		{
-		}
-		_jdbcAccess.putConnection(newConnection);
-
-		// release the statements associated with the closed
-		// connection so they dont get used by mistake...
-		for (int i = 0; i < STATEMENT_SIZE; i++)
-		{
-			_preparedStatements[pool][i] = null;
-		}
-
-		// re-establish the connection:
-		newConnection = _jdbcAccess.getConnection();
-		try
-		{
-			newConnection.setAutoCommit(true);
-		}
-		catch (SQLException e)
-		{
-			newConnection = null;
-			throw e;
-		}
-		_theConnection[pool] = newConnection;
 	}
 
 	/**
@@ -1232,8 +1010,6 @@ public abstract class JDBCImple
 	protected JDBCAccess _jdbcAccess = null;
 
 	protected Connection[] _theConnection = null;
-
-	protected boolean _isValid = false;
 
 	protected PreparedStatement[][] _preparedStatements = null;
 

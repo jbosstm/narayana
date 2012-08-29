@@ -36,6 +36,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.naming.NamingException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
@@ -45,8 +47,8 @@ import com.arjuna.ats.internal.arjuna.objectstore.jdbc.ibm_driver;
 
 public class MockDriver extends ibm_driver
 {   
-    public boolean initialise(Connection conn, JDBCAccess jdbcAccess, String tableName,
-                              JDBCStoreEnvironmentBean jdbcStoreEnvironmentBean) throws SQLException
+    public void initialise(Connection conn, JDBCAccess jdbcAccess, String tableName,
+                              JDBCStoreEnvironmentBean jdbcStoreEnvironmentBean) throws SQLException, NamingException
     {
         super.initialise(conn, jdbcAccess, tableName, jdbcStoreEnvironmentBean);
         
@@ -70,8 +72,6 @@ public class MockDriver extends ibm_driver
         
         super._inUse[0] = false;
         super._theConnection[0] = new MockConnection();
-        
-        return true;
     }
     
     public void setState (int state)
@@ -86,19 +86,9 @@ public class MockDriver extends ibm_driver
         return _state;
     }
     
-    public void setValid (boolean v)
-    {
-        super._isValid = v;
-    }
-    
     public void setReadWriteShortcut (boolean res)
     {
         super._preparedStatements[0][JDBCImple.READ_WRITE_SHORTCUT] = new MockPreparedStatement(res);
-    }
-    
-    public void addTable(String tableName) throws Exception
-    {
-        super.addTable(tableName);
     }
     
     public int getTheState(String state)
@@ -114,16 +104,6 @@ public class MockDriver extends ibm_driver
     public void removeFromTheCache(String state)
     {
         super.removeFromCache(state);
-    }
-    
-    public boolean retryConnection(Throwable e, int pool)
-    {
-        return super.retryConnection(e, pool);
-    }
-    
-    public void reconnect(int pool) throws SQLException
-    {
-        super.reconnect(pool);
     }
     
     public void createTable (Statement stmt, String tableName) throws SQLException

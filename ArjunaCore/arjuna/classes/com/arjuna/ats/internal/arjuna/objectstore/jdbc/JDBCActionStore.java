@@ -60,11 +60,6 @@ public class JDBCActionStore extends JDBCStore
 
         boolean result = false;
 
-        /* Bail out if the object store is not set up */
-
-        if (!storeValid())
-            return false;
-
         if (currentState(objUid, tName) == StateStatus.OS_COMMITTED)
             result = true;
     
@@ -123,15 +118,6 @@ public class JDBCActionStore extends JDBCStore
         }
         
         return false;
-    }
-
-    public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
-    {
-        if (tsLogger.logger.isTraceEnabled()) {
-            tsLogger.logger.trace("JDBCActionStore.write_committed(" + storeUid + ", " + tName + ")");
-        }
-        
-        return super.write_committed(storeUid, tName, state);
     }
 
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException

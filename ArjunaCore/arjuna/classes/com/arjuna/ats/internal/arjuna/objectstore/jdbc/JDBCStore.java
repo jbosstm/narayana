@@ -111,10 +111,7 @@ public class JDBCStore implements ObjectStoreAPI
 
     public String getStoreName()
     {
-        if (storeValid())
-            return getJDBCAccess().getClass().getName() + ":" + getTableName();
-        else
-            return "Invalid";
+         return getJDBCAccess().getClass().getName() + ":" + getTableName();
     }
 
     public boolean commit_state(Uid objUid, String tName)
@@ -124,12 +121,7 @@ public class JDBCStore implements ObjectStoreAPI
             tsLogger.logger.trace("JDBCStore.commit_state(" + objUid + ", " + tName + ")");
         }
 
-        /* Bail out if the object store is not set up */
-
-        if (!storeValid())
-            return false;
-        else
-            return _theImple.commit_state(objUid, tName, getTableName());
+        return _theImple.commit_state(objUid, tName, getTableName());
     }
 
     public boolean hide_state(Uid objUid, String tName)
@@ -141,10 +133,7 @@ public class JDBCStore implements ObjectStoreAPI
 
         /* Bail out if the object store is not set up */
 
-        if (storeValid())
-            return _theImple.hide_state(objUid, tName, getTableName());
-        else
-            return false;
+        return _theImple.hide_state(objUid, tName, getTableName());
     }
 
     public boolean reveal_state(Uid objUid, String tName)
@@ -155,10 +144,7 @@ public class JDBCStore implements ObjectStoreAPI
                     + ")");
         }
 
-        if (storeValid())
-            return _theImple.reveal_state(objUid, tName, getTableName());
-        else
-            return false;
+        return _theImple.reveal_state(objUid, tName, getTableName());
     }
 
     /*
@@ -169,10 +155,7 @@ public class JDBCStore implements ObjectStoreAPI
     public int currentState(Uid objUid, String tName)
             throws ObjectStoreException
     {
-        if (storeValid())
-            return _theImple.currentState(objUid, tName, getTableName());
-        else
-            return StateStatus.OS_UNKNOWN;
+        return _theImple.currentState(objUid, tName, getTableName());
     }
 
     /**
@@ -246,11 +229,6 @@ public class JDBCStore implements ObjectStoreAPI
         return write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
     }
 
-    public final boolean storeValid()
-    {
-        return _isValid;
-    }
-
     /*
     * Given a type name return an ObjectState that contains all of the uids of
     * objects of that type
@@ -264,10 +242,7 @@ public class JDBCStore implements ObjectStoreAPI
                     + match + ")");
         }
 
-        if (storeValid())
-            return _theImple.allObjUids(tName, state, match, getTableName());
-        else
-            return false;
+        return _theImple.allObjUids(tName, state, match, getTableName());
     }
 
     public boolean allTypes(InputObjectState foundTypes)
@@ -277,10 +252,7 @@ public class JDBCStore implements ObjectStoreAPI
             tsLogger.logger.trace("JDBCStore.allTypes(" + foundTypes + ")");
         }
 
-        if (storeValid())
-            return _theImple.allTypes(foundTypes, getTableName());
-        else
-            return false;
+        return _theImple.allTypes(foundTypes, getTableName());
     }
 
     public synchronized void packInto(OutputBuffer buff) throws IOException
@@ -296,10 +268,7 @@ public class JDBCStore implements ObjectStoreAPI
     protected InputObjectState read_state(Uid objUid, String tName, int ft)
             throws ObjectStoreException
     {
-        if (!storeValid())
-            return null;
-        else
-            return _theImple.read_state(objUid, tName, ft, getTableName());
+        return _theImple.read_state(objUid, tName, ft, getTableName());
     }
 
     /**
@@ -315,19 +284,13 @@ public class JDBCStore implements ObjectStoreAPI
                     + StateType.stateTypeString(ft) + ")");
         }
 
-        if (!storeValid())
-            return false;
-        else
-            return _theImple.remove_state(objUid, name, ft, getTableName());
+        return _theImple.remove_state(objUid, name, ft, getTableName());
     }
 
     protected boolean write_state(Uid objUid, String tName,
                                   OutputObjectState state, int s) throws ObjectStoreException
     {
-        if (!storeValid())
-            return false;
-        else
-            return _theImple.write_state(objUid, tName, state, s,
+        return _theImple.write_state(objUid, tName, state, s,
                     getTableName());
     }
 
@@ -477,29 +440,17 @@ public class JDBCStore implements ObjectStoreAPI
                             throw ex;
                         }
 
-                        if (!jdbcImple.initialise(connection, getJDBCAccess(),
-                                impleTableName, jdbcStoreEnvironmentBean)) {
-                            tsLogger.i18NLogger.warn_objectstore_JDBCStore_3();
-                            throw new ObjectStoreException();
-                        }
-                        else
-                        {
+                        jdbcImple.initialise(connection, getJDBCAccess(),
+                                impleTableName, jdbcStoreEnvironmentBean);
                             _theImples.put(impleKey, jdbcImple);
                             _theImple = jdbcImple;
                             success = true;
-                        }
                     }
                     finally
                     {
                         if (!success)
                         {
-                            try
-                            {
-                                connection.close();
-                            }
-                            catch (final SQLException sqle)
-                            {
-                            } // Ignore exception
+                             connection.close();
                         }
                     }
                 }
@@ -552,10 +503,10 @@ public class JDBCStore implements ObjectStoreAPI
 
         final ClassLoader classLoader = Thread.currentThread()
                 .getContextClassLoader();
-        final String packageName = getClass().getPackage().getName() + ".jdbc.";
+        final String packagePrefix = getClass().getPackage().getName() + ".";
         try
         {
-            return classLoader.loadClass(packageName + name + "_" + major + "_"
+            return classLoader.loadClass(packagePrefix + name + "_" + major + "_"
                     + minor + "_driver");
         }
         catch (final ClassNotFoundException cnfe)
@@ -563,13 +514,13 @@ public class JDBCStore implements ObjectStoreAPI
         }
         try
         {
-            return classLoader.loadClass(packageName + name + "_" + major
+            return classLoader.loadClass(packagePrefix + name + "_" + major
                     + "_driver");
         }
         catch (final ClassNotFoundException cnfe)
         {
         }
-        return classLoader.loadClass(packageName + name + "_driver");
+        return classLoader.loadClass(packagePrefix + name + "_driver");
     }
 
     protected boolean supressEntry(String name)

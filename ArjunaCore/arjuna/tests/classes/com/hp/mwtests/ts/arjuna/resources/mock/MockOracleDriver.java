@@ -57,13 +57,6 @@ public class MockOracleDriver extends oracle_driver
         
         super._inUse[0] = false;
         super._theConnection[0] = new MockConnection();
-        
-        super._isValid = true;
-    }
-    
-    public void setValid (boolean valid)
-    {
-        super._isValid = valid;
     }
     
     public void resetReadState ()

@@ -61,9 +61,6 @@ public class oracle_driver extends JDBCImple
     public InputObjectState read_state (Uid objUid, String tName, int ft,
             String tableName) throws ObjectStoreException
     {
-        if (!storeValid())
-            return null;
-
         InputObjectState newImage = null;
 
         if (tName != null)
@@ -124,14 +121,14 @@ public class oracle_driver extends JDBCImple
                             {
                                 throw new ObjectStoreException(e.toString(), e);
                             }
-                            try
-                            {
-                                reconnect(pool);
-                            }
-                            catch (final Throwable th)
-                            {
-                                throw new ObjectStoreException(e.toString(), th);
-                            }
+//                            try
+//                            {
+//                                reconnect(pool);
+//                            }
+//                            catch (final Throwable th)
+//                            {
+                                throw new ObjectStoreException(e.toString(), e);
+//                            }
                         }
                     }
                 }
@@ -170,7 +167,7 @@ public class oracle_driver extends JDBCImple
 
         byte[] b = state.buffer();
 
-        if (imageSize > 0 && storeValid())
+        if (imageSize > 0)
         {
             int pool = getPool();
             ResultSet rs = null;
@@ -263,14 +260,14 @@ public class oracle_driver extends JDBCImple
                             tsLogger.i18NLogger.warn_objectstore_jdbc_oracle_2(e);
                             return false;
                         }
-                        try
-                        {
-                            reconnect(pool);
-                        }
-                        catch (final Throwable th)
-                        {
-                            throw new ObjectStoreException(e.toString(), th);
-                        }
+//                        try
+//                        {
+//                            reconnect(pool);
+//                        }
+//                        catch (final Throwable th)
+//                        {
+                            throw new ObjectStoreException(e.toString(), e);
+//                        }
                     }
                 }
             }
