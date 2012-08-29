@@ -24,7 +24,7 @@ function build_narayana {
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all$OBJECT_STORE_PROFILE "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
 
@@ -217,7 +217,7 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target
-    ant -f run-tests.xml $target
+    ant -f run-tests.xml $target $QA_PROFILE
     ok=$?
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
     ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip

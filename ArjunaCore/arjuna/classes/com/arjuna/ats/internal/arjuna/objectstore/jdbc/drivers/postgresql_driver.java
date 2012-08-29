@@ -18,29 +18,33 @@
  * (C) 2009,
  * @author JBoss by Red Hat.
  */
-package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
+package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.SQLException;
-import java.sql.Statement;
+
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver;
 
 /**
- * JDBC store implementation driver-specific code.
- * This version for PostgreSQL JDBC Drivers.
+ * JDBC store implementation driver-specific code. This version for PostgreSQL
+ * JDBC Drivers.
  */
-public class postgresql_driver extends JDBCImple
-{
-    protected void createTable (Statement stmt, String tableName) throws SQLException
-	{
-		stmt.executeUpdate("CREATE TABLE "+tableName+" (StateType INTEGER, TypeName VARCHAR(1024), UidString VARCHAR(255), ObjectState bytea, PRIMARY KEY(UidString, StateType, TypeName))");
+public class postgresql_driver extends JDBCImple_driver {
+
+	@Override
+	protected void checkCreateTableError(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals("42P07")) {
+			throw ex;
+		}
 	}
 
-	public String name ()
-	{
-		return "pgsql";
+	@Override
+	protected void checkDropTableException(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals("42P01")) {
+			throw ex;
+		} else {
+			// For some reason PSQL leaves the transaction in a bad state on a
+			// failed drop
+			connection.get().commit();
+		}
 	}
-
-    protected int getMaxStateSize()
-    {
-        return 65535;
-    }
 }
