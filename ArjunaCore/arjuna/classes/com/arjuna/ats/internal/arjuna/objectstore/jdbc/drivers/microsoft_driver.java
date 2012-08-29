@@ -35,29 +35,33 @@
  * Note: This impl has come from HP-TS-2.2 via. HP-MS 1.0
  */
 
-package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
+package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.SQLException;
-import java.sql.Statement;
+
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver;
 
 /**
- * JDBC store implementation driver-specific code.
- * This version for MS SQL Server JDBC Drivers 2 (server 2005/2008).
+ * JDBC store implementation driver-specific code. This version for MS SQL
+ * Server JDBC Drivers 2 (server 2005/2008).
  */
-public class microsoft_driver extends JDBCImple
-{
-	protected void createTable (Statement stmt, String tableName) throws SQLException
-	{
-		stmt.executeUpdate("CREATE TABLE "+tableName+" (StateType INTEGER, TypeName VARCHAR(1024), UidString VARCHAR(255), ObjectState VARBINARY(MAX), PRIMARY KEY(UidString, StateType, TypeName))");
+public class microsoft_driver extends JDBCImple_driver {
+	@Override
+	protected String getObjectStateSQLType() {
+		return "VARBINARY(MAX)";
 	}
 
-	public String name ()
-	{
-		return "mssqlserver";
+	@Override
+	protected void checkCreateTableError(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals(30001) && ex.getErrorCode() != 2714) {
+			throw ex;
+		}
 	}
 
-    protected int getMaxStateSize()
-    {
-        return 65535;
-    }
+	@Override
+	protected void checkDropTableException(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals("S0005") && ex.getErrorCode() != 3701) {
+			throw ex;
+		}
+	}
 }

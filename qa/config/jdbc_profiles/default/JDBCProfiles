@@ -296,3 +296,4 @@ DB2_SYBASE_JNDI_DatabasePassword=jbossts1
 DB2_SYBASE_JNDI_DatabaseName=jbossts
 DB2_SYBASE_JNDI_Host=vmg07.mw.lab.eng.bos.redhat.com
 DB2_SYBASE_JNDI_Port=5000
+

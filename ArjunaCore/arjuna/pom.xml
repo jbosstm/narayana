@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
-	LLC, and others contributors as indicated by the @authors tag. All rights 
-	reserved. See the copyright.txt in the distribution for a full listing of 
-	individual contributors. This copyrighted material is made available to anyone 
-	wishing to use, modify, copy, or redistribute it subject to the terms and 
-	conditions of the GNU Lesser General Public License, v. 2.1. This program 
-	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-	PURPOSE. See the GNU Lesser General Public License for more details. You 
-	should have received a copy of the GNU Lesser General Public License, v.2.1 
-	along with this distribution; if not, write to the Free Software Foundation, 
-	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  LLC, and others contributors as indicated by the @authors tag. All rights 
+  reserved. See the copyright.txt in the distribution for a full listing of 
+  individual contributors. This copyrighted material is made available to anyone 
+  wishing to use, modify, copy, or redistribute it subject to the terms and 
+  conditions of the GNU Lesser General Public License, v. 2.1. This program 
+  is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+  PURPOSE. See the GNU Lesser General Public License for more details. You 
+  should have received a copy of the GNU Lesser General Public License, v.2.1 
+  along with this distribution; if not, write to the Free Software Foundation, 
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.arjunacore</groupId>
     <artifactId>arjunacore-all</artifactId>
@@ -154,6 +155,18 @@
       <artifactId>byteman-bmunit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.3.168</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>catalina</artifactId>
+      <version>6.0.18</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -191,5 +204,189 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+        <id>release</id>
+        <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                  </execution>
+                </executions>
+                <inherited>false</inherited>
+              </plugin>
+            </plugins>
+        </build>
+    </profile>
+	<profile>
+		<id>sybase-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>com.sybase.jConnect</groupId>
+				<artifactId>jconn3</artifactId>
+				<version>6.0</version>
+				<scope>system</scope>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/jConnect-6_0/classes/jconn3.jar</systemPath>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>sybasejbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>oracle-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc</artifactId>
+				<version>10.2.0.4</version>
+				<scope>system</scope>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/oracle_10_2_0_4/ojdbc14.jar</systemPath>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>oraclejbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>db2-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>com.ibm</groupId>
+				<artifactId>db2jcc</artifactId>
+				<version>9.7</version>
+				<scope>system</scope>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/DB2_v9.7/db2jcc.jar</systemPath>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>db2jbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>postgres-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>9.0-801.jdbc4</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>postgresjbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>mysql-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.21</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>mysqljbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>mssql-jdbc-store</id>
+		<dependencies>
+			<dependency>
+				<groupId>com.microsoft.sqlserver</groupId>
+				<artifactId>sqljdbc4</artifactId>
+				<version>mssql2005_sqljdbc_2.0</version>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar</systemPath>
+				<scope>system</scope>
+			</dependency>
+		</dependencies>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<property>
+								<name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+								<value>mssqljbossts-properties.xml</value>
+							</property>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
   </profiles>
 </project>

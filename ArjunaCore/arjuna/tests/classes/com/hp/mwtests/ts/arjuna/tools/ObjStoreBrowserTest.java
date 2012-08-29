@@ -118,12 +118,14 @@ public class ObjStoreBrowserTest {
 		// listing beans of an invalid type returns null
 		assertNull(osb.probe("InvalidType"));
 		
-		// TODO windows
-		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
-			// listing beans of a valid type returns an empty list
-			assertNotNull(osb.probe("Recovery",
-					"com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean"));
-		}
+		// JBTM-1230
+		// This does not work on the JDBC object store as this test assumes a previous
+		// run has left the "Recovery" entry on disk which won't happen in a JDBC store 
+//		// TODO windows
+//		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
+//			// listing beans of a valid type returns an empty list
+//			assertNotNull(osb.probe("Recovery"));
+//		}
 
 		osb.stop();
 	}

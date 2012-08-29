@@ -26,42 +26,49 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: JDBCAccess.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: accessor.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna.objectstore.jdbc;
+package com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-/**
- * Do not return a connection which participates within the
- * transaction 2-phase commit protocol! All connections will have
- * auto-commit set to true, or we will not be able to use them.
- * So don't return an Arjuna JDBC 1.0 or 2.x connection.
- *
- * @since JTS 2.1.
- */
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
-public interface JDBCAccess
-{    
-    /**
-     * @return the connection to use for the object store.  If a pool of
-     * connections is used, this method may be called up to maxpoolsize
-     * times.  It <EM>must<EM> not return the same connection each time.
-     * @throws NamingException 
-     */
+public class DataSourceJDBCAccess implements JDBCAccess {
 
-    public Connection getConnection () throws SQLException, NamingException;
+	private String datasourceName;
 
-    /**
-     * This method can be used to pass additional information to the
-     * implementation.
-     */
+	public Connection getConnection() throws SQLException, NamingException {
+		Connection connection = ((DataSource) new InitialContext()
+				.lookup(datasourceName)).getConnection();
+		connection.setAutoCommit(false);
+		return connection;
+	}
 
-    public void initialise (StringTokenizer stringTokenizer);
+	public void initialise(StringTokenizer tokenizer) {
+		while (tokenizer.hasMoreElements()) {
+			try {
+				String[] split = tokenizer.nextToken().split("=");
+				if (split[0].equalsIgnoreCase("datasourceName")) {
+					datasourceName = split[1];
+				}
+			} catch (Exception ex) {
+				throw new FatalError(toString() + " : " + ex, ex);
+			}
+		}
+
+		if (datasourceName == null) {
+			throw new FatalError(
+					"The JDBC ObjectStore was not configured with a datasource name");
+		}
+	}
 
 }
