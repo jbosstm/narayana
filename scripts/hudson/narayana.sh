@@ -133,7 +133,7 @@ function qa_tests_once {
   # delete lines containing jacorb
   [ $IDLJ = 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
-  ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
+  [ $IPV6_OPTS ] || ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
   [ $? = 0 ] || fatal "qa build failed"
 
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
