@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
+
 /**
  * A JMX MBean interface containing configuration for the objectstore and various implementations thereof.
  *
@@ -62,4 +64,48 @@ public interface ObjectStoreEnvironmentBeanMBean
     long getTxLogSize();
 
     long getPurgeTime();
+    
+	/**
+	 * Get the JDBCAccess details.
+	 */
+	public String getJdbcAccess();
+
+	/**
+	 * Sets the instance of JDBCAccess
+	 * 
+	 * @param instance
+	 *            an Object that implements JDBCAccess, or null.
+	 */
+	public void setJdbcAccess(String connectionDetails);
+
+	/**
+	 * Get the table prefix
+	 * 
+	 * @return The prefix to apply to the table
+	 */
+	public String getTablePrefix();
+
+	/**
+	 * Set the table prefix
+	 * 
+	 * @param tablePrefix
+	 *            A prefix to use on the tables
+	 */
+	public void setTablePrefix(String tablePrefix);
+
+	/**
+	 * Should the store drop the table
+	 * 
+	 * @return Whether to drop the table
+	 */
+	public boolean getDropTable();
+
+	/**
+	 * Set whether to drop the table.
+	 * 
+	 * @param dropTable
+	 *            Drop the table
+	 */
+	public void setDropTable(boolean dropTable);
+
 }

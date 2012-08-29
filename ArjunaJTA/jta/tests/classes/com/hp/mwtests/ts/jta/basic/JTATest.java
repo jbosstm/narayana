@@ -53,6 +53,7 @@ public class JTATest
 
         XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
         XAResource theResource = creator.create(connectionString, true);
+        XAResource theResource2 = creator.create(connectionString, true);
 
         assertNotNull(xaResource);
 
@@ -63,6 +64,7 @@ public class JTATest
         javax.transaction.Transaction theTransaction = tm.getTransaction();
 
         assertTrue( theTransaction.enlistResource(theResource) );
+        assertTrue( theTransaction.enlistResource(theResource2) );
 
         /*
         * XA does not support subtransactions.
