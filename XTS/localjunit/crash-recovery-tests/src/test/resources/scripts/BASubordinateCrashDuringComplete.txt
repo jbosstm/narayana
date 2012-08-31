@@ -292,7 +292,7 @@ METHOD run()
 AT ENTRY
 IF TRUE
 DO debug("creating counter and rendezvous"),
-   createCounter("closes", 1),
+   createCounter("closes", 3),
    createRendezvous("closes-complete", 2)
 ENDRULE
 
