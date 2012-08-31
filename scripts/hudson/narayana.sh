@@ -133,9 +133,12 @@ function qa_tests_once {
   # delete lines containing jacorb
   [ $IDLJ = 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
-  [ $IPV6_OPTS ] || ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
+  # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
+  [ -z "${IPV6_OPTS+x}" ] && ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
   [ $? = 0 ] || fatal "qa build failed"
 
+  # if IPV6_OPTS is not set then run everything (ci-tests) otherwise don't do the jdbc tests
+  [ -z "${IPV6_OPTS+x}" ] || target="junit-testsuite" && target="ci-tests"
   [ $IPV6_OPTS ] && target="junit-testsuite" || target="ci-tests"
   [ $IDLJ = 1 ] && target="junit-jts-testsuite"
   [ x$QA_TARGET = x ] || target=$QA_TARGET
