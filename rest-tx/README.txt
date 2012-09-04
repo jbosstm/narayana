@@ -38,3 +38,28 @@ appropriately. I have tested against AS trunk (6.0.0.20100721-M4) and AS7.
 The integration tests run the particpant in an embedded container and the coordinator in the JBoss AS:
 
 	mvn clean install -Premote
+
+Generating a Schema
+===================
+
+Parts of the API use media type "application/txstatusext+xml". The JAXB classes supporting this media
+type are in the restat-util module. To generate a schema for this type compile restat-util and then use
+the JAXB shemagen tool:
+
+	schemagen util/src/main/java/org/jboss/jbossts/star/util/media/txstatusext/TransactionManagerElement.java -cp util/target/classes/
+
+which will generate a file called schema1.xsd in the current directory. Then overwrite the existing schema:
+
+	mv schema1.xsd util/src/main/resources/restat.xsd
+
+Next you need to generate an instance of JAXB ObjectFactory using the xjc tool:
+
+	xjc -p org.jboss.jbossts.star.util.media.txstatusext util/src/main/resources/restat.xsd
+
+and copy the ObjectFactory to the package where the other JAXB classes are:
+
+	cp org/jboss/jbossts/star/util/media/txstatusext/ObjectFactory.java  util/src/main/java/org/jboss/jbossts/star/util/media/txstatusext/
+
+and then clean up the generated files:
+
+	rm -rf org

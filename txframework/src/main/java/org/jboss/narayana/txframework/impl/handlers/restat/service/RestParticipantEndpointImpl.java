@@ -1,6 +1,7 @@
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
 import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
 import javax.ws.rs.DefaultValue;
@@ -41,6 +42,15 @@ public class RestParticipantEndpointImpl {
 
         participants.put(pid, new RESTAT2PCParticipant(serviceImpl, true));
 
+        // draft 8 of the REST-AT spec uses link headers for participant registration
+        TxSupport txSupport = new TxSupport();
+        String linkHeader = txSupport.makeTwoPhaseAwareParticipantLinkHeader(
+                info.getAbsolutePath().toString(), txid, String.valueOf(pid));
+        System.out.println("Service: Enlisting " + linkHeader);
+        String recoveryUrl = txSupport.enlistParticipant(enlistUrl, linkHeader);
+        System.out.println("Service: recoveryURI: " + recoveryUrl);
+
+/*
         String path = info.getPath();
         if (path.startsWith("/")) {
             path = path.substring(1);
@@ -58,6 +68,7 @@ public class RestParticipantEndpointImpl {
         String response = txSupport.httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, enlistUrl,
                 "POST", TxSupport.POST_MEDIA_TYPE, pUrls, null);
         //todo: check response
+*/
     }
 
     private static void checkNotNull(Object object, String name) throws ParticipantRegistrationException {
@@ -73,28 +84,28 @@ public class RestParticipantEndpointImpl {
     * participants to prepare/commit/rollback their transactional work.commitCount
     */
     @PUT
-    @Path("{txid}/{pId}/terminate")
+    @Path("{whats_this}/{txid}/{pId}/terminator")
     public Response terminate(@PathParam("txid") @DefaultValue("") String txid, @PathParam("pId") @DefaultValue("") Integer pId, String content) {
 
         RESTAT2PCParticipant participant = participants.get(pId);
         String status = TxSupport.getStatus(content);
 
-        if (TxSupport.isPrepare(status)) {
+        if (TxStatus.isPrepare(status)) {
 
             boolean prepared = participant.prepare();
             if (prepared) {
-                return Response.ok(TxSupport.toStatusContent(TxSupport.PREPARED)).build();
+                return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())).build();
             } else {
                 return Response.ok(HttpURLConnection.HTTP_CONFLICT).build();
             }
 
-        } else if (TxSupport.isCommit(status)) {
+        } else if (TxStatus.isCommit(status)) {
             participant.commit();
-            return Response.ok(TxSupport.toStatusContent(TxSupport.COMMITTED)).build();
+            return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionCommitted.name())).build();
 
-        } else if (TxSupport.isAbort(status)) {
+        } else if (TxStatus.isAbort(status)) {
             participant.rollback();
-            return Response.ok(TxSupport.toStatusContent(TxSupport.ABORTED)).build();
+            return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())).build();
 
         } else {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();

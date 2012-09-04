@@ -94,16 +94,16 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>rest-tx-web</artifactId>
+      <artifactId>restat-web</artifactId>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>rest-tx-api</artifactId>
+      <artifactId>restat-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>rest-tx-api</artifactId>
+      <artifactId>restat-api</artifactId>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>

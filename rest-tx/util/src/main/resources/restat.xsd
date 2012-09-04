@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="coordinator" type="coordinatorElement"/>
+
+  <xs:element name="transaction-manager" type="transactionManagerElement"/>
+
+  <xs:complexType name="transactionManagerElement">
+    <xs:sequence>
+      <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="statistics" type="transactionStatisticsElement" minOccurs="0"/>
+      <xs:element name="coordinatorURIs" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="coordinators" type="coordinatorElement" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="transactionStatisticsElement">
+    <xs:sequence>
+      <xs:element name="active" type="xs:int"/>
+      <xs:element name="prepared" type="xs:int"/>
+      <xs:element name="committed" type="xs:int"/>
+      <xs:element name="rolledback" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="coordinatorElement">
+    <xs:sequence>
+      <xs:element name="status" type="transactionStatusElement" minOccurs="0"/>
+      <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="timeout" type="xs:long"/>
+      <xs:element name="txnURI" type="xs:string" minOccurs="0"/>
+      <xs:element name="terminatorURI" type="xs:string" minOccurs="0"/>
+      <xs:element name="durableParticipantEnlistmentURI" type="xs:string" minOccurs="0"/>
+      <xs:element name="volatileParticipantEnlistmentURI" type="xs:string" minOccurs="0"/>
+      <xs:element name="twoPhaseAware" type="twoPhaseAwareParticipantElement" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="twoPhaseUnaware" type="twoPhaseUnawareParticipantElement" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="volatileParticipants" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="twoPhaseAwareParticipantElement">
+    <xs:complexContent>
+      <xs:extension base="participantElement">
+        <xs:sequence>
+          <xs:element name="terminatorURI" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="participantElement">
+    <xs:sequence>
+      <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="status" type="transactionStatusElement" minOccurs="0"/>
+      <xs:element name="recoveryURI" type="xs:string" minOccurs="0"/>
+      <xs:element name="resourceURI" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="twoPhaseUnawareParticipantElement">
+    <xs:complexContent>
+      <xs:extension base="participantElement">
+        <xs:sequence>
+          <xs:element name="prepareURI" type="xs:string" minOccurs="0"/>
+          <xs:element name="commitURI" type="xs:string" minOccurs="0"/>
+          <xs:element name="rollbackURI" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="transactionStatusElement">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TransactionRollbackOnly"/>
+      <xs:enumeration value="TransactionRollingBack"/>
+      <xs:enumeration value="TransactionRolledBack"/>
+      <xs:enumeration value="TransactionCommitting"/>
+      <xs:enumeration value="TransactionCommitted"/>
+      <xs:enumeration value="TransactionHeuristicRollback"/>
+      <xs:enumeration value="TransactionHeuristicCommit"/>
+      <xs:enumeration value="TransactionHeuristicHazard"/>
+      <xs:enumeration value="TransactionHeuristicMixed"/>
+      <xs:enumeration value="TransactionPreparing"/>
+      <xs:enumeration value="TransactionPrepared"/>
+      <xs:enumeration value="TransactionActive"/>
+      <xs:enumeration value="TransactionCommittedOnePhase"/>
+      <xs:enumeration value="TransactionReadOnly"/>
+      <xs:enumeration value="TransactionStatusNone"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

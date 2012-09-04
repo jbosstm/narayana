@@ -72,7 +72,7 @@ public class CoordinatorCleanupSynchronization implements SynchronizationRecord 
 
     @Override
     public boolean afterCompletion(int status) {
-        coordinator.removeTxState(transaction, enlistmentIds);
+        coordinator.removeTxState(status, transaction, enlistmentIds);
         return true;
     }
 

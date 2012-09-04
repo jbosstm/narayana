@@ -944,18 +944,24 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-tx-web</artifactId>
+        <artifactId>restat-web</artifactId>
         <version>${project.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-tx-api</artifactId>
+        <artifactId>restat-util</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>restat-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-tx-api</artifactId>
+        <artifactId>restat-api</artifactId>
         <version>${project.version}</version>
         <classifier>javadoc</classifier>
       </dependency>

@@ -21,9 +21,13 @@
 package org.jboss.jbossts.star.resource;
 
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.util.LinkHolder;
+import org.jboss.jbossts.star.util.TxLinkRel;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 
@@ -35,44 +39,69 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
- * Log record for driving participants through 2PC and recoverery
+ * Log record for driving participants through 2PC and recovery
  */
 public class RESTRecord extends AbstractRecord
 {
     protected final static Logger log = Logger.getLogger(RESTRecord.class);
-    private String terminateUrl;
-    private String participantUrl;
+    private String participantURI;
 
-    private String coordinatorUrl;
+    // two phase aware participant completion URI
+    private String terminateURI;
+
+    // two phase unaware participant completion URIs
+    String commitURI;
+    String prepareURI;
+    String rollbackURI;
+    String commitOnePhaseURI;
+
+    private String coordinatorURI;
 
     private String coordinatorID;
-    private String status;
+
+    private TxStatus status;
     private String txId;
     private boolean prepared;
-    private String recoveryUrl;
+    private String recoveryURI;
+    private long age = System.currentTimeMillis();
 
-    public RESTRecord() {}
+    public RESTRecord() {
+        status = TxStatus.TransactionStatusUnknown;
+    }
 
-    public RESTRecord(String coordinatorUrl, String participantUrl, String terminateUrl, String txId)
+    public RESTRecord(String txId, String coordinatorURI, String participantURI, String terminateURI)
     {
         super(new Uid());
 
         if (log.isTraceEnabled())
-            log.tracef("RESTRecord(%s, %s, %s, %s)", coordinatorUrl, participantUrl, terminateUrl, txId);
+            log.tracef("RESTRecord(%s, %s, %s, %s)", coordinatorURI, participantURI, terminateURI, txId);
 
-        this.participantUrl = participantUrl;
-        this.terminateUrl = terminateUrl;
-        this.coordinatorUrl = coordinatorUrl;
+        this.participantURI = participantURI;
+        this.terminateURI = this.prepareURI = this.commitURI = this.rollbackURI = this.commitOnePhaseURI = terminateURI;
+        this.coordinatorURI = coordinatorURI;
         this.txId = txId;
 
         coordinatorID = get_uid().fileStringForm();
-        status = "";
-        recoveryUrl = "";
+        status = TxStatus.TransactionActive;
+        recoveryURI = "";
     }
 
-    String getParticipant()
+    public RESTRecord(String txId, String coordinatorURI, String participantURI,
+                      String commitURI, String prepareURI, String  rollbackURI, String commitOnePhaseURI) {
+        this(txId, coordinatorURI, participantURI, null);
+
+        if (log.isTraceEnabled())
+            log.tracef("RESTRecord(%s, %s, %s, %s)", commitURI, prepareURI, rollbackURI, commitOnePhaseURI);
+
+        this.commitURI = commitURI;
+        this.prepareURI = prepareURI;
+        this.rollbackURI = rollbackURI;
+        this.commitOnePhaseURI = commitOnePhaseURI;
+    }
+
+    String getParticipantURI()
     {
-        return terminateUrl;
+        return participantURI;
     }
 
     public int typeIs()
@@ -82,7 +111,15 @@ public class RESTRecord extends AbstractRecord
 
     public Object value()
     {
-        return status;
+        return status.name();
+    }
+
+    public String getStatus() {
+        return status.name();
+    }
+
+    public long getAge() {
+        return age;
     }
 
     public void setValue(Object o)
@@ -137,53 +174,27 @@ public class RESTRecord extends AbstractRecord
         return statusToOutcome(status);
     }
 
-    private int statusToOutcome(String status)
+    private int statusToOutcome(TxStatus status)
     {
-        if (TxSupport.H_COMMIT.equals(status))
-            return TwoPhaseOutcome.HEURISTIC_COMMIT;
-        else if (TxSupport.H_ROLLBACK.equals(status))
-            return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-        else if (TxSupport.H_MIXED.equals(status))
-            return TwoPhaseOutcome.HEURISTIC_MIXED;
-        else if (TxSupport.H_HAZARD.equals(status))
-            return TwoPhaseOutcome.HEURISTIC_HAZARD;
-        else if (TxSupport.ABORT_ONLY.equals(status))
-            return TwoPhaseOutcome.FINISH_OK;
-        else if (TxSupport.ABORTED.equals(status))
-            return TwoPhaseOutcome.FINISH_OK;
-        else if (TxSupport.COMMITTED.equals(status))
-            return TwoPhaseOutcome.FINISH_OK;
-        else if (TxSupport.COMMITTED_ONE_PHASE.equals(status))
-            return TwoPhaseOutcome.FINISH_OK;
-        else if (TxSupport.PREPARED.equals(status))
-            return TwoPhaseOutcome.PREPARE_OK;
-        else if (TxSupport.READONLY.equals(status))
-            return TwoPhaseOutcome.PREPARE_READONLY;
+        try {
+            if (!status.equals(TxStatus.TransactionStatusUnknown))
+                return status.twoPhaseOutcome();
+        } catch (IllegalArgumentException e) {
+            if (log.isTraceEnabled())
+                log.trace("Participant returned unknown status");
+        }
 
-/*
-        else if (TxSupport.PREPARING.equals(status))
-            return TwoPhaseOutcome.PREPARE_NOTOK;
-        else if (TxSupport.RUNNING.equals(status))
-            return TwoPhaseOutcome.FINISH_ERROR;
-        else if (TxSupport.UNKNOWN.equals(status))
-            return TwoPhaseOutcome.FINISH_ERROR;
-        else if (TxSupport.ABORTING.equals(status))
-            return TwoPhaseOutcome.FINISH_ERROR;
-        else if (TxSupport.COMMITTING.equals(status))
-            return TwoPhaseOutcome.FINISH_ERROR;
-*/
-        else
-            return TwoPhaseOutcome.FINISH_ERROR;
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     public boolean forgetHeuristic() {
         if (log.isTraceEnabled())
-            log.tracef("forgetting heuristic for %s", terminateUrl);
+            log.tracef("forgetting heuristic for %s", participantURI);
 
         try {
             new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NO_CONTENT},
-                    this.participantUrl, "DELETE", null, null, null);
-            status = "";
+                    this.participantURI, "DELETE", null);
+            status = TxStatus.TransactionStatusUnknown;
         } catch (HttpResponseException e) {
             return false;
         }
@@ -194,7 +205,7 @@ public class RESTRecord extends AbstractRecord
     public int topLevelPrepare()
     {
         if (log.isTraceEnabled())
-            log.tracef("prepare %s", terminateUrl);
+            log.tracef("prepare %s", prepareURI);
 
         check_halt(Fault.prepare_halt);
         check_suspend(Fault.prepare_suspend);
@@ -202,17 +213,18 @@ public class RESTRecord extends AbstractRecord
         if (fault.equals(Fault.h_hazard))
             return TwoPhaseOutcome.HEURISTIC_HAZARD;
 
-        if (terminateUrl == null || txId == null)
+        if (prepareURI == null || txId == null)
             return TwoPhaseOutcome.PREPARE_READONLY;
 
         try
         {
-            status = TxSupport.getStatus(
+            String res = TxSupport.getStatus(
 				new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-					this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-					TxSupport.toStatusContent(TxSupport.PREPARED), null));
+					this.prepareURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
+					TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())));
 
             prepared = true;
+            status = TxStatus.fromStatus(res);
 
             int outcome = statusToOutcome();
 
@@ -221,11 +233,11 @@ public class RESTRecord extends AbstractRecord
         }
         catch (HttpResponseException e)
         {
-            if (checkFinishError(e.getActualResponse(), false)) {
-                status = TxSupport.toStatusContent(TxSupport.PREPARED);
+            if (checkFinishError(e.getActualResponse(), TxStatus.TransactionPrepared)) {
+                status = TxStatus.TransactionPrepared;
                 return TwoPhaseOutcome.PREPARE_OK;
             } else {
-                status = TxSupport.toStatusContent(TxSupport.ABORTED);
+                status = TxStatus.TransactionRolledBack;
             }
         }
 
@@ -235,20 +247,23 @@ public class RESTRecord extends AbstractRecord
     public int topLevelAbort()
     {
         if (log.isTraceEnabled())
-            log.debugf("trace %s", terminateUrl);
+            log.debugf("trace %s", rollbackURI);
 
         check_halt(Fault.abort_halt);
         check_suspend(Fault.abort_suspend);
 
-        if (terminateUrl == null || txId == null)
+        if (rollbackURI == null || txId == null)
             return TwoPhaseOutcome.FINISH_ERROR;
 
         try {
-            status = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-                    TxSupport.toStatusContent(TxSupport.ABORTED), null));
+            String res = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+                    this.rollbackURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
+                    TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())));
+
+            status = TxStatus.fromStatus(res);
         } catch (HttpResponseException e) {
 
-            if (checkFinishError(e.getActualResponse(), false))
+            if (checkFinishError(e.getActualResponse(), TxStatus.TransactionRolledBack))
                 return TwoPhaseOutcome.FINISH_OK;
         }
 
@@ -258,15 +273,15 @@ public class RESTRecord extends AbstractRecord
     public int topLevelCommit()
     {
         if (log.isTraceEnabled())
-            log.tracef("commit %s", terminateUrl);
+            log.tracef("commit %s", commitURI);
 
-        if (terminateUrl == null || txId == null)
+        if (commitURI == null || txId == null)
             return TwoPhaseOutcome.PREPARE_READONLY;
 
         if (!prepared)
             return TwoPhaseOutcome.NOT_PREPARED;
 
-        return doCommit(TxSupport.COMMITTED);
+        return doCommit(TxStatus.TransactionCommitted);
     }
 
     public int nestedOnePhaseCommit()
@@ -282,10 +297,10 @@ public class RESTRecord extends AbstractRecord
      */
     public int topLevelOnePhaseCommit()
     {
-		return doCommit(TxSupport.COMMITTED_ONE_PHASE);
+		return doCommit(TxStatus.TransactionCommittedOnePhase);
     }
 
-    private int doCommit(String nextState)
+    private int doCommit(TxStatus nextState)
     {
 		TxSupport txs = new TxSupport();
 
@@ -298,24 +313,24 @@ public class RESTRecord extends AbstractRecord
         try
         {
             if (log.isTraceEnabled())
-                log.tracef("committing %s", this.terminateUrl);
-  
-            if (!TxSupport.isReadOnly(status)) {
+                log.tracef("committing %s", this.commitURI);
+
+            if (!TxStatus.TransactionReadOnly.equals(status)) {
                 txs = new TxSupport();
 				String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-					this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-					TxSupport.toStatusContent(nextState), null);
+					this.commitURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
+					TxSupport.toStatusContent(nextState.name()));
 
-                status = txs.getStatus(body);
+                status = TxStatus.fromStatus(TxSupport.getStatus(body));
 
             	if (log.isTraceEnabled())
                 	log.tracef("commit http status: %s RTS status: %s", txs.getStatus(), status);
             } else {
-                status = TxSupport.COMMITTED;
+                status = TxStatus.TransactionCommitted;
 			}
 
             if (log.isTraceEnabled())
-                log.tracef("COMMIT OK at terminateUrl: %s", this.terminateUrl);
+                log.tracef("COMMIT OK at commitURI: %s", this.commitURI);
         }
         catch (HttpResponseException e)
         {
@@ -327,31 +342,49 @@ public class RESTRecord extends AbstractRecord
                 log.trace("Finishing with TwoPhaseOutcome.FINISH_ERROR");
  				return TwoPhaseOutcome.FINISH_ERROR;
 			} else {
-            	checkFinishError(e.getActualResponse(), true);
-				status = txs.getBody();
+            	checkFinishError(e.getActualResponse(), nextState);
+				status = TxStatus.fromStatus(txs.getBody());
 			}
         }
 
         return statusToOutcome(status);
     }
-    private boolean checkFinishError(int expected, boolean commit) throws HttpResponseException
+
+    private boolean checkFinishError(int expected, TxStatus nextState) throws HttpResponseException
     {
         if (expected == HttpURLConnection.HTTP_NOT_FOUND)
         {
-            // the participant may have moved so check the coordinator terminateUrl
+            // the participant may have moved so check the coordinator participantURI
             if (hasParticipantMoved())
             {
                 if (log.isDebugEnabled())
-                    log.debugf("participant has moved commit to new terminateUrl %s", this.terminateUrl);
+                    log.debugf("participant has moved commit to new participantURI %s", this.participantURI);
+
+                String uri;
+
+                if (nextState.isCommit()) {
+                    uri = commitURI;
+                } else if (nextState.isAbort()) {
+                    uri = rollbackURI;
+                } else if (nextState.isPrepare()) {
+                    uri = prepareURI;
+                } else if (nextState.isCommitOnePhase()) {
+                    uri = commitOnePhaseURI;
+                } else {
+                    status = TxStatus.TransactionActive;
+
+                    return false;
+                }
 
                 try
                 {
-                    TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.terminateUrl, "PUT", TxSupport.STATUS_MEDIA_TYPE,
-                        TxSupport.toStatusContent(commit ? TxSupport.COMMITTED : TxSupport.ABORTED), null));
+                    TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+                            uri, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
+                            TxSupport.toStatusContent(nextState.name())));
                     if (log.isDebugEnabled())
-                        log.debug("Finish OK at new terminateUrl: %s" + this.terminateUrl);
+                        log.debug("Finish OK at new participantURI: %s" + this.participantURI);
 
-                    status = (commit ? TxSupport.COMMITTED : TxSupport.ABORTED);
+                    status = nextState;
 
                     return true;
                 }
@@ -361,19 +394,19 @@ public class RESTRecord extends AbstractRecord
                         log.tracef(e1, "Finish still failing at new URI: ");
 
                     if (log.isInfoEnabled())
-                        log.debugf("participant %s commit error: %s", this.terminateUrl, e1.getMessage());
+                        log.debugf("participant %s commit error: %s", this.participantURI, e1.getMessage());
                 }
             }
         }
 
-        status = TxSupport.RUNNING;
+        status = TxStatus.TransactionActive;
 
         return false;
     }
 
     /**
      * A participant tells the coordinator if it changes its URL.
-     * To see if this has happened perform a GET on the recovery terminateUrl which returns the
+     * To see if this has happened perform a GET on the recovery participantURI which returns the
      * last known location of the participant.
      * @return true if the participant did move
      */
@@ -382,24 +415,60 @@ public class RESTRecord extends AbstractRecord
         try
         {
             if (log.isTraceEnabled())
-                log.tracef("seeing if participant has moved: %s  recoveryUrl: %s", coordinatorID, recoveryUrl);
+                log.tracef("seeing if participant has moved: %s  recoveryURI: %s", coordinatorID, recoveryURI);
 
-            if (recoveryUrl.length() == 0)
+            if (recoveryURI.length() == 0)
                     return false;
 
-            // get the latest participant terminateUrl by probing the recovery terminateUrl:
-            String content = new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, recoveryUrl, "GET", TxSupport.PLAIN_MEDIA_TYPE, null, null);
-            String terminator = new LinkHolder(content).get(TxSupport.TERMINATOR_LINK);
-            String participant = new LinkHolder(content).get(TxSupport.PARTICIPANT_LINK);
+            // get the latest participant terminateURI (or URIs in the case of a Two Phase Unaware participant)
+            // by probing the recovery URI:
+            Map<String, String> links = new HashMap<String, String>();
 
-            if (terminator != null && !terminator.equals(this.terminateUrl))
-            {
+            new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, recoveryURI, "GET",
+                    TxMediaType.PLAIN_MEDIA_TYPE, null, links);
+
+            String terminateURI = links.get(TxLinkRel.PARTICIPANT_TERMINATOR.linkName());
+
+            if (links.containsKey(TxLinkRel.PARTICIPANT_TERMINATOR.linkName())) {
                 // participant has moved so remember the new location
-                this.participantUrl = participant;
-                this.terminateUrl = terminator;
+                this.participantURI = links.get(TxLinkRel.PARTICIPANT_RESOURCE.linkName());
+            }
+
+            if (terminateURI == null) {
+                // see if it is two phase unaware
+                String commitURI = links.get(TxLinkRel.PARTICIPANT_COMMIT.linkName());
+                String prepareURI = links.get(TxLinkRel.PARTICIPANT_PREPARE.linkName());
+                String rollbackURI = links.get(TxLinkRel.PARTICIPANT_ROLLBACK.linkName());
+                String commitOnePhaseURI = links.get(TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE.linkName());
+
+                if (commitURI != null)
+                    this.commitURI = commitURI;
+
+                if (prepareURI != null)
+                    this.prepareURI = prepareURI;
+
+                if (rollbackURI != null)
+                    this.rollbackURI = rollbackURI;
+
+                if (commitOnePhaseURI != null)
+                    this.commitOnePhaseURI = commitOnePhaseURI;
 
             	if (log.isTraceEnabled())
-                	log.tracef("... yes it has - new terminateUrl is %s", terminator);
+                	log.tracef("... yes it has - new terminate URIs (commit, prepare, rollback and commit one phase)" +
+                            " are %s %s %s %s",
+                            commitURI != null ?  commitURI : "",
+                            prepareURI != null ?  prepareURI : "",
+                            rollbackURI != null ?  rollbackURI : "",
+                            commitOnePhaseURI != null ?  commitOnePhaseURI : "");
+
+                if (this.commitURI != null && this.prepareURI != null && this.rollbackURI != null)
+                    return true;
+            } else {
+                // terminator has moved so remember the new location
+                this.terminateURI = this.prepareURI = this.commitURI = this.rollbackURI = this.commitOnePhaseURI = terminateURI;
+
+            	if (log.isTraceEnabled())
+                	log.tracef("... yes it has - new terminateURI is %s", terminateURI);
 
                 return true;
             }
@@ -419,12 +488,12 @@ public class RESTRecord extends AbstractRecord
         {
             os.packString(txId);
             os.packBoolean(prepared);
-            os.packString(participantUrl);
-            os.packString(terminateUrl);
-            os.packString(coordinatorUrl);
-            os.packString(recoveryUrl);
+            os.packString(participantURI);
+            os.packString(terminateURI);
+            os.packString(coordinatorURI);
+            os.packString(recoveryURI);
             os.packString(coordinatorID);
-            os.packString(status);
+            os.packString(status.name());
 
             return super.save_state(os, t);
         }
@@ -442,15 +511,15 @@ public class RESTRecord extends AbstractRecord
         {
             txId = os.unpackString();
             prepared = os.unpackBoolean();
-            participantUrl = os.unpackString();
-            terminateUrl = os.unpackString();
-            coordinatorUrl = os.unpackString();
-            recoveryUrl = os.unpackString();
+            participantURI = os.unpackString();
+            terminateURI = os.unpackString();
+            coordinatorURI = os.unpackString();
+            recoveryURI = os.unpackString();
             coordinatorID = os.unpackString();
-            status = os.unpackString();
+            status = TxStatus.fromStatus(os.unpackString());
 
             if (log.isInfoEnabled())
-                log.infof("restore_state %s", terminateUrl);
+                log.infof("restore_state %s", terminateURI);
 
             return super.restore_state(os, t);
         }
@@ -503,8 +572,8 @@ public class RESTRecord extends AbstractRecord
         return false;
     }
 
-    public void setRecoveryUrl(String recoveryUrl) {
-        this.recoveryUrl = recoveryUrl;
+    public void setRecoveryURI(String recoveryURI) {
+        this.recoveryURI = recoveryURI;
     }
 
     // TODO remove fault injection code - use byteman instead
@@ -521,7 +590,7 @@ public class RESTRecord extends AbstractRecord
         {
             if (f.name().equals(name))
             {
-                log.tracef("setFault: %s terminateUrl: %s", f, terminateUrl);
+                log.tracef("setFault: %s participantURI: %s", f, participantURI);
 
                 fault = f;
                 return;

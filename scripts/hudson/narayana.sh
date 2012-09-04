@@ -71,7 +71,7 @@ function init_jboss_home {
 
 function txframework_tests {
   echo "#0. TXFramework Test"
-  cp ./rest-tx/webservice/target/rest-tx-web-*.war $JBOSS_HOME/standalone/deployments
+  cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
 }

@@ -29,7 +29,7 @@ public class ClientIntegrationTest extends BaseTest {
 
     @BeforeClass
     public static void startServer() throws Exception {
-        startContainer(TxSupport.DEF_TX_URL, "org.jboss.jbossts.star.test", BaseTest.TransactionalResource.class);
+        startContainer(TxSupport.TXN_MGR_URL, "org.jboss.jbossts.star.test", BaseTest.TransactionalResource.class);
     }
     
     @Test
@@ -68,7 +68,10 @@ public class ClientIntegrationTest extends BaseTest {
     }
     @Test // recovery
     public void testRecoveryURL() throws Exception {
-        specTest.testRecoveryURL();
+        specTest.testRecoveryURLTwoPhaseAwareWithNotification();
+        specTest.testRecoveryURLTwoPhaseAwareWithoutNotification();
+        specTest.testRecoveryURLTwoPhaseUnawareWithNotification();
+        specTest.testRecoveryURLTwoPhaseUnawareWithoutNotification();
     }
 
 }

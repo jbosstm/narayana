@@ -17,10 +17,10 @@ public class RestClientInterceptor implements ClientExecutionInterceptor {
 
     public ClientResponse execute(ClientExecutionContext clientExecutionContext) throws Exception {
 
-        //Add enlistUrl if a REST-TX is running
+        //Add getDurableParticipantEnlistmentURI if a REST-TX is running
         TxSupport txSupport = UserTransaction.getTXSupport();
         if (txSupport != null) {
-            String enlistURL = txSupport.enlistUrl();
+            String enlistURL = txSupport.getDurableParticipantEnlistmentURI();
             clientExecutionContext.getRequest().header("enlistURL", enlistURL);
         }
 

@@ -20,10 +20,7 @@
  */
 package org.jboss.jbossts.star.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -39,10 +36,19 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.util.media.txstatusext.CoordinatorElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.Link;
+import org.jboss.resteasy.spi.LinkHeader;
 
 /**
  * Various utilities for sending HTTP messages
@@ -51,87 +57,59 @@ public class TxSupport
 {
     protected static final Logger log = Logger.getLogger(TxSupport.class);
 
-    private static Pattern NVP_PATTERN = Pattern.compile("\\b\\w+\\s*=\\s*.*"); // matches name=value pairs
-    private static String LINK_REGEX = "<(.*?)>.*rel=\"(.*?)\"";
-    private static Pattern LINK_PATTERN = Pattern.compile(LINK_REGEX);
-
-    public static int PORT = 8080;
-    public static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "localhost");
-    public static String BASE_URL = "http://" + BIND_ADDRESS + ':';
+    /**
+     * context root
+     */
     public static final String TX_CONTEXT = System.getProperty("rest.tx.context.path", "/rest-tx");
     /**
-     * The REST path prefix for the transaction and recovery coordinator URLS
+     * Transaction Coordinator resource path
      */
     public static final String TX_PATH = "/tx/";
     /**
-     * The REST path for the transaction coordinator. Thus the full path for the coordinator
-     * is <web server context> + TX_PATH + TX_SEGMENT
+     * transaction-manager URI
      */
     public static final String TX_SEGMENT = "transaction-manager";
 
-    public static final String RC_SEGMENT = "recovery-coordinator";
+    private static int PORT = 8080;
+    private static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "localhost");
+    private static String BASE_URL = "http://" + BIND_ADDRESS + ':';
+    private static final String DEF_TX_URL = BASE_URL + PORT + TX_CONTEXT + TX_PATH + TX_SEGMENT;
 
-    public static final String DEF_TX_URL = BASE_URL + PORT + TX_CONTEXT + TX_PATH + TX_SEGMENT;
     public static String TXN_MGR_URL = DEF_TX_URL;
+    public static final String URI_SEPARATOR = ",";
 
-
-    public static final String URI_SEPARATOR = ";";
-
-    public static final String ABORT_ONLY = "TransactionRollbackOnly";
-    public static final String ABORTING = "TransactionRollingBack";
-    public static final String ABORTED = "TransactionRolledBack";
-    public static final String COMMITTING = "TransactionCommitting";
-    public static final String COMMITTED = "TransactionCommitted";
-    public static final String COMMITTED_ONE_PHASE = "TransactionCommittedOnePhase";
-    public static final String H_ROLLBACK = "TransactionHeuristicRollback";
-    public static final String H_COMMIT = "TransactionHeuristicCommit";
-    public static final String H_HAZARD = "TransactionHeuristicHazard";
-    public static final String H_MIXED = "TransactionHeuristicMixed";
-    public static final String PREPARING = "TransactionPreparing";
-    public static final String PREPARED = "TransactionPrepared";
-    public static final String RUNNING = "TransactionActive";
-
-    public static final String READONLY = "TransactionReadOnly";
-
-    public static final String TX_ACTIVE = toStatusContent(RUNNING);
-    public static final String TX_PREPARED = toStatusContent(PREPARED);
-    public static final String TX_COMMITTED = toStatusContent(COMMITTED);
-    public static final String TX_ABORTED = toStatusContent(ABORTED);
-    public static final String TX_H_MIXED = toStatusContent(H_MIXED);
-    public static final String TX_H_ROLLBACK = toStatusContent(H_ROLLBACK);
-
-    public static final String DO_COMMIT = toStatusContent(COMMITTED);
-    public static final String DO_ABORT = toStatusContent(ABORTED);
-
-    public static final String STATUS_MEDIA_TYPE = "application/txstatus";
-    public static final String POST_MEDIA_TYPE = "application/x-www-form-urlencoded";
-    public static final String PLAIN_MEDIA_TYPE = "text/plain";
-
-    public static final String LOCATION_LINK = "location";
-    public static final String TERMINATOR_LINK = "terminator";
-    public static final String PARTICIPANT_LINK = "durableparticipant";
-
-    public static final String TIMEOUT_PROPERTY = "timeout";
-    public static final String STATUS_PROPERTY = "txStatus";
+    private static Pattern NVP_PATTERN = Pattern.compile("\\b\\w+\\s*=\\s*.*"); // matches name=value pairs
 
     private Map<String, String> links = new HashMap<String, String>();
+    private String participantLinkHeader = null;
     private int status = -1;
     private String body = null;
+    private String contentType = null;
     private String txnMgr;
+    private int readTimeout = 5000;
 
     public static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
     }
+    public TxSupport(String txnMgr, int readTimeout) {
+        this.txnMgr = txnMgr;
+        this.readTimeout = readTimeout;
+    }
 
     public TxSupport(String txnMgr) {
-        this.txnMgr = txnMgr;
+        this(txnMgr, 5000);
     }
 
     public TxSupport() {
         this(TXN_MGR_URL);
     }
 
-    public static void addLinkHeader(Response.ResponseBuilder response, UriInfo info, String title, String name, String ... pathComponents)
+    public TxSupport(int readTimeout) {
+        this(TXN_MGR_URL, readTimeout);
+    }
+
+    public static void addLinkHeader(Response.ResponseBuilder response, UriInfo info, String title, String name,
+                                     String ... pathComponents)
     {
         String basePath = info.getMatchedURIs().get(0);
         UriBuilder builder = info.getBaseUriBuilder();
@@ -145,7 +123,8 @@ public class TxSupport
         setLinkHeader(response, title, name, uri, null);
     }
 
-    public static void setLinkHeader(Response.ResponseBuilder builder, String title, String rel, String href, String type)
+    public static void setLinkHeader(Response.ResponseBuilder builder, String title, String rel, String href,
+                                     String type)
     {
         Link link = new Link(title, rel, href, type, null);
         setLinkHeader(builder, link);
@@ -157,7 +136,11 @@ public class TxSupport
     }
 
     public Collection<String> getTransactions() throws HttpResponseException {
-        String content = httpRequest(new int[] {HttpURLConnection.HTTP_OK}, txnMgr, "GET", STATUS_MEDIA_TYPE, null, null);
+        return getTransactions(TxMediaType.TX_LIST_MEDIA_TYPE);
+    }
+
+    public Collection<String> getTransactions(String mediaType) throws HttpResponseException {
+        String content = httpRequest(new int[] {HttpURLConnection.HTTP_OK}, txnMgr, "GET", mediaType, null, links);
         Collection<String> txns = new ArrayList<String> ();
 
         // the returned document contains transaction URLs delimited by the TXN_LIST_SEP character
@@ -171,40 +154,63 @@ public class TxSupport
         return txns;
     }
     public int txCount() throws HttpResponseException {
-        String content = httpRequest(new int[] {HttpURLConnection.HTTP_OK}, txnMgr, "GET", STATUS_MEDIA_TYPE, null, null);
+        String content = httpRequest(new int[] {HttpURLConnection.HTTP_OK}, txnMgr, "GET",
+                TxMediaType.TX_LIST_MEDIA_TYPE, null, null);
 
         return content.length() == 0 ? 0 : content.split(URI_SEPARATOR).length;
     }
 
     // Transaction control methods
     public TxSupport startTx() throws HttpResponseException {
-        httpRequest(new int[] {HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", POST_MEDIA_TYPE, "", links);
+        httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", TxMediaType.POST_MEDIA_TYPE, "", links);
+        links.put(TxLinkRel.TRANSACTION.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
         return this;
     }
     public TxSupport startTx(long milliseconds) throws HttpResponseException {
-        httpRequest(new int[] {HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", POST_MEDIA_TYPE, TIMEOUT_PROPERTY + "=" + milliseconds, links);
+        httpRequest(new int[] {HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", TxMediaType.POST_MEDIA_TYPE,
+                TxMediaType.TIMEOUT_PROPERTY + "=" + milliseconds, links);
+        links.put(TxLinkRel.TRANSACTION.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
         return this;
     }
     public String commitTx() throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TERMINATOR_LINK), "PUT", STATUS_MEDIA_TYPE, DO_COMMIT, null);
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TERMINATOR.linkName()), "PUT",
+                TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_COMMITTED, null);
     }
     public String rollbackTx() throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TERMINATOR_LINK), "PUT", STATUS_MEDIA_TYPE, DO_ABORT, null);
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TERMINATOR.linkName()), "PUT",
+                TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_ROLLEDBACK, null);
     }
+
+    /**
+     * Get the status of the current transacton
+     * @return the transaction status expressed in the default media type (@see TxMediaType#TX_STATUS_MEDIA_TYPE)
+     * @throws HttpResponseException
+     */
     public String txStatus() throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(LOCATION_LINK), "GET", null, null, null);
+        return txStatus(TxMediaType.TX_STATUS_MEDIA_TYPE, null);
     }
-
-    public String txUrl() {
-        return links.get(LOCATION_LINK);
+    public String txStatus(String mediaType) throws HttpResponseException {
+        return txStatus(mediaType, links);
     }
-    public String txTerminatorUrl() {
-        return links.get(TERMINATOR_LINK);
+    private String txStatus(String mediaType, Map<String, String> linkHeaders) throws HttpResponseException {
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_UNSUPPORTED_TYPE},
+                links.get(TxLinkRel.TRANSACTION.linkName()), "GET", mediaType, null, linkHeaders);
     }
-    public String enlistUrl() {
-        return links.get(PARTICIPANT_LINK);
+    public String getTxnUri() {
+        return links.get(TxLinkRel.TRANSACTION.linkName());
     }
-
+    public String getTerminatorURI() {
+        return links.get(TxLinkRel.TERMINATOR.linkName());
+    }
+    public String getDurableParticipantEnlistmentURI() {
+        return links.get(TxLinkRel.PARTICIPANT.linkName());
+    }
+    public String getVolatileParticipantEnlistmentURI() {
+        return links.get(TxLinkRel.VOLATILE_PARTICIPANT.linkName());
+    }
+    public String getParticipantLinkHeader() {
+        return participantLinkHeader;
+    }
 
     public String getBody() {
         return body;
@@ -212,22 +218,265 @@ public class TxSupport
     public int getStatus() {
         return status;
     }
-
-    public void refreshLinkHeaders(Map<String, String> linkHeaders) throws HttpResponseException {
-        httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(LOCATION_LINK), "HEAD", STATUS_MEDIA_TYPE, null, linkHeaders);
+    public String getContentType() {
+        return contentType;
     }
 
-    public String enlist(String pUrl) throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, pUrl, "POST", POST_MEDIA_TYPE, enlistUrl(), null);
+    public void refreshTransactionHeaders(Map<String, String> linkHeaders) throws HttpResponseException {
+        httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TRANSACTION.linkName()), "HEAD",
+                TxMediaType.TX_STATUS_MEDIA_TYPE, null, linkHeaders);
     }
 
-    public String httpRequest(int[] expect, String url, String method, String mediaType, String content, Map<String, String> linkHeaders) throws HttpResponseException {
+    public String enlistTestResource(String pUrl, boolean vParticipant) throws HttpResponseException {
+        String content = links.get(TxLinkRel.PARTICIPANT.linkName());
+
+        if (vParticipant)
+            content += "," + links.get(TxLinkRel.VOLATILE_PARTICIPANT.linkName());
+
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, pUrl, "POST", TxMediaType.POST_MEDIA_TYPE,
+                content, null);
+    }
+
+    public static Map<TxLinkRel, String> decodeLinkHeader(String linkHeader) {
+        int i;
+        Map<TxLinkRel, String> links = new HashMap<TxLinkRel, String>();
+
+        if (linkHeader == null || (i = linkHeader.indexOf('<')) == -1)
+            return links;
+
+        linkHeader = linkHeader.substring(i);
+
+        try {
+            for (Link link : LinkHeader.valueOf(linkHeader).getLinks()) {
+                try {
+                    TxLinkRel rel = TxLinkRel.fromLinkName(link.getRelationship());
+
+                    links.put(rel, link.getHref());
+                } catch (Throwable e) {
+                    // not interested in this link header
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Error decoding Link header: " + e.getMessage());
+            return links;
+        }
+
+        return links;
+    }
+
+    public StringBuilder addLink(StringBuilder linkHeader, TxLinkRel link, StringBuilder hrefPrefix, boolean first) {
+        String name = link.linkName();
+
+        if (!first)
+            linkHeader.append(',');
+
+        linkHeader.append("<").append(hrefPrefix).append(name).append(">; rel=\"").append(name).append("\"");
+
+        return linkHeader;
+    }
+
+    public StringBuilder addLink2(StringBuilder linkHeader, TxLinkRel link, String href, boolean first) {
+        if (!first)
+            linkHeader.append(',');
+
+        linkHeader.append("<").append(href).append(">; rel=\"").append(link.linkName()).append("\"");
+
+        return linkHeader;
+    }
+
+    /**
+     * Constructs the participant-resource and participant-terminator URIs for participants in the format:
+     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminate" and optionally
+     * "<baseURI>/{uid1}/{uid2}/volatile"
+     *
+     * If uid1 is null then the "{uid1}/" is not included and similarly if uid2 is null.
+     *
+     * @param baseURI the (full) uri prefix
+     * @param vParticipant if true also construct a link header for participation in the volatile protocol
+     * @param uid1 a string which together with baseURI and possibly uid2 produce a unique id
+     * @param uid2 a string which together with baseURI and possibly uid1 produce a unique id
+     * @return link header value
+     */
+    public String makeTwoPhaseAwareParticipantLinkHeader(
+            String baseURI, boolean vParticipant, String uid1, String uid2) {
+        StringBuilder resourcePrefix = new StringBuilder(baseURI);
+        StringBuilder linkHeader = new StringBuilder(); // "Link:"
+
+        if (uid1 != null)
+            resourcePrefix.append('/').append(uid1);
+        if (uid2 != null)
+            resourcePrefix.append('/').append(uid2);
+
+        resourcePrefix.append('/');
+
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_RESOURCE, resourcePrefix, true);
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_TERMINATOR, resourcePrefix, false);
+
+        if (vParticipant)
+            addLink(linkHeader, TxLinkRel.VOLATILE_PARTICIPANT, resourcePrefix, false);
+
+        participantLinkHeader = linkHeader.toString();
+
+        return participantLinkHeader;
+    }
+
+    public String makeTwoPhaseAwareParticipantLinkHeader(String baseURI, String uid1, String uid2) {
+        return makeTwoPhaseAwareParticipantLinkHeader(baseURI, false, uid1, uid2);
+    }
+
+    public String makeTwoPhaseAwareParticipantLinkHeader(String participantHref, String terminatorHref) {
+        StringBuilder linkHeader = new StringBuilder();
+        linkHeader.append("<").append(participantHref).append(">; rel=\"")
+                .append(TxLinkRel.PARTICIPANT_RESOURCE).append("\"");
+        linkHeader.append(',');
+        linkHeader.append("<").append(terminatorHref).append(">; rel=\"")
+                .append(TxLinkRel.PARTICIPANT_TERMINATOR).append("\"");
+
+        participantLinkHeader = linkHeader.toString();
+
+        return participantLinkHeader;
+    }
+
+    /**
+     * Constructs the participant-resource and participant-terminator URIs for participants in the format:
+     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminate"
+     * If uid1 is null then the "{uid1}/" is not included and similarly if uid2 is null.
+     * @param baseURI the (full) uri prefix
+     * @param vParticipant if true also construct a link header for participation in the volatile protocol
+     * @param uid1 a string which together with baseURI and possibly uid2 produce a unique id
+     * @param uid2 a string which together with baseURI and possibly uid1 produce a unique id
+     * @param commitOnePhase if true generate a commit-one-phase link header
+     * @return link header value
+     */
+    public String makeTwoPhaseUnAwareParticipantLinkHeader(
+            String baseURI, boolean vParticipant, String uid1, String uid2, boolean commitOnePhase) {
+        StringBuilder resourcePrefix = new StringBuilder(baseURI);
+        StringBuilder linkHeader = new StringBuilder();  // "Link:"
+
+        if (uid1 != null)
+            resourcePrefix.append('/').append(uid1);
+        if (uid2 != null)
+            resourcePrefix.append('/').append(uid2);
+
+        resourcePrefix.append('/');
+
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_RESOURCE, resourcePrefix, true);
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_PREPARE, resourcePrefix, false);
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_COMMIT, resourcePrefix, false);
+        addLink(linkHeader, TxLinkRel.PARTICIPANT_ROLLBACK, resourcePrefix, false);
+
+        if (commitOnePhase)
+            addLink(linkHeader, TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE, resourcePrefix, false);
+
+        if (vParticipant)
+            addLink(linkHeader, TxLinkRel.VOLATILE_PARTICIPANT, resourcePrefix, false);
+
+        participantLinkHeader = linkHeader.toString();
+
+        return participantLinkHeader;
+    }
+
+    public String makeTwoPhaseUnAwareParticipantLinkHeader(
+            String participantHref, String prepareHref, String commitHref, String rollbackHref,
+            String vParticipantHref) {
+        StringBuilder linkHeader = new StringBuilder();
+        linkHeader.append("<").append(participantHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_RESOURCE).append("\"");
+        linkHeader.append(',');
+        linkHeader.append("<").append(prepareHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_PREPARE).append("\"");
+        linkHeader.append(',');
+        linkHeader.append("<").append(commitHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_COMMIT).append("\"");
+        linkHeader.append(',');
+        linkHeader.append("<").append(rollbackHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_ROLLBACK).append("\"");
+
+        if (vParticipantHref != null) {
+            linkHeader.append(',');
+            linkHeader.append("<").append(vParticipantHref).append(">; rel=\"").append(TxLinkRel.VOLATILE_PARTICIPANT).append("\"");
+        }
+
+        participantLinkHeader = linkHeader.toString();
+
+        return participantLinkHeader;
+    }
+
+    public String makeTwoPhaseParticipantLinkHeader(HashMap<TxLinkRel, String> links) {
+        if (!links.containsKey(TxLinkRel.PARTICIPANT_RESOURCE))
+            return null;
+
+        StringBuilder hdr = new StringBuilder();
+
+        addLink2(hdr, TxLinkRel.PARTICIPANT_RESOURCE, links.get(TxLinkRel.PARTICIPANT_RESOURCE), true);
+
+        if (links.containsKey(TxLinkRel.PARTICIPANT_TERMINATOR))
+            addLink2(hdr, TxLinkRel.PARTICIPANT_TERMINATOR, links.get(TxLinkRel.PARTICIPANT_TERMINATOR), false);
+
+        if (links.containsKey(TxLinkRel.PARTICIPANT_COMMIT))
+            addLink2(hdr, TxLinkRel.PARTICIPANT_COMMIT, links.get(TxLinkRel.PARTICIPANT_COMMIT), false);
+
+        if (links.containsKey(TxLinkRel.PARTICIPANT_PREPARE))
+            addLink2(hdr, TxLinkRel.PARTICIPANT_PREPARE, links.get(TxLinkRel.PARTICIPANT_PREPARE), false);
+
+        if (links.containsKey(TxLinkRel.PARTICIPANT_ROLLBACK))
+            addLink2(hdr, TxLinkRel.PARTICIPANT_ROLLBACK, links.get(TxLinkRel.PARTICIPANT_ROLLBACK), false);
+
+        if (links.containsKey(TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE))
+            addLink2(hdr, TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE,
+                    links.get(TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE), false);
+
+        participantLinkHeader = hdr.toString();
+
+        return participantLinkHeader;
+    }
+
+    public String enlistParticipant(String participantLinkHeader) {
+        return enlistParticipant(links.get(TxLinkRel.PARTICIPANT.linkName()), participantLinkHeader);
+    }
+
+    /**
+     * @param enlistUri the URI for enlisting participants with a transaction manager
+     * @param participantLinkHeader link header for the participant to identify itself to the coordinator
+     */
+    public String enlistParticipant(String enlistUri, String participantLinkHeader) {
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Link", participantLinkHeader);
+        httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, enlistUri, "POST", TxMediaType.POST_MEDIA_TYPE, null,
+                links, reqHeaders);
+
+        links.put(TxLinkRel.PARTICIPANT_RECOVERY.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
+
+        return links.get(TxLinkRel.PARTICIPANT_RECOVERY.linkName());
+    }
+
+    public void enlistVolatileParticipant(String enlistUri, String participantLinkHeader) {
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Link", participantLinkHeader);
+        httpRequest(new int[]{HttpURLConnection.HTTP_OK}, enlistUri, "PUT", null, null,
+                links, reqHeaders);
+    }
+
+    public String httpRequest(int[] expect, String url, String method, String mediaType) throws HttpResponseException {
+        return httpRequest(expect, url, method, mediaType, null, null, null);
+    }
+
+    public String httpRequest(int[] expect, String url, String method, String mediaType, String content)
+            throws HttpResponseException {
+        return httpRequest(expect, url, method, mediaType, content, null, null);
+    }
+
+    public String httpRequest(int[] expect, String url, String method, String mediaType, String content,
+                              Map<String, String> linkHeaders) throws HttpResponseException {
+        return httpRequest(expect, url, method, mediaType, content, linkHeaders, null);
+    }
+
+    public String httpRequest(int[] expect, String url, String method, String mediaType, String content,
+                              Map<String, String> linkHeaders, Map<String, String> reqHeaders)
+            throws HttpResponseException {
         HttpURLConnection connection = null;
 
         try {
-            connection = openConnection(null, url, method, mediaType, content);
-            connection.setReadTimeout(5000);
+            connection = openConnection(null, url, method, mediaType, content, reqHeaders);
+            connection.setReadTimeout(readTimeout);
             status = connection.getResponseCode();
+            contentType = connection.getContentType();
 
             try {
                 body = (status != -1 ? getContent(connection) : "");
@@ -240,15 +489,15 @@ public class TxSupport
                 addLocationHeader(connection, linkHeaders);
             }
 
-			if (log.isTraceEnabled())
-				log.trace("httpRequest:" +
-					"\n\turl: " + url +
-					"\n\tmethod: " + method +
-					"\n\tmediaType: " + mediaType +
-					"\n\tcontent: " + content +
-					"\n\tresponse code: " + status +
-					"\n\tresponse body: " + body
-				);
+            if (log.isTraceEnabled())
+                log.trace("httpRequest:" +
+                        "\n\turl: " + url +
+                        "\n\tmethod: " + method +
+                        "\n\tmediaType: " + mediaType +
+                        "\n\tcontent: " + content +
+                        "\n\tresponse code: " + status +
+                        "\n\tresponse body: " + body
+                );
 
             if (expect != null && expect.length != 0) {
                 for (int sc : expect)
@@ -275,13 +524,16 @@ public class TxSupport
 
         if (linkHeaders != null) {
             for (String link : linkHeaders) {
-                String[] lhs = link.split(","); // links are separated by a comma
+                for (Link lnk : LinkHeader.valueOf( link).getLinks())
+                    links.put(lnk.getRelationship(), lnk.getHref());
+
+/*                String[] lhs = link.split(","); // links are separated by a comma
 
                 for (String lnk : lhs) {
                     Matcher m = LINK_PATTERN.matcher(lnk);
                     if (m.find() && m.groupCount() > 1)
                         links.put(m.group(2), m.group(1));
-                }
+                }*/
             }
         }
     }
@@ -294,8 +546,9 @@ public class TxSupport
         }
     }
 
-    private HttpURLConnection openConnection(HttpURLConnection connection, String url, String method, String contentType,
-                                                   String content) throws IOException {
+    private HttpURLConnection openConnection(HttpURLConnection connection, String url, String method,
+                                             String contentType, String content, Map<String, String> reqHeaders)
+            throws IOException {
         if (connection != null)
             connection.disconnect();
 
@@ -303,8 +556,16 @@ public class TxSupport
 
         connection.setRequestMethod(method);
 
-        if (contentType != null)
-            connection.setRequestProperty("Content-Type", contentType);
+        if (contentType != null) {
+            if ("GET".equals(method))
+                connection.setRequestProperty("Accept", contentType);
+            else
+                connection.setRequestProperty("Content-Type", contentType);
+        }
+
+        if (reqHeaders != null)
+            for (Map.Entry<String, String> entry : reqHeaders.entrySet())
+                connection.setRequestProperty(entry.getKey(), entry.getValue());
 
         if (content != null) {
             connection.setDoOutput(true);
@@ -335,12 +596,12 @@ public class TxSupport
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             int wasRead;
 
-            do 
+            do
             {
                 wasRead = reader.read(buffer, 0, 1024);
                 if (wasRead > 0)
                     builder.append(buffer, 0, wasRead);
-            } 
+            }
             while (wasRead > -1);
         } finally {
             if (reader != null) {
@@ -349,35 +610,6 @@ public class TxSupport
         }
         return builder;
     }
-
-    public static String getParticipantUrls(String terminatorUrl, String participantUrl) {
-        return new StringBuilder().append(TERMINATOR_LINK).append('=').append(terminatorUrl).
-                append(URI_SEPARATOR).append(PARTICIPANT_LINK).append('=').append(participantUrl).toString();
-    }
-
-    public static String getStringValue(String content, String name)
-    {
-        Map<String, String> matches = new HashMap<String, String>();
-
-        TxSupport.matchNames(matches, content, null);
-
-        return matches.get(name);
-    }
-
-    public static int getIntValue(String content, String name, int defValue)
-    {
-        String v = getStringValue(content, name);
-
-        if (v != null)
-            try {
-                return Integer.valueOf(v);
-            } catch (NumberFormatException e) {
-                //
-            }
-
-        return defValue;
-    }
-
     /**
      * Parse a string for name=value pairs
      * TODO java.util.Scanner might be more efficient
@@ -409,7 +641,30 @@ public class TxSupport
             }
         }
     }
-    
+
+    public static String getStringValue(String content, String name)
+    {
+        Map<String, String> matches = new HashMap<String, String>();
+
+        TxSupport.matchNames(matches, content, null);
+
+        return matches.get(name);
+    }
+
+    public static int getIntValue(String content, String name, int defValue)
+    {
+        String v = getStringValue(content, name);
+
+        if (v != null)
+            try {
+                return Integer.valueOf(v);
+            } catch (NumberFormatException e) {
+                //
+            }
+
+        return defValue;
+    }
+
     public static UriBuilder getUriBuilder(UriInfo info, int npaths, String ... paths)
     {
         UriBuilder builder = info.getBaseUriBuilder();
@@ -444,8 +699,12 @@ public class TxSupport
         return builder.build().toString();
     }
 
+    public static TxStatus toTxStatus(String statusContent) {
+        String status = getStringValue(statusContent, TxStatusMediaType.STATUS_PROPERTY);
+        return TxStatus.fromStatus(status);
+    }
     public static String getStatus(String statusContent) {
-        return getStringValue(statusContent, STATUS_PROPERTY);
+        return getStringValue(statusContent, TxStatusMediaType.STATUS_PROPERTY);
     }
 
     public static String toContent(String property, String status) {
@@ -453,44 +712,90 @@ public class TxSupport
     }
 
     public static String toStatusContent(String status) {
-        return toContent(STATUS_PROPERTY, status);
+        return toContent(TxStatusMediaType.STATUS_PROPERTY, status);
     }
 
-    public static boolean isPrepare(String status) {
-        return PREPARED.equals(status);
+    public String getLink(String linkName) {
+        return links.get(linkName);
     }
 
-    public static boolean isCommit(String status) {
-        return COMMITTED.equals(status);
+    /**
+     * Obtain statistical information such as the number of transactions that have committed and aborted.
+     * @return transaction statistics
+     * @throws JAXBException if JAXB cannot convert an XML representation of the statistics into a JAXB object
+     */
+    public TransactionStatisticsElement getTransactionStatistics() throws JAXBException {
+        // performing a get on the transaction-manager MAY return a link for obtaining transaction statistic
+        getTransactions();
+
+        String statisticsHref = getLink(TxLinkRel.STATISTICS.linkName());
+
+        if (statisticsHref == null) // NOTE: statistics are optional
+            return null;
+
+        // GET the statistics
+        String txStats = httpRequest(new int[] {HttpURLConnection.HTTP_OK}, statisticsHref, "GET",
+                TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
+
+        if (log.isTraceEnabled())
+            log.tracef("Unmarshalling TransactionStatisticsElement\n%s", txStats);
+
+        JAXBContext jc = JAXBContext.newInstance(TransactionStatisticsElement.class.getPackage().getName() );
+        Unmarshaller u = jc.createUnmarshaller();
+        Object o = u.unmarshal( new StreamSource( new StringReader(txStats)));
+
+        if (o instanceof TransactionStatisticsElement)
+            return (TransactionStatisticsElement)o;
+
+        return (TransactionStatisticsElement)((JAXBElement)o).getValue();
     }
 
-    public static boolean isAbort(String status) {
-        return ABORTED.equals(status);
+    public CoordinatorElement getTransactionInfo() throws JAXBException {
+        if (!links.containsKey(TxLinkRel.TRANSACTION.linkName()))
+            throw new IllegalStateException("Not transaction has been started");
+
+        txStatus(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
+
+        if (status == HttpURLConnection.HTTP_UNSUPPORTED_TYPE )
+            return null;
+
+        if (log.isTraceEnabled())
+            log.tracef("Unmarshalling CoordinatorElement\n%s", getBody());
+
+        JAXBContext jc = JAXBContext.newInstance(CoordinatorElement.class.getPackage().getName() );
+
+
+        Unmarshaller u = jc.createUnmarshaller();
+        Object o = u.unmarshal( new StreamSource( new StringReader(getBody())));
+
+        return (CoordinatorElement)((JAXBElement)o).getValue();
     }
 
-    public static boolean isReadOnly(String status) {
-        return READONLY.equals(status);
+    public CoordinatorElement getTransactionInfo(String uri) throws JAXBException {
+        links.put(TxLinkRel.TRANSACTION.linkName(), uri);
+
+        return getTransactionInfo();
     }
 
-    public static boolean isHeuristic(String status) {
-        return H_COMMIT.equals(status) ||
-                H_HAZARD.equals(status) ||
-                H_MIXED.equals(status) ||
-                H_ROLLBACK.equals(status);
-    }
 
-    public static boolean isComplete(String status) {
-        return COMMITTED.equals(status) ||
-                ABORTED.equals(status);
-    }
+    public TransactionManagerElement getTransactionManagerInfo() throws JAXBException {
+        // GET the extended transaction-manager info
+        String xml = httpRequest(new int[]{HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_UNSUPPORTED_TYPE},
+                txnMgr, "GET", TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
 
-    public static boolean isActive(String status) {
-        return ABORT_ONLY.equals(status) ||
-                ABORTING.equals(status) ||
-                COMMITTING.equals(status) ||
-                PREPARING.equals(status) ||
-                PREPARED.equals(status) ||
-                RUNNING.equals(status);
-    }
+        if (status == HttpURLConnection.HTTP_UNSUPPORTED_TYPE )
+            return null;
 
+        System.out.printf("Unmarshalling TransactionManagerElement\n%s", xml);
+        JAXBContext jc = JAXBContext.newInstance(TransactionManagerElement.class.getPackage().getName() );
+
+
+        Unmarshaller u = jc.createUnmarshaller();
+        Object o = u.unmarshal( new StreamSource( new StringReader(xml)));
+
+        if (o instanceof TransactionManagerElement)
+            return (TransactionManagerElement)o;
+
+        return (TransactionManagerElement)((JAXBElement)o).getValue();
+    }
 }

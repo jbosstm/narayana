@@ -23,24 +23,24 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>rest-tx-web</artifactId>
+  <artifactId>restat-web</artifactId>
   <packaging>war</packaging>
   <name>RESTful Atomic Transactions War Packaging</name>
   <description>Provides Transactions for web applications</description>
   <properties>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
     <version.artifactId>5.0.0.M2-SNAPSHOT</version.artifactId>
-    <artifactId.name>rest-tx</artifactId.name>
+    <artifactId.name>restat-web</artifactId.name>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>rest-tx-api</artifactId>
+      <artifactId>restat-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>rest-tx-api</artifactId>
+      <artifactId>restat-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>

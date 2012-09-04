@@ -23,6 +23,8 @@ package org.jboss.jbossts.star.test;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatusMediaType;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -151,15 +153,15 @@ public class CoordinatorTest extends BaseTest {
     @Test
     public void testCommitInvalidTx() throws IOException
     {
-        TxSupport txn = new TxSupport();
+        // start a transaction
+        TxSupport txn = new TxSupport().startTx();
 
-        txn.startTx();
-
-        String terminator = txn.txTerminatorUrl();
-        // we know that the terminator URL ends in terminate (by reading the code for the provider) - modify to produce an invalid one
-        terminator = terminator.replace("/terminate", "_dead/terminate");
-        // an attempt to commit on this URL should fail:
-        txn.httpRequest(new int[] {HttpURLConnection.HTTP_NOT_FOUND}, terminator, "PUT", TxSupport.STATUS_MEDIA_TYPE, TxSupport.DO_COMMIT, null);
+        String terminator = txn.getTerminatorURI();
+        // mangle the terminator URI
+        //terminator = terminator.replace("/terminate", "_dead/terminate");
+        terminator += "/_dead";
+        // an attempt to commit on this URI should fail:
+        txn.httpRequest(new int[] {HttpURLConnection.HTTP_NOT_FOUND}, terminator, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_COMMITTED);
         // commit it properly
         txn.commitTx();
     }
@@ -169,7 +171,7 @@ public class CoordinatorTest extends BaseTest {
         TxSupport txn = new TxSupport();
         int txnCount = txn.txCount();
         txn.startTx(1000);
-        txn.enlist(PURL);
+        txn.enlistTestResource(PURL, false);
 
         // Let the txn timeout
         Thread.sleep(2000);
