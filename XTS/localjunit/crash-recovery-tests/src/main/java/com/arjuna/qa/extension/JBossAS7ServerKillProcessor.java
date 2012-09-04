@@ -12,7 +12,7 @@ import org.jboss.arquillian.container.spi.ServerKillProcessor;
 public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 	private final Logger log = Logger.getLogger(
 			JBossAS7ServerKillProcessor.class.getName());
-	private static String killSequence = "[jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
+	private static String killSequence = "sh -x [jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
 	private static String shutdownSequence = "[jbossHome]/bin/jboss-cli.[suffix] --connect command=:shutdown";
 	private int checkDurableTime = 10;
 	private int numofCheck = 60;
