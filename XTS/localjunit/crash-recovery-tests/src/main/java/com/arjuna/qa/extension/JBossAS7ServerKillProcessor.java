@@ -2,6 +2,7 @@ package com.arjuna.qa.extension;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
@@ -98,6 +99,17 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
         }
     }
 
+    private void dumpStream(String msg, InputStream is) {
+        try {
+            BufferedReader ein = new BufferedReader(new InputStreamReader(is));
+            String res = ein.readLine();
+            is.close();
+            System.out.printf("%s %s\n", msg, res);
+        } catch (IOException e) {
+            log.info("Exception dumping stream: " + e.getMessage());
+        }
+    }
+
 	private boolean checkJBossAlive() throws Exception {
 		String env = System.getenv().get("CLI_IPV6_OPTS");
 		Process p;
@@ -112,6 +124,8 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 
 		if (rc != 0 && rc != 1) {
             listAllJavaProcesses();
+            dumpStream("Error Stream: ", p.getErrorStream());
+            dumpStream("Input Stream: ", p.getInputStream());
 			p.destroy();
 			throw new RuntimeException("Kill Sequence "+ killSequence + " failed. Returned " + rc
                     + " CLI_IPV6_OPTS=" + System.getenv().get("CLI_IPV6_OPTS"));
