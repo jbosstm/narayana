@@ -79,7 +79,25 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 			throw new RuntimeException("jboss-as not killed and shutdown");
 		}
 	}
-	
+
+    private void listAllJavaProcesses() {
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if(os.indexOf("windows") == -1) {
+            try {
+                String line;
+                Process p = Runtime.getRuntime().exec("ps -ef |grep java");
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                while ((line = input.readLine()) != null) {
+                    System.out.println(line); //<-- Parse data here.
+                }
+                input.close();
+            } catch (Exception err) {
+            }
+        }
+    }
+
 	private boolean checkJBossAlive() throws Exception {
 		String env = System.getenv().get("CLI_IPV6_OPTS");
 		Process p;
@@ -93,8 +111,10 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 		int rc = p.exitValue();
 
 		if (rc != 0 && rc != 1) {
+            listAllJavaProcesses();
 			p.destroy();
-			throw new RuntimeException("Kill Sequence failed");
+			throw new RuntimeException("Kill Sequence "+ killSequence + " failed. Returned " + rc
+                    + " CLI_IPV6_OPTS=" + System.getenv().get("CLI_IPV6_OPTS"));
 		}
 		
 		InputStream out = p.getInputStream();
