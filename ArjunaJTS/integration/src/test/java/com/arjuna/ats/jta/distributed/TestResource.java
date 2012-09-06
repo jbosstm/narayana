@@ -49,6 +49,8 @@ public class TestResource implements XAResource {
 
 	private CompletionCounter completionCounter;
 
+	private boolean scanning;
+
 	public TestResource(String serverId, boolean readonly) {
 		this.completionCounter = CompletionCounter.getInstance();
 		this.serverId = serverId;
@@ -213,6 +215,19 @@ public class TestResource implements XAResource {
 	public Xid[] recover(int flag) throws XAException {
 		Xid toReturn = null;
 		if ((flag & XAResource.TMSTARTRSCAN) == XAResource.TMSTARTRSCAN) {
+
+			synchronized(this) {
+				if (scanning) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						throw new XAException("Could not wait for in progress scanner");
+					}
+				} else {
+					scanning = true;
+				}
+			}
+			
 			System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      RECOVER[XAResource.TMSTARTRSCAN]: " + serverId);
 			if (xid != null) {
 				toReturn = xid;
@@ -221,6 +236,12 @@ public class TestResource implements XAResource {
 		}
 		if ((flag & XAResource.TMENDRSCAN) == XAResource.TMENDRSCAN) {
 			System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      RECOVER[XAResource.TMENDRSCAN]: " + serverId);
+			synchronized(this) {
+				if (scanning) {
+					scanning = false;
+					this.notify();
+				}
+			}
 		}
 		if (flag == XAResource.TMNOFLAGS) {
 			System.out.println("[" + Thread.currentThread().getName() + "] TestResource (" + serverId + ")      RECOVER[XAResource.TMENDRSCAN]: " + serverId);
