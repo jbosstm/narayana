@@ -134,7 +134,8 @@ function qa_tests_once {
   [ $IDLJ = 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  [ -z "${IPV6_OPTS+x}" ] && ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist
+  [ -z "${IPV6_OPTS+x}" ] && ant -DisIdlj=$IDLJ "$QA_BUILD_ARGS" get.drivers dist ||
+    echo "will download JDBC drivers"
   [ $? = 0 ] || fatal "qa build failed"
 
   # if IPV6_OPTS is not set then run everything (ci-tests) otherwise don't do the jdbc tests
