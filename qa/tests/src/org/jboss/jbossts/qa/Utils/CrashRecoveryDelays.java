@@ -21,6 +21,7 @@
 package org.jboss.jbossts.qa.Utils;
 
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import java.io.BufferedReader;
 import java.io.PrintStream;
@@ -150,13 +151,28 @@ public class CrashRecoveryDelays
         awaitReplayCompletion(5); // was 60
     }
 
-    private static void awaitReplayCompletion(int seconds) throws InterruptedException
-    {
-        Thread.sleep(seconds * 1000);
-    }
-
     public static void awaitReplayCompletionCR06() throws InterruptedException {
         awaitReplayCompletion(10); // was 5
     }
 
+    private static void awaitReplayCompletion(int seconds) throws InterruptedException
+    {
+        Thread.sleep(getDelayFactor() * seconds * 1000);
+    }
+
+    private static int getDelayFactor() {
+        if (delayFactor < 0) {
+            delayFactor = arjPropertyManager.getCoreEnvironmentBean().getTimeoutFactor();
+//            delayFactor = Integer.getInteger("timeout.factor", 1);
+
+            if (delayFactor <= 0)
+                delayFactor = 1;
+
+            System.out.printf("Using timeout delay factor of %d%n", delayFactor);
+        }
+
+        return delayFactor;
+    }
+
+    private static int delayFactor = -1;
 }
