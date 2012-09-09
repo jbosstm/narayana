@@ -18,7 +18,7 @@
  * (C) 2010
  * @author JBoss Inc.
  */
- package org.jboss.jbossts.star.provider;
+package org.jboss.jbossts.star.provider;
 
 /**
  * Exception for wrapping unexpected http response codes
