@@ -188,7 +188,12 @@ public class BaseCrashTest
         Config config = new Config();
         config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
         controller.start("jboss-as", config.map());
-        deployer.deploy("xtstest");
+        try {
+            deployer.deploy("xtstest");
+        } catch (java.lang.RuntimeException e) {
+            //JBTM-1236 it could be ignore this exception because the container might be killed already and JVM.kill() has happened.
+            System.out.println("jboss-as has been killed");
+        }
 
         //Waiting for crashing
         controller.kill("jboss-as");
