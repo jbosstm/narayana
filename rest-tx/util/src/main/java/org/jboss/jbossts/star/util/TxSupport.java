@@ -68,7 +68,7 @@ public class TxSupport
     /**
      * transaction-manager URI
      */
-    public static final String TX_SEGMENT = "transaction-manager";
+    public static final String TX_SEGMENT = "transaction-manager/";
 
     private static int PORT = 8080;
     private static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "localhost");
@@ -163,21 +163,21 @@ public class TxSupport
     // Transaction control methods
     public TxSupport startTx() throws HttpResponseException {
         httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", TxMediaType.POST_MEDIA_TYPE, "", links);
-        links.put(TxLinkRel.TRANSACTION.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
+        links.put(TxLinkNames.TRANSACTION, links.get(TxLinkNames.LOCATION));
         return this;
     }
     public TxSupport startTx(long milliseconds) throws HttpResponseException {
         httpRequest(new int[] {HttpURLConnection.HTTP_CREATED}, txnMgr, "POST", TxMediaType.POST_MEDIA_TYPE,
                 TxMediaType.TIMEOUT_PROPERTY + "=" + milliseconds, links);
-        links.put(TxLinkRel.TRANSACTION.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
+        links.put(TxLinkNames.TRANSACTION, links.get(TxLinkNames.LOCATION));
         return this;
     }
     public String commitTx() throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TERMINATOR.linkName()), "PUT",
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkNames.TERMINATOR), "PUT",
                 TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_COMMITTED, null);
     }
     public String rollbackTx() throws HttpResponseException {
-        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TERMINATOR.linkName()), "PUT",
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkNames.TERMINATOR), "PUT",
                 TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_ROLLEDBACK, null);
     }
 
@@ -194,22 +194,19 @@ public class TxSupport
     }
     private String txStatus(String mediaType, Map<String, String> linkHeaders) throws HttpResponseException {
         return httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_UNSUPPORTED_TYPE},
-                links.get(TxLinkRel.TRANSACTION.linkName()), "GET", mediaType, null, linkHeaders);
+                links.get(TxLinkNames.TRANSACTION), "GET", mediaType, null, linkHeaders);
     }
     public String getTxnUri() {
-        return links.get(TxLinkRel.TRANSACTION.linkName());
+        return links.get(TxLinkNames.TRANSACTION);
     }
     public String getTerminatorURI() {
-        return links.get(TxLinkRel.TERMINATOR.linkName());
+        return links.get(TxLinkNames.TERMINATOR);
     }
     public String getDurableParticipantEnlistmentURI() {
-        return links.get(TxLinkRel.PARTICIPANT.linkName());
+        return links.get(TxLinkNames.PARTICIPANT);
     }
     public String getVolatileParticipantEnlistmentURI() {
-        return links.get(TxLinkRel.VOLATILE_PARTICIPANT.linkName());
-    }
-    public String getParticipantLinkHeader() {
-        return participantLinkHeader;
+        return links.get(TxLinkNames.VOLATILE_PARTICIPANT);
     }
 
     public String getBody() {
@@ -223,23 +220,24 @@ public class TxSupport
     }
 
     public void refreshTransactionHeaders(Map<String, String> linkHeaders) throws HttpResponseException {
-        httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkRel.TRANSACTION.linkName()), "HEAD",
+        httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkNames.TRANSACTION), "HEAD",
                 TxMediaType.TX_STATUS_MEDIA_TYPE, null, linkHeaders);
     }
 
     public String enlistTestResource(String pUrl, boolean vParticipant) throws HttpResponseException {
-        String content = links.get(TxLinkRel.PARTICIPANT.linkName());
+        String content = links.get(TxLinkNames.PARTICIPANT);
 
         if (vParticipant)
-            content += "," + links.get(TxLinkRel.VOLATILE_PARTICIPANT.linkName());
+            content += "," + links.get(TxLinkNames.VOLATILE_PARTICIPANT);
 
         return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, pUrl, "POST", TxMediaType.POST_MEDIA_TYPE,
                 content, null);
     }
 
-    public static Map<TxLinkRel, String> decodeLinkHeader(String linkHeader) {
+    // return a map of link name to link uri
+    public static Map<String, String> decodeLinkHeader(String linkHeader) {
         int i;
-        Map<TxLinkRel, String> links = new HashMap<TxLinkRel, String>();
+        Map<String, String> links = new HashMap<String, String>();
 
         if (linkHeader == null || (i = linkHeader.indexOf('<')) == -1)
             return links;
@@ -249,9 +247,7 @@ public class TxSupport
         try {
             for (Link link : LinkHeader.valueOf(linkHeader).getLinks()) {
                 try {
-                    TxLinkRel rel = TxLinkRel.fromLinkName(link.getRelationship());
-
-                    links.put(rel, link.getHref());
+                    links.put(link.getRelationship(), link.getHref());
                 } catch (Throwable e) {
                     // not interested in this link header
                 }
@@ -264,29 +260,27 @@ public class TxSupport
         return links;
     }
 
-    public StringBuilder addLink(StringBuilder linkHeader, TxLinkRel link, StringBuilder hrefPrefix, boolean first) {
-        String name = link.linkName();
-
+    public StringBuilder addLink(StringBuilder linkHeader, String linkName, StringBuilder hrefPrefix, boolean first) {
         if (!first)
             linkHeader.append(',');
 
-        linkHeader.append("<").append(hrefPrefix).append(name).append(">; rel=\"").append(name).append("\"");
+        linkHeader.append("<").append(hrefPrefix).append(linkName).append(">; rel=\"").append(linkName).append("\"");
 
         return linkHeader;
     }
 
-    public StringBuilder addLink2(StringBuilder linkHeader, TxLinkRel link, String href, boolean first) {
+    public StringBuilder addLink2(StringBuilder linkHeader, String linkName, String href, boolean first) {
         if (!first)
             linkHeader.append(',');
 
-        linkHeader.append("<").append(href).append(">; rel=\"").append(link.linkName()).append("\"");
+        linkHeader.append("<").append(href).append(">; rel=\"").append(linkName).append("\"");
 
         return linkHeader;
     }
 
     /**
      * Constructs the participant-resource and participant-terminator URIs for participants in the format:
-     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminate" and optionally
+     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminator" and optionally
      * "<baseURI>/{uid1}/{uid2}/volatile"
      *
      * If uid1 is null then the "{uid1}/" is not included and similarly if uid2 is null.
@@ -309,11 +303,11 @@ public class TxSupport
 
         resourcePrefix.append('/');
 
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_RESOURCE, resourcePrefix, true);
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_TERMINATOR, resourcePrefix, false);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_RESOURCE, resourcePrefix, true);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_TERMINATOR, resourcePrefix, false);
 
         if (vParticipant)
-            addLink(linkHeader, TxLinkRel.VOLATILE_PARTICIPANT, resourcePrefix, false);
+            addLink(linkHeader, TxLinkNames.VOLATILE_PARTICIPANT, resourcePrefix, false);
 
         participantLinkHeader = linkHeader.toString();
 
@@ -327,10 +321,10 @@ public class TxSupport
     public String makeTwoPhaseAwareParticipantLinkHeader(String participantHref, String terminatorHref) {
         StringBuilder linkHeader = new StringBuilder();
         linkHeader.append("<").append(participantHref).append(">; rel=\"")
-                .append(TxLinkRel.PARTICIPANT_RESOURCE).append("\"");
+                .append(TxLinkNames.PARTICIPANT_RESOURCE).append("\"");
         linkHeader.append(',');
         linkHeader.append("<").append(terminatorHref).append(">; rel=\"")
-                .append(TxLinkRel.PARTICIPANT_TERMINATOR).append("\"");
+                .append(TxLinkNames.PARTICIPANT_TERMINATOR).append("\"");
 
         participantLinkHeader = linkHeader.toString();
 
@@ -360,16 +354,16 @@ public class TxSupport
 
         resourcePrefix.append('/');
 
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_RESOURCE, resourcePrefix, true);
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_PREPARE, resourcePrefix, false);
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_COMMIT, resourcePrefix, false);
-        addLink(linkHeader, TxLinkRel.PARTICIPANT_ROLLBACK, resourcePrefix, false);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_RESOURCE, resourcePrefix, true);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_PREPARE, resourcePrefix, false);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_COMMIT, resourcePrefix, false);
+        addLink(linkHeader, TxLinkNames.PARTICIPANT_ROLLBACK, resourcePrefix, false);
 
         if (commitOnePhase)
-            addLink(linkHeader, TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE, resourcePrefix, false);
+            addLink(linkHeader, TxLinkNames.PARTICIPANT_COMMIT_ONE_PHASE, resourcePrefix, false);
 
         if (vParticipant)
-            addLink(linkHeader, TxLinkRel.VOLATILE_PARTICIPANT, resourcePrefix, false);
+            addLink(linkHeader, TxLinkNames.VOLATILE_PARTICIPANT, resourcePrefix, false);
 
         participantLinkHeader = linkHeader.toString();
 
@@ -380,17 +374,17 @@ public class TxSupport
             String participantHref, String prepareHref, String commitHref, String rollbackHref,
             String vParticipantHref) {
         StringBuilder linkHeader = new StringBuilder();
-        linkHeader.append("<").append(participantHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_RESOURCE).append("\"");
+        linkHeader.append("<").append(participantHref).append(">; rel=\"").append(TxLinkNames.PARTICIPANT_RESOURCE).append("\"");
         linkHeader.append(',');
-        linkHeader.append("<").append(prepareHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_PREPARE).append("\"");
+        linkHeader.append("<").append(prepareHref).append(">; rel=\"").append(TxLinkNames.PARTICIPANT_PREPARE).append("\"");
         linkHeader.append(',');
-        linkHeader.append("<").append(commitHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_COMMIT).append("\"");
+        linkHeader.append("<").append(commitHref).append(">; rel=\"").append(TxLinkNames.PARTICIPANT_COMMIT).append("\"");
         linkHeader.append(',');
-        linkHeader.append("<").append(rollbackHref).append(">; rel=\"").append(TxLinkRel.PARTICIPANT_ROLLBACK).append("\"");
+        linkHeader.append("<").append(rollbackHref).append(">; rel=\"").append(TxLinkNames.PARTICIPANT_ROLLBACK).append("\"");
 
         if (vParticipantHref != null) {
             linkHeader.append(',');
-            linkHeader.append("<").append(vParticipantHref).append(">; rel=\"").append(TxLinkRel.VOLATILE_PARTICIPANT).append("\"");
+            linkHeader.append("<").append(vParticipantHref).append(">; rel=\"").append(TxLinkNames.VOLATILE_PARTICIPANT).append("\"");
         }
 
         participantLinkHeader = linkHeader.toString();
@@ -398,29 +392,29 @@ public class TxSupport
         return participantLinkHeader;
     }
 
-    public String makeTwoPhaseParticipantLinkHeader(HashMap<TxLinkRel, String> links) {
-        if (!links.containsKey(TxLinkRel.PARTICIPANT_RESOURCE))
+    public String makeTwoPhaseParticipantLinkHeader(HashMap<String, String> links) {
+        if (!links.containsKey(TxLinkNames.PARTICIPANT_RESOURCE))
             return null;
 
         StringBuilder hdr = new StringBuilder();
 
-        addLink2(hdr, TxLinkRel.PARTICIPANT_RESOURCE, links.get(TxLinkRel.PARTICIPANT_RESOURCE), true);
+        addLink2(hdr, TxLinkNames.PARTICIPANT_RESOURCE, links.get(TxLinkNames.PARTICIPANT_RESOURCE), true);
 
-        if (links.containsKey(TxLinkRel.PARTICIPANT_TERMINATOR))
-            addLink2(hdr, TxLinkRel.PARTICIPANT_TERMINATOR, links.get(TxLinkRel.PARTICIPANT_TERMINATOR), false);
+        if (links.containsKey(TxLinkNames.PARTICIPANT_TERMINATOR))
+            addLink2(hdr, TxLinkNames.PARTICIPANT_TERMINATOR, links.get(TxLinkNames.PARTICIPANT_TERMINATOR), false);
 
-        if (links.containsKey(TxLinkRel.PARTICIPANT_COMMIT))
-            addLink2(hdr, TxLinkRel.PARTICIPANT_COMMIT, links.get(TxLinkRel.PARTICIPANT_COMMIT), false);
+        if (links.containsKey(TxLinkNames.PARTICIPANT_COMMIT))
+            addLink2(hdr, TxLinkNames.PARTICIPANT_COMMIT, links.get(TxLinkNames.PARTICIPANT_COMMIT), false);
 
-        if (links.containsKey(TxLinkRel.PARTICIPANT_PREPARE))
-            addLink2(hdr, TxLinkRel.PARTICIPANT_PREPARE, links.get(TxLinkRel.PARTICIPANT_PREPARE), false);
+        if (links.containsKey(TxLinkNames.PARTICIPANT_PREPARE))
+            addLink2(hdr, TxLinkNames.PARTICIPANT_PREPARE, links.get(TxLinkNames.PARTICIPANT_PREPARE), false);
 
-        if (links.containsKey(TxLinkRel.PARTICIPANT_ROLLBACK))
-            addLink2(hdr, TxLinkRel.PARTICIPANT_ROLLBACK, links.get(TxLinkRel.PARTICIPANT_ROLLBACK), false);
+        if (links.containsKey(TxLinkNames.PARTICIPANT_ROLLBACK))
+            addLink2(hdr, TxLinkNames.PARTICIPANT_ROLLBACK, links.get(TxLinkNames.PARTICIPANT_ROLLBACK), false);
 
-        if (links.containsKey(TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE))
-            addLink2(hdr, TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE,
-                    links.get(TxLinkRel.PARTICIPANT_COMMIT_ONE_PHASE), false);
+        if (links.containsKey(TxLinkNames.PARTICIPANT_COMMIT_ONE_PHASE))
+            addLink2(hdr, TxLinkNames.PARTICIPANT_COMMIT_ONE_PHASE,
+                    links.get(TxLinkNames.PARTICIPANT_COMMIT_ONE_PHASE), false);
 
         participantLinkHeader = hdr.toString();
 
@@ -428,12 +422,13 @@ public class TxSupport
     }
 
     public String enlistParticipant(String participantLinkHeader) {
-        return enlistParticipant(links.get(TxLinkRel.PARTICIPANT.linkName()), participantLinkHeader);
+        return enlistParticipant(links.get(TxLinkNames.PARTICIPANT), participantLinkHeader);
     }
 
     /**
      * @param enlistUri the URI for enlisting participants with a transaction manager
      * @param participantLinkHeader link header for the participant to identify itself to the coordinator
+     * @return participant recovery URI
      */
     public String enlistParticipant(String enlistUri, String participantLinkHeader) {
         Map<String, String> reqHeaders = new HashMap<String, String>();
@@ -441,9 +436,9 @@ public class TxSupport
         httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, enlistUri, "POST", TxMediaType.POST_MEDIA_TYPE, null,
                 links, reqHeaders);
 
-        links.put(TxLinkRel.PARTICIPANT_RECOVERY.linkName(), links.get(TxLinkRel.LOCATION.linkName()));
+        links.put(TxLinkNames.PARTICIPANT_RECOVERY, links.get(TxLinkNames.LOCATION));
 
-        return links.get(TxLinkRel.PARTICIPANT_RECOVERY.linkName());
+        return links.get(TxLinkNames.PARTICIPANT_RECOVERY);
     }
 
     public void enlistVolatileParticipant(String enlistUri, String participantLinkHeader) {
@@ -728,7 +723,7 @@ public class TxSupport
         // performing a get on the transaction-manager MAY return a link for obtaining transaction statistic
         getTransactions();
 
-        String statisticsHref = getLink(TxLinkRel.STATISTICS.linkName());
+        String statisticsHref = getLink(TxLinkNames.STATISTICS);
 
         if (statisticsHref == null) // NOTE: statistics are optional
             return null;
@@ -751,7 +746,7 @@ public class TxSupport
     }
 
     public CoordinatorElement getTransactionInfo() throws JAXBException {
-        if (!links.containsKey(TxLinkRel.TRANSACTION.linkName()))
+        if (!links.containsKey(TxLinkNames.TRANSACTION))
             throw new IllegalStateException("Not transaction has been started");
 
         txStatus(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
@@ -772,7 +767,7 @@ public class TxSupport
     }
 
     public CoordinatorElement getTransactionInfo(String uri) throws JAXBException {
-        links.put(TxLinkRel.TRANSACTION.linkName(), uri);
+        links.put(TxLinkNames.TRANSACTION, uri);
 
         return getTransactionInfo();
     }

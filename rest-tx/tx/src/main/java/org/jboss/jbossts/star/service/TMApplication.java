@@ -20,6 +20,7 @@
  */
 package org.jboss.jbossts.star.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,11 +48,8 @@ public class TMApplication extends Application
 
     public TMApplication()
     {
-        for (Class cl : resourceClasses)
-            classes.add(cl);
-
-        for (Class cl : mappers)
-            classes.add(cl);
+        Collections.addAll(classes, resourceClasses);
+        Collections.addAll(classes, mappers);
 
 //        singletons.addAll(Arrays.asList(resources));
         try
@@ -93,7 +91,7 @@ public class TMApplication extends Application
         NotFoundMapper.class
     };
     
-    private static Class[] resourceClasses = {
+    private static Class<?>[] resourceClasses = {
             Coordinator.class,
     };
 

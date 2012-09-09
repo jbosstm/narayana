@@ -72,11 +72,11 @@ public class SpecTest extends BaseTest {
         */
         txn.refreshTransactionHeaders(links);
 
-        Assert.assertTrue("Missing terminator link header", links.containsKey(TxLinkRel.TERMINATOR.linkName()));
-        Assert.assertTrue("Missing durable-participant link header", links.containsKey(TxLinkRel.PARTICIPANT.linkName()));
+        Assert.assertTrue("Missing terminator link header", links.containsKey(TxLinkNames.TERMINATOR));
+        Assert.assertTrue("Missing durable-participant link header", links.containsKey(TxLinkNames.PARTICIPANT));
 
-        Assert.assertEquals(links.get(TxLinkRel.PARTICIPANT.linkName()), txn.getDurableParticipantEnlistmentURI());
-        Assert.assertEquals(links.get(TxLinkRel.TERMINATOR.linkName()), txn.getTerminatorURI());
+        Assert.assertEquals(links.get(TxLinkNames.PARTICIPANT), txn.getDurableParticipantEnlistmentURI());
+        Assert.assertEquals(links.get(TxLinkNames.TERMINATOR), txn.getTerminatorURI());
 
         /*
         262Performing a GET on the /transaction-manager URI returns a list of all transaction -coordinator
@@ -271,10 +271,10 @@ public class SpecTest extends BaseTest {
         content = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
                 PURL + "?pId=" + work[1], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
 
-        Map<TxLinkRel, String> pUrls = TxSupport.decodeLinkHeader(content);
+        Map<String, String> pUrls = TxSupport.decodeLinkHeader(content);
 
-        String pTerminator = pUrls.get(TxLinkRel.PARTICIPANT_TERMINATOR);
-        String pParticipant = pUrls.get(TxLinkRel.PARTICIPANT_RESOURCE);
+        String pTerminator = pUrls.get(TxLinkNames.PARTICIPANT_TERMINATOR);
+        String pParticipant = pUrls.get(TxLinkNames.PARTICIPANT_RESOURCE);
         Map<String, String> links2 = new HashMap<String, String>();
 
         /*
@@ -283,7 +283,7 @@ public class SpecTest extends BaseTest {
         */
         txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, pParticipant, "HEAD", TxMediaType.PLAIN_MEDIA_TYPE, null,
                 links2);
-        Assert.assertEquals(links2.get(TxLinkRel.TERMINATOR.linkName()), pTerminator);
+        Assert.assertEquals(links2.get(TxLinkNames.TERMINATOR), pTerminator);
 
         // manually tell the TransactionalResource to forget the heuristic
         // (see the test testHeuristicWithForget for how to get the Transaction Manager to
@@ -385,9 +385,9 @@ public class SpecTest extends BaseTest {
         // ask the TransactionalResource for the participant url:
         String content = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
                 PURL + "?pId=" + work[0], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
-        Map<TxLinkRel, String> pLinks = TxSupport.decodeLinkHeader(content);
+        Map<String, String> pLinks = TxSupport.decodeLinkHeader(content);
 
-        String pParticipant = pLinks.get(TxLinkRel.PARTICIPANT_RESOURCE);
+        String pParticipant = pLinks.get(TxLinkNames.PARTICIPANT_RESOURCE);
 
         // wait long enough for the prepare
         Thread.sleep(1000);

@@ -6,10 +6,12 @@ import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationExcep
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PUT;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Context;
 import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,33 +44,20 @@ public class RestParticipantEndpointImpl {
 
         participants.put(pid, new RESTAT2PCParticipant(serviceImpl, true));
 
-        // draft 8 of the REST-AT spec uses link headers for participant registration
         TxSupport txSupport = new TxSupport();
+        /*
+         * Draft 8 of the REST-AT spec uses link headers for participant registration
+         *
+         * The next call constructs the participant-resource and participant-terminator URIs for participants
+         * in the format: "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminator"
+         */
         String linkHeader = txSupport.makeTwoPhaseAwareParticipantLinkHeader(
                 info.getAbsolutePath().toString(), txid, String.valueOf(pid));
         System.out.println("Service: Enlisting " + linkHeader);
-        String recoveryUrl = txSupport.enlistParticipant(enlistUrl, linkHeader);
-        System.out.println("Service: recoveryURI: " + recoveryUrl);
+        String recoveryUri = txSupport.enlistParticipant(enlistUrl, linkHeader);
+        System.out.println("Service: recoveryURI: " + recoveryUri);
 
-/*
-        String path = info.getPath();
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-
-        String serviceURL = info.getBaseUri() + path;
-        String terminator = serviceURL + txid + "/" + pid + "/terminate";
-        String participant = serviceURL + txid + "/" + pid + "/terminator";
-
-        String pUrls = TxSupport.getParticipantUrls(terminator, participant);
-        System.out.println("Service: Enlisting " + pUrls);
-
-
-        TxSupport txSupport = new TxSupport();
-        String response = txSupport.httpRequest(new int[]{HttpURLConnection.HTTP_CREATED}, enlistUrl,
-                "POST", TxSupport.POST_MEDIA_TYPE, pUrls, null);
-        //todo: check response
-*/
+        // TODO the recovery URI should be use by the framework to provide recovery support
     }
 
     private static void checkNotNull(Object object, String name) throws ParticipantRegistrationException {
@@ -85,31 +74,38 @@ public class RestParticipantEndpointImpl {
     */
     @PUT
     @Path("{whats_this}/{txid}/{pId}/terminator")
-    public Response terminate(@PathParam("txid") @DefaultValue("") String txid, @PathParam("pId") @DefaultValue("") Integer pId, String content) {
+    public Response terminate(@PathParam("pId") @DefaultValue("") Integer pId, String content) {
 
         RESTAT2PCParticipant participant = participants.get(pId);
-        String status = TxSupport.getStatus(content);
+        TxStatus status = TxSupport.toTxStatus(content);
 
-        if (TxStatus.isPrepare(status)) {
+        if (status.isPrepare()) {
 
-            boolean prepared = participant.prepare();
-            if (prepared) {
-                return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())).build();
-            } else {
+            if (!participant.prepare()) {
                 return Response.ok(HttpURLConnection.HTTP_CONFLICT).build();
             }
 
-        } else if (TxStatus.isCommit(status)) {
+        } else if (status.isCommit()) {
             participant.commit();
-            return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionCommitted.name())).build();
-
-        } else if (TxStatus.isAbort(status)) {
+        } else if (status.isAbort()) {
             participant.rollback();
-            return Response.ok(TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())).build();
-
         } else {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }
+
+        return Response.ok(TxSupport.toStatusContent(status.name())).build();
         //todo: shouldn't we get a FORGET here? If so, that is the time to remove the participant entry from the participants map.
+    }
+
+    /*
+     * This method handles requests from the REST-AT coordinator for the participant terminator URI
+     */
+    @HEAD
+    @Path("{whats_this}/{txid}/{pId}/participant")
+    public Response getTerminator(@Context UriInfo info, @PathParam("pId") @DefaultValue("")String wId) {
+        String serviceURL = info.getBaseUri() + info.getPath();
+        String linkHeader = new TxSupport().makeTwoPhaseAwareParticipantLinkHeader(serviceURL, false, wId, null);
+
+        return Response.ok().header("Link", linkHeader).build();
     }
 }

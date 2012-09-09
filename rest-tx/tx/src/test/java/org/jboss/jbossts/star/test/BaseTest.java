@@ -443,7 +443,7 @@ public class BaseTest {
                 String vParticipant = new StringBuilder(info.getAbsolutePath().toString()).append('/').append(work.id)
                         .append('/').append(txId).append('/').append("vp").toString();
                 vParticipantLink = txn.addLink2(
-                        new StringBuilder(), TxLinkRel.VOLATILE_PARTICIPANT, vParticipant,true).toString();
+                        new StringBuilder(), TxLinkNames.VOLATILE_PARTICIPANT, vParticipant,true).toString();
             }
 
             try {

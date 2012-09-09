@@ -21,8 +21,6 @@
 package org.jboss.jbossts.star.resource;
 
 import java.net.HttpURLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
