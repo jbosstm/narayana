@@ -22,7 +22,7 @@
 
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
+	<property name="narayana.version" value="4.17.0.Final-SNAPSHOT"/>
 	<property name="isIdlj" value="0"/>
 	<condition property="useJavaIdl">
 		<equals arg1="${isIdlj}" arg2="1"/>
@@ -50,8 +50,8 @@
 		<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
 		<path id="jts.classpath">
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-				<include name="narayana-jts.jar"/>
-				<!--include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/-->
+				<include name="jbossjts.jar"/>
+				<!--include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/-->
 			</fileset>
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
 				<include name="jboss-transaction-api_1.1_spec.jar"/>
@@ -73,8 +73,8 @@
 		<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/jacorb.jar;${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
 		<path id="jts.classpath">
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-				<include name="narayana-jts.jar"/>
-				<include name="narayana-jts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
+				<include name="jbossjts.jar"/>
+				<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 			</fileset>
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
 				<include name="jboss-transaction-api_1.1_spec.jar"/>
@@ -260,7 +260,7 @@
 
     <path id="as.classpath">
                 <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
-                        <include name="narayana-jts.jar"/>
+                        <include name="jbossjts.jar"/>
                 </fileset>
                 <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
                         <include name="jbossts-common.jar"/>
