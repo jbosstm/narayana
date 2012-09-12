@@ -260,12 +260,13 @@
               </includes>
             </imageResource>
             <formats>
-<!-- COMMUNITY DOCS GENERATED IN HTML ONLY-->
+<!-- COMMUNITY DOCS GENERATED IN HTML ONLY
               <format>
                 <formatName>pdf</formatName>
                 <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
                 <finalName>${docname}.pdf</finalName>
               </format>
+-->
 
               <format>
                 <formatName>html_single</formatName>
