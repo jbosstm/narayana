@@ -45,8 +45,8 @@ function build_as {
   [ $? = 0 ] || fatal "git clone $GIT_URL failed"
 
   cd jboss-as
-  git checkout -t origin/5_BRANCH
-  [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
+  git checkout -t origin/4_BRANCH
+  [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
 
   git remote add upstream $UPSTREAM_GIT_URL
   git pull --rebase --ff-only upstream master
@@ -165,7 +165,7 @@ function qa_tests {
 }
 
 # if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M2-SNAPSHOT"
+[ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.0.Final-SNAPSHOT"
 [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests

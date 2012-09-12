@@ -13,13 +13,12 @@
 	if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 	Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
 	<parent>
-		<groupId>org.jboss.narayana</groupId>
+		<groupId>org.jboss.jbossts</groupId>
 		<artifactId>narayana-all</artifactId>
-		<version>5.0.0.M2-SNAPSHOT</version>
+		<version>4.17.0.Final-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.jbossts</groupId>
 	<artifactId>jbossts-transactional-fileio</artifactId>
 	<name>JBoss Transactional File I/O</name>
 	<description>Transactional file I/O</description>
@@ -75,7 +74,7 @@
 		</dependency>
 		<!-- jboss jta -->
 		<dependency>
-			<groupId>org.jboss.narayana.jta</groupId>
+			<groupId>org.jboss.jbossts.jta</groupId>
 			<artifactId>narayana-jta</artifactId>
 		</dependency>
 		<!-- Apache Commons transaction -->

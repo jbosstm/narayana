@@ -17,9 +17,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.jboss.narayana.rts</groupId>
+    <groupId>org.jboss.jbossts.rts</groupId>
     <artifactId>rest-tx</artifactId>
-    <version>5.0.0.M2-SNAPSHOT</version>
+    <version>4.17.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -69,7 +69,7 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana.rts</groupId>
+      <groupId>org.jboss.jbossts.rts</groupId>
       <artifactId>restat-util</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -129,7 +129,7 @@
     </dependency>
     <!-- end Jersey -->
     <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
+      <groupId>org.jboss.jbossts.jta</groupId>
       <artifactId>narayana-jta</artifactId>
       <scope>provided</scope>
     </dependency>

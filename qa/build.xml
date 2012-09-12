@@ -25,7 +25,7 @@
   <property name="isIdlj" value="0"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
+  <property name="narayana.version" value="4.17.0.Final-SNAPSHOT"/>
   <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
   <property name="org.jboss.jbossts.qa.idlcompiler.lib" location="../ArjunaJTS/orbportability/lib/ext"/>
   <!-- you should not need to configure anything below here -->
@@ -79,9 +79,9 @@
     <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar" dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
   </target>
   <target name="buildtype">
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar" property="buildtype" value="jts"/>
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar" property="buildtype" value="jts"/>
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar" property="buildtype" value="jta"/>
-    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts-integration.jar" property="integration.build"/>
+    <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts-integration.jar" property="integration.build"/>
     <condition property="dist.as">
       <and>
         <isset property="integration.build"/>
@@ -126,11 +126,11 @@
   <target name="init-jts" depends="jts.cp.jacorb,jts.cp.idlj"/>
   <target name="jts.cp.jacorb" depends="which-jts-jar" if="cp-jacorb-jts">
     <echo>copying jacorb jts</echo>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-jacorb.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/jbossjts-jacorb.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
   </target>
   <target name="jts.cp.idlj" depends="which-jts-jar" if="cp-idlj-jts">
     <echo>copying idlj jts</echo>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jts.jar"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/jbossjts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
   </target>
 
   <target name="dist" depends="clean, init, buildtype">
