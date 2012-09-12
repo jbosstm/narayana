@@ -67,7 +67,7 @@
   <!--
     <property name="svnbase" value="https://svn.jboss.org/repos/blacktie"/>
     <property name="tag" value="trunk"/>
-    <property name="version" value="5.0.0.M2-SNAPSHOT"/>
+    <property name="version" value="4.17.0.Final-SNAPSHOT"/>
 -->
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <!--property name="workdir" location="/tmp/blacktie_releases"/-->
