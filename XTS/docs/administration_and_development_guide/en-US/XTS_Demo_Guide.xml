@@ -72,6 +72,9 @@
                 <para>Install AS7</para>
             </listitem>
             <listitem>
+                <para>cp docs/examples/configs/standalone-xts.xml standalone/configuration/</para>
+            </listitem>
+            <listitem>
                 <para>Run AS7 using the XTS profile: ./bin/standalone.sh -c standalone-xts.xml</para>
             </listitem>
             <listitem>
