@@ -23,6 +23,7 @@
   <name>ArjunaCore arjuna module</name>
   <description>arjuna</description>
   <packaging>jar</packaging>
+
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <resources>
@@ -118,13 +119,6 @@
       <version>1.0.9</version>
     </dependency>
     <dependency>
-      <groupId>oracle.java</groupId>
-      <artifactId>jconsole</artifactId>
-      <version>1.6.0_20</version>
-      <scope>system</scope>
-      <systemPath>${env.JAVA_HOME}/lib/jconsole.jar</systemPath>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
@@ -161,4 +155,41 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>linux-windows</id>
+      <activation>
+        <file>
+          <exists>${java.home}/../lib/tools.jar</exists>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>sun.jdk</groupId>
+          <artifactId>jconsole</artifactId>
+          <version>jdk</version>
+          <scope>system</scope>
+          <systemPath>${java.home}/../lib/jconsole.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>os-x</id>
+      <activation>
+        <file>
+          <exists>${java.home}/bundle/Classes/classes.jar</exists>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>sun.jdk</groupId>
+          <artifactId>jconsole</artifactId>
+          <version>jdk</version>
+          <scope>system</scope>
+          <systemPath>${java.home}/bundle/Classes/jconsole.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
