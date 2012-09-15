@@ -5,6 +5,9 @@ import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
 
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -173,7 +176,27 @@ public class XTSServiceTestInterpreter
      */
     public void addDefaultBinding(String var, String val)
     {
+        val = replaceLocalhostIfIPv6AndUrl(val);
         defaultBindings.put(var, val);
+    }
+
+    public String replaceLocalhostIfIPv6AndUrl(String url)
+    {
+        if (isIPv6())
+        {
+            url = url.replace("http://localhost", "http://[::1]");
+        }
+        return url;
+    }
+
+    private boolean isIPv6() {
+        try {
+            if (InetAddress.getLocalHost() instanceof Inet6Address || System.getenv("IPV6_OPTS") != null)
+                return true;
+        } catch (final UnknownHostException uhe) {
+        }
+
+        return false;
     }
 
     /// overrideable methods
