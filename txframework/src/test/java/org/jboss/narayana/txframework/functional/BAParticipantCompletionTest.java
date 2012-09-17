@@ -46,6 +46,7 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     {
         uba.begin();
         client.saveDataAutoComplete();
+        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -57,6 +58,7 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     {
         uba.begin();
         client.saveDataManualComplete(ServiceCommand.COMPLETE);
+        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -68,6 +70,7 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
         uba.begin();
         client.saveDataManualComplete();
         client.saveDataManualComplete(ServiceCommand.COMPLETE);
+        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -78,6 +81,7 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     {
         uba.begin();
         client.saveDataAutoComplete();
+        Thread.sleep(10000); //JBTM-1203
         uba.cancel();
 
         assertOrder(ConfirmCompleted.class, Compensate.class);
@@ -109,6 +113,7 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     {
         uba.begin();
         client.saveDataAutoComplete(ServiceCommand.CANNOT_COMPLETE);
+        Thread.sleep(10000); //JBTM-1203
         uba.close();
         assertOrder();
     }
