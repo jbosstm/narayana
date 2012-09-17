@@ -24,8 +24,8 @@ function cp_narayana_to_as {
   [ -d $JBOSS_HOME ] || return 1
 
   echo "WARNING - check that narayana version ${NARAYANA_VERSION} is the one you want"
-  JAR1=narayana-jts-integration-${NARAYANA_VERSION}.jar
-  JAR2=narayana-jts-${NARAYANA_VERSION}.jar
+  JAR1=jbossjts-integration-${NARAYANA_VERSION}.jar
+  JAR2=jbossjts-${NARAYANA_VERSION}.jar
 # TODO make sure ${JBOSS_HOME} doesn't already contain a different version of narayana
   echo "cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/"
   echo "cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/"
