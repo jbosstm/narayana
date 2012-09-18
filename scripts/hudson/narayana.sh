@@ -140,7 +140,7 @@ function qa_tests_once {
   [ $? = 0 ] || fatal "qa build failed"
 
   # if IPV6_OPTS is not set then run everything (ci-tests) otherwise don't do the jdbc tests
-  [ -z "${IPV6_OPTS+x}" ] || target="junit-testsuite" && target="ci-tests"
+  [ -z "${IPV6_OPTS+x}" ] && target="ci-tests" || target="junit-testsuite"
   [ $IDLJ = 1 ] && target="junit-jts-testsuite"
   [ x$QA_TARGET = x ] || target=$QA_TARGET
 
