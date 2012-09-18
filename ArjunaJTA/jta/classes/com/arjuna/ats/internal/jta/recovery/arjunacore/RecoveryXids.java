@@ -142,6 +142,18 @@ public class RecoveryXids
 
         return _whenFirstSeen.containsKey(xidImple);
     }
+
+    // JBTM-924
+    public boolean isStale() {
+        long now = System.currentTimeMillis();
+        // JBTM-1255 - use a different safety declaration for staleness, if you set a safety interval of 0 (using reflection) then 
+        // you will detect everything as stale. The only time we actually set safetyIntervalMillis is in JBTM-895 unit test SimpleIsolatedServers
+        // so in the normal case this will behave as before
+        long threshold = _lastValidated+(2*safetyIntervalMillis < staleSafetyIntervalMillis ? staleSafetyIntervalMillis : 2*safetyIntervalMillis);
+        long diff = now - threshold;
+        boolean result = diff > 0;
+        return result;
+    }
     
     public boolean remove (Xid xid)
     {
@@ -199,6 +211,10 @@ public class RecoveryXids
     private XAResource _xares;
     private long _lastValidated;
 
+    /**
+     * JBTM-1255 this is required to reinstate JBTM-924, see message in {@see RecoveryXids#isStale()} 
+     */
+    private static final int staleSafetyIntervalMillis = 20000; // The advice is that this (if made configurable is twice the safety interval) 
     // JBTM-916 removed final so 10000 is not inlined into source code until we make this configurable
 	// https://issues.jboss.org/browse/JBTM-842
     private static int safetyIntervalMillis = 10000; // may eventually want to make this configurable?
