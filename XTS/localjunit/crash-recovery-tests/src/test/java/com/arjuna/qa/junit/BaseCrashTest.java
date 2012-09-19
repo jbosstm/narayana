@@ -11,7 +11,9 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.arjuna.qa.extension.JBossAS7ServerKillProcessor;
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
@@ -28,6 +30,9 @@ import org.junit.Assert;
 
 public class BaseCrashTest
 {
+
+    private static final Logger logger = Logger.getLogger(BaseCrashTest.class.getName());
+
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
     protected String BytemanArgs = "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
     protected String iPv6Args = "-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] ";
@@ -185,9 +190,15 @@ public class BaseCrashTest
 
     protected void runTest(String testClass) throws Exception
     {
+        logger.info("Test starting, server should be down: " + scriptName + ":" + testName);
+
         Config config = new Config();
+        config.add("testClass", testClass);
+        config.add("scriptName", scriptName);
         config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
+
         controller.start("jboss-as", config.map());
+
         try {
             deployer.deploy("xtstest");
         } catch (java.lang.RuntimeException e) {
@@ -204,6 +215,8 @@ public class BaseCrashTest
 
         //Waiting for recovery happening
         controller.kill("jboss-as");
+
+        logger.info("Test completed, server should be down: " + scriptName + ":" + testName);
     }
 
     private boolean deleteDirectory(File path) 

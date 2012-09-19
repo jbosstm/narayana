@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
@@ -16,6 +17,8 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
 
     private int checkPeriodMillis = 10 * 1000;
     private int numChecks = 60;
+
+    private static int processLogId = 0;
 
     @Override
     public void kill(Container container) throws Exception {
@@ -28,6 +31,7 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
                 logger.info("jboss-as is still alive, sleeping for a further " + checkPeriodMillis + "ms");
             } else {
                 logger.info("jboss-as killed by byteman scirpt");
+                dumpProcesses(container);
                 return;
             }
         }
@@ -79,9 +83,26 @@ public class JBossAS7ServerKillProcessor implements ServerKillProcessor {
             BufferedReader ein = new BufferedReader(new InputStreamReader(is));
             String res = ein.readLine();
             is.close();
-            System.out.printf("%s %s\n", msg, res);
+            if (res != null)
+            {
+                System.out.printf("%s %s\n", msg, res);
+            }
         } catch (IOException e) {
             logger.info("Exception dumping stream: " + e.getMessage());
         }
+    }
+
+    public void dumpProcesses(Container container) throws Exception
+    {
+        Map<String, String> config = container.getContainerConfiguration().getContainerProperties();
+        String testClass = config.get("testClass");
+        String scriptName = config.get("scriptName");
+
+        String dir = "./target/surefire-reports/processes";
+        runShellCommand("mkdir -p " + dir);
+
+        String logFile = dir + "/" + scriptName + ":" + testClass + "_" + processLogId++ + ".txt";
+        runShellCommand("ps aux > " + logFile);
+        logger.info("Logged current running processes to: " + logFile);
     }
 }
