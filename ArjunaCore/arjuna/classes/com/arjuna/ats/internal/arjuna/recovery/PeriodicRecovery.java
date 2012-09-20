@@ -669,7 +669,7 @@ public class PeriodicRecovery extends Thread
     private void doPeriodicWait()
     {
         try {
-            _stateLock.wait(_recoveryPeriod * 1000);
+            _stateLock.wait(_recoveryPeriod * 1000L);
         } catch (InterruptedException e) {
             // we can ignore this exception
         }
