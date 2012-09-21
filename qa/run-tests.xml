@@ -92,6 +92,9 @@
   <target name="junit" depends="junit-testsuite,junit-jts-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
   </target>
+  <target name="ci-jts-tests" depends="junit-jts-testsuite">
+    <fail if="failed-tests" message="some tests failed"/>
+  </target>
   <target name="junit-testsuite">
     <!-- txcore : 28 tests, 2 minutes -->
     <junit-tests tests="txcore" additional.elements="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
