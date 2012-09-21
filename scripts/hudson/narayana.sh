@@ -119,6 +119,7 @@ function qa_tests_once {
   cd $WORKSPACE/qa
   unset orb
 
+  # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
   done
@@ -133,6 +134,7 @@ function qa_tests_once {
   # delete lines containing jacorb
   [ $IDLJ = 1 ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
+  # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   [ -z "${MFACTOR+x}" ] || sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
 
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
@@ -141,11 +143,19 @@ function qa_tests_once {
 
   [ $? = 0 ] || fatal "qa build failed"
 
-  # if IPV6_OPTS is not set then run everything (ci-tests) otherwise don't do the jdbc tests
-  [ -z "${IPV6_OPTS+x}" ] && target="ci-tests" || target="junit-testsuite"
-  [ $IDLJ = 1 ] && target="junit-jts-testsuite"
-  [ x$QA_TARGET = x ] || target=$QA_TARGET
+  # determine which QA test target to call
+  target="ci-tests" # the default is to run everything (ci-tests)
 
+  # if IPV6_OPTS is set then do not do the jdbc tests (ie run target junit-testsuite)
+  [ -z "${IPV6_OPTS+x}" ] || target="junit-testsuite"
+
+  # IDLJ = 1 overrides the previous setting 
+  [ $IDLJ = 1 ] && target="ci-jts-tests" # if called with orb=idlj then only run the jtsremote tests
+
+  # QA_TARGET overrides the previous settings
+  [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
+
+  # run the ant target
   ant -f run-tests.xml $target
 }
 
