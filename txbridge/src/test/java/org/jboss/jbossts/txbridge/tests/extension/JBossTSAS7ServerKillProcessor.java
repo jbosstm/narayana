@@ -2,92 +2,121 @@ package org.jboss.jbossts.txbridge.tests.extension;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ServerKillProcessor;
 
 public class JBossTSAS7ServerKillProcessor implements ServerKillProcessor {
-	private final Logger log = Logger.getLogger(
-			JBossTSAS7ServerKillProcessor.class.getName());
-	private static String killSequence = "[jbossHome]/bin/jboss-cli.[suffix] --commands=connect,quit";
-	private static String shutdownSequence = "[jbossHome]/bin/jboss-cli.[suffix] --connect command=:shutdown";
-	private int checkDurableTime = 10;
-	private int numofCheck = 60;
 
-	@Override
-	public void kill(Container container) throws Exception {
-		log.info("waiting for byteman to kill server");
-		String jbossHome = System.getenv().get("JBOSS_HOME");
-		if(jbossHome == null) {
-			jbossHome = container.getContainerConfiguration().getContainerProperties().get("jbossHome");
-		}
-		killSequence = killSequence.replace("[jbossHome]", jbossHome);
-		shutdownSequence = shutdownSequence.replace("[jbossHome]", jbossHome);
+    private static final Logger logger = Logger.getLogger(JBossTSAS7ServerKillProcessor.class.getName());
+    private static final String CHECK_JBOSS_ALIVE_CMD = "if [ \"$(jps | grep jboss-modules.jar)\" == \"\" ]; then exit 1; fi";
+    private static final String CHECK_FOR_DEFUNCT_JAVA_CMD = "if [ \"$(ps aux | grep '\\[java\\] <defunct>')\" == \"\" ]; then exit 1; fi";
+    private static final String SHUTDOWN_JBOSS_CMD = "jps | grep jboss-modules.jar | awk '{ print $1 }' | xargs kill";
 
-		String suffix;
-		String os = System.getProperty("os.name").toLowerCase();
-		if(os.indexOf("windows") > -1) {
-			suffix = "bat";
-		} else {
-			suffix = "sh";
-		}
-		killSequence = killSequence.replace("[suffix]", suffix);
-		shutdownSequence = shutdownSequence.replace("[suffix]", suffix);
-		
-		int checkn = 0;
-		boolean killed = false;
-		do {
-			if(checkJBossAlive()) {
-				Thread.sleep(checkDurableTime * 1000);
-				log.info("jboss-as is alive");
-			} else {
-				killed = true;
-				break;
-			}
-			checkn ++;
-		} while(checkn < numofCheck);
-		
-		if(killed) {
-			log.info("jboss-as killed by byteman scirpt");
-		} else {
-			log.info("jboss-as not killed and shutdown");
-			Process p = Runtime.getRuntime().exec(shutdownSequence);
-			p.waitFor();
-			p.destroy();
-			// wait 5 * 60 second for jboss-as shutdown complete
-			int checkn_s = 0;
-			do {
-				if(checkJBossAlive()) {
-					Thread.sleep(5000);
-				} else {
-					log.info("jboss-as shutdown");
-					break;
-				}
-				checkn_s ++;
-			} while (checkn_s < 60);
-			throw new RuntimeException("jboss-as not killed and shutdown");
-		}
-	}
-	
-	private boolean checkJBossAlive() throws Exception {
-		Process p = Runtime.getRuntime().exec(killSequence);
-		p.waitFor();
-		int rc = p.exitValue();
+    private int checkPeriodMillis = 10 * 1000;
+    private int numChecks = 60;
 
-		if (rc != 0 && rc != 1) {
-			p.destroy();
-			throw new RuntimeException("Kill Sequence failed");
-		}
-		
-		InputStream out = p.getInputStream();
-		BufferedReader in = new BufferedReader(new InputStreamReader(out));
-		String result= in.readLine();
-		out.close();
-		p.destroy();
-		
-		return !(result != null && result.contains("The controller is not available"));
-	}
+    private static int processLogId = 0;
+
+    @Override
+    public void kill(Container container) throws Exception {
+        logger.info("waiting for byteman to kill the server");
+
+        for (int i = 0; i < numChecks; i++) {
+
+            if (jbossIsAlive()) {
+                Thread.sleep(checkPeriodMillis);
+                logger.info("jboss-as is still alive, sleeping for a further " + checkPeriodMillis + "ms");
+            } else if (isDefunctJavaProcess()) {
+                logger.info("Found a defunct java process, sleeping for a further " + checkPeriodMillis + "ms");
+                dumpProcesses(container);
+            } else {
+                logger.info("jboss-as killed by byteman scirpt");
+                dumpProcesses(container);
+                return;
+            }
+        }
+
+        //We've waited long enough for Byteman to kil the server and it has not yet done it.
+        // Kill the server manually and fail the test
+        shutdownJBoss();
+        throw new RuntimeException("jboss-as was not killed by Byteman, this indicates a test failure");
+    }
+
+    private boolean jbossIsAlive() throws Exception {
+        int exitCode = runShellCommand(CHECK_JBOSS_ALIVE_CMD);
+
+        //Command will 'exit 1' if jboss is not running and 'exit 0' if it is
+        return exitCode == 0;
+    }
+
+    private boolean isDefunctJavaProcess() throws Exception {
+        int exitCode = runShellCommand(CHECK_FOR_DEFUNCT_JAVA_CMD);
+
+        //Command will 'exit 1' if a defunct java process is not running and 'exit 0' if there is
+        return exitCode == 0;
+    }
+
+
+    private void shutdownJBoss() throws Exception {
+        runShellCommand(SHUTDOWN_JBOSS_CMD);
+
+        // wait 5 * 60 second for jboss-as shutdown complete
+        for (int i = 0; i < 60; i++) {
+
+            if (jbossIsAlive()) {
+                Thread.sleep(5000);
+            } else {
+                logger.info("jboss-as shutdown after sending shutdown command");
+                return;
+            }
+        }
+    }
+
+    private int runShellCommand(String cmd) throws Exception {
+        logger.info("Executing shell command: '" + cmd + "'");
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", cmd);
+        Process p = pb.start();
+        p.waitFor();
+
+        dumpStream("std out", p.getInputStream());
+        dumpStream("std error", p.getErrorStream());
+
+        p.destroy();
+
+        return p.exitValue();
+    }
+
+    private void dumpStream(String msg, InputStream is) {
+        try {
+            BufferedReader ein = new BufferedReader(new InputStreamReader(is));
+            String res = ein.readLine();
+            is.close();
+            if (res != null)
+            {
+                System.out.printf("%s %s\n", msg, res);
+            }
+        } catch (IOException e) {
+            logger.info("Exception dumping stream: " + e.getMessage());
+        }
+    }
+
+    public void dumpProcesses(Container container) throws Exception
+    {
+        Map<String, String> config = container.getContainerConfiguration().getContainerProperties();
+        String testClass = config.get("testClass");
+        String scriptName = config.get("scriptName");
+
+        String dir = "./target/surefire-reports/processes";
+        runShellCommand("mkdir -p " + dir);
+
+        String logFile = dir + "/" + scriptName + ":" + testClass + "_" + processLogId++ + ".txt";
+        runShellCommand("ps aux > " + logFile);
+        logger.info("Logged current running processes to: " + logFile);
+    }
 }
