@@ -40,6 +40,7 @@
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="4.17.0.Final-SNAPSHOT"/>
   <property name="working.dir" location="build"/>
+  <property name="testoutput.zipname" value="testoutput.zip"/>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="scratch">
     <junit-tests tests="defaulttimeout"/>
@@ -175,6 +176,16 @@
     <junit-tests tests="crashrecovery10"/>
     <!-- crashrecovery12 : 7 tests, 2 minutes -->
     <junit-tests tests="crashrecovery12"/>
+  </target>
+
+  <target name="has-testoutput-output">
+    <condition property="has-testoutput-output">
+      <available file="testoutput" type="dir"/>
+    </condition>
+  </target>
+  <target name="testoutput.zip" depends="has-testoutput-output" if="has-testoutput-output">
+    <echo message="archiving testoutput to ${testoutput.zipname}"/>
+    <zip destfile="${testoutput.zipname}" basedir="testoutput"/>
   </target>
 
   <property name="test.name" value="otsserver"/>

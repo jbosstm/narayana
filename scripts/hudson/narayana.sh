@@ -1,6 +1,6 @@
 function fatal {
   echo "$1"
-  exit -1
+  exit 1
 }
 
 #BUILD NARAYANA WITH FINDBUGS
@@ -125,7 +125,13 @@ function qa_tests_once {
   done
 
   # check to see if we were called with orb=idlj as one of the arguments
-  [ x$orb = x"idlj" ] && IDLJ=1 || IDLJ=0
+  if [ x$orb = x"idlj" ]; then
+    IDLJ=1
+    testoutputzip="testoutput-idlj.zip"
+  else
+    IDLJ=0
+    testoutputzip="testoutput-jacorb.zip"
+  fi
 
   git checkout TaskImpl.properties
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
@@ -157,6 +163,10 @@ function qa_tests_once {
 
   # run the ant target
   ant -f run-tests.xml $target
+  ok=$?
+  # archive the jtsremote test output (use a name related to the orb that was used for the tests)
+  ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
+  return $ok
 }
 
 function qa_tests {
@@ -219,4 +229,4 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
-exit 0
+exit 0 # any failure would have resulted in fatal being called which exits with a value of 1
