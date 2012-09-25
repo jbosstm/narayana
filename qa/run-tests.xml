@@ -38,7 +38,7 @@
 <project name="QA Tests for JBossTS" default="junit" basedir=".">
   <!-- set this property to the location of a JBossTS core build -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="4.17.0.Final-SNAPSHOT"/>
+  <property name="narayana.version" value="4.17.0.Final"/>
   <property name="working.dir" location="build"/>
   <property name="testoutput.zipname" value="testoutput.zip"/>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
