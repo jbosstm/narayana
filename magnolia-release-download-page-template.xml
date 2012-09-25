@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="@tag@" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sv:node sv:name="@pageName@" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>mgnl:content</sv:value>
   </sv:property>
@@ -31,7 +31,7 @@
     <sv:value>false</sv:value>
   </sv:property>
   <sv:property sv:name="title" sv:type="String">
-    <sv:value>JBossTS @filename@ release</sv:value>
+    <sv:value>JBossTS @tag@ release</sv:value>
   </sv:property>
   <sv:property sv:name="useTitle" sv:type="String">
     <sv:value>true</sv:value>
@@ -99,12 +99,6 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>00bd1847-65cd-4ff1-b7ce-20b8084be52b</sv:value>
       </sv:property>
-      <sv:property sv:name="desc21" sv:type="String">
-        <sv:value>The JBoss Transactions JTA @filename@ Source</sv:value>
-      </sv:property>
-      <sv:property sv:name="desc22" sv:type="String">
-        <sv:value>JBoss Transactions JTA @filename@ Binary</sv:value>
-      </sv:property>
       <sv:property sv:name="desc23" sv:type="String">
         <sv:value>JBoss Transactions JTS (and JTA) and WS-T Source Code</sv:value>
       </sv:property>
@@ -123,17 +117,11 @@
       <sv:property sv:name="license24" sv:type="String">
         <sv:value>LGPL</sv:value>
       </sv:property>
-      <sv:property sv:name="name21" sv:type="String">
-        <sv:value>jbossts-jta-@filename@-src.zip</sv:value>
-      </sv:property>
-      <sv:property sv:name="name22" sv:type="String">
-        <sv:value>jbossts-jta-@filename@.zip</sv:value>
-      </sv:property>
       <sv:property sv:name="name23" sv:type="String">
-        <sv:value>jbossts-full-@filename@-src.zip</sv:value>
+        <sv:value>narayana-full-@tag@-src.zip</sv:value>
       </sv:property>
       <sv:property sv:name="name24" sv:type="String">
-        <sv:value>jbossts-full-@filename@.zip</sv:value>
+        <sv:value>narayana-full-@tag@-bin.zip</sv:value>
       </sv:property>
       <sv:property sv:name="popup" sv:type="String">
         <sv:value>true</sv:value>
@@ -168,20 +156,14 @@
       <sv:property sv:name="showVersion" sv:type="String">
         <sv:value>false</sv:value>
       </sv:property>
-      <sv:property sv:name="size21" sv:type="String">
-        <sv:value>@jta-src-length@</sv:value>
-      </sv:property>
-      <sv:property sv:name="size22" sv:type="String">
-        <sv:value>@full-src-length@</sv:value>
-      </sv:property>
       <sv:property sv:name="size23" sv:type="String">
-        <sv:value>@jta-bin-length@</sv:value>
+        <sv:value>@full-src-length@</sv:value>
       </sv:property>
       <sv:property sv:name="size24" sv:type="String">
         <sv:value>@full-bin-length@</sv:value>
       </sv:property>
       <sv:property sv:name="tableTitle" sv:type="String">
-        <sv:value>JBossTS @filename@ release</sv:value>
+        <sv:value>JBossTS @tag@ release</sv:value>
       </sv:property>
       <sv:property sv:name="text21" sv:type="String">
         <sv:value>Download</sv:value>
@@ -195,17 +177,11 @@
       <sv:property sv:name="text24" sv:type="String">
         <sv:value>Download</sv:value>
       </sv:property>
-      <sv:property sv:name="url21" sv:type="String">
-        <sv:value>http://www.jboss.org/jbosstm/downloads/@filename@/src/jbossts-jta-@filename@-src.zip</sv:value>
-      </sv:property>
-      <sv:property sv:name="url22" sv:type="String">
-        <sv:value>http://www.jboss.org/jbosstm/downloads/@filename@/binary/jbossts-jta-@filename@.zip</sv:value>
-      </sv:property>
       <sv:property sv:name="url23" sv:type="String">
-        <sv:value>http://www.jboss.org/jbosstm/downloads/@filename@/src/jbossts-full-@filename@-src.zip</sv:value>
+        <sv:value>http://www.jboss.org/jbosstm/downloads/@tag@/src/narayana-full-@tag@-src.zip</sv:value>
       </sv:property>
       <sv:property sv:name="url24" sv:type="String">
-        <sv:value>http://www.jboss.org/jbosstm/downloads/@filename@/binary/jbossts-full-@filename@.zip</sv:value>
+        <sv:value>http://www.jboss.org/jbosstm/downloads/@tag@/binary/narayana-full-@tag@-bin.zip</sv:value>
       </sv:property>
       <sv:node sv:name="MetaData">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
