@@ -45,8 +45,8 @@ function build_as {
   [ $? = 0 ] || fatal "git clone $GIT_URL failed"
 
   cd jboss-as
-  git checkout -t origin/4_BRANCH
-  [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
+  git checkout -t origin/5_BRANCH
+  [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
 
   git remote add upstream $UPSTREAM_GIT_URL
   git pull --rebase --ff-only upstream master
