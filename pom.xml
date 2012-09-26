@@ -13,7 +13,7 @@
 		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
 		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jboss.jbossts.documentation</groupId>
+  <groupId>org.jboss.narayana.documentation</groupId>
   <artifactId>narayana-documentation</artifactId>
   <version>5.0.0.M2-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -310,97 +310,97 @@
   <dependencyManagement>
     <dependencies>
             <dependency>
-                <groupId>org.jboss.jbossts.blacktie</groupId>
+                <groupId>org.jboss.narayana.blacktie</groupId>
                 <artifactId>docs</artifactId>
                 <version>${project.version}</version>
         <type>jdocbook</type>
             </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jts</groupId>
+        <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>administration-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jts</groupId>
+        <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>development-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jts</groupId>
+        <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>orbportability-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jts</groupId>
+        <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>quick-start-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jta</groupId>
+        <groupId>org.jboss.narayana.jta</groupId>
         <artifactId>administration-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jta</groupId>
+        <groupId>org.jboss.narayana.jta</groupId>
         <artifactId>development-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jta</groupId>
+        <groupId>org.jboss.narayana.jta</groupId>
         <artifactId>installation-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.jta</groupId>
+        <groupId>org.jboss.narayana.jta</groupId>
         <artifactId>quick-start-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.arjunacore</groupId>
+        <groupId>org.jboss.narayana.arjunacore</groupId>
         <artifactId>development-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.arjunacore</groupId>
+        <groupId>org.jboss.narayana.arjunacore</groupId>
         <artifactId>failure-recovery-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.platform-docs</groupId>
+        <groupId>org.jboss.narayana.platform-docs</groupId>
         <artifactId>development-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.platform-docs</groupId>
+        <groupId>org.jboss.narayana.platform-docs</groupId>
         <artifactId>failure-recovery-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.platform-docs</groupId>
+        <groupId>org.jboss.narayana.platform-docs</groupId>
         <artifactId>transactions-overview-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.platform-docs</groupId>
+        <groupId>org.jboss.narayana.platform-docs</groupId>
         <artifactId>txbridge-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.jbossts.xts</groupId>
+        <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>xts-guide</artifactId>
         <type>jdocbook</type>
         <version>${project.version}</version>
