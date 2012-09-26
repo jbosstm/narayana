@@ -13,7 +13,7 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.jboss.jbossts.jts</groupId>
+    <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
     <version>5.0.0.M2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
@@ -69,8 +69,8 @@
                   <exclude>**/implicit/**</exclude>
                 </excludes>
                 <classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.jbossts.jts:idlj-idl</classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.jbossts.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
                 </classpathDependencyExcludes>
               </configuration>
             </execution>
@@ -93,8 +93,8 @@
                 </excludes>
                 <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.jbossts.jts:jacorb-idl</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.jbossts.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
 
                   <systemPropertyVariables combine.children="append">
@@ -111,37 +111,37 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.jbossts.jta</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
     </dependency>
     <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jacorb-idl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jacorb-idl</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>idlj-idl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>idlj-idl</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
     </dependency>
     <dependency>

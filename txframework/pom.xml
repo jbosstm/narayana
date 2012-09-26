@@ -6,7 +6,7 @@
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <groupId>org.jboss.jbossts.txframework</groupId>
+    <groupId>org.jboss.narayana.txframework</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>txframework</artifactId>
     <packaging>jar</packaging>
@@ -14,7 +14,7 @@
     <description>txframework</description>
 
     <parent>
-        <groupId>org.jboss.jbossts</groupId>
+        <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-all</artifactId>
         <version>5.0.0.M2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -90,7 +90,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts</groupId>
+            <groupId>org.jboss.narayana</groupId>
             <artifactId>jbosstxbridge</artifactId>
             <scope>provided</scope>
             <exclusions>
@@ -101,7 +101,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts.xts</groupId>
+            <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>jbossxts</artifactId>
             <classifier>api</classifier>
             <scope>provided</scope>
@@ -113,7 +113,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.jboss.jbossts.rts</groupId>
+            <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>restat-util</artifactId>
         </dependency>
         <dependency>

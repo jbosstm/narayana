@@ -13,13 +13,13 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.jboss.jbossts.jts</groupId>
+    <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
     <version>5.0.0.M2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jbossjts-integration</artifactId>
+  <artifactId>narayana-jts-integration</artifactId>
   <name>JBossJTS ATX module</name>
   <description>atx</description>
   <packaging>jar</packaging>
@@ -76,19 +76,19 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.jbossts.jta</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jts</groupId>
+      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
     </dependency>
     <dependency>

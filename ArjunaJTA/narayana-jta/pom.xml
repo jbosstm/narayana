@@ -13,7 +13,7 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.jboss.jbossts.jta</groupId>
+    <groupId>org.jboss.narayana.jta</groupId>
     <artifactId>narayana-jta-all</artifactId>
     <version>5.0.0.M2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
@@ -127,11 +127,11 @@
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <artifactSet>
                 <includes>
-                  <include>org.jboss.jbossts:common</include>
-                  <include>org.jboss.jbossts.arjunacore:arjuna</include>
-                  <include>org.jboss.jbossts.arjunacore:txoj</include>
-                  <include>org.jboss.jbossts.jta:jta</include>
-                  <include>org.jboss.jbossts.jta:jdbc</include>
+                  <include>org.jboss.narayana:common</include>
+                  <include>org.jboss.narayana.arjunacore:arjuna</include>
+                  <include>org.jboss.narayana.arjunacore:txoj</include>
+                  <include>org.jboss.narayana.jta:jta</include>
+                  <include>org.jboss.narayana.jta:jdbc</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -142,23 +142,23 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.jbossts</groupId>
+      <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.arjunacore</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.arjunacore</groupId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>txoj</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jta</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossts.jta</groupId>
+      <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
     </dependency>
     <dependency>
