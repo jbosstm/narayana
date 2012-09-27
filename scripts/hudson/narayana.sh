@@ -85,16 +85,17 @@ function xts_tests {
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
-    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
+    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   else
-    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
+    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
-
   if [ $ran_crt = 1 ]; then
-    (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-    [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
+    if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
+      (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
+      [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
+    fi
   fi
 }
 
@@ -110,7 +111,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean install
+  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean install "$@"
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
