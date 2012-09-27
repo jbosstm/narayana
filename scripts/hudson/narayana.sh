@@ -6,11 +6,13 @@ function fatal {
 
 function comment_on_pull
 {
+    if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
+
 	PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
 	if [ "$PULL_NUMBER" != "" ] then
 	{
 	    JSON="{ \"body\": \"$1\" }"
-	    curl -d "$JSON" -ujbosstm-bot:p4ssw0rd https://api.github.com/repos/paulrobinson/git-play/issues/$PULL_NUMBER/comments
+	    curl -d "$JSON" -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
     } else {
         echo "Not a pull request, so not commenting"
     }
@@ -26,7 +28,6 @@ function build_narayana {
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
 
-  comment_on_pull "$FUNCNAME passed"
   return 0
 }
 
@@ -72,8 +73,6 @@ function build_as {
   ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS
   [ $? = 0 ] || fatal "AS build failed"
   init_jboss_home
-
-  comment_on_pull "$FUNCNAME passed"
 }
 
 function init_jboss_home {
@@ -91,8 +90,6 @@ function txframework_tests {
   cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
-
-  comment_on_pull "$FUNCNAME passed"
 }
 
 function xts_tests {
@@ -115,8 +112,6 @@ function xts_tests {
     (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
     [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
   fi
-
-  comment_on_pull "$FUNCNAME passed"
 }
 
 function tx_bridge_tests {
@@ -133,8 +128,6 @@ function tx_bridge_tests {
   echo "XTS: TXBRIDGE TESTS"
   ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
-
-  comment_on_pull "$FUNCNAME passed"
 }
 
 function qa_tests_once {
@@ -208,7 +201,6 @@ function qa_tests {
   [ $ok2 = 0 ] || echo some Sun ORB QA tests failed
 
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
-  comment_on_pull "$FUNCNAME passed"
 }
 
 comment_on_pull "Started testing this pull request: $BUILD_URL"
