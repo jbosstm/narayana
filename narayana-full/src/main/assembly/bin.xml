@@ -130,7 +130,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jts:jbossjts-idlj</include>
+				<include>org.jboss.narayana.jts:narayana-jts-idlj</include>
 			</includes>
 			<excludes>
 				<exclude>*:javadoc</exclude>

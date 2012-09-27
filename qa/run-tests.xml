@@ -372,7 +372,7 @@
             <include name="jbossts-*-qa.jar"/>
           </fileset>
           <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
-            <exclude name="jbossjts-idlj.jar"/>
+            <exclude name="narayana-jts-idlj.jar"/>
             <exclude name="narayana-jts-jacorb.jar"/>
             <include name="*.jar"/>
           </fileset>

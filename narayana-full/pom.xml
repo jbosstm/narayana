@@ -77,7 +77,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jbossjts-idlj</artifactId>
+      <artifactId>narayana-jts-idlj</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
