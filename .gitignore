@@ -8,6 +8,7 @@ jboss-as
 qa/ObjectStore
 qa/PutObjectStoreDirHere
 qa/testoutput
+qa/testoutput-*.zip
 qa/transaction.log.1
 qa/transaction.log.2
 qa/value_1
