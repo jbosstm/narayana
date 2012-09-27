@@ -130,7 +130,7 @@
   </target>
   <target name="jts.cp.idlj" depends="which-jts-jar" if="cp-idlj-jts">
     <echo>copying idlj jts</echo>
-    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/jbossjts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
   </target>
 
   <target name="dist" depends="clean, init, buildtype">
