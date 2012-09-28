@@ -150,24 +150,27 @@ function qa_tests_once {
 
   [ $? = 0 ] || fatal "qa build failed"
 
-  # determine which QA test target to call
-  target="ci-tests" # the default is to run everything (ci-tests)
+  if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
+    # determine which QA test target to call
+    target="ci-tests" # the default is to run everything (ci-tests)
 
-  # if IPV6_OPTS is set then do not do the jdbc tests (ie run target junit-testsuite)
-  [ -z "${IPV6_OPTS+x}" ] || target="junit-testsuite"
+    # if IPV6_OPTS is set then do not do the jdbc tests (ie run target junit-testsuite)
+    [ -z "${IPV6_OPTS+x}" ] || target="junit-testsuite"
 
-  # IDLJ = 1 overrides the previous setting 
-  [ $IDLJ = 1 ] && target="ci-jts-tests" # if called with orb=idlj then only run the jtsremote tests
+    # IDLJ = 1 overrides the previous setting 
+    [ $IDLJ = 1 ] && target="ci-jts-tests" # if called with orb=idlj then only run the jtsremote tests
 
-  # QA_TARGET overrides the previous settings
-  [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
+    # QA_TARGET overrides the previous settings
+    [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
-  # run the ant target
-  ant -f run-tests.xml $target
-  ok=$?
-  # archive the jtsremote test output (use a name related to the orb that was used for the tests)
-  ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
-  return $ok
+    # run the ant target
+    ant -f run-tests.xml $target
+    ok=$?
+    # archive the jtsremote test output (use a name related to the orb that was used for the tests)
+    ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
+    return $ok
+  fi
+  return 0
 }
 
 function qa_tests {
