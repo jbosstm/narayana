@@ -40,15 +40,27 @@ function build_as {
   UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
 
   cd ${WORKSPACE}
-  rm -rf jboss-as
-  git clone $GIT_URL
-  [ $? = 0 ] || fatal "git clone $GIT_URL failed"
+  if [ -d jboss-as ]; then
+    echo "Updating existing checkout of AS7"
+    cd jboss-as
+    git fetch
+    [ $? = 0 ] || fatal "git fetch $GIT_URL failed"
+    git reset --hard origin/5_BRANCH
+    [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
+    git clean -f -d -x
+    [ $? = 0 ] || fatal "git clean failed"
+  else
+    echo "First time checkout of AS7"
+    git clone $GIT_URL
+    [ $? = 0 ] || fatal "git clone $GIT_URL failed"
 
-  cd jboss-as
-  git checkout -t origin/5_BRANCH
-  [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
+    cd jboss-as
+    git checkout -t origin/5_BRANCH
+    [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
 
-  git remote add upstream $UPSTREAM_GIT_URL
+    git remote add upstream $UPSTREAM_GIT_URL
+  fi
+
   git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
