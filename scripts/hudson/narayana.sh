@@ -49,6 +49,7 @@ function build_as {
     [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
     [ $? = 0 ] || fatal "git clean failed"
+    git rebase --abort
   else
     echo "First time checkout of AS7"
     git clone $GIT_URL
