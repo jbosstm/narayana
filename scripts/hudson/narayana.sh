@@ -43,6 +43,8 @@ function build_as {
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of AS7"
     cd jboss-as
+    git checkout 5_BRANCH
+    [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
     [ $? = 0 ] || fatal "git fetch $GIT_URL failed"
     git reset --hard origin/5_BRANCH
@@ -50,6 +52,7 @@ function build_as {
     git clean -f -d -x
     [ $? = 0 ] || fatal "git clean failed"
     git rebase --abort
+    rm -rf .git/rebase-apply
   else
     echo "First time checkout of AS7"
     git clone $GIT_URL
