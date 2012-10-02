@@ -85,6 +85,12 @@ function init_jboss_home {
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml ${JBOSS_HOME}/standalone/configuration
 }
 
+function xts_as_tests {
+  echo "#-1. XTS AS Integration Test"
+  mvn -f ${WORKSPACE}/jboss-as/testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
+  [ $? = 0 ] || fatal "XTS AS Integration Test failed"
+}
+
 function txframework_tests {
   echo "#0. TXFramework Test"
   cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
@@ -216,6 +222,7 @@ function qa_tests {
 [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
 [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
+[ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
@@ -244,6 +251,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
+[ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
