@@ -87,8 +87,10 @@ function init_jboss_home {
 
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
-  mvn -f ${WORKSPACE}/jboss-as/testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
+  cd ${WORKSPACE}/jboss-as
+  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
+  cd ${WORKSPACE}
 }
 
 function txframework_tests {
