@@ -8,6 +8,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.functional.clients.BAParticipantCompletionClient;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
@@ -96,10 +97,9 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
             client.saveDataAutoComplete(ServiceCommand.THROW_APPLICATION_EXCEPTION);
             Assert.fail("Exception should have been thrown by now");
         }
-        catch (SOAPFaultException e)
+        catch (SomeApplicationException e)
         {
-            //todo: can we pass application exceptions over SOAP when using an EJB exposed as a JAX-WS ws?
-            System.out.println("Caught exception");
+            //Exception expected
         }
         finally
         {

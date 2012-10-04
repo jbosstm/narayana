@@ -8,6 +8,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.functional.clients.BACoordinatorCompletionClient;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
@@ -83,9 +84,9 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest
             client.saveData(THROW_APPLICATION_EXCEPTION);
             Assert.fail("Exception should have been thrown by now");
         }
-        catch (SOAPFaultException e)
+        catch (SomeApplicationException e)
         {
-            //todo: can we pass application exceptions over SOAP when using an EJB exposed as a JAX-WS ws?
+            //Exception expected
         }
         finally
         {
