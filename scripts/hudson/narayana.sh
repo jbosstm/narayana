@@ -1,6 +1,21 @@
 function fatal {
+  comment_on_pull "Tests failed: $1"
   echo "$1"
   exit 1
+}
+
+function comment_on_pull
+{
+    if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
+
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+    if [ "$PULL_NUMBER" != "" ]
+    then
+        JSON="{ \"body\": \"$1\" }"
+        curl -d "$JSON" -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
+    else
+        echo "Not a pull request, so not commenting"
+    fi
 }
 
 #BUILD NARAYANA WITH FINDBUGS
@@ -12,6 +27,7 @@ function build_narayana {
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
+
   return 0
 }
 
@@ -215,6 +231,8 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
 
+comment_on_pull "Started testing this pull request: $BUILD_URL"
+
 # if the following env variables have not been set initialize them to their defaults
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.0.Final-SNAPSHOT"
 [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
@@ -259,4 +277,5 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
+comment_on_pull "All tests passed - Job complete"
 exit 0 # any failure would have resulted in fatal being called which exits with a value of 1
