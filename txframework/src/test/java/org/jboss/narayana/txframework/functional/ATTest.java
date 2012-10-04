@@ -101,7 +101,7 @@ public class ATTest extends BaseFunctionalTestWar
         }
         catch (SomeApplicationException e)
         {
-            System.out.println("Caught exception");
+            //Exception expected
         }
         finally
         {
