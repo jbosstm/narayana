@@ -59,6 +59,8 @@ function build_as {
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of AS7"
     cd jboss-as
+    #Abort any partially complete rebase
+    git rebase --abort
     git checkout 5_BRANCH
     [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
