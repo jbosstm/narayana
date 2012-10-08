@@ -83,7 +83,7 @@ function build_as {
     git remote add upstream $UPSTREAM_GIT_URL
   fi
 
-  git pull --rebase --ff-only -s ours upstream master
+  git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
