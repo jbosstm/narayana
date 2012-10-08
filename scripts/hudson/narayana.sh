@@ -83,7 +83,7 @@ function build_as {
     git remote add upstream $UPSTREAM_GIT_URL
   fi
 
-  git pull --rebase --ff-only -s ours upstream master
+  git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
@@ -236,7 +236,7 @@ function qa_tests {
 comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 # if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.0.Final-SNAPSHOT"
+[ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M2-SNAPSHOT"
 [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
