@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 
 @RunWith(Arquillian.class)
+@Ignore //JBTM-1287
 public class ATTest extends BaseFunctionalTestWar
 {
     private UserTransaction ut;
