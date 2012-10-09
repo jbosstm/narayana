@@ -75,6 +75,8 @@ public class MultiClose
             throw eouter;
         }
         // the close should succeed even though the participant fails
+        //[JBTM-1292]
+        Thread.sleep(3*1000);
 	    uba.close();
         assertTrue(p.passed());
     }
