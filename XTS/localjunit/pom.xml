@@ -24,6 +24,19 @@
             <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
         </properties>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.jbossts.xts</groupId>
@@ -47,26 +60,6 @@
 		</dependency>
 	</dependencies>
 	<profiles>
-		<!-- The default profile skips all tests, though you can tune it 
-			to run just unit tests based on a custom pattern -->
-		<!-- Seperate profiles are provided for running all tests, including 
-			Arquillian tests that execute in the specified container -->
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 		<profile>
 			<id>arq</id>
 			<activation>
@@ -85,6 +78,7 @@
 							  <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
                                                           <node.address>127.0.0.1</node.address>
 							</systemPropertyVariables>
+                            <skip>false</skip>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -117,6 +111,7 @@
 							  <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                                           <node.address>[::1]</node.address>
 							</systemPropertyVariables>
+                            <skip>false</skip>
 						</configuration>
 					</plugin>
 				</plugins>

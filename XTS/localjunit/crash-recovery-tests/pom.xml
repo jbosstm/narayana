@@ -27,23 +27,6 @@
 
     <profiles>
         <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkMode>once</forkMode>
-                            <workingDirectory>.</workingDirectory>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -59,6 +42,7 @@
                                 <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
+                            <skip>false</skip>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -67,7 +51,7 @@
         <profile>
             <id>arqIPv6</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -84,6 +68,7 @@
                                 <server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>
+                            <skip>false</skip>
                         </configuration>
                     </plugin>
                 </plugins>
