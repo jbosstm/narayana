@@ -184,14 +184,32 @@
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>orbportability</artifactId>
+       <exclusions>
+         <exclusion>
+           <groupId>org.jboss.jbossts.jts</groupId>
+           <artifactId>idlj-idl</artifactId>
+         </exclusion>
+       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jts</artifactId>
+       <exclusions>
+         <exclusion>
+           <groupId>org.jboss.jbossts.jts</groupId>
+           <artifactId>idlj-idl</artifactId>
+         </exclusion>
+       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jtax</artifactId>
+       <exclusions>
+         <exclusion>
+           <groupId>org.jboss.jbossts.jts</groupId>
+           <artifactId>idlj-idl</artifactId>
+         </exclusion>
+       </exclusions>
     </dependency>
     <dependency>
       <groupId>tanukisoft</groupId>
