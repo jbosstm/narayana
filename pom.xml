@@ -1065,5 +1065,50 @@
         <module>STM</module>
       </modules>
     </profile>
+    <profile>
+        <id>release</id>
+        <modules>
+          <module>common</module>
+          <module>ArjunaCore</module>
+          <module>ArjunaJTA</module>
+          <module>XTS</module>
+          <module>ArjunaJTS</module>
+          <module>rest-tx</module>
+          <module>txbridge</module>
+          <module>fileio</module>
+          <module>STM</module>
+          <module>txframework</module>
+          <module>narayana-full</module>
+        </modules>
+        <build>
+            <pluginManagement>
+                <plugins>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-install-plugin</artifactId>
+                      <executions>
+                        <execution>
+                          <id>default-install</id>
+                          <phase>none</phase>
+                        </execution>
+                      </executions>
+                    </plugin>
+                </plugins>
+            </pluginManagement>
+            <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-install-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-install</id>
+                  <phase>install</phase>
+                </execution>
+              </executions>
+              <inherited>false</inherited>
+            </plugin>
+            </plugins>
+        </build>
+    </profile>
   </profiles>
 </project>
