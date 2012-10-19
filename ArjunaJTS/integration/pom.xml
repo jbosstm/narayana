@@ -78,18 +78,22 @@
     <dependency>
       <groupId>org.jboss.jbossts.jta</groupId>
       <artifactId>jta</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jts</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jtax</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>orbportability</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -152,4 +156,24 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+        <id>release</id>
+        <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                  </execution>
+                </executions>
+                <inherited>false</inherited>
+              </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>

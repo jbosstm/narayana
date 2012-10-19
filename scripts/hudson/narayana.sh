@@ -9,7 +9,7 @@ function build_narayana {
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
   cp_narayana_to_as
   return 0
