@@ -13,4 +13,5 @@ qa/transaction.log.1
 qa/transaction.log.2
 qa/value_1
 qa/value_2
-
+qa/testoutput-idlj.zip
+qa/testoutput-jacorb.zip
