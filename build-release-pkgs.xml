@@ -59,22 +59,13 @@
   <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
-  <!-- you probably need to change these properties to suit your machine -->
-  <!-- uncomment the block of properties below to do a snapshot release.
-            you need permissions to webdav upload to the server for this to work
-            http://www.jboss.org/community/docs/DOC-11381  -->
-  <!--
-    <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
-    <property name="tag" value="trunk"/>
-    <property name="version" value="5.0.0.M2-SNAPSHOT"/>
--->
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
   <property name="gitbase" value="https://github.com/jbosstm"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="pageName" value="4_17_0_Final"/>
-  <property name="tag" value="4.17.0.Final"/>
+  <property name="pageName" value="5_0_0_M2"/>
+  <property name="tag" value="5.0.0.M2"/>
   <!-- which uber jar to use -->
   <property name="orb" value="jacorb"/>
   <!-- the location the JBossTS web site content is copied to -->
