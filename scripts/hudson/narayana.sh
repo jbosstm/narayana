@@ -84,6 +84,14 @@ function build_as {
   fi
 
   git pull --rebase --ff-only upstream master
+  while [ $? != 0 ]
+  do
+     for i in `git status -s | sed "s/UU \(.*\)/\1/g"`
+     do 
+        awk '/^<+ HEAD$/,/^=+$/{next} /^>+ /{next} 1' $i > $i.bak; mv $i.bak $i; git add $i
+     done
+     git rebase --continue
+  done
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
