@@ -68,7 +68,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xms400m -Xmx400m</argLine>
+          <argLine>-Xms100m -Xmx100m</argLine>
           <useManifestOnlyJar>false</useManifestOnlyJar>
         </configuration>
       </plugin>
