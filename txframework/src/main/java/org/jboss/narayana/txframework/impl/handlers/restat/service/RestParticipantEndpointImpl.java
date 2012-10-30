@@ -1,18 +1,20 @@
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
-import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.PUT;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Context;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,21 +30,23 @@ public class RestParticipantEndpointImpl {
     //todo: should this be a uuid?
     private static AtomicInteger currentParticipantId = new AtomicInteger(0);
 
-    //todo: Entries are nevr removed. They should be when the TX is forgotten
+    //todo: Entries are never removed. They should be when the TX is forgotten
     private static Map<Integer, RESTAT2PCParticipant> participants = new ConcurrentHashMap<Integer, RESTAT2PCParticipant>();
 
 
-    public static void enlistParticipant(String txid, UriInfo info, String enlistUrl, Object serviceImpl) throws ParticipantRegistrationException {
+    public static void enlistParticipant(String txid, UriInfo info, String enlistUrl, ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException {
 
         //todo: use a @Notnull annotation.
         checkNotNull(info, "txid");
         checkNotNull(info, "info");
         checkNotNull(enlistUrl, "enlistUrl");
-        checkNotNull(serviceImpl, "serviceImpl");
+        checkNotNull(serviceInvocationMeta, "serviceImpl");
 
         final int pid = currentParticipantId.getAndIncrement();
 
-        participants.put(pid, new RESTAT2PCParticipant(serviceImpl, true));
+        RESTAT2PCParticipant participant = new RESTAT2PCParticipant(serviceInvocationMeta, new HashMap());
+        participants.put(pid, participant);
+        participant.resume();
 
         TxSupport txSupport = new TxSupport();
         /*
@@ -77,6 +81,7 @@ public class RestParticipantEndpointImpl {
     public Response terminate(@PathParam("pId") @DefaultValue("") Integer pId, String content) {
 
         RESTAT2PCParticipant participant = participants.get(pId);
+        participant.resume();
         TxStatus status = TxSupport.toTxStatus(content);
 
         if (status.isPrepare()) {
@@ -92,6 +97,8 @@ public class RestParticipantEndpointImpl {
         } else {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }
+
+        RESTAT2PCParticipant.suspend();
 
         return Response.ok(TxSupport.toStatusContent(status.name())).build();
         //todo: shouldn't we get a FORGET here? If so, that is the time to remove the participant entry from the participants map.

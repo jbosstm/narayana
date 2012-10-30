@@ -1,6 +1,6 @@
 package org.jboss.narayana.txframework.api.management;
 
-import org.jboss.narayana.txframework.impl.TXControlException;
+import org.jboss.narayana.txframework.api.exception.TXControlException;
 
 /**
  * Interface defining at the most generic level a transaction control object which can be injected into a

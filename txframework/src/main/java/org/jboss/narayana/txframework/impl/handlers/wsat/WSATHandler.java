@@ -9,44 +9,23 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.Volatile2PCParticipant;
 import com.arjuna.wst.WrongStateException;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.impl.Participant;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
+
 import javax.interceptor.InvocationContext;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class WSATHandler implements ProtocolHandler
 {
     private static final WSATParticipantRegistry participantRegistry = new WSATParticipantRegistry();
 
-    public WSATHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
-    {
-        String idPrefix = serviceImpl.getClass().getName();
+    private static final Map<String, Participant> durableServiceParticipants = new HashMap<String, Participant>();
 
-        //Register Service's participant
-        registerParticipants(serviceImpl, idPrefix);
-
-        //Register internal participant for tidy up at end of TX
-        registerParticipants(new WSATInternalParticipant(), WSATInternalParticipant.class.getName());
-    }
-
-    @Override
-    public Object proceed(InvocationContext ic) throws Exception
-    {
-        return ic.proceed();
-    }
-
-    @Override
-    public void notifySuccess() {
-        //do nothing
-    }
-
-    @Override
-    public void notifyFailure() {
-        //Todo: ensure transaction rolled back
-    }
-
-    private void registerParticipants(Object participant, String idPrefix) throws ParticipantRegistrationException
+    public WSATHandler(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException
     {
         try
         {
@@ -55,18 +34,31 @@ public class WSATHandler implements ProtocolHandler
                 String txid = UserTransactionFactory.userTransaction().toString();
 
                 //Only create participant if there is not already a participant for this ServiceImpl and this transaction
-                if (!participantRegistry.isRegistered(txid, participant.getClass()))
+                Participant participantToResume;
+                if (!participantRegistry.isRegistered(txid, serviceInvocationMeta.getServiceClass()))
                 {
-                    //Internal participant for doing tidy up at the end of the transaction
-                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(participant, false);
-                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(participant, true);
+                    Map txDataMap = new HashMap();
+                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(serviceInvocationMeta, txDataMap, txid);
+                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(serviceInvocationMeta, txDataMap);
 
                     TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
+                    String idPrefix = serviceInvocationMeta.getServiceClass().getName();
                     transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + UUID.randomUUID());
                     transactionManager.enlistForDurableTwoPhase(durableParticipant, idPrefix + UUID.randomUUID());
 
-                    participantRegistry.register(txid, participant.getClass());
+                    participantRegistry.register(txid, serviceInvocationMeta.getServiceClass());
+
+                    synchronized (durableServiceParticipants)
+                    {
+                        participantToResume = (Participant) durableParticipant;
+                        durableServiceParticipants.put(txid, participantToResume);
+                    }
                 }
+                else
+                {
+                    participantToResume = durableServiceParticipants.get(txid);
+                }
+                participantToResume.resume();
             }
         }
         catch (WrongStateException e)
@@ -81,6 +73,23 @@ public class WSATHandler implements ProtocolHandler
         {
             throw new ParticipantRegistrationException("A SystemException occurred when attempting to register a participant", e);
         }
+    }
+
+    @Override
+    public Object proceed(InvocationContext ic) throws Exception
+    {
+        return ic.proceed();
+    }
+
+    @Override
+    public void notifySuccess() {
+        Participant.suspend();
+    }
+
+    @Override
+    public void notifyFailure() {
+        //Todo: ensure transaction rolled back
+        Participant.suspend();
     }
 
 }

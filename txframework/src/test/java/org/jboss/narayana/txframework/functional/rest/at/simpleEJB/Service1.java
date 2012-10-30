@@ -1,6 +1,6 @@
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
-import org.jboss.narayana.txframework.functional.common.*;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

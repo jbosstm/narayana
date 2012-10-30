@@ -20,9 +20,11 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
-import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Unknown;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
@@ -33,6 +35,7 @@ import org.jboss.narayana.txframework.functional.interfaces.ATStatefull;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -50,7 +53,7 @@ import java.util.Map;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATStatefullService implements ATStatefull
 {
-    @DataManagement
+    @Inject
     private Map TXDataMap;
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();

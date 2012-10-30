@@ -1,6 +1,4 @@
-package org.jboss.narayana.txframework.impl;
-
-import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+package org.jboss.narayana.txframework.api.exception;
 
 public class TXControlException extends TXFrameworkException
 {

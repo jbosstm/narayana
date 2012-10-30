@@ -1,6 +1,7 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst11.BAParticipantManager;
+
 import java.util.HashMap;
 import java.util.Map;
 

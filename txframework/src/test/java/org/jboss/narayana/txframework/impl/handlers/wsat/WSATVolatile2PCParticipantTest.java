@@ -1,12 +1,21 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
-import com.arjuna.wst.*;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.Volatile2PCParticipant;
+import com.arjuna.wst.Vote;
+import com.arjuna.wst.WrongStateException;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PostCommit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PrePrepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Unknown;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.junit.Test;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class WSATVolatile2PCParticipantTest
@@ -15,7 +24,8 @@ public class WSATVolatile2PCParticipantTest
     public void testCallbacks() throws Exception
     {
         LifecycleImpl lifecycle = new LifecycleImpl();
-        WSATDurable2PCParticipant participant = new WSATDurable2PCParticipant(lifecycle, false);
+        ServiceInvocationMeta serviceInvocationMeta = new ServiceInvocationMeta(lifecycle, LifecycleImpl.class, null);
+        WSATVolatile2PCParticipant participant = new WSATVolatile2PCParticipant(serviceInvocationMeta, new HashMap(), null);
 
         participant.prepare();
         participant.commit();
@@ -36,7 +46,7 @@ public class WSATVolatile2PCParticipantTest
     {
         private List<Class<? extends Annotation>> executionOrder = new ArrayList<Class<? extends Annotation>>();
 
-        @Prepare
+        @PrePrepare
         public Vote prepare() throws WrongStateException, SystemException
         {
             executionOrder.add(PrePrepare.class);
@@ -44,7 +54,7 @@ public class WSATVolatile2PCParticipantTest
             return null;
         }
 
-        @Commit
+        @PostCommit
         public void commit() throws WrongStateException, SystemException
         {
             executionOrder.add(PostCommit.class);

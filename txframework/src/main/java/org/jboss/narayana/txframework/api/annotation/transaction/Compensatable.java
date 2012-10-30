@@ -1,6 +1,7 @@
 package org.jboss.narayana.txframework.api.annotation.transaction;
 
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

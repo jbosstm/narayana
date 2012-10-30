@@ -1,21 +1,18 @@
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
-import com.arjuna.wst.Aborted;
-import com.arjuna.wst.Prepared;
-import com.arjuna.wst.Vote;
-import javassist.bytecode.annotation.BooleanMemberValue;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
-import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
-import org.jboss.narayana.txframework.api.exception.TXFrameworkRuntimeException;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
+
+import java.util.Map;
 
 public class RESTAT2PCParticipant extends org.jboss.narayana.txframework.impl.Participant
 {
-    public RESTAT2PCParticipant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
+    public RESTAT2PCParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException
     {
-        super(serviceImpl, injectDataManagement);
+        super(serviceInvocationMeta, txDataMap);
 
         registerEventsOfInterest(Rollback.class, Commit.class, Prepare.class);
     }

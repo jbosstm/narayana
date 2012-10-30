@@ -1,16 +1,26 @@
 package org.jboss.narayana.txframework.impl.handlers.wsat;
 
-import com.arjuna.wst.*;
+import com.arjuna.wst.Aborted;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.Prepared;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.Vote;
+import com.arjuna.wst.WrongStateException;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
-import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Unknown;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
+
+import java.util.Map;
 
 public class WSATDurable2PCParticipant extends org.jboss.narayana.txframework.impl.Participant implements Durable2PCParticipant
 {
-    public WSATDurable2PCParticipant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
+    public WSATDurable2PCParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException
     {
-        super(serviceImpl, injectDataManagement);
+        super(serviceInvocationMeta, txDataMap);
 
         registerEventsOfInterest(Rollback.class, Commit.class, Prepare.class, Error.class, Unknown.class);
     }

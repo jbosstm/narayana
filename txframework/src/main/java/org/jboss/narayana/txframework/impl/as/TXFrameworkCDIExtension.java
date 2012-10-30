@@ -1,7 +1,12 @@
 package org.jboss.narayana.txframework.impl.as;
 
+import org.jboss.narayana.txframework.api.management.TXDataMap;
+import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.impl.ServiceRequestInterceptor;
+import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor;
+import org.jboss.narayana.txframework.impl.handlers.wsba.WSBATxControlImpl;
+
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -27,5 +32,16 @@ public class TXFrameworkCDIExtension implements Extension {
         final AnnotatedType<RestTXRequiredInterceptor> restTXRequiredInterceptor = bm.createAnnotatedType(RestTXRequiredInterceptor.class);
         bbd.addAnnotatedType(restTXRequiredInterceptor);
 
+        final AnnotatedType<TXDataMap> txDataMap = bm.createAnnotatedType(TXDataMap.class);
+        bbd.addAnnotatedType(txDataMap);
+
+        final AnnotatedType<TXDataMapImpl> txDataMapImpl = bm.createAnnotatedType(TXDataMapImpl.class);
+        bbd.addAnnotatedType(txDataMapImpl);
+
+        final AnnotatedType<WSBATxControl> wsbatxcontrol = bm.createAnnotatedType(WSBATxControl.class);
+        bbd.addAnnotatedType(wsbatxcontrol);
+
+        final AnnotatedType<WSBATxControlImpl> wsbaTxControlImpl = bm.createAnnotatedType(WSBATxControlImpl.class);
+        bbd.addAnnotatedType(wsbaTxControlImpl);
     }
 }

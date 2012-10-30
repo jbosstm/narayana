@@ -5,20 +5,31 @@ import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
-import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
 import org.jboss.narayana.txframework.impl.Participant;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class WSBAParticipantCompletionParticipant extends Participant implements BusinessAgreementWithParticipantCompletionParticipant,
         ConfirmCompletedParticipant, Serializable
 {
-    public WSBAParticipantCompletionParticipant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
+
+    protected final WSBAParticipantRegistry participantRegistry = new WSBAParticipantRegistry();
+    private String txid;
+
+    public WSBAParticipantCompletionParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap, String txid) throws ParticipantRegistrationException
     {
-        super(serviceImpl, injectDataManagement);
+        super(serviceInvocationMeta, txDataMap);
+        this.txid = txid;
 
         registerEventsOfInterest(Cancel.class, Close.class, Compensate.class, ConfirmCompleted.class, Error.class, Status.class, Unknown.class);
     }
@@ -31,16 +42,19 @@ public class WSBAParticipantCompletionParticipant extends Participant implements
     public void close() throws WrongStateException, SystemException
     {
         invoke(Close.class);
+        participantRegistry.forget(txid);
     }
 
     public void cancel() throws FaultedException, WrongStateException, SystemException
     {
         invoke(Cancel.class);
+        participantRegistry.forget(txid);
     }
 
     public void compensate() throws FaultedException, WrongStateException, SystemException
     {
         invoke(Compensate.class);
+        participantRegistry.forget(txid);
     }
 
     public String status() throws SystemException

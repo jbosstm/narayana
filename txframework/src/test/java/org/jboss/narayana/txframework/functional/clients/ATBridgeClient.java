@@ -19,8 +19,10 @@ package org.jboss.narayana.txframework.functional.clients;
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
+
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;

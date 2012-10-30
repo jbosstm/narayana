@@ -2,25 +2,38 @@ package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.txframework.api.configuration.trigger.BALifecycleEvent;
+import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.impl.TXControlException;
 
 public class WSBATxControlImpl implements WSBATxControl
 {
-    BAParticipantManager baParticipantManager;
-    //todo: Need to hook into lifecycle or record it here.
-    private boolean cannotComplete = false;
+    static final ThreadLocal<BAParticipantManager> baParticipantManagerThreadLocal = new ThreadLocal<BAParticipantManager>();
 
-    public WSBATxControlImpl(BAParticipantManager baParticipantManager)
+    //todo: Need to hook into lifecycle or record it here.
+    static final ThreadLocal<Boolean> cannotCompleteThreadLocal = new ThreadLocal<Boolean>();
+
+    public WSBATxControlImpl()
     {
-        this.baParticipantManager = baParticipantManager;
+        
+    }
+
+
+    public static void resume(BAParticipantManager baParticipantManager)
+    {
+        baParticipantManagerThreadLocal.set(baParticipantManager);
+        cannotCompleteThreadLocal.set(false);
+    }
+
+    public static void suspend()
+    {
+        baParticipantManagerThreadLocal.remove();
     }
 
     public void exit() throws TXControlException
     {
         try
         {
-            baParticipantManager.exit();
+            baParticipantManagerThreadLocal.get().exit();
         }
         catch (Exception e)
         {
@@ -32,8 +45,8 @@ public class WSBATxControlImpl implements WSBATxControl
     {
         try
         {
-            baParticipantManager.cannotComplete();
-            cannotComplete = true;
+            baParticipantManagerThreadLocal.get().cannotComplete();
+            cannotCompleteThreadLocal.set(true);
         }
         catch (Exception e)
         {
@@ -46,7 +59,7 @@ public class WSBATxControlImpl implements WSBATxControl
         //todo: what is the BALifecycleEvent for?
         try
         {
-            baParticipantManager.exit();
+            baParticipantManagerThreadLocal.get().exit();
         }
         catch (Exception e)
         {
@@ -58,7 +71,7 @@ public class WSBATxControlImpl implements WSBATxControl
     {
         try
         {
-            baParticipantManager.completed();
+            baParticipantManagerThreadLocal.get().completed();
         }
         catch (Exception e)
         {
@@ -70,7 +83,7 @@ public class WSBATxControlImpl implements WSBATxControl
     {
         try
         {
-            baParticipantManager.exit();
+            baParticipantManagerThreadLocal.get().exit();
         }
         catch (Exception e)
         {
@@ -83,7 +96,7 @@ public class WSBATxControlImpl implements WSBATxControl
         try
         {
             //todo: Why does this take a QName?
-            baParticipantManager.fail(null);
+            baParticipantManagerThreadLocal.get().fail(null);
         }
         catch (Exception e)
         {
@@ -93,6 +106,6 @@ public class WSBATxControlImpl implements WSBATxControl
 
     public boolean isCannotComplete()
     {
-        return cannotComplete;
+        return cannotCompleteThreadLocal.get();
     }
 }

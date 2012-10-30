@@ -20,21 +20,26 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
-import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PostCommit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PrePrepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Unknown;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.api.management.TXDataMap;
 
+import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.lang.annotation.Annotation;
-import java.util.Map;
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
@@ -44,8 +49,8 @@ import java.util.Map;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class ATService
 {
-    @DataManagement
-    private Map txDataMap;
+    @Inject
+    public TXDataMap<String, String> txDataMap;
     
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
