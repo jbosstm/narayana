@@ -59,6 +59,7 @@
   <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
+  <property name="rsync" value="true" />
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
@@ -69,8 +70,9 @@
   <!-- which uber jar to use -->
   <property name="orb" value="jacorb"/>
   <!-- the location the JBossTS web site content is copied to -->
-  <property name="downloads.dir" value="${user.home}/narayana/filemgmt.jboss.org/downloads_htdocs/jbosstm/"/>
-  <property name="docs.dir" value="${user.home}/narayana/filemgmt.jboss.org/docs_htdocs/jbosstm/"/>
+  <property name="sshfs.dir" value="${user.home}/narayana/filemgmt.jboss.org" />
+  <property name="downloads.dir" value="downloads_htdocs/jbosstm/"/>
+  <property name="docs.dir" value="docs_htdocs/jbosstm/"/>
   <!-- you probably don't need to change anything below here -->
   <taskdef resource="net/sf/antcontrib/antlib.xml">
     <classpath>
@@ -122,20 +124,25 @@
   </target>
   <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
   <target name="docs">
-    <fail>
-      <condition>
-        <not>
-          <available file="${downloads.dir}" type="dir"/>
-        </not>
-      </condition>
-    </fail>
-    <fail>
-      <condition>
-        <not>
-          <available file="${docs.dir}" type="dir"/>
-        </not>
-      </condition>
-    </fail>
+    <if>
+        <not><equals arg1="${rsync}" arg2="true" /></not>
+        <then>
+            <fail>
+              <condition>
+                <not>
+                  <available file="${sshfs.dir}/${downloads.dir}" type="dir"/>
+                </not>
+              </condition>
+            </fail>
+            <fail>
+              <condition>
+                <not>
+                  <available file="${sshfs.dir}/${docs.dir}" type="dir"/>
+                </not>
+              </condition>
+            </fail>
+        </then>
+    </if>
 
     <exec executable="git" dir="${workdir}">
       <arg value="clone"/>
@@ -196,35 +203,41 @@
     <copy todir="tmp-docs-dir-docs/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}-docs/docs/txbridge_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
-    <move todir="${docs.dir}/${tag}" verbose="true">
-      <fileset dir="tmp-docs-dir-docs"/>
-    </move>
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-docs-dir-docs"/>
+        <param name="to" value="${docs.dir}/${tag}"/>
+    </antcall>
   </target> 
   <target name="downloads" description="copy release bundles to JBossTS web site content">
-    <fail>
-      <condition>
-        <not>
-          <available file="${downloads.dir}" type="dir"/>
-        </not>
-      </condition>
-    </fail>
-    <fail>
-      <condition>
-        <available file="${downloads.dir}/${tag}" type="dir"/>
-      </condition>
-    </fail>
-    <fail>
-      <condition>
-        <not>
-          <available file="${docs.dir}" type="dir"/>
-        </not>
-      </condition>
-    </fail>
-    <fail>
-      <condition>
-        <available file="${docs.dir}/${tag}" type="dir"/>
-      </condition>
-    </fail>
+    <if>
+        <not><equals arg1="${rsync}" arg2="true" /></not>
+        <then>
+            <fail>
+              <condition>
+                <not>
+                  <available file="${sshfs.dir}/${downloads.dir}" type="dir"/>
+                </not>
+              </condition>
+            </fail>
+            <fail>
+              <condition>
+                <not>
+                  <available file="${sshfs.dir}/${docs.dir}" type="dir"/>
+                </not>
+              </condition>
+            </fail>
+            <fail>
+              <condition>
+                <available file="${sshfs.dir}/${docs.dir}/${tag}" type="dir"/>
+              </condition>
+            </fail>
+            <fail>
+              <condition>
+                <available file="${sshfs.dir}/${downloads.dir}/${tag}" type="dir"/>
+              </condition>
+            </fail>
+      </then>
+    </if>
     <delete dir="tmp-downloads-dir"/>
     <mkdir dir="tmp-downloads-dir"/>
     <mkdir dir="tmp-downloads-dir/src"/>
@@ -257,13 +270,49 @@
     <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
     <unzip src="${workdir}/${tag}/rest-tx/tx/target/restat-api-${tag}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
     <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${tag}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
-    <move todir="${downloads.dir}/${tag}" verbose="true">
-      <fileset dir="tmp-downloads-dir"/>
-    </move>
-    <move todir="${docs.dir}/${tag}" verbose="true">
-      <fileset dir="tmp-docs-dir"/>
-    </move>
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-downloads-dir"/>
+        <param name="to" value="${downloads.dir}/${tag}"/>
+    </antcall>
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-docs-dir"/>
+        <param name="to" value="${docs.dir}/${tag}"/>
+    </antcall>
   </target>
+  <target name="rsync">
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-docs-dir-docs"/>
+        <param name="to" value="${docs.dir}/${tag}"/>
+    </antcall>
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-downloads-dir"/>
+        <param name="to" value="${downloads.dir}/${tag}"/>
+    </antcall>
+    <antcall target="remote-copy">
+        <param name="from" value="tmp-docs-dir"/>
+        <param name="to" value="${docs.dir}/${tag}"/>
+    </antcall>
+  </target>
+
+  <target name="remote-copy">
+      <if>
+        <equals arg1="${rsync}" arg2="true" />
+        <then>
+	    <property  name="rsync.cmd" value="echo rsync --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
+            <echo>${rsync.cmd}</echo>
+            <exec executable="bash" dir="." failonerror="true">
+              <arg value="-c"/>
+              <arg value="${rsync.cmd}" />
+            </exec>
+        </then>
+        <else>
+            <move todir="${sshfs.dir}/${to}" verbose="true">
+              <fileset dir="${from}"/>
+            </move>
+        </else>
+    </if>
+  </target>
+
   <!-- magnolia (the cms that sits behind jboss.org/jbosstm pages) is a pain. This target generates
      xml for /downloads/somerelease.xml pages to ease some of the pain in publishing an upload
       right click jbosstm/downloads node, import from xml, then right click new node and activate.
