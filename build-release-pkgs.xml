@@ -279,20 +279,6 @@
         <param name="to" value="${docs.dir}/${tag}"/>
     </antcall>
   </target>
-  <target name="rsync">
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-docs-dir-docs"/>
-        <param name="to" value="${docs.dir}/${tag}"/>
-    </antcall>
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-downloads-dir"/>
-        <param name="to" value="${downloads.dir}/${tag}"/>
-    </antcall>
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-docs-dir"/>
-        <param name="to" value="${docs.dir}/${tag}"/>
-    </antcall>
-  </target>
 
   <target name="remote-copy">
       <if>
