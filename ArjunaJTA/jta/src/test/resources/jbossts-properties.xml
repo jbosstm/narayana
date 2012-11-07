@@ -1,1 +1,5 @@
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"><properties/>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="ObjectStoreEnvironmentBean.objectStoreDir">PutObjectStoreDirHere</entry>
+  <entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreDir">PutObjectStoreDirHere</entry>
+</properties>
