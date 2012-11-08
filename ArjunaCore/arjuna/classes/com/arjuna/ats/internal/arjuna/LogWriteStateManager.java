@@ -128,6 +128,8 @@ public class LogWriteStateManager extends StateManager
 	     * present.
 	     */
 
+	    createLists();
+	    
 	    synchronized (modifyingActions)
 	    {
 		if ((modifyingActions.size() > 0) &&

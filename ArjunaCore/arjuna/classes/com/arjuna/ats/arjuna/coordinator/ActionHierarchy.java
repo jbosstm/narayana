@@ -69,12 +69,7 @@ public class ActionHierarchy
 	currentDepth = 0;
 
 	if (maxHierarchyDepth > 0)
-	{
 	    hierarchy = new ActionInfo[maxHierarchyDepth];
-
-	    for (int i = 0; i < maxHierarchyDepth; i++)
-		hierarchy[i] = null;
-	}
     }
 
     /**
@@ -88,12 +83,7 @@ public class ActionHierarchy
 	currentDepth = theCopy.currentDepth;
 
 	if (maxHierarchyDepth > 0)
-	{
 	    hierarchy = new ActionInfo[maxHierarchyDepth];
-
-	    for (int i = 0; i < maxHierarchyDepth; i++)
-		hierarchy[i] = null;
-	}
 
 	for (int i = 0; i < currentDepth; i++)
 	{
@@ -427,7 +417,11 @@ public class ActionHierarchy
 	return hierarchy[typeIndex];
     }
 
-    public static final int DEFAULT_HIERARCHY_DEPTH = 5;
+    /*
+     * Most transactions are top-level so optimise data structure for that case.
+     */
+    
+    public static final int DEFAULT_HIERARCHY_DEPTH = 1;
 
     private ActionInfo[] hierarchy;
     private int          maxHierarchyDepth;
