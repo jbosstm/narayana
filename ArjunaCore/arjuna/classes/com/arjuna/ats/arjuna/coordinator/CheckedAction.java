@@ -55,6 +55,8 @@ public class CheckedAction
      * associated with the transaction. The supplied information should be
      * sufficient for application specific implementations to do useful work
      * (such as synchronizing on the threads).
+     * 
+     * The default implementation simply prints a warning.
      */
 
     public void check (boolean isCommit, Uid actUid, Hashtable list)

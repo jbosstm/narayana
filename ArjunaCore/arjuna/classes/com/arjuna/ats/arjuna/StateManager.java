@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -60,7 +61,6 @@ import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.RecoveryRecord;
-import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
@@ -1314,7 +1314,7 @@ public class StateManager
      * @since JTS 2.1.
      */
 
-    protected final BasicMutex getMutex ()
+    protected final ReentrantLock getMutex ()
     {
         return mutex;
     }
@@ -1326,10 +1326,16 @@ public class StateManager
 
     protected final boolean lockMutex ()
     {
-        if (mutex.lock() == BasicMutex.LOCKED)
+        try
+        {
+            mutex.lock();
+            
             return true;
-        else
+        }
+        catch (final Throwable ex)
+        {
             return false;
+        }
     }
 
     /**
@@ -1339,10 +1345,16 @@ public class StateManager
 
     protected final boolean unlockMutex ()
     {
-        if (mutex.unlock() == BasicMutex.UNLOCKED)
+        try
+        {
+            mutex.unlock();
+            
             return true;
-        else
+        }
+        catch (final Throwable ex)
+        {
             return false;
+        }
     }
 
     /**
@@ -1353,10 +1365,7 @@ public class StateManager
 
     protected final boolean tryLockMutex ()
     {
-        if (mutex.tryLock() == BasicMutex.LOCKED)
-            return true;
-        else
-            return false;
+        return mutex.tryLock();
     }
 
     /*
@@ -1395,7 +1404,7 @@ public class StateManager
 
     private String storeRoot;
 
-    private BasicMutex mutex = new BasicMutex();
+    private ReentrantLock mutex = new ReentrantLock();
 
     private static final String marker = "#ARJUNA#";
 }

@@ -32,11 +32,12 @@
 package com.arjuna.ats.internal.jts.interposition;
 
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.PropagationContext;
 
-import com.arjuna.ats.internal.arjuna.common.BasicMutex;
 import com.arjuna.ats.internal.jts.interposition.resources.arjuna.InterpositionCreator;
 import com.arjuna.ats.internal.jts.interposition.resources.osi.OSIInterpositionCreator;
 import com.arjuna.ats.internal.jts.interposition.resources.restricted.RestrictedInterpositionCreator;
@@ -256,6 +257,6 @@ public class FactoryList
 	private static FactoryElement _list = null;
 	private static FactoryElement _default = null; // used if no formatID
 													// values match.
-	private static BasicMutex _lock = new BasicMutex();
+	private static ReentrantLock _lock = new ReentrantLock();
 
 }
