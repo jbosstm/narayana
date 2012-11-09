@@ -1460,6 +1460,13 @@ public interface arjunaI18NLogger {
     @Message(id = 12369, value = "The node identifier was already set", format = MESSAGE_FORMAT)
 	public String get_node_identifier_reset_attempt();
 
+	@Message(id = 12370, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
+	@LogMessage(level = FATAL)
+    public void fatal_nodename_too_long(String xaNodeName);
+
+	@Message(id = 12371, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
+    public String get_fatal_nodename_too_long(String xaNodeName);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

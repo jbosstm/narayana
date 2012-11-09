@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBeanException;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
@@ -306,7 +307,12 @@ public class TxControl
 
 		if (writeNodeName)
 		{
-            arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier( new String(xaNodeName) );
+            try {
+				arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier( new String(xaNodeName) );
+			} catch (CoreEnvironmentBeanException e) {
+	            tsLogger.i18NLogger.fatal_nodename_too_long(xaNodeName);
+	            throw new Error();
+			}
 		}
 
 

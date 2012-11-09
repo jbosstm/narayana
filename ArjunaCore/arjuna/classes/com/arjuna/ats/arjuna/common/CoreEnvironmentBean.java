@@ -24,6 +24,9 @@ import com.arjuna.ats.internal.arjuna.utils.AndroidProcessId;
 
 import java.io.File;
 
+import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Process;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
@@ -105,8 +108,13 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
      * @param nodeIdentifier the Node Identifier.
      * @throws CoreEnvironmentBeanException 
      */
-    public void setNodeIdentifier(String nodeIdentifierAsString)
+    public void setNodeIdentifier(String nodeIdentifierAsString) throws CoreEnvironmentBeanException
     {
+    	int length = nodeIdentifierAsString.getBytes().length;
+    	if (length > Xid.MAXGTRIDSIZE - Uid.UID_SIZE) {
+            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifierAsString);
+    		throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifierAsString));//"Node name: " + nodeIdentifierAsString + " cannot be used as getBytes() returns a byte[] longer than: " + (Xid.MAXGTRIDSIZE - Uid.UID_SIZE));
+    	}
     	this.nodeIdentifier = nodeIdentifierAsString;
     }
 

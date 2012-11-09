@@ -162,6 +162,7 @@ main() {
         case $param in
             -*)      ADDIT_PARAMS="$ADDIT_PARAMS $param";;
             clean)   MVN_GOAL="$MVN_GOAL$param ";;
+            compile) MVN_GOAL="$MVN_GOAL$param ";;
             test)    MVN_GOAL="$MVN_GOAL$param ";;
             install) MVN_GOAL="$MVN_GOAL$param ";;
             deploy)  MVN_GOAL="$MVN_GOAL$param ";;
