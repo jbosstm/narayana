@@ -34,7 +34,6 @@ package com.hp.mwtests.ts.jta.recovery;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -46,21 +45,10 @@ import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.recovery.ActionStatusService;
-import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
