@@ -56,7 +56,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                 * these entries will be associated with the current MBean (refer to
                 * the method findParticipants below for details)
                 */
-            recuids = w.probe(JMXServer.AJT_RECORD_TYPE, JMXServer.AJT_XAREC_TYPE);
+            recuids = w.probe(JMXServer.AJT_RECORD_TYPE);
         } else {
             ra = createWrapper(w, true);  // com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager.manager()
         }

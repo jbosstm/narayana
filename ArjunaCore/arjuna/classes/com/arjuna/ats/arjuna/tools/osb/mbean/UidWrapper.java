@@ -115,8 +115,8 @@ public class UidWrapper {
 		return mbean.toString(prefix, sb);
 	}
 
-	public List<UidWrapper> probe(String type, String beantype) {
-		return browser.probe(type, beantype);
+	public List<UidWrapper> probe(String type) {
+		return browser.probe(type);
 	}
 
     /**

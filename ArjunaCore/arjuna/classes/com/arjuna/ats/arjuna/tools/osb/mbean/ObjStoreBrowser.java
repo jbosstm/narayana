@@ -190,38 +190,49 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * See if any new MBeans need to be registered or if any existing MBeans no longer exist
      * as ObjectStore entries.
      */
-    public void probe() {
-        InputObjectState types = new InputObjectState();
+	public void probe() {
+		InputObjectState types = new InputObjectState();
 
-        try {
-            if (StoreManager.getRecoveryStore().allTypes(types)) {
-                String tname;
+		try {
+			if (StoreManager.getRecoveryStore().allTypes(types)) {
+				String tname;
 
-                do {
-                    try {
-                        tname = types.unpackString();
+				do {
+					try {
+						tname = types.unpackString();
+					} catch (IOException e1) {
+						tname = "";
+					}
 
-                        if (tname.length() != 0) {
-                            List<UidWrapper> uids = allUids.get(tname);
+					if (tname.length() != 0) {
+						List<UidWrapper> uids = allUids.get(tname);
 
-                            if (uids == null) {
-                                uids = new ArrayList<UidWrapper> ();
-                                allUids.put(tname, uids);
-                            }
+						if (uids == null) {
+							uids = new ArrayList<UidWrapper>();
+							allUids.put(tname, uids);
+						}
+					}
+				} while (tname.length() != 0);
+			}
+		} catch (ObjectStoreException e2) {
+			if (tsLogger.logger.isTraceEnabled())
+				tsLogger.logger.trace(e2.toString());
+		}
 
-                            if (exposeAllLogs || beanTypes.containsKey(tname))
-                                updateMBeans(uids, System.currentTimeMillis(), true, tname);
-                        }
-                    } catch (IOException e1) {
-                        tname = "";
-                    }
-                } while (tname.length() != 0);
-            }
-        } catch (ObjectStoreException e2) {
-            if (tsLogger.logger.isTraceEnabled())
-                tsLogger.logger.trace(e2.toString());
-        }
-    }
+		Iterator<String> iterator = allUids.keySet().iterator();
+		while (iterator.hasNext()) {
+			String tname = iterator.next();
+			List<UidWrapper> uids = allUids.get(tname);
+
+			if (uids == null) {
+				uids = new ArrayList<UidWrapper>();
+				allUids.put(tname, uids);
+			}
+
+			if (exposeAllLogs || beanTypes.containsKey(tname))
+				updateMBeans(uids, System.currentTimeMillis(), true, tname);
+		}
+	}
 
     public void viewSubordinateAtomicActions(boolean enable) {
         if (enable) {
@@ -258,13 +269,40 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * Register new MBeans of the requested type (or unregister ones whose
      * corresponding ObjectStore entry has been removed)
      * @param type the ObjectStore entry type
-     * @param beantype the class name of the MBean implementation used to represent
-     * the request type
      * @return the list of MBeans representing the requested ObjectStore type
      */
-    public List<UidWrapper> probe(String type, String beantype) {
-        if (!allUids.containsKey(type))
-            return null;
+    public List<UidWrapper> probe(String type) {
+		if (!allUids.containsKey(type)) {
+			InputObjectState types = new InputObjectState();
+
+			try {
+				if (StoreManager.getRecoveryStore().allTypes(types)) {
+					String tname;
+
+					do {
+						try {
+							tname = types.unpackString();
+						} catch (IOException e1) {
+							tname = "";
+						}
+
+						if (tname.length() != 0) {
+							List<UidWrapper> uids = allUids.get(tname);
+
+							if (uids == null) {
+								uids = new ArrayList<UidWrapper>();
+								allUids.put(tname, uids);
+							}
+						}
+					} while (tname.length() != 0);
+				}
+			} catch (ObjectStoreException e2) {
+				if (tsLogger.logger.isTraceEnabled())
+					tsLogger.logger.trace(e2.toString());
+			}
+			if (!allUids.containsKey(type))
+				return null;
+		}
 
         List<UidWrapper> uids = allUids.get(type);
 
