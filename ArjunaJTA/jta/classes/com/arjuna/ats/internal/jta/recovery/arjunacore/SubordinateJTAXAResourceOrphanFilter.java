@@ -58,7 +58,7 @@ public class SubordinateJTAXAResourceOrphanFilter implements XAResourceOrphanFil
 			if (transactionLog(xid, nodeName)) {
 				// it's owned by a logged transaction which
 				// will recover it top down in due course
-				return Vote.LEAVE_ALONE;
+				return Vote.ABSTAIN;
 			} else {
 				return Vote.ROLLBACK;
 			}
