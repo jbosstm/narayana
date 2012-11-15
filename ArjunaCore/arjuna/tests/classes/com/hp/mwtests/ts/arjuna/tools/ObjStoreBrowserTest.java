@@ -116,7 +116,7 @@ public class ObjStoreBrowserTest {
 		assertNull(osb.findUid(Uid.nullUid()));
 
 		// listing beans of an invalid type returns null
-		assertNull(osb.probe("InvalidType", "BeanClass"));
+		assertNull(osb.probe("InvalidType"));
 		
 		// TODO windows
 		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
