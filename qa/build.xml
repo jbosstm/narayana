@@ -111,7 +111,7 @@
             determine the build type at clean time and jts should have the superset -->
     <ant dir="tests" antfile="build-jts.xml" target="clean"/>
   </target>
-  <target name="init" depends="clean">
+  <target name="init" depends="clean-tests">
     <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
     <unzip src="../narayana-full/target/narayana-full-${narayana.version}-bin.zip" dest="${org.jboss.jbossts.qa.ts.home}"/>
@@ -133,7 +133,7 @@
     <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/jbossjts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar"/>
   </target>
 
-  <target name="dist" depends="clean, init, buildtype">
+  <target name="dist" depends="init, buildtype">
     <!-- build the test suite -->
     <ant dir="tests" antfile="build-${buildtype}.xml">
       <property name="isIdlj" value="${isIdlj}"/>
