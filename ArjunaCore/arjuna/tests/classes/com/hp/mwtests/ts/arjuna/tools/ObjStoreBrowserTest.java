@@ -121,8 +121,7 @@ public class ObjStoreBrowserTest {
 		// TODO windows
 		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
 			// listing beans of a valid type returns an empty list
-			assertNotNull(osb.probe("Recovery",
-					"com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean"));
+			assertNotNull(osb.probe("Recovery"));
 		}
 
 		osb.stop();
