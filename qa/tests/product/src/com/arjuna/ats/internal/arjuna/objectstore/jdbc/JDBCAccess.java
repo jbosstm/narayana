@@ -71,7 +71,7 @@ public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAc
 		return false;
 	}
 
-	public void initialise(ObjectName objName)
+	public void initialise(Object[] objName)
 	{
 	}
 }
