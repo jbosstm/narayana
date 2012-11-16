@@ -36,7 +36,7 @@ DB1_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql1
 DB1_PGSQL_JNDI_DatabaseUser=dtf11
 DB1_PGSQL_JNDI_DatabasePassword=dtf11
 DB1_PGSQL_JNDI_DatabaseName=jbossts
-DB1_PGSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB1_PGSQL_JNDI_Host=tywin.buildnet.ncl.jboss.com
 
 DB2_PGSQL_JNDI_NumberOfDrivers=2
 DB2_PGSQL_JNDI_Driver0=org.postgresql.Driver
@@ -46,7 +46,7 @@ DB2_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql2
 DB2_PGSQL_JNDI_DatabaseUser=dtf12
 DB2_PGSQL_JNDI_DatabasePassword=dtf12
 DB2_PGSQL_JNDI_DatabaseName=jbossts
-DB2_PGSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB2_PGSQL_JNDI_Host=tywin.buildnet.ncl.jboss.com
 
 ######################################################################
 # MySQL JNDI Pair
@@ -64,7 +64,7 @@ DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
 DB1_MYSQL_JNDI_DatabaseUser=dtf11
 DB1_MYSQL_JNDI_DatabasePassword=dtf11
 DB1_MYSQL_JNDI_DatabaseName=jbossts
-DB1_MYSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB1_MYSQL_JNDI_Host=tywin.buildnet.ncl.jboss.com
 
 DB2_MYSQL_JNDI_NumberOfDrivers=2
 DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
@@ -74,7 +74,7 @@ DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
 DB2_MYSQL_JNDI_DatabaseUser=dtf12
 DB2_MYSQL_JNDI_DatabasePassword=dtf12
 DB2_MYSQL_JNDI_DatabaseName=jbossts
-DB2_MYSQL_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB2_MYSQL_JNDI_Host=tywin.buildnet.ncl.jboss.com
 
 ######################################################################
 # Oracle thin JNDI Pair
@@ -91,7 +91,7 @@ DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
 DB1_THIN_JNDI_DatabaseUser=dtf11
 DB1_THIN_JNDI_DatabasePassword=dtf11
 DB1_THIN_JNDI_DatabaseName=orcl
-DB1_THIN_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB1_THIN_JNDI_Host=tywin.buildnet.ncl.jboss.com
 DB1_THIN_JNDI_Port=1521
 
 DB2_THIN_JNDI_NumberOfDrivers=2
@@ -102,5 +102,5 @@ DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
 DB2_THIN_JNDI_DatabaseUser=dtf12
 DB2_THIN_JNDI_DatabasePassword=dtf12
 DB2_THIN_JNDI_DatabaseName=orcl
-DB2_THIN_JNDI_Host=larry.buildnet.ncl.jboss.com
+DB2_THIN_JNDI_Host=tywin.buildnet.ncl.jboss.com
 DB2_THIN_JNDI_Port=1521
