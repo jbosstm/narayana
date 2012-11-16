@@ -33,6 +33,8 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
+import java.util.concurrent.Callable;
+
 /**
  * Instances of this class are responsible for performing asynchronous
  * prepare on a specific AbstractRecord associated with a transaction.
@@ -45,56 +47,33 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 /*
  * Default visibility.
  */
+class AsyncPrepare implements Callable<Integer> {
+    public Integer call() throws Exception {
+        /*
+                   * This is a transient thread so we don't want to register it
+                   * with the action it is preparing, only change its notion of
+                   * the current transaction so that any abstract records that
+                   * need that information can still have it.
+                   */
 
-class AsyncPrepare extends Thread
-{
+        ThreadActionData.pushAction(_theAction, false);
 
-public static AsyncPrepare create (BasicAction act, boolean reportHeuristics,
-				   AbstractRecord rec)
-    {
-	return new AsyncPrepare(act, reportHeuristics, rec);
-    }
-    
-public void run ()
-    {
-	if (_theAction != null)
-	{
-	    /*
-	     * This is a transient thread so we don't
-	     * want to register it with the action it is
-	     * preparing, only change its notion of the
-	     * current transaction so that any abstract
-	     * records that need that information can still
-	     * have it.
-	     */
+        _outcome = _theAction.doPrepare(_reportHeuristics, _theRecord);
 
-	    ThreadActionData.pushAction(_theAction, false);
-	    
-	    _outcome = _theAction.doPrepare(_reportHeuristics, _theRecord);
+        ThreadActionData.popAction(false);
 
-	    ThreadActionData.popAction(false);
-	}
-
-	_theRecord = null;
-	_theAction = null;
+        return _outcome;
     }
 
-public int outcome ()
-    {
-	return _outcome;
-    }
-    
-protected AsyncPrepare (BasicAction act, boolean reportHeuristics, AbstractRecord rec)
-    {
-	_theAction = act;
-	_outcome = TwoPhaseOutcome.PREPARE_NOTOK;
-	_reportHeuristics = reportHeuristics;
-	_theRecord = rec;
+    protected AsyncPrepare(BasicAction act, boolean reportHeuristics, AbstractRecord rec) {
+        _theAction = act;
+        _outcome = TwoPhaseOutcome.PREPARE_NOTOK;
+        _reportHeuristics = reportHeuristics;
+        _theRecord = rec;
     }
 
-private BasicAction    _theAction;
-private int            _outcome;
-private boolean        _reportHeuristics;
-private AbstractRecord _theRecord;
-    
+    private BasicAction _theAction;
+    private int _outcome;
+    private boolean _reportHeuristics;
+    private AbstractRecord _theRecord;
 };
