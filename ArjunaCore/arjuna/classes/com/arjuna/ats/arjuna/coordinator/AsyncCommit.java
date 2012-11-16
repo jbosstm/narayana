@@ -33,6 +33,8 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
+import java.util.concurrent.Callable;
+
 /**
  * This class is responsible for performing asynchronous termination of
  * a transaction. Despite its name, it is also able to perform
@@ -48,31 +50,9 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
  * Default visibility.
  */
 
-class AsyncCommit extends Thread
+class AsyncCommit implements Runnable
 {
-
-    /**
-     * Create a new instance, and give it the transaction to
-     * control. The commit parameter determines whether the thread
-     * should commit or rollback the transaction.
-     */
-
-public static AsyncCommit create (BasicAction toControl, boolean commit)
-    {
-	AsyncCommit c = new AsyncCommit(toControl, commit);
-
-	c.start();
-
-	Thread.yield();
-
-	return c;
-    }
-
-    /**
-     * Overloads Thread.run
-     */
-    
-public void run ()
+ public void run() {
     {
 	if (_theAction != null)
 	{
@@ -95,12 +75,15 @@ public void run ()
 	    ThreadActionData.popAction(false);
 	}
     }
+ }
+
 
     /**
-     * The actual constructor for a new instance.
+     * Create a new instance, and give it the transaction to
+     * control. The commit parameter determines whether the thread
+     * should commit or rollback the transaction.
      */
-
-protected AsyncCommit (BasicAction toControl, boolean commit)
+ AsyncCommit (BasicAction toControl, boolean commit)
     {
 	_theAction = toControl;
 	_commit = commit;
@@ -146,4 +129,4 @@ protected boolean doPhase2Abort ()
 private BasicAction _theAction;
 private boolean     _commit;
 
-};
+}
