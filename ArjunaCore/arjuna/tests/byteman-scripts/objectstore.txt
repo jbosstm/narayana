@@ -48,8 +48,8 @@ AFTER CALL truncateLogs
 BIND NOTHING
 IF TRUE
 DO debug("Signalling purge complete"),
-   signalWake("LogStore.purged", true),
    flag("LogStore done purge"),
+   signalWake("LogStore.purged", true),
    debug("Signalled purge complete")
 ENDRULE
 
