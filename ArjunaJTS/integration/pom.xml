@@ -53,6 +53,7 @@
         <configuration>
           <argLine>-Xms100m -Xmx100m</argLine>
           <useManifestOnlyJar>false</useManifestOnlyJar>
+	  <redirectTestOutputToFile>false</redirectTestOutputToFile>
         </configuration>
       </plugin>
     </plugins>
