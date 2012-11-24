@@ -29,6 +29,8 @@ import org.junit.Test;
 
 import java.net.HttpURLConnection;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /*
  * The tests are against draft 8 of the spec. Some comments refer to line numbers from draft 4 if they spec didn't
@@ -346,13 +348,9 @@ public class SpecTest extends BaseTest {
         for (String url : pUrl)
             txn.enlistTestResource(url, false);
 
-        AsynchronousCommit async = new AsynchronousCommit(txn);
+        Future<String> future = submitJob((Callable<String>) new AsynchronousCommit(txn));
 
-        new Thread(async).start();
-
-        Thread.sleep(4000);
-
-        Assert.assertEquals(async.status, TxStatusMediaType.TX_COMMITTED);
+        Assert.assertEquals(future.get(), TxStatusMediaType.TX_COMMITTED);
 
     }
 
@@ -364,33 +362,34 @@ public class SpecTest extends BaseTest {
                 PURL,
         };
         String[] work = new String[pUrls.length];
-        AsynchronousCommit[] async = new AsynchronousCommit[pUrls.length];
 
         // start a transaction
         txn.startTx();
 
-        for (int i = 0; i < pUrls.length; i++) {
+        for (int i = 0; i < pUrls.length; i++)
             work[i] = txn.enlistTestResource(pUrls[i], false);
-            async[i] = new AsynchronousCommit(txn);
-        }
 
-        for (int i = 0; i < async.length; i++)
-            new Thread(async[i]).start();
+        // ask the TransactionalResource for the participant url:
+        String content = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+                PURL + "?pId=" + work[0], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
+        Map<String, String> pLinks = TxSupport.decodeLinkHeader(content);
+        String pParticipant = pLinks.get(TxLinkNames.PARTICIPANT_RESOURCE);
+
+        // run the commit in the background
+        submitJob((Runnable) new AsynchronousCommit(txn, 0L));
 
         /*
         427 Performing a GET on the /participant-resource URL MUST return the current status of the
         428 participant
         */
 
-        // ask the TransactionalResource for the participant url:
-        String content = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-                PURL + "?pId=" + work[0], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
-        Map<String, String> pLinks = TxSupport.decodeLinkHeader(content);
-
-        String pParticipant = pLinks.get(TxLinkNames.PARTICIPANT_RESOURCE);
-
-        // wait long enough for the prepare
-        Thread.sleep(1000);
+        /*
+         * wait long enough for the background thread to commit the transaction. Note one of the
+         * participants will delay during the commit phase. Wait long enough for the prepare to
+         * be called on each participant but not too long that the participant commit calls will
+         * complete @see TransactionalResource#terminate where the delay is 3000 ms
+         */
+        Thread.sleep(500);
 
         /*
         427 Performing a GET on the /participant-resource URL MUST return the current status of the
@@ -400,7 +399,7 @@ public class SpecTest extends BaseTest {
         // the commit on the first participant is delayed so asking for its status should return prepared:
         content = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, pParticipant, "GET",
                 TxMediaType.TX_STATUS_MEDIA_TYPE);
-        Assert.assertEquals(content, TxStatusMediaType.TX_PREPARED);
+        Assert.assertEquals(TxStatusMediaType.TX_PREPARED, content);
     }
 
     @Test
@@ -427,8 +426,6 @@ public class SpecTest extends BaseTest {
         for (int i = 0; i < pUrls.length; i++)
             work[i] = txn.enlistTestResource(pUrls[i], false);
 
-        AsynchronousCommit async = new AsynchronousCommit(txn);
-
         // ask the TransactionalResource for the participant urls:
         String enlistUrls = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
                 PURL + "?pId=" + work[0], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
@@ -437,14 +434,14 @@ public class SpecTest extends BaseTest {
                 txn.getDurableParticipantEnlistmentURI(), "POST", TxMediaType.POST_MEDIA_TYPE, enlistUrls);
 
         // commit the transaction
-        new Thread(async).start();
+        submitJob((Runnable) new AsynchronousCommit(txn)) ;
 
         // allow time for the prepare to be called
         Thread.sleep(1000);
         // the transaction should now be prepared so it should be too late to enlist in the transaction:
         try {
             String er = txn.enlistTestResource(PURL, false);
-            Assert.fail("Should not be able to enlist a resource after 2PC has started");
+            Assert.fail("Should not be able to enlist a resource after 2PC has started: " + er);
         } catch (HttpResponseException e) {
             Assert.assertEquals(e.getActualResponse(), HttpURLConnection.HTTP_PRECON_FAILED);
         }
@@ -558,29 +555,46 @@ public class SpecTest extends BaseTest {
         for (String url : pUrl)
             txn.enlistTestResource(url, false);
 
-        AsynchronousCommit async = new AsynchronousCommit(txn);
-        Thread thr = new Thread(async);
-
-        thr.start();
+        Future<String> future = submitJob((Callable<String>) new AsynchronousCommit(txn));
 
         Thread.sleep(1000); // read committed
         OSRecordHolder recordHolder = readObjectStoreRecord(new AtomicAction().type());
-        thr.join();
+        future.get();
         writeObjectStoreRecord(recordHolder);
     }
 
-    static class AsynchronousCommit implements Runnable {
-        String status;
+    static class AsynchronousCommit implements Callable<String>, Runnable {
+        String status = "";
         TxSupport txn;
-        public AsynchronousCommit(TxSupport txn) { this.txn = txn; }
+        Long delay;
+
+        public AsynchronousCommit(TxSupport txn, Long delay) {
+            this.txn = txn;
+            this.delay = delay;
+        }
+
+        public AsynchronousCommit(TxSupport txn) {
+            this(txn, 0L);
+        }
+
         public void run() {
             try {
-                Thread.sleep(500);
+                if (delay > 0)
+                    Thread.sleep(delay);
                 status = txn.commitTx();
             } catch (HttpResponseException e) {
-                status = "";
+                // ignore
             } catch (InterruptedException e) {
-                status = "";
+                // ignore
+            }
+        }
+
+        @Override
+        public String call() throws Exception {
+            try {
+                return txn.commitTx();
+            } catch (HttpResponseException e) {
+                return "";
             }
         }
     }

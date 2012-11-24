@@ -25,6 +25,10 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -70,6 +74,7 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 public class BaseTest {
     protected final static Logger log = Logger.getLogger(BaseTest.class);
 
+    protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_RESTEASY = false;
 
     protected static final int PORT = 58081;
@@ -100,6 +105,14 @@ public class BaseTest {
         factory.addExceptionMapper(TransactionStatusMapper.class);
         factory.addExceptionMapper(HttpResponseMapper.class);
         factory.addExceptionMapper(NotFoundMapper.class);
+    }
+
+    public static Future<String> submitJob(Callable<String> job) {
+        return executor.submit(job);
+    }
+
+    public static void submitJob(Runnable job) {
+        executor.submit(job);
     }
 
     protected static void startJersey(String packages) throws Exception {
