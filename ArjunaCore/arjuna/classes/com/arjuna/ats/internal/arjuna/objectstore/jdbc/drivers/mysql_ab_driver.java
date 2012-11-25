@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,37 +15,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
- * @author JBoss Inc.
+ * (C) 2009,
+ * @author JBoss by Red Hat.
  */
-/*
- * Copyright (C) 2004,
- *
- * Arjuna Technologies Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: SyncRecord.java 2342 2006-03-30 13:06:17Z  $
- */
-
-package com.hp.mwtests.ts.arjuna.resources.mock;
+package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import com.arjuna.ats.internal.arjuna.objectstore.jdbc.microsoft_driver;
+/**
+ * JDBC store implementation driver-specific code. This version for MySQL JDBC
+ * Drivers.
+ */
+public class mysql_ab_driver extends
+		com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver {
 
-public class MockMSFTDriver extends microsoft_driver
-{
-    public void createTable (Statement stmt, String tableName) throws SQLException
-    {
-        super.createTable(stmt, tableName);
-    }
+	@Override
+	protected String getObjectStateSQLType() {
+		return "BLOB";
+	}
 
-    public int getMaxStateSize()
-    {
-        return super.getMaxStateSize();
-    }
+	@Override
+	protected void checkCreateTableError(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals("42S01")) {
+			throw ex;
+		}
+
+	}
+
+	@Override
+	protected void checkDropTableException(SQLException ex) throws SQLException {
+		if (!ex.getSQLState().equals("42S02")) {
+			throw ex;
+		}
+	}
 }
-
