@@ -5,6 +5,8 @@ import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.Assert;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.jbossts.xts.bytemanSupport.BMScript;
+import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.functional.clients.BAParticipantCompletionClient;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
@@ -12,7 +14,9 @@ import org.jboss.narayana.txframework.functional.interfaces.BAParticipantComplet
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -25,6 +29,17 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
 {
     UserBusinessActivity uba;
     BAParticipantCompletion client;
+
+
+    @BeforeClass()
+    public static void submitBytemanScript() throws Exception {
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
+
+    @AfterClass()
+    public static void removeBytemanScript() {
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
 
     @Before
     public void setupTest() throws Exception
@@ -44,9 +59,10 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     @Test
     public void testAutoComplete() throws Exception
     {
+        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        
         uba.begin();
         client.saveDataAutoComplete();
-        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -56,9 +72,10 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     @Test
     public void testManualComplete() throws Exception
     {
+        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+
         uba.begin();
         client.saveDataManualComplete(ServiceCommand.COMPLETE);
-        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -67,10 +84,11 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     @Test
     public void testMultiInvoke() throws Exception
     {
+        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        
         uba.begin();
         client.saveDataManualComplete();
         client.saveDataManualComplete(ServiceCommand.COMPLETE);
-        Thread.sleep(10000); //JBTM-1203
         uba.close();
 
         assertOrder(ConfirmCompleted.class, Close.class);
@@ -79,9 +97,10 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     @Test
     public void testClientDrivenCompensate() throws Exception
     {
+        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+
         uba.begin();
         client.saveDataAutoComplete();
-        Thread.sleep(10000); //JBTM-1203
         uba.cancel();
 
         assertOrder(ConfirmCompleted.class, Compensate.class);
@@ -113,8 +132,8 @@ public class BAParticipantCompletionTest extends BaseFunctionalTest
     {
         uba.begin();
         client.saveDataAutoComplete(ServiceCommand.CANNOT_COMPLETE);
-        Thread.sleep(10000); //JBTM-1203
         uba.close();
+        
         assertOrder();
     }
 
