@@ -176,7 +176,7 @@ function qa_tests_once {
   # and update the transaction timeout property too
   if [[ "$MFACTOR" =~ ^[0-9]+$ ]] ; then
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
-    let txtimeout=$MFACTOR*240
+    let txtimeout=$MFACTOR*120
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/"
   fi
 

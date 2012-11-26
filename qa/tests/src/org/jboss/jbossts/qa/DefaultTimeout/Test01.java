@@ -57,13 +57,15 @@ public class Test01
 			{
                 Thread.sleep( (1000*arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout()) + 1000 );
 
-                correct = (transactionManager.getStatus() == Status.STATUS_ROLLEDBACK);
+//                correct = (transactionManager.getStatus() == Status.STATUS_ROLLEDBACK);
 
 				transactionManager.commit();
 				correct = false;
 			}
 			catch (RollbackException rollbackException)
 			{
+				// Commit attempt after timeout should fail with RollbackException
+				correct = true;
 			}
 
 			if (correct)
