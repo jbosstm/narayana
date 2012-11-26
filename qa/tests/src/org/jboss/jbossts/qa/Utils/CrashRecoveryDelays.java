@@ -58,7 +58,7 @@ public class CrashRecoveryDelays
     }
 
     public static void awaitRecoveryCR12() throws InterruptedException {
-        awaitRecovery(1, 1);
+        awaitRecovery(2, 1);
     }
 
 /*
