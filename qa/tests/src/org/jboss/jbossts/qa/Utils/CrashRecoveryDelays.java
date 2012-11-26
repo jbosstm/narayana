@@ -148,7 +148,7 @@ public class CrashRecoveryDelays
     }
 
     public static void awaitReplayCompletionCR05() throws InterruptedException {
-        awaitReplayCompletion(5); // was 60
+        awaitReplayCompletion(10); // was 60
     }
 
     public static void awaitReplayCompletionCR06() throws InterruptedException {
