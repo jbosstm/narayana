@@ -4,7 +4,6 @@
 	<classpathentry excluding="com/arjuna/ats/tools/perftest/|com/arjuna/ats/tools/perftest/product/|org/narayana/tools/perf/|com/arjuna/ats/internal/arjuna/objectstore/jdbc/h2_driver.java" kind="src" path="tests/product/src"/>
 	<classpathentry excluding="org/jboss/jbossts/qa/astests/taskdefs/ASTestConfig.java|org/jboss/jbossts/qa/astests/taskdefs/ServerTask.java|org/jboss/jbossts/qa/astests/taskdefs/ASClientTask.java|org/jboss/jbossts/qa/astests/taskdefs/ClientAction.java|org/jboss/jbossts/qa/astests/ASCrashRecovery01/|org/jboss/jbossts/qa/astests/crash/" kind="src" path="tests/src"/>
 	<classpathentry kind="src" path="tests/build/idl"/>
-	<classpathentry kind="src" path="etc"/>
 	<classpathentry kind="lib" path="ext/ant.jar"/>
 	<classpathentry kind="lib" path="ext/emma_ant.jar"/>
 	<classpathentry kind="lib" path="ext/fscontext.jar"/>
