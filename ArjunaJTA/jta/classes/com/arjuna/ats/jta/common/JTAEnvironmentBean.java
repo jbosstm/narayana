@@ -88,7 +88,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile String xaResourceRecordWrappingPluginClassName;
     private volatile XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
 
-    /**
+	private int asyncCommitPoolSize = 10;
+
+	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
      *
@@ -946,4 +948,12 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
             }
         }
     }
+
+	public int getAsyncCommitPoolSize() {
+		return asyncCommitPoolSize;
+	}
+
+    public void setAsyncCommitPoolSize(int asyncCommitPoolSize) {
+		this.asyncCommitPoolSize = asyncCommitPoolSize;
+	}
 }
