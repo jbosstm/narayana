@@ -31,13 +31,12 @@
 
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
-import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStoreEnvironmentBean;
-
 import java.io.File;
-import java.sql.Connection;
-import java.sql.Statement;
+
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore;
 
 public class EmptyObjectStore
 {
@@ -67,36 +66,11 @@ public class EmptyObjectStore
 			}
 
 			if (arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType() != null &&
-					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().startsWith("JDBCStore"))
+					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().contains("JDBCStore"))
 			{
-				JDBCAccess mJDBC = (JDBCAccess) Class.forName(new JDBCStoreEnvironmentBean().getJdbcUserDbAccessClassName()).newInstance();
-				String tableName = mJDBC.tableName();
-				if (tableName == "")
-					/* from arjuna.internal.JDBCStore */
-				{
-					tableName = "ArjunaTSTable";
-				}
-				System.err.println("Dropping object store table: " + tableName);
-				Connection mConnection = mJDBC.getConnection();
-				Statement s = mConnection.createStatement();
-				try
-				{
-					s.executeUpdate("DROP TABLE " + tableName);
-				}
-				catch (java.sql.SQLException se1)
-				{
-					se1.printStackTrace();
-				}
-				System.err.println("Dropping action store table: ArjunaTSTxTable");
-				/* from arjuna.internal.JDBCActionStore */
-				try
-				{
-					s.executeUpdate("DROP TABLE ArjunaTSTxTable");
-				}
-				catch (java.sql.SQLException se2)
-				{
-					se2.printStackTrace();
-				}
+				arjPropertyManager.getObjectStoreEnvironmentBean().setDropTable(true);
+				// Will recreate the object store tables
+				StoreManager.getParticipantStore();
 			}
 			else
 			{

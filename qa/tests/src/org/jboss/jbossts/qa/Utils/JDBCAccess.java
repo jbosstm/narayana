@@ -38,6 +38,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess
 {
@@ -64,21 +65,7 @@ public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAc
 		}
 	}
 
-	public void putConnection(Connection conn)
-	{
-	}
-
-	public String tableName()
-	{
-		return "";
-	}
-
-	public boolean dropTable()
-	{
-		return false;
-	}
-
-	public void initialise(Object[] objName)
+	public void initialise(StringTokenizer objName)
 	{
 	}
 }

@@ -1,0 +1,15 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0</entry>
+	<entry key="ObjectStoreEnvironmentBean.tablePrefix">Action</entry>
+	<entry key="ObjectStoreEnvironmentBean.dropTable">false</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.tablePrefix">stateStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.dropTable">true</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+</properties>
