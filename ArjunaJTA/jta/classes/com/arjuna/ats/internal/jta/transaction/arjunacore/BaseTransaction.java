@@ -31,8 +31,17 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import javax.transaction.InvalidTransactionException;
 import javax.transaction.NotSupportedException;
 
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
@@ -261,13 +270,54 @@ public class BaseTransaction
 		}
 	}
 
+
+	public Future<Void> commitAsync() {
+		final TransactionImple theTransaction = TransactionImple
+				.getTransaction();
+		if (theTransaction == null)
+			throw new IllegalStateException("BaseTransaction.commit - "
+					+ jtaLogger.i18NLogger.get_transaction_arjunacore_notx());
+		
+		AtomicAction.suspend();
+
+		return wrap(new Callable<Void>() {
+			public Void call() throws InvalidTransactionException,
+					javax.transaction.RollbackException,
+					javax.transaction.HeuristicMixedException,
+					javax.transaction.HeuristicRollbackException,
+					java.lang.SecurityException,
+					javax.transaction.SystemException,
+					java.lang.IllegalStateException {
+				if (AtomicAction.suspend() != null) {
+					System.err
+							.println("WARNING - A PREVIOUS TRANSACTION WAS ON THE THREAD UNSUSPENDED");
+				}
+				if (!AtomicAction.resume(theTransaction.getAtomicAction()))
+					throw new InvalidTransactionException();
+				theTransaction.commitAndDisassociate();
+				return null;
+			}
+		});
+	}
+
+	public static <T> Future<T> wrap(Callable<T> callable) {
+        final FutureTask<T> task = new FutureTask<T>(callable);
+        tpe.execute(task);
+        return task;
+    }
+
 	private static boolean _supportSubtransactions = false;
 
 	private static ThreadLocal<Integer> _timeouts = new ThreadLocal<Integer>();
 
+	private static int _asyncCommitPoolSize;
+	
 	static
 	{
             _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
+            _asyncCommitPoolSize = jtaPropertyManager.getJTAEnvironmentBean().getAsyncCommitPoolSize();
 	}
+
+	private static ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, _asyncCommitPoolSize, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3));
 
 }
