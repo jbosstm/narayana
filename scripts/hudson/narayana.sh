@@ -194,7 +194,7 @@ function qa_tests_once {
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   if [[ "$MFACTOR" =~ ^[0-9]+$ ]] ; then
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
-    let txtimeout=$MFACTOR*240
+    let txtimeout=$MFACTOR*120
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
