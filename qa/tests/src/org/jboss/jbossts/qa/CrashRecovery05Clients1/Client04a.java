@@ -88,13 +88,22 @@ public class Client04a
 
 			service.setup_oper(1);
 
-			correct = service.check_oper(checkBehaviors) && service.is_correct();
-
+			correct = service.check_oper(checkBehaviors);
+            if (!correct) {
+                System.out.println("Gonna fail1");
+            } else {
+			    correct = service.is_correct();
+                if (!correct)
+                    System.out.println("Gonna fail2");
+            }
 			CrashRecoveryDelays.awaitReplayCompletionCR05();
 
 			ResourceTrace resourceTrace = service.get_resource_trace(0);
 
-			correct = correct && (resourceTrace == ResourceTrace.ResourceTraceRollback);
+			if (resourceTrace != ResourceTrace.ResourceTraceRollback) {
+                correct = false;
+                System.out.printf("Gonna fail3: resourceTrace=%s\n", resourceTrace.toString());
+            }
 
 			if (correct)
 			{
