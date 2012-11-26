@@ -52,6 +52,14 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-submit</artifactId>
+    </dependency>
     <!-- START TEST -->
     <dependency>
       <groupId>junit</groupId>

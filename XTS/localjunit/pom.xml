@@ -18,17 +18,50 @@
 	<description>localjunit tests for xts</description>
         <properties>
             <buildType>11</buildType>
-            <general.server.jvm.args>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</general.server.jvm.args>
+            <general.server.jvm.args>-Xms64m -Xmx1024m -XX:MaxPermSize=512m
+                                     -Dorg.jboss.byteman.verbose
+                                    -Djboss.modules.system.pkgs=org.jboss.byteman
+                                    -Dorg.jboss.byteman.transform.all
+                                    -javaagent:${project.build.directory}/lib/byteman.jar=listener:true
+            </general.server.jvm.args>
             <ipv4.server.jvm.args></ipv4.server.jvm.args>
             <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
             <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
         </properties>
+
+    <build>
+        <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-dependency-plugin</artifactId>
+                      <executions>
+                        <execution>
+                          <id>copy-dependencies</id>
+                          <phase>test-compile</phase>
+                          <goals>
+                            <goal>copy-dependencies</goal>
+                          </goals>
+                          <configuration>
+                              <stripVersion>true</stripVersion>
+                              <includeGroupIds>org.jboss.byteman</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                          </configuration>
+                        </execution>
+                      </executions>
+                </plugin>
+        </plugins>
+    </build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.narayana.xts</groupId>
 			<artifactId>jbossxts</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.narayana.xts</groupId>
+			<artifactId>byteman_support</artifactId>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -67,6 +100,37 @@
 				</plugins>
 			</build>
 		</profile>
+        <profile>
+      			<id>arq-remote</id>
+      			<activation>
+      				<activeByDefault>false</activeByDefault>
+      			</activation>
+      			<build>
+      				<plugins>
+      					<plugin>
+      						<artifactId>maven-surefire-plugin</artifactId>
+      						<configuration>
+      							<forkMode>once</forkMode>
+      							<systemPropertyVariables combine.children="append">
+      							<!--
+      							  Used in arquillian.xml
+      							-->
+      							  <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
+                                    <node.address>127.0.0.1</node.address>
+      							</systemPropertyVariables>
+      						</configuration>
+      					</plugin>
+      				</plugins>
+      			</build>
+      			<dependencies>
+      				<dependency>
+      					<groupId>org.jboss.as</groupId>
+      					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+      					<version>${jboss-as.version}</version>
+      					<scope>test</scope>
+      				</dependency>
+      			</dependencies>
+      		</profile>
 		<profile>
 			<id>arq</id>
 			<activation>
@@ -83,7 +147,7 @@
 							  Used in arquillian.xml
 							-->
 							  <server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args}</server.jvm.args>
-                                                          <node.address>127.0.0.1</node.address>
+                              <node.address>127.0.0.1</node.address>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>

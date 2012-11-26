@@ -16,6 +16,11 @@
       <!-- If you want to use the JBOSS_HOME environment variable, just delete the jbossHome property -->
       <configuration>
 			<property name="serverConfig">standalone-xts.xml</property>
+            <property name="javaVmArguments">-Dorg.jboss.byteman.verbose
+                                    -Djboss.modules.system.pkgs=org.jboss.byteman
+                                    -Dorg.jboss.byteman.transform.all
+                                    -javaagent:../lib/byteman.jar=listener:true
+            </property>
       </configuration>
    </container>
 
