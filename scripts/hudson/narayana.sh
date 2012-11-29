@@ -83,6 +83,7 @@ function build_as {
 }
 
 function init_jboss_home {
+  echo "# init_jboss_home"
   cd $WORKSPACE
   JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
   [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
@@ -93,6 +94,7 @@ function init_jboss_home {
 }
 
 function xts_as_tests {
+  init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
   ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
@@ -101,6 +103,7 @@ function xts_as_tests {
 }
 
 function txframework_tests {
+  init_jboss_home
   echo "#0. TXFramework Test"
   cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
@@ -108,6 +111,7 @@ function txframework_tests {
 }
 
 function xts_tests {
+  init_jboss_home
   echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS, xtstest and CRASH RECOVERY TESTS"
 
   cd $WORKSPACE
@@ -130,6 +134,7 @@ function xts_tests {
 }
 
 function tx_bridge_tests {
+  init_jboss_home
   echo "XTS: TXBRIDGE TESTS update conf"
   cd $WORKSPACE
   CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
@@ -264,7 +269,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $CP_NARAYANA_AS = 1 ] && cp_narayana_to_as "$@"
-[ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
