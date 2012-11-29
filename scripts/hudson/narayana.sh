@@ -26,7 +26,6 @@ function build_narayana {
 
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all$OBJECT_STORE_PROFILE "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
-  cp_narayana_to_as
 
   return 0
 }
@@ -232,6 +231,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
+[ $CP_NARAYANA_AS ] || CP_NARAYANA_AS=1 # build narayana
 [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
 [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
@@ -263,6 +263,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
+[ $CP_NARAYANA_AS = 1 ] && cp_narayana_to_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
