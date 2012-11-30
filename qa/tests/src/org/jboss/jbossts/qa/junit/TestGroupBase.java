@@ -176,7 +176,7 @@ public class TestGroupBase
             additionalCommandLineElements.add("-DObjectStoreBaseDir="+objectStoreBaseDir.getCanonicalPath());
             additionalCommandLineElements.add("-DRecoveryEnvironmentBean.recoveryListener=true"); // JBTM-810
 
-            return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout, additionalCommandLineElements);
+            return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout, additionalCommandLineElements, directory);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("createTask : could not open output stream for file " + filename);

@@ -153,6 +153,11 @@ public class TaskImpl implements Task
     private TaskErrorReaderThread taskErrorReaderThread;
 
     /**
+     * the tasks output directory
+     */
+    private File outputDirectory;
+
+    /**
      * create a new task
      * @param clazz the task whose main method is to be executed in a JVM running in a subprocess
      * @param type the type of the test either PASS_FAIL or READY
@@ -176,6 +181,13 @@ public class TaskImpl implements Task
         this.isDone = false;
         this.isTimedOut = false;
         this.taskReaderThread = null;
+        this.outputDirectory = null;
+    }
+
+    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout,
+             List<String> additionalCommandLineElements, File directory) {
+        this(taskName, clazz, type, out, timeout, additionalCommandLineElements);
+        this.outputDirectory = directory;
     }
 
     /**
@@ -517,6 +529,7 @@ public class TaskImpl implements Task
 
             out.println("!!!TASK TIME OUT!!!");
             out.flush();
+            createThreadDumps();
             // we timed out before the process managed to complete so kill it now
             // n.b. since this closes the process stdout we can be sure that the task
             // reader thread will exit.
@@ -526,6 +539,51 @@ public class TaskImpl implements Task
     }
     /////////////////////////
     // private implementation
+
+    private void createThreadDump(String jps) {
+
+        int i = jps.indexOf(' ');
+        String pid = i > 0 ? jps.substring(0, i) : null;
+
+        System.out.printf("Creating stack dump for pid %s and cmd %s\n", pid, jps);
+        if (pid == null)
+            return;
+
+        ProcessBuilder builder = new ProcessBuilder("jstack", pid);
+
+        try {
+            java.lang.Process process = builder.start();
+            String dumpFile = outputDirectory.getAbsolutePath() + "/jstack." + pid;
+            OutputStream os = new FileOutputStream(dumpFile);
+            os.write(jps.getBytes());
+            os.write(System.getProperty("line.separator").getBytes());
+            byte[] buffer = new byte[1024];
+            int len = process.getInputStream().read(buffer);
+
+            while (len != -1) {
+                os.write(buffer, 0, len);
+                len = process.getInputStream().read(buffer);
+            }
+            os.close();
+        } catch (IOException e) {
+            System.out.printf("ERROR CREATING THREAD DUMP for %s: %s\n", jps, e.getMessage());
+        }
+    }
+
+    private void createThreadDumps() {
+        try {
+            ProcessBuilder builder = new ProcessBuilder("jps", "-mlv");
+            java.lang.Process process = builder.start();
+            Scanner scanner = new Scanner(process.getInputStream());
+
+            while(scanner.hasNextLine())
+                createThreadDump(scanner.nextLine());
+
+            process.destroy();
+        } catch (IOException e) {
+            System.out.printf("ERROR CREATING THREAD DUMPS: %s\n", e.getMessage());
+        }
+    }
 
     /**
      * construct an executable command line to execute the supplied java class with the arguments in params,
