@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<deployment xmlns="urn:jboss:pojo:7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jboss:pojo:7.0 jboss-pojo_7_0.xsd">
-
-    <!-- bean to declare the dependency of the test code on the XTS code  -->
-    <bean name="WSTTestBean" class="java.lang.Object">
-       <depends>jboss.web:service=WebServer</depends>
-   </bean>
-
-</deployment>
