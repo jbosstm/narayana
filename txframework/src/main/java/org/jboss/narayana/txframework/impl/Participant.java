@@ -1,11 +1,9 @@
 package org.jboss.narayana.txframework.impl;
 
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
-import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,46 +12,27 @@ import java.util.Map;
 
 public abstract class Participant
 {
-    protected Object serviceImpl;
+    protected ServiceInvocationMeta serviceInvocationMeta;
     protected Map<Class<? extends Annotation>, Method> lifecycleEventMap = new HashMap<Class<? extends Annotation>, Method>();
     protected List<Method> visibleMethods;
 
-    private final Map txDataMap = new HashMap();
+    private final Map txDataMap;
 
-    public Participant(Object serviceImpl, boolean injectDataManagement) throws ParticipantRegistrationException
+    public Participant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException
     {
-        this.serviceImpl = serviceImpl;
-        visibleMethods = getAllVisibleMethods(serviceImpl.getClass());
-
-        if (injectDataManagement)
-        {
-            injectTxDataMap(txDataMap, serviceImpl);
-        }
+        this.serviceInvocationMeta = serviceInvocationMeta;
+        visibleMethods = getAllVisibleMethods(serviceInvocationMeta.getServiceClass());
+        this.txDataMap = txDataMap;
     }
 
-    private void injectTxDataMap(Map txDataMap, Object serviceImpl) throws ParticipantRegistrationException
+    public void resume()
     {
-        for (Field field : serviceImpl.getClass().getDeclaredFields())
-        {
-            if (field.getAnnotation(DataManagement.class) != null)
-            {
-                try
-                {
-                    if (!field.getType().equals(Map.class))
-                    {
-                        throw new ParticipantRegistrationException("Unable to inject data management Map into to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() +
-                                "': Field is not of type '" + Map.class + "'");
-                    }
-                    field.setAccessible(true);
-                    field.set(serviceImpl, txDataMap);
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new ParticipantRegistrationException("Unable to inject data management map impl to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() + "'", e);
-                }
-            }
-        }
-        //didn't find an injection point. No problem as this is optional
+        TXDataMapImpl.resume(txDataMap);
+    }
+    
+    public static void suspend()
+    {
+        TXDataMapImpl.suspend();
     }
 
     protected void registerEventsOfInterest(Class<? extends Annotation>... lifecycleEvents)
@@ -74,6 +53,8 @@ public abstract class Participant
 
     protected Object invoke(Class<? extends Annotation> lifecycleEvent, Object... args)
     {
+        resume();
+
         Method method = lifecycleEventMap.get(lifecycleEvent);
         if (method == null)
         {
@@ -87,17 +68,21 @@ public abstract class Participant
             //todo: detect parameters better. Maybe have a different participant per interface.
             if (lifecycleEvent == ConfirmCompleted.class)
             {
-                return method.invoke(serviceImpl, args);
+                return method.invoke(serviceInvocationMeta.getProxyInstance(), args);
             }
             else
             {
-                return method.invoke(serviceImpl);
+                return method.invoke(serviceInvocationMeta.getProxyInstance());
             }
         }
         catch (Exception e)
         {
-            //todo: Log stacktrace to debug and throw a SystemException
-            throw new RuntimeException("Unable to invoke method '" + method.getName() + "' on '" + serviceImpl.getClass().getName() + "'", e);
+            //todo: Log stacktrace to error and throw a SystemException
+            throw new RuntimeException("Unable to invoke method '" + method.getName() + "' on '" + serviceInvocationMeta.getServiceClass().getName() + "'", e);
+        }
+        finally
+        {
+            suspend();
         }
     }
 

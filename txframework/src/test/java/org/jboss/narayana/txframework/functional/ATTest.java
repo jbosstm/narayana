@@ -3,15 +3,18 @@ package org.jboss.narayana.txframework.functional;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PostCommit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.PrePrepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.functional.clients.ATClient;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.junit.After;
 import org.junit.Assert;
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,10 +22,10 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.VOTE_ROLLBACK;
 
 @RunWith(Arquillian.class)
-@Ignore //JBTM-1287
 public class ATTest extends BaseFunctionalTestWar
 {
     private UserTransaction ut;

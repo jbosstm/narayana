@@ -5,7 +5,10 @@ import com.arjuna.mw.wst11.UserTransactionFactory;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.functional.clients.ATBridgeClient;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 

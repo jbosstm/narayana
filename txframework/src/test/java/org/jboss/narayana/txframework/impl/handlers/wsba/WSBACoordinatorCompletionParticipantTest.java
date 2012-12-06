@@ -2,12 +2,21 @@ package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.junit.Test;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class WSBACoordinatorCompletionParticipantTest
@@ -16,7 +25,8 @@ public class WSBACoordinatorCompletionParticipantTest
     public void testCallbacks() throws Exception
     {
         LifecycleImpl lifecycle = new LifecycleImpl();
-        WSBACoordinatorCompletionParticipant participant = new WSBACoordinatorCompletionParticipant(lifecycle, false);
+        ServiceInvocationMeta serviceInvocationMeta = new ServiceInvocationMeta(lifecycle, LifecycleImpl.class, null);
+        WSBACoordinatorCompletionParticipant participant = new WSBACoordinatorCompletionParticipant(serviceInvocationMeta, new HashMap(), null);
 
         participant.cancel();
         participant.close();

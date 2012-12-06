@@ -6,31 +6,28 @@ import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.restat.service.RESTATHandler;
 import org.jboss.narayana.txframework.impl.handlers.wsat.WSATHandler;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBACoordinatorCompletionHandler;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAParticipantCompletionHandler;
 
-import java.lang.reflect.Method;
-
 public class HandlerFactory
 {
     //todo: improve the way transaction type is detected.
-    public static ProtocolHandler createInstance(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
+    public static ProtocolHandler createInstance(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException
     {
-        Class serviceClass = serviceImpl.getClass();
-
-        Compensatable Compensatable = (Compensatable) serviceClass.getAnnotation(Compensatable.class);
+        Compensatable Compensatable = (Compensatable) serviceInvocationMeta.getServiceClass().getAnnotation(Compensatable.class);
         if (Compensatable != null)
         {
             CompletionType completionType = Compensatable.completionType();
             if (completionType == CompletionType.PARTICIPANT)
             {
-                return new WSBAParticipantCompletionHandler(serviceImpl, serviceMethod);
+                return new WSBAParticipantCompletionHandler(serviceInvocationMeta);
             }
             else if (completionType == CompletionType.COORDINATOR)
             {
-                return new WSBACoordinatorCompletionHandler(serviceImpl, serviceMethod);
+                return new WSBACoordinatorCompletionHandler(serviceInvocationMeta);
             }
             else
             {
@@ -38,19 +35,19 @@ public class HandlerFactory
             }
         }
 
-        Transactional Transactional = (Transactional) serviceClass.getAnnotation(Transactional.class);
+        Transactional Transactional = (Transactional) serviceInvocationMeta.getServiceClass().getAnnotation(Transactional.class);
         if (Transactional != null)
         {
             if (isWSATTransactionRunning())
             {
-                return new WSATHandler(serviceImpl, serviceMethod);
+                return new WSATHandler(serviceInvocationMeta);
             }
             else //assume it must be a REST-AT transaction running.
             {
-                return new RESTATHandler(serviceImpl, serviceMethod);
+                return new RESTATHandler(serviceInvocationMeta);
             }
         }
-        throw new UnsupportedProtocolException("Expected to find a transaction type annotation on '" + serviceClass.getName() + "'");
+        throw new UnsupportedProtocolException("Expected to find a transaction type annotation on '" + serviceInvocationMeta.getServiceClass().getName() + "'");
     }
 
     private static boolean isWSATTransactionRunning()

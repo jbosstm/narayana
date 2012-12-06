@@ -7,35 +7,22 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
+import org.jboss.narayana.txframework.impl.Participant;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
-import java.lang.reflect.Method;
+
+import java.util.HashMap;
 import java.util.UUID;
 
 public class WSBACoordinatorCompletionHandler extends WSBAHandler
 {
-    public WSBACoordinatorCompletionHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
+    public WSBACoordinatorCompletionHandler(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException
     {
-        super(serviceImpl, serviceMethod);
+        super(serviceInvocationMeta);
     }
 
     @Override
-    protected BAParticipantManager registerParticipants(Object participant, Method serviceMethod) throws ParticipantRegistrationException
-    {
-        try
-        {
-            BAParticipantManager participantManager = register(new WSBAInternalParticipant());
-            //This particular participant does no work, so notify Completed
-            participantManager.completed();
-        }
-        catch (Exception e)
-        {
-            throw new ParticipantRegistrationException("", e);
-        }
-
-        return register(participant);
-    }
-
-    private BAParticipantManager register(Object participantObject) throws ParticipantRegistrationException
+    protected BAParticipantManager registerParticipants(ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException
     {
         try
         {
@@ -46,21 +33,29 @@ public class WSBACoordinatorCompletionHandler extends WSBAHandler
                 BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
                 String txid = businessActivityManager.currentTransaction().toString();
 
+                Participant participantToResume;
+
                 //Only create participant if there is not already a participant for this ServiceImpl and this transaction
-                Class participantClass = participantObject.getClass();
-                if (!participantRegistry.isRegistered(txid, participantClass))
+                if (!participantRegistry.isRegistered(txid, serviceInvocationMeta.getServiceClass()))
                 {
 
-                    WSBACoordinatorCompletionParticipant coordinatorCompletionParticipant = new WSBACoordinatorCompletionParticipant(participantObject, true);
+                    WSBACoordinatorCompletionParticipant coordinatorCompletionParticipant = new WSBACoordinatorCompletionParticipant(serviceInvocationMeta, new HashMap(), txid);
+                    baParticipantManager = businessActivityManager.enlistForBusinessAgreementWithCoordinatorCompletion(coordinatorCompletionParticipant, serviceInvocationMeta.getServiceClass().getName() + UUID.randomUUID());
 
-                    baParticipantManager = businessActivityManager.enlistForBusinessAgreementWithCoordinatorCompletion(coordinatorCompletionParticipant, participantClass.getName() + UUID.randomUUID());
+                    participantRegistry.register(txid, serviceInvocationMeta.getServiceClass(), baParticipantManager);
 
-                    participantRegistry.register(txid, participantClass, baParticipantManager);
+                    synchronized (durableServiceParticipants)
+                    {
+                        participantToResume = coordinatorCompletionParticipant;
+                        durableServiceParticipants.put(txid, participantToResume);
+                    }
                 }
                 else
                 {
-                    baParticipantManager = participantRegistry.lookupBAParticipantManager(txid, participantClass);
+                    baParticipantManager = participantRegistry.lookupBAParticipantManager(txid, serviceInvocationMeta.getServiceClass());
+                    participantToResume = durableServiceParticipants.get(txid);
                 }
+                participantToResume.resume();
             }
 
             return baParticipantManager;

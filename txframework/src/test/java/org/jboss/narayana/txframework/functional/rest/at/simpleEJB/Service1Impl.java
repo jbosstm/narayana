@@ -1,13 +1,15 @@
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
-import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
-import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
@@ -20,10 +22,9 @@ import java.util.Map;
 @Transactional
 public class Service1Impl implements Service1 {
 
-    @DataManagement
+    @Inject
     Map TXDataMap;
 
-    @TxManagement
     private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 

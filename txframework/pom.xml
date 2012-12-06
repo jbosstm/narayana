@@ -151,6 +151,11 @@
             <artifactId>arquillian-protocol-servlet</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>1.1.10.Final</version>
+        </dependency>
     </dependencies>
 
     <profiles>

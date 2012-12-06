@@ -1,8 +1,8 @@
 package org.jboss.narayana.txframework.functional.interfaces;
 
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.jws.WebMethod;
 

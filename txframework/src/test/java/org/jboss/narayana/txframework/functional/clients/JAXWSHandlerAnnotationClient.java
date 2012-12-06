@@ -20,17 +20,11 @@ package org.jboss.narayana.txframework.functional.clients;
  * @author JBoss Inc.
  */
 
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
 import org.jboss.narayana.txframework.functional.interfaces.JAXWSHandlerAnnotation;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JAXWSHandlerAnnotationClient {
 

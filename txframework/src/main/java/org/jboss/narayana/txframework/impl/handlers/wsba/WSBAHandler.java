@@ -5,57 +5,37 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Completes;
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
+import org.jboss.narayana.txframework.impl.Participant;
+import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
+import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
+
 import javax.interceptor.InvocationContext;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class WSBAHandler implements ProtocolHandler
 {
-    private Method serviceMethod;
-    private Object serviceImpl;
-    private WSBATxControl wsbaTxControl;
+    private ServiceInvocationMeta serviceInvocationMeta;
     private BAParticipantManager participantManager;
+
+    WSBATxControl wsbaTxControl = new WSBATxControlImpl();
 
     protected final WSBAParticipantRegistry participantRegistry = new WSBAParticipantRegistry();
 
-    public WSBAHandler(Object serviceImpl, Method serviceMethod) throws TXFrameworkException
-    {
-        this.serviceImpl = serviceImpl;
-        this.serviceMethod = serviceMethod;
-        participantManager = registerParticipants(serviceImpl, serviceMethod);
-        wsbaTxControl = new WSBATxControlImpl(participantManager);
+    protected static final Map<String, Participant> durableServiceParticipants = new HashMap<String, Participant>();
 
-        injectTxManagement(wsbaTxControl);
+    public WSBAHandler(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException
+    {
+        this.serviceInvocationMeta = serviceInvocationMeta;
+        participantManager = registerParticipants(serviceInvocationMeta);
+        WSBATxControlImpl.resume(participantManager);
     }
 
-    protected abstract BAParticipantManager registerParticipants(Object serviceImpl, Method serviceMethod) throws ParticipantRegistrationException;
-
-    //todo: Use CDI to do injection
-    private void injectTxManagement(WSBATxControl wsbaTxControl) throws TXFrameworkException
-    {
-        for (Field field : serviceImpl.getClass().getDeclaredFields())
-        {
-            if (field.getAnnotation(TxManagement.class) != null)
-            {
-                try
-                {
-                    field.setAccessible(true);
-                    //todo: check field type
-                    field.set(serviceImpl, wsbaTxControl);
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new TXFrameworkException("Unable to inject TxManagement impl to field '" + field.getName() + "' on '" + serviceImpl.getClass().getName() + "'", e);
-                }
-            }
-        }
-        //didn't find an injection point. No problem as this is optional
-    }
+    protected abstract BAParticipantManager registerParticipants(ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException;
 
     public Object proceed(InvocationContext ic) throws Exception
     {
@@ -64,8 +44,9 @@ public abstract class WSBAHandler implements ProtocolHandler
 
     @Override
     public void notifySuccess() throws TXFrameworkException{
+
         //todo: find a better way of getting the current status of the TX
-        if (shouldComplete(serviceMethod) && !((WSBATxControlImpl) wsbaTxControl).isCannotComplete())
+        if (shouldComplete(serviceInvocationMeta.getServiceMethod()) && !((WSBATxControlImpl) wsbaTxControl).isCannotComplete())
         {
             try {
                 participantManager.completed();
@@ -77,6 +58,8 @@ public abstract class WSBAHandler implements ProtocolHandler
                 throw new TXFrameworkException("Error notifying completion on participant manager.", e);
             }
         }
+        Participant.suspend();
+        WSBATxControlImpl.suspend();
     }
 
     @Override
@@ -90,8 +73,10 @@ public abstract class WSBAHandler implements ProtocolHandler
             } catch (SystemException e) {
                 throw new TXFrameworkException("Error notifying cannotComplete on participant manager.", e);
             }
+        Participant.suspend();
+        WSBATxControlImpl.suspend();
     }
-
+    
     private boolean shouldComplete(Method serviceMethod)
     {
         Completes completes = serviceMethod.getAnnotation(Completes.class);

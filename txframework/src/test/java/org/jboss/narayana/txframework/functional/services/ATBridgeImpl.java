@@ -27,11 +27,15 @@ package org.jboss.narayana.txframework.functional.services;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 
-import javax.ejb.*;
-import javax.persistence.*;
-import javax.jws.WebService;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.jws.WebMethod;
+import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author paul.robinson@redhat.com

@@ -20,19 +20,24 @@
  */
 package org.jboss.narayana.txframework.functional.services;
 
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Completes;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
-import org.jboss.narayana.txframework.api.annotation.management.DataManagement;
-import org.jboss.narayana.txframework.api.annotation.management.TxManagement;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
+import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.impl.TXControlException;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
@@ -54,11 +59,11 @@ import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
 @Compensatable(completionType = CompletionType.PARTICIPANT)
 public class BAParticipantCompletionService implements BAParticipantCompletion
 {
-    @TxManagement
+    @Inject
     private WSBATxControl txControl;
     @Inject
     private EventLog eventLog = new EventLog();
-    @DataManagement
+    @Inject
     private Map TXDataMap;
 
     @WebMethod
