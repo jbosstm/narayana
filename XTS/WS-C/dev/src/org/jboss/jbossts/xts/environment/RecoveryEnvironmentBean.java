@@ -25,18 +25,38 @@ public class RecoveryEnvironmentBean
     @ConcatenationPrefix(prefix="org.jboss.jbossts.xts.recovery.participantRecoveryModule")
     private volatile List<String> participantRecoveryModules = new ArrayList<String>();
 
+    /**
+     * Returns the list of XTS coordinator recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @return the list of XTS coordinator recovery modules.
+     */
     public List<String> getCoordinatorRecoveryModules() {
         return coordinatorRecoveryModules;
     }
 
+    /**
+     * Sets the list of XTS coordinator recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @param coordinatorRecoveryModules the list of XTS coordinator recovery modules.
+     */
     public void setCoordinatorRecoveryModules(List<String> coordinatorRecoveryModules) {
         this.coordinatorRecoveryModules = coordinatorRecoveryModules;
     }
 
+    /**
+     * Returns the list of XTS participant recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @return the list of XTS participant recovery modules.
+     */
     public List<String> getParticipantRecoveryModules() {
         return participantRecoveryModules;
     }
 
+    /**
+     * Sets the list of XTS participant recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @param participantRecoveryModules the list of XTS participant recovery modules.
+     */
     public void setParticipantRecoveryModules(List<String> participantRecoveryModules) {
         this.participantRecoveryModules = participantRecoveryModules;
     }

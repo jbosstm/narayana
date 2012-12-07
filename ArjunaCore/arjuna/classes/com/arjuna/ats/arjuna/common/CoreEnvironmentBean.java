@@ -60,6 +60,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     private volatile boolean allowMultipleLastResources = false;
     private volatile boolean disableMultipleLastResourcesWarning = false;
 
+    @Deprecated
     @FullPropertyName(name = "timeout.factor")
     private volatile int timeoutFactor = 1;
 

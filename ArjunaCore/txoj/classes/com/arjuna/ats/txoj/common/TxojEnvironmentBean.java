@@ -33,9 +33,12 @@ import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 @PropertyPrefix(prefix = "com.arjuna.ats.txoj.lockstore.")
 public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
+    @Deprecated
     private volatile String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
     private volatile String lockStoreType = BasicLockStore.class.getName();
+    @Deprecated
     private volatile String multipleLockStore = null;
+    @Deprecated
     private volatile String singleLockStore = BasicLockStore.class.getName();
     private volatile boolean allowNestedLocking = true;
 

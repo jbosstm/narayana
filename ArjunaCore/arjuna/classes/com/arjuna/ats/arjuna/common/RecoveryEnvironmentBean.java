@@ -63,6 +63,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryActivator")
     private volatile List<String> recoveryActivatorClassNames = new ArrayList<String>();
+    @Deprecated
     private volatile List<RecoveryActivator> recoveryActivators = null;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")

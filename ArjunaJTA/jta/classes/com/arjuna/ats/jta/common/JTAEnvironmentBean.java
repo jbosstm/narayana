@@ -53,6 +53,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile UserTransaction userTransaction = null;
 
     private volatile String transactionSynchronizationRegistryClassName = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
+    @Deprecated
     private volatile TransactionSynchronizationRegistry transactionSynchronizationRegistry = null;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaRecoveryNode")
@@ -949,10 +950,20 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         }
     }
 
+    /**
+     * Returns maximum size of a thread pool, used to execute asynchronous commits.
+     *
+     * @return maximum size of a thread pool, used to execute asynchronous commits.
+     */
 	public int getAsyncCommitPoolSize() {
 		return asyncCommitPoolSize;
 	}
 
+    /**
+     * Sets maximum size of a thread pool, used to execute asynchronous commits.
+     *
+     * @param asyncCommitPoolSize maximum size of a thread pool, used to execute asynchronous commits.
+     */
     public void setAsyncCommitPoolSize(int asyncCommitPoolSize) {
 		this.asyncCommitPoolSize = asyncCommitPoolSize;
 	}

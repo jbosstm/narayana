@@ -34,6 +34,7 @@ public class JDBCStoreEnvironmentBean
     private volatile String jdbcUserDbAccessClassName = null;
     private volatile JDBCAccess jdbcUserDbAccess;
     private volatile String jdbcTxDbAccessClassName = null;
+    @Deprecated
     private volatile JDBCAccess jdbcTxDbAccess;
 
     private volatile int jdbcPoolSizeInitial = 1;
