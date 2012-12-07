@@ -84,6 +84,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Returns the maximum allowed size, in bytes, of the cache store's in-memory cache.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * Default: 10240 bytes
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size
      *
@@ -97,6 +99,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the maximum size, in bytes, of the in-memory object state cache.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreSize the maximum cache size in bytes.
      */
     public void setCacheStoreSize(int cacheStoreSize)
@@ -107,6 +111,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Returns true if writes to the objectstore should include a disk sync. Unlikely to be worthwile
      * since the store caches state in memory anyhow.
+     *
+     * This property is used by the following object store implementations: CacheStore.
      *
      * Default: false
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.sync
@@ -121,6 +127,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets if writes to the store should be synched to disk or not.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreSync true to enable syncing, false to disable.
      */
     public void setCacheStoreSync(boolean cacheStoreSync)
@@ -130,6 +138,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the maximum number of removed items that may be held in the cache before being purged.
+     *
+     * This property is used by the following object store implementations: CacheStore.
      *
      * Default: 256
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.removedItems
@@ -144,6 +154,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the maximum number of removed items that may be held in the cache before being purged.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreRemovedItems teh maximun number of items.
      */
     public void setCacheStoreRemovedItems(int cacheStoreRemovedItems)
@@ -153,6 +165,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the interval on which the cache will wake and process outstanding work.
+     *
+     * This property is used by the following object store implementations: CacheStore.
      *
      * Default: 120000 milliseconds
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.scanPeriod
@@ -167,6 +181,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the interval on which the cache will process outstanding work, in milliseconds.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreScanPeriod the sleep duration, in milliseconds.
      */
     public void setCacheStoreScanPeriod(int cacheStoreScanPeriod)
@@ -176,6 +192,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the maximum number of outstanding writes that may be held in the cache.
+     *
+     * This property is used by the following object store implementations: CacheStore.
      *
      * Default: 100
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.workItems
@@ -190,6 +208,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the maximum number of outstanding writes that may be held in the cache.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreWorkItems the maximum number of outstnading writes.
      */
     public void setCacheStoreWorkItems(int cacheStoreWorkItems)
@@ -199,6 +219,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the number of hash buckets used for the cache work queue.
+     *
+     * This property is used by the following object store implementations: CacheStore.
      *
      * Default: 128
      * Equivalent deprecated property: com.arjuna.ats.internal.arjuna.objectstore.cacheStore.hash
@@ -213,6 +235,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the number of hash buskets used to store the cache work queue.
      *
+     * This property is used by the following object store implementations: CacheStore.
+     *
      * @param cacheStoreHash the number of hash buckets.
      */
     public void setCacheStoreHash(int cacheStoreHash)
@@ -223,6 +247,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the local ObjectStore root directory name. This should be a path element, not a complete path.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
      *
      * Default: "defaultStore"
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.localOSRoot
@@ -235,7 +262,10 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     }
 
     /**
-     * Sets the local ObjectStore root directory name. This shold be a path element, not a complete path.
+     * Sets the local ObjectStore root directory name. This should be a path element, not a complete path.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
      *
      * @param localOSRoot the directory name.
      */
@@ -246,6 +276,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the ObjectStore directory path.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
      *
      * Default: {user.dir}/ObjectStore
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.objectStoreDir
@@ -290,6 +323,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the ObjectStore directory path.
      *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
+     *
      * @param objectStoreDir the directory path.
      */
     public void setObjectStoreDir(String objectStoreDir)
@@ -301,6 +337,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      * Returns true if ObjectStore operations should be synched to disk.
      * Note that this value may be overridden by store implementation specific configuration.
      * See also: isTransactionSync
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
      *
      * Default: true
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.objectStoreSync
@@ -315,6 +354,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets if ObjectStore operations should be synched to disk or not.
      * Caution: Disabling this may be lead to non-ACID transaction behaviour.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
      *
      * @param objectStoreSync true to sunc to disk, false to skip synching.
      */
@@ -351,6 +393,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      * Splitting the contents is important for performance on some file systems, as it reduces
      * chain length (number of items in a directory) and directory lock contention.
      *
+     * This property is used by the following object store implementations: CacheStore, HashedActionStore, HashedStore.
+     *
      * Default: 255
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.hashedDirectories
      *
@@ -364,6 +408,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the number of directories over which the ObjectStore will be split.
      *
+     * This property is used by the following object store implementations: CacheStore, HashedActionStore, HashedStore.
+     *
      * @param hashedDirectories the number of directories.
      */
     public void setHashedDirectories(int hashedDirectories)
@@ -373,6 +419,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns true if transaction log operations should be synched to disk.
+     *
+     * This property is used by the following object store implementations: ActionStore, HashedActionStore, LogStore.
      *
      * Default: true
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.transactionSync
@@ -388,6 +436,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      * Sets if transaction log operations should be synched to disk or not.
      * Caution: Disabling this may be lead to non-ACID transaction behaviour.
      *
+     * This property is used by the following object store implementations: ActionStore, HashedActionStore, LogStore.
+     *
      * @param transactionSync true to enable synching, false to disable.
      */
     public void setTransactionSync(boolean transactionSync)
@@ -397,6 +447,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns true if zero length files should be returned by a recovery scan.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
      *
      * Default: false
      *
@@ -410,6 +463,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets if zero length files should be returned by a recovery scan.
      *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
+     *
      * @param scanZeroLengthFiles true to include zero length files in scan results, false to exclude them.
      */
     public void setScanZeroLengthFiles(boolean scanZeroLengthFiles)
@@ -420,6 +476,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Returns the share mode for the ObjectStore, i.e., is this being shared
      * between VMs?
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
      *
      * Default: ObjectStore.OS_UNKNOWN
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.share
@@ -434,6 +493,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the share mode of the ObjectStore
      *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore, TwoPhaseVolatileStore, VolatileStore.
+     *
      * @param share a valid share mode.
      */
     public void setShare(int share)
@@ -443,6 +505,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the maximum number of attempts which may be made to create a file path in the store.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
      *
      * Default: 100
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.hierarchyRetry
@@ -457,6 +522,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the maximum number of attempts which may be made to create a direcory tree in the store.
      *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
+     *
      * @param hierarchyRetry the maximum number of file creation attempts.
      */
     public void setHierarchyRetry(int hierarchyRetry)
@@ -466,6 +534,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the time in milliseconds to wait between file creation retries.
+     *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
      *
      * Default: 100 milliseconds.
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.hierarchyTimeout
@@ -480,6 +551,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the time in milliseconds to wait between file creation retries.
      *
+     * This property is used by the following object store implementations: ActionStore, CacheStore, HashedActionStore,
+     * HashedStore, LogStore, NullActionStore, ShadowingStore, ShadowNoFileLockStore.
+     *
      * @param hierarchyTimeout the wait time in milliseconds.
      */
     public void setHierarchyTimeout(int hierarchyTimeout)
@@ -490,6 +564,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Returns true if the LogStore should write removal records synchronously.
      * Disabling this may increase performance at the cost of recovery complexity.
+     *
+     * This property is used by the following object store implementations: LogStore.
      *
      * Default: true
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.transactionLog.synchronousRemoval
@@ -504,6 +580,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets if the LogStore should write removal records synchronously or not.
      *
+     * This property is used by the following object store implementations: LogStore.
+     *
      * @param synchronousRemoval true for synchronous operation, false for asynchronous.
      */
     public void setSynchronousRemoval(boolean synchronousRemoval)
@@ -513,6 +591,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the default size of the LogStore file, in bytes.
+     *
+     * This property is used by the following object store implementations: LogStore.
      *
      * Default: 10MB
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.transactionLog.txLogSize
@@ -527,6 +607,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     /**
      * Sets the default size of the LogStore, in bytes.
      *
+     * This property is used by the following object store implementations: LogStore.
+     *
      * @param txLogSize the default file size, in bytes.
      */
     public void setTxLogSize(long txLogSize)
@@ -536,6 +618,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Returns the purge interval for the LogStore, in milliseconds.
+     *
+     * This property is used by the following object store implementations: LogStore.
      *
      * Default: 100000 milliseconds
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.transactionLog.purgeTime
@@ -549,6 +633,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     /**
      * Sets the purge interval for the LogStore, in milliseconds.
+     *
+     * This property is used by the following object store implementations: LogStore.
      *
      * @param purgeTime the purge interval in milliseconds.
      */

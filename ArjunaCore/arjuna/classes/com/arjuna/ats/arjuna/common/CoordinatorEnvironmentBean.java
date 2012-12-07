@@ -42,6 +42,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile boolean asyncRollback = false;
     private volatile boolean commitOnePhase = true;
     private volatile boolean maintainHeuristics = true;
+    @Deprecated
     private volatile boolean transactionLog = false; // rename to useTransactionLog ?
 
     private volatile int maxTwoPhaseCommitThreads = 100;
@@ -55,6 +56,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile boolean readonlyOptimisation = true;
     private volatile boolean classicPrepare = false;
     private volatile boolean enableStatistics = false;
+    @Deprecated
     private volatile boolean sharedTransactionLog = false;
     private volatile boolean startDisabled = false; // rename/repurpose to 'enable'?
     private volatile String txReaperMode = "DYNAMIC"; // rename bool txReaperModeDynamic?
@@ -76,6 +78,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     private volatile boolean alternativeRecordOrdering = false;
 
+    @Deprecated
     private volatile String communicationStore = HashedActionStore.class.getName();
 
     private volatile boolean finalizeBasicActions = false;
@@ -150,10 +153,22 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
         this.asyncRollback = asyncRollback;
     }
 
+    /**
+     * Returns maximum thread pool size allowed for two phase commits.
+     *
+     * Default: 100
+     *
+     * @return maximum number of threads in a thread pool
+     */
     public int getMaxTwoPhaseCommitThreads() {
         return maxTwoPhaseCommitThreads;
     }
 
+    /**
+     * Sets maximum thread pool size for two phase commits.
+     *
+     * @param maxTwoPhaseCommitThreads maximum number of threads in a thread pool
+     */
     public void setMaxTwoPhaseCommitThreads(int maxTwoPhaseCommitThreads) {
         this.maxTwoPhaseCommitThreads = maxTwoPhaseCommitThreads;
     }
@@ -251,7 +266,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Returns true if the old sytle of prepare handling should be used for PersistenceRecord.
+     * Returns true if the old style of prepare handling should be used for PersistenceRecord.
      *
      * Default: false
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.classicPrepare
@@ -264,7 +279,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Sets if old sytle prepare handling should be used for PersistenceRecord.
+     * Sets if old style prepare handling should be used for PersistenceRecord.
      *
      * @param classicPrepare true to enable classic prepare handling, false to disable.
      */
@@ -299,13 +314,14 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Returns if the transaction log sould be run in shared mode or not.
+     * Returns if the transaction log should be run in shared mode or not.
      *
      * Default: false
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.sharedTransactionLog
      *
      * @return true if transaction log sharing is enabled, false otherwise.
      */
+    @Deprecated
     public boolean isSharedTransactionLog()
     {
         return sharedTransactionLog;
@@ -316,6 +332,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      *
      * @param sharedTransactionLog true to enable transaction log sharing, false to disable.
      */
+    @Deprecated
     public void setSharedTransactionLog(boolean sharedTransactionLog)
     {
         this.sharedTransactionLog = sharedTransactionLog;
@@ -391,8 +408,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Returns the number of millisecs delay afer a cancel is scheduled,
-         * before the reaper tries to interrupt the worker thread executing the cancel.
+     * Returns the number of millisecs delay after a cancel is scheduled,
+     * before the reaper tries to interrupt the worker thread executing the cancel.
      *
      * Default: 500ms
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.txReaperCancelWaitPeriod
@@ -415,7 +432,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     }
 
     /**
-     * Returns the number of millisecs delay afer a worker thread is interrupted,
+     * Returns the number of millisecs delay after a worker thread is interrupted,
      * before the reaper writes the it off as a zombie and starts a new thread.
      *
      * Default: 500ms
@@ -656,6 +673,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      *
      * @return the communication store name.
      */
+    @Deprecated
     public String getCommunicationStore()
     {
         return communicationStore;
@@ -666,6 +684,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      *
      * @param communicationStore the communication store name.
      */
+    @Deprecated
     public void setCommunicationStore(String communicationStore)
     {
         this.communicationStore = communicationStore;

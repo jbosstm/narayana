@@ -20,10 +20,20 @@ public class XTSEnvironmentBean
     @ConcatenationPrefix(prefix="org.jboss.jbossts.xts.initialisation.xtsInitialisation")
     private volatile List<String> xtsInitialisations = new ArrayList<String>();
 
+    /**
+     * Returns the list of XTS recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @return the list of XTS recovery modules.
+     */
     public List<String> getXtsInitialisations() {
         return xtsInitialisations;
     }
 
+    /**
+     * Sets the list of XTS recovery modules to be installed at startup and removed at shutdown.
+     *
+     * @param xtsInitialisations the list of XTS recovery modules.
+     */
     public void setXtsInitialisations(List<String> xtsInitialisations) {
         this.xtsInitialisations = xtsInitialisations;
     }
