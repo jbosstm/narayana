@@ -37,6 +37,24 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>copy-dependencies</id>
+                      <phase>test-compile</phase>
+                      <goals>
+                        <goal>copy-dependencies</goal>
+                      </goals>
+                      <configuration>
+                          <stripVersion>true</stripVersion>
+                          <includeGroupIds>org.jboss.byteman</includeGroupIds>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                      </configuration>
+                    </execution>
+                  </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -112,6 +130,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+	<dependency>
+	   <groupId>org.jboss.narayana.xts</groupId>
+	   <artifactId>byteman_support</artifactId>
+           <scope>test</scope>
+	</dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>restat-util</artifactId>
