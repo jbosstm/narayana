@@ -114,6 +114,14 @@ public class Coordinator
         return builder.build();
     }
 
+    /**
+     * Performing a GET on the transaction-manager URI with media type application/txstatusext+xml
+     * returns extended information about the transaction-manager resource such as how long it has
+     * been up and all transaction-coordinator URIs. 
+     *
+     * @param info Request context
+     * @return TransactionManagerElement
+     */
     @GET
     @Path(TxSupport.TX_SEGMENT)
     @Produces(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE)
@@ -134,6 +142,13 @@ public class Coordinator
         return tm;
     }
 
+    /**
+     * Performing a GET on the transaction-manager URI sufficed with /statistics
+     * returns statistics of the transaction manager.
+     * Numbers of active, prepared, committed, and aborted transactions are returned. 
+     * 
+     * @return TransactionStatisticsElement
+     */
     @GET
     @Path(TxSupport.TX_SEGMENT + TxLinkNames.STATISTICS)
     @Produces(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE)
@@ -189,6 +204,15 @@ public class Coordinator
         return addTransactionHeaders(builder, info, txn, false).build();
     }
 
+    /**
+     * Performing a GET on the transaction URL with media type application/txstatusext+xml
+     * returns extended information about the transaction, such as its status,
+     * number of participants, and their individual URIs.
+     * 
+     * @param info Request context
+     * @param id URL template parameter for the id of the transaction
+     * @return HTTP response representing extended transaction status information
+     */
     @GET
     @Path(TxSupport.TX_SEGMENT + "{id}")
     @Produces(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE)
@@ -541,6 +565,14 @@ public class Coordinator
         return Response.created(URI.create(tx.getRecoveryUrl())).build();
     }
 
+    /**
+     * Register a volatile participant in a tx
+     * 
+     * @param linkHeader link header
+     * @param info  URI info
+     * @param txId id of transaction
+     * @return HTTP status code
+     */
     @PUT
     @Path(TxSupport.TX_SEGMENT + "{TxId}/" + TxLinkNames.VOLATILE_PARTICIPANT)
     public Response enlistVolatileParticipant(@HeaderParam("Link") String linkHeader, @Context UriInfo info,
@@ -631,6 +663,12 @@ public class Coordinator
         return Response.status(HttpURLConnection.HTTP_UNAUTHORIZED).build();
     }
 
+    /**
+     * Performing DELETE on participant's recovery URL removes participant from the transaction.
+     * 
+     * @param enlistmentId The resource reference
+     * @return HTTP status code
+     */
     @DELETE
     @Path(RC_SEGMENT + "/{RecCoordId}")
     public Response deleteParticipant(@PathParam("RecCoordId")String enlistmentId)
