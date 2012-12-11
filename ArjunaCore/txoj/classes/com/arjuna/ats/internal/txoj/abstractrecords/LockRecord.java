@@ -60,7 +60,7 @@ public class LockRecord extends AbstractRecord
 	if (txojLogger.logger.isTraceEnabled())
 	{
 	    txojLogger.logger.trace("LockRecord::LockRecord("+lm.get_uid()+", "
-				       +(readOnly ? "PREPARE_READONLY" : "WRITEABLE")+")");
+				       +(rdOnly ? "PREPARE_READONLY" : "WRITEABLE")+")");
 	}
 	
 	actionHandle = currAct;
