@@ -364,16 +364,11 @@ public class IDLCompiler extends Task
 
             log("Processing '" + _filename + "'");
 
-            if (!processIDL(idlCompiler, _filename, _packageName, _destinationDirectory))
+            if (!processIDL(idlCompiler, _filename, _packageName, _destinationDirectory, ""))
             {
                 throw new BuildException("Failed to compile '" + _filename + "' file");
             }
         }
-    }
-
-    public boolean processIDL(IDLCompilerDetails idlCompiler, String filename, String packageName, String destDir)
-    {
-        return processIDL(idlCompiler, filename, packageName, "");
     }
 
     public boolean processIDL(IDLCompilerDetails idlCompiler, String filename, String packageName, String destDir, String mappings)
