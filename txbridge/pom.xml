@@ -30,9 +30,6 @@
         <version.byteman>2.0.1</version.byteman>
         <version.apache.httpcomponents>4.1.2</version.apache.httpcomponents>
         <byteman.home>${project.build.directory}/byteman</byteman.home>
-        <general.server.jvm.args>
-            -Xms64m -Xmx512m -XX:MaxPermSize=256m
-        </general.server.jvm.args>
         <ipv4.server.jvm.args></ipv4.server.jvm.args>
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
         <byteman.server.jvm.args>
@@ -262,7 +259,7 @@
 							<!-- System properties passed to test cases -->
 							<systemPropertyVariables>
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${general.server.jvm.args} ${ipv4.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
+								<server.jvm.args>${jvm.args.memory} ${ipv4.server.jvm.args} ${byteman.server.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>localhost</node.address>
 							</systemPropertyVariables>
@@ -304,7 +301,7 @@
 							<!-- System properties passed to test cases -->
 							<systemPropertyVariables>
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${general.server.jvm.args} ${ipv6.server.jvm.args} ${byteman.server.ipv6.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
+								<server.jvm.args>${jvm.args.memory} ${ipv6.server.jvm.args} ${byteman.server.ipv6.jvm.args} ${jpda.server.jvm.args}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>[::1]</node.address>
 							</systemPropertyVariables>

@@ -209,6 +209,12 @@
                         <version>2.12.4</version>
                         <configuration>
                             <skip>false</skip>
+                            <systemPropertyVariables combine.children="append">
+                                <!--
+                                    Used in arquillian.xml
+                                -->
+                                <server.jvm.args>${jvm.args.byteman} ${jvm.args.memory}</server.jvm.args>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

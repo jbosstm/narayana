@@ -1023,6 +1023,12 @@
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <findbugs.skip>true</findbugs.skip>
+    <jvm.args.byteman>-Dorg.jboss.byteman.verbose
+                        -Djboss.modules.system.pkgs=org.jboss.byteman
+                        -Dorg.jboss.byteman.transform.all
+                        -javaagent:${project.build.directory}/lib/byteman.jar=listener:true
+    </jvm.args.byteman>
+    <jvm.args.memory>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
 <!--
     <jboss-as.version>7.1.2.Final-SNAPSHOT</jboss-as.version>
 -->

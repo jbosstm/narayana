@@ -3,6 +3,7 @@ package org.jboss.narayana.txframework.functional;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -18,6 +19,7 @@ public class BaseFunctionalTest {
                 .addPackages(true, "org.jboss.narayana.txframework.functional")
                 .addAsResource("jaxws-handlers-jaxws-service.xml")
                 .addAsManifestResource("persistence.xml")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(new ByteArrayAsset("<interceptors><class>org.jboss.narayana.txframework.impl.ServiceRequestInterceptor</class></interceptors>".getBytes()),
                         ArchivePaths.create("beans.xml"));
 
