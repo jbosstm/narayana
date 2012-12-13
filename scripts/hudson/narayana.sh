@@ -276,7 +276,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 free -m
 
 #Make sure no JBoss processes running
-for i in `ps -eaf | grep java | grep "standalone*.xml" | grep -v grep | cut -c10-15`; do kill $i; done
+for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c10-15`; do kill $i; done
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
