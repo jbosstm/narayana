@@ -220,7 +220,7 @@ public class XARecoveryModule implements RecoveryModule
 	 * @return the XAResource than can be used to commit/rollback the specified
 	 *         record.
 	 */
-    public synchronized XAResource getNewXAResource(XAResourceRecord xaResourceRecord)
+    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord)
     {
         return getNewXAResource(xaResourceRecord.getXid());
     }
@@ -436,8 +436,7 @@ public class XARecoveryModule implements RecoveryModule
 						{
 							resource = ri.getXAResource();
 
-							xaRecoveryStart(resource);
-							xaRecoveryEnd(resource);
+							xaRecovery(resource);
 						}
 						catch (Exception exp)
 						{
@@ -466,28 +465,13 @@ public class XARecoveryModule implements RecoveryModule
                     XAResource[] xaResources = xaResourceRecoveryHelper.getXAResources();
                     if (xaResources != null)
                     {
-                    	synchronized (this) {
                         for (XAResource xaResource : xaResources)
                         {
                             try
                             {
                                 // This calls out to remote systems and may block. Consider using alternate concurrency
                                 // control rather than sync on __xaResourceRecoveryHelpers to avoid blocking problems?
-                                xaRecoveryStart(xaResource);
-                            }
-                            catch (Exception ex)
-                            {
-                                jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-                            }
-                        }
-                    	}
-                    	for (XAResource xaResource : xaResources)
-                        {
-                            try
-                            {
-                                // This calls out to remote systems and may block. Consider using alternate concurrency
-                                // control rather than sync on __xaResourceRecoveryHelpers to avoid blocking problems?
-                                xaRecoveryEnd(xaResource);
+                                xaRecovery(xaResource);
                             }
                             catch (Exception ex)
                             {
@@ -507,12 +491,14 @@ public class XARecoveryModule implements RecoveryModule
     }
 
 
-	private final void xaRecoveryStart(XAResource xares)
+	private final boolean xaRecovery(XAResource xares)
 	{
 		if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("xarecovery of " + xares);
         }
 
+		try
+		{
 			Xid[] trans = null;
 
 			try
@@ -537,7 +523,7 @@ public class XARecoveryModule implements RecoveryModule
 				{
 				}
 
-//				return false;TODO
+				return false;
 			}
 
 			RecoveryXids xidsToRecover = null;
@@ -581,14 +567,8 @@ public class XARecoveryModule implements RecoveryModule
 
 				_xidScans.put(xares, xidsToRecover);
 			}
+
 			xidsToRecover.nextScan(trans);
-	}
-	
-	
-	private final boolean xaRecoveryEnd(XAResource xares)
-	{
-		try {
-			RecoveryXids xidsToRecover = _xidScans.get(xares);
 
 			Xid[] xids = xidsToRecover.toRecover();
 
