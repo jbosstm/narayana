@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
 import junit.framework.Assert;
@@ -22,7 +44,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 /**
- * @Author paul.robinson@redhat.com 06/04/2012
+ * @author paul.robinson@redhat.com 06/04/2012
  */
 @RunWith(Arquillian.class)
 public class ClientTXInterceptorTest {
@@ -32,6 +54,7 @@ public class ClientTXInterceptorTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.txframework.functional.rest.at.simpleEJB")
                 .addClasses(EventLog.class, SomeApplicationException.class, ServiceCommand.class)
@@ -50,18 +73,21 @@ public class ClientTXInterceptorTest {
 
     @After
     public void teardownTest() throws Exception {
+
         client.clearLogs();
         //rollbackIfActive(ut);
     }
 
     @Test
     public void clientDrivenCommitTest() throws Exception {
+
         client.invoke();
         assertOrder(Prepare.class, Prepare.class, Commit.class, Commit.class);
     }
 
 
     private void assertOrder(Class<? extends Annotation>... expectedOrder) {
+
         String eventLog = client.getEventLog();
         Assert.assertEquals(EventLog.asString(Arrays.asList(expectedOrder)), eventLog);
     }

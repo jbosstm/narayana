@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,6 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- *
- * (C) 2007, 2009 @author JBoss Inc
  */
 package org.jboss.narayana.txframework.functional.services;
 
@@ -48,6 +46,7 @@ import javax.persistence.PersistenceContext;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @TransactionAttribute(TransactionAttributeType.MANDATORY) // default is REQUIRED
 public class ATBridgeImpl implements ATBridge {
+
     private static final int ENTITY_ID = 1;
 
     @PersistenceContext
@@ -55,6 +54,7 @@ public class ATBridgeImpl implements ATBridge {
 
     @WebMethod
     public void incrementCounter(int how_many) {
+
         System.out.println("incrementCounter");
 
         SimpleEntity entity = getSimpleEntity();
@@ -64,10 +64,10 @@ public class ATBridgeImpl implements ATBridge {
 
     @WebMethod
     public int getCounter() {
+
         System.out.println("getCounter");
-		SimpleEntity simpleEntity =  getSimpleEntity();
-        if (simpleEntity == null)
-        {
+        SimpleEntity simpleEntity = getSimpleEntity();
+        if (simpleEntity == null) {
             return -1;
         }
         return simpleEntity.getCounter();
@@ -75,12 +75,14 @@ public class ATBridgeImpl implements ATBridge {
 
     @WebMethod
     public void reset() {
+
         SimpleEntity entity = getSimpleEntity();
         entity.setCounter(0);
         em.merge(entity);
     }
 
     private SimpleEntity getSimpleEntity() {
+
         SimpleEntity entity = em.find(SimpleEntity.class, ENTITY_ID);
         if (entity == null) {
             entity = new SimpleEntity();

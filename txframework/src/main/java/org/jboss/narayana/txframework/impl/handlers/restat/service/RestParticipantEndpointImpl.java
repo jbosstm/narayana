@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
 import org.jboss.jbossts.star.util.TxStatus;
@@ -5,11 +27,7 @@ import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -20,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @Author paul.robinson@redhat.com 07/04/2012
+ * @author paul.robinson@redhat.com 07/04/2012
  */
 @Path("/")
 public class RestParticipantEndpointImpl {
@@ -65,6 +83,7 @@ public class RestParticipantEndpointImpl {
     }
 
     private static void checkNotNull(Object object, String name) throws ParticipantRegistrationException {
+
         if (object == null) {
             throw new ParticipantRegistrationException(name + " is null");
         }
@@ -109,7 +128,8 @@ public class RestParticipantEndpointImpl {
      */
     @HEAD
     @Path("{whats_this}/{txid}/{pId}/participant")
-    public Response getTerminator(@Context UriInfo info, @PathParam("pId") @DefaultValue("")String wId) {
+    public Response getTerminator(@Context UriInfo info, @PathParam("pId") @DefaultValue("") String wId) {
+
         String serviceURL = info.getBaseUri() + info.getPath();
         String linkHeader = new TxSupport().makeTwoPhaseAwareParticipantLinkHeader(serviceURL, false, wId, null);
 

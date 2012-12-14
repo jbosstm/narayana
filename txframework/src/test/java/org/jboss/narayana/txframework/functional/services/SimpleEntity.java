@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,6 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- *
- * (C) 2007, 2009 @author JBoss Inc
  */
 package org.jboss.narayana.txframework.functional.services;
 
@@ -34,37 +32,39 @@ import java.io.Serializable;
  * @author paul.robinson@redhat.com
  */
 @Entity
-public class SimpleEntity implements Serializable
-{
-	private int id;
-	private int bookingCount;
+public class SimpleEntity implements Serializable {
 
-	public SimpleEntity() { }
+    private int id;
+    private int bookingCount;
 
-	@Id
-	@GeneratedValue
-	public int getId ()
-    {
-		return id;
-	}
+    public SimpleEntity() {
 
-	public void setId (int id)
-    {
-		this.id = id;
-	}
+    }
 
-	public int getCounter()
-	{
-		return bookingCount;
-	}
+    @Id
+    @GeneratedValue
+    public int getId() {
 
-	public void setCounter(int counter)
-	{
-		this.bookingCount = counter;
-	}
+        return id;
+    }
 
-	public void incrimentCounter(int how_many)
-    {
-		setCounter(getCounter() + how_many);
-	}
+    public void setId(int id) {
+
+        this.id = id;
+    }
+
+    public int getCounter() {
+
+        return bookingCount;
+    }
+
+    public void setCounter(int counter) {
+
+        this.bookingCount = counter;
+    }
+
+    public void incrimentCounter(int how_many) {
+
+        setCounter(getCounter() + how_many);
+    }
 }
