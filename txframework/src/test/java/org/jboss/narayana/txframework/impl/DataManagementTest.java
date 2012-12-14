@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.jboss.narayana.txframework.impl;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -17,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author paul.robinson@redhat.com 01/11/2012
+ * @author paul.robinson@redhat.com 01/11/2012
  */
 @RunWith(Arquillian.class)
 public class DataManagementTest {
@@ -36,12 +58,14 @@ public class DataManagementTest {
 
     @Test(expected = TransactionDataUnavailableException.class)
     public void testNoData() throws Exception {
+
         Assert.assertNotNull(txDataMap);
         txDataMap.put("one", 1);
     }
 
     @Test
     public void testSuspendResume() throws Exception {
+
         Map map = new HashMap();
 
         assertTransactionDataUnavailable(txDataMap);
@@ -65,6 +89,7 @@ public class DataManagementTest {
 
     @Test
     public void testMultiSuspendResume() throws Exception {
+
         Map map1 = new HashMap();
         Map map2 = new HashMap();
 
@@ -87,11 +112,11 @@ public class DataManagementTest {
     }
 
     private void assertTransactionDataUnavailable(TXDataMap txDataMap) {
+
         try {
             txDataMap.isEmpty();
             Assert.fail();
-        }
-        catch (TransactionDataUnavailableException e) {
+        } catch (TransactionDataUnavailableException e) {
             //do nothing, this is expected
         }
     }
