@@ -310,9 +310,10 @@ public class SimpleIsolatedServers {
 
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
 		// JBTM-1260 simultaneous recover can cause spurious Xid rollback of normally completed Xid, should not be an issue
-		assertTrue("" + completionCounter.getRollbackCount("1000"), Arrays.asList(new Integer[] {3, 4}).contains(completionCounter.getRollbackCount("1000")));
+		// JBTM-1345 simulatenous recover can cause spurious Xid rollback of completed resources, should not be a data integrity issue
+		assertTrue("" + completionCounter.getRollbackCount("1000"), Arrays.asList(new Integer[] {3, 4, 5}).contains(completionCounter.getRollbackCount("1000")));
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("2000"), Arrays.asList(new Integer[] {3, 4}).contains(completionCounter.getRollbackCount("2000")));
+		assertTrue("" + completionCounter.getRollbackCount("2000"), Arrays.asList(new Integer[] {3, 4, 5}).contains(completionCounter.getRollbackCount("2000")));
 
 	}
 
