@@ -79,7 +79,8 @@ public class CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback {
 
 		RecoveryEnvironmentBean recoveryEnvironmentBean = BeanPopulator
 				.getDefaultInstance(RecoveryEnvironmentBean.class);
-		recoveryEnvironmentBean.setRecoveryBackoffPeriod(Integer.MAX_VALUE);
+		// JBTM-1354 we need to make sure that a full scan has gone off
+		recoveryEnvironmentBean.setRecoveryBackoffPeriod(1);
 		recoveryEnvironmentBean.setPeriodicRecoveryPeriod(Integer.MAX_VALUE);
 
 		List<String> recoveryModuleClassNames = new ArrayList<String>();
@@ -112,6 +113,10 @@ public class CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback {
 		if (xaRecoveryModule == null) {
 			throw new Exception("No XARM");
 		}
+
+		// JBTM-1354 Run a scan to make sure that the recovery thread has completed a full run before starting the test
+		// The important thing is that replayCompletion is allowed to do a scan of the transactions 
+		RecoveryManager.manager().scan();
 
 		XAResource firstResource = new SimpleResource();
 		Object toWakeUp = new Object();
