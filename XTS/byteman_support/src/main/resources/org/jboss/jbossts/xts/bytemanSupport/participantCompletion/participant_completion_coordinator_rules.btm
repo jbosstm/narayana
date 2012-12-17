@@ -9,8 +9,8 @@ DO debug("participant_completion.counter.create: " + counter),
 ENDRULE
 
 RULE complete called
-CLASS com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl
-METHOD completedOperation(NotificationType)
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+METHOD completed(NotificationType, MAP, ArjunaContext)
 AT RETURN
 BIND NOTHING
 IF (debug("participant_completion.counter.decrement") AND decrementCounter("completes") == 0)
