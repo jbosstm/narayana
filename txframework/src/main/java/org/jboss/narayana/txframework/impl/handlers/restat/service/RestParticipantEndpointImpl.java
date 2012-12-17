@@ -24,6 +24,7 @@ package org.jboss.narayana.txframework.impl.handlers.restat.service;
 
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.narayana.txframework.impl.Participant;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
@@ -32,7 +33,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +52,7 @@ public class RestParticipantEndpointImpl {
     private static Map<Integer, RESTAT2PCParticipant> participants = new ConcurrentHashMap<Integer, RESTAT2PCParticipant>();
 
 
-    public static void enlistParticipant(String txid, UriInfo info, String enlistUrl, ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException {
+    public static Participant enlistParticipant(String txid, UriInfo info, String enlistUrl, ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException {
 
         //todo: use a @Notnull annotation.
         checkNotNull(info, "txid");
@@ -62,7 +62,7 @@ public class RestParticipantEndpointImpl {
 
         final int pid = currentParticipantId.getAndIncrement();
 
-        RESTAT2PCParticipant participant = new RESTAT2PCParticipant(serviceInvocationMeta, new HashMap());
+        RESTAT2PCParticipant participant = new RESTAT2PCParticipant(serviceInvocationMeta);
         participants.put(pid, participant);
         participant.resume();
 
@@ -75,11 +75,10 @@ public class RestParticipantEndpointImpl {
          */
         String linkHeader = txSupport.makeTwoPhaseAwareParticipantLinkHeader(
                 info.getAbsolutePath().toString(), txid, String.valueOf(pid));
-        System.out.println("Service: Enlisting " + linkHeader);
         String recoveryUri = txSupport.enlistParticipant(enlistUrl, linkHeader);
-        System.out.println("Service: recoveryURI: " + recoveryUri);
 
-        // TODO the recovery URI should be use by the framework to provide recovery support
+        // TODO the recovery URI should be used by the framework to provide recovery support
+        return participant;
     }
 
     private static void checkNotNull(Object object, String name) throws ParticipantRegistrationException {

@@ -55,8 +55,6 @@ public class ATBridgeImpl implements ATBridge {
     @WebMethod
     public void incrementCounter(int how_many) {
 
-        System.out.println("incrementCounter");
-
         SimpleEntity entity = getSimpleEntity();
         entity.incrimentCounter(how_many);
         em.merge(entity);
@@ -65,7 +63,6 @@ public class ATBridgeImpl implements ATBridge {
     @WebMethod
     public int getCounter() {
 
-        System.out.println("getCounter");
         SimpleEntity simpleEntity = getSimpleEntity();
         if (simpleEntity == null) {
             return -1;

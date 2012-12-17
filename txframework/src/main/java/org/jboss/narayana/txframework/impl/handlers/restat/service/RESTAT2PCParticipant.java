@@ -28,13 +28,13 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class RESTAT2PCParticipant extends org.jboss.narayana.txframework.impl.Participant {
 
-    public RESTAT2PCParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException {
+    public RESTAT2PCParticipant(ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException {
 
-        super(serviceInvocationMeta, txDataMap);
+        super(serviceInvocationMeta, new HashMap());
 
         registerEventsOfInterest(Rollback.class, Commit.class, Prepare.class);
     }
