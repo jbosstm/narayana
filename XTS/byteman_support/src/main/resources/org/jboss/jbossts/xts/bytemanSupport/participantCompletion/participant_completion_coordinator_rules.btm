@@ -1,7 +1,7 @@
 RULE create counter
 CLASS org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules
 METHOD setParticipantCount(Integer)
-BIND counter:Integer=$1, disabled:boolean=false
+BIND counter:Integer=$1
 IF TRUE
 DO debug("participant_completion.counter.create: " + counter),
   deleteCounter("completes"),
@@ -10,8 +10,8 @@ DO debug("participant_completion.counter.create: " + counter),
 ENDRULE
 
 RULE complete called
-CLASS com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl
-METHOD completedOperation(NotificationType)
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+METHOD completed(NotificationType, MAP, ArjunaContext)
 AT RETURN
 BIND NOTHING
 IF (flagged("enabled") AND debug("participant_completion.counter.decrement") AND decrementCounter("completes") == 0)
