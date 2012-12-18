@@ -34,9 +34,9 @@ import java.util.Map;
 public class WSBACoordinatorCompletionParticipant extends WSBAParticipantCompletionParticipant implements
         BusinessAgreementWithCoordinatorCompletionParticipant {
 
-    public WSBACoordinatorCompletionParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap, String txid) throws ParticipantRegistrationException {
+    public WSBACoordinatorCompletionParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException {
 
-        super(serviceInvocationMeta, txDataMap, txid);
+        super(serviceInvocationMeta, txDataMap);
 
         registerEventsOfInterest(Complete.class);
     }

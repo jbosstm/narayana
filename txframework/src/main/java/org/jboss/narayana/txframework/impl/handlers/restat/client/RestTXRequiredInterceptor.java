@@ -28,8 +28,8 @@ import javax.interceptor.InvocationContext;
 
 /**
  * @author paul.robinson@redhat.com 09/04/2012
- * <p/>
- * Quick and dirty implementation of a TX annotation for REST-AT, similar to the EJB tx annotations. Needs doing properly and supporting all variations
+ *         <p/>
+ *         Quick and dirty implementation of a TX annotation for REST-AT, similar to the EJB tx annotations. Needs doing properly and supporting all variations
  */
 @Required
 @Interceptor

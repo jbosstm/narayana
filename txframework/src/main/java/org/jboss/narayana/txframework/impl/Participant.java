@@ -38,7 +38,7 @@ public abstract class Participant {
     protected Map<Class<? extends Annotation>, Method> lifecycleEventMap = new HashMap<Class<? extends Annotation>, Method>();
     protected List<Method> visibleMethods;
 
-    private final Map txDataMap;
+    private Map txDataMap;
 
     public Participant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException {
 
@@ -82,14 +82,13 @@ public abstract class Participant {
 
         try {
             method.setAccessible(true);
-            //todo: detect parameters better. Maybe have a different participant per interface.
             if (lifecycleEvent == ConfirmCompleted.class) {
                 return method.invoke(serviceInvocationMeta.getProxyInstance(), args);
             } else {
                 return method.invoke(serviceInvocationMeta.getProxyInstance());
             }
         } catch (Exception e) {
-            //todo: Log stacktrace to error and throw a SystemException
+            e.printStackTrace();
             throw new RuntimeException("Unable to invoke method '" + method.getName() + "' on '" + serviceInvocationMeta.getServiceClass().getName() + "'", e);
         } finally {
             suspend();

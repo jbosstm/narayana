@@ -22,11 +22,14 @@
 
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Completes;
+import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.impl.Participant;
@@ -37,30 +40,50 @@ import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
-public abstract class WSBAHandler implements ProtocolHandler {
+public class WSBAHandler implements ProtocolHandler {
 
     private ServiceInvocationMeta serviceInvocationMeta;
     private BAParticipantManager participantManager;
 
+    private Participant participant;
+
     WSBATxControl wsbaTxControl = new WSBATxControlImpl();
 
-    protected final WSBAParticipantRegistry participantRegistry = new WSBAParticipantRegistry();
-
-    protected static final Map<String, Participant> durableServiceParticipants = new HashMap<String, Participant>();
-
-    public WSBAHandler(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException {
+    public WSBAHandler(ServiceInvocationMeta serviceInvocationMeta, CompletionType completionType) throws TXFrameworkException {
 
         this.serviceInvocationMeta = serviceInvocationMeta;
-        participantManager = registerParticipants(serviceInvocationMeta);
+
+        try {
+            BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
+
+            if (completionType == CompletionType.COORDINATOR) {
+                WSBACoordinatorCompletionParticipant coordinatorCompletionParticipant = new WSBACoordinatorCompletionParticipant(serviceInvocationMeta, new HashMap());
+                participantManager = businessActivityManager.enlistForBusinessAgreementWithCoordinatorCompletion(coordinatorCompletionParticipant, serviceInvocationMeta.getServiceClass().getName() + UUID.randomUUID());
+                participant = coordinatorCompletionParticipant;
+            } else {
+                WSBAParticipantCompletionParticipant participantCompletionParticipant = new WSBAParticipantCompletionParticipant(serviceInvocationMeta, new HashMap());
+                participantManager = businessActivityManager.enlistForBusinessAgreementWithParticipantCompletion(participantCompletionParticipant,
+                        serviceInvocationMeta.getServiceClass().getName() + UUID.randomUUID());
+                participant = participantCompletionParticipant;
+            }
+
+        } catch (WrongStateException e) {
+            throw new ParticipantRegistrationException("Transaction was not in a state in which participants can be registered", e);
+        } catch (UnknownTransactionException e) {
+            throw new ParticipantRegistrationException("Can't register a participant as the transaction in unknown", e);
+        } catch (SystemException e) {
+            throw new ParticipantRegistrationException("A SystemException occurred when attempting to register a participant", e);
+        }
+
         WSBATxControlImpl.resume(participantManager);
     }
 
-    protected abstract BAParticipantManager registerParticipants(ServiceInvocationMeta serviceInvocationMeta) throws ParticipantRegistrationException;
-
     public Object proceed(InvocationContext ic) throws Exception {
 
+        WSBATxControlImpl.resume(participantManager);
+        participant.resume();
         return ic.proceed();
     }
 
