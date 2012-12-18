@@ -39,14 +39,9 @@ import java.util.Map;
 public class WSBAParticipantCompletionParticipant extends Participant implements BusinessAgreementWithParticipantCompletionParticipant,
         ConfirmCompletedParticipant, Serializable {
 
-    protected final WSBAParticipantRegistry participantRegistry = new WSBAParticipantRegistry();
-    private String txid;
-
-    public WSBAParticipantCompletionParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap, String txid) throws ParticipantRegistrationException {
+    public WSBAParticipantCompletionParticipant(ServiceInvocationMeta serviceInvocationMeta, Map txDataMap) throws ParticipantRegistrationException {
 
         super(serviceInvocationMeta, txDataMap);
-        this.txid = txid;
-
         registerEventsOfInterest(Cancel.class, Close.class, Compensate.class, ConfirmCompleted.class, Error.class, Status.class, Unknown.class);
     }
 
@@ -58,19 +53,16 @@ public class WSBAParticipantCompletionParticipant extends Participant implements
     public void close() throws WrongStateException, SystemException {
 
         invoke(Close.class);
-        participantRegistry.forget(txid);
     }
 
     public void cancel() throws FaultedException, WrongStateException, SystemException {
 
         invoke(Cancel.class);
-        participantRegistry.forget(txid);
     }
 
     public void compensate() throws FaultedException, WrongStateException, SystemException {
 
         invoke(Compensate.class);
-        participantRegistry.forget(txid);
     }
 
     public String status() throws SystemException {

@@ -30,9 +30,4 @@ public class UnsupportedProtocolException extends TXFrameworkException {
 
         super(message);
     }
-
-    public UnsupportedProtocolException(String message, Throwable cause) {
-
-        super(message, cause);
-    }
 }

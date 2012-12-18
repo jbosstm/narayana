@@ -24,7 +24,6 @@ package org.jboss.narayana.txframework.impl.handlers.wsat;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
-import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.*;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.Participant;
@@ -39,39 +38,21 @@ import java.util.UUID;
 
 public class WSATHandler implements ProtocolHandler {
 
-    private static final WSATParticipantRegistry participantRegistry = new WSATParticipantRegistry();
-
-    private static final Map<String, Participant> durableServiceParticipants = new HashMap<String, Participant>();
+    private Durable2PCParticipant durableParticipant;
 
     public WSATHandler(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException {
 
         try {
-            synchronized (participantRegistry) {
-                String txid = UserTransactionFactory.userTransaction().toString();
 
-                //Only create participant if there is not already a participant for this ServiceImpl and this transaction
-                Participant participantToResume;
-                if (!participantRegistry.isRegistered(txid, serviceInvocationMeta.getServiceClass())) {
-                    Map txDataMap = new HashMap();
-                    Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(serviceInvocationMeta, txDataMap, txid);
-                    Durable2PCParticipant durableParticipant = new WSATDurable2PCParticipant(serviceInvocationMeta, txDataMap);
+            Map txDataMap = new HashMap();
+            Volatile2PCParticipant volatileParticipant = new WSATVolatile2PCParticipant(serviceInvocationMeta, txDataMap);
+            durableParticipant = new WSATDurable2PCParticipant(serviceInvocationMeta, txDataMap);
 
-                    TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
-                    String idPrefix = serviceInvocationMeta.getServiceClass().getName();
-                    transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + UUID.randomUUID());
-                    transactionManager.enlistForDurableTwoPhase(durableParticipant, idPrefix + UUID.randomUUID());
+            TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
+            String idPrefix = serviceInvocationMeta.getServiceClass().getName();
+            transactionManager.enlistForVolatileTwoPhase(volatileParticipant, idPrefix + UUID.randomUUID());
+            transactionManager.enlistForDurableTwoPhase(durableParticipant, idPrefix + UUID.randomUUID());
 
-                    participantRegistry.register(txid, serviceInvocationMeta.getServiceClass());
-
-                    synchronized (durableServiceParticipants) {
-                        participantToResume = (Participant) durableParticipant;
-                        durableServiceParticipants.put(txid, participantToResume);
-                    }
-                } else {
-                    participantToResume = durableServiceParticipants.get(txid);
-                }
-                participantToResume.resume();
-            }
         } catch (WrongStateException e) {
             throw new ParticipantRegistrationException("Transaction was not in a state in which participants can be registered", e);
         } catch (UnknownTransactionException e) {
@@ -84,6 +65,7 @@ public class WSATHandler implements ProtocolHandler {
     @Override
     public Object proceed(InvocationContext ic) throws Exception {
 
+        ((Participant) durableParticipant).resume();
         return ic.proceed();
     }
 

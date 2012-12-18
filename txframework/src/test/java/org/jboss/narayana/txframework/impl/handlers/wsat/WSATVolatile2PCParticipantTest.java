@@ -44,7 +44,7 @@ public class WSATVolatile2PCParticipantTest {
 
         LifecycleImpl lifecycle = new LifecycleImpl();
         ServiceInvocationMeta serviceInvocationMeta = new ServiceInvocationMeta(lifecycle, LifecycleImpl.class, null);
-        WSATVolatile2PCParticipant participant = new WSATVolatile2PCParticipant(serviceInvocationMeta, new HashMap(), null);
+        WSATVolatile2PCParticipant participant = new WSATVolatile2PCParticipant(serviceInvocationMeta, new HashMap());
 
         participant.prepare();
         participant.commit();

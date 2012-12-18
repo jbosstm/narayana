@@ -23,13 +23,12 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.txframework.api.configuration.trigger.BALifecycleEvent;
 import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 
 public class WSBATxControlImpl implements WSBATxControl {
 
-    static final ThreadLocal<BAParticipantManager> baParticipantManagerThreadLocal = new ThreadLocal<BAParticipantManager>();
+    private static final ThreadLocal<BAParticipantManager> baParticipantManagerThreadLocal = new ThreadLocal<BAParticipantManager>();
 
     //todo: Need to hook into lifecycle or record it here.
     static final ThreadLocal<Boolean> cannotCompleteThreadLocal = new ThreadLocal<Boolean>();
@@ -66,15 +65,6 @@ public class WSBATxControlImpl implements WSBATxControl {
             cannotCompleteThreadLocal.set(true);
         } catch (Exception e) {
             throw new TXControlException("Exception when calling 'cannotComplete' on participant manager", e);
-        }
-    }
-
-    public void readOnly(BALifecycleEvent event) throws TXControlException {
-        //todo: what is the BALifecycleEvent for?
-        try {
-            baParticipantManagerThreadLocal.get().exit();
-        } catch (Exception e) {
-            throw new TXControlException("Exception when calling 'exit' on participant manager", e);
         }
     }
 

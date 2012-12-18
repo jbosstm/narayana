@@ -22,51 +22,99 @@
 
 package org.jboss.narayana.txframework.impl.handlers;
 
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
+import com.arjuna.wst.SystemException;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
-import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.restat.service.RESTATHandler;
 import org.jboss.narayana.txframework.impl.handlers.wsat.WSATHandler;
-import org.jboss.narayana.txframework.impl.handlers.wsba.WSBACoordinatorCompletionHandler;
-import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAParticipantCompletionHandler;
+import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAHandler;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandlerFactory {
 
-    //todo: improve the way transaction type is detected.
-    public static ProtocolHandler createInstance(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException {
+    private static final Map<String, ProtocolHandler> protocolHandlerMap = new HashMap<String, ProtocolHandler>();
 
-        Compensatable Compensatable = (Compensatable) serviceInvocationMeta.getServiceClass().getAnnotation(Compensatable.class);
-        if (Compensatable != null) {
-            CompletionType completionType = Compensatable.completionType();
-            if (completionType == CompletionType.PARTICIPANT) {
-                return new WSBAParticipantCompletionHandler(serviceInvocationMeta);
-            } else if (completionType == CompletionType.COORDINATOR) {
-                return new WSBACoordinatorCompletionHandler(serviceInvocationMeta);
-            } else {
-                throw new UnsupportedProtocolException("Unexpected or null completionType");
-            }
+    public static ProtocolHandler getInstance(ServiceInvocationMeta serviceInvocationMeta) throws TXFrameworkException {
+
+        String txid = getCurrentTXID() + ":" + serviceInvocationMeta.getServiceClass();
+        ProtocolHandler protocolHandler = protocolHandlerMap.get(txid);
+
+        if (protocolHandler != null) {
+            return protocolHandler;
+        }
+
+        Compensatable compensatable = (Compensatable) serviceInvocationMeta.getServiceClass().getAnnotation(Compensatable.class);
+        if (compensatable != null) {
+            protocolHandler = new WSBAHandler(serviceInvocationMeta, compensatable.completionType());
         }
 
         Transactional Transactional = (Transactional) serviceInvocationMeta.getServiceClass().getAnnotation(Transactional.class);
         if (Transactional != null) {
             if (isWSATTransactionRunning()) {
-                return new WSATHandler(serviceInvocationMeta);
+                protocolHandler = new WSATHandler(serviceInvocationMeta);
             } else //assume it must be a REST-AT transaction running.
             {
-                return new RESTATHandler(serviceInvocationMeta);
+                protocolHandler = new RESTATHandler(serviceInvocationMeta);
             }
         }
-        throw new UnsupportedProtocolException("Expected to find a transaction type annotation on '" + serviceInvocationMeta.getServiceClass().getName() + "'");
+
+        if (protocolHandler == null) {
+            throw new UnsupportedProtocolException("Expected to find a transaction type annotation on '" + serviceInvocationMeta.getServiceClass().getName() + "'");
+        }
+
+        protocolHandlerMap.put(txid, protocolHandler);
+        return protocolHandler;
     }
 
     private static boolean isWSATTransactionRunning() {
 
         UserTransaction ut = UserTransactionFactory.userTransaction();
         return !ut.transactionIdentifier().equals("Unknown");
+    }
+
+    private static String getCurrentTXID() throws TXFrameworkException {
+
+        String txid;
+
+        //Try WS-AT
+        txid = UserTransactionFactory.userTransaction().transactionIdentifier();
+        if (!txid.equals("Unknown")) {
+            return txid;
+        }
+
+        //Try WS-BA
+        try {
+            BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
+
+            if (businessActivityManager.currentTransaction() != null) {
+                txid = businessActivityManager.currentTransaction().toString();
+                if (!txid.equals("Unknown")) {
+                    return txid;
+                }
+            }
+        } catch (SystemException e) {
+            throw new TXFrameworkException("Error when looking up Business Activity", e);
+        }
+
+        //Try REST-AT
+        HttpServletRequest req = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+        String enlistUrl = req.getHeader("enlistURL");
+        if (enlistUrl != null) {
+            String[] parts = enlistUrl.split("/");
+            return parts[parts.length - 1];
+        }
+
+        throw new TXFrameworkException("No Transaction detected");
     }
 
 }
