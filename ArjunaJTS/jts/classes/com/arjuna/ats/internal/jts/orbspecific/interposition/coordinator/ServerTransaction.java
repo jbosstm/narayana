@@ -671,11 +671,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	private int _prepState;
 
-	private static boolean _interposedSynch = false;
-
-	static
-	{
-		_interposedSynch = jtsPropertyManager.getJTSEnvironmentBean().isSupportInterposedSynchronization();
-	}
+	private static final boolean _interposedSynch = jtsPropertyManager.getJTSEnvironmentBean()
+            .isSupportInterposedSynchronization();
 
 }

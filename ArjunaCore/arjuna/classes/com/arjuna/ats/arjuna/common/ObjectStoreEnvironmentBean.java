@@ -23,6 +23,7 @@ package com.arjuna.ats.arjuna.common;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
@@ -93,6 +94,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getCacheStoreSize()
     {
+        if (cacheStoreSize < 0)
+        {
+            return 0;
+        }
+
         return cacheStoreSize;
     }
 
@@ -148,6 +154,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getCacheStoreRemovedItems()
     {
+        if (cacheStoreRemovedItems < 0)
+        {
+            return 0;
+        }
+
         return cacheStoreRemovedItems;
     }
 
@@ -202,6 +213,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getCacheStoreWorkItems()
     {
+        if (cacheStoreWorkItems < 0)
+        {
+            return 0;
+        }
+
         return cacheStoreWorkItems;
     }
 
@@ -229,6 +245,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getCacheStoreHash()
     {
+        if (cacheStoreHash <= 0)
+        {
+            return 128;
+        }
+
         return cacheStoreHash;
     }
 
@@ -402,6 +423,10 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getHashedDirectories()
     {
+        if (hashedDirectories <= 0) {
+            tsLogger.i18NLogger.warn_objectstore_HashedStore_2(Integer.toString(hashedDirectories));
+            return HashedStore.DEFAULT_NUMBER_DIRECTORIES;
+        }
         return hashedDirectories;
     }
 
@@ -516,6 +541,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getHierarchyRetry()
     {
+        if (hierarchyRetry < 0)
+        {
+            return 100;
+        }
+
         return hierarchyRetry;
     }
 
@@ -545,6 +575,11 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public int getHierarchyTimeout()
     {
+        if (hierarchyTimeout < 0)
+        {
+            return 100;
+        }
+
         return hierarchyTimeout;
     }
 

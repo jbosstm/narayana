@@ -529,7 +529,10 @@ public class Sc007TestCase extends InteropTestCase
     {
         return (getAsyncTest() ? AsyncParticipantStub.getParticipantStub() : SyncParticipantStub.getParticipantStub()) ;
     }
-    
+
+    /**
+     * Initialises SOURCE_PARTICIPANT_URI and SOURCE_COORDINATOR_URI
+     */
     static
     {
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;

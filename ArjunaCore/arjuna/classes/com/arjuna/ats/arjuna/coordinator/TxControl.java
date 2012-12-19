@@ -210,28 +210,28 @@ public class TxControl
 	    }
 	}
 	
-	static boolean maintainHeuristics = true;
+	static final boolean maintainHeuristics = arjPropertyManager.getCoordinatorEnvironmentBean().isMaintainHeuristics();
 
-	static boolean asyncCommit = false;
+	static final boolean asyncCommit = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncCommit();
 
-	static boolean asyncPrepare = false;
+	static final boolean asyncPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncPrepare();
 
-	static boolean asyncRollback = false;
+	static final boolean asyncRollback = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncRollback();
 
-	static boolean onePhase = true;
+	static final boolean onePhase = arjPropertyManager.getCoordinatorEnvironmentBean().isCommitOnePhase();
 
-	static boolean readonlyOptimisation = true;
+	static final boolean readonlyOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isReadonlyOptimisation();
 
     /**
      * flag which is true if transaction service is enabled and false if it is disabled
      */
-	static volatile boolean enable = true;
+	static volatile boolean enable = !arjPropertyManager.getCoordinatorEnvironmentBean().isStartDisabled();
 
 	private static TransactionStatusManager transactionStatusManager = null;
 
 	static String xaNodeName = arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier();
 
-	static int _defaultTimeout = 60; // 60 seconds
+	static int _defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
 
     /**
      * flag which is true if enable and disable operations, respectively, start and stop the transaction status
@@ -239,29 +239,19 @@ public class TxControl
      * set to false by setting property {@link#com.arjuna.ats.arjuna.common.TRANSACTION_STATUS_MANAGER_ENABLE}
      * to value "NO"
      */
-	static boolean _enableTSM = true;
+	static final boolean _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();
     
-    static boolean beforeCompletionWhenRollbackOnly = false;
+    static final boolean beforeCompletionWhenRollbackOnly = arjPropertyManager.getCoordinatorEnvironmentBean().isBeforeCompletionWhenRollbackOnly();
 	
 	static Thread _shutdownHook = null;
 	
 	static Object _lock = new Object();
-	
+
+    /**
+     * Creates transaction status manager.
+     */
 	static
 	{
-        _defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
-        maintainHeuristics = arjPropertyManager.getCoordinatorEnvironmentBean().isMaintainHeuristics();
-		asyncCommit = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncCommit();
-        asyncPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncPrepare();
-        onePhase = arjPropertyManager.getCoordinatorEnvironmentBean().isCommitOnePhase();
-        asyncRollback = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncRollback();
-        readonlyOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isReadonlyOptimisation();
-        enable = !arjPropertyManager.getCoordinatorEnvironmentBean().isStartDisabled();
-        beforeCompletionWhenRollbackOnly = arjPropertyManager.getCoordinatorEnvironmentBean().isBeforeCompletionWhenRollbackOnly();
-
-
-        _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();
-
         // TODO -- add this check to respect the environment setting for Environment.START_DISABLED?
         // TODO -- is this feature actually needed (it appears not to be used internally)
         // if (enable) {

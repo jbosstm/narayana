@@ -385,12 +385,8 @@ private static Status get_status (Uid actionUid, Uid processUid) throws Inactive
 
     private RecoveryCoordinatorId _id;
 
-    private static boolean  _issueRecoveryRollback;
-
-    static
-    {
-        _issueRecoveryRollback = jtsPropertyManager.getJTSEnvironmentBean().isIssueRecoveryRollback();
-    }
+    private static final boolean  _issueRecoveryRollback = jtsPropertyManager.getJTSEnvironmentBean()
+            .isIssueRecoveryRollback();
 
 }
 

@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.jts.extensions;
 
+import com.arjuna.ats.jts.logging.jtsLogger;
+
 /**
  * To get the formatID used to represent JBoss transactions
  * to the system.
@@ -81,7 +83,7 @@ public static final String osiXID ()
 public static final int nameToXID (String name)
     {
 	if (name == null)
-	    return -1;
+	    return Arjuna.XID();
 	else
 	{
 	    if (name.compareTo(Arjuna.arjunaXID()) == 0)
@@ -99,7 +101,10 @@ public static final int nameToXID (String name)
 			if (name.compareTo(Arjuna.osiXID()) == 0)
 			    return 0; // osi tp
 			else
-			    return -1;
+            {
+                jtsLogger.i18NLogger.warn_orbspecific_coordinator_ipunknown("Arjuna.nameToXID", name);
+			    return Arjuna.XID();
+            }
 		    }
 		}
 	    }
