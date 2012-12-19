@@ -1751,15 +1751,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     private Throwable _rollbackOnlyCallerStacktrace;
 
-	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
-	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
+	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean()
+            .isXaTransactionTimeoutEnabled();
+	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean()
+            .getLastResourceOptimisationInterface();
 
+    /**
+     * Static block writes warning message to the log if last resource optimisation interface was not provided.
+     */
 	static
 	{
-        XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
-
-        LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterface();
-
         if(LAST_RESOURCE_OPTIMISATION_INTERFACE == null) {
             jtaLogger.i18NLogger.warn_transaction_arjunacore_lastResourceOptimisationInterface(jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterfaceClassName());
             jtaxLogger.i18NLogger.warn_jtax_transaction_jts_lastResourceOptimisationInterface(jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterfaceClassName());

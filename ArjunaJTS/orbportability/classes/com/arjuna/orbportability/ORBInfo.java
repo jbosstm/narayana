@@ -150,6 +150,9 @@ public class ORBInfo
     private static ORBData          _theData = null;
     private static SimpleXMLParser  _xml = null;
 
+    /**
+     * Static block is used to initialize _theData and _xml static variables.
+     */
     static
     {
         try {

@@ -776,22 +776,24 @@ public abstract class FileSystemStore extends ObjectStore
     // global values (some of which may be reset on a per instance basis).
 
     private static Hashtable fileCache = new Hashtable();
-    private static int       createRetry = 100;
-    private static int       createTimeout = 100;
+    private static int       createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
+    private static int       createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
 
     protected boolean scanZeroLengthFiles = false;
 
+    /**
+     * Static block sets rewriteSeparator variable to true if FileSystemStore's file separator is different
+     * than default file system's separator.
+     *
+     * Also, createRetry and createTimeout variables are validated.
+     */
     static
     {
         if (File.separatorChar != FileSystemStore.unixSeparator)
             rewriteSeparator = true;
 
-        createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
-
         if (createRetry < 0)
             createRetry = 100;
-
-        createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
 
         if (createTimeout < 0)
             createTimeout = 100;

@@ -253,12 +253,7 @@ public class Listener extends Thread
 
     private List<Socket> connections;
 
-    private static boolean setTimeout = false;
-    
-    static
-    {
-    	setTimeout = recoveryPropertyManager.getRecoveryEnvironmentBean().isTimeoutSocket();
-    }
-    
+    private static boolean setTimeout = recoveryPropertyManager.getRecoveryEnvironmentBean().isTimeoutSocket();
+
 }
 

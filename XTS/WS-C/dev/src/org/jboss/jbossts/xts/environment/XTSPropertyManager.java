@@ -51,6 +51,9 @@ public class XTSPropertyManager
 
     static Properties xtsProperties;
 
+    /**
+     * Initialise XTS properties.
+     */
     static {
         try {
             xtsProperties = XTSPropertiesFactory.getDefaultProperties();

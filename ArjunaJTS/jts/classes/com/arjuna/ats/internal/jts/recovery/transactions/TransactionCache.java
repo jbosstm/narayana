@@ -313,10 +313,6 @@ public class TransactionCache
     }
     
     private static Hashtable _theCache = new Hashtable();
-    private static int attemptsBeforeConversion = 3;
-
-    static
-    {
-        attemptsBeforeConversion = jtsPropertyManager.getJTSEnvironmentBean().getCommitedTransactionRetryLimit();
-    }
+    private static int attemptsBeforeConversion = jtsPropertyManager.getJTSEnvironmentBean()
+            .getCommitedTransactionRetryLimit();
 }

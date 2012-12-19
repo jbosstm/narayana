@@ -1304,11 +1304,6 @@ public class LockManager extends StateManager
 
     protected static final int DOZE_TIME = 1000000;
 
-    protected static boolean nestedLocking = true;
-
-    static
-    {
-        nestedLocking = txojPropertyManager.getTxojEnvironmentBean().isAllowNestedLocking();
-    }
+    protected static boolean nestedLocking = txojPropertyManager.getTxojEnvironmentBean().isAllowNestedLocking();
 
 }

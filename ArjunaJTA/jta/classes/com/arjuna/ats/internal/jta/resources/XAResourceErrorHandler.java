@@ -57,6 +57,9 @@ public class XAResourceErrorHandler
 
 	private static HashMap _maps = new HashMap();
 
+    /**
+     * Static block puts all configured XAResourceMap instances to the XAResourceErrorHandler's hash map.
+     */
     static
     {
         for(XAResourceMap xaResourceMap : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceMaps())

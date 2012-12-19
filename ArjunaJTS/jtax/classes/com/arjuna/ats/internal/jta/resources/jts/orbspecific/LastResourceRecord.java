@@ -157,15 +157,18 @@ public class LastResourceRecord extends XAResourceRecord
         }
     }
 
-    private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES;
+    private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean()
+            .isAllowMultipleLastResources();
 
     private static boolean _disableMLRWarning = false;
     private static boolean _issuedWarning = false;
 
+    /**
+     * Static block writes warning messages to the log if either multiple last resources are enabled
+     * or multiple last resources warning is disabled.
+     */
     static
     {
-        ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources();
-
         if (ALLOW_MULTIPLE_LAST_RESOURCES)
         {
             jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_lastResource_startupWarning();
