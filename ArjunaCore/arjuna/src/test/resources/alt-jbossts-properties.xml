@@ -4,4 +4,5 @@
     <entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry>
     <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry>
     <entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 </properties>

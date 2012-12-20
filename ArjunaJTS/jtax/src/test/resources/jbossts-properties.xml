@@ -11,4 +11,5 @@
 
 	<entry key="JTAEnvironmentBean.userTransactionClassName">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</entry>
     
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 </properties>

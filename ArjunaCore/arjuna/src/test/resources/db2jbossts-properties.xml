@@ -12,4 +12,5 @@
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.ibm.db2.jcc.DB2DataSource;DatabaseName=BTDB1;ServerName=tywin.buildnet.ncl.jboss.com;DriverType=4;PortNumber=50001;User=db2;Password=db2</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 </properties>
