@@ -12,4 +12,5 @@
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.postgresql.ds.PGSimpleDataSource;DatabaseName=jbossts;User=dtf11;Password=dtf11;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=5432</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 </properties>

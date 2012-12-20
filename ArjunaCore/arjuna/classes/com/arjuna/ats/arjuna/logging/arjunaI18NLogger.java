@@ -1470,6 +1470,20 @@ public interface arjunaI18NLogger {
 	public void warn_objectstore_JDBCImple_over_max_image_size(int imageSize,
 			int maxStateSize);
 
+    @Message(id = 12372, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
+    @LogMessage(level = FATAL)
+    public void fatal_nodename_too_long(String xaNodeName);
+
+    @Message(id = 12373, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
+    public String get_fatal_nodename_too_long(String xaNodeName);
+
+    @Message(id = 12374, value = "The node identifier cannot be null, aborting initialization", format = MESSAGE_FORMAT)
+    @LogMessage(level = FATAL)
+    public void fatal_nodename_null();
+
+    @Message(id = 12375, value = "The node identifier cannot be null, aborting initialization", format = MESSAGE_FORMAT)
+    public String get_fatal_nodename_null();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
