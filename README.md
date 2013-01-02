@@ -10,6 +10,12 @@ This build uses a patch of the EMMA Jar, the source code for the patch is availa
 The latest version of the patched emma is available from /ext folder.
 
 
+Requirements
+------------
+To build Narayana you should have installed:
+Java 1.6.0 or greater
+
+
 Building Naryana
 ----------------
 To build Narayana you should call:
