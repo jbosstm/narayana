@@ -12,4 +12,5 @@
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.h2.jdbcx.JdbcDataSource;URL=jdbc:h2:target/h2/JBTMDB;User=sa;Password=sa</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 </properties>

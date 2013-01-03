@@ -49,14 +49,10 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 public class XATxConverter
 {
-	private static XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
+	private static XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin =
+            jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
     public static final int FORMAT_ID = 131077; // different from JTS ones.
 
-
-	static {
-        xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
-	}
-	
     static XID getXid (Uid uid, boolean branch, Integer eisName) throws IllegalStateException
     {
         if (branch)

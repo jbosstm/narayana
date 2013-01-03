@@ -77,6 +77,9 @@ public class Implementations
 
     private static boolean _added = false;
 
+    /**
+     * Static block triggers initialization of XAResourceRecordMap.
+     */
     static
     {
 	initialise();

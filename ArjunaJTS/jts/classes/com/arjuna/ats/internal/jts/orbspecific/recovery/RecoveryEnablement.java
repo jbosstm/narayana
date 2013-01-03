@@ -152,6 +152,10 @@ public class RecoveryEnablement implements RecoveryActivator
         }
     }
 
+    /**
+     * Static block informs RecoveryInit class that this is not a normal TS user.
+     * Also, initializes recovery manager's tag.
+     */
     static{
 
         // tell the recovery init we aren't a normal TS-user

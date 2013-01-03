@@ -123,13 +123,15 @@ public class ExpiredContactScanner implements ExpiryScanner
 
     private String	 _itemTypeName;
     private RecoveryStore _recoveryStore;
-    private static int _expiryTime = 12 *60*60; // default is 12 hours
+    private static int _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean()
+            .getTransactionStatusManagerExpiryTime() * 60 * 60;
     private static SimpleDateFormat    _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
+    /**
+     * Static block writes expiry scan interval to the log.
+     */
     static
     {
-        _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
-
         if (jtsLogger.logger.isDebugEnabled()) {
             jtsLogger.logger.debug("Expiry scan interval set to "+_expiryTime+" seconds");
         }

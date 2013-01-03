@@ -306,17 +306,11 @@ public class BaseTransaction
         return task;
     }
 
-	private static boolean _supportSubtransactions = false;
+	private static boolean _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
 
 	private static ThreadLocal<Integer> _timeouts = new ThreadLocal<Integer>();
 
-	private static int _asyncCommitPoolSize;
-	
-	static
-	{
-            _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
-            _asyncCommitPoolSize = jtaPropertyManager.getJTAEnvironmentBean().getAsyncCommitPoolSize();
-	}
+	private static int _asyncCommitPoolSize = jtaPropertyManager.getJTAEnvironmentBean().getAsyncCommitPoolSize();
 
 	private static ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, _asyncCommitPoolSize, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3));
 
