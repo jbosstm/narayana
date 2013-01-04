@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" kind="src" path="/jbossjts-jacorb"/>
 	<classpathentry excluding="com/arjuna/ats/tools/perftest/|com/arjuna/ats/tools/perftest/product/|org/narayana/tools/perf/|com/arjuna/ats/internal/arjuna/objectstore/jdbc/h2_driver.java" kind="src" path="tests/product/src"/>
 	<classpathentry excluding="org/jboss/jbossts/qa/astests/taskdefs/ASTestConfig.java|org/jboss/jbossts/qa/astests/taskdefs/ServerTask.java|org/jboss/jbossts/qa/astests/taskdefs/ASClientTask.java|org/jboss/jbossts/qa/astests/taskdefs/ClientAction.java|org/jboss/jbossts/qa/astests/ASCrashRecovery01/|org/jboss/jbossts/qa/astests/crash/" kind="src" path="tests/src"/>
 	<classpathentry kind="src" path="tests/build/idl"/>
@@ -12,7 +11,7 @@
 	<classpathentry kind="lib" path="ext/providerutil.jar"/>
 	<classpathentry kind="lib" path="tests/product/lib/jbossts/fscontext.jar"/>
 	<classpathentry kind="lib" path="tests/product/lib/jbossts/providerutil.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jboss-transaction-api_1.1_spec.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jboss-transaction-api_1.1_spec.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/DB2_v9.7/db2jcc.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/jConnect-6_0/classes/jconn3.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/mysql-connector-java-5.1.8-bin.jar"/>
@@ -20,51 +19,49 @@
 	<classpathentry kind="lib" path="dbdrivers/oracle_10_2_0_4/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/postgresql-8.3-605.jdbc4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/arjuna"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jta"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jts"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/orbportability"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jacorb-idl"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jdbc"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/txoj"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jtax"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/activation.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/commons-codec.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/commons-httpclient.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/dom4j.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/hamcrest-core.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/hornetq-core.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/httpclient.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/httpcore.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/ironjacamar-spec-api.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/javassist.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jaxrs-api.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jboss-logging-processor.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jboss-logging.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jboss-servlet-api_3.0_spec.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jbossws-api.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jcip-annotations.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jcl-over-slf4j.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jcommon.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jfreechart.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/jsr250-api.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/junit.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/log4j.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/resteasy-jaxrs.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/scannotation.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/slf4j-api.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/slf4j-simple.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/wrapper.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/lib/ext/xml-apis.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/antlr-2.7.2.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/backport-util-concurrent.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/idl.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/jacorb.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/logkit-1.2.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/picocontainer-1.2.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/slf4j-jdk14-1.5.6.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.3.Final-SNAPSHOT/jacorb/lib/wrapper-3.1.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.arjunacore.arjuna"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jta.jta"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jts.jts"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jts.orbportability"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jts.jacorb-idl"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jta.jdbc"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.arjunacore.txoj"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jts.jtax"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/activation.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/commons-codec.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/dom4j.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/hamcrest-core.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/hornetq-core.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/httpclient.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/httpcore.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/ironjacamar-spec-api.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/javassist.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jaxrs-api.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jboss-logging-processor.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jboss-logging.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jboss-servlet-api_3.0_spec.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jbossws-api.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jcip-annotations.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jcommon.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jfreechart.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/jsr250-api.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/junit.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/log4j.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/resteasy-jaxrs.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/scannotation.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/wrapper.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/xml-apis.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/antlr-2.7.2.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/backport-util-concurrent.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/idl.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/jacorb.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/logkit-1.2.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/picocontainer-1.2.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/slf4j-jdk14-1.5.6.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/jacorb/lib/wrapper-3.1.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.jbossts.jts.jbossjts-jacorb"/>
 	<classpathentry kind="output" path="tests/build/classes/"/>
 </classpath>
