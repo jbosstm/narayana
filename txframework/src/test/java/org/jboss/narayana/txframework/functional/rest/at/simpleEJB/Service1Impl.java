@@ -47,7 +47,6 @@ public class Service1Impl implements Service1 {
     @Inject
     Map TXDataMap;
 
-    private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
     @WebMethod
@@ -61,7 +60,7 @@ public class Service1Impl implements Service1 {
         }
 
         if (VOTE_ROLLBACK.equals(serviceCommand)) {
-            rollback = true;
+            TXDataMap.put("rollback", true);
         }
         return Response.ok().build();
     }
@@ -93,7 +92,7 @@ public class Service1Impl implements Service1 {
     private Boolean prepare() {
 
         logEvent(Prepare.class);
-        if (rollback) {
+        if (TXDataMap.containsKey("rollback")) {
             return false;
         } else {
             return true;
