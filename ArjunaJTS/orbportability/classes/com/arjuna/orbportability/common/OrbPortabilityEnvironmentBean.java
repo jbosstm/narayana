@@ -127,7 +127,7 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     }
 
     /**
-     * Sets the name of the direcory to store reference files in.
+     * Sets the name of the directory to store reference files in.
      *
      * @param fileDir the path to the reference file directory.
      */

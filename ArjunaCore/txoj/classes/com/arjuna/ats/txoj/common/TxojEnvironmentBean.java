@@ -33,9 +33,12 @@ import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 @PropertyPrefix(prefix = "com.arjuna.ats.txoj.lockstore.")
 public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
+    @Deprecated
     private volatile String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
     private volatile String lockStoreType = BasicLockStore.class.getName();
+    @Deprecated
     private volatile String multipleLockStore = null;
+    @Deprecated
     private volatile String singleLockStore = BasicLockStore.class.getName();
     private volatile boolean allowNestedLocking = true;
 
@@ -47,6 +50,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @return the path to the lock directory.
      */
+    @Deprecated
     public String getLockStoreDir()
     {
         return lockStoreDir;
@@ -57,6 +61,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @param lockStoreDir the path to the lock directory.
      */
+    @Deprecated
     public void setLockStoreDir(String lockStoreDir)
     {
         this.lockStoreDir = lockStoreDir;
@@ -94,6 +99,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @return the name of the multiple lock store implementation. 
      */
+    @Deprecated
     public String getMultipleLockStore()
     {
         return multipleLockStore;
@@ -104,6 +110,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @param multipleLockStore the name of the multiple lock store implementation.
      */
+    @Deprecated
     public void setMultipleLockStore(String multipleLockStore)
     {
         this.multipleLockStore = multipleLockStore;
@@ -117,6 +124,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @return the name of the single lock store implementation.
      */
+    @Deprecated
     public String getSingleLockStore()
     {
         return singleLockStore;
@@ -127,6 +135,7 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
      *
      * @param singleLockStore  the name of the single lock store implementation.
      */
+    @Deprecated
     public void setSingleLockStore(String singleLockStore)
     {
         this.singleLockStore = singleLockStore;
