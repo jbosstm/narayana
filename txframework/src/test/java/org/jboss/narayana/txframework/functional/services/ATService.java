@@ -46,9 +46,8 @@ import java.lang.annotation.Annotation;
 public class ATService {
 
     @Inject
-    public TXDataMap<String, String> txDataMap;
+    private TXDataMap<String, String> txDataMap;
 
-    private boolean rollback = false;
     private EventLog eventLog = new EventLog();
 
     @WebMethod
@@ -61,7 +60,7 @@ public class ATService {
         }
 
         if (isPresent(ServiceCommand.VOTE_ROLLBACK, serviceCommands)) {
-            rollback = true;
+            txDataMap.put("rollback", "true");
         }
     }
 
@@ -111,7 +110,7 @@ public class ATService {
     private Boolean prepare() {
 
         logEvent(Prepare.class);
-        if (rollback) {
+        if (txDataMap.containsKey("rollback")) {
             return false;
         } else {
             return true;
