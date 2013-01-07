@@ -27,6 +27,7 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
+import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
@@ -45,7 +46,7 @@ import java.util.Map;
 public class Service1Impl implements Service1 {
 
     @Inject
-    Map TXDataMap;
+    private TXDataMap<String, String> txDataMap;
 
     private EventLog eventLog = new EventLog();
 
@@ -53,14 +54,14 @@ public class Service1Impl implements Service1 {
     @ServiceRequest
     public Response someServiceRequest(String serviceCommand) throws SomeApplicationException {
 
-        TXDataMap.put("data", "data");
+        txDataMap.put("data", "data");
 
         if (Service1.THROW_APPLICATION_EXCEPTION.equals(serviceCommand)) {
             throw new SomeApplicationException("Intentionally thrown Exception");
         }
 
         if (VOTE_ROLLBACK.equals(serviceCommand)) {
-            TXDataMap.put("rollback", true);
+            txDataMap.put("rollback", "true");
         }
         return Response.ok().build();
     }
@@ -92,7 +93,7 @@ public class Service1Impl implements Service1 {
     private Boolean prepare() {
 
         logEvent(Prepare.class);
-        if (TXDataMap.containsKey("rollback")) {
+        if (txDataMap.containsKey("rollback")) {
             return false;
         } else {
             return true;
@@ -101,7 +102,7 @@ public class Service1Impl implements Service1 {
 
     private void logEvent(Class<? extends Annotation> event) {
         //Check data is available
-        if (TXDataMap.get("data") == null) {
+        if (txDataMap.get("data") == null) {
             eventLog.addDataUnavailable(event);
         }
 
