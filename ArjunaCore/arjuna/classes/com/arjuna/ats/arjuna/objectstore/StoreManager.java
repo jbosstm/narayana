@@ -143,49 +143,17 @@ public class StoreManager
 
     private static final ObjectStoreAPI initStore(String name)
     {
-        ObjectStoreEnvironmentBean storeEnvBean;
-        
-        try
-        {
-            storeEnvBean = BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, name);
-        }
-        catch (final java.lang.RuntimeException ex)
-        {
-            if (Utility.isAndroid())
-                storeEnvBean = new ObjectStoreEnvironmentBean(); // todo android
-            else
-                throw ex;
-        }
-        
+        ObjectStoreEnvironmentBean storeEnvBean = BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, name);
         String storeType = storeEnvBean.getObjectStoreType();
-        ObjectStoreAPI store = null;
+        ObjectStoreAPI store;
 
         try
         {
             store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name);
         }
-        catch (final java.lang.RuntimeException ex)
+        catch (final Throwable ex)
         {
-            if (Utility.isAndroid())  // todo android
-                store = null;
-            else            
-                throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
-        }
-
-        // if store is null then we shouldn't get here except for on android
-        
-        if (store == null)
-        {
-            try
-            {
-                Class<?> clazz = Class.forName(storeType);
-                
-                store = (ObjectStoreAPI) clazz.getConstructor(ObjectStoreEnvironmentBean.class).newInstance(storeEnvBean);
-            }
-            catch (final Throwable ex)
-            {
-                throw new RuntimeException(ex);
-            }
+            throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
         }
 
         store.start();
