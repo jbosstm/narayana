@@ -27,6 +27,7 @@ import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.exception.TXControlException;
+import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
@@ -55,14 +56,14 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion {
     private WSBATxControl txControl;
     private EventLog eventLog = new EventLog();
     @Inject
-    private Map TXDataMap;
+    private TXDataMap<String, String> txDataMap;
 
     @WebMethod
     @ServiceRequest
     //todo: batch up data and only addEvent during confirmCompleted
     public void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException {
 
-        TXDataMap.put("data", "data");
+        txDataMap.put("data", "data");
         try {
             if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands)) {
                 throw new SomeApplicationException("Intentionally thrown Exception");
@@ -170,7 +171,7 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion {
 
     private void logEvent(Class<? extends Annotation> event) {
         //Check data is available
-        if (TXDataMap == null || TXDataMap.get("data") == null) {
+        if (txDataMap == null || txDataMap.get("data") == null) {
             eventLog.addDataUnavailable(event);
         }
 

@@ -46,7 +46,7 @@ import java.lang.annotation.Annotation;
 public class ATService {
 
     @Inject
-    public TXDataMap<String, String> txDataMap;
+    private TXDataMap<String, String> txDataMap;
 
     private EventLog eventLog = new EventLog();
 
