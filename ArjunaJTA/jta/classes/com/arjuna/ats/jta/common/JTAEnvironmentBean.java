@@ -949,10 +949,20 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         }
     }
 
+    /**
+     * Returns maximum size of a thread pool, used to execute asynchronous commits.
+     *
+     * @return maximum size of a thread pool, used to execute asynchronous commits.
+     */
 	public int getAsyncCommitPoolSize() {
 		return asyncCommitPoolSize;
 	}
 
+    /**
+     * Sets maximum size of a thread pool, used to execute asynchronous commits.
+     *
+     * @param asyncCommitPoolSize maximum size of a thread pool, used to execute asynchronous commits.
+     */
     public void setAsyncCommitPoolSize(int asyncCommitPoolSize) {
 		this.asyncCommitPoolSize = asyncCommitPoolSize;
 	}

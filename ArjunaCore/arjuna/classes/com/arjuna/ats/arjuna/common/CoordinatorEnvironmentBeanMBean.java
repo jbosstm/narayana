@@ -47,6 +47,7 @@ public interface CoordinatorEnvironmentBeanMBean
 
     void setEnableStatistics(boolean enableStatistics);
 
+    @Deprecated
     boolean isSharedTransactionLog();
 
     boolean isStartDisabled();
@@ -69,5 +70,6 @@ public interface CoordinatorEnvironmentBeanMBean
 
     String getCheckedActionFactoryClassName();
 
+    @Deprecated
     String getCommunicationStore();
 }
