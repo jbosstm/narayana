@@ -890,6 +890,10 @@ public interface wstI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_participant_ba_BAParticipantRecoveryRecord_saveState_3(String arg0, @Cause() Throwable arg1);
 
+    @Message(id = 43228, value = "Delay of {0} ms reached before changing state from {1} to something else", format = MESSAGE_FORMAT)
+   	@LogMessage(level = WARN)
+   	public void warn_state_change_timeout(String arg0, String arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
