@@ -499,6 +499,7 @@ public abstract class JDBCImple_driver {
 					updateBytes(rs, 1, b);
 					rs.updateRow();
 				} else {
+					connection.get().commit();
 					// not in database, do insert:
 					PreparedStatement pstmt2 = connection
 							.get()
