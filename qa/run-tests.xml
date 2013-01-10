@@ -46,6 +46,7 @@
   <property name="narayana.version" value="5.0.0.M2-SNAPSHOT"/>
   <property name="working.dir" location="build"/>
   <property name="testoutput.zipname" value="testoutput.zip"/>
+  <property name="testoutput.zip,includes" value="testoutput/**,TEST*"/>
   <property name="profile" value=""/>
 
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
@@ -192,7 +193,8 @@
   </target>
   <target name="testoutput.zip" depends="has-testoutput-output" if="has-testoutput-output">
     <echo message="archiving testoutput to ${testoutput.zipname}"/>
-    <zip destfile="${testoutput.zipname}" basedir="testoutput"/>
+    <zip destfile="testoutput/${testoutput.zipname}" basedir="."
+         includes="${testoutput.zip,includes}"/>
   </target>
 
   <property name="test.name" value="otsserver"/>
