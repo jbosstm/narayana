@@ -24,7 +24,6 @@ package com.arjuna.ats.jta.distributed;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,8 +46,8 @@ import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.jboss.byteman.rule.exception.ExecuteException;
 import org.jfree.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,43 +63,43 @@ public class SimpleIsolatedServers {
 	private static int[] serverPortOffsets = new int[] { 1000, 2000, 3000 };
 	private static String[][] clusterBuddies = new String[][] { new String[] { "2000", "3000" }, new String[] { "1000", "3000" },
 			new String[] { "1000", "2000" } };
-	private static LookupProvider lookupProvider = LookupProvider.getInstance();
-	private static LocalServer[] localServers = new LocalServer[serverNodeNames.length];
-	private static CompletionCounter completionCounter = CompletionCounter.getInstance();
+	private LookupProvider lookupProvider = LookupProvider.getInstance();
+	private LocalServer[] localServers = new LocalServer[serverNodeNames.length];
+	private CompletionCounter completionCounter = CompletionCounter.getInstance();
 
-	@BeforeClass
-	public static void setup() throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException,
+	@Before
+	public void setup() throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException,
 			CoreEnvironmentBeanException, IOException, IllegalArgumentException, NoSuchFieldException {
 		for (int i = 0; i < serverNodeNames.length; i++) {
 			boot(i);
 		}
 	}
 
-	public static boolean deleteDir(File dir) {
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
-				if (!success) {
-					return false;
-				}
-			}
-		}
+//	public static boolean deleteDir(File dir) {
+//		if (dir.isDirectory()) {
+//			String[] children = dir.list();
+//			for (int i = 0; i < children.length; i++) {
+//				boolean success = deleteDir(new File(dir, children[i]));
+//				if (!success) {
+//					return false;
+//				}
+//			}
+//		}
+//
+//		// The directory is now empty so delete it
+//		return dir.delete();
+//	}
 
-		// The directory is now empty so delete it
-		return dir.delete();
-	}
-
-	@AfterClass
-	public static void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		// Enable it if you need to ensure the folder is empty for some reason
-		if (false) {
-			File file = new File(System.getProperty("user.dir") + "/distributedjta-tests/");
-			boolean delete = !file.exists() ? true : deleteDir(file);
-			if (!delete) {
-				throw new Exception("Could not delete folder");
-			}
-		}
+//		if (false) {
+//			File file = new File(System.getProperty("user.dir") + "/distributedjta-tests/");
+//			boolean delete = !file.exists() ? true : deleteDir(file);
+//			if (!delete) {
+//				throw new Exception("Could not delete folder");
+//			}
+//		}
 		for (int i = 0; i < localServers.length; i++) {
 			ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 			Thread.currentThread().setContextClassLoader(localServers[i].getClassLoader());
@@ -111,7 +110,7 @@ public class SimpleIsolatedServers {
 		lookupProvider.clear();
 	}
 
-	private static void reboot(String serverName) throws Exception {
+	private void reboot(String serverName) throws Exception {
 		// int index = (Integer.valueOf(serverName) / 1000) - 1;
 		for (int i = 0; i < localServers.length; i++) {
 			if (localServers[i].getNodeName().equals(serverName)) {
@@ -127,7 +126,7 @@ public class SimpleIsolatedServers {
 
 	}
 
-	private static void boot(int index) throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException,
+	private void boot(int index) throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException,
 			ClassNotFoundException, IllegalArgumentException, CoreEnvironmentBeanException, IOException, NoSuchFieldException {
 		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 		IsolatableServersClassLoader classLoaderForTransactionManager = new IsolatableServersClassLoader(null, SimpleIsolatedServers.class.getPackage()
@@ -157,8 +156,6 @@ public class SimpleIsolatedServers {
 	@BMScript("leave-subordinate-orphan")
 	public void testSimultaneousRecover() throws Exception {
 		System.out.println("testSimultaneousRecover");
-		tearDown();
-		setup();
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
@@ -325,8 +322,6 @@ public class SimpleIsolatedServers {
 	@BMScript("leaveorphan")
 	public void testTwoPhaseXAResourceOrphan() throws Exception {
 		System.out.println("testTwoPhaseXAResourceOrphan");
-		tearDown();
-		setup();
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
 		final CompletionCountLock phase2CommitAborted = new CompletionCountLock();
@@ -406,8 +401,6 @@ public class SimpleIsolatedServers {
 	@BMScript("leaveorphan")
 	public void testOnePhaseXAResourceOrphan() throws Exception {
 		System.out.println("testOnePhaseXAResourceOrphan");
-		tearDown();
-		setup();
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
@@ -489,8 +482,6 @@ public class SimpleIsolatedServers {
 	@BMScript("leave-subordinate-orphan")
 	public void testOnePhaseSubordinateOrphan() throws Exception {
 		System.out.println("testOnePhaseSubordinateOrphan");
-		tearDown();
-		setup();
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
@@ -580,9 +571,6 @@ public class SimpleIsolatedServers {
 	@BMScript("leaverunningorphan")
 	public void testRecoverInflightTransaction() throws Exception {
 		System.out.println("testRecoverInflightTransaction");
-		tearDown();
-		setup();
-
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
@@ -659,8 +647,6 @@ public class SimpleIsolatedServers {
 	@BMScript("fail2pc")
 	public void testRecovery() throws Exception {
 		System.out.println("testRecovery");
-		tearDown();
-		setup();
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
@@ -714,8 +700,6 @@ public class SimpleIsolatedServers {
 	@Test
 	public void testOnePhaseCommit() throws Exception {
 		System.out.println("testOnePhaseCommit");
-		tearDown();
-		setup();
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -745,8 +729,6 @@ public class SimpleIsolatedServers {
 	@Test
 	public void testUnPreparedRollback() throws Exception {
 		System.out.println("testUnPreparedRollback");
-		tearDown();
-		setup();
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -830,8 +812,6 @@ public class SimpleIsolatedServers {
 	@Test
 	public void testMigrateTransactionSubordinateTimeout() throws Exception {
 		System.out.println("testMigrateTransactionSubordinateTimeout");
-		tearDown();
-		setup();
 		int rootTimeout = 10000;
 		int subordinateTimeout = 1;
 		LocalServer originalServer = getLocalServer("1000");
@@ -876,8 +856,6 @@ public class SimpleIsolatedServers {
 	@Test
 	public void testTransactionReaperIsCleanedUp() throws Exception {
 		System.out.println("testTransactionReaperIsCleanedUp");
-		tearDown();
-		setup();
 		int rootTimeout = 5;
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -917,9 +895,6 @@ public class SimpleIsolatedServers {
 	}
 
 	private void doRecursiveTransactionalWork(int startingTimeout, List<String> nodesToFlowTo, boolean commit, boolean rollbackOnlyOnLastNode) throws Exception {
-		tearDown();
-		setup();
-
 		List<String> uniqueServers = new ArrayList<String>();
 		Iterator<String> iterator = nodesToFlowTo.iterator();
 		while (iterator.hasNext()) {
@@ -1074,7 +1049,7 @@ public class SimpleIsolatedServers {
 		return new DataReturnedFromRemoteServer(requiresProxyAtPreviousServer, transactionState);
 	}
 
-	private static LocalServer getLocalServer(String jndiName) {
+	private LocalServer getLocalServer(String jndiName) {
 		int index = (Integer.valueOf(jndiName) / 1000) - 1;
 		return localServers[index];
 	}
