@@ -675,8 +675,14 @@ public class SimpleIsolatedServers {
 		});
 		thread.start();
 		synchronized (phase2CommitAborted) {
-			if (phase2CommitAborted.getCount() < 1) {
+			int count = 0;
+			while (phase2CommitAborted.getCount() != 1 && count < 20) {
 				phase2CommitAborted.wait(5000);
+				if (phase2CommitAborted.getCount() != 1) {
+					count++;
+				} else {
+		            break;
+				}
 			}
             if (phase2CommitAborted.getCount() < 1) {
                 fail("Servers were not aborted");
