@@ -110,6 +110,9 @@
 			<includes>
 				<include>org.jboss.narayana.jts:narayana-jts-jacorb:*:javadoc</include>
 			</includes>
+            <excludes>
+                <exclude>${skip.from.jacorb}</exclude>
+            </excludes>
 			<outputDirectory>docs/api/jts</outputDirectory>
 			<useProjectAttachments>true</useProjectAttachments>
 			<unpack>true</unpack>
@@ -121,6 +124,7 @@
 			</includes>
 			<excludes>
 				<exclude>*:javadoc</exclude>
+                <exclude>${skip.from.jacorb}</exclude>
 			</excludes>
 			<outputDirectory>lib/jts</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -134,6 +138,7 @@
 			</includes>
 			<excludes>
 				<exclude>*:javadoc</exclude>
+                <exclude>${skip.from.idlj}</exclude>
 			</excludes>
 			<outputDirectory>lib/jts</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
@@ -340,8 +345,11 @@
 		<fileSet>
 			<directory>../ArjunaJTS/jacorb</directory>
 			<outputDirectory>jacorb</outputDirectory>
+            <excludes>
+                <exclude>${skip.from.jacorb}</exclude>
+            </excludes>
 		</fileSet>
-		
+
 		<fileSet>
 			<directory>../ArjunaJTA/quickstarts
 			</directory>
