@@ -22,7 +22,6 @@
             <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
             <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
         </properties>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -35,24 +34,24 @@
             </plugins>
         </pluginManagement>
         <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-dependency-plugin</artifactId>
-                      <executions>
-                        <execution>
-                          <id>copy-dependencies</id>
-                          <phase>test-compile</phase>
-                          <goals>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>test-compile</phase>
+                        <goals>
                             <goal>copy-dependencies</goal>
-                          </goals>
-                          <configuration>
-                              <stripVersion>true</stripVersion>
-                              <includeGroupIds>org.jboss.byteman</includeGroupIds>
+                        </goals>
+                        <configuration>
+                            <stripVersion>true</stripVersion>
+                            <includeGroupIds>org.jboss.byteman</includeGroupIds>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                          </configuration>
-                        </execution>
-                      </executions>
-                </plugin>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -81,34 +80,33 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
             <version>1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-		</dependency>
-	</dependencies>
-	<profiles>
-		<!-- The default profile skips all tests, though you can tune it 
-			to run just unit tests based on a custom pattern -->
-		<!-- Seperate profiles are provided for running all tests, including 
-			Arquillian tests that execute in the specified container -->
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <!-- The default profile skips all tests, though you can tune it
+            to run just unit tests based on a custom pattern -->
+        <!-- Seperate profiles are provided for running all tests, including
+            Arquillian tests that execute in the specified container -->
         <profile>
       			<id>arq-remote</id>
       			<activation>
@@ -151,6 +149,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
 							<systemPropertyVariables combine.children="append">
 							<!--
 							  Used in arquillian.xml
@@ -184,6 +183,7 @@
 						<configuration>
 							<argLine>${ipv6.server.jvm.args}</argLine>
               				<forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
 							<systemPropertyVariables combine.children="append">
 							<!--
 							  Used in arquillian.xml
@@ -207,14 +207,10 @@
 		</profile>
 	</profiles>
 	<modules>
-		<module>WSAS</module>
-		<module>WSCF</module>
-		<module>WSTX</module>
-		<module>WS-C</module>
-		<module>WS-T</module>
+        <module>unit</module>
 		<module>WSTX11-interop</module>
 		<module>WSTFSC07-interop</module>
         <module>xtstest</module>
         <module>crash-recovery-tests</module>
-	</modules>
+    </modules>
 </project>
