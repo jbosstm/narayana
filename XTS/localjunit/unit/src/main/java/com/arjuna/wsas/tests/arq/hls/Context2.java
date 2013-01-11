@@ -92,7 +92,7 @@ public class Context2
 
         String currentServiceType = ua.serviceType();
 
-        if (currentServiceType != failureServiceType) {
+        if (!currentServiceType.equals(failureServiceType)) {
             fail("invalid service type for current activity");
         }
 
@@ -126,7 +126,7 @@ public class Context2
 
         currentServiceType = ua.serviceType();
 
-        if (currentServiceType != demoServiceType) {
+        if (!currentServiceType.equals(demoServiceType)) {
             fail("invalid service type for current activity");
         }
 
