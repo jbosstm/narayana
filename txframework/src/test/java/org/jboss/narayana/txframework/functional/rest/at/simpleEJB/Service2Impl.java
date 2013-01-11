@@ -28,8 +28,8 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;

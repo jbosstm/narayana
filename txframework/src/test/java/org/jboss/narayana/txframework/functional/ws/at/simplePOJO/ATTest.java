@@ -20,16 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
 
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
-import org.jboss.narayana.txframework.functional.clients.ATClient;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.BaseFunctionalTestWar;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,8 +39,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.VOTE_ROLLBACK;
+import static org.jboss.narayana.txframework.functional.ServiceCommand.THROW_APPLICATION_EXCEPTION;
+import static org.jboss.narayana.txframework.functional.ServiceCommand.VOTE_ROLLBACK;
 
 @RunWith(Arquillian.class)
 public class ATTest extends BaseFunctionalTestWar {

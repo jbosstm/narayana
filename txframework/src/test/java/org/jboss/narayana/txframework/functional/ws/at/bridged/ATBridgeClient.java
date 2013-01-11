@@ -20,10 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.clients;
+package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.AT;
+import org.jboss.narayana.txframework.functional.ws.at.bridged.ATBridge;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -33,22 +33,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATClient {
+public class ATBridgeClient {
 
-    public static AT newInstance() throws Exception {
+    public static ATBridge newInstance() throws Exception {
 
-        URL wsdlLocation = new URL("http://localhost:8080/echo_service/ATService?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/at/", "ATService");
-        QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
+        URL wsdlLocation = new URL("http://localhost:8080/test/ATBridgeService/ATBridge?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridgeService");
+        QName portName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridge");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        AT client = service.getPort(portName, AT.class);
+        ATBridge client = service.getPort(portName, ATBridge.class);
 
         /*
            Add client handler chain
         */
         BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
+        List<Handler> handlers = new ArrayList<Handler>();
         handlers.add(new JaxWSHeaderContextProcessor());
         bindingProvider.getBinding().setHandlerChain(handlers);
 

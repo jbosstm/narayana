@@ -19,11 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.txframework.functional.services;
+package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
 
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
-import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;

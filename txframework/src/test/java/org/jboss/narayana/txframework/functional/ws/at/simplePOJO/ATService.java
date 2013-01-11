@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.txframework.functional.services;
+package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
 
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Error;
@@ -27,9 +27,9 @@ import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.ServiceCommand;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 
 import javax.inject.Inject;
 import javax.jws.WebMethod;

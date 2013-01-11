@@ -19,25 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.txframework.functional.interfaces;
 
-import javax.ejb.Remote;
-import javax.jws.WebMethod;
+package org.jboss.narayana.txframework.functional;
 
-/**
- * Server side version of the business logic API.
- *
- * @author jonathan.halliday@redhat.com, 2007-04-30
- */
-@Remote
-public interface ATBridge {
+import java.io.Serializable;
 
-    @WebMethod
-    public void incrementCounter(int how_many);
+public class SomeApplicationException extends Exception implements Serializable {
 
-    @WebMethod
-    public int getCounter();
+    public SomeApplicationException(String message, Throwable cause) {
 
-    @WebMethod
-    public void reset();
+        super(message, cause);
+    }
+
+    public SomeApplicationException(String message) {
+
+        super(message);
+    }
+
 }

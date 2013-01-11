@@ -20,23 +20,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.interfaces;
+package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.ServiceCommand;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 
 import javax.ejb.Remote;
 import javax.jws.WebMethod;
 
 @Remote
-public interface BAParticipantCompletion {
+public interface BACoordinatorCompletion {
 
     @WebMethod
-    public void saveDataAutoComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
-
-    @WebMethod
-    public void saveDataManualComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
+    public void saveData(ServiceCommand... serviceCommands) throws SomeApplicationException;
 
     @WebMethod
     public EventLog getEventLog();
