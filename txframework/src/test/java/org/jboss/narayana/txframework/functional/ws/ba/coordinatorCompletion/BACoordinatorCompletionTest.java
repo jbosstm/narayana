@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -31,9 +31,9 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
-import org.jboss.narayana.txframework.functional.clients.BACoordinatorCompletionClient;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.BACoordinatorCompletion;
+import org.jboss.narayana.txframework.functional.BaseFunctionalTest;
+import org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion.BACoordinatorCompletionClient;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +43,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.CANNOT_COMPLETE;
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
+import static org.jboss.narayana.txframework.functional.ServiceCommand.CANNOT_COMPLETE;
+import static org.jboss.narayana.txframework.functional.ServiceCommand.THROW_APPLICATION_EXCEPTION;
 
 @RunWith(Arquillian.class)
 public class BACoordinatorCompletionTest extends BaseFunctionalTest {

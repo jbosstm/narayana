@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -32,10 +32,11 @@ import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCom
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
-import org.jboss.narayana.txframework.functional.clients.BAParticipantCompletionClient;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
+import org.jboss.narayana.txframework.functional.BaseFunctionalTest;
+import org.jboss.narayana.txframework.functional.ws.ba.participantCompletion.BAParticipantCompletionClient;
+import org.jboss.narayana.txframework.functional.ServiceCommand;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.ws.ba.participantCompletion.BAParticipantCompletion;
 import org.junit.*;
 import org.junit.runner.RunWith;
 

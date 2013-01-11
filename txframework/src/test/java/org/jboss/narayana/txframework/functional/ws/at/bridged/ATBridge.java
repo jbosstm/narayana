@@ -19,19 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.jboss.narayana.txframework.functional.interfaces;
+package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
 import javax.ejb.Remote;
 import javax.jws.WebMethod;
 
 /**
- * @author paul.robinson@redhat.com, 2012-02-06
+ * Server side version of the business logic API.
+ *
+ * @author jonathan.halliday@redhat.com, 2007-04-30
  */
 @Remote
-public interface JAXWSHandlerAnnotation {
+public interface ATBridge {
 
     @WebMethod
-    public String sayHello(String arg0);
+    public void incrementCounter(int how_many);
 
+    @WebMethod
+    public int getCounter();
+
+    @WebMethod
+    public void reset();
 }

@@ -19,24 +19,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
-package org.jboss.narayana.txframework.functional.interfaces;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
 
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+/**
+ * EJB3 Entity Bean implementation of the business app state.
+ *
+ * @author paul.robinson@redhat.com
+ */
+@Entity
+public class SimpleEntity implements Serializable {
 
-import javax.jws.WebMethod;
+    private int id;
+    private int bookingCount;
 
-public interface AT {
+    public SimpleEntity() {
 
-    @WebMethod
-    public void invoke(ServiceCommand... serviceCommands) throws SomeApplicationException;
+    }
 
-    @WebMethod
-    public EventLog getEventLog();
+    @Id
+    @GeneratedValue
+    public int getId() {
 
-    @WebMethod
-    public void clearLogs();
+        return id;
+    }
 
+    public void setId(int id) {
+
+        this.id = id;
+    }
+
+    public int getCounter() {
+
+        return bookingCount;
+    }
+
+    public void setCounter(int counter) {
+
+        this.bookingCount = counter;
+    }
+
+    public void incrimentCounter(int how_many) {
+
+        setCounter(getCounter() + how_many);
+    }
 }

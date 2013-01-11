@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.txframework.functional.services;
+package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
@@ -29,10 +29,10 @@ import org.jboss.narayana.txframework.api.configuration.transaction.CompletionTy
 import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
+import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.ServiceCommand;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion.BACoordinatorCompletion;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -40,57 +40,40 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.lang.annotation.Annotation;
-import java.util.Map;
-
-import static org.jboss.narayana.txframework.functional.common.ServiceCommand.*;
-
 
 /**
  * @author Paul Robinson (paul.robinson@redhat.com)
  */
 @Stateless
-@WebService(serviceName = "BAParticipantCompletionService", portName = "BAParticipantCompletionService",
-        name = "BAParticipantCompletion", targetNamespace = "http://www.jboss.com/functional/ba/participantcompletion/")
+@WebService(serviceName = "BACoordinatorCompletionService", portName = "BACoordinatorCompletionService",
+        name = "BACoordinatorCompletion", targetNamespace = "http://www.jboss.com/functional/ba/coordinatorcompletion/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-@Compensatable(completionType = CompletionType.PARTICIPANT)
-public class BAParticipantCompletionService implements BAParticipantCompletion {
+@Compensatable(completionType = CompletionType.COORDINATOR)
+public class BACoordinatorCompletionService implements BACoordinatorCompletion {
 
     @Inject
     private WSBATxControl txControl;
-    @Inject
     private EventLog eventLog = new EventLog();
     @Inject
     private TXDataMap<String, String> txDataMap;
 
     @WebMethod
     @ServiceRequest
-    @Completes
-    public void saveDataAutoComplete(ServiceCommand... serviceCommands) throws SomeApplicationException {
-
-        saveData(serviceCommands);
-    }
-
-    @WebMethod
-    @ServiceRequest
-    public void saveDataManualComplete(ServiceCommand... serviceCommands) throws SomeApplicationException {
-
-        saveData(serviceCommands);
-    }
-
-    private void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException {
+    //todo: batch up data and only addEvent during confirmCompleted
+    public void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException {
 
         txDataMap.put("data", "data");
         try {
-            if (present(THROW_APPLICATION_EXCEPTION, serviceCommands)) {
+            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands)) {
                 throw new SomeApplicationException("Intentionally thrown Exception");
             }
 
-            if (present(CANNOT_COMPLETE, serviceCommands)) {
+            if (isPresent(ServiceCommand.CANNOT_COMPLETE, serviceCommands)) {
                 txControl.cannotComplete();
                 return;
             }
 
-            if (present(COMPLETE, serviceCommands)) {
+            if (isPresent(ServiceCommand.COMPLETE, serviceCommands)) {
                 txControl.completed();
             }
         } catch (TXControlException e) {
@@ -110,6 +93,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
         eventLog.clear();
     }
 
+    //todo: why is this never invoked? Always true for CoordinationCompletion?
     @Compensate
     @WebMethod(exclude = true)
     private void compensate() {
@@ -138,6 +122,13 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
         logEvent(Close.class);
     }
 
+    @Complete
+    @WebMethod(exclude = true)
+    private void complete() {
+
+        logEvent(Complete.class);
+    }
+
     @ConfirmCompleted
     @WebMethod(exclude = true)
     private void confirmCompleted(boolean success) {
@@ -149,7 +140,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
     @WebMethod(exclude = true)
     private void error() {
 
-        logEvent(Error.class);
+        logEvent(org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error.class);
     }
 
     @Status
@@ -167,7 +158,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
         logEvent(Unknown.class);
     }
 
-    private boolean present(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands) {
+    private boolean isPresent(ServiceCommand expectedServiceCommand, ServiceCommand... serviceCommands) {
 
         for (ServiceCommand foundServiceCommand : serviceCommands) {
             if (foundServiceCommand == expectedServiceCommand) {
@@ -179,7 +170,7 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
 
     private void logEvent(Class<? extends Annotation> event) {
         //Check data is available
-        if (txDataMap.get("data") == null) {
+        if (txDataMap == null || txDataMap.get("data") == null) {
             eventLog.addDataUnavailable(event);
         }
 

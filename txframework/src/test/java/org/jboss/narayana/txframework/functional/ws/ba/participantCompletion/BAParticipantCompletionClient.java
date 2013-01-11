@@ -20,10 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.clients;
+package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.ATBridge;
+import org.jboss.narayana.txframework.functional.ws.ba.participantCompletion.BAParticipantCompletion;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -33,22 +33,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATBridgeClient {
+public class BAParticipantCompletionClient {
 
-    public static ATBridge newInstance() throws Exception {
+    public static BAParticipantCompletion newInstance() throws Exception {
 
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATBridgeService/ATBridge?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridgeService");
-        QName portName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridge");
+        URL wsdlLocation = new URL("http://localhost:8080/test/BAParticipantCompletionService/BAParticipantCompletion?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
+        QName portName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        ATBridge client = service.getPort(portName, ATBridge.class);
+        BAParticipantCompletion client = service.getPort(portName, BAParticipantCompletion.class);
 
         /*
            Add client handler chain
         */
         BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>();
+        List<Handler> handlers = new ArrayList<Handler>(1);
         handlers.add(new JaxWSHeaderContextProcessor());
         bindingProvider.getBinding().setHandlerChain(handlers);
 

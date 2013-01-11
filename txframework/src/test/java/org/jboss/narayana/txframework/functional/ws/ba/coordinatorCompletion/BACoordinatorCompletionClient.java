@@ -20,10 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.clients;
+package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.interfaces.BAParticipantCompletion;
+import org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion.BACoordinatorCompletion;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -33,16 +33,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BAParticipantCompletionClient {
+public class BACoordinatorCompletionClient {
 
-    public static BAParticipantCompletion newInstance() throws Exception {
+    public static BACoordinatorCompletion newInstance() throws Exception {
 
-        URL wsdlLocation = new URL("http://localhost:8080/test/BAParticipantCompletionService/BAParticipantCompletion?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
-        QName portName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
+        URL wsdlLocation = new URL("http://localhost:8080/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
+        QName portName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        BAParticipantCompletion client = service.getPort(portName, BAParticipantCompletion.class);
+        BACoordinatorCompletion client = service.getPort(portName, BACoordinatorCompletion.class);
 
         /*
            Add client handler chain

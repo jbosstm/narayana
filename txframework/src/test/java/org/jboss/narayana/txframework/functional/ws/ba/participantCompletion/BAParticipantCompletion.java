@@ -20,8 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.common;
+package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 
-public enum ServiceCommand {
-    THROW_APPLICATION_EXCEPTION, CANNOT_COMPLETE, COMPLETE, READ_ONLY, VOTE_ROLLBACK
+import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.ServiceCommand;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
+
+import javax.ejb.Remote;
+import javax.jws.WebMethod;
+
+@Remote
+public interface BAParticipantCompletion {
+
+    @WebMethod
+    public void saveDataAutoComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
+
+    @WebMethod
+    public void saveDataManualComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
+
+    @WebMethod
+    public EventLog getEventLog();
+
+    @WebMethod
+    public void clearEventLog();
+
 }

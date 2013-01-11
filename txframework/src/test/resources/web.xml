@@ -25,12 +25,12 @@
          version="2.4">
 
     <servlet>
-        <servlet-name>org.jboss.narayana.txframework.functional.services.ATService</servlet-name>
-        <servlet-class>org.jboss.narayana.txframework.functional.services.ATService</servlet-class>
+        <servlet-name>org.jboss.narayana.txframework.functional.ws.at.simplePOJO.ATService</servlet-name>
+        <servlet-class>org.jboss.narayana.txframework.functional.ws.at.simplePOJO.ATService</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>org.jboss.narayana.txframework.functional.services.ATService</servlet-name>
+        <servlet-name>org.jboss.narayana.txframework.functional.ws.at.simplePOJO.ATService</servlet-name>
         <url-pattern>/ATService</url-pattern>
     </servlet-mapping>
 

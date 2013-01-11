@@ -19,52 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.txframework.functional.services;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.io.Serializable;
+package org.jboss.narayana.txframework.functional;
 
-/**
- * EJB3 Entity Bean implementation of the business app state.
- *
- * @author paul.robinson@redhat.com
- */
-@Entity
-public class SimpleEntity implements Serializable {
-
-    private int id;
-    private int bookingCount;
-
-    public SimpleEntity() {
-
-    }
-
-    @Id
-    @GeneratedValue
-    public int getId() {
-
-        return id;
-    }
-
-    public void setId(int id) {
-
-        this.id = id;
-    }
-
-    public int getCounter() {
-
-        return bookingCount;
-    }
-
-    public void setCounter(int counter) {
-
-        this.bookingCount = counter;
-    }
-
-    public void incrimentCounter(int how_many) {
-
-        setCounter(getCounter() + how_many);
-    }
+public enum ServiceCommand {
+    THROW_APPLICATION_EXCEPTION, CANNOT_COMPLETE, COMPLETE, READ_ONLY, VOTE_ROLLBACK
 }

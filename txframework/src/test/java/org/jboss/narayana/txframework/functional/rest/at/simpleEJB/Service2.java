@@ -22,7 +22,7 @@
 
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.SomeApplicationException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
