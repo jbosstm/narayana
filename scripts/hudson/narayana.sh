@@ -178,7 +178,7 @@ function qa_tests_once {
   # check to see if we were called with orb=idlj as one of the arguments
   if [ x$orb = x"idlj" ]; then
     IDLJ=1
-    testoutputzip=$IDLJZIP
+    testoutputzip="testoutput-idlj.zip"
   else
     IDLJ=0
     testoutputzip="testoutput-jacorb.zip"
@@ -220,21 +220,11 @@ function qa_tests_once {
     ant -f run-tests.xml $target $QA_PROFILE
     ok=$?
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
-    ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip -Dtestoutput.zip,includes="testoutput/**,TEST*"
+    mv "$WORKSPACE/qa/TEST-*.txt" $WORKSPACE/qa/testoutput 2>/dev/null
+    ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
     return $ok
   fi
   return 0
-}
-
-function mv_file {
-  if [ ! -f $1 ]; then
-    echo "cannot move file: $1 does not exist"
-  elif [ ! -e $2 ]; then
-    echo "cannot move file: $2 does not exist"
-  else
-    mv $1 $2
-    [ $? = 0 ] || echo WARNING mv $1 $2 failed
-  fi
 }
 
 function qa_tests {
@@ -243,14 +233,10 @@ function qa_tests {
   if [ $SUN_ORB = 1 ]; then
     qa_tests_once "$@" "orb=idlj" "$@" # run qa against the Sun orb
     ok2=$?
-    mv_file "$WORKSPACE/qa/testoutput/$IDLJZIP" "$WORKSPACE/qa"
   fi
   if [ $JAC_ORB = 1 ]; then
     qa_tests_once "$@"    # run qa against the default orb
     ok1=$?
-    if [ $SUN_ORB = 1 ]; then
-      mv_file "$WORKSPACE/qa/$IDLJZIP" testoutput
-    fi
   fi
 
   [ $ok1 = 0 ] || echo some jacorb QA tests failed
@@ -260,8 +246,6 @@ function qa_tests {
 }
 
 comment_on_pull "Started testing this pull request: $BUILD_URL"
-
-IDLJZIP="testoutput-idlj.zip"
 
 # if the following env variables have not been set initialize them to their defaults
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M2-SNAPSHOT"
