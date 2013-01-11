@@ -712,7 +712,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         final State current ;
         synchronized(this)
         {
-            if (timerTask != caller) {
+            if (!timerTask.equals(caller)) {
                 // the timer was cancelled but it went off before it could be cancelled
 
                 return;
