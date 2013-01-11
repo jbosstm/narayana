@@ -6,87 +6,15 @@
 	Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jboss.narayana.xts</groupId>
-		<artifactId>localjunit</artifactId>
-		<version>5.0.0.M2-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.narayana.xts</groupId>
+        <artifactId>localjunit</artifactId>
+        <version>5.0.0.M2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>localjunit-crash-recovery-tests</artifactId>
     <packaging>jar</packaging>
     <name>xts crash recovery tests</name>
     <description>xts crash recovery tests</description>
-    <properties>
-        <ipv4.server.jvm.args></ipv4.server.jvm.args>
-        <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
-        <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</server.debug.args>
-    </properties>
-
-
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkMode>once</forkMode>
-                            <workingDirectory>.</workingDirectory>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arq</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkMode>once</forkMode>
-                            <workingDirectory>.</workingDirectory>
-                            <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>${jvm.args.memory} ${ipv4.server.jvm.args}</server.jvm.args>
-                                <node.address>127.0.0.1</node.address>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arqIPv6</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>${ipv6.server.jvm.args}</argLine>
-                            <forkMode>once</forkMode>
-                            <workingDirectory>.</workingDirectory>
-                            <environmentVariables>
-                            <CLI_IPV6_OPTS>-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</CLI_IPV6_OPTS>
-                            </environmentVariables>
-                            <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>${jvm.args.memory} ${ipv6.server.jvm.args}</server.jvm.args>
-                                <node.address>[::1]</node.address>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
