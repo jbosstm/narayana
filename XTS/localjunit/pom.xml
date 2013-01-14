@@ -156,6 +156,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <forkMode>once</forkMode>
+                            <workingDirectory>.</workingDirectory>
                             <systemPropertyVariables combine.children="append">
                                 <!--
                                   Used in arquillian.xml
