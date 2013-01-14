@@ -1950,28 +1950,49 @@ public class BasicAction extends StateManager
 
     protected int async_prepare(boolean reportHeuristics) {
         int p = TwoPhaseOutcome.PREPARE_OK;
-        AbstractRecord lastRec = pendingList.getRear();
+        Collection<AbstractRecord> lastResourceRecords = new ArrayList<AbstractRecord>();
         Collection<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
 
-        while (pendingList.size() != 0)
-            tasks.add(TwoPhaseCommitThreadPool.submitJob(new AsyncPrepare(
-                    this, reportHeuristics, pendingList.getFront())));
+        AbstractRecord last2PCAwareRecord = pendingList.getRear();
 
-        // prepare the last (or only) participant on the callers thread
-        if (lastRec != null)
-            p = doPrepare(reportHeuristics, lastRec);
+        // Get 1PC aware resources
+        while (last2PCAwareRecord != null && last2PCAwareRecord.typeIs() == RecordType.LASTRESOURCE) {
+            lastResourceRecords.add(last2PCAwareRecord);
+            last2PCAwareRecord = pendingList.getRear();
+        }
 
-        // get the results
+        // Prepare 2PC aware resources
+        while (pendingList.size() != 0) {
+            tasks.add(TwoPhaseCommitThreadPool.submitJob(new AsyncPrepare(this, reportHeuristics, pendingList.getFront())));
+        }
+
+        // Prepare the last (or only) 2PC aware resource on the callers thread
+        if (last2PCAwareRecord != null) {
+            p = doPrepare(reportHeuristics, last2PCAwareRecord);
+        }
+
+        // Get results of the 2PC aware resources prepare
         for (Future<Integer> task : tasks) {
             try {
                 int outcome = task.get();
 
-                if (p == TwoPhaseOutcome.PREPARE_OK)
+                if (p == TwoPhaseOutcome.PREPARE_OK) {
                     p = outcome;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
+            }
+        }
+
+        // Commit one phase aware resources
+        for (AbstractRecord lastResourceRecord : lastResourceRecords) {
+            if (p == TwoPhaseOutcome.PREPARE_OK) {
+                p = doPrepare(reportHeuristics, lastResourceRecord);
+            } else {
+                // Prepare failed, put remaining records back to the pendingList.
+                pendingList.insert(lastResourceRecord);
             }
         }
 

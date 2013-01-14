@@ -51,8 +51,11 @@ public class OnePhase implements OnePhaseResource
 
     public int commit()
     {
-        _status = COMMITTED;
+        if (_status == ROLLEDBACK) {
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 
+        _status = COMMITTED;
         return TwoPhaseOutcome.FINISH_OK;
     }
 
@@ -62,8 +65,11 @@ public class OnePhase implements OnePhaseResource
 
     public int rollback()
     {
-        _status = ROLLEDBACK;
+        if (_status == COMMITTED) {
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
 
+        _status = ROLLEDBACK;
         return TwoPhaseOutcome.FINISH_OK;
     }
 

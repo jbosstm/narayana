@@ -20,11 +20,18 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
+import com.hp.mwtests.ts.arjuna.resources.ShutdownRecord;
+import com.hp.mwtests.ts.arjuna.resources.OnePhase;
+import com.hp.mwtests.ts.arjuna.resources.LastResourceShutdownRecord;
 import org.junit.Test;
+import org.junit.Assert;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
 public class AsyncUnitTest
 {
@@ -43,6 +50,65 @@ public class AsyncUnitTest
         A.add(new BasicRecord());
         
         A.commit(false);
+    }
+
+    @Test
+    public void testAsyncPrepareWithLRRSuccess()
+    {
+        setupCoordinatorEnvironmentBean(true, false, false);
+
+        OnePhase onePhase = new OnePhase();
+        AbstractRecord lastResourceRecord = new LastResourceRecord(onePhase);
+        AbstractRecord basicRecord = new BasicRecord();
+
+        AtomicAction a = executeAsyncPrepareTest(true, basicRecord, lastResourceRecord);
+
+        Assert.assertEquals(OnePhase.COMMITTED, onePhase.status());
+        Assert.assertEquals(ActionStatus.COMMITTED, a.status());
+    }
+
+    @Test
+    public void testAsyncPrepareWithLRRFailOn2PCAwareResourcePrepare()
+    {
+        setupCoordinatorEnvironmentBean(true, false, false);
+
+        OnePhase onePhase = new OnePhase();
+        AbstractRecord lastResourceRecord = new LastResourceRecord(onePhase);
+        AbstractRecord shutdownRecord = new ShutdownRecord(ShutdownRecord.FAIL_IN_PREPARE);
+
+        AtomicAction a = executeAsyncPrepareTest(true, shutdownRecord, lastResourceRecord);
+
+        Assert.assertEquals(OnePhase.ROLLEDBACK, onePhase.status());
+        Assert.assertEquals(ActionStatus.ABORTED, a.status());
+    }
+
+    @Test
+    public void testAsyncPrepareWithLRRFailOn2PCUnawareResourcePrepare()
+    {
+        setupCoordinatorEnvironmentBean(true, false, false);
+
+        OnePhase onePhase = new OnePhase();
+        AbstractRecord lastResourceRecord = new LastResourceShutdownRecord(onePhase, true);
+        AbstractRecord basicRecord = new BasicRecord();
+
+        AtomicAction a = executeAsyncPrepareTest(true, lastResourceRecord, basicRecord);
+
+        Assert.assertEquals(OnePhase.ROLLEDBACK, onePhase.status());
+        Assert.assertEquals(ActionStatus.ABORTED, a.status());
+    }
+
+    @Test
+    public void testAsyncPrepareWithLRRFailOn2PCAwareResourceCommit()
+    {
+        setupCoordinatorEnvironmentBean(true, false, false);
+
+        OnePhase onePhase = new OnePhase();
+        AbstractRecord lastResourceRecord = new LastResourceRecord(onePhase);
+        AbstractRecord shutdownRecord = new ShutdownRecord(ShutdownRecord.FAIL_IN_COMMIT);
+
+        executeAsyncPrepareTest(true, lastResourceRecord, shutdownRecord);
+
+        Assert.assertEquals(OnePhase.COMMITTED, onePhase.status());
     }
     
     @Test
@@ -77,5 +143,28 @@ public class AsyncUnitTest
         A.add(new BasicRecord());
         
         A.abort();
+    }
+
+    private void setupCoordinatorEnvironmentBean(boolean isAsyncPrepare, boolean isAsyncCommit, boolean isAsyncRollback) {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncPrepare(isAsyncPrepare);
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncCommit(isAsyncCommit);
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncRollback(isAsyncRollback);
+    }
+
+    private AtomicAction executeAsyncPrepareTest(boolean isCommit, AbstractRecord... records) {
+        AtomicAction a = new AtomicAction();
+        a.begin();
+
+        for (AbstractRecord record : records) {
+            a.add(record);
+        }
+
+        if (isCommit) {
+            a.commit();
+        } else {
+            a.abort();
+        }
+
+        return a;
     }
 }
