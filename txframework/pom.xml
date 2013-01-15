@@ -183,7 +183,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.byteman} ${jvm.args.memory} -Dorg.jboss.jbossts.xts.transport.transportTimeout=60000</server.jvm.args>
+                                <server.jvm.args>${jvm.args.byteman} ${jvm.args.memory}</server.jvm.args>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

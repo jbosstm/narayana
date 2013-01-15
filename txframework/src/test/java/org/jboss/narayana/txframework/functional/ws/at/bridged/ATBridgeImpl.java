@@ -55,7 +55,7 @@ public class ATBridgeImpl implements ATBridge {
     public void incrementCounter(int how_many) {
 
         SimpleEntity entity = getSimpleEntity();
-        entity.incrimentCounter(how_many);
+        entity.incrementCounter(how_many);
         em.merge(entity);
     }
 
@@ -81,7 +81,7 @@ public class ATBridgeImpl implements ATBridge {
 
         SimpleEntity entity = em.find(SimpleEntity.class, ENTITY_ID);
         if (entity == null) {
-            entity = new SimpleEntity();
+            entity = new SimpleEntity(ENTITY_ID, 0);
             em.persist(entity);
         }
 
