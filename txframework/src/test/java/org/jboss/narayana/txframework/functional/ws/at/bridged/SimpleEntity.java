@@ -22,7 +22,6 @@
 package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 
@@ -41,8 +40,13 @@ public class SimpleEntity implements Serializable {
 
     }
 
+    public SimpleEntity(int id, int initialCounterValue) {
+
+        this.id = id;
+        this.bookingCount = initialCounterValue;
+    }
+
     @Id
-    @GeneratedValue
     public int getId() {
 
         return id;
@@ -63,8 +67,8 @@ public class SimpleEntity implements Serializable {
         this.bookingCount = counter;
     }
 
-    public void incrimentCounter(int how_many) {
+    public void incrementCounter(int howMany) {
 
-        setCounter(getCounter() + how_many);
+        setCounter(getCounter() + howMany);
     }
 }

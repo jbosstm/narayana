@@ -15,14 +15,17 @@ if [ "" == "$JBOSS_BUILD_HOME" ]; then
 fi
 
 if [ "$2" == "--clean" ] || [ "$3" == "--clean" ]; then
+    echo "Cleaning"
     CLEAN=clean
 fi
 
 if [ "$2" == "--xts" ] || [ "$3" == "--xts" ]; then
+    echo "Rebuilding XTS"
     cd ..
     ./build.sh -f ./XTS/pom.xml $CLEAN install -DskipTests || fail
     cd -
 fi
+
 
 mvn $CLEAN install || fail
 kill-jboss
