@@ -1234,32 +1234,25 @@ public class XAResourceRecord extends AbstractRecord
     private String _productName;
     private String _productVersion;
     private String _jndiName;
-    private static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin;
+    private static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin =
+            jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
 
-	private static boolean _rollbackOptimization = false;
-    private static boolean _assumedComplete = false;
+	private static final boolean _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
+
+    /*
+     * WARNING: USE WITH EXTEREME CARE!!
+     *
+     * This assumes that if there is no XAResource that can deal with an Xid
+     * after recovery, then we failed after successfully committing the transaction
+     * but before updating the log. In which case we just need to ignore this
+     * resource and remove the entry from the log.
+     *
+     * BUT if not all XAResourceRecovery instances are correctly implemented
+     * (or present) we may end up removing participants that have not been dealt
+     * with. Hence USE WITH EXTREME CARE!!
+     */
+    private static final boolean _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
     
 	private List<SerializableXAResourceDeserializer> seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
-
-	static
-	{
-        _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
-
-		/*
-		 * WARNING: USE WITH EXTEREME CARE!!
-		 *
-		 * This assumes that if there is no XAResource that can deal with an Xid
-		 * after recovery, then we failed after successfully committing the transaction
-		 * but before updating the log. In which case we just need to ignore this
-		 * resource and remove the entry from the log.
-		 *
-		 * BUT if not all XAResourceRecovery instances are correctly implemented
-		 * (or present) we may end up removing participants that have not been dealt
-		 * with. Hence USE WITH EXTREME CARE!!
-		 */
-        _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
-
-        _xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
-	}
 
 }

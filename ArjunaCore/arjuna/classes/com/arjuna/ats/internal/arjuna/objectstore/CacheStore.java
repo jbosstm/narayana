@@ -164,7 +164,7 @@ public class CacheStore extends HashedStore
         super.syncWrites = objectStoreEnvironmentBean.isCacheStoreSync();
     }
 
-    static AsyncStore _storeManager = new AsyncStore();
+    static final AsyncStore _storeManager = new AsyncStore();
 }
 
 class StoreElement
@@ -820,44 +820,15 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
     private int _removedItems = 0;
 
-    private static int HASH_SIZE = 128;
+    private static final int HASH_SIZE = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreHash();
 
-    private static int _defaultCacheSize = 10240; // size in bytes
+    private static final int _defaultCacheSize = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreSize();
 
-    private static int _defaultRemovedItems = 2 * HASH_SIZE;
+    private static final int _defaultRemovedItems = arjPropertyManager
+            .getObjectStoreEnvironmentBean().getCacheStoreRemovedItems();
 
-    private static int _defaultWorkItems = 100;
+    private static final int _defaultWorkItems = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreWorkItems();
 
-    private static int _defaultScanPeriod = 120000;
-
-    static
-    {
-        HASH_SIZE = arjPropertyManager.getObjectStoreEnvironmentBean()
-                .getCacheStoreHash();
-
-        if (HASH_SIZE <= 0)
-            HASH_SIZE = 128;
-
-        _defaultCacheSize = arjPropertyManager.getObjectStoreEnvironmentBean()
-                .getCacheStoreSize();
-
-        if (_defaultCacheSize < 0)
-            _defaultCacheSize = 0;
-
-        _defaultRemovedItems = arjPropertyManager
-                .getObjectStoreEnvironmentBean().getCacheStoreRemovedItems();
-
-        if (_defaultRemovedItems < 0)
-            _defaultRemovedItems = 0;
-
-        _defaultWorkItems = arjPropertyManager.getObjectStoreEnvironmentBean()
-                .getCacheStoreWorkItems();
-
-        if (_defaultWorkItems < 0)
-            _defaultWorkItems = 0;
-
-        _defaultScanPeriod = arjPropertyManager.getObjectStoreEnvironmentBean()
-                .getCacheStoreScanPeriod();
-    }
+    private static final int _defaultScanPeriod = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreScanPeriod();
 
 }

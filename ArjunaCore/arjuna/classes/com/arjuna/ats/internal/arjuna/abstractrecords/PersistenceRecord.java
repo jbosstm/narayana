@@ -482,14 +482,7 @@ public class PersistenceRecord extends RecoveryRecord
 	protected boolean shadowMade;
 	protected ParticipantStore targetParticipantStore;
 	protected OutputObjectState topLevelState;
-	protected static boolean classicPrepare = false;
+	protected static final boolean classicPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isClassicPrepare();
 	
-	private static boolean writeOptimisation = false;
-
-	static
-	{
-        classicPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isClassicPrepare();
-
-        writeOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isWriteOptimisation();
-	}
+	private static final boolean writeOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isWriteOptimisation();
 }

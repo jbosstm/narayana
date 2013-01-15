@@ -291,6 +291,10 @@ public class OTSImpleManager
 
 	private static org.omg.CosTransactions.Current _currentRef = null;
 
+    /**
+     * Static block adds new instance of ShutdownOTS to the portable object adapter.
+     * Also, triggers initialization of com.arjuna.ats.internal.jts.Implementation if it was not initialized before.
+     */
 	static
 	{
 		ORBManager.getPOA().addPreShutdown(new com.arjuna.ats.internal.jts.lifecycle.ShutdownOTS());

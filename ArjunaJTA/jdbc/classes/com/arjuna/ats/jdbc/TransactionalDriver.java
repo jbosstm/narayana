@@ -148,6 +148,9 @@ public static final String createDb = "CREATE_DB";
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * Static block registers instance of TransactionalDriver with sql drivers manager.
+     */
     static
     {
 	try

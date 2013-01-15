@@ -2249,41 +2249,19 @@ public class ArjunaTransactionImple extends
 	private SortedSet _synchs;
     private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 
-    static int _ipType = Arjuna.XID();
+    static final int _ipType = Arjuna.nameToXID(jtsPropertyManager.getJTSEnvironmentBean().getInterposition());
 
-	static boolean _subtran = true;
+	static final boolean _subtran = jtsPropertyManager.getJTSEnvironmentBean().isSupportSubtransactions();
 
-	static boolean _syncOn = true;
+	static final boolean _syncOn = jtsPropertyManager.getJTSEnvironmentBean().isSupportRollbackSync();
 
-	static boolean _checkedTransactions = false;
+	static final boolean _checkedTransactions = jtsPropertyManager.getJTSEnvironmentBean().isCheckedTransactions();
 
-	static boolean _propagateTerminator = false;
+	static final boolean _propagateTerminator = jtsPropertyManager.getJTSEnvironmentBean().isPropagateTerminator();
 
-	static boolean _propagateRemainingTimeout = true;  // OTS 1.2 onwards supported this.
+	static final boolean _propagateRemainingTimeout = jtsPropertyManager.getJTSEnvironmentBean().isTimeoutPropagation();  // OTS 1.2 onwards supported this.
 
 	private static final boolean XA_COMPLIANT = true; // if we ever want to disable this then add an mbean option.
-
-	static
-	{
-		String interpositionType = jtsPropertyManager.getJTSEnvironmentBean().getInterposition();
-
-		if (interpositionType != null)
-		{
-			int ipType = Arjuna.nameToXID(interpositionType);
-
-			if (ipType != -1)
-				ArjunaTransactionImple._ipType = ipType;
-			else {
-                jtsLogger.i18NLogger.warn_orbspecific_coordinator_ipunknown("ArjunaTransactionImple.init", interpositionType);
-            }
-		}
-
-		_subtran = jtsPropertyManager.getJTSEnvironmentBean().isSupportSubtransactions();
-		_syncOn = jtsPropertyManager.getJTSEnvironmentBean().isSupportRollbackSync();
-		_checkedTransactions = jtsPropertyManager.getJTSEnvironmentBean().isCheckedTransactions();
-		_propagateTerminator = jtsPropertyManager.getJTSEnvironmentBean().isPropagateTerminator();
-		_propagateRemainingTimeout = jtsPropertyManager.getJTSEnvironmentBean().isTimeoutPropagation();
-	}
 
     public java.util.Map<Uid, String> getSynchronizations()
     {

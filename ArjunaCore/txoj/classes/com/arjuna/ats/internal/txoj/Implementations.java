@@ -81,6 +81,9 @@ public class Implementations
 
     private static boolean _added = false;
 
+    /**
+     * Static block triggers initialisation of lock record type map.
+     */
     static
     {
         initialise();

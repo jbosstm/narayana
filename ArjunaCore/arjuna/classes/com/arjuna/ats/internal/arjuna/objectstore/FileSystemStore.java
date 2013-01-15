@@ -764,7 +764,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     static final char unixSeparator = '/';
 
-    static boolean rewriteSeparator = false;
+    static final boolean rewriteSeparator = (File.separatorChar != FileSystemStore.unixSeparator);
 
     // allow derived classes to specify sync on a per instance basis
 
@@ -775,28 +775,12 @@ public abstract class FileSystemStore extends ObjectStore
 
     // global values (some of which may be reset on a per instance basis).
 
-    private static Hashtable fileCache = new Hashtable();
-    private static int       createRetry = 100;
-    private static int       createTimeout = 100;
+    private static final Hashtable fileCache = new Hashtable();
+    private static final int       createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
+    private static final int       createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
 
     protected boolean scanZeroLengthFiles = false;
 
-    static
-    {
-        if (File.separatorChar != FileSystemStore.unixSeparator)
-            rewriteSeparator = true;
-
-        createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
-
-        if (createRetry < 0)
-            createRetry = 100;
-
-        createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
-
-        if (createTimeout < 0)
-            createTimeout = 100;
-    }
-
-    private static boolean isWindows = Utility.isWindows();
+    private static final boolean isWindows = Utility.isWindows();
 
 }

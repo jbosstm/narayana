@@ -137,6 +137,9 @@ public class ConfigurationInfo
     private static volatile String propertiesFile = "arjuna-properties.xml";
     private static volatile String buildId = "arjuna-builder";
 
+    /**
+     * Static block triggers initialization of build time properties.
+     */
     static {
         getBuildTimeProperties();
     }

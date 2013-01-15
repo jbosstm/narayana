@@ -1100,10 +1100,6 @@ public class ConnectionImple implements Connection
 
 	private static final int defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
-	private static int _currentIsolationLevel = defaultIsolationLevel;
+	private static final int _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
 
-	static
-	{
-        _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
-	}
 }
