@@ -1594,25 +1594,25 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     private Throwable _rollbackOnlyCallerStacktrace;
 
-	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED;
+	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean()
+            .isXaTransactionTimeoutEnabled();
 
-	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE;
+	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean()
+            .getLastResourceOptimisationInterface();
 
-    protected static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin;
+    protected static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin =
+            jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
 
+    /**
+     * Static block writes warning message to the log if last resource optimisation interface was not set.
+     */
 	static
 	{
-        XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
-
-        LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterface();
-
         if(LAST_RESOURCE_OPTIMISATION_INTERFACE == null) {
             jtaLogger.i18NLogger.warn_transaction_arjunacore_lastResourceOptimisationInterface(jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterfaceClassName());
         }
-
-        _xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
 	}
 
-	private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
+	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
 
 }

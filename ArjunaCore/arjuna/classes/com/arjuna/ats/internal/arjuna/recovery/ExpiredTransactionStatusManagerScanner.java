@@ -150,14 +150,16 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     private String      _itemTypeName ;
     private RecoveryStore _recoveryStore;
     
-    private static int _expiryTime = 12 * 60 * 60 ; // default is 12 hours
+    private static final int _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean()
+            .getTransactionStatusManagerExpiryTime() * 60 * 60;
     
-    private static SimpleDateFormat _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    private static final SimpleDateFormat _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
+    /**
+     * Block writes expiry scan interval to the log.
+     */
     static
     {
-        _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
-
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("Expiry scan interval set to  "+Integer.toString(_expiryTime)+"  seconds");
         }

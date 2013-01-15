@@ -57,6 +57,10 @@ public class XAResourceErrorHandler
 
 	private static HashMap _maps = new HashMap();
 
+    /**
+     * Static block puts all XAResourceMap instances defined in JTAEnvironmentBean to the XAResourceErrorHandler's hash map.
+     * They are later used to check if the XAException is a non-error when received in reply to commit or rollback.
+     */
     static
     {
         for(XAResourceMap xaResourceMap : jtaPropertyManager.getJTAEnvironmentBean().getXaResourceMaps())
