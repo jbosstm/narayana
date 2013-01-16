@@ -200,7 +200,7 @@ public class LastResourceRecord extends AbstractRecord
         }
         else
         {
-            return true;
+            return false;
         }
     }
 
