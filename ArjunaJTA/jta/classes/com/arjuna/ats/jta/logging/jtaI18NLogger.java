@@ -435,4 +435,7 @@ public interface jtaI18NLogger {
           By convention methods with String return type have prefix get_,
             all others are log methods and have prefix <level>_
     */
+
+	@Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
+	public String get_transaction_arjunacore_inactive(Uid arg0);
 }
