@@ -180,7 +180,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
 			}
 
 			/*
@@ -239,7 +239,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
 			}
 
 			/*
@@ -302,7 +302,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                     case Status.STATUS_PREPARED:
                         throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
                     default:
-                        throw new InactiveTransactionException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+                        throw new InactiveTransactionException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
                     }
 	        }
 	        else
@@ -369,7 +369,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				case ActionStatus.ABORTED:
 					throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_syncwhenaborted() );
 				case ActionStatus.CREATED:
-					throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+					throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
 				default:
 					throw new IllegalStateException(
                             jtaLogger.i18NLogger.get_transaction_arjunacore_syncsnotallowed() + ActionStatus.stringForm(status));
@@ -1152,7 +1152,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+						throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
 
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
