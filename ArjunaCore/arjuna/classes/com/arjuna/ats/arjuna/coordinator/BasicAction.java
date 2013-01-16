@@ -512,7 +512,6 @@ public class BasicAction extends StateManager
      *
      * @return <code>true</code> on success, <code>false</code> otherwise.
      * 
-     * @deprecated Only called in tests
      */
 
     public boolean deactivate ()

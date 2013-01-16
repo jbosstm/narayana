@@ -83,9 +83,6 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 		XATxConverter.setEisName(_theXid, eisName);
 	}
 
-	/**
-	 * @deprecated This is only used by test code
-	 */
 	public XidImple(Uid id) {
 		this(id, false, null);
 	}
