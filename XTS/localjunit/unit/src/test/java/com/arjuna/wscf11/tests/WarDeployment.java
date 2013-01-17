@@ -22,8 +22,6 @@
 
 package com.arjuna.wscf11.tests;
 
-import java.io.File;
-
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;

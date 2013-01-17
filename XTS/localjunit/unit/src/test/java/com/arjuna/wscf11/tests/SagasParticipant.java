@@ -31,16 +31,15 @@
 
 package com.arjuna.wscf11.tests;
 
+import java.io.IOException;
+
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
-import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete;
-
-import java.io.IOException;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)

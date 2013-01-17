@@ -1,33 +1,59 @@
 package com.arjuna.wstx11.tests.arq.basic;
 
-import javax.inject.Inject;
+import static org.junit.Assert.fail;
 
-import com.arjuna.wstx11.tests.arq.basic.CommitRollbackInPrepare;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wst11.TransactionManager;
+import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.wstx.tests.common.DemoDurableParticipant;
 import com.arjuna.wstx.tests.common.FailureParticipant;
 import com.arjuna.wstx11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class CommitRollbackInPrepareTest {
-	@Inject
-    CommitRollbackInPrepare test;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
 		return WarDeployment.getDeployment(
-				CommitRollbackInPrepare.class,
 				DemoDurableParticipant.class,
 				FailureParticipant.class);
 	}
 
 	@Test
-	public void test() throws Exception {
-		test.testCommitRollbackInPrepare();
-	}
+	public void testCommitRollbackInPrepare()
+            throws Exception
+    {
+        UserTransaction ut = UserTransaction.getUserTransaction();
+    try
+    {
+        TransactionManager tm = TransactionManager.getTransactionManager();
+        FailureParticipant p1 = new FailureParticipant(FailureParticipant.FAIL_IN_PREPARE, FailureParticipant.NONE);
+        DemoDurableParticipant p2 = new DemoDurableParticipant();
+
+        ut.begin();
+
+        tm.enlistForDurableTwoPhase(p1, "failure");
+        tm.enlistForDurableTwoPhase(p2, p2.identifier());
+    }  catch (Exception eouter) {
+        try {
+            ut.rollback();
+        } catch(Exception einner) {
+        }
+        throw eouter;
+    }
+    try {
+        ut.commit();
+
+        fail("expected TransactionRolledBackException");
+    }
+    catch (com.arjuna.wst.TransactionRolledBackException ex)
+    {
+        // we should arrive here
+    }
+    }
 }

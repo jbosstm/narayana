@@ -35,7 +35,6 @@ public class BaseWSTTest {
 
     @Before
     public void setup() {
-
         testInitialisation.setupTest();
     }
 

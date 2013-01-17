@@ -21,12 +21,9 @@
  */
 package com.arjuna.wsc11.tests;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
+import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.ContextFactoryMapper;
 import com.arjuna.wsc11.RegistrarMapper;
-import com.arjuna.wsc.tests.TestUtil;
 
 /**
  * Initialise the test.

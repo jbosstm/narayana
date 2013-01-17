@@ -20,28 +20,30 @@
  */
 package com.arjuna.wsc11.tests.arq;
 
-import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import org.jboss.ws.api.addressing.MAP;
-import com.arjuna.wsc.tests.TestUtil;
-import com.arjuna.wsc11.tests.TestUtil11;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.soap.SOAPFaultException;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.jboss.ws.api.addressing.MAP;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
+
+import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices11.wsarj.ArjunaContext;
+import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.tests.TestUtil11;
 
 public class TestRegistrationCoordinatorProcessor extends
         RegistrationCoordinatorProcessor
 {
-    private Map messageIdMap = new HashMap() ;
+    private Map<String, RegisterDetails> messageIdMap = new HashMap<String, RegisterDetails>() ;
 
     public RegisterResponseType register(final RegisterType register, final MAP map, final ArjunaContext arjunaContext, boolean isSecure)
     {

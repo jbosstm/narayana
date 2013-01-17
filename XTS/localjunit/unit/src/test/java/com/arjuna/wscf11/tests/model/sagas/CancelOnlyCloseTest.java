@@ -1,6 +1,6 @@
 package com.arjuna.wscf11.tests.model.sagas;
 
-import javax.inject.Inject;
+import static org.junit.Assert.fail;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -8,20 +8,49 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wscf.model.sagas.api.UserCoordinator;
+import com.arjuna.mw.wscf.model.sagas.exceptions.CoordinatorCancelledException;
+import com.arjuna.mw.wscf11.model.sagas.UserCoordinatorFactory;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import com.arjuna.wscf11.tests.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class CancelOnlyCloseTest {
-	@Inject
-	CancelOnlyClose test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(CancelOnlyClose.class);
-	}
-	
-	@Test
-	public void testCancelOnlyClose() throws Exception {
-		test.testCancelOnlyClose();
-	}
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment();
+    }
+
+    @Test
+    public void testCancelOnlyClose()
+            throws Exception
+            {
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
+        try
+        {
+            ua.begin("Sagas11HLS");
+
+            System.out.println("Started: "+ua.identifier()+"\n");
+
+            ua.setCancelOnly();
+
+            ua.close();
+
+            fail("Close succeeded after setCancelOnly");
+        }
+        catch (CoordinatorCancelledException ex)
+        {
+            // we should get here
+            WSCF11TestUtils.cleanup(ua);
+        }
+        catch (Exception ex)
+        {
+            WSCF11TestUtils.cleanup(ua);
+            throw ex;
+        }
+            }
 }

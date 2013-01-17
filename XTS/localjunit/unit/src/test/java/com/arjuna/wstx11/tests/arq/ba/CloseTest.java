@@ -1,8 +1,7 @@
 package com.arjuna.wstx11.tests.arq.ba;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertTrue;
 
-import com.arjuna.wstx11.tests.arq.ba.Close;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
@@ -13,21 +12,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wstx.tests.common.DemoBusinessParticipant;
 import com.arjuna.wstx11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class CloseTest {
-	@Inject
-    Close test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(
-				Close.class,
-				DemoBusinessParticipant.class,
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment(
+                DemoBusinessParticipant.class,
                 ParticipantCompletionCoordinatorRules.class);
-	}
+    }
 
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
@@ -38,10 +36,30 @@ public class CloseTest {
     public static void removeBytemanScript() {
         BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
-	
-	@Test
-	public void test() throws Exception {
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
-		test.testClose();
-	}
+
+    @Test
+    public void testClose()
+            throws Exception
+            {
+        UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();
+        BusinessActivityManager bam = BusinessActivityManager.getBusinessActivityManager();
+        com.arjuna.wst11.BAParticipantManager bpm = null;
+        DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.CLOSE, "1235");
+        try {
+            uba.begin();
+
+            bpm = bam.enlistForBusinessAgreementWithParticipantCompletion(p, p.identifier());
+            bpm.completed();
+        } catch (Exception eouter) {
+            try {
+                uba.cancel();
+            } catch(Exception einner) {
+            }
+            throw eouter;
+        }
+
+        uba.close();
+
+        assertTrue(p.passed());
+            }
 }

@@ -1,9 +1,7 @@
 package com.arjuna.wstx11.tests.arq.ba;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertTrue;
 
-import com.arjuna.wstx11.tests.arq.WarDeployment;
-import com.arjuna.wstx11.tests.arq.ba.Compensate;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
@@ -14,21 +12,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wstx.tests.common.DemoBusinessParticipant;
 import com.arjuna.wstx11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class CompensateTest {
-	@Inject
-    Compensate test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(
-                Compensate.class,
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment(
                 DemoBusinessParticipant.class,
                 ParticipantCompletionCoordinatorRules.class);
-	}
+    }
 
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
@@ -39,10 +36,32 @@ public class CompensateTest {
     public static void removeBytemanScript() {
         BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
-	
-	@Test
-	public void test() throws Exception {
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
-		test.testCompensate();
-	}
+
+    @Test
+    public void testCompensate()
+            throws Exception
+            {
+        UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();
+        BusinessActivityManager bam = BusinessActivityManager.getBusinessActivityManager();
+        com.arjuna.wst11.BAParticipantManager bpm = null;
+        String participantId = "1236";
+        DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.COMPENSATE, participantId);
+        try {
+            uba.begin();
+
+            bpm = bam.enlistForBusinessAgreementWithParticipantCompletion(p, participantId);
+
+            bpm.completed();
+        } catch (Exception eouter) {
+            try {
+                uba.cancel();
+            } catch(Exception einner) {
+            }
+            throw eouter;
+        }
+
+        uba.cancel();
+
+        assertTrue(p.passed());
+            }
 }
