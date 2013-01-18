@@ -49,6 +49,7 @@ public class ConfigurationInfo
      * @return the version control tag of the source used, or "unknown".
      */
     public static String getSourceId() {
+        getBuildTimeProperties();
         return sourceId;
     }
 
@@ -56,6 +57,7 @@ public class ConfigurationInfo
      * @return the name (not path) of the properties file
      */
     public static String getPropertiesFile() {
+        getBuildTimeProperties();
         return propertiesFile;
     }
 
@@ -63,6 +65,7 @@ public class ConfigurationInfo
      * @return the build identification line indicating the os name and version and build date
      */
     public static String getBuildId() {
+        getBuildTimeProperties();
         return buildId;
     }
 
@@ -82,7 +85,11 @@ public class ConfigurationInfo
     }
 
     // initialize build time properties from data in the jar's META-INF/MANIFEST.MF
-    private static void getBuildTimeProperties() {
+    private static synchronized void getBuildTimeProperties() {
+        if (isInitialized) {
+            return;
+        }
+
         /*
         our classloader's classpath may contain more than one .jar, each with a manifest.
         we need to ensure we get our own .jar's manifest, even if the jar is not first on the path.
@@ -93,8 +100,8 @@ public class ConfigurationInfo
          */
         String classFileName = ConfigurationInfo.class.getSimpleName()+".class";
         String pathToThisClass = ConfigurationInfo.class.getResource(classFileName).toString();
-        
-        // we need to strip off the class name bit so we can replace it with the manifest name: 
+
+        // we need to strip off the class name bit so we can replace it with the manifest name:
         int suffixLength = ("/"+ConfigurationInfo.class.getCanonicalName()+".class").length();
         // now derive the path to the .jar which contains the class and thus hopefully the right manifest:
         String basePath = pathToThisClass.substring(0, pathToThisClass.length()-suffixLength);
@@ -131,16 +138,12 @@ public class ConfigurationInfo
                 } catch(IOException e) {}
             }
         }
+
+        isInitialized = true;
     }
 
-    private static volatile String sourceId = "unknown";
-    private static volatile String propertiesFile = "arjuna-properties.xml";
-    private static volatile String buildId = "arjuna-builder";
-
-    /**
-     * Static block triggers initialization of build time properties.
-     */
-    static {
-        getBuildTimeProperties();
-    }
+    private static String sourceId = "unknown";
+    private static String propertiesFile = "arjuna-properties.xml";
+    private static String buildId = "arjuna-builder";
+    private static boolean isInitialized = false;
 }
