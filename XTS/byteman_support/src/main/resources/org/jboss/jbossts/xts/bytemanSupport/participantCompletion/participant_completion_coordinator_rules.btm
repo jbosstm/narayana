@@ -5,7 +5,8 @@ BIND counter:Integer=$1
 IF TRUE
 DO debug("participant_completion.counter.create: " + counter),
   deleteCounter("completes"),
-  createCounter("completes", counter)
+  createCounter("completes", counter),
+  flag("enabled")
 ENDRULE
 
 RULE complete called
@@ -13,7 +14,7 @@ CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD completed(NotificationType, MAP, ArjunaContext)
 AT RETURN
 BIND NOTHING
-IF (debug("participant_completion.counter.decrement") AND decrementCounter("completes") == 0)
+IF (flagged("enabled") AND debug("participant_completion.counter.decrement") AND decrementCounter("completes") == 0)
 DO debug("participant_completion.called.waking"),
    signalWake("complete", true),
    debug("participant_completion.called.donewake")
@@ -23,18 +24,20 @@ RULE close called
 CLASS com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl
 METHOD closeOperation(NotificationType)
 BIND NOTHING
-IF TRUE
+IF (flagged("enabled"))
 DO debug("participant_completion.close.waiting"),
    waitFor("complete"),
-   debug("participant_completion.close.woken")
+   debug("participant_completion.close.woken"),
+   clear("enabled")
 ENDRULE
 
 RULE cancel called
 CLASS com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl
 METHOD cancelOperation(NotificationType)
 BIND NOTHING
-IF TRUE
+IF (flagged("enabled"))
 DO debug("participant_completion.cancel.waiting"),
    waitFor("complete"),
-   debug("participant_completion.cancel.woken")
+   debug("participant_completion.cancel.woken"),
+   clear("enabled")
 ENDRULE
