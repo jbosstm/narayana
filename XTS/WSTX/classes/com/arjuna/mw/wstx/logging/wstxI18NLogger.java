@@ -261,6 +261,10 @@ public interface wstxI18NLogger {
 	@Message(id = 45061, value = "No termination context!", format = MESSAGE_FORMAT)
 	public String get_mwlabs_wst11_ba_remote_UserBusinessActivityImple_3();
 
+    @Message(id = 45062, value = "Coordinator cancelled the activity", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+   	public void warn_mwlabs_wst11_ba_coordinator_cancelled_activity();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
