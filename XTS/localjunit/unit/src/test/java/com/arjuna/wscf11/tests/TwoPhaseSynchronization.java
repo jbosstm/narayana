@@ -26,44 +26,36 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: SingleParticipant.java,v 1.7.8.1 2005/11/22 10:36:12 kconner Exp $
+ * $Id: TwoPhaseSynchronization.java,v 1.1 2003/01/07 10:37:17 nmcl Exp $
  */
 
-package com.arjuna.wstx11.tests.arq.basic;
+package com.arjuna.wscf11.tests;
 
-import javax.inject.Named;
-
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.wstx.tests.common.DemoDurableParticipant;
+import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wscf.model.twophase.common.CoordinationResult;
+import com.arjuna.mw.wscf.model.twophase.participants.Synchronization;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: SingleParticipant.java,v 1.7.8.1 2005/11/22 10:36:12 kconner Exp $
+ * @version $Id: TwoPhaseSynchronization.java,v 1.1 2003/01/07 10:37:17 nmcl Exp $
  * @since 1.0.
  */
 
-@Named
-public class SingleParticipant
+public class TwoPhaseSynchronization implements Synchronization
 {
-    public void testSingleParticipant()
-            throws Exception
+
+    public TwoPhaseSynchronization()
     {
-	    UserTransaction ut = UserTransaction.getUserTransaction();
-	    TransactionManager tm = TransactionManager.getTransactionManager();
-	    DemoDurableParticipant p = new DemoDurableParticipant();
-
-	    ut.begin();
-	    try {
-	    tm.enlistForDurableTwoPhase(p, p.identifier());
-        }  catch (Exception eouter) {
-            try {
-                ut.rollback();
-            } catch(Exception einner) {
-            }
-            throw eouter;
-        }
-
-	    ut.commit();
     }
+
+    public void beforeCompletion () throws SystemException
+    {
+	System.out.println("TwoPhaseSynchronization.beforeCompletion");
+    }
+
+    public void afterCompletion (int status) throws SystemException
+    {
+	System.out.println("TwoPhaseSynchronization.afterCompletion ( "+CoordinationResult.stringForm(status)+" )");
+    }
+
 }

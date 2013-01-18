@@ -20,30 +20,31 @@
  */
 package com.arjuna.wsc11.tests.arq;
 
-import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import org.jboss.ws.api.addressing.MAP;
-import com.arjuna.wsc.tests.TestUtil;
-import com.arjuna.wsc11.tests.TestUtil11;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.jboss.ws.api.addressing.MAP;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
+
+import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.tests.TestUtil11;
 
 public class TestActivationCoordinatorProcessor extends
         ActivationCoordinatorProcessor
 {
-    private Map messageIdMap = new HashMap() ;
+    private Map<String, CreateCoordinationContextDetails> messageIdMap = new HashMap<String, CreateCoordinationContextDetails>() ;
 
     public CreateCoordinationContextResponseType createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
         final MAP map, boolean isSecure)
@@ -80,7 +81,7 @@ public class TestActivationCoordinatorProcessor extends
         builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
         builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         builder.address(TestUtil.PROTOCOL_COORDINATOR_SERVICE);
-        W3CEndpointReference registrationService = builder.build();
+        builder.build();
         coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifier));
         createCoordinationContextResponseType.setCoordinationContext(coordinationContext);
 

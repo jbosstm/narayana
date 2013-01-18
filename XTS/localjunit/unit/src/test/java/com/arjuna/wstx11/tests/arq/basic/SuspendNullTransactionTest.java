@@ -1,28 +1,35 @@
 package com.arjuna.wstx11.tests.arq.basic;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertTrue;
 
-import com.arjuna.wstx11.tests.arq.basic.SuspendNullTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wst.TxContext;
+import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.wstx11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class SuspendNullTransactionTest {
-	@Inject
-    SuspendNullTransaction test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(SuspendNullTransaction.class);
-	}
-	
-	@Test
-	public void test() throws Exception {
-		test.testSuspendNullTransaction();
-	}
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment();
+    }
+
+    @Test
+    public void testSuspendNullTransaction()
+            throws Exception
+            {
+        TransactionManager ut = TransactionManager.getTransactionManager();
+
+        TxContext ctx = ut.suspend();
+
+        System.out.println("Suspended: "+ctx);
+
+        assertTrue(ctx == null);
+            }
 }

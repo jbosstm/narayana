@@ -22,7 +22,7 @@
 
 package com.arjuna.wsc11.tests.arq;
 
-import javax.inject.Inject;
+import static org.junit.Assert.fail;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -30,20 +30,34 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.wsc.InvalidCreateParametersException;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.ActivationCoordinator;
+import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class ActivationServiceExceptionTest extends BaseWSCTest {
-	@Inject
-	ActivationServiceException test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(ActivationServiceException.class);
-	}
-	
-	@Test
-	public void testInvalidCreateParametersException() throws Exception {
-		test.testInvalidCreateParametersException();
-	}
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment();
+    }
+
+    @Test
+    public void testInvalidCreateParametersException()
+            throws Exception
+            {
+        final String messageID = "testInvalidCreateParametersException" ;
+        final String coordinationTypeURI = TestUtil.INVALID_CREATE_PARAMETERS_COORDINATION_TYPE ;
+        try
+        {
+            ActivationCoordinator.createCoordinationContext(TestUtil11.activationCoordinatorService, messageID, coordinationTypeURI, null, null) ;
+            fail("Expected exception: InvalidCreateParametersException");
+        }
+        catch (final InvalidCreateParametersException icpe) {} // Ignore, expected
+        catch (final Throwable th)
+        {
+            fail("Expected exception: InvalidCreateParametersException");
+        }
+            }
 }

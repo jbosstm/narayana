@@ -22,33 +22,78 @@
 
 package com.arjuna.wsc11.tests.arq;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
+import com.arjuna.wsc.InvalidProtocolException;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.RegistrationCoordinator;
+import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class RegistrationServiceTest extends BaseWSCTest {
-	@Inject
-	RegistrationService test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(RegistrationService.class);
-	}
-	
-	@Test
-	public void testKnownCoordinationType() throws Exception {
-		test.testKnownCoordinationType();
-	}
-	
-	@Test
-	public void testUnknownCoordinationType() throws Exception {
-		test.testUnknownCoordinationType();
-	}
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment();
+    }
+
+    @Test
+    public void testKnownCoordinationType()
+            throws Exception
+            {
+        final String messageId = "testKnownCoordinationType" ;
+        final String protocolIdentifier = TestUtil.PROTOCOL_IDENTIFIER ;
+        final CoordinationContextType coordinationContext = new CoordinationContextType() ;
+        CoordinationContextType.Identifier identifierInstance = new CoordinationContextType.Identifier();
+        coordinationContext.setCoordinationType(TestUtil.COORDINATION_TYPE) ;
+        coordinationContext.setIdentifier(identifierInstance) ;
+        identifierInstance.setValue("identifier");
+        coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifierInstance.getValue())) ;
+        W3CEndpointReference participantEndpoint = TestUtil11.getProtocolParticipantEndpoint("participant");
+        try
+        {
+            final W3CEndpointReference registerResponse = RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier) ;
+
+            assertNotNull(registerResponse) ;
+        }
+        catch (final Throwable th)
+        {
+            fail("Unexpected exception: " + th) ;
+        }
+            }
+
+    @Test
+    public void testUnknownCoordinationType()
+            throws Exception
+            {
+        final String messageId = "testUnknownCoordinationType" ;
+        final String protocolIdentifier = TestUtil.UNKNOWN_PROTOCOL_IDENTIFIER ;
+        final CoordinationContextType coordinationContext = new CoordinationContextType() ;
+        CoordinationContextType.Identifier identifierInstance = new CoordinationContextType.Identifier();
+        coordinationContext.setCoordinationType(TestUtil.COORDINATION_TYPE) ;
+        coordinationContext.setIdentifier(identifierInstance) ;
+        identifierInstance.setValue("identifier");
+        coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifierInstance.getValue())) ;
+        W3CEndpointReference participantEndpoint = TestUtil11.getProtocolParticipantEndpoint("participant");
+        try
+        {
+            RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier) ;
+        }
+        catch (final InvalidProtocolException ipe) {}
+        catch (final Throwable th)
+        {
+            fail("Unexpected exception: " + th) ;
+        }
+            }
 }

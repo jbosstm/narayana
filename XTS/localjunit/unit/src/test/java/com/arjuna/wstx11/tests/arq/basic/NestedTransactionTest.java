@@ -1,29 +1,61 @@
 package com.arjuna.wstx11.tests.arq.basic;
 
-import javax.inject.Inject;
+import static org.junit.Assert.fail;
 
-import com.arjuna.wstx11.tests.arq.WarDeployment;
-import com.arjuna.wstx11.tests.arq.basic.NestedTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.wstx11.tests.arq.WarDeployment;
 
 @RunWith(Arquillian.class)
 public class NestedTransactionTest {
-	@Inject
-    NestedTransaction test;
-	
-	@Deployment
-	public static WebArchive createDeployment() {
-		return WarDeployment.getDeployment(NestedTransaction.class);
-	}
-	
-	@Test
-	public void test() throws Exception {
-		test.testNestedTransaction();
-	}
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        return WarDeployment.getDeployment();
+    }
+
+    @Test
+    public void testNestedTransaction()
+            throws Exception
+            {
+        UserTransaction ut = UserTransaction.getUserTransaction();
+        try
+        {
+
+            // nesting not supported, so each is a separate top-level tx.
+
+            ut.begin();
+
+            ut.begin();
+
+            ut.commit();
+
+            ut.commit();
+
+            fail("expected WrongStateException");
+        }
+        catch (com.arjuna.wst.WrongStateException ex)
+        {
+            // original test was expecting UnknownTransactionException
+            // we should get here;
+            try {
+                ut.rollback();
+            } catch(Exception einner) {
+            }
+        }
+        catch (Exception eouter)
+        {
+            try {
+                ut.rollback();
+                ut.rollback();
+            } catch(Exception einner) {
+            }
+            throw eouter;
+        }
+            }
 }

@@ -22,11 +22,10 @@
 
 package com.arjuna.wsc11.tests.arq;
 
-import com.arjuna.wsc11.tests.TestInitialisation;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
+
+import com.arjuna.wsc11.tests.TestInitialisation;
 
 /**
  * @author paul.robinson@redhat.com 11/01/2013

@@ -22,9 +22,6 @@
 
 package com.arjuna.wst11.tests;
 
-import java.io.File;
-
-import com.arjuna.wst11.tests.arq.BaseWSTTest;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -46,6 +43,7 @@ import com.arjuna.wst.tests.common.TestTransactionRolledBackExceptionParticipant
 import com.arjuna.wst.tests.common.TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.tests.common.TestWrongStateExceptionBusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.tests.common.TestWrongStateExceptionParticipant;
+import com.arjuna.wst11.tests.arq.BaseWSTTest;
 
 public class WarDeployment {
 	public static WebArchive getDeployment(Class<?>...args){
@@ -79,7 +77,7 @@ public class WarDeployment {
 		.addClass(TestUnknownTransactionExceptionBusinessActivityTerminator.class)
 		.addClass(TestTransactionRolledBackExceptionBusinessActivityTerminator.class)
 		.addClass(TestSystemExceptionBusinessActivityTerminator.class)
-        .addClass(BaseWSTTest.class)
+		.addClass(BaseWSTTest.class)
 		.addClasses(args)
 		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
