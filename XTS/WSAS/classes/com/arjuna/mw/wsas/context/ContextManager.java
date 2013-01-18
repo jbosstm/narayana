@@ -73,7 +73,7 @@ public class ContextManager
             // ensure we are in an activity associated with the correct service type
 
             String currentServiceType = UserActivityFactory.userActivity().serviceType();
-            if (currentServiceType == serviceType) {
+            if (currentServiceType.equals(serviceType)) {
                 service = _manager.getHighLevelService(serviceType);
             }
         }
