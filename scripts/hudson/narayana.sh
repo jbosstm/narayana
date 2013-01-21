@@ -165,10 +165,47 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
+function enable_qa_trace {
+cat << 'EOF' > dist/narayana-full-5.0.0.M2-SNAPSHOT/etc/log4j.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <param name="Threshold" value="TRACE"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ABSOLUTE} {%8.8t} (%x) [%-5p,%-10c{1}] %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="file" class="org.apache.log4j.FileAppender">
+        <param name="File" value="logs/test.log"/>
+        <param name="Append" value="false"/>
+        <param name="Threshold" value="TRACE"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %p - %m%n"/>
+        </layout>
+    </appender>
+
+    <category name="com.arjuna">
+        <level value="TRACE"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </category>
+</log4j:configuration>
+EOF
+}
+
 function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
   unset orb
+
+  [ $QA_TRACE = 1 ] && enable_qa_trace
 
   # look for an argument of the form orb=<something>
   for i in $@; do
@@ -217,7 +254,16 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target
-    ant -f run-tests.xml $target $QA_PROFILE
+    if [ "x$QA_TESTGROUP" != "x" ]; then
+      if [ "x$QA_STRESS" != "x" ]; then
+        for i in {1..200}; do echo run $i; ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest; [ $? = 0 ] || break; done
+      else
+        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest;
+      fi
+    else
+      ant -f run-tests.xml $target $QA_PROFILE
+    fi
+
     ok=$?
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
     mv "$WORKSPACE/qa/TEST-*.txt" $WORKSPACE/qa/testoutput 2>/dev/null
