@@ -43,6 +43,8 @@ public class MultiCompensateTest {
     public void testMultiCompensate()
             throws Exception
             {
+        ParticipantCompletionCoordinatorRules.setParticipantCount(2);
+
         UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();
         BusinessActivityManager bam = BusinessActivityManager.getBusinessActivityManager();
         com.arjuna.wst11.BAParticipantManager bpm1 = null;

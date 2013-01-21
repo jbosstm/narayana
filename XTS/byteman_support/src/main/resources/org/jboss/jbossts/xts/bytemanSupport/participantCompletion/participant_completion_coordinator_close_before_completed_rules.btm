@@ -1,0 +1,34 @@
+RULE create counter
+CLASS org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorCloseBeforeCompletedRules
+METHOD setParticipantCount(Integer)
+BIND counter:Integer=$1
+IF TRUE
+DO debug("participant_completion.counter.create: " + counter),
+  deleteCounter("completes"),
+  createCounter("completes", counter),
+  flag("enabled")
+ENDRULE
+
+RULE complete called
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
+METHOD completed(NotificationType, MAP, ArjunaContext)
+AT ENTRY
+BIND NOTHING
+IF (flagged("enabled"))
+DO debug("participant_completion.complete.waiting"),
+   waitFor("complete"),
+   debug("participant_completion.complete.woken"),
+   clear("enabled")
+ENDRULE
+
+
+RULE close called
+CLASS com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple
+METHOD close
+AT THROW ALL
+BIND NOTHING
+IF (flagged("enabled") AND debug("participant_completion.counter.decrement") AND decrementCounter("completes") == 0)
+DO debug("participant_completion.called.waking"),
+   signalWake("complete", true),
+   debug("participant_completion.called.donewake")
+ENDRULE
