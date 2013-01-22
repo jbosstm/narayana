@@ -1099,5 +1099,37 @@
         <module>STM</module>
       </modules>
     </profile>
+    <profile>
+      <id>release</id>
+      <build>
+          <pluginManagement>
+              <plugins>
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <executions>
+                      <execution>
+                        <id>default-install</id>
+                        <phase>none</phase>
+                      </execution>
+                    </executions>
+                  </plugin>
+              </plugins>
+          </pluginManagement>
+          <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+          </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
