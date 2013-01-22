@@ -13,15 +13,17 @@ import java.util.Properties;
  */
 public class XTSPropertiesFactory
 {
-    private static volatile Properties defaultProperties = null;
+    private static Properties defaultProperties = null;
 
     /**
      * Returns the systems default properties, as read from the configuration file.
      * @return the configuration Properties
      */
-    public static Properties getDefaultProperties() {
-        if(defaultProperties == null) {
+    public static synchronized Properties getDefaultProperties() {
+        try {
             initDefaultProperties("org.jboss.jbossts.xts.propertiesFile");
+        } catch (Exception e) {
+            defaultProperties = new Properties(System.getProperties());
         }
 
         return defaultProperties;
@@ -37,7 +39,7 @@ public class XTSPropertiesFactory
         }
     }
 
-    private static synchronized void initDefaultProperties(String fileNamePropertyKey)
+    private static void initDefaultProperties(String fileNamePropertyKey)
     {
         if(defaultProperties != null) {
             return;
