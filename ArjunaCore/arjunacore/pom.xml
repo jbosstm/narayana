@@ -144,6 +144,17 @@
         <id>release</id>
         <build>
           <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                  </execution>
+                </executions>
+                <inherited>false</inherited>
+              </plugin>
 	      <plugin>
         	<groupId>org.codehaus.mojo</groupId>
 	        <artifactId>buildnumber-maven-plugin</artifactId>

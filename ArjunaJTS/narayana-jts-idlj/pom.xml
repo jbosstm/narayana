@@ -167,10 +167,22 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>jacorb-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>jacorb-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -179,6 +191,12 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>jacorb-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>tanukisoft</groupId>
@@ -201,6 +219,17 @@
         <id>release</id>
         <build>
           <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
 	      <plugin>
         	<groupId>org.codehaus.mojo</groupId>
 	        <artifactId>buildnumber-maven-plugin</artifactId>

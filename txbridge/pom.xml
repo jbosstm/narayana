@@ -94,6 +94,13 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
         	<plugins>
@@ -222,23 +229,6 @@
     </dependencies>
 	<profiles>
 		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.11</version>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>arq</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -263,6 +253,7 @@
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>localhost</node.address>
 							</systemPropertyVariables>
+                            <skip>false</skip>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -305,6 +296,7 @@
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>[::1]</node.address>
 							</systemPropertyVariables>
+                            <skip>false</skip>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -333,5 +325,23 @@
 				</dependency>
 			</dependencies>
 		</profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <executions>
+                      <execution>
+                        <id>default-install</id>
+                        <phase>install</phase>
+                      </execution>
+                    </executions>
+                    <inherited>false</inherited>
+                  </plugin>
+                </plugins>
+            </build>
+        </profile>
 	</profiles>
 </project>
