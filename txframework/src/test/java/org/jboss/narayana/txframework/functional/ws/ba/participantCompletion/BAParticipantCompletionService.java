@@ -21,12 +21,17 @@
  */
 package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Completes;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
-import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.EventLog;
@@ -78,21 +83,17 @@ public class BAParticipantCompletionService implements BAParticipantCompletion {
     private void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException {
 
         txDataMap.put("data", "data");
-        try {
-            if (present(THROW_APPLICATION_EXCEPTION, serviceCommands)) {
-                throw new SomeApplicationException("Intentionally thrown Exception");
-            }
+        if (present(THROW_APPLICATION_EXCEPTION, serviceCommands)) {
+            throw new SomeApplicationException("Intentionally thrown Exception");
+        }
 
-            if (present(CANNOT_COMPLETE, serviceCommands)) {
-                txControl.cannotComplete();
-                return;
-            }
+        if (present(CANNOT_COMPLETE, serviceCommands)) {
+            txControl.cannotComplete();
+            return;
+        }
 
-            if (present(COMPLETE, serviceCommands)) {
-                txControl.completed();
-            }
-        } catch (TXControlException e) {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+        if (present(COMPLETE, serviceCommands)) {
+            txControl.completed();
         }
     }
 
