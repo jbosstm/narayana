@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,25 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
+package com.arjuna.mw.wst11.client;
 
-import java.net.URL;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+/**
+ * This handler is used when <code>default-context-propagation</code> is enabled. It handles every message unless WSTXFeature is
+ * disabled.
+ *
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ *
+ */
+public final class EnabledWSTXHandler extends AbstractWSTXHandler {
 
-import com.arjuna.mw.wst11.client.WSTXFeature;
-
-public class ATClient {
-
-    public static AT newInstance() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATService?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/at/", "ATService");
-        QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
-
-        Service service = Service.create(wsdlLocation, serviceName);
-        return service.getPort(portName, AT.class, new WSTXFeature());
+    /**
+     * @see com.arjuna.mw.wst11.client.AbstractWSTXHandler#isContextPropagationEnabled(SOAPMessageContext)
+     *
+     * @return false if WSTXFeature is present and is disabled, true otherwise.
+     */
+    @Override
+    protected boolean isContextPropagationEnabled(SOAPMessageContext context) {
+        return !WSTXFeature.DISABLED_VALUE.equals(context.get(WSTXFeature.REQUEST_CONTEXT_KEY));
     }
-}
 
+}

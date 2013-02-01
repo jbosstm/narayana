@@ -50,6 +50,7 @@
                 <include>com/arjuna/mw/wst11/BusinessActivityManagerFactory.class</include>
                 <include>com/arjuna/mw/wst11/client/JaxWSHeaderContextProcessor.class</include>
                 <include>com/arjuna/mw/wst11/client/JaxBaseHeaderContextProcessor.class</include>
+                <include>com/arjuna/mw/wst11/client/WSTXFeature.class</include>
                 <include>com/arjuna/mw/wst11/service/JaxWSHeaderContextProcessor.class</include>
                 <include>com/arjuna/mw/wst11/service/JaxWSSubordinateHeaderContextProcessor.class</include>
                 <include>com/arjuna/mw/wst11/service/JaxBaseHeaderContextProcessor.class</include>
@@ -126,6 +127,12 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-api</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

@@ -101,6 +101,52 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-configutation</id>
+                        <phase>process-test-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <copy
+                                    file="src/test/resources/test-disabled-context-propagation-standalone-xts.xml"
+                                    tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>delete-configutation</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <tasks>
+                                <delete
+                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${env.JBOSS_HOME}/standalone/configuration</directory>
+                            <includes>
+                                <include>test-disabled-context-propagation-standalone-xts.xml</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
         	<plugins>
@@ -154,7 +200,26 @@
         <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>jbossxts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.xts</groupId>
+            <artifactId>jbossxts</artifactId>
             <classifier>api</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.xts</groupId>
+            <artifactId>ws-c11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.xts</groupId>
+            <artifactId>ws-c11</artifactId>
+            <classifier>api</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-api</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
@@ -223,6 +288,13 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>${version.apache.httpcomponents}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.3.1</version>
             <scope>test</scope>
         </dependency>
 

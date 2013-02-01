@@ -35,4 +35,16 @@
             <property name="managementAddress">${node.address}</property>
         </configuration>
     </container>
+    
+    <container qualifier="jboss-as-disabled-context-propagation">
+        <protocol type="jmx-as7">
+            <property name="executionType">REMOTE</property>
+        </protocol>
+        <configuration>
+            <property name="javaVmArguments">${server.jvm.args}</property>
+            <property name="serverConfig">test-disabled-context-propagation-standalone-xts.xml</property>
+            <property name="managementAddress">${node.address}</property>
+        </configuration>
+    </container>
+    
 </arquillian>
