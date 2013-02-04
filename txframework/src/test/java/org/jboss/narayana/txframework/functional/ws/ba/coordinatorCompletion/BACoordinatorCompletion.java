@@ -22,9 +22,9 @@
 
 package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.ServiceCommand;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.ejb.Remote;
 import javax.jws.WebMethod;

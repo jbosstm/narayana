@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,8 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
-public enum ServiceCommand {
-    THROW_APPLICATION_EXCEPTION, CANNOT_COMPLETE, COMPLETE, READ_ONLY, VOTE_ROLLBACK
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+
+import javax.ejb.Remote;
+import javax.jws.WebMethod;
+
+@Remote
+public interface BABridged {
+
+    @WebMethod
+    public void incrementCounter(Integer how_many) throws SomeApplicationException;
+
+    @WebMethod
+    public int getCounter();
+
+    @WebMethod
+    public void reset();
+
+    @WebMethod
+    public boolean isConfirmed();
+
 }

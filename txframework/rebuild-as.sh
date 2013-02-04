@@ -30,6 +30,7 @@ fi
 mvn $CLEAN install || fail
 kill-jboss
 $JBOSS_BUILD_HOME/build.sh $CLEAN install -f $JBOSS_BUILD_HOME/xts/pom.xml -DskipTests || fail
+$JBOSS_BUILD_HOME/build.sh $CLEAN install -f $JBOSS_BUILD_HOME/txf/pom.xml -DskipTests || fail
 $JBOSS_BUILD_HOME/build.sh $CLEAN install -f $JBOSS_BUILD_HOME/build/pom.xml -DskipTests || fail
 
 JBOSS_BUILD_NAME=$(ls $JBOSS_BUILD_HOME/build/target/ | grep jboss-as)

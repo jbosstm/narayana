@@ -20,28 +20,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
+package org.jboss.narayana.txframework.functional.common;
 
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import java.io.Serializable;
 
-import javax.ejb.Remote;
-import javax.jws.WebMethod;
+public class SomeApplicationException extends Exception implements Serializable {
 
-@Remote
-public interface BAParticipantCompletion {
+    public SomeApplicationException(String message, Throwable cause) {
 
-    @WebMethod
-    public void saveDataAutoComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
+        super(message, cause);
+    }
 
-    @WebMethod
-    public void saveDataManualComplete(ServiceCommand... serviceCommands) throws SomeApplicationException;
+    public SomeApplicationException(String message) {
 
-    @WebMethod
-    public EventLog getEventLog();
-
-    @WebMethod
-    public void clearEventLog();
+        super(message);
+    }
 
 }

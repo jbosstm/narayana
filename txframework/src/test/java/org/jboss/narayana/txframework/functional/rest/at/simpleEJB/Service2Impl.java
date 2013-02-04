@@ -28,12 +28,17 @@ import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -43,7 +48,13 @@ import java.util.Map;
  */
 @Stateless
 @Transactional
-public class Service2Impl implements Service2 {
+@Path("/2")
+public class Service2Impl {
+
+    public static final String THROW_APPLICATION_EXCEPTION = "THROW_APPLICATION_EXCEPTION";
+    public static final String READ_ONLY = "READ_ONLY";
+    public static final String VOTE_ROLLBACK = "VOTE_ROLLBACK";
+    public static final String VOTE_COMMIT = "VOTE_COMMIT";
 
     @Inject
     private TXDataMap<String, String> txDataMap;
@@ -52,6 +63,9 @@ public class Service2Impl implements Service2 {
 
     @WebMethod
     @ServiceRequest
+    @POST
+    @Produces("text/plain")
+    @Consumes("text/plain")
     public Response someServiceRequest(String serviceCommand) throws SomeApplicationException {
 
         txDataMap.put("data", "data");
@@ -66,11 +80,15 @@ public class Service2Impl implements Service2 {
         return Response.ok().build();
     }
 
+    @GET
+    @Path("getEventLog")
     public Response getEventLog() {
 
         return Response.ok(EventLog.asString(eventLog.getEventLog())).build();
     }
 
+    @GET
+    @Path("clearLogs")
     public Response clearLogs() {
 
         eventLog.clear();
@@ -78,19 +96,19 @@ public class Service2Impl implements Service2 {
     }
 
     @Commit
-    private void commit() {
+    public void commit() {
 
         logEvent(Commit.class);
     }
 
     @Rollback
-    private void rollback() {
+    public void rollback() {
 
         logEvent(Rollback.class);
     }
 
     @Prepare
-    private Boolean prepare() {
+    public Boolean prepare() {
 
         logEvent(Prepare.class);
         if (txDataMap.containsKey("rollback")) {

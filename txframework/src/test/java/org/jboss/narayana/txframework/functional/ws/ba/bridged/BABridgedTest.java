@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,45 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
+package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-
 @RunWith(Arquillian.class)
-public class BAParticipantCompletionTest {
+public class BABridgedTest {
 
     UserBusinessActivity uba;
-    BAParticipantCompletion client;
+    BABridged client;
 
     @Deployment()
     public static JavaArchive createTestArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addPackages(false, BAParticipantCompletionTest.class.getPackage())
+                .addPackages(false, BABridgedTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
+                .addAsManifestResource("persistence.xml")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
@@ -66,6 +61,7 @@ public class BAParticipantCompletionTest {
 
         String ManifestMF = "Manifest-Version: 1.0\n"
                 + "Dependencies: org.jboss.narayana.txframework\n";
+
 
         archive.setManifest(new StringAsset(ManifestMF));
 
@@ -89,103 +85,40 @@ public class BAParticipantCompletionTest {
     public void setupTest() throws Exception {
 
         uba = UserBusinessActivityFactory.userBusinessActivity();
-        client = BAParticipantCompletionClient.newInstance();
+        client = BABridgedClient.newInstance();
     }
 
     @After
     public void teardownTest() throws Exception {
 
-        assertDataAvailable();
-        client.clearEventLog();
+        client.reset();
         cancelIfActive(uba);
     }
 
     @Test
-    public void testAutoComplete() throws Exception {
+    public void testClose() throws Exception {
 
         ParticipantCompletionCoordinatorRules.setParticipantCount(1);
 
         uba.begin();
-        client.saveDataAutoComplete();
+        client.incrementCounter(2);
+        Assert.assertEquals(2, client.getCounter());
         uba.close();
-
-        assertOrder(ConfirmCompleted.class, Close.class);
-
+        Assert.assertEquals(2, client.getCounter());
+        Assert.assertTrue(client.isConfirmed());
     }
 
     @Test
-    public void testManualComplete() throws Exception {
+    public void testCompensate() throws Exception {
 
         ParticipantCompletionCoordinatorRules.setParticipantCount(1);
 
         uba.begin();
-        client.saveDataManualComplete(ServiceCommand.COMPLETE);
-        uba.close();
-
-        assertOrder(ConfirmCompleted.class, Close.class);
-    }
-
-    @Test
-    public void testMultiInvoke() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
-
-        uba.begin();
-        client.saveDataManualComplete();
-        client.saveDataManualComplete(ServiceCommand.COMPLETE);
-        uba.close();
-
-        assertOrder(ConfirmCompleted.class, Close.class);
-    }
-
-    @Test
-    public void testClientDrivenCompensate() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
-
-        uba.begin();
-        client.saveDataAutoComplete();
+        client.incrementCounter(2);
+        Assert.assertEquals(2, client.getCounter());
         uba.cancel();
-
-        assertOrder(ConfirmCompleted.class, Compensate.class);
-    }
-
-    @Test
-    public void testApplicationException() throws Exception {
-
-        try {
-            uba.begin();
-            client.saveDataAutoComplete(ServiceCommand.THROW_APPLICATION_EXCEPTION);
-            Assert.fail("Exception should have been thrown by now");
-        } catch (SomeApplicationException e) {
-            //Exception expected
-        } finally {
-            uba.cancel();
-        }
-        assertOrder();
-    }
-
-    @Test(expected = TransactionRolledBackException.class)
-    public void testCannotComplete() throws Exception {
-
-        uba.begin();
-        client.saveDataAutoComplete(ServiceCommand.CANNOT_COMPLETE);
-        uba.close();
-
-        assertOrder();
-    }
-
-    private void assertOrder(Class<? extends Annotation>... expectedOrder) {
-
-        org.junit.Assert.assertEquals(Arrays.asList(expectedOrder), client.getEventLog().getEventLog());
-    }
-
-    private void assertDataAvailable() {
-
-        List<Class<? extends Annotation>> log = client.getEventLog().getDataUnavailableLog();
-        if (!log.isEmpty()) {
-            org.junit.Assert.fail("One or more lifecycle methods could not access the managed data: " + log.toString());
-        }
+        Assert.assertEquals(0, client.getCounter());
+        Assert.assertFalse(client.isConfirmed());
     }
 
     public void cancelIfActive(UserBusinessActivity uba) {

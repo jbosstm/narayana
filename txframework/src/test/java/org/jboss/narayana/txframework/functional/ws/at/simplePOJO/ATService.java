@@ -27,9 +27,9 @@ import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.configuration.BridgeType;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.ServiceCommand;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.inject.Inject;
 import javax.jws.WebMethod;
@@ -78,28 +78,28 @@ public class ATService {
 
     @Commit
     @WebMethod(exclude = true)
-    private void commit() {
+    public void commit() {
 
         logEvent(Commit.class);
     }
 
     @PostCommit
     @WebMethod(exclude = true)
-    private void postCommit() {
+    public void postCommit() {
 
         logEvent(PostCommit.class);
     }
 
     @Rollback
     @WebMethod(exclude = true)
-    private void rollback() {
+    public void rollback() {
 
         logEvent(Rollback.class);
     }
 
     @PrePrepare
     @WebMethod(exclude = true)
-    private Boolean prePrepare() {
+    public Boolean prePrepare() {
 
         logEvent(PrePrepare.class);
         return true;
@@ -107,7 +107,7 @@ public class ATService {
 
     @Prepare
     @WebMethod(exclude = true)
-    private Boolean prepare() {
+    public Boolean prepare() {
 
         logEvent(Prepare.class);
         if (txDataMap.containsKey("rollback")) {
@@ -119,14 +119,14 @@ public class ATService {
 
     @Unknown
     @WebMethod(exclude = true)
-    private void unknown() {
+    public void unknown() {
 
         logEvent(Unknown.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    private void error() {
+    public void error() {
 
         logEvent(Error.class);
     }
