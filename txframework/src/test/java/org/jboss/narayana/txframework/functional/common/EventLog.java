@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.common;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;

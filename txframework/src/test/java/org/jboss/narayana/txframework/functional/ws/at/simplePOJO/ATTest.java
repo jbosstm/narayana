@@ -25,10 +25,17 @@ package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
-import org.jboss.narayana.txframework.functional.BaseFunctionalTestWar;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,14 +46,32 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jboss.narayana.txframework.functional.ServiceCommand.THROW_APPLICATION_EXCEPTION;
-import static org.jboss.narayana.txframework.functional.ServiceCommand.VOTE_ROLLBACK;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.VOTE_ROLLBACK;
 
 @RunWith(Arquillian.class)
-public class ATTest extends BaseFunctionalTestWar {
+public class ATTest {
 
     private UserTransaction ut;
     private AT client;
+
+    @Deployment
+    public static WebArchive createTestArchive() {
+        //todo: Does the application developer have to specify the interceptor?
+        WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
+                .addPackage(ATTest.class.getPackage())
+                .addPackage(EventLog.class.getPackage())
+                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                .addAsWebInfResource("web.xml", "web.xml");
+
+        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
+
+        String ManifestMF = "Manifest-Version: 1.0\n"
+                + "Dependencies: org.jboss.narayana.txframework\n";
+        archive.setManifest(new StringAsset(ManifestMF));
+
+        return archive;
+    }
 
     @Before
     public void setupTest() throws Exception {
@@ -135,6 +160,15 @@ public class ATTest extends BaseFunctionalTestWar {
         List<Class<? extends Annotation>> log = client.getEventLog().getDataUnavailableLog();
         if (!log.isEmpty()) {
             Assert.fail("One or more lifecycle methods could not access the managed data: " + log.toString());
+        }
+    }
+
+    public void rollbackIfActive(UserTransaction ut) {
+
+        try {
+            ut.rollback();
+        } catch (Throwable th2) {
+            // do nothing, not active
         }
     }
 }

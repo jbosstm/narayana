@@ -22,7 +22,7 @@
 
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
-import org.jboss.narayana.txframework.functional.EventLog;
+import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.Required;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ProxyFactory;

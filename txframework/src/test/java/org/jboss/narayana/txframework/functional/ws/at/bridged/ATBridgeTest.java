@@ -24,9 +24,15 @@ package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.narayana.txframework.functional.BaseFunctionalTest;
-import org.jboss.narayana.txframework.functional.ws.at.bridged.ATBridgeClient;
+import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,10 +41,30 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class ATBridgeTest extends BaseFunctionalTest {
+public class ATBridgeTest {
 
     private UserTransaction ut;
     private ATBridge client;
+
+    @Deployment()
+    public static JavaArchive createTestArchive() {
+
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+                .addPackage(ATBridgeTest.class.getPackage())
+                .addPackage(EventLog.class.getPackage())
+                .addAsManifestResource("persistence.xml")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+
+        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
+
+        String ManifestMF = "Manifest-Version: 1.0\n"
+                + "Dependencies: org.jboss.narayana.txframework\n";
+
+        archive.setManifest(new StringAsset(ManifestMF));
+
+        return archive;
+    }
 
     @Before
     public void setupTest() throws Exception {
@@ -82,6 +108,15 @@ public class ATBridgeTest extends BaseFunctionalTest {
         ut.commit();
 
         Assert.assertEquals(0, counter);
+    }
+
+    public void rollbackIfActive(UserTransaction ut) {
+
+        try {
+            ut.rollback();
+        } catch (Throwable th2) {
+            // do nothing, not active
+        }
     }
 }
 

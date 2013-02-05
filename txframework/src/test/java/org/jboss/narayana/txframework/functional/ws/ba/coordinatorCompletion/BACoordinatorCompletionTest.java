@@ -26,14 +26,20 @@ import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.Assert;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
-import org.jboss.narayana.txframework.functional.BaseFunctionalTest;
-import org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion.BACoordinatorCompletionClient;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,11 +49,34 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jboss.narayana.txframework.functional.ServiceCommand.CANNOT_COMPLETE;
-import static org.jboss.narayana.txframework.functional.ServiceCommand.THROW_APPLICATION_EXCEPTION;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.CANNOT_COMPLETE;
+import static org.jboss.narayana.txframework.functional.common.ServiceCommand.THROW_APPLICATION_EXCEPTION;
 
 @RunWith(Arquillian.class)
-public class BACoordinatorCompletionTest extends BaseFunctionalTest {
+public class BACoordinatorCompletionTest {
+
+    @Deployment()
+    public static JavaArchive createTestArchive() {
+        //todo: Does the application developer have to specify the interceptor?
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+                .addPackages(false, BACoordinatorCompletionTest.class.getPackage())
+                .addPackage(EventLog.class.getPackage())
+                .addAsManifestResource("persistence.xml")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE,
+                        ArchivePaths.create("beans.xml"));
+
+        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
+
+        String ManifestMF = "Manifest-Version: 1.0\n"
+                + "Dependencies: org.jboss.narayana.txframework\n";
+
+
+        archive.setManifest(new StringAsset(ManifestMF));
+
+        return archive;
+    }
+
 
     UserBusinessActivity uba;
     BACoordinatorCompletion client;
@@ -133,6 +162,15 @@ public class BACoordinatorCompletionTest extends BaseFunctionalTest {
         List<Class<? extends Annotation>> log = client.getEventLog().getDataUnavailableLog();
         if (!log.isEmpty()) {
             org.junit.Assert.fail("One or more lifecycle methods could not access the managed data: " + log.toString());
+        }
+    }
+
+    public void cancelIfActive(UserBusinessActivity uba) {
+
+        try {
+            uba.cancel();
+        } catch (Throwable e) {
+            // do nothing, not active
         }
     }
 }

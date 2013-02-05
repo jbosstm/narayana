@@ -34,9 +34,9 @@ import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.ServiceCommand;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -96,56 +96,56 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion {
     //todo: why is this never invoked? Always true for CoordinationCompletion?
     @Compensate
     @WebMethod(exclude = true)
-    private void compensate() {
+    public void compensate() {
 
         logEvent(Compensate.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    private void confirmCompleted(Boolean success) {
+    public void confirmCompleted(Boolean success) {
 
         logEvent(ConfirmCompleted.class);
     }
 
     @Cancel
     @WebMethod(exclude = true)
-    private void cancel() {
+    public void cancel() {
 
         logEvent(Cancel.class);
     }
 
     @Close
     @WebMethod(exclude = true)
-    private void close() {
+    public void close() {
 
         logEvent(Close.class);
     }
 
     @Complete
     @WebMethod(exclude = true)
-    private void complete() {
+    public void complete() {
 
         logEvent(Complete.class);
     }
 
     @ConfirmCompleted
     @WebMethod(exclude = true)
-    private void confirmCompleted(boolean success) {
+    public void confirmCompleted(boolean success) {
 
         logEvent(ConfirmCompleted.class);
     }
 
     @Error
     @WebMethod(exclude = true)
-    private void error() {
+    public void error() {
 
         logEvent(org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error.class);
     }
 
     @Status
     @WebMethod(exclude = true)
-    private String status() {
+    public String status() {
 
         logEvent(Status.class);
         return null;
@@ -153,7 +153,7 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion {
 
     @Unknown
     @WebMethod(exclude = true)
-    private void unknown() {
+    public void unknown() {
 
         logEvent(Unknown.class);
     }

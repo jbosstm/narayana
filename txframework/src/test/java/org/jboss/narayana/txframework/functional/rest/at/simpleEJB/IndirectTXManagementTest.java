@@ -28,16 +28,14 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Rollback;
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.ServiceCommand;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.UserTransaction;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.UserTransactionFactory;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
@@ -67,10 +65,9 @@ public class IndirectTXManagementTest {
     public static WebArchive createTestArchive() {
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addPackage("org.jboss.narayana.txframework.functional.rest.at.simpleEJB")
-                .addClasses(EventLog.class, SomeApplicationException.class, ServiceCommand.class)
-                .addAsWebInfResource(new ByteArrayAsset("<interceptors><class>org.jboss.narayana.txframework.impl.ServiceRequestInterceptor</class></interceptors>".getBytes()),
-                        ArchivePaths.create("beans.xml"))
+                .addPackage(ClientTXInterceptorTest.class.getPackage())
+                .addPackage(EventLog.class.getPackage())
+                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .addAsWebInfResource("resttx.ejb.web.xml", "web.xml");
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 

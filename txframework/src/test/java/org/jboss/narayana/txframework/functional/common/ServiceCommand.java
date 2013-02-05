@@ -20,20 +20,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional;
+package org.jboss.narayana.txframework.functional.common;
 
-import java.io.Serializable;
-
-public class SomeApplicationException extends Exception implements Serializable {
-
-    public SomeApplicationException(String message, Throwable cause) {
-
-        super(message, cause);
-    }
-
-    public SomeApplicationException(String message) {
-
-        super(message);
-    }
-
+public enum ServiceCommand {
+    THROW_APPLICATION_EXCEPTION, CANNOT_COMPLETE, COMPLETE, READ_ONLY, VOTE_ROLLBACK
 }
