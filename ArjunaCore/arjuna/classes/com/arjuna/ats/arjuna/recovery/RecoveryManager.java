@@ -106,7 +106,9 @@ public class RecoveryManager
 
     public static synchronized final RecoveryManager manager () throws IllegalArgumentException
     {
-	return manager(RecoveryManager.INDIRECT_MANAGEMENT);
+   	if (_recoveryManager == null)    		
+   		return manager(RecoveryManager.INDIRECT_MANAGEMENT);
+    return _recoveryManager;
     }
 
     /**
