@@ -279,6 +279,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
+[ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
 [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
@@ -309,7 +310,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-build_as "$@"
+[ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
