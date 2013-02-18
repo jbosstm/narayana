@@ -29,5 +29,6 @@
     <module>failure_recovery_guide</module>
     <module>transactions_overview_guide</module>
     <module>txbridge_guide</module>
+    <module>xts_administration_and_development_guide</module>
   </modules>
 </project>

@@ -417,8 +417,8 @@
     <module>ArjunaCore/docs</module>
     <module>ArjunaJTA/docs</module>
     <module>ArjunaJTS/docs</module>
-    <module>XTS/docs</module>
     <module>blacktie/docs</module>
     <module>docs</module>
+    <module>XTS/background</module>
   </modules>
 </project>
