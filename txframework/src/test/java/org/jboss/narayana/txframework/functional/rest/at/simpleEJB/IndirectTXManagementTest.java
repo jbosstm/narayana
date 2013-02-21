@@ -72,7 +72,7 @@ public class IndirectTXManagementTest {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.resteasy.resteasy-jaxrs,javax.ws.rs.api,javax.ejb.api,org.jboss.jts,org.jboss.narayana.txframework\n";
+                + "Dependencies: org.jboss.resteasy.resteasy-jaxrs,javax.ws.rs.api,javax.ejb.api,org.jboss.jts,org.jboss.xts\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
