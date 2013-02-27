@@ -64,7 +64,7 @@ public class ClientTXInterceptorTest {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.resteasy.resteasy-jaxrs,javax.ws.rs.api,javax.ejb.api,org.jboss.jts,org.jboss.xts\n";
+                + "Dependencies: org.jboss.resteasy.resteasy-jaxrs,javax.ws.rs.api,javax.ejb.api,org.jboss.jts,org.jboss.narayana.txframework\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
