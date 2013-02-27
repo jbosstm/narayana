@@ -525,8 +525,13 @@ public class ExtendedResourceRecord extends
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
+		catch (Exception e2)
+		{
+			e2.printStackTrace();
+			
+			return TwoPhaseOutcome.FINISH_ERROR;
 		}
-
+		}
 		return TwoPhaseOutcome.FINISH_OK;
 	}
 
