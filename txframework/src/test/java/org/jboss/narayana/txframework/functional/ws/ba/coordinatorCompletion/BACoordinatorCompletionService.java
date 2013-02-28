@@ -32,7 +32,7 @@ import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-
+a
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
