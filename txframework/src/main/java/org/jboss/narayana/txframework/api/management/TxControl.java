@@ -22,7 +22,7 @@
 
 package org.jboss.narayana.txframework.api.management;
 
-import org.jboss.narayana.txframework.api.exception.TXControlRuntimeException;
+import org.jboss.narayana.txframework.api.exception.TXControlException;
 
 /**
  * Interface defining at the most generic level a transaction control object which can be injected into a
@@ -37,11 +37,11 @@ public interface TxControl {
      * this method can be called from a web service method while a transaction is active to notify the
      * framework that no changes have been made during execution of the service method.
      */
-    public void readOnly() throws TXControlRuntimeException;
+    public void readOnly() throws TXControlException;
 
     /**
      * this method can be called from a web service or lifecycle method to notify the framework that the
      * transaction has failed and may have left the service in an inconsistent state
      */
-    public void fail() throws TXControlRuntimeException;
+    public void fail() throws TXControlException;
 }

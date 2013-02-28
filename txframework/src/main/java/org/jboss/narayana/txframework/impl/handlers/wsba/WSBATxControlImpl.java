@@ -23,7 +23,7 @@
 package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.txframework.api.exception.TXControlRuntimeException;
+import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 
 public class WSBATxControlImpl implements WSBATxControl {
@@ -49,50 +49,50 @@ public class WSBATxControlImpl implements WSBATxControl {
         baParticipantManagerThreadLocal.remove();
     }
 
-    public void exit() throws TXControlRuntimeException {
+    public void exit() throws TXControlException {
 
         try {
             baParticipantManagerThreadLocal.get().exit();
         } catch (Exception e) {
-            throw new TXControlRuntimeException("Exception when calling 'exit' on participant manager", e);
+            throw new TXControlException("Exception when calling 'exit' on participant manager", e);
         }
     }
 
-    public void cannotComplete() throws TXControlRuntimeException {
+    public void cannotComplete() throws TXControlException {
 
         try {
             baParticipantManagerThreadLocal.get().cannotComplete();
             cannotCompleteThreadLocal.set(true);
         } catch (Exception e) {
-            throw new TXControlRuntimeException("Exception when calling 'cannotComplete' on participant manager", e);
+            throw new TXControlException("Exception when calling 'cannotComplete' on participant manager", e);
         }
     }
 
-    public void completed() throws TXControlRuntimeException {
+    public void completed() throws TXControlException {
 
         try {
             baParticipantManagerThreadLocal.get().completed();
         } catch (Exception e) {
-            throw new TXControlRuntimeException("Exception when calling 'completed' on participant manager", e);
+            throw new TXControlException("Exception when calling 'completed' on participant manager", e);
         }
     }
 
-    public void readOnly() throws TXControlRuntimeException {
+    public void readOnly() throws TXControlException {
 
         try {
             baParticipantManagerThreadLocal.get().exit();
         } catch (Exception e) {
-            throw new TXControlRuntimeException("Exception when calling 'exit' on participant manager", e);
+            throw new TXControlException("Exception when calling 'exit' on participant manager", e);
         }
     }
 
-    public void fail() throws TXControlRuntimeException {
+    public void fail() throws TXControlException {
 
         try {
             //todo: Why does this take a QName?
             baParticipantManagerThreadLocal.get().fail(null);
         } catch (Exception e) {
-            throw new TXControlRuntimeException("Exception when calling 'fail' on participant manager", e);
+            throw new TXControlException("Exception when calling 'fail' on participant manager", e);
         }
     }
 
