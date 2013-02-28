@@ -1,0 +1,2 @@
+export UPSTREAM_AS_BRANCH=master
+export ORIGIN_AS_BRANCH=5_BRANCH

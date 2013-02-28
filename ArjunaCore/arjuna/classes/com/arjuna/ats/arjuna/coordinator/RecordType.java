@@ -109,6 +109,8 @@ public class RecordType
 
     public static final int XTS_WSBA_RECORD = 162;
 
+    public static final int RESTAT_RECORD = 165;
+
     public static final int JTA_RECORD = 171;
 
     public static final int JTAX_RECORD = 172;
@@ -253,6 +255,9 @@ public class RecordType
         case RecordType.XTS_WSBA_RECORD:
             return RecordTypeManager.manager().getClass(
                     RecordType.XTS_WSBA_RECORD);
+        case RecordType.RESTAT_RECORD:
+            return RecordTypeManager.manager().getClass(
+                    RecordType.RESTAT_RECORD);
         case RecordType.JTA_RECORD:
             return RecordTypeManager.manager().getClass(RecordType.JTA_RECORD);
         case RecordType.JTAX_RECORD:

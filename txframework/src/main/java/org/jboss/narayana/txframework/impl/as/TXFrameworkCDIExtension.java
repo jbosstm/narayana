@@ -24,7 +24,6 @@ package org.jboss.narayana.txframework.impl.as;
 
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.impl.ServiceRequestInterceptor;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBATxControlImpl;
@@ -48,9 +47,6 @@ public class TXFrameworkCDIExtension implements Extension {
      * @param bm  the bean manager
      */
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
-
-        final AnnotatedType<ServiceRequestInterceptor> serviceRequestInterceptor = bm.createAnnotatedType(ServiceRequestInterceptor.class);
-        bbd.addAnnotatedType(serviceRequestInterceptor);
 
         final AnnotatedType<RestTXRequiredInterceptor> restTXRequiredInterceptor = bm.createAnnotatedType(RestTXRequiredInterceptor.class);
         bbd.addAnnotatedType(restTXRequiredInterceptor);

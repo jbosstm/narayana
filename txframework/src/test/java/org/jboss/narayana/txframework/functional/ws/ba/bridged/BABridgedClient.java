@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
+package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 
@@ -32,16 +32,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATClient {
+public class BABridgedClient {
 
-    public static AT newInstance() throws Exception {
+    public static BABridged newInstance() throws Exception {
 
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATService?wsdl");
-        QName serviceName = new QName("http://www.jboss.com/functional/at/", "ATService");
-        QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
+        URL wsdlLocation = new URL("http://localhost:8080/test/BABridgedService/BABridged?wsdl");
+        QName serviceName = new QName("http://www.jboss.com/functional/ba/bridged/", "BABridgedService");
+        QName portName = new QName("http://www.jboss.com/functional/ba/bridged/", "BABridgedService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        AT client = service.getPort(portName, AT.class);
+        BABridged client = service.getPort(portName, BABridged.class);
 
         /*
            Add client handler chain

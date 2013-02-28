@@ -324,7 +324,7 @@
               <forkMode>pertest</forkMode>
               <workingDirectory>target/test-classes</workingDirectory>
               <runOrder>alphabetical</runOrder>
-              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+              <redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
               <inherited>true</inherited>
               <includes>
                 <include>**/*.java</include>
@@ -1027,6 +1027,7 @@
   </dependencyManagement>
   <properties>
     <!-- IP stack configs. -->
+    <testLogToFile>true</testLogToFile>
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>

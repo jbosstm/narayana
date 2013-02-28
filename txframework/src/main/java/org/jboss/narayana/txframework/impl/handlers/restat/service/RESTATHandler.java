@@ -50,10 +50,9 @@ public class RESTATHandler implements ProtocolHandler {
     }
 
     @Override
-    public Object proceed(InvocationContext ic) throws Exception {
+    public void preInvocation() throws Exception {
 
         participant.resume();
-        return ic.proceed();
     }
 
     @Override

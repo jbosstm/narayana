@@ -63,10 +63,9 @@ public class WSATHandler implements ProtocolHandler {
     }
 
     @Override
-    public Object proceed(InvocationContext ic) throws Exception {
+    public void preInvocation() throws Exception {
 
         ((Participant) durableParticipant).resume();
-        return ic.proceed();
     }
 
     @Override

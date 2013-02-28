@@ -63,7 +63,7 @@ public class TMApplication extends Application
            // register RESTRecord record type so that it is persisted in the object store correctly
            RecordTypeManager.manager().add(new RecordTypeMap() {
                public Class<? extends AbstractRecord> getRecordClass () { return RESTRecord.class;}
-               public int getType () {return RecordType.USER_DEF_FIRST0;}
+               public int getType () {return RecordType.RESTAT_RECORD;}
            });
         }
         catch (Throwable e)

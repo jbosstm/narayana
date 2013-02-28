@@ -26,28 +26,8 @@ function build_narayana {
 
   ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all$OBJECT_STORE_PROFILE "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
-  cp_narayana_to_as
 
   return 0
-}
-
-function cp_narayana_to_as {
-  echo "Copying Narayana to AS"
-  cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  [ $? = 0 ] || return 1
-  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
-  [ -d $JBOSS_HOME ] || return 1
-
-  echo "WARNING - check that narayana version ${NARAYANA_VERSION} is the one you want"
-  JAR1=jbossjts-integration-${NARAYANA_VERSION}.jar
-  JAR2=jbossjts-${NARAYANA_VERSION}.jar
-# TODO make sure ${JBOSS_HOME} doesn't already contain a different version of narayana
-  echo "cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/"
-  echo "cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/"
-  cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/
-  [ $? = 0 ] || return 1
-  cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/
 }
 
 function build_as {

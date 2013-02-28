@@ -27,9 +27,9 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Prepare;
-import org.jboss.narayana.txframework.functional.EventLog;
-import org.jboss.narayana.txframework.functional.ServiceCommand;
-import org.jboss.narayana.txframework.functional.SomeApplicationException;
+import org.jboss.narayana.txframework.functional.common.EventLog;
+import org.jboss.narayana.txframework.functional.common.ServiceCommand;
+import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -56,9 +56,9 @@ public class ClientTXInterceptorTest {
     public static WebArchive createTestArchive() {
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addPackage("org.jboss.narayana.txframework.functional.rest.at.simpleEJB")
-                .addClasses(EventLog.class, SomeApplicationException.class, ServiceCommand.class)
-                .addAsWebInfResource(new ByteArrayAsset("<interceptors><class>org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor</class><class>org.jboss.narayana.txframework.impl.ServiceRequestInterceptor</class></interceptors>".getBytes()),
+                .addPackage(ClientTXInterceptorTest.class.getPackage())
+                .addPackage(EventLog.class.getPackage())
+                .addAsWebInfResource(new ByteArrayAsset("<interceptors><class>org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor</class></interceptors>".getBytes()),
                         ArchivePaths.create("beans.xml"))
                 .addAsWebInfResource("resttx.ejb.web.xml", "web.xml");
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
