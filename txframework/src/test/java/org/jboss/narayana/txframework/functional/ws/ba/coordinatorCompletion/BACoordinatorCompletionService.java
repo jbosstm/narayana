@@ -32,7 +32,6 @@ import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
-a
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -63,21 +62,17 @@ public class BACoordinatorCompletionService implements BACoordinatorCompletion {
     public void saveData(ServiceCommand[] serviceCommands) throws SomeApplicationException {
 
         txDataMap.put("data", "data");
-        try {
-            if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands)) {
-                throw new SomeApplicationException("Intentionally thrown Exception");
-            }
+        if (isPresent(ServiceCommand.THROW_APPLICATION_EXCEPTION, serviceCommands)) {
+            throw new SomeApplicationException("Intentionally thrown Exception");
+        }
 
-            if (isPresent(ServiceCommand.CANNOT_COMPLETE, serviceCommands)) {
-                txControl.cannotComplete();
-                return;
-            }
+        if (isPresent(ServiceCommand.CANNOT_COMPLETE, serviceCommands)) {
+            txControl.cannotComplete();
+            return;
+        }
 
-            if (isPresent(ServiceCommand.COMPLETE, serviceCommands)) {
-                txControl.completed();
-            }
-        } catch (TXControlException e) {
-            throw new RuntimeException("Error invoking lifecycle methods on the TXControl", e);
+        if (isPresent(ServiceCommand.COMPLETE, serviceCommands)) {
+            txControl.completed();
         }
     }
 

@@ -22,7 +22,7 @@
 
 package org.jboss.narayana.txframework.api.management;
 
-import org.jboss.narayana.txframework.api.exception.TXControlException;
+import org.jboss.narayana.txframework.api.exception.TXControlRuntimeException;
 
 /**
  * Interface defining a transaction control object which can be injected into a framework web service or
@@ -30,7 +30,7 @@ import org.jboss.narayana.txframework.api.exception.TXControlException;
  */
 public interface WSBATxControl extends BATxControl {
 
-    public void exit() throws TXControlException;
+    public void exit() throws TXControlRuntimeException;
 
-    public void cannotComplete() throws TXControlException;
+    public void cannotComplete() throws TXControlRuntimeException;
 }
