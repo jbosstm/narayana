@@ -27,9 +27,11 @@
   <packaging>jar</packaging>
   <name>Support utils for using the REST-AT</name>
   <description>Provides Utility methods to support RESTAT</description>
+<!-- 
   <properties>
     <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
   </properties>
+ -->
 
   <repositories>
     <repository>
@@ -89,12 +91,12 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>jaxrs-api</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
+<!--       <version>${version.org.jboss.resteasy}</version> -->
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
+<!--       <version>${version.org.jboss.resteasy}</version> -->
       <!-- filter out unwanted jars -->
       <exclusions>
         <exclusion>
