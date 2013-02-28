@@ -21,12 +21,17 @@
  */
 package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
 import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
-import org.jboss.narayana.txframework.api.exception.TXControlException;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.functional.common.EventLog;
