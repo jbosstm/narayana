@@ -34,9 +34,13 @@
 #   MAVEN_SKIP_RC - flag to disable loading of mavenrc files
 # ----------------------------------------------------------------------------
 
-MAVEN_DEBUG_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+QUOTED_ARGS=""
+while [ "$1" != "" ] ; do
 
-echo Preparing to Execute Maven in Debug Mode
+  QUOTED_ARGS="$QUOTED_ARGS \"$1\""
+  shift
+
+done
 
 if [ -z "$MAVEN_SKIP_RC" ] ; then
 
@@ -60,10 +64,16 @@ case "`uname`" in
   Darwin*) darwin=true 
            if [ -z "$JAVA_VERSION" ] ; then
              JAVA_VERSION="CurrentJDK"
+           else
+             echo "Using Java version: $JAVA_VERSION"
            fi
            if [ -z "$JAVA_HOME" ] ; then
              JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/${JAVA_VERSION}/Home
            fi
+           if [ -z "$YJP_HOME" ]; then
+             YJP_HOME=/Applications/YourKit.app
+           fi
+           YJPLIB=$YJP_HOME/bin/mac/libyjpagent.jnilib
            ;;
 esac
 
@@ -118,21 +128,6 @@ if $mingw ; then
   # TODO classpath?
 fi
 
-if [ -z "$JAVA_HOME" ]; then
-  javaExecutable="`which javac`"
-  if [ -n "$javaExecutable" -a ! "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ]; then
-    # readlink(1) is not available as standard on Solaris 10.
-    readLink=`which readlink`
-    if [ ! `expr "$readLink" : '\([^ ]*\)'` = "no" ]; then
-      javaExecutable="`readlink -f \"$javaExecutable\"`"
-      javaHome="`dirname \"$javaExecutable\"`"
-      javaHome=`expr "$javaHome" : '\(.*\)/bin'`
-      JAVA_HOME="$javaHome"
-      export JAVA_HOME
-    fi
-  fi
-fi
-
 if [ -z "$JAVACMD" ] ; then
   if [ -n "$JAVA_HOME"  ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
@@ -164,14 +159,22 @@ if $cygwin; then
     M2_HOME=`cygpath --path --windows "$M2_HOME"`
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
-  [ -n "$CLASSPATH" ] &&
-    CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+  [ -n "$HOME" ] &&
+    HOME=`cygpath --path --windows "$HOME"`
 fi
+
+if [ ! -f "$YJPLIB" ]; then
+  echo "Unable to autodetect the YJP library location. Please set YJPLIB variable"
+  exit 1
+fi
+
+MAVEN_OPTS="-agentpath:$YJPLIB=onexit=snapshot,onexit=memory,tracing,onlylocal $MAVEN_OPTS"
 
 exec "$JAVACMD" \
   $MAVEN_OPTS \
-  $MAVEN_DEBUG_OPTS \
   -classpath "${M2_HOME}"/boot/plexus-classworlds-*.jar \
   "-Dclassworlds.conf=${M2_HOME}/bin/m2.conf" \
   "-Dmaven.home=${M2_HOME}"  \
-  ${CLASSWORLDS_LAUNCHER} "$@"
+  ${CLASSWORLDS_LAUNCHER} $QUOTED_ARGS
+
+

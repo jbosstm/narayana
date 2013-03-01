@@ -38,8 +38,6 @@
 @REM enable echoing my setting MAVEN_BATCH_ECHO to 'on'
 @if "%MAVEN_BATCH_ECHO%" == "on"  echo %MAVEN_BATCH_ECHO%
 
-@echo Preparing to Execute Maven in Debug Mode
-
 @REM set %HOME% to equivalent of $HOME
 if "%HOME%" == "" (set "HOME=%HOMEDRIVE%%HOMEPATH%")
 
@@ -53,8 +51,6 @@ set ERROR_CODE=0
 @REM set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" @setlocal
 if "%OS%"=="WINNT" @setlocal
-
-set MAVEN_DEBUG_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
 
 @REM ==== START VALIDATION ====
 if not "%JAVA_HOME%" == "" goto OkJHome
@@ -162,7 +158,7 @@ goto runm2
 @REM Start MAVEN2
 :runm2
 set CLASSWORLDS_LAUNCHER=org.codehaus.plexus.classworlds.launcher.Launcher
-%MAVEN_JAVA_EXE% %MAVEN_OPTS% %MAVEN_DEBUG_OPTS% -classpath %CLASSWORLDS_JAR% "-Dclassworlds.conf=%M2_HOME%\bin\m2.conf" "-Dmaven.home=%M2_HOME%" %CLASSWORLDS_LAUNCHER% %MAVEN_CMD_LINE_ARGS%
+%MAVEN_JAVA_EXE% %MAVEN_OPTS% -classpath %CLASSWORLDS_JAR% "-Dclassworlds.conf=%M2_HOME%\bin\m2.conf" "-Dmaven.home=%M2_HOME%" %CLASSWORLDS_LAUNCHER% %MAVEN_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
@@ -196,4 +192,6 @@ if "%MAVEN_BATCH_PAUSE%" == "on" pause
 
 if "%MAVEN_TERMINATE_CMD%" == "on" exit %ERROR_CODE%
 
-exit /B %ERROR_CODE%
+cmd /C exit /B %ERROR_CODE%
+
+
