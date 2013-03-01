@@ -22,20 +22,6 @@
         <skipDisabledPropagationTests>false</skipDisabledPropagationTests>
     </properties>
     
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.ws</groupId>
-            <artifactId>jbossws-api</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
-            <scope>provided</scope>            
-        </dependency>
-    </dependencies>
-    
     <build>
         <plugins>
             <plugin>
