@@ -20,16 +20,16 @@
  */
 package com.arjuna.mw.wst11.client;
 
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.mw.wst11.client.JaxBaseHeaderContextProcessor;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.util.HashSet;
-import java.util.Set;
+
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 
 /**
  * The class is used to perform WS-Transaction context insertion
@@ -46,11 +46,22 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      */
     public boolean handleMessage(SOAPMessageContext msgContext)
     {
+        return handleMessage(msgContext, true);
+    }
+
+    /**
+     * Process a message. Determines if it is inbound or outbound and dispatches accordingly.
+     *
+     * @param msgContext
+     * @param mustUnderstand
+     * @return true
+     */
+    public boolean handleMessage(SOAPMessageContext msgContext, boolean mustUnderstand) {
         Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outbound == null)
             throw new IllegalStateException("Cannot obtain required property: " + MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
-        return outbound ? handleOutbound(msgContext) : handleInbound(msgContext);
+        return outbound ? handleOutbound(msgContext, mustUnderstand) : handleInbound(msgContext);
     }
 
     /**
@@ -109,12 +120,13 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      * Process the tx thread context and attach serialized version as msg header
      *
      * @param messageContext
+     * @param mustUnderstand
      * @return true
      */
-    protected boolean handleOutbound(SOAPMessageContext messageContext)
+    protected boolean handleOutbound(SOAPMessageContext messageContext, boolean mustUnderstand)
     {
         final SOAPMessage soapMessage = messageContext.getMessage() ;
 
-        return handleOutboundMessage(soapMessage);
+        return handleOutboundMessage(soapMessage, mustUnderstand);
     }
 }

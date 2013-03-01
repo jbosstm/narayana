@@ -20,22 +20,29 @@
  */
 package com.arjuna.mw.wst11.client;
 
+import java.util.Iterator;
+
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPMessage;
+
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+
 import com.arjuna.mw.wsc11.context.Context;
-import com.arjuna.mw.wst.*;
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.common.SOAPUtil;
-import com.arjuna.mw.wst11.common.CoordinationContextHelper;
 import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.common.CoordinationContextHelper;
 import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-
-import javax.xml.soap.*;
-import java.util.Iterator;
 
 /**
  * Common base class for classes used to perform
@@ -46,10 +53,22 @@ class JaxBaseHeaderContextProcessor
 {
     /**
      * Handle the request.
+     *
      * @param soapMessage The current message context.
      */
-
     public boolean handleOutboundMessage(final SOAPMessage soapMessage)
+    {
+        return handleOutboundMessage(soapMessage, true);
+    }
+
+    /**
+     * Handle the request.
+     *
+     * @param soapMessage The current message context.
+     * @param mustUnderstand Value of MustUnderstand attribute.
+     * @return
+     */
+    public boolean handleOutboundMessage(final SOAPMessage soapMessage, boolean mustUnderstand)
     {
         if (soapMessage == null)
         {
@@ -114,7 +133,7 @@ class JaxBaseHeaderContextProcessor
                 final Name name = env.createName(CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT, CoordinationConstants.WSCOOR_PREFIX, CoordinationConstants.WSCOOR_NAMESPACE) ;
                 final SOAPHeaderElement headerElement = header.addHeaderElement(name) ;
                 headerElement.addNamespaceDeclaration(CoordinationConstants.WSCOOR_PREFIX, CoordinationConstants.WSCOOR_NAMESPACE) ;
-                headerElement.setMustUnderstand(true) ;
+                headerElement.setMustUnderstand(mustUnderstand) ;
                 CoordinationContextHelper.serialise(coordinationContext, headerElement) ;
             }
         }

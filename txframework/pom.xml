@@ -75,6 +75,11 @@
     <dependencies>
         <!-- Import the CDI API, we use provided scope as the API is included in
      JBoss AS 7 -->
+      <dependency>
+          <groupId>org.jboss.ws</groupId>
+          <artifactId>jbossws-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>

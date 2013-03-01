@@ -20,6 +20,8 @@
  */
 package org.jboss.jbossts.txbridge.tests.common;
 
+import java.io.IOException;
+
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -32,8 +34,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-
-import java.io.IOException;
 
 /**
  * Common methods for tx bridge test cases.
@@ -72,7 +72,7 @@ public abstract class AbstractBasicTests {
 
     protected static Archive<?> getOutboundServiceArchive() {
         Archive<?> archive = ShrinkWrap.create(WebArchive.class, OUTBOUND_SERVICE_DEPLOYMENT_NAME + ".war")
-                .addPackage("org.jboss.jbossts.txbridge.tests.outbound.service")
+                .addClass(org.jboss.jbossts.txbridge.tests.outbound.service.TestServiceImpl.class)
                 .addPackage("org.jboss.jbossts.txbridge.tests.outbound.utility")
                 .addAsResource("outbound/jaxws-handlers-server.xml", "jaxws-handlers-server.xml")
 //                .addAsManifestResource("outbound/jboss-beans.xml", "jboss-beans.xml")
@@ -82,7 +82,8 @@ public abstract class AbstractBasicTests {
 
     protected static Archive<?> getOutboundClientArchive() {
         Archive<?> archive = ShrinkWrap.create(WebArchive.class, OUTBOUND_CLIENT_DEPLOYMENT_NAME + ".war")
-                .addPackage("org.jboss.jbossts.txbridge.tests.outbound.client")
+                .addClass(org.jboss.jbossts.txbridge.tests.outbound.client.TestClient.class)
+                .addClass(org.jboss.jbossts.txbridge.tests.outbound.client.TestService.class)
                 .addAsManifestResource(new StringAsset("Dependencies: org.jboss.xts,org.jboss.jts\n"), "MANIFEST.MF");
         return archive;
     }
