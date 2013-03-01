@@ -22,16 +22,12 @@
 
 package org.jboss.narayana.txframework.functional.ws.at.bridged;
 
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.ws.at.bridged.ATBridge;
+import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.arjuna.mw.wst11.client.WSTXFeature;
 
 public class ATBridgeClient {
 
@@ -42,15 +38,7 @@ public class ATBridgeClient {
         QName portName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridge");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        ATBridge client = service.getPort(portName, ATBridge.class);
-
-        /*
-           Add client handler chain
-        */
-        BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>();
-        handlers.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlers);
+        ATBridge client = service.getPort(portName, ATBridge.class, new WSTXFeature());
 
         return client;
     }
